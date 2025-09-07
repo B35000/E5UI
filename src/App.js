@@ -16016,7 +16016,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       if(obj.success == false){
         console.log('apppage','Delete action was not successful', obj)
         this.prompt_top_notification(this.getLocale()['3055cb']/* 'Something went wrong.' */, 4500)
@@ -16904,7 +16904,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -16943,7 +16943,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);;
 
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
@@ -16978,7 +16978,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -17029,7 +17029,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -17064,7 +17064,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -17100,7 +17100,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -17135,7 +17135,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -17172,7 +17172,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -17214,7 +17214,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -17252,7 +17252,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       var duration = obj.success == true ? 3700 : 4800
       this.prompt_top_notification(obj.message, duration)
     }
@@ -19706,7 +19706,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       console.log('vote_counter', obj)
       
       if(obj.success == true){
@@ -19880,7 +19880,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
       console.log('calculate_payouts', obj)
       
       if(obj.success == true){
@@ -22414,7 +22414,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
       return obj['data'][0]
     }
     catch(e){
@@ -26061,7 +26061,7 @@ class App extends Component {
       body: JSON.stringify(await this.encrypt_post_object(nitro_object_e5_id, arg_obj)) // Convert the data object to a JSON string
     }
 
-    var request = `${beacon_node}/subscription_income_stream_datapoints`
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'subscription_income_stream_datapoints')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -26069,7 +26069,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
       console.log('fetch_subscription_income_stream', obj)
       if(obj.success == false){
         return null
@@ -29215,7 +29215,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
       console.log('all_data', obj)
       return obj['data']
     }
@@ -32125,7 +32125,7 @@ class App extends Component {
           throw new Error(`Failed to retrieve data. Status: ${response}`);
         }
         var data = await response.text();
-        var obj = JSON.parse(data);
+        var obj = await this.process_nitro_api_call_result(data, beacon_node);
         obj['data'].forEach(element => {
           if(!prioritized_accounts.includes(element)) prioritized_accounts.push(element)
         });
@@ -32306,7 +32306,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
       var object_data = obj['data']
       console.log('apppage', 'data', obj)
       for(var i=0; i<hashes.length; i++){
@@ -32633,7 +32633,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       if(obj.success == false){
         this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */+' '+obj.message, 8000)
         return '';
@@ -32674,7 +32674,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, nitro_url);
       // console.log('datas', 'hash object', obj)
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
@@ -33157,7 +33157,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, nitro_url);
       var object_data = obj['data']
       var files_to_fetch_view_data = []
       var files_to_fetch_view_data_e5s = []
@@ -33290,7 +33290,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, nitro_url);
       console.log('fetch_view_data', obj)
       if(obj.success != false){
         var file_streaming_data_clone = structuredClone(this.state.file_streaming_data)
@@ -33762,7 +33762,7 @@ class App extends Component {
           throw new Error(`Failed to retrieve data. Status: ${response}`);
         }
         var data = await response.text();
-        var obj = JSON.parse(data);
+        var obj = await this.process_nitro_api_call_result(data, node_url);
         if(obj.success == false){
           console.log('apppage','Upload was not successful', obj)
           return null
@@ -33820,7 +33820,7 @@ class App extends Component {
             throw new Error(`Failed to retrieve data. Status: ${response}`);
           }
           var data = await response.text();
-          var obj = JSON.parse(data);
+          var obj = await this.process_nitro_api_call_result(data, node_url);
           if(obj.success == false){
             console.log('uploader','error', obj.message)
             return null
@@ -33926,7 +33926,7 @@ class App extends Component {
           throw new Error(`Failed to retrieve data. Status: ${response}`);
         }
         var data = await response.text();
-        var obj = JSON.parse(data);
+        var obj = await this.process_nitro_api_call_result(data, node_url);
         if(obj.success == false){
           console.log('uploader','error', obj.message)
           return null
@@ -34056,7 +34056,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, node_url);
       console.log('upload_file_objects_to_nitro', 'obj', obj)
       if(obj.success == false){
         return null
@@ -37109,7 +37109,7 @@ class App extends Component {
             throw new Error(`Failed to retrieve data. Status: ${response}`);
           }
           const response_data = await response.text();
-          const response_obj = JSON.parse(response_data);
+          const response_obj = await this.process_nitro_api_call_result(response_data, beacon_node);;
           response_obj['data'].forEach(element => {
             const element_id = element.split(':')[1]
             if(!ids.includes(parseInt(element_id))) ids.push(parseInt(element_id))
@@ -37932,6 +37932,7 @@ class App extends Component {
           'user_temp_hash': user_temp_hash, 
           'user_temp_encryption_key' : user_temp_encryption_key,
           'root_identifier_from_private_key' : root_identifier_from_private_key,
+          'endpoint_data_decryption_key': await this.get_key_from_password(user_temp_encryption_key, 'f'),
           'e5_id': object['e5_id']
         }
         nitro_link_directory_data_clone[link] = nitro_link_directory
@@ -38003,6 +38004,7 @@ class App extends Component {
           'user_temp_hash': user_temp_hash, 
           'user_temp_encryption_key' : user_temp_encryption_key,
           'root_identifier_from_private_key' : root_identifier_from_private_key,
+          'endpoint_data_decryption_key': await this.get_key_from_password(user_temp_encryption_key, 'f'),
           'e5_id': nitro_e5_id
         }
         
@@ -38106,7 +38108,7 @@ class App extends Component {
           throw new Error(`Failed to retrieve data. Status: ${response}`);
         }
         var data = await response.text();
-        var obj = JSON.parse(data);
+        var obj = await this.process_nitro_api_call_result(data, link)
         var success = obj.success
         if(success == true){
           var info = obj.account
@@ -38138,6 +38140,20 @@ class App extends Component {
     }
     return this.state.nitro_link_directory_data[link][name] || name
   }
+
+  process_nitro_api_call_result = async (data, link) => {
+    try{
+      var parsed_data = JSON.parse(data)
+      return parsed_data
+    }catch(e){
+      var link_key = this.state.nitro_url_temp_hash_data[link]['endpoint_data_decryption_key']
+      var decrypted_string = await this.decrypt_secure_data(data, '', link_key)
+      var decrypted_parsed_data = JSON.parse(decrypted_string)
+      return decrypted_parsed_data
+    }
+  }
+
+
 
 
 
@@ -38174,7 +38190,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);;
       // console.log('appdataa',obj)
       var object_data = obj['data']
       var count = 0
