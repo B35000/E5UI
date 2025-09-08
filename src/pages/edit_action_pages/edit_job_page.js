@@ -2456,7 +2456,7 @@ return data['data']
         }
         else{
             this.setState({entered_title_text: this.normalizeText(this.state.entered_title_text)});
-
+            var me = this;
             setTimeout(function() {
                 me.props.when_add_edit_object_to_stack(me.state)
             }, (1 * 1000));

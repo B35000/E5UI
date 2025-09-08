@@ -1894,6 +1894,7 @@ class StackPage extends Component {
 
     show_e5_locked_message_if_locked(){
         const currrent_e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.created_contract_mapping[currrent_e5] == null) return;
         const contract_obj = this.props.app_state.created_contract_mapping[currrent_e5][2]
 
         if(contract_obj['primary_account'] != null && contract_obj['primary_account_tx_period'] != null){
@@ -14022,7 +14023,7 @@ class StackPage extends Component {
         const key = await this.props.get_key_from_password(password, salt);
 
         const fileBuffer = await file.arrayBuffer();
-        const encrypted = await crypto.subtle.encrypt(
+        const encrypted = await window.crypto.subtle.encrypt(
             { name: 'AES-GCM', iv },
             key,
             fileBuffer
@@ -14047,7 +14048,7 @@ class StackPage extends Component {
     //         const chunk = file.slice(offset, offset + CHUNK_SIZE);
     //         const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
     //         const iv = crypto.getRandomValues(new Uint8Array(12));
-    //         const encrypted = await crypto.subtle.encrypt(
+    //         const encrypted = await window.crypto.subtle.encrypt(
     //             { name: 'AES-GCM', iv }, // unique IV per chunk
     //             key,
     //             chunkBuffer

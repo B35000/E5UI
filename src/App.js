@@ -7294,7 +7294,7 @@ class App extends Component {
       when_run_gas_price_set={this.when_run_gas_price_set.bind(this)} set_custom_gateway={this.set_custom_gateway.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} upload_multiple_files_to_nitro_node={this.upload_multiple_files_to_nitro_node.bind(this)} set_my_nitro_selection={this.set_my_nitro_selection.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} follow_account={this.follow_account.bind(this)} remove_followed_account={this.remove_followed_account.bind(this)} censor_keyword={this.censor_keyword.bind(this)} uncensor_keyword={this.uncensor_keyword.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} play_pause_from_stack={this.play_pause_from_stack.bind(this)} open_full_screen_viewer={this.open_full_screen_viewer.bind(this)} when_hide_pip_tags_changed={this.when_hide_pip_tags_changed.bind(this)} when_preferred_currency_tags_changed={this.when_preferred_currency_tags_changed.bind(this)}
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
-      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
+      set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)}
       
       />
@@ -8561,7 +8561,7 @@ class App extends Component {
   stringToBigNumber = async(str) => {
     const encoder = new TextEncoder();
     const data = encoder.encode(str);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
     const hashBytes = new Uint8Array(hashBuffer);
 
     // Use the first 6 bytes (48 bits) safely
@@ -8580,7 +8580,7 @@ class App extends Component {
     const encoder = new TextEncoder();
     const str = `${id},${process.env.REACT_APP_HASH_KEY}`
     const data = encoder.encode(str);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
     const hashBytes = new Uint8Array(hashBuffer);
 
     let result = bigInt(0);
@@ -16061,8 +16061,10 @@ class App extends Component {
     const data = this.state.nitro_url_temp_hash_data[node_url]
     const user_temp_hash = data['user_temp_hash']
     const user_temp_encryption_key = data['user_temp_encryption_key']
+    // const encrypted_nitro_privacy_signature = target_data_to_encrypt == null ? target_data : await this.encrypt_data_string(target_data, user_temp_encryption_key)
     const encrypted_nitro_privacy_signature = await this.encrypt_data_string(target_data, user_temp_encryption_key)
-    return user_temp_hash+'|'+encrypted_nitro_privacy_signature;
+
+    return encodeURIComponent(user_temp_hash+'|'+encrypted_nitro_privacy_signature);
   }
 
   add_moderator_note(note_object){
@@ -18778,7 +18780,8 @@ class App extends Component {
     return(
       <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             <FullVideoPage ref={this.full_video_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
-            update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+            update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
+            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)}
             />
       </div>
     )
@@ -20317,7 +20320,7 @@ class App extends Component {
   get_sync_block_from_nitro = async () => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
-    var request = `${beacon_node}/`
+    var request = `${beacon_node}/${this.state.nitro_privacy_signature}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -21790,7 +21793,7 @@ class App extends Component {
     const encoder = new TextEncoder();
     const encodedData = encoder.encode(data);
     // Generate the hash using the SubtleCrypto API
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encodedData);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', encodedData);
     // Convert the hash to a hexadecimal string
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
@@ -22236,11 +22239,73 @@ class App extends Component {
         console.log('apppage', 'beacon node online!')
         const nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
         nitro_link_directory_data_clone[beacon_node] = nitro_link_directory
-        this.setState({beacon_node_enabled: true, beacon_data: obj, nitro_link_directory_data: nitro_link_directory_data_clone})
+        this.setState({beacon_node_enabled: true, nitro_link_directory_data: nitro_link_directory_data_clone})
+        await this.wait(700)
+        await this.record_beacon_node_key_in_nitro_node(obj, beacon_node)
       }
     }
     catch(e){
       console.log(e)
+    }
+  }
+
+  record_beacon_node_key_in_nitro_node = async (marco_obj, link) => {
+    const root_identifier_data = this.generate_id_for_nitro_node_key(link)
+    const root_identifier = root_identifier_data.id
+    const root_identifier_from_private_key = root_identifier_data.from_private_key
+
+    const user_key_data = await this.generate_my_box_keys(root_identifier);
+    const user_temp_hash = user_key_data.my_node_server_public_key
+    const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
+    const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'], user_key_data.keypair)
+    const nitro_link_directory = this.state.nitro_link_directory_data[link]
+
+    var arg_obj = {
+      user_temp_hash: user_temp_hash,
+      encrypted_key: encrypted_user_temp_encryption_key,
+    }
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+    const endpoint = nitro_link_directory['register']
+    console.log('apppage', 'attempting to register my key in node...')
+    var request = `${link}/${endpoint}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var success = obj.success
+      if(success == true || obj.existing == true){
+        marco_obj['user_temp_hash'] = user_temp_hash
+        marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
+        var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
+        
+        nitro_url_temp_hash_data_clone[link] = {
+          'user_temp_hash': user_temp_hash, 
+          'user_temp_encryption_key' : user_temp_encryption_key,
+          'root_identifier_from_private_key' : root_identifier_from_private_key,
+          'endpoint_data_decryption_key': await this.get_key_from_password(user_temp_encryption_key, 'f'),
+          'e5_id': default_nitro_option
+        }
+        
+        this.setState({nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone, beacon_data: marco_obj})
+
+        await this.wait(700)
+        console.log('apppage', 'nitro_url_temp_hash_data after beacon node setting', nitro_url_temp_hash_data_clone)
+      }else{
+        console.log('apppage', 'something went wrong with registering my key', obj)
+      }
+    }
+    catch(e){
+      
     }
   }
 
@@ -22415,6 +22480,7 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('apppage', 'load_events_from_nitro result', obj)
       return obj['data'][0]
     }
     catch(e){
@@ -29216,7 +29282,7 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
-      console.log('all_data', obj)
+      console.log('apppage', 'gotten return data from nitro: ', obj)
       return obj['data']
     }
     catch(e){
@@ -33282,7 +33348,7 @@ class App extends Component {
       body: JSON.stringify(await this.encrypt_post_object(files_to_fetch_view_data_e5s[0], arg_obj)) // Convert the data object to a JSON string
     }
 
-    var request = `${nitro_url}/streams`
+    var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'streams')}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
@@ -33365,7 +33431,7 @@ class App extends Component {
 
     const key = await this.get_key_from_password(password, salt);
     try{
-      const decrypted = await crypto.subtle.decrypt(
+      const decrypted = await window.crypto.subtle.decrypt(
         { name: 'AES-GCM', iv: new Uint8Array(iv) },
         key,
         data
@@ -34184,7 +34250,7 @@ class App extends Component {
 
     const key = await this.get_key_from_password(password, salt);
     try{
-      const decrypted = await crypto.subtle.decrypt(
+      const decrypted = await window.crypto.subtle.decrypt(
         { name: 'AES-GCM', iv: new Uint8Array(iv) },
         key,
         data
@@ -34373,7 +34439,7 @@ class App extends Component {
     const encoder = new TextEncoder();
     const encoded = encoder.encode(text);
 
-    const ciphertext = await crypto.subtle.encrypt(
+    const ciphertext = await window.crypto.subtle.encrypt(
       { name: "AES-GCM", iv: iv },
       key,
       encoded
@@ -34392,13 +34458,13 @@ class App extends Component {
     const ciphertext = data.slice(12);
 
     const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
-    const decrypted = await crypto.subtle.decrypt(
+    const decrypted = await window.crypto.subtle.decrypt(
       { name: "AES-GCM", iv: iv },
       key,
       ciphertext
     );
     const decoder = new TextDecoder();
-    return decoder.decode(decrypted)
+    return decoder.decode(new Uint8Array(decrypted))
   }
 
   encrypt_string_using_crypto_js(data, key){
@@ -34430,7 +34496,7 @@ class App extends Component {
     if(this.gateway_traffic_cache == null){
       this.gateway_traffic_cache = {}
     }
-    if(this.gateway_traffic_stats_cache = null){
+    if(this.gateway_traffic_stats_cache == null){
       this.gateway_traffic_stats_cache = {}
     }
     this.gateway_traffic_stats_cache[cid] = { 't': Date.now() }
@@ -34453,13 +34519,13 @@ class App extends Component {
     if(this.gateway_traffic_cache == null){
       this.gateway_traffic_cache = {}
     }
-    if(this.gateway_traffic_stats_cache = null){
+    if(this.gateway_traffic_stats_cache == null){
       this.gateway_traffic_stats_cache = {}
     }
     this.gateway_traffic_cache[cid] = data
 
     if(this.get_object_size_in_mbs(this.gateway_traffic_cache) > 5.3 && this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
-      const my_address_signature = this.state.hash_data_with_randomizer(this.state.accounts['E25'].address)
+      const my_address_signature = this.hash_data_with_randomizer(this.state.accounts['E25'].address)
 
       this.gateway_traffic_cache_pointers_index += 1
       var keys = Object.keys(this.gateway_traffic_cache)
@@ -34498,7 +34564,7 @@ class App extends Component {
     else if(this.get_object_size_in_mbs(this.gateway_traffic_cache) > 5.3){
       //reduce the size by removing unaccessed data
       const cached_keys = Object.keys(this.gateway_traffic_cache)
-      const my_address_signature = this.state.hash_data_with_randomizer(this.state.accounts['E25'].address)
+      const my_address_signature = this.hash_data_with_randomizer(this.state.accounts['E25'].address)
       cached_keys.forEach(key => {
         if(this.gateway_traffic_stats_cache[key] != null){
           const time_difference = Date.now() - this.gateway_traffic_stats_cache[key]['t']
@@ -34511,8 +34577,9 @@ class App extends Component {
   }
 
   fetch_my_personal_data_in_memory(){
+    if(this.gateway_traffic_cache == null) return {}
     const cached_keys = Object.keys(this.gateway_traffic_cache)
-    const my_address_signature = this.state.hash_data_with_randomizer(this.state.accounts['E25'].address)
+    const my_address_signature = this.hash_data_with_randomizer(this.state.accounts['E25'].address)
     const my_personal_data = {}
     cached_keys.forEach(key => {
       if(this.gateway_traffic_cache[key]['author'] != my_address_signature){
@@ -34735,7 +34802,7 @@ class App extends Component {
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
 
-    const key_data = this.generate_my_box_keys(hash);
+    const key_data = await this.generate_my_box_keys(hash);
     return key_data.my_node_server_public_key;
 
     // var private_key_to_use = Buffer.from(hash)
@@ -34748,17 +34815,15 @@ class App extends Component {
     // return obj_cid
   }
 
-  uint8ToBase64(uint8) {
-    return btoa(String.fromCharCode(...uint8));
-  }
+  
 
   get_my_entire_public_key = async () => {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     
-    const key_data = this.generate_my_box_keys(hash);
-    return key_data.my_node_server_public_key;
+    const key_data = await this.generate_my_box_keys(hash);
+    return (new Uint8Array(key_data.keypair.publicKey)).toString()
 
     // var private_key_to_use = Buffer.from(hash)
     // const publicKeyA = await ecies.getPublic(private_key_to_use);
@@ -34770,7 +34835,7 @@ class App extends Component {
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
 
-    const key_data = this.generate_my_box_keys(hash);
+    const key_data = await this.generate_my_box_keys(hash);
     return key_data.keypair.publicKey;
 
     // var private_key_to_use = Buffer.from(hash)
@@ -34786,8 +34851,7 @@ class App extends Component {
   }
 
   encrypt_data_string = async (tx, key, ready_made_key) => {
-    var object_as_string = JSON.stringify(tx)
-    return await this.encrypt_secure_data(object_as_string, key, ready_made_key);
+    return await this.encrypt_secure_data(tx, key, ready_made_key);
     // var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
     // return ciphertext
   }
@@ -34867,15 +34931,11 @@ class App extends Component {
     return []
   }
 
-  base64ToUint8(base64) {
-    return new Uint8Array(Buffer.from(base64, 'base64'))
-  }
-
   encrypt_key_with_accounts_public_key_hash = async (key, pub_key_hash) => {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
-    const key_data = this.generate_my_box_keys(hash);
+    const key_data = await this.generate_my_box_keys(hash);
     const user_key_data = key_data.keypair
     const string = this.encrypt_data_with_specified_targets_public_key(key, pub_key_hash, user_key_data, true)
     return string
@@ -34931,7 +34991,7 @@ class App extends Component {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const privateKey = this.state.accounts[e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
-    const key_data = this.generate_my_box_keys(hash);
+    const key_data = await this.generate_my_box_keys(hash);
     const user_key_data = key_data.keypair
 
     if(this.is_string(encrypted_key)){
@@ -34950,7 +35010,7 @@ class App extends Component {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const privateKey = this.state.accounts[e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
-    const key_data = this.generate_my_box_keys(hash);
+    const key_data = await this.generate_my_box_keys(hash);
     const user_key_data = key_data.keypair
 
     const my_key = this.decrypt_data_with_my_private_key(encrypted_key, encryptor_pub_key, user_key_data)
@@ -34960,7 +35020,6 @@ class App extends Component {
   is_string(value) {
     return typeof value === "string" || value instanceof String;
   }
-
 
 
 
@@ -37886,7 +37945,7 @@ class App extends Component {
     const root_identifier_data = this.generate_id_for_nitro_node_key(link)
     const root_identifier = root_identifier_data.id
     const root_identifier_from_private_key = root_identifier_data.from_private_key
-    const user_key_data = this.generate_my_box_keys(root_identifier);
+    const user_key_data = await this.generate_my_box_keys(root_identifier);
     const user_temp_hash = user_key_data.my_node_server_public_key
     const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
     const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'], user_key_data.keypair)
@@ -37963,7 +38022,7 @@ class App extends Component {
     const root_identifier = root_identifier_data.id
     const root_identifier_from_private_key = root_identifier_data.from_private_key
 
-    const user_key_data = this.generate_my_box_keys(root_identifier);
+    const user_key_data = await this.generate_my_box_keys(root_identifier);
     const user_temp_hash = user_key_data.my_node_server_public_key
     const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
     const marco_obj = this.state.nitro_node_details[nitro_e5_id]
@@ -38025,7 +38084,7 @@ class App extends Component {
       return { id: this.hash_data_with_randomizer(my_address+ link + current_hour), from_private_key: true }
     }
     else{
-      return { id: this.makeid(53), from_private_key: false }
+      return { id: makeid(53), from_private_key: false }
     }
   }
 
@@ -38035,15 +38094,17 @@ class App extends Component {
     return now.getTime();
   }
 
-  generate_my_box_keys(identifier){
+  generate_my_box_keys = async (identifier) => {
     const web3 = new Web3(this.get_web3_url_from_e5('E25'));
     const hash = web3.utils.keccak256(identifier.toString()).slice(34)
     const private_key_to_use = createHash("sha256").update(hash).digest(); // 32 bytes
-    const my_node_server_keys = nacl.sign.keyPair.fromSeed(new Uint8Array(private_key_to_use));
+    const my_node_server_keys = nacl.box.keyPair.fromSecretKey(new Uint8Array(private_key_to_use));
     const my_node_server_public_key = this.uint8ToBase64(new Uint8Array(my_node_server_keys.publicKey))
     const my_node_server_secret_key = this.uint8ToBase64(new Uint8Array(my_node_server_keys.secretKey))
 
-    return {my_node_server_public_key, my_node_server_secret_key, keypair: my_node_server_keys}
+    const final_key_pair = { secretKey: my_node_server_keys.secretKey.slice(0, 32), publicKey: my_node_server_keys.publicKey }
+
+    return {my_node_server_public_key, my_node_server_secret_key, keypair: final_key_pair}
   }
 
   encrypt_my_key_with_user_encryption_key = async (user_temp_encryption_key, node_public_key, keyPair) => {
@@ -38053,7 +38114,8 @@ class App extends Component {
       const message = encoder.encode(user_temp_encryption_key)
       const nonce = nacl.randomBytes(nacl.box.nonceLength)
       const cipher = nacl.box(message, nonce, node_raw_public_key_buffer, keyPair.secretKey);
-      return this.uint8ToBase64(new Uint8Array(cipher))+'_'+this.uint8ToBase64(nonce)
+
+      return this.uint8ToBase64(new Uint8Array(cipher))+'_'+this.uint8ToBase64(new Uint8Array(nonce))
 
       // const node_public_key_buffer = Buffer.from(node_public_key, 'base64')
       // const encrypted_data = await ecies.encrypt(node_public_key_buffer, Buffer.from(user_temp_encryption_key))
@@ -38087,7 +38149,7 @@ class App extends Component {
       const nonce = this.base64ToUint8(nonce_cypher)
       const decrypted = nacl.box.open(encrypted_key_as_uint8array, nonce, encoders_public_key_to_use, keyPair.secretKey);
       const decoder = new TextDecoder();
-      const user_key = decoder.decode(decrypted);
+      const user_key = decoder.decode(new Uint8Array(decrypted));
       return user_key
     }
     catch(e){
@@ -38152,6 +38214,10 @@ class App extends Component {
       return decrypted_parsed_data
     }
   }
+
+
+
+
 
 
 
@@ -38270,14 +38336,14 @@ class App extends Component {
   get_key_from_password = async (password, salt) => {
     const final_salt = salt == 'e' ? process.env.REACT_APP_ENCRYPTION_SALT_KEY : salt
     const encoder = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey(
+    const keyMaterial = await window.crypto.subtle.importKey(
       'raw',
       encoder.encode(password),
       { name: 'PBKDF2' },
       false,
       ['deriveKey']
     );
-    return crypto.subtle.deriveKey(
+    return window.crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
         salt: encoder.encode(final_salt),
@@ -38302,6 +38368,14 @@ class App extends Component {
 
   process_encrypted_file(encryptedChunks){
     return Buffer.from(encryptedChunks)
+  }
+
+  base64ToUint8(base64) {
+    return new Uint8Array(Buffer.from(base64, 'base64'))
+  }
+
+  uint8ToBase64(uint8) {
+    return Buffer.from(uint8).toString('base64')
   }
 
   //node_modules/react-scripts/config/webpack.config.js
