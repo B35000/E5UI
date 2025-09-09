@@ -1203,8 +1203,8 @@ class home_page extends Component {
     get_searched_data(){
         var id = this.get_page_id()
         var posts_to_load = []
-        var searched_data = this.state.page_search_data[id]
-        var searched_tags = this.state.tags_search_data[id]
+        var searched_data = this.state.page_search_data[id] || ''
+        var searched_tags = this.state.tags_search_data[id] || []
         var searched_accounts = []
         
         if(searched_tags != null){
@@ -1492,8 +1492,8 @@ class home_page extends Component {
         
         var posts_to_load = []
         var targeted_accounts = []
-        var searched_data = this.state.page_search_data[id]
-        var searched_tags = this.state.tags_search_data[id]
+        var searched_data = this.state.page_search_data[id] || ''
+        var searched_tags = this.state.tags_search_data[id] || []
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
@@ -1583,8 +1583,8 @@ class home_page extends Component {
     reload_section_data(id, selected_page){
         var posts_to_load = []
         var targeted_accounts = []
-        var searched_data = this.state.page_search_data[id]
-        var searched_tags = this.state.tags_search_data[id]
+        var searched_data = this.state.page_search_data[id] || ''
+        var searched_tags = this.state.tags_search_data[id] || []
         if(searched_tags != null){
             posts_to_load = posts_to_load.concat(searched_tags)
         }
@@ -2344,6 +2344,8 @@ class home_page extends Component {
             return sorted_token_exchange_data
         }
 
+        console.log('homepage', 'loaded token count', sorted_token_exchange_data.length)
+
         return this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
     }
 
@@ -2353,7 +2355,8 @@ class home_page extends Component {
         if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1219']/* 'spends' */|| all != null){
             return this.get_exchange_tokens(5, all)
         }
-        else if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
+        
+        if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
             return this.get_exchange_tokens(5, all)
         }
         else if(selected_option_name == this.props.app_state.loc['1264bb']/* 'main ⚪' */){
@@ -2372,29 +2375,33 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264bc']/* 'hyper 🌟' */){
             var all_tokens = this.get_exchange_tokens(5, all)
+            const end_token_list = this.props.app_state.end_tokens
             var main_tokens = all_tokens.filter(function (object) {
-                return (this.props.app_state.end_tokens[object['e5']].includes(object['id']))
+                return (end_token_list[object['e5']].includes(object['id']))
             })
             return main_tokens
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var all_tokens = this.get_exchange_tokens(5, all)
+            const viewed = this.state.viewed_tokens
             var main_tokens = all_tokens.filter(function (object) {
-                return (this.state.viewed_tokens.includes(object['id']))
+                return (viewed.includes(object['id']))
             })
             return main_tokens
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var all_tokens = this.get_exchange_tokens(5, all)
+            const pinned = this.state.pinned_tokens
             var main_tokens = all_tokens.filter(function (object) {
-                return (this.state.pinned_tokens.includes(object['id']))
+                return (pinned.includes(object['id']))
             })
             return main_tokens
         }
         else {
             var all_tokens = this.get_exchange_tokens(5, all)
+            const me = this.props.app_state.user_account_id
             var main_tokens = all_tokens.filter(function (object) {
-                return (this.props.app_state.user_account_id[object['e5']] == object['author'])
+                return (me[object['e5']] == object['author'])
             })
             return main_tokens
         }
@@ -2406,7 +2413,8 @@ class home_page extends Component {
         if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1218']/* 'ends' */ || all != null){
             return this.get_exchange_tokens(3, all)
         }
-        else if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
+        
+        if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
             return this.get_exchange_tokens(3, all)
         }
         else if(selected_option_name == this.props.app_state.loc['1264ba']/* 'main ⚫' */){
@@ -2425,15 +2433,17 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var all_tokens = this.get_exchange_tokens(3, all)
+            const viewed_tokens = this.state.viewed_tokens
             var main_tokens = all_tokens.filter(function (object) {
-                return (this.state.viewed_tokens.includes(object['id']))
+                return (viewed_tokens.includes(object['id']))
             })
             return main_tokens
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var all_tokens = this.get_exchange_tokens(3, all)
+            const pinned = this.state.pinned_tokens
             var main_tokens = all_tokens.filter(function (object) {
-                return (this.state.pinned_tokens.includes(object['id']))
+                return (pinned.includes(object['id']))
             })
             return main_tokens
         }
@@ -2447,8 +2457,9 @@ class home_page extends Component {
         }
         else {
             var all_tokens = this.get_exchange_tokens(3, all)
+            const me = this.props.app_state.user_account_id 
             var main_tokens = all_tokens.filter(function (object) {
-                return (this.props.app_state.user_account_id[object['e5']] == object['author'])
+                return (me[object['e5']] == object['author'])
             })
             return main_tokens
         }
@@ -3514,7 +3525,21 @@ class home_page extends Component {
         return return_objs.concat(other_objs)
     }
 
+    is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'] != null && object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = this.get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
+    }
+
     should_hide_contract_info_because_private(object){
+        if(object['ipfs'] == null){
+            return false
+        }
         var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
         if(this.props.app_state.user_account_id[object['e5']] == object['author']){
             return false
@@ -6937,7 +6962,7 @@ class home_page extends Component {
             return 5_300_000;
         }
         var contract_data = this.props.app_state.created_contract_mapping[e5][2]['data'];
-        var contract_config = contract_data['data'][1]
+        var contract_config = contract_data[1]
         return contract_config[11]
 
     }

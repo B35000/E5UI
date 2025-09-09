@@ -365,13 +365,13 @@ class ContractDetailsSection extends Component {
             var hit_count = 0
             for(var k=0; k<focused_note['keywords'].length; k++){
                 const keyword_target = focused_note['keywords'][k]
-                if(object['ipfs'].entered_title_text.includes(keyword_target)){
+                if(object['ipfs'] != null && object['ipfs'].entered_title_text.includes(keyword_target)){
                     hit_count ++
                 }
                 else if(this.get_senders_name(object['author'], object) == keyword_target || object['author'] == keyword_target){
                     if(!this.should_hide_contract_info_because_private(object)) hit_count++
                 }
-                else if(object['ipfs'].entered_indexing_tags.includes(keyword_target)){
+                else if(object['ipfs'] != null && object['ipfs'].entered_indexing_tags.includes(keyword_target)){
                     hit_count ++
                 }
             }
@@ -415,6 +415,7 @@ class ContractDetailsSection extends Component {
     }
 
     render_post_state(object){
+        if(object['ipfs'] == null) return;
         const country_data = this.props.app_state.country_data
         const object_country = object['ipfs'].device_country
         const country_item_data = country_data.find(e => e.name === object_country)
@@ -458,7 +459,7 @@ class ContractDetailsSection extends Component {
     }
 
     render_contract_type(object){
-        if(object['ipfs'].contract_type != null){
+        if(object['ipfs'] != null && object['ipfs'].contract_type != null){
             var obj = {
                 'workgroup':this.props.app_state.loc['173'],
                 'personal':this.props.app_state.loc['175'],
@@ -594,7 +595,7 @@ class ContractDetailsSection extends Component {
 
     render_revoke_author_privelages_event(object){
         // var object = this.get_contract_items()[this.props.selected_contract_item]
-        var events = this.get_moderator_item_logs(object, 'revoke_privelages')
+        var events = this.get_moderator_item_logs(object, 'revoke_privelages') || []
 
         if(object['id'] != 2){
             if(events.length != 0){
@@ -999,6 +1000,9 @@ class ContractDetailsSection extends Component {
     }
 
     should_hide_contract_info_because_private(object){
+        if(object['ipfs'] == null){
+            return false
+        }
         var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
         if(this.props.app_state.user_account_id[object['e5']] == object['author'] || this.is_sender_part_of_contract(object)){
             return false

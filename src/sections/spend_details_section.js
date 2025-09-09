@@ -458,16 +458,16 @@ class SpendDetailSection extends Component {
             var hit_count = 0
             for(var k=0; k<focused_note['keywords'].length; k++){
                 const keyword_target = focused_note['keywords'][k]
-                if(object['ipfs'].entered_title_text.includes(keyword_target)){
+                if(object['ipfs'] != null && object['ipfs'].entered_title_text.includes(keyword_target)){
                     hit_count ++
                 }
                 else if(this.get_senders_name(object['author'], object) == keyword_target || object['author'] == keyword_target){
                     hit_count++
                 }
-                else if(object['ipfs'].entered_indexing_tags.includes(keyword_target)){
+                else if(object['ipfs'] != null && object['ipfs'].entered_indexing_tags.includes(keyword_target)){
                     hit_count ++
                 }
-                else if(object['ipfs'].entered_symbol_text.includes(keyword_target)){
+                else if(object['ipfs'] != null && object['ipfs'].entered_symbol_text.includes(keyword_target)){
                     hit_count ++
                 }
             }
@@ -555,7 +555,7 @@ class SpendDetailSection extends Component {
     }
 
     render_token_type(object){
-        if(object['ipfs'].token_type != null){
+        if(object['ipfs'] != null && object['ipfs'].token_type != null){
             var obj = {
                 'e':this.props.app_state.loc['629']/* '📈 e-Token' */,
                 'paid':this.props.app_state.loc['631']/* '☝️ Paid Token' */,

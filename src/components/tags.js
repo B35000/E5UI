@@ -65,6 +65,8 @@ class tags extends Component {
         items[this.props.app_state.loc['113']/* 'authorities' */] = '👮'
         items[this.props.app_state.loc['2764']/* 'configuration' */] = '🛠️'
         items[this.props.app_state.loc['752b']/* 'spend-simulator' */] = '🕹️'
+        items[this.props.app_state.loc['1218']/* ends */] = '☝️'
+        items[this.props.app_state.loc['1219']/* spends */] = '🫰'
       }
       
       if(items[item] != null) return items[item];
@@ -208,7 +210,7 @@ class tags extends Component {
         var page_data = this.props.page_tags_object;
         var active = page_data['i'].active;
         const currently_selected_tag_pos = this.get_selected_item2(page_data, active)
-        var pos = (final_text == 'e' && active == 'e' && page_data[active][0/* config */][0/* type */] == 'xor' && currently_selected_tag_pos != 0) ? currently_selected_tag_pos : passed_pos;
+        var pos = (final_text == 'e' && active == 'e' && page_data[active][0/* config */][0/* type */] == 'or' && currently_selected_tag_pos != 0) ? currently_selected_tag_pos : passed_pos;
         var current_selected_tag = this.get_selected_item(page_data, active)
         var clicked_tag_name = page_data[active][1/* tag_options */][pos];
         var is_moving_down_option = false

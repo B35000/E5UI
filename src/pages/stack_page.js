@@ -1923,7 +1923,7 @@ class StackPage extends Component {
             return 5_300_000;
         }
         var contract_data = this.props.app_state.created_contract_mapping[e5][2]['data'];
-        var contract_config = contract_data['data'][1]
+        var contract_config = contract_data[1]
         return contract_config[11]
 
     }
@@ -4342,7 +4342,7 @@ class StackPage extends Component {
 
 
         const runs = this.props.app_state.E5_runs[e5] == null ? [] : this.props.app_state.E5_runs[e5]
-        if(runs.length == 0){
+        if(runs.length == 0 || parseInt(runs[runs.length -1].returnValues.p8/* timestamp */) < 1757414035){
             //if its the first time running a transaction
             const obj = [ /* set data */
                 [20000, 13, 0],
@@ -4352,7 +4352,7 @@ class StackPage extends Component {
             ]
 
             const string_obj = [[]]
-            var pub_key_link = calculate_gas == true ? "TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw==" : await this.get_account_public_key()
+            const pub_key_link = calculate_gas == true ? "TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw==" : await this.get_account_public_key()
 
             account_data_object[1].push(0)
             account_data_object[2].push(53)

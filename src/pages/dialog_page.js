@@ -3021,6 +3021,9 @@ return data['data']
     }
 
     should_hide_contract_info_because_private(object){
+        if(object['ipfs'] == null){
+            return false
+        }
         var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
         if(this.props.app_state.user_account_id[object['e5']] == object['author']){
             return false

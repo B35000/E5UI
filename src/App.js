@@ -901,7 +901,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(53), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(72), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -22480,7 +22480,7 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
-      console.log('apppage', 'load_events_from_nitro result', obj)
+      // console.log('apppage', 'load_events_from_nitro result', obj)
       return obj['data'][0]
     }
     catch(e){
@@ -22704,7 +22704,8 @@ class App extends Component {
         const selected_dark_emblem_country = root_data.selected_dark_emblem_country
         const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
         const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
-        const beacon_chain_url = root_data.data['beacon_chain_url']/* 'http://localhost:4000' */
+        var beacon_chain_url = root_data.data['beacon_chain_url']
+        // beacon_chain_url = 'http://localhost:4000';
         const e5_ether_override = root_data.get_ether_e5_softwrite_object == null ? 'e' : this.get_selected_item(root_data.get_ether_e5_softwrite_object, 'e');
         const e5s = e5_ether_override == 'e' ? structuredClone(this.state.e5s) : this.update_e5_images(root_data.data['e5s'])
 
@@ -23207,7 +23208,7 @@ class App extends Component {
 
 
 
-    /* ---------------------------------------- BALANCE DATA -------------------------------------- */
+    /* ---------------------------------------- NITRO DATA -------------------------------------- */
     const F5contractArtifact = require('./contract_abis/F5.json');
     const F5_address = contract_addresses[2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
@@ -23229,11 +23230,31 @@ class App extends Component {
 
 
 
-
+    const event_params2 = [
+      [web3, contractInstance, 'e4', e5, {}],/* e5 runs */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1}],/* contacts */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2}],/* blocked */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:8}],/* my followed */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:9}],/* blocked posts */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10}],/* censored keywords */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12}],/* promoted posts */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5}],/* acquired albums */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6}],/* playlists */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:3}],/* section tags */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:7}],/* plays */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:11}],/* acquired videos */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11}],/* aliases */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:14}],/* channel events */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:15}],/* poll events */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:16}],/* object events */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account}],/* my_channel_file */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17}],/* file_renewal */
+    ]
+    const all_basic_events = await this.load_multiple_events_from_nitro(event_params2)
 
 
     /* ---------------------------------------- EVENT DATA ------------------------------------------- */
-    this.load_all_e5_runs_data(web3, contractInstance, e5, account)
+    this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0])
     // this.load_my_e5_runs_data(web3, contractInstance, e5, account)
 
     // if(is_syncing){
@@ -23246,7 +23267,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- CONTACTS DATA------------------------------------------- */
-    this.get_contacts_data(web3, E52contractInstance, e5, account)
+    this.get_contacts_data(web3, E52contractInstance, e5, account, all_basic_events[1])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23259,7 +23280,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- BLOCKED ACCOUNTS DATA ------------------------------------------- */
-    this.get_blocked_accounts_data(web3, E52contractInstance, e5, account)
+    this.get_blocked_accounts_data(web3, E52contractInstance, e5, account, all_basic_events[2])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23271,7 +23292,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- FOLLOWED ACCOUNTS DATA ------------------------------------------- */
-    this.get_my_followed_accounts_data(web3, E52contractInstance, e5, account)
+    this.get_my_followed_accounts_data(web3, E52contractInstance, e5, account, all_basic_events[3])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23283,7 +23304,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY BLOCKED POSTS DATA ------------------------------------------- */
-    this.load_my_blocked_posts(web3, E52contractInstance, e5, account)
+    this.load_my_blocked_posts(web3, E52contractInstance, e5, account, all_basic_events[4])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23293,7 +23314,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY CENSORED KEYWORDS DATA ------------------------------------------- */
-    this.load_my_censored_keywords(web3, E52contractInstance, e5, account)
+    this.load_my_censored_keywords(web3, E52contractInstance, e5, account, all_basic_events[5])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23305,7 +23326,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY PROMOTED POSTS DATA ------------------------------------------- */
-    this.load_my_promoted_posts(web3, E52contractInstance, e5, account)
+    this.load_my_promoted_posts(web3, E52contractInstance, e5, account, all_basic_events[6])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23315,7 +23336,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ALBUM COLLECTION DATA ------------------------------------------- */
-    await this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address)
+    await this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[7])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23326,7 +23347,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- PLAYLIST COLLECTION DATA ------------------------------------------- */
-    await this.get_my_playlists_data(web3, E52contractInstance, e5, account, address_account.address)
+    await this.get_my_playlists_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[8])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23337,7 +23358,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- SECTION TAGS DATA ------------------------------------------- */
-    await this.get_section_tags_data(web3, E52contractInstance, e5, account)
+    await this.get_section_tags_data(web3, E52contractInstance, e5, account, all_basic_events[9])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23348,7 +23369,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY PLAYS DATA ------------------------------------------- */
-    await this.get_my_plays_data(web3, E52contractInstance, e5, account)
+    await this.get_my_plays_data(web3, E52contractInstance, e5, account, all_basic_events[10])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23359,7 +23380,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY VIDEOS DATA ------------------------------------------- */
-    await this.get_my_videos_data(web3, E52contractInstance, e5, account, address_account.address)
+    await this.get_my_videos_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[11])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23381,7 +23402,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ALIAS DATA------------------------------------------- */
-    this.get_alias_data(E52contractInstance, e5, account, web3);
+    this.get_alias_data(E52contractInstance, e5, account, web3, all_basic_events[12]);
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23394,7 +23415,7 @@ class App extends Component {
 
 
     /* ------------------------------------ CHANNEL PARTICIPATION DATA-------------------------- */
-    this.load_my_participated_channel_ids(web3, E52contractInstance, e5, account)
+    this.load_my_participated_channel_ids(web3, E52contractInstance, e5, account, all_basic_events[13])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23403,7 +23424,7 @@ class App extends Component {
 
 
     /* ------------------------------------ POLL PARTICIPATION DATA-------------------------- */
-    this.load_my_participated_poll_ids(web3, E52contractInstance, e5, account)
+    this.load_my_participated_poll_ids(web3, E52contractInstance, e5, account, all_basic_events[14])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23412,7 +23433,7 @@ class App extends Component {
 
 
     /* ------------------------------------ OBJECT PARTICIPATION DATA-------------------------- */
-    this.load_my_participated_object_ids(web3, E52contractInstance, e5, account)
+    this.load_my_participated_object_ids(web3, E52contractInstance, e5, account, all_basic_events[15])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23425,7 +23446,7 @@ class App extends Component {
 
 
     /* ------------------------------------ CHANNEL FILE UPLOAD RECROD DATA-------------------------- */
-    this.load_my_channel_file_records(web3, E52contractInstance, e5, account)
+    this.load_my_channel_file_records(web3, E52contractInstance, e5, account, all_basic_events[16])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23434,7 +23455,7 @@ class App extends Component {
 
 
     /* ------------------------------------ NITRO FILE RENEWAL RECROD DATA-------------------------- */
-    this.load_my_file_renewal_records(web3,E52contractInstance, e5, account)
+    this.load_my_file_renewal_records(web3,E52contractInstance, e5, account, all_basic_events[17])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23500,8 +23521,8 @@ class App extends Component {
 
 
     /* ---------------------------------------- JOB DATA ------------------------------------------- */
-    var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
-    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, posts_to_prioritize)
+    // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
+    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, [])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23559,8 +23580,8 @@ class App extends Component {
     /* ---------------------------------------- ------------------------------------------- */
   }
 
-  get_alias_data = async (E52contractInstance, e5, account, web3) => {
-    var alias_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11})
+  get_alias_data = async (E52contractInstance, e5, account, web3, pre_loaded_events) => {
+    var alias_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11})
 
     var my_alias_events = []
     var alias_bucket = {}
@@ -23672,8 +23693,8 @@ class App extends Component {
 
   }
 
-  load_all_e5_runs_data = async (web3, contractInstance, e5, account) => {
-    var events = await this.load_event_data(web3, contractInstance, 'e4', e5, {})
+  load_all_e5_runs_data = async (web3, contractInstance, e5, account, pre_loaded_events) => {
+    var events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, contractInstance, 'e4', e5, {})
     events = events.reverse()
     var clone = structuredClone(this.state.all_E5_runs)
     clone[e5] = events
@@ -23719,14 +23740,14 @@ class App extends Component {
     console.log('end_balance: ', end_balance_of_E5, ' spend_balance: ',spend_balance_of_E5, ' burn account balance: ', end_balance_of_burn_account)
 
 
-    var end_balance_of_E5_clone = JSON.parse(JSON.stringify(this.state.end_balance_of_E5))
-    end_balance_of_E5_clone[e5] = end_balance_of_E5
+    var end_balance_of_E5_clone = structuredClone(this.state.end_balance_of_E5)
+    end_balance_of_E5_clone[e5] = end_balance_of_E5.toString().toLocaleString('fullwide', {useGrouping:false})
 
-    var spend_balance_of_E5_clone = JSON.parse(JSON.stringify(this.state.spend_balance_of_E5))
-    spend_balance_of_E5_clone[e5] = spend_balance_of_E5
+    var spend_balance_of_E5_clone = structuredClone(this.state.spend_balance_of_E5)
+    spend_balance_of_E5_clone[e5] = spend_balance_of_E5.toString().toLocaleString('fullwide', {useGrouping:false})
 
-    var end_balance_of_burn_account_clone = JSON.parse(JSON.stringify(this.state.end_balance_of_burn_account))
-    end_balance_of_burn_account_clone[e5] = end_balance_of_burn_account
+    var end_balance_of_burn_account_clone = structuredClone(this.state.end_balance_of_burn_account)
+    end_balance_of_burn_account_clone[e5] = end_balance_of_burn_account.toString().toLocaleString('fullwide', {useGrouping:false})
 
     this.setState({end_balance_of_E5:end_balance_of_E5_clone, spend_balance_of_E5:spend_balance_of_E5_clone, end_balance_of_burn_account: end_balance_of_burn_account_clone})
 
@@ -23746,9 +23767,9 @@ class App extends Component {
     this.setState({withdraw_event_data: withdraw_clone, pending_withdraw_event_data: pending_withdraw_clone})
   }
   
-  get_contacts_data = async (web3, E52contractInstance, e5, account) => {
+  get_contacts_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var contacts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1})
+    var contacts_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1})
 
     if(contacts_data.length > 0){
       var latest_event = contacts_data[contacts_data.length - 1];
@@ -23784,9 +23805,9 @@ class App extends Component {
     return decrypted_data_object
   }
 
-  get_blocked_accounts_data = async (web3, E52contractInstance, e5, account) => {
+  get_blocked_accounts_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var blocked_contacts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2})
+    var blocked_contacts_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2})
 
     if(blocked_contacts_data.length > 0){
       var latest_event = blocked_contacts_data[blocked_contacts_data.length - 1];
@@ -23820,9 +23841,9 @@ class App extends Component {
     }
   }
 
-  get_section_tags_data = async (web3, E52contractInstance, e5, account) => {
-    if(this.state.accounts[e5].privateKey == '') return;
-    var section_tags_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:3})
+  get_section_tags_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
+    // if(this.state.accounts[e5].privateKey == '') return;
+    var section_tags_data_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:3})
 
     if(section_tags_data_events.length != 0){
       var latest_event = section_tags_data_events[section_tags_data_events.length - 1];
@@ -24214,9 +24235,9 @@ class App extends Component {
     }
   }
 
-  get_my_collection_data = async (web3, E52contractInstance, e5, account, address_account) => {
+  get_my_collection_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var my_acquired_album_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5})
+    var my_acquired_album_data_events = pre_loaded_events != null ? pre_loaded_events :  await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5})
 
     if(my_acquired_album_data_events.length > 0){
       var latest_event = my_acquired_album_data_events[my_acquired_album_data_events.length - 1];
@@ -24244,9 +24265,9 @@ class App extends Component {
     this.my_collection_account = address_account
   }
 
-  get_my_playlists_data = async (web3, E52contractInstance, e5, account, address_account) => {
+  get_my_playlists_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var playlists_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6})
+    var playlists_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6})
 
     if(playlists_event_data.length > 0){
       var latest_event = playlists_event_data[playlists_event_data.length - 1];
@@ -24287,9 +24308,9 @@ class App extends Component {
     return object
   }
 
-  get_my_plays_data = async (web3, E52contractInstance, e5, account) => {
+  get_my_plays_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var plays_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:7})
+    var plays_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:7})
 
     if(plays_event_data.length > 0){
       var latest_event = plays_event_data[plays_event_data.length - 1];
@@ -24329,9 +24350,9 @@ class App extends Component {
     this.my_plays_account = account
   }
 
-  get_my_videos_data = async (web3, E52contractInstance, e5, account, address_account) => {
+  get_my_videos_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var my_acquired_videos_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:11})
+    var my_acquired_videos_data_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:11})
 
     if(my_acquired_videos_data_events.length > 0){
       var latest_event = my_acquired_videos_data_events[my_acquired_videos_data_events.length - 1];
@@ -24381,8 +24402,8 @@ class App extends Component {
     this.setState({nitro_links: registered_nitro_links_clone})
   }
 
-  get_my_followed_accounts_data = async (web3, E52contractInstance, e5, account) => {
-    var followed_accounts_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:8})
+  get_my_followed_accounts_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
+    var followed_accounts_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:8})
 
     if(followed_accounts_data.length > 0){
       var latest_event = followed_accounts_data[followed_accounts_data.length - 1];
@@ -24417,9 +24438,9 @@ class App extends Component {
     }
   }
 
-  load_my_blocked_posts = async (web3, E52contractInstance, e5, account) => {
+  load_my_blocked_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var my_blocked_posts_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:9})
+    var my_blocked_posts_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:9})
 
     if(my_blocked_posts_event_data.length > 0){
       var latest_event = my_blocked_posts_event_data[my_blocked_posts_event_data.length - 1];
@@ -24440,9 +24461,9 @@ class App extends Component {
     }
   }
 
-  load_blocked_posts = async (web3, E52contractInstance, e5, account) => {
+  load_blocked_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
-    var followed_accounts_blocked_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:9})
+    var followed_accounts_blocked_posts_events_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:9})
 
     var followed_accounts_blocked_posts_events_data = followed_accounts_blocked_posts_events_data.filter(function (event) {
       return (accounts_to_load.includes(parseInt(event.returnValues.p1)))
@@ -24503,9 +24524,9 @@ class App extends Component {
     return accepted_ids
   }
 
-  load_my_censored_keywords = async (web3, E52contractInstance, e5, account) => {
+  load_my_censored_keywords = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var my_censored_keywords_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10})
+    var my_censored_keywords_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10})
 
     if(my_censored_keywords_event_data.length > 0){
       var latest_event = my_censored_keywords_event_data[my_censored_keywords_event_data.length - 1];
@@ -24613,9 +24634,9 @@ class App extends Component {
     }
   }
 
-  load_my_promoted_posts = async (web3, E52contractInstance, e5, account) => {
+  load_my_promoted_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var my_promoted_posts_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12})
+    var my_promoted_posts_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12})
 
     if(my_promoted_posts_event_data.length > 0){
       var latest_event = my_promoted_posts_event_data[my_promoted_posts_event_data.length - 1];
@@ -24711,9 +24732,9 @@ class App extends Component {
     }
   }
 
-  load_my_participated_channel_ids = async (web3, E52contractInstance, e5, account) => {
+  load_my_participated_channel_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var channel_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:14})
+    var channel_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:14})
 
     if(channel_event_data.length > 0){
       var latest_event = channel_event_data[channel_event_data.length - 1];
@@ -24732,9 +24753,9 @@ class App extends Component {
     }
   }
 
-  load_my_participated_poll_ids = async (web3, E52contractInstance, e5, account) => {
+  load_my_participated_poll_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var poll_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:15})
+    var poll_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:15})
 
     if(poll_event_data.length > 0){
       var latest_event = poll_event_data[poll_event_data.length - 1];
@@ -24753,9 +24774,9 @@ class App extends Component {
     }
   }
 
-  load_my_participated_object_ids = async (web3, E52contractInstance, e5, account) => {
+  load_my_participated_object_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    var object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:16})
+    var object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:16})
 
     if(object_event_data.length > 0){
       var latest_event = object_event_data[object_event_data.length - 1];
@@ -24774,9 +24795,9 @@ class App extends Component {
     }
   }
 
-  load_my_channel_file_records = async (web3, E52contractInstance, e5, account) => {
+  load_my_channel_file_records = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    const object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account})
+    const object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account})
 
     var loaded_target = 0
     if(object_event_data.length > 0){
@@ -24808,9 +24829,9 @@ class App extends Component {
     }
   }
 
-  load_my_file_renewal_records = async (web3, E52contractInstance, e5, account) => {
+  load_my_file_renewal_records = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(this.state.accounts[e5].privateKey == '') return;
-    const object_event_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17})
+    const object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17})
 
     if(object_event_data.length > 0){
       const latest_event = object_event_data[object_event_data.length -1]
@@ -26863,6 +26884,7 @@ class App extends Component {
       }
     });
 
+    console.log('apppage', 'loading balance for e tokens...')
     const e_token_balance_data = await this.fetch_balance_data_for_e_tokens(created_tokens, created_token_data, H52contractInstance)
 
     // var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
@@ -26907,11 +26929,13 @@ class App extends Component {
       }
 
       var keys = {}
-      const key_object = tokens_data.ecid_encryption_passwords || {}
-      var object_keys = Object.keys(key_object)
-      object_keys.forEach(ecid => {
-        keys[ecid] = key_object[ecid]
-      });
+      if(tokens_data != null){
+        const key_object = tokens_data.ecid_encryption_passwords || {}
+        var object_keys = Object.keys(key_object)
+        object_keys.forEach(ecid => {
+          keys[ecid] = key_object[ecid]
+        });
+      }
       if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false, keys);
       
       if(tokens_data != null){
@@ -26927,9 +26951,11 @@ class App extends Component {
       if(exchanges_depth != 0){
         end_tokens.push(created_tokens[i])
       }
+
+      const spend_balance = (tokens_data != null && tokens_data.token_type == 'e') ? e_token_balance_data[created_tokens[i]] : 0
         
       var token_obj = {
-        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length, 'spend_balance':(tokens_data.token_type == 'e' ? e_token_balance_data[created_tokens[i]] : 0)
+        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length, 'spend_balance':spend_balance
       }
 
       if(this.homepage.current?.state.selected_end_item == created_tokens[i]+e5 || this.homepage.current?.state.selected_spend_item == created_tokens[i]+e5){
@@ -27046,7 +27072,7 @@ class App extends Component {
     if(exchanges_to_fetch.length == 0) return {};
     
     const balance_data = {}
-    const token_balances = await H52contractInstance.methods.f270([5], exchanges_to_fetch, [0], 1, 0).call((error, result) => {});
+    const token_balances = await H52contractInstance.methods.f270([5], [exchanges_to_fetch], [0], 1, 0).call((error, result) => {});
 
     token_balances[0].forEach((balance_item, index) => {
       balance_data[exchanges_to_fetch[index]] = bigInt(balance_item)
@@ -27453,7 +27479,7 @@ class App extends Component {
         var created_posts_clone = structuredClone(this.state.created_posts)
         created_posts_clone[e5] = created_posts
         this.setState({created_posts: created_posts_clone}) 
-        // await this.wait(150)       
+        // await this.wait(150)   
       }
 
       if(i+1 >= created_post_events.length && all_data[created_post_events[i+1]] == null){
@@ -27607,9 +27633,9 @@ class App extends Component {
   }
 
   get_job_data = async (E52contractInstance, web3, e5, contract_addresses, account, loop_count, prioritized_accounts, specific_items) => {
+    console.log('apppage', 'starting to load job data...')
     var created_job_events =  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */, p1:this.get_valid_post_index(web3)})
     created_job_events = created_job_events.reverse()
-
 
     //prioritize the objects ive participated in first
     if(this.state.my_objects.length > 0){
@@ -27679,7 +27705,7 @@ class App extends Component {
       created_job_events = my_events
     }
 
-    // console.log('created_job_events', created_job_events)
+    console.log('apppage', 'created_job_events', created_job_events)
     this.record_number_of_items(e5, 'jobs', created_job_events.length)
 
     var created_job = this.state.created_jobs[e5] == null ? [] : this.state.created_jobs[e5].slice()
@@ -27706,6 +27732,7 @@ class App extends Component {
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_job_events[i].returnValues.p1.toString(), web3)){
         var job_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(job_data != null){
+          console.log('apppage', 'loaded data for job id: ', id)
           var response_count = response_data[id] == null ? [] : response_data[id]
           var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
           
@@ -32266,25 +32293,25 @@ class App extends Component {
     return return_obj
   }
 
-  load_prioritised_job_posts = async (e5, web3, contract_addresses) => {
-    var searched_tags_including_prioritized_tags = this.load_selected_tags(this.getLocale()['1196']/* 'jobs' */)
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = contract_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+  // load_prioritised_job_posts = async (e5, web3, contract_addresses) => {
+  //   var searched_tags_including_prioritized_tags = this.load_selected_tags(this.getLocale()['1196']/* 'jobs' */)
+  //   const E52contractArtifact = require('./contract_abis/E52.json');
+  //   const E52_address = contract_addresses[1];
+  //   const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var all_indexed_tags_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */: 20/* 20(tag_registry) */, p5/* int_data */:17/* jobs */});
+  //   var all_indexed_tags_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */: 20/* 20(tag_registry) */, p5/* int_data */:17/* jobs */});
 
-    var prioritized_accounts = []
-    all_indexed_tags_events.forEach(event_item => {
-      var items_tag = event_item.returnValues.p4/* string_data */
-      var items_id = event_item.returnValues.p1/* target_id */
-      if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id)){
-        prioritized_accounts.push(items_id)
-      }
-    });
+  //   var prioritized_accounts = []
+  //   all_indexed_tags_events.forEach(event_item => {
+  //     var items_tag = event_item.returnValues.p4/* string_data */
+  //     var items_id = event_item.returnValues.p1/* target_id */
+  //     if(searched_tags_including_prioritized_tags.includes(items_tag) || searched_tags_including_prioritized_tags.includes(items_id)){
+  //       prioritized_accounts.push(items_id)
+  //     }
+  //   });
 
-    return prioritized_accounts
-  }
+  //   return prioritized_accounts
+  // }
 
 
 
@@ -32294,6 +32321,9 @@ class App extends Component {
 
   fetch_multiple_objects_data = async (ids_to_load, web3, e5, addresses) => {
     var load_limit = 1023
+    if(ids_to_load.length == 0){
+      return {}
+    }
     if(this.state.beacon_chain_url != ''){
       load_limit = this.state.beacon_data['hash_data_request_limit']
     }
@@ -32374,7 +32404,7 @@ class App extends Component {
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
       var object_data = obj['data']
-      console.log('apppage', 'data', obj)
+      console.log('apppage', 'fetch_multiple_objects_data', obj)
       for(var i=0; i<hashes.length; i++){
         var cid_data = object_data[hashes[i]]
         if(cid_data != null){
@@ -34815,8 +34845,6 @@ class App extends Component {
     // return obj_cid
   }
 
-  
-
   get_my_entire_public_key = async () => {
     const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
@@ -36679,23 +36707,23 @@ class App extends Component {
     }
   }
 
-  test_generate_signature= async (account) => {
-    const web3 = new Web3(this.state.web3);
+  // test_generate_signature= async (account) => {
+  //   const web3 = new Web3(this.state.web3);
 
-    var data = 'hello world'
-    var address = account.address
-    console.log('----------------------www----------------------')
-    console.log('account address: ',address)
+  //   var data = 'hello world'
+  //   var address = account.address
+  //   console.log('----------------------www----------------------')
+  //   console.log('account address: ',address)
 
-    web3.eth.accounts.wallet.add(account.privateKey);
-    var signature = await web3.eth.sign(data, address)
+  //   web3.eth.accounts.wallet.add(account.privateKey);
+  //   var signature = await web3.eth.sign(data, address)
     
-    console.log('signature: ',signature)
-    var original_address = await web3.eth.accounts.recover(data, signature)
-    console.log('original address: ',original_address)
+  //   console.log('signature: ',signature)
+  //   var original_address = await web3.eth.accounts.recover(data, signature)
+  //   console.log('original address: ',original_address)
 
 
-  }
+  // }
 
 
 
