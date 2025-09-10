@@ -884,7 +884,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:this.getLocale()['1593hp']/* 'disable' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -901,7 +901,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(72), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(87), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -940,7 +940,7 @@ class App extends Component {
 
     run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
 
-    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:'', followed_accounts:primary_following, should_update_followed_accounts:false, posts_blocked_by_me:[], should_update_posts_blocked_by_me:false, posts_blocked_by_my_following:[], my_subscription_payment_mappings:{},
+    nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:'', my_preferred_nitro_link:'', followed_accounts:primary_following, should_update_followed_accounts:false, posts_blocked_by_me:[], should_update_posts_blocked_by_me:false, posts_blocked_by_my_following:[], my_subscription_payment_mappings:{},
 
     censored_keyword_phrases: [], should_update_censored_keyword_phrases: false, censored_keywords_by_my_following:[],
 
@@ -3442,6 +3442,7 @@ class App extends Component {
       stacked_message_ids:this.state.stacked_message_ids,
       last_login_time: Date.now(),
       my_created_moderator_notes: this.state.my_created_moderator_notes,
+      my_preferred_nitro_link: this.state.my_preferred_nitro_link,
     }
   }
 
@@ -3624,6 +3625,7 @@ class App extends Component {
       var stacked_message_ids = state.stacked_message_ids == null ? this.state.stacked_message_ids : state.stacked_message_ids
       var last_login_time = state.last_login_time == null ? Date.now() : state.last_login_time
       var my_created_moderator_notes = state.my_created_moderator_notes == null ? this.state.my_created_moderator_notes : state.my_created_moderator_notes
+      var my_preferred_nitro_link = state.my_preferred_nitro_link == null ? '' : state.my_preferred_nitro_link;
 
       this.setState({
         theme: theme,
@@ -3691,6 +3693,7 @@ class App extends Component {
         stacked_message_ids: stacked_message_ids,
         last_login_time: last_login_time,
         my_created_moderator_notes: my_created_moderator_notes,
+        my_preferred_nitro_link: my_preferred_nitro_link
       })
       var me = this;
       setTimeout(function() {
@@ -7963,8 +7966,11 @@ class App extends Component {
   }
 
   set_my_nitro_selection(id, data){
-    this.setState({my_preferred_nitro: id})
-    if(data != null) this.load_my_account_storage_info(data);
+    const link = this.get_nitro_link_from_e5_id(id) || ''
+    this.setState({my_preferred_nitro: id, my_preferred_nitro_link: link})
+    if(data != null){
+      this.load_my_account_storage_info(data);
+    }
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -17412,6 +17418,7 @@ class App extends Component {
       this.is_loaded_image_encrypted = false;
     }
     this.setState({view_images: view_image, view_images_name: name })
+    await this.wait(500)
     this.getBase64ImageDimensions(view_image)
     .then(({ width, height }) => {
       console.log(`Image Width: ${width}px, Image Height: ${height}px`);
@@ -20221,7 +20228,7 @@ class App extends Component {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     await this.check_and_set_default_rpc()
     await this.update_nitro_privacy_signature(false)
-    await this.wait(1500)
+    await this.wait(500)
     await this.load_root_config()
     await this.wait(500)
     if(this.is_allowed_in_e5()){
@@ -20247,7 +20254,7 @@ class App extends Component {
       }
     }else{
       this.prompt_top_notification(me.getLocale()['2738']/* 'Not available in your region yet.' */, 100000)
-      document.title = '??(Beta?)'
+      document.title = '??(Beta)'
       this.disableConsole()
     }
   }
@@ -22769,8 +22776,12 @@ class App extends Component {
         }
 
         // console.log('apppage', 'data', root_data)
-        console.log('apppage', 'theme', get_theme_stage_tags_object)
+        // console.log('apppage', 'theme', get_theme_stage_tags_object)
         // console.log('apppage', 'mymods', my_moderators)
+
+        if(this.state.my_preferred_nitro_link != ''){
+          beacon_chain_url = this.state.my_preferred_nitro_link
+        }
 
         this.setState({
           allowed_countries: allowed_countries, 
@@ -23196,40 +23207,6 @@ class App extends Component {
 
 
 
-
-
-    /* ---------------------------------------- NITRO LINK DATA -------------------------------------- */
-    await this.get_my_nitro_link_data(web3, E52contractInstance, e5, account);
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-
-
-
-
-
-    /* ---------------------------------------- NITRO DATA -------------------------------------- */
-    const F5contractArtifact = require('./contract_abis/F5.json');
-    const F5_address = contract_addresses[2];
-    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
-    await this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, [], account, F5contractInstance)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-
-
-
-
-    /* ---------------------------------------- BALANCE DATA -------------------------------------- */
-    await this.load_e5_balance_data(web3, contractInstance, account, e5, contract_addresses);
-    this.load_pending_withdraw_event_data(web3, contractInstance, account, e5, contract_addresses)
-    if(is_syncing){
-      this.inc_synch_progress()
-    }
-
-
-
-
     const event_params2 = [
       [web3, contractInstance, 'e4', e5, {}],/* e5 runs */
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1}],/* contacts */
@@ -23249,8 +23226,45 @@ class App extends Component {
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:16}],/* object events */
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account}],/* my_channel_file */
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17}],/* file_renewal */
+      [web3, E52contractInstance, 'e4', e5, {p3/* context */:400}], /* nitro link data */
+      [web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: account}],/* withdraw_event_data */
+      [web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: account}]/* pending_withdraw_event_data */
     ]
     const all_basic_events = await this.load_multiple_events_from_nitro(event_params2)
+
+
+
+    /* ---------------------------------------- NITRO LINK DATA -------------------------------------- */
+    this.get_my_nitro_link_data(web3, E52contractInstance, e5, account, all_basic_events[18]);
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
+
+    /* ---------------------------------------- NITRO DATA -------------------------------------- */
+    const F5contractArtifact = require('./contract_abis/F5.json');
+    const F5_address = contract_addresses[2];
+    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+    this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, [], account, F5contractInstance)
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
+    /* ---------------------------------------- BALANCE DATA -------------------------------------- */
+    this.load_e5_balance_data(web3, contractInstance, account, e5, contract_addresses);
+    this.load_pending_withdraw_event_data(web3, contractInstance, account, e5, contract_addresses, [all_basic_events[19], all_basic_events[20]])
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
 
 
     /* ---------------------------------------- EVENT DATA ------------------------------------------- */
@@ -23336,7 +23350,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ALBUM COLLECTION DATA ------------------------------------------- */
-    await this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[7])
+    this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[7])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23347,7 +23361,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- PLAYLIST COLLECTION DATA ------------------------------------------- */
-    await this.get_my_playlists_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[8])
+    this.get_my_playlists_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[8])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23358,7 +23372,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- SECTION TAGS DATA ------------------------------------------- */
-    await this.get_section_tags_data(web3, E52contractInstance, e5, account, all_basic_events[9])
+    this.get_section_tags_data(web3, E52contractInstance, e5, account, all_basic_events[9])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23369,7 +23383,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY PLAYS DATA ------------------------------------------- */
-    await this.get_my_plays_data(web3, E52contractInstance, e5, account, all_basic_events[10])
+    this.get_my_plays_data(web3, E52contractInstance, e5, account, all_basic_events[10])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23380,7 +23394,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY VIDEOS DATA ------------------------------------------- */
-    await this.get_my_videos_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[11])
+    this.get_my_videos_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[11])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23512,8 +23526,8 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     
-    var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
-    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, priority_ids)
+    // var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
+    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23753,10 +23767,10 @@ class App extends Component {
 
   }
 
-  load_pending_withdraw_event_data = async (web3, contractInstance, account, e5, contract_addresses) => {
-    var withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: account})
+  load_pending_withdraw_event_data = async (web3, contractInstance, account, e5, contract_addresses, pre_loaded_events) => {
+    var withdraw_event_data = pre_loaded_events[0] != null ? pre_loaded_events[0] : await this.load_event_data(web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: account})
 
-    var pending_withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: account})
+    var pending_withdraw_event_data = pre_loaded_events[1] != null ? pre_loaded_events[1] : await this.load_event_data(web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: account})
 
     var withdraw_clone = structuredClone(this.state.withdraw_event_data)
     withdraw_clone[e5] = withdraw_event_data
@@ -23768,13 +23782,13 @@ class App extends Component {
   }
   
   get_contacts_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var contacts_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1})
 
     if(contacts_data.length > 0){
       var latest_event = contacts_data[contacts_data.length - 1];
-      var contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var contacts = contacts_data['all_contacts'] == null ? this.decrypt_data(contacts_data['cypher'])['data'] : contacts_data['all_contacts']
+      var contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      var contacts = contacts_data['all_contacts'] == null ? await this.decrypt_data(contacts_data['cypher'])['data'] : contacts_data['all_contacts']
       var time = contacts_data['time']
       if(contacts != null){
         if(this.my_contacts_timestamp == null){
@@ -23797,22 +23811,28 @@ class App extends Component {
     }
   }
 
-  decrypt_data(data){
+  decrypt_data = async (data) => {
     const key = this.state.accounts['E25'].privateKey.toString()
-    const bytes = CryptoJS.AES.decrypt(data, key);
-    const originalText = bytes.toString(CryptoJS.enc.Utf8);
-    const decrypted_data_object = JSON.parse(JSON.parse(originalText));
-    return decrypted_data_object
+    try{
+      // const bytes = CryptoJS.AES.decrypt(data, key);
+      // const originalText = bytes.toString(CryptoJS.enc.Utf8);
+      const originalText = await this.decrypt_secure_data(data, key)
+      const decrypted_data_object = JSON.parse(JSON.parse(originalText));
+      return decrypted_data_object
+    }catch(e){
+      console.log(e)
+    }
+    
   }
 
   get_blocked_accounts_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var blocked_contacts_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2})
 
     if(blocked_contacts_data.length > 0){
       var latest_event = blocked_contacts_data[blocked_contacts_data.length - 1];
       var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
-      var loaded_blocked_accounts = blocked_contacts_data['all_blocked_accounts'] == null ? this.decrypt_data(blocked_contacts_data['cypher'])['data'] : blocked_contacts_data['all_blocked_accounts']
+      var loaded_blocked_accounts = blocked_contacts_data['all_blocked_accounts'] == null ? await this.decrypt_data(blocked_contacts_data['cypher'])['data'] : blocked_contacts_data['all_blocked_accounts']
       var timestamp = blocked_contacts_data['time']
 
       if(loaded_blocked_accounts != null){
@@ -23842,14 +23862,14 @@ class App extends Component {
   }
 
   get_section_tags_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    // if(this.state.accounts[e5].privateKey == '') return;
+    // if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var section_tags_data_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:3})
 
     if(section_tags_data_events.length != 0){
       var latest_event = section_tags_data_events[section_tags_data_events.length - 1];
       var section_tag_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       
-      var data_obj = section_tag_data == null ? this.decrypt_data(section_tag_data['cypher']) : section_tag_data
+      var data_obj = section_tag_data == null ? await this.decrypt_data(section_tag_data['cypher']) : section_tag_data
 
       var job_section_tags = data_obj['job_section_tags']
       var explore_section_tags = data_obj['explore_section_tags']
@@ -23888,19 +23908,19 @@ class App extends Component {
     this.section_tags_data_user = account
   }
 
-  get_my_token_ids = async (web3, contractInstance, e5, account) => {
-    if(this.state.accounts[e5].privateKey == '') return [];
-    var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */, p3/* sender_account_id */:account})
-    var ids = []
-    created_token_events.forEach(event => {
-      var id = event.returnValues.p1
-      ids.push(id)
-    });
-    return ids
-  }
+  // get_my_token_ids = async (web3, contractInstance, e5, account) => {
+  //   if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return [];
+  //   var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */, p3/* sender_account_id */:account})
+  //   var ids = []
+  //   created_token_events.forEach(event => {
+  //     var id = event.returnValues.p1
+  //     ids.push(id)
+  //   });
+  //   return ids
+  // }
 
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
     var loaded_target = 0
     if(section_cid_data_events.length != 0){
@@ -24236,7 +24256,7 @@ class App extends Component {
   }
 
   get_my_collection_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var my_acquired_album_data_events = pre_loaded_events != null ? pre_loaded_events :  await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5})
 
     if(my_acquired_album_data_events.length > 0){
@@ -24266,13 +24286,13 @@ class App extends Component {
   }
 
   get_my_playlists_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var playlists_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6})
 
     if(playlists_event_data.length > 0){
       var latest_event = playlists_event_data[playlists_event_data.length - 1];
       var playlists_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var loaded_playlists = playlists_data['playlists'] == null ? this.decrypt_data(playlists_data['cypher'])['data'] : playlists_data['playlists']
+      var loaded_playlists = playlists_data['playlists'] == null ? await this.decrypt_data(playlists_data['cypher'])['data'] : playlists_data['playlists']
       var timestamp = playlists_data['time']
 
       if(this.my_playlists_timestamp == null){
@@ -24309,14 +24329,14 @@ class App extends Component {
   }
 
   get_my_plays_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var plays_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:7})
 
     if(plays_event_data.length > 0){
       var latest_event = plays_event_data[plays_event_data.length - 1];
       var plays_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       if(plays_data != null){
-        var loaded_plays = plays_data['plays'] == null ? this.decrypt_data(plays_data['cypher'])['data'] : plays_data['plays']
+        var loaded_plays = plays_data['plays'] == null ? await this.decrypt_data(plays_data['cypher'])['data'] : plays_data['plays']
         var timestamp = plays_data['time']
 
         if(this.my_loaded_plays_collection_timestamp == null){
@@ -24351,7 +24371,7 @@ class App extends Component {
   }
 
   get_my_videos_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var my_acquired_videos_data_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:11})
 
     if(my_acquired_videos_data_events.length > 0){
@@ -24378,8 +24398,8 @@ class App extends Component {
     this.my_video_collection_account = address_account
   }
 
-  get_my_nitro_link_data = async (web3, E52contractInstance, e5, account) => {
-    var nitro_link_registry = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:400});
+  get_my_nitro_link_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
+    var nitro_link_registry = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:400});
     var registered_nitro_links = {}
     var registered_nitro_links_authors = {}
     nitro_link_registry.forEach(event => {
@@ -24408,7 +24428,7 @@ class App extends Component {
     if(followed_accounts_data.length > 0){
       var latest_event = followed_accounts_data[followed_accounts_data.length - 1];
       var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
-      var loaded_followed_accounts = followed_account_data['followed_accounts'] == null ? this.decrypt_data(followed_account_data['cypher'])['data'] : followed_account_data['followed_accounts']
+      var loaded_followed_accounts = followed_account_data['followed_accounts'] == null ? await this.decrypt_data(followed_account_data['cypher'])['data'] : followed_account_data['followed_accounts']
       var timestamp = followed_account_data['time']
 
       if(this.my_followed_accounts_collection_timestamp == null){
@@ -24439,7 +24459,7 @@ class App extends Component {
   }
 
   load_my_blocked_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var my_blocked_posts_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:9})
 
     if(my_blocked_posts_event_data.length > 0){
@@ -24525,7 +24545,7 @@ class App extends Component {
   }
 
   load_my_censored_keywords = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var my_censored_keywords_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10})
 
     if(my_censored_keywords_event_data.length > 0){
@@ -24635,7 +24655,7 @@ class App extends Component {
   }
 
   load_my_promoted_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var my_promoted_posts_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12})
 
     if(my_promoted_posts_event_data.length > 0){
@@ -24733,7 +24753,7 @@ class App extends Component {
   }
 
   load_my_participated_channel_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var channel_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:14})
 
     if(channel_event_data.length > 0){
@@ -24754,7 +24774,7 @@ class App extends Component {
   }
 
   load_my_participated_poll_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var poll_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:15})
 
     if(poll_event_data.length > 0){
@@ -24775,7 +24795,7 @@ class App extends Component {
   }
 
   load_my_participated_object_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:16})
 
     if(object_event_data.length > 0){
@@ -24796,7 +24816,7 @@ class App extends Component {
   }
 
   load_my_channel_file_records = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     const object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account})
 
     var loaded_target = 0
@@ -24830,7 +24850,7 @@ class App extends Component {
   }
 
   load_my_file_renewal_records = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     const object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17})
 
     if(object_event_data.length > 0){
@@ -27304,7 +27324,7 @@ class App extends Component {
 
 
   load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     var created_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
 
     var my_sent_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p2/* sender_acc_id */:account})
@@ -27401,6 +27421,7 @@ class App extends Component {
   }
 
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
+    console.log('get_post_data', 'starting get post data...')
     var created_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */, p1:this.get_valid_post_index(web3)})
     created_post_events = created_post_events.reverse()
 
@@ -27450,6 +27471,7 @@ class App extends Component {
       });
       created_post_events = my_events
     }
+    console.log('get_post_data', 'loaded, filtered and sorted the post events...')
 
     
     this.record_number_of_items(e5, 'posts', created_post_events.length)
@@ -27457,7 +27479,7 @@ class App extends Component {
     var is_first_time = this.state.created_posts[e5] == null
 
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
-    console.log('all_data', all_data)
+    console.log('get_post_data', 'loaded the post data ipfs data...')
 
     for(var i=0; i<created_post_events.length; i++){
       var id = created_post_events[i].returnValues.p2
@@ -27479,6 +27501,7 @@ class App extends Component {
         var created_posts_clone = structuredClone(this.state.created_posts)
         created_posts_clone[e5] = created_posts
         this.setState({created_posts: created_posts_clone}) 
+        console.log('get_post_data', 'set the state for 1 post item...')
         // await this.wait(150)   
       }
 
@@ -27492,7 +27515,7 @@ class App extends Component {
     created_posts_clone[e5] = created_posts
     this.setState({created_posts: created_posts_clone})
 
-    console.log('post count: '+created_posts.length)
+    console.log('get_post_data', 'post count: '+created_posts.length)
   }
 
   get_channel_data = async (E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
@@ -27732,7 +27755,6 @@ class App extends Component {
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(created_job_events[i].returnValues.p1.toString(), web3)){
         var job_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         if(job_data != null){
-          console.log('apppage', 'loaded data for job id: ', id)
           var response_count = response_data[id] == null ? [] : response_data[id]
           var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length}
           
@@ -27845,7 +27867,7 @@ class App extends Component {
   }
 
   get_all_mail_data = async (E52contractInstance, e5, account, web3, specific_items) => {
-    if(this.state.accounts[e5].privateKey == '') return;
+    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
     
     const all_events = await this.load_mail_events(E52contractInstance, e5, account, web3)
     const my_received_mail_events = all_events.my_received_mail_events;
@@ -29263,7 +29285,7 @@ class App extends Component {
     }
   }
 
-  load_multiple_events_from_nitro = async (event_params) => {
+  load_multiple_events_from_nitro = async (event_params, p) => {
     var event_requests = []
     for(var i=0; i<event_params.length; i++){
       const _web3 = event_params[i][0]
@@ -29289,16 +29311,21 @@ class App extends Component {
 
     var event_request_batches = this.splitIntoChunks(event_requests, load_limit)
     var return_array = []
+    var return_obj = {}
     for(var i=0; i<event_request_batches.length; i++){
-      var batch_data = await this.load_muliple_batch_events_from_nitro(event_request_batches[i], beacon_node)
-      return_array = return_array.concat(batch_data)
+      var { events, event_data } = await this.load_muliple_batch_events_from_nitro(event_request_batches[i], beacon_node, p)
+      return_array = return_array.concat(events)
+      Object.assign(return_obj, event_data);
+    }
+    if(p != null){
+      return { all_events: return_array, all_events_data: return_obj }
     }
     return return_array;
   }
 
-  load_muliple_batch_events_from_nitro = async (event_requests, beacon_node) => {
+  load_muliple_batch_events_from_nitro = async (event_requests, beacon_node, p) => {
     const params = new URLSearchParams({
-      arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify({requests: event_requests})),
+      arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify({requests: event_requests, p: p, known: this.get_my_recorded_hashes(p)})),
     });
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
@@ -29310,7 +29337,7 @@ class App extends Component {
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
       console.log('apppage', 'gotten return data from nitro: ', obj)
-      return obj['data']
+      return { events: obj['data'], event_data: obj['hash_data'] }
     }
     catch(e){
       return []
@@ -29348,6 +29375,18 @@ class App extends Component {
       ids.push(id);
     });
     return ids
+  }
+
+  get_my_recorded_hashes(p){
+    if(p == null) return [];
+    var list = []
+    if(this.gateway_traffic_cache_pointers != null){
+      list = list.concat(Object.keys(this.gateway_traffic_cache_pointers))
+    }
+    if(this.gateway_traffic_cache != null){
+      list = list.concat(Object.keys(this.gateway_traffic_cache))
+    }
+    return list
   }
 
 
@@ -32176,14 +32215,15 @@ class App extends Component {
     //   this.fetch_object_history[search_index] = now
     // }
 
-    var searched_tags_including_prioritized_tags = (this.load_selected_tags(page)).concat(searched_tags)
+    // var searched_tags_including_prioritized_tags = (this.load_selected_tags(page)).concat(searched_tags)
+    var searched_tags_including_prioritized_tags = [].concat(searched_tags)
 
     // if((page == this.getLocale()['1197']/* 'contracts' */ || page == this.getLocale()['1200']/* 'subscriptions' */ || page == this.getLocale()['1198']/* 'contractors' */) && searched_tags.length == 0 && this.state.user_account_id[this.state.selected_e5] != 1){
     //   //prioritize my accounts data first
     //   searched_tags_including_prioritized_tags = [this.state.user_account_id[this.state.selected_e5]].concat(searched_tags_including_prioritized_tags)
     // }
 
-    if(searched_tags.length != 0) searched_tags_including_prioritized_tags = searched_tags
+    // if(searched_tags.length != 0) searched_tags_including_prioritized_tags = searched_tags
 
     var all_unhashed_tags = []
     if(search != null && search != ''){
@@ -32346,7 +32386,7 @@ class App extends Component {
       var target_id = ids[i];
       event_params.push([web3, E52contractInstance, 'e5', e5, {p1/* target_obj_id */: target_id}])
     }
-    var all_events = await this.load_multiple_events_from_nitro(event_params)
+    var { all_events, all_events_data } = await this.load_multiple_events_from_nitro(event_params, 'p4')
     var obj_id_ecid = {}
     var hashes = []
     var valid_ids = []
@@ -32384,44 +32424,72 @@ class App extends Component {
       }
     }
 
-    // console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
-    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
-    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
-    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
-      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
-    }
-    const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify({hashes: hashes}))
-    const params = new URLSearchParams({
-      arg_string: arg_string_data,
-    });
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
-    try{
-      const response = await fetch(request);
-      if (!response.ok) {
-        console.log('datas',response)
-        throw new Error(`Failed to retrieve data. Status: ${response}`);
-      }
-      var data = await response.text();
-      var obj = await this.process_nitro_api_call_result(data, beacon_node);
-      var object_data = obj['data']
-      console.log('apppage', 'fetch_multiple_objects_data', obj)
+    var has_hash_data_already_been_loaded = false;
+    if(Object.keys(all_events_data).length > 0){
       for(var i=0; i<hashes.length; i++){
-        var cid_data = object_data[hashes[i]]
+        var cid_data = all_events_data[hashes[i]]
         if(cid_data != null){
           var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
           if(confirmation_hash != hashes[i] && obj_types[hashes[i]] == 'ni'){
             console.log('apppage', hashes[i], 'data has been modified! bad data!', confirmation_hash)
           }else{
-            var decrypted_data = await this.decrypt_storage_object2(cid_data)
-            // console.log('apppage', 'decrypted object', decrypted_data)
-            this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+            try{
+              var decrypted_data = await this.decrypt_storage_object2(cid_data)
+              // console.log('apppage', 'decrypted object', decrypted_data)
+              this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+            }catch(e){
+              console.log(e)
+            }
           }
         }
       }
+      has_hash_data_already_been_loaded = true;
     }
-    catch(e){
-      console.log('apppage', e)
-      return {}
+
+    if(has_hash_data_already_been_loaded == false){
+      // console.log('apppage', 'obj_id_ecid', obj_id_ecid, 'hashes', hashes)
+      var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+      if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
+      if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+        beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      }
+      const arg_string_data = await this.encrypt_arg_string(beacon_node, JSON.stringify({hashes: hashes}))
+      const params = new URLSearchParams({
+        arg_string: arg_string_data,
+      });
+      var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'data')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+      try{
+        const response = await fetch(request);
+        if (!response.ok) {
+          console.log('datas',response)
+          throw new Error(`Failed to retrieve data. Status: ${response}`);
+        }
+        var data = await response.text();
+        var obj = await this.process_nitro_api_call_result(data, beacon_node);
+        var object_data = obj['data']
+        console.log('apppage', 'fetch_multiple_objects_data', obj)
+        for(var i=0; i<hashes.length; i++){
+          var cid_data = object_data[hashes[i]]
+          if(cid_data != null){
+            var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+            if(confirmation_hash != hashes[i] && obj_types[hashes[i]] == 'ni'){
+              console.log('apppage', hashes[i], 'data has been modified! bad data!', confirmation_hash)
+            }else{
+              try{
+                var decrypted_data = await this.decrypt_storage_object2(cid_data)
+                // console.log('apppage', 'decrypted object', decrypted_data)
+                this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+              }catch(e){
+                console.log(e)
+              }
+            }
+          }
+        }
+      }
+      catch(e){
+        console.log('apppage', e)
+        return {}
+      }
     }
 
     var data = {}
@@ -34872,8 +34940,7 @@ class App extends Component {
   }
 
   encrypt_data_object = async (tx, key) => {
-    var object_as_string = JSON.stringify(tx)
-    return await this.encrypt_secure_data(object_as_string, key);
+    return await this.encrypt_secure_data(tx, key);
     // var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
     // return ciphertext
   }

@@ -239,10 +239,10 @@ class BagDetailsSection extends Component {
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
 
-                    <div style={{height: 10}}/>
                     <div onClick={() => this.add_to_contacts2(object)}>
                         {this.render_detail_item('3', item['sender_account'])}
                     </div>
+                    <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -259,6 +259,8 @@ class BagDetailsSection extends Component {
 
                     {this.render_bag_value(object)}
 
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064i']/* 'Ordered Items.' */, 'details':this.props.app_state.loc['2064j']/* 'Below are all the items ordered in the bag.' */})}
+                    <div style={{height: 10}}/>
                     {this.render_all_variants(object)}
 
                     {this.render_fulfil_order_button(object)}
@@ -489,7 +491,7 @@ class BagDetailsSection extends Component {
         if(allowed == true){
             return object['ipfs'].delivery_location
         }else{
-            return this.props.app_state.loc['2064h']/* 'Masked.' */
+            return "????"/* this.props.app_state.loc['2064h'] *//* 'Masked.' */
         }
     }
 
@@ -670,17 +672,19 @@ class BagDetailsSection extends Component {
         // var items = variant_in_store['price_data']
         // var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
 
+        var image = (variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0) ? variant_in_store['image_data']['data']['images'][0] : this.props.app_state.static_assets['empty_image']
+
         if(this.state.selected_variant[object['id']] == item){
             return(
                 <div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 5px 3px 5px'}}/>
-                    {this.render_detail_item('3',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
+                    {this.render_detail_item('8',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
+                    {this.render_detail_item('8',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
                 </div>
             )
         }

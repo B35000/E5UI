@@ -403,8 +403,6 @@ class EndDetailSection extends Component {
                     {this.show_24_hour_volume_data(selected_object, symbol)}
 
                     {this.show_transaction_count_chart(selected_object, symbol)}
-                    
-                    {this.render_detail_item('0')}
 
                     {this.render_token_liquidity_balance(selected_object, symbol)}
 
@@ -1004,7 +1002,7 @@ class EndDetailSection extends Component {
 
         var type = selected_obj_root_config[3] == 3 ? this.props.app_state.loc['1808']/* 'Capped' */ : this.props.app_state.loc['1809']/* 'Uncapped' */
         var spend_type = selected_object['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
-        var is_auth_main_contract = selected_obj_config[9] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: selected_obj_config[9]
+        var is_auth_main_contract = selected_obj_config[9] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: (selected_obj_config[9])
         var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: (selected_obj_config[10] == 0 ? this.props.app_state.loc['2374']/* '0 (Burn Account)' */: selected_obj_config[10])
 
         if(title == 3){
@@ -1048,8 +1046,8 @@ class EndDetailSection extends Component {
             'minimum_time_between_swap': {'title':this.get_time_diff(selected_obj_config[4]), 'details':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'size':'l'},
             
             'trust_fee_proportion': {'title':this.format_proportion(selected_obj_config[7]), 'details':this.props.app_state.loc['660']/* 'Trust Fee' */, 'size':'l'},
-            'exchange_authority': {'title':this.props.app_state.loc['1818']/* 'Authority: ' */+is_auth_main_contract, 'details':this.props.app_state.loc['1819']/* 'Exchange Authority Identifier' */, 'size':'l'},
-            'trust_fee_target': {'title':this.props.app_state.loc['1820']/* 'Target: ' */+is_trust_fee_target_main_contract, 'details':this.props.app_state.loc['1821']/*Trust Fee Target Identifier' */, 'size':'l'},
+            'exchange_authority': {'title':is_auth_main_contract, 'details':this.props.app_state.loc['1819']/* 'Exchange Authority Identifier' */, 'size':'l'},
+            'trust_fee_target': {'title':is_trust_fee_target_main_contract, 'details':this.props.app_state.loc['1821']/*Trust Fee Target Identifier' */, 'size':'l'},
 
             'sell_limit':{'style':'l','title':this.props.app_state.loc['328']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':symbol, 'n':selected_obj_config[11]},
 
@@ -1421,7 +1419,7 @@ return data['data']
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2387']/* 'Y-Aggregate' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the y-aggregate of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2387']/* 'Y-Aggregate' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the y-aggregate and price change of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object), 'interval':this.get_exchange_ratio_interval_figure(exchange_ratio_events, selected_object)})}
                     <div style={{height: 10}}/>
 
@@ -1672,6 +1670,7 @@ return data['data']
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2395']/* 'Total Transactions' */, 'number':amount, 'relativepower':this.props.app_state.loc['665']/* 'transactions' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2395']/* 'Total Transactions' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['665']/* 'transactions' */, })}
                     </div>
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2800,7 +2799,7 @@ return data['data']
     }
 
     get_moderator_item_logs(object, event){
-        if (this.props.app_state.moderator_events[object['id']] == null) {
+        if (this.props.app_state.moderator_events[object['id']] == null || this.props.app_state.moderator_events[object['id']][event] == null) {
             return []
         }
         return this.props.app_state.moderator_events[object['id']][event]

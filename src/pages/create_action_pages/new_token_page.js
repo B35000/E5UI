@@ -430,6 +430,7 @@ class NewTokenPage extends Component {
                 <div>
                     {this.render_title_tags_part()}
                     {this.render_presets_menu()}
+                    {this.render_title_tags_part2()}
                 </div>
             )
         }
@@ -441,6 +442,7 @@ class NewTokenPage extends Component {
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_presets_menu()}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -454,6 +456,7 @@ class NewTokenPage extends Component {
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_presets_menu()}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -509,8 +512,14 @@ class NewTokenPage extends Component {
                 {this.render_specific_country_selector()}
 
 
-                {this.render_previous_edits_if_existing()}
+            </div>
+        )
+    }
 
+    render_title_tags_part2(){
+        return(
+            <div>
+                {this.render_previous_edits_if_existing()}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
@@ -1917,7 +1926,7 @@ return data['data']
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'textsize':'10px', 'font':this.props.app_state.font})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_account_balance_figure(bigInt(this.state.default_exchange_amount_buy_limit).multiply(bigInt(2))), 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                     
@@ -2637,7 +2646,7 @@ return data['data']
                 </div>
 
                 <div style={{height:2}}/>
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_account_balance_figure(this.state.simulator_mint_limit), 'textsize':'10px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_account_balance_figure(bigInt(this.state.simulator_mint_limit).multiply(bigInt(2))), 'textsize':'10px', 'font':this.props.app_state.font})}
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
 

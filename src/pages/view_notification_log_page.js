@@ -260,6 +260,8 @@ class ViewNotificationLogPage extends Component {
         if(items.length == 0){
             return(
                 <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['1593hr']/* 'If any new notifications are received, they will show here.' */})}
+                    <div style={{height:10}}/>
                     {this.render_empty_views(3)}
                 </div>
             )
@@ -368,6 +370,8 @@ class ViewNotificationLogPage extends Component {
         if(items.length == 0){
             return(
                 <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['1593hr']/* 'If any new notifications are received, they will show here.' */})}
+                    <div style={{height:10}}/>
                     {this.render_empty_views(3)}
                 </div>
             )
@@ -439,13 +443,15 @@ class ViewNotificationLogPage extends Component {
         if(items.length == 0){
             return(
                 <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Your notification history.' */, 'details':this.props.app_state.loc['1593hr']/* 'If any new notifications are received, they will show here.' */})}
+                    <div style={{height:10}}/>
                     {this.render_empty_views(3)}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Your notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
                     <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>

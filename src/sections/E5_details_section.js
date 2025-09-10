@@ -266,16 +266,7 @@ class E5DetailsSection extends Component {
 
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.get_last_transaction_block(e5), 'details':this.props.app_state.loc['2236']/* 'Last Transaction Block' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_time_difference(this.get_last_transaction_time(e5)), 'details':this.props.app_state.loc['2237']/* 'Last Transaction age' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_last_entered_contracts_count(e5), 'details':this.props.app_state.loc['2238']/* 'Number of entered contracts' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_number_of_e5_runs(e5), 'details':this.props.app_state.loc['2239']/* 'Number of E5 runs' */, 'size':'l'})}
-
-
-                    {this.render_detail_item('0')}
+                    {this.render_last_transaction_time_data(e5)}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'number':this.props.app_state.withdraw_balance[e5], 'relativepower':'wei'})}>
                         {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5]), 'relativepower':'wei'})}
@@ -297,6 +288,23 @@ class E5DetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_last_transaction_time_data(e5){
+        if(this.props.app_state.has_wallet_been_set || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_last_transaction_block(e5), 'details':this.props.app_state.loc['2236']/* 'Last Transaction Block' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.get_time_difference(this.get_last_transaction_time(e5)), 'details':this.props.app_state.loc['2237']/* 'Last Transaction age' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.get_last_entered_contracts_count(e5), 'details':this.props.app_state.loc['2238']/* 'Number of entered contracts' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.get_number_of_e5_runs(e5), 'details':this.props.app_state.loc['2239']/* 'Number of E5 runs' */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
     }
 
     round_off_to_nearest_gwei(number){
@@ -365,15 +373,15 @@ class E5DetailsSection extends Component {
 
             'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':this.props.app_state.loc['2247']/* 'Vote Bounty Split Proportion' */, 'size':'l'},
             
-            'default_end_minimum_contract_amount':{'style':'l','title':this.props.app_state.loc['2248']/* 'Minimum End Contract Amount' */, 'subtitle':this.format_power_figure(contract_config[3]), 'barwidth':this.calculate_bar_width(contract_config[3]), 'number':this.format_account_balance_figure(contract_config[3]), 'relativepower':this.props.app_state.loc['1885']/* 'tokens' */, 'n':contract_config[3]},
+            'default_end_minimum_contract_amount':{'style':'l','title':this.props.app_state.loc['2248']/* 'Minimum End Contract Amount' */, 'subtitle':this.format_power_figure(contract_config[3]), 'barwidth':this.calculate_bar_width(contract_config[3]), 'number':this.format_account_balance_figure(contract_config[3]), 'relativepower':this.props.app_state.loc['3078']/* 'END' */, 'n':contract_config[3]},
 
-            'default_minimum_end_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['70']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */, 'n':contract_config[4]},
+            'default_minimum_end_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['70']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':this.props.app_state.loc['3078']/* 'END' */, 'n':contract_config[4]},
 
             'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':this.props.app_state.loc['71']/* 'Proposal Expiry Duration Limit' */, 'size':'l'},
 
-            'default_spend_minimum_contract_amount':{'style':'l','title':this.props.app_state.loc['240']/* Minimum Spend Contract Amount' */, 'subtitle':this.format_power_figure(contract_config[9]), 'barwidth':this.calculate_bar_width(contract_config[9]), 'number':this.format_account_balance_figure(contract_config[9]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */, 'n':contract_config[9]},
+            'default_spend_minimum_contract_amount':{'style':'l','title':this.props.app_state.loc['240']/* Minimum Spend Contract Amount' */, 'subtitle':this.format_power_figure(contract_config[9]), 'barwidth':this.calculate_bar_width(contract_config[9]), 'number':this.format_account_balance_figure(contract_config[9]), 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, 'n':contract_config[9]},
 
-            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['421']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */, 'n':contract_config[10]},
+            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['421']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, 'n':contract_config[10]},
 
             'tx_gas_limit':{'style':'l','title':this.props.app_state.loc['1429']/* Transaction Gas Limit' */, 'subtitle':this.format_power_figure(contract_config[11]), 'barwidth':this.calculate_bar_width(contract_config[11]), 'number':this.format_account_balance_figure(contract_config[11]), 'relativepower':'gas', 'n':contract_config[11]},
 
@@ -708,7 +716,7 @@ class E5DetailsSection extends Component {
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2336q']/* E5\'s Traffic Dominance */, 'subtitle':'e0', 'barwidth':(item['percentage']+'%'), 'number':item['percentage']+'%', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}  
+                    {this.render_detail_item('2', { 'style':'l', 'title':obj['id']+this.props.app_state.loc['2336q']/* E5\'s Traffic Dominance */, 'subtitle':'e0', 'barwidth':(item['percentage']+'%'), 'number':item['percentage']+'%', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}  
                 </div>
                 <div style={{height: 10}}/>
             </div>

@@ -56,6 +56,7 @@ class ViewGroups extends Component {
     state = {
         keyboard_showing: false,
         animate: false,
+    
     };
 
     render(){
@@ -341,7 +342,7 @@ class ViewGroups extends Component {
                 text_transform = object_data['text_transform'] == null ? 'capitalize' : object_data['text_transform']
             }
             return(
-                <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
+                <div /* onClick={()=> this.when_action_button_clicked(action)} */ style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <style>{`
                         .button-click {
                             animation: clickAnim 0.2s ease;
@@ -352,7 +353,7 @@ class ViewGroups extends Component {
                             100% { transform: scale(1); background-color: ${this.props.theme['button_color']}; }
                         }
                     `}</style>
-                    <button className={'button-click'} style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
+                    <button ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action)}>
                       {text}
                     </button>
                 </div>  
@@ -479,8 +480,8 @@ class ViewGroups extends Component {
 
             if(items.length == 0) return;
             return (
-                <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 0px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'auto'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                <div style={{'margin':'0px 0px 0px 1px','padding': '0px 0px 0px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'auto'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 1px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
                       {items.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:'auto'}} onClick={() => this.when_image_clicked(items, index)}>
                             <img alt="" src={this.get_image_from_file(item)} style={{width:'auto', height:90, 'border-radius': '10px'}} />
@@ -798,7 +799,7 @@ class ViewGroups extends Component {
         }
     }
 
-    when_any_button_tapped(e, prevent_default){
+    when_any_button_tapped(e, prevent_default, action){
         if(prevent_default){
             e.preventDefault()
             console.log('prevented default!')
@@ -807,6 +808,7 @@ class ViewGroups extends Component {
         this.setState({ animate: true }, () => {
             setTimeout(() => this.setState({ animate: false }), 200); // match animation duration
         });
+        this.when_action_button_clicked(action)
     }
 
     get_tag_color(tag, selected_tags, tag_background_color){
@@ -869,6 +871,17 @@ class ViewGroups extends Component {
           // dps.push({x: 101, y: yVal,  indexLabel: "900e3"});
       return dps;
     }
+
+    // handleClick = (e) => {
+    //     // Force re-trigger of animation by toggling class
+    //     this.setState({ animate: false }, () => {
+    //     void this.button.offsetWidth; // 🔑 force reflow
+    //     this.setState({ animate: true });
+    //     });
+
+    //     // Your existing handler
+    //     this.when_any_button_tapped(e, this.props.prevent_default);
+    // };
 
     when_action_button_clicked(action_id){
         if(action_id == 'send_receive_ether'){

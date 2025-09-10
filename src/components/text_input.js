@@ -56,76 +56,119 @@ function iOS() {
 }
 
 class TextInput extends Component {
-    
-    state = {
-      selected: 0,
-      set_text:''
-    };
+  state = {
+    selected: 0,
+    set_text:'',
+    input_type: this.props.type || 'text',
+  };
 
-    render(){
-      return(
-        <div>
-          {this.render_text_input_field()}
+  constructor(props) {
+    super(props);
+    this.inputRef = React.createRef();
+  }
+
+  render(){
+    return(
+      <div>
+        {this.render_text_input_field()}
+      </div>
+    )
+  }
+
+
+  /* render the text area */
+  render_text_input_field(){
+    var os = getOS()
+    var f = os == 'iOS' ? '16px' : '13px'
+    return(
+      <div style={{'padding': '0px 0px 0px 0px'}}>
+        <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'],'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
+          {this.render_textarea_or_input(f)}
         </div>
+      </div>
+    )
+  }
+
+  render_textarea_or_input(f){
+    var height = this.props.height
+    if(height < 53){
+      var text_type = this.state.input_type == null ? 'text' : this.state.input_type
+      var step = text_type == 'number' ? 'any' : ''
+      return(
+        <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }} onClick={() => this.when_textarea_clicked()}>
+          <style>
+            {`
+              .form-control::placeholder {
+                color: ${this.props.theme['text_input_color']};
+                opacity: 0.6; /* Ensures visibility in some browsers */
+              }
+            `}
+          </style>
+            <input ref={this.inputRef} className="form-control" step={step}  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
+        </div> 
+      )
+    }else{
+      return(
+        <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
+          <style>
+            {`
+              .form-control::placeholder {
+                color: ${this.props.theme['text_input_color']};
+                opacity: 0.6; /* Ensures visibility in some browsers */
+              }
+            `}
+          </style>
+            <textarea className="form-control"  rows="1" style={{height:height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+        </div> 
       )
     }
+  }
 
-
-    /* render the text area */
-    render_text_input_field(){
-      var os = getOS()
-      var f = os == 'iOS' ? '16px' : '13px'
-      return(
-        <div style={{'padding': '0px 0px 0px 0px'}}>
-          <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'],'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
-            {this.render_textarea_or_input(f)}
-          </div>
-        </div>
-      )
+  /* when text is added to the text area  */
+  when_text_input_field_changed(e){
+    if(this.textarea == null || this.textarea != e){
+      this.textarea = e;
     }
+    this.setState({set_text: this.textarea.target.value})
+    this.props.when_text_input_field_changed(this.textarea.target.value)
+  }
 
-    render_textarea_or_input(f){
-      var height = this.props.height
-      if(height < 53){
-        var text_type = this.props.type == null ? 'text' : this.props.type
-        return(
-          <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
-            <style>
-              {`
-                .form-control::placeholder {
-                  color: ${this.props.theme['text_input_color']};
-                  opacity: 0.6; /* Ensures visibility in some browsers */
-                }
-              `}
-            </style>
-              <input className="form-control"  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
-          </div> 
-        )
-      }else{
-        return(
-          <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }}>
-            <style>
-              {`
-                .form-control::placeholder {
-                  color: ${this.props.theme['text_input_color']};
-                  opacity: 0.6; /* Ensures visibility in some browsers */
-                }
-              `}
-            </style>
-              <textarea className="form-control"  rows="1" style={{height:height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
-          </div> 
-        )
+  when_textarea_clicked = (event) => {
+    let me = this;
+    if(Date.now() - this.last_all_click_time < 400){
+        me.change_text_area_type()
+        clearTimeout(this.all_timeout);
+    }else{
+        this.all_timeout = setTimeout(function() {
+          clearTimeout(this.all_timeout);
+        }, 400);
+    }
+    this.last_all_click_time = Date.now();
+  }
+
+  change_text_area_type(){
+    if(this.state.input_type == 'password'){
+      this.setState({ input_type: 'text' }, () => {
+        // After state is updated and DOM re-renders, move cursor to the end
+        const input = this.inputRef.current;
+        if (input) {
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      });
+    }else{
+      if(this.props.type == 'password'){
+        this.setState({ input_type: 'password' }, () => {
+          // After state is updated and DOM re-renders, move cursor to the end
+          const input = this.inputRef.current;
+          if (input) {
+            const length = input.value.length;
+            input.setSelectionRange(length, length);
+          }
+        });
       }
     }
-
-    /* when text is added to the text area  */
-    when_text_input_field_changed(e){
-      if(this.textarea == null || this.textarea != e){
-        this.textarea = e;
-      }
-      this.setState({set_text: this.textarea.target.value})
-      this.props.when_text_input_field_changed(this.textarea.target.value)
-    }
+  }
 
 
 }

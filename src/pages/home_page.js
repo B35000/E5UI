@@ -372,7 +372,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, /* this.props.app_state.loc['1264i'] 'wallet-notifications' */],[1]
           ],
         }
 
@@ -947,7 +947,7 @@ class home_page extends Component {
     render_e_plus_button(){
       var button_target = this.get_e_plus_button_mapping();
       var alpha = 1.0;
-      if(button_target == ''){
+      if(button_target == '' || button_target == 'e'){
         alpha = 0.2;
       }
       return(
@@ -966,6 +966,7 @@ class home_page extends Component {
         data[this.props.app_state.loc['1198']/* contractors */] = '9'
         data[this.props.app_state.loc['1201']/* mail */] = '5'
         data[this.props.app_state.loc['1264s']/* 'nitro' */] = '12'
+        if(selected_item == 'e') return 'e'
         if(data[selected_item] == null) return ''
         return data[selected_item];
       }
@@ -978,6 +979,7 @@ class home_page extends Component {
         data[this.props.app_state.loc['1264k']/* audioport */] = '10'
         data[this.props.app_state.loc['1264p']/* 'videoport' */] = '11'
         data[this.props.app_state.loc['1264ao']/* 'polls' */] = '13'
+        if(selected_item == 'e') return 'e'
         if(data[selected_item] == null) return ''
         return data[selected_item];
       }
@@ -1020,12 +1022,15 @@ class home_page extends Component {
     /* called when the eplus letter is clicked on the main page */
     when_e_plus_letter_clicked(){
       var button_target = this.get_e_plus_button_mapping();
-      if(button_target != ''){
+      if(button_target != '' && button_target != 'e'){
         if(button_target == 'bills'){
             this.props.show_view_contextual_transfer_bottomsheet('bills')
         }else{
             this.props.open_new_object(button_target);
         }
+      }
+      else if(button_target == 'e'){
+        this.render_top_notification(this.props.app_state.loc['1264bg']/* Try tapping a tag on the left first. */, 2300)
       }
     }
 
@@ -2075,7 +2080,7 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bags))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.filter_using_searched_text(this.get_all_sorted_objects(this.props.app_state.created_bags)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_bags = []
@@ -2084,7 +2089,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_bags = []
@@ -2093,7 +2098,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ae']/* 'my-responses' */){
             var my_applied_bags = []
@@ -2103,7 +2108,7 @@ class home_page extends Component {
                     my_applied_bags.push(all_bags[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_applied_bags))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_applied_bags)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -2117,10 +2122,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bags))))
+            return this.sort_feed_based_on_my_section_tags2(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bags)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -2133,7 +2138,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else {
             var my_bags = []
@@ -2147,7 +2152,7 @@ class home_page extends Component {
                     my_bags.push(all_bags[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bags))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bags)))))
         }
     }
 
@@ -4022,7 +4027,7 @@ class home_page extends Component {
         }
         else if(this.state.page == 'e'){
             var selected_item = this.state.explore_page_tags_object['i'].active
-            if(selected_item == 'e' || selected_item == this.props.app_state.loc['1212']/* 'e.E5s' */ || selected_item == this.props.app_state.loc['1216']/* 'e.bags' */){
+            if(selected_item == 'e' || selected_item == this.props.app_state.loc['1212']/* 'e.E5s' */ /* || selected_item == this.props.app_state.loc['1216'] *//* 'e.bags' */){
                 return false
             }
             else return true
@@ -4052,7 +4057,7 @@ class home_page extends Component {
         searched_data_clone[id] = text
         this.setState({typed_tag: searched_data_clone})
         if(text == ''){
-            this.search_string()
+            this.when_search_button_tapped('')
         }
     }
 
@@ -6384,6 +6389,9 @@ class home_page extends Component {
                     <div style={{height: 5}}/>
                     {this.render_transaction_data()}
 
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
@@ -7125,16 +7133,12 @@ class home_page extends Component {
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2840']/* E5 Traffic Distribution. */}</p>
                     
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                     {traffic_proportion_events.map((item, index) => (
-                            <div>
-                                {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(item['percentage']+'%'), 'number':item['e5'], 'relativepower':item['percentage']+'%', })}
-                            </div>
-                            
-                        ))}
-                    </ul>   
+                        <div>
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(item['percentage']+'%'), 'number':item['e5'], 'relativepower':item['percentage']+'%', })}
+                        </div>
+                    ))}  
                 </div>
-                <div style={{height: 10}}/>
 
             </div>
         )

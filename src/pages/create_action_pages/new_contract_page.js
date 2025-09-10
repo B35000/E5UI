@@ -647,6 +647,16 @@ class NewContractPage extends Component {
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
+                if(setting == 'price_data'){
+                    this.state[setting].forEach(price_target => {
+                        if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
+                            is_matching = false
+                        }
+                        else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
+                            is_matching = false
+                        }
+                    });
+                }else
                 if(this.state[setting] != set_object[setting]){
                     is_matching = false
                 }

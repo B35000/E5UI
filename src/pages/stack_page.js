@@ -4963,6 +4963,13 @@ class StackPage extends Component {
                         'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time, ecid_encryption_passwords: ecid_encryption_passwords
                     }
 
+                    const all_final_elements = []
+                    for(var te=0; te<bag_tags.length; te++){
+                        const word = bag_tags[te]
+                        all_final_elements.push(this.props.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    }
+                    obj['tags'][t.id] = {'elements':all_final_elements, 'type':25, 'lan':final_bag_object.device_language_setting, 'state': this.props.hash_data_with_randomizer(final_bag_object.device_country)}
+
                     ipfs_index_object[t.id] = final_bag_object
                     ipfs_index_array.push({'id':t.id, 'data':final_bag_object})
                 }
@@ -11266,7 +11273,6 @@ class StackPage extends Component {
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
                 </div>
-                <div style={{height: 20}}/>
                 
                 {this.render_reload_wallet_if_wallet_is_set()}
                 
@@ -11276,9 +11282,10 @@ class StackPage extends Component {
     }
 
     render_reload_wallet_if_wallet_is_set(){
-        if(this.props.app_state.has_wallet_been_set || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1 || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != null){
+        if(this.props.app_state.has_wallet_been_set || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1){
             return(
                 <div style={{'padding':'0px 5px 0px 5px'}} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
+                    <div style={{height: 20}}/>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
                 </div>
             )
@@ -11313,8 +11320,8 @@ class StackPage extends Component {
         var size = this.props.size
         var w = size == 's' ? '95%' : '99%'
         return(
-            <div>
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}
+            <div style={{'padding': '0px 0px 0px 0px'}}>
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Type a word then click \'e|\' to add a word, or tap the word to remove and double tap the text area to unmask.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
                 <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
@@ -11347,10 +11354,10 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_seed_randomizer_setting_object} tag_size={'l'} when_tags_updated={this.get_seed_randomizer_setting_object_updated.bind(this)} theme={this.props.theme}/>
                 
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
                 {this.render_message_if_stack_not_empty()}
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593it']/* 'Please Note ⚠️' */, 'details':this.props.app_state.loc['1979s']/* 'If you didnt know to keep these provided details private, or dont know why they should remain private, kindly stop using this webapp.' */, 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593it']/* 'Please Note ⚠️' */, 'details':this.props.app_state.loc['1593iu']/* 'If you didnt know to keep these provided details private, or dont know why they should remain private, kindly stop using this webapp.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
                 <div style={{'padding':'0px 5px 0px 5px'}}>
@@ -11622,17 +11629,7 @@ class StackPage extends Component {
             items = [0, 0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
@@ -11803,17 +11800,7 @@ class StackPage extends Component {
             items = [0, 0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
@@ -12060,17 +12047,7 @@ class StackPage extends Component {
             items = [0, 0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
@@ -15733,17 +15710,7 @@ class StackPage extends Component {
             items = [0, 0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
@@ -15896,17 +15863,7 @@ class StackPage extends Component {
             items = [0, 0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
@@ -16213,17 +16170,7 @@ class StackPage extends Component {
             items = [0, 0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
