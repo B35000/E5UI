@@ -870,6 +870,10 @@ class EditNitroPage extends Component {
     get_edited_text_object(){
         var font = this.get_selected_item(this.state.get_new_job_page_tags_object, 'font')
         var size = this.get_selected_item(this.state.get_new_job_page_tags_object, 'size')
+        if(this.props.app_state.kaomojis.includes(this.state.entered_text.trim())){
+            font = 'Sans-serif'
+            size = '40px'
+        }
         return{
             'font':font, 'textsize':size, 'text':this.state.entered_text
         }
@@ -1088,7 +1092,7 @@ class EditNitroPage extends Component {
 
 
     render_kaomoji_list(){
-        var items = ['⸜(｡˃ ᵕ ˂ )⸝♡','( ˶ˆᗜˆ˵ )','(๑>◡<๑)','ദ്ദി ˉ͈̀꒳ˉ͈́ )✧','( ˶°ㅁ°) !!','(*ᴗ͈ˬᴗ͈)ꕤ*.ﾟ','(｡>﹏<)','(๑-﹏-๑)','ᓚ₍ ^. .^₎','(˵ •̀ ᴗ - ˵ ) ✧','ᕙ(  •̀ ᗜ •́  )ᕗ','( ｡ •̀ ᴖ •́ ｡)','৻(  •̀ ᗜ •́  ৻)','( ˶ˆ꒳ˆ˵ )','(¬`‸´¬)','≽^•⩊•^≼','(ó﹏ò｡)']
+        var items = this.props.app_state.kaomojis
 
         return(
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>

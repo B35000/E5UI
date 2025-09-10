@@ -259,7 +259,6 @@ class JobDetailsSection extends Component {
 
                     {this.render_zip_files_if_any(object)}
 
-                    <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
 
                     {this.render_detail_item('0')}
@@ -494,6 +493,7 @@ class JobDetailsSection extends Component {
         if(state.markdown != null && state.markdown != ''){
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('13', {'source':state.markdown})}
                 </div>
             )

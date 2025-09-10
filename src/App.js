@@ -911,7 +911,7 @@ class App extends Component {
     contract_events:{}, proposal_events:{}, subscription_events:{}, exchange_events:{}, moderator_events:{},
     subscription_search_result:{}, all_data:{}, gateway_traffic_cache:{}, channel_events:{}, all_E5_runs:{}, 
 
-    e5s:this.get_e5s(),
+    e5s:this.get_e5s(), kaomojis:this.get_kaomojis(),
     selected_e5:'E25', default_e5:'E25',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
@@ -1792,6 +1792,28 @@ class App extends Component {
         first_block:0, end_image: null, spend_image: null, ether_image:manta_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
       },
     }
+  }
+
+  get_kaomojis(){
+    return [
+      '⸜(｡˃ ᵕ ˂ )⸝♡',
+      '( ˶ˆᗜˆ˵ )',
+      '(๑>◡<๑)',
+      'ദ്ദി ˉ͈̀꒳ˉ͈́ )✧',
+      '( ˶°ㅁ°) !!',
+      '(*ᴗ͈ˬᴗ͈)ꕤ*.ﾟ',
+      '(｡>﹏<)',
+      '(๑-﹏-๑)',
+      'ᓚ₍ ^. .^₎',
+      '(˵ •̀ ᴗ - ˵ ) ✧',
+      'ᕙ(  •̀ ᗜ •́  )ᕗ',
+      '( ｡ •̀ ᴖ •́ ｡)',
+      '৻(  •̀ ᗜ •́  ৻)',
+      '( ˶ˆ꒳ˆ˵ )',
+      '(¬`‸´¬)',
+      '≽^•⩊•^≼',
+      '(ó﹏ò｡)'
+    ]
   }
 
   getLocale(){

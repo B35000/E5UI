@@ -77,7 +77,7 @@ class DialogPage extends Component {
 
         get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'', moderator_note_id:'', visibility_end_time: ((Date.now()/1000) + 60*60*24), entered_file_objects: [], entered_video_object_dimensions: {}, ecid_encryption_passwords:{},
 
-        export_start_time:0,
+        export_start_time:0, following_search_text:'',
     };
 
 
@@ -4136,6 +4136,8 @@ return data['data']
                 <div>
                     {this.render_home_page_view_items()}
                     {this.render_detail_item('0')}
+                    {this.render_home_page_view_items2()}
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -4145,9 +4147,13 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_home_page_view_items()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_home_page_view_items2()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 
@@ -4158,9 +4164,13 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_home_page_view_items()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_home_page_view_items2()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 
@@ -4183,14 +4193,42 @@ return data['data']
                 <div onClick={() => this.when_reload_section_selected()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ci']/* 'Reload Section.' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
-                {this.render_detail_item('0')}
                 
+            </div>
+        )
+    }
+
+    render_home_page_view_items2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ec']/* 'Filter By Following' */, 'details':this.props.app_state.loc['3055ed']/* 'Filter the content in the section by an account your following.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{margin:'0px 1px 0px 1px'}}>
+                    <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2669']/* Search account ID...' */} when_text_input_field_changed={this.when_account_search_text_input_field_changed.bind(this)} text={this.state.following_search_text} theme={this.props.theme}/>
+                </div>
                 <div style={{height:10}}/>
                 {this.render_followed_accounts()}
             </div>
         )
     }
+
+    when_account_search_text_input_field_changed(text){
+        this.setState({following_search_text: text})
+    }
+
+    filter_followed_accounts_by_searched(accounts){
+        const typed_id = this.state.following_search_text.trim().toLowerCase()
+        if(typed_id == '') return accounts;
+        var filtered_accounts = accounts.filter(function (item) {
+            var split_account_array = item.split(':')
+            var e5 = split_account_array[0]
+            var account = split_account_array[1]
+            var alias = this.get_followed_account_name_from_id(account, e5).toLowerCase()
+            return (account.includes(typed_id) || alias.includes(typed_id))
+        })
+        return filtered_accounts
+    }
+
 
     when_scroll_to_top_section_selected(){
         this.props.when_scroll_to_top_section(this.state.data)
@@ -4201,7 +4239,7 @@ return data['data']
     }
 
     render_followed_accounts(){
-        var items = [].concat(this.props.app_state.followed_accounts)
+        var items = [].concat(this.filter_followed_accounts_by_searched(this.props.app_state.followed_accounts))
         if(items.length == 0){
             items = [1, 2, 3]
             return(

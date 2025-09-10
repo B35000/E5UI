@@ -1845,6 +1845,11 @@ class home_page extends Component {
             var id = this.state.work_page_tags_object['i'].active + selected_item
 
             // var scroll_pos = this.page_scroll_data[id]
+            if(this.page_scroll_data[id] == null || this.page_scroll_data[id] == 0){
+                this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+            }else{
+                this.render_top_notification(this.props.app_state.loc['1264bi']/* 'Scrolling to the top...' */, 1500)
+            }
             var scroll_pos = 0
             if(scroll_pos == null) scroll_pos = 0;
            
@@ -1885,6 +1890,11 @@ class home_page extends Component {
             var id = this.state.explore_page_tags_object['i'].active + selected_item
 
             // var scroll_pos = this.page_scroll_data[id]
+            if(this.page_scroll_data[id] == null || this.page_scroll_data[id] == 0){
+                this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+            }else{
+                this.render_top_notification(this.props.app_state.loc['1264bi']/* 'Scrolling to the top...' */, 1500)
+            }
             var scroll_pos = 0
             if(scroll_pos == null) scroll_pos = 0;
             
@@ -1943,6 +1953,11 @@ class home_page extends Component {
             var id = selected_item
 
             // var scroll_pos = this.page_scroll_data[id]
+            if(this.page_scroll_data[id] == null || this.page_scroll_data[id] == 0){
+                this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+            }else{
+                this.render_top_notification(this.props.app_state.loc['1264bi']/* 'Scrolling to the top...' */, 1500)
+            }
             var scroll_pos = 0
             if(scroll_pos == null) scroll_pos = 0;
 
