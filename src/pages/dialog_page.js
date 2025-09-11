@@ -3367,6 +3367,10 @@ return data['data']
             return(
                 <div>
                     {this.render_account_option_items()}
+                    {this.render_detail_item('0')}
+                    {this.render_account_option_items2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -3375,8 +3379,11 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_account_option_items()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_account_option_items2()}
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -3388,8 +3395,11 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_account_option_items()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_account_option_items2()}
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -3422,9 +3432,13 @@ return data['data']
                 </div>
                 <div style={{height:5}}/>
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
-                {this.render_detail_item('0')}
+            </div>
+        )
+    }
 
-
+    render_account_option_items2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bc']/* 'View Account' */, 'details':this.props.app_state.loc['3055bd']/* 'View the accounts entire activity on e.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={() => this.when_view_account_selected()}>
@@ -3435,9 +3449,6 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055be']/* 'Copy Account' */, 'details':this.props.app_state.loc['3055bf']/* 'Copy the accounts ID to your clipboard' */, 'size':'l'})}
                 {this.render_copy_alias_if_exists()}
-                
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }

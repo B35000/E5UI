@@ -5431,12 +5431,12 @@ class App extends Component {
           {this.render_view_bid_in_auction_bottomsheet()}
           {this.render_fulfil_auction_bid_bottomsheet()}
 
+          {this.render_full_video_bottomsheet()}
           {this.render_dialog_bottomsheet()}
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
-          {this.render_pick_file_bottomsheet()}
-          {this.render_full_video_bottomsheet()}
           {this.render_add_comment_bottomsheet()}
+          {this.render_pick_file_bottomsheet()}
           {this.render_view_number_bottomsheet()}
           
           
@@ -8229,7 +8229,7 @@ class App extends Component {
               ? value.toString()
               : value
       )
-      var final_data = this.encrypt_storage_object(object_as_string, tx['tags'])
+      var final_data = await this.encrypt_storage_object(object_as_string, tx['tags'])
       let test_wallet_key = await arweave.wallets.generate();
       var transaction = await arweave.createTransaction({
         data: final_data
@@ -15303,7 +15303,7 @@ class App extends Component {
       'view_incoming_receipts':250, 
       'view_incoming_transactions':300, 
       'view_e5_link':300, 
-      'account_options':600,
+      'account_options':500,
       'confirm_pay_bill':350,
       'invalid_stack_size_dialog_box':350,
       'file_type_picker':550,
@@ -20433,7 +20433,7 @@ class App extends Component {
     this.my_channel_timestamp = 0
     this.my_poll_timestamp = 0
     this.my_object_timestamp = 0
-    Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
+    // Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
     this.last_load_time = {};
 
     if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0){
@@ -23198,8 +23198,21 @@ class App extends Component {
     const E52_address = contract_addresses[1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    
+    const H5contractArtifact = require('./contract_abis/H5.json');
+    const H5_address = contract_addresses[5];
+    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const G5contractArtifact = require('./contract_abis/G5.json');
+    const G5_address = contract_addresses[3];
+    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+    const G52contractArtifact = require('./contract_abis/G52.json');
+    const G52_address = contract_addresses[4];
+    const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
     /* ---------------------------------------- ACCOUNT DATA ------------------------------------------- */
     var accounts = await contractInstance.methods.f167([],[address_account.address], 2).call();
@@ -23225,6 +23238,25 @@ class App extends Component {
     if(is_syncing){
       this.inc_synch_progress()
     }
+
+
+
+
+     /* ---------------------------------------- TOKEN DATA --------------------------------------- */
+    // var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
+    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [])
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+    /* ---------------------------------------- JOB DATA ------------------------------------------- */
+    // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
+    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, [])
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
 
 
 
@@ -23438,7 +23470,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ALIAS DATA------------------------------------------- */
-    this.get_alias_data(E52contractInstance, e5, account, web3, all_basic_events[12]);
+    if(is_syncing) this.get_alias_data(E52contractInstance, e5, account, web3, all_basic_events[12]);
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -23511,13 +23543,8 @@ class App extends Component {
 
 
     /* ---------------------------------------- CONTRACT DATA ------------------------------------------- */
-    const G5contractArtifact = require('./contract_abis/G5.json');
-    const G5_address = contract_addresses[3];
-    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+    
 
-    const G52contractArtifact = require('./contract_abis/G52.json');
-    const G52_address = contract_addresses[4];
-    const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
     this.load_main_contracts(e5)
     // this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance)
@@ -23538,30 +23565,7 @@ class App extends Component {
 
 
 
-    /* ---------------------------------------- TOKEN DATA ------------------------------------------- */
-    const H5contractArtifact = require('./contract_abis/H5.json');
-    const H5_address = contract_addresses[5];
-    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
-
-    const H52contractArtifact = require('./contract_abis/H52.json');
-    const H52_address = contract_addresses[6];
-    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
-
-    
-    // var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
-    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [])
-    // if(is_syncing){
-    //   this.inc_synch_progress()
-    // }
-
-
-
-    /* ---------------------------------------- JOB DATA ------------------------------------------- */
-    // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
-    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, [])
-    // if(is_syncing){
-    //   this.inc_synch_progress()
-    // }
+   
 
 
     /* ---------------------------------------- POST DATA ------------------------------------------- */
@@ -23804,7 +23808,7 @@ class App extends Component {
   }
   
   get_contacts_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var contacts_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:1})
 
     if(contacts_data.length > 0){
@@ -23848,7 +23852,7 @@ class App extends Component {
   }
 
   get_blocked_accounts_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var blocked_contacts_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:2})
 
     if(blocked_contacts_data.length > 0){
@@ -23884,7 +23888,7 @@ class App extends Component {
   }
 
   get_section_tags_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    // if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var section_tags_data_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:3})
 
     if(section_tags_data_events.length != 0){
@@ -23931,7 +23935,7 @@ class App extends Component {
   }
 
   // get_my_token_ids = async (web3, contractInstance, e5, account) => {
-  //   if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return [];
+  //   if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return [];
   //   var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */, p3/* sender_account_id */:account})
   //   var ids = []
   //   created_token_events.forEach(event => {
@@ -23942,7 +23946,7 @@ class App extends Component {
   // }
 
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var section_cid_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
     var loaded_target = 0
     if(section_cid_data_events.length != 0){
@@ -24278,7 +24282,7 @@ class App extends Component {
   }
 
   get_my_collection_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var my_acquired_album_data_events = pre_loaded_events != null ? pre_loaded_events :  await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:5})
 
     if(my_acquired_album_data_events.length > 0){
@@ -24308,7 +24312,7 @@ class App extends Component {
   }
 
   get_my_playlists_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var playlists_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:6})
 
     if(playlists_event_data.length > 0){
@@ -24351,7 +24355,7 @@ class App extends Component {
   }
 
   get_my_plays_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var plays_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:7})
 
     if(plays_event_data.length > 0){
@@ -24393,7 +24397,7 @@ class App extends Component {
   }
 
   get_my_videos_data = async (web3, E52contractInstance, e5, account, address_account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var my_acquired_videos_data_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:11})
 
     if(my_acquired_videos_data_events.length > 0){
@@ -24481,7 +24485,7 @@ class App extends Component {
   }
 
   load_my_blocked_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var my_blocked_posts_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:9})
 
     if(my_blocked_posts_event_data.length > 0){
@@ -24567,7 +24571,7 @@ class App extends Component {
   }
 
   load_my_censored_keywords = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var my_censored_keywords_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:10})
 
     if(my_censored_keywords_event_data.length > 0){
@@ -24677,7 +24681,7 @@ class App extends Component {
   }
 
   load_my_promoted_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var my_promoted_posts_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12})
 
     if(my_promoted_posts_event_data.length > 0){
@@ -24775,7 +24779,7 @@ class App extends Component {
   }
 
   load_my_participated_channel_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var channel_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:14})
 
     if(channel_event_data.length > 0){
@@ -24796,7 +24800,7 @@ class App extends Component {
   }
 
   load_my_participated_poll_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var poll_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:15})
 
     if(poll_event_data.length > 0){
@@ -24817,7 +24821,7 @@ class App extends Component {
   }
 
   load_my_participated_object_ids = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:16})
 
     if(object_event_data.length > 0){
@@ -24838,7 +24842,7 @@ class App extends Component {
   }
 
   load_my_channel_file_records = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     const object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p2/* sender_acc_id */:account})
 
     var loaded_target = 0
@@ -24872,7 +24876,7 @@ class App extends Component {
   }
 
   load_my_file_renewal_records = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     const object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17})
 
     if(object_event_data.length > 0){
@@ -27346,7 +27350,7 @@ class App extends Component {
 
 
   load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var created_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
 
     var my_sent_bill_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p2/* sender_acc_id */:account})
@@ -27889,13 +27893,15 @@ class App extends Component {
   }
 
   get_all_mail_data = async (E52contractInstance, e5, account, web3, specific_items) => {
-    if(this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] != 1) return;
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     
     const all_events = await this.load_mail_events(E52contractInstance, e5, account, web3)
     const my_received_mail_events = all_events.my_received_mail_events;
     const my_created_mail_events = all_events.my_created_mail_events;
     const my_received_message_events = all_events.my_received_message_events;
     const my_created_message_events = all_events.my_created_message_events;
+
+    console.log('apppage', 'get_all_mail_data', 'created mail', my_created_mail_events)
 
     const all_my_messages = my_received_message_events.concat(my_created_message_events)
     const message_event_array = {}
@@ -27911,7 +27917,7 @@ class App extends Component {
       }
     });
 
-    var all_my_mail_events = my_received_mail_events.concat(my_created_mail_events)
+    var all_my_mail_events = my_received_mail_events.reverse().concat(my_created_mail_events.reverse())
 
     if(specific_items != null && specific_items.length > 0){
       var my_events = all_my_mail_events.filter(function (event) {
@@ -32413,7 +32419,7 @@ class App extends Component {
     var hashes = []
     var valid_ids = []
     var obj_types = {}
-    // console.log('apppage', 'all events length', all_events.length)
+    console.log('apppage', 'all events length', all_events, all_events_data)
 
     for(var i=0; i<all_events.length; i++){
       var objects_event = all_events[i]
@@ -32707,7 +32713,7 @@ class App extends Component {
 
 
   store_data_in_arweave_storage = async (_data, unencrypt_image, tags_obj) => {
-    var final_data = unencrypt_image ? _data: this.encrypt_storage_object(_data, tags_obj)
+    var final_data = unencrypt_image ? _data: await this.encrypt_storage_object(_data, tags_obj)
     var wallet_data = this.state.coin_data['AR']
     if(wallet_data != null){
       const wallet = wallet_data['wallet']
@@ -32787,7 +32793,7 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['1593db']/* 'Please wait a few moments for your selected node to come online.' */, 5000)
       return '';
     }
-    var data = this.encrypt_storage_object(_data, tags_obj)
+    var data = await this.encrypt_storage_object(_data, tags_obj)
     var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
     if(block_hash_and_signature == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
@@ -32877,6 +32883,7 @@ class App extends Component {
       return return_data
     }
     catch(e){
+      console.log('apppage', 'get_object_messages', e)
       if(depth < 3){
         return await this.fetch_data_from_nitro(cid, depth+1)
       }
@@ -32887,8 +32894,8 @@ class App extends Component {
 
 
   store_data_in_infura = async (_data, unencrypt_image, tags_obj) => {
-    var data = unencrypt_image ? _data: this.encrypt_storage_object(_data, tags_obj)
-    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
+    var data = unencrypt_image ? _data: await this.encrypt_storage_object(_data, tags_obj)
+    var data = unencrypt_image ? _data: (tags_obj != null ? await this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
 
     const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
     const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
@@ -32915,7 +32922,7 @@ class App extends Component {
   }
 
   store_data_in_infura2 = async (_data, unencrypt_image, tags_obj) => {
-    var data = unencrypt_image ? _data: (tags_obj != null ? this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
+    var data = unencrypt_image ? _data: (tags_obj != null ? await this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
     
     const obj = { data: data }
     const final_data = JSON.stringify(obj)
@@ -34554,7 +34561,7 @@ class App extends Component {
 
 
   encrypt_secure_data = async(text, password, ready_made_key) => {
-    const iv   = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
     const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
     const encoder = new TextEncoder();
     const encoded = encoder.encode(text);
@@ -34574,7 +34581,7 @@ class App extends Component {
 
   decrypt_secure_data = async (encrypted, password, ready_made_key) => {
     const data = this.base64ToUint8(encrypted);
-    const iv   = data.slice(0, 12);
+    const iv = data.slice(0, 12);
     const ciphertext = data.slice(12);
 
     const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
@@ -34962,7 +34969,7 @@ class App extends Component {
   }
 
   encrypt_data_object = async (tx, key) => {
-    return await this.encrypt_secure_data(tx, key);
+    return await this.encrypt_secure_data(JSON.stringify(tx), key);
     // var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
     // return ciphertext
   }
@@ -35054,7 +35061,7 @@ class App extends Component {
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     const key_data = await this.generate_my_box_keys(hash);
     const user_key_data = key_data.keypair
-    const string = this.encrypt_data_with_specified_targets_public_key(key, pub_key_hash, user_key_data, true)
+    const string = this.encrypt_data_with_specified_targets_public_key(key, pub_key_hash, user_key_data, false)
     return string
 
     // const encrypted_data = (await ecies.encrypt(pub_key_hash, Buffer.from(key)))
@@ -35073,25 +35080,32 @@ class App extends Component {
     }
 
     try{
+      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'encrypted_ipfs_obj', encrypted_ipfs_obj)
       var my_uniquie_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'my_uniquie_crosschain_identifier', my_uniquie_crosschain_identifier)
       var encrypted_key = encrypted_ipfs_obj['recipient_data'][my_uniquie_crosschain_identifier]
+      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'encrypted_key', encrypted_key)
       if(encrypted_key == null){
         return null;
       }
       var my_key = ''
       if(encrypted_ipfs_obj['encryptor_pub_key'] != null){
-        my_key = this.decrypt_encrypted_key_with_my_public_key(encrypted_key, e5, encrypted_ipfs_obj['encryptor_pub_key'])
+        my_key = await this.decrypt_encrypted_key_with_my_public_key(encrypted_key, e5, encrypted_ipfs_obj['encryptor_pub_key'])
+        console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'decrypted key', my_key)
       }else{
         var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
         my_key = await ecies.decrypt(private_key_to_use, uint8array)
       }
       
       var encrypted_object = encrypted_ipfs_obj['obj']
-      var bytes = CryptoJS.AES.decrypt(encrypted_object, my_key.toString());
-      var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      // var bytes = CryptoJS.AES.decrypt(encrypted_object, my_key.toString());
+      // var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      // return JSON.parse(originalText);
+      var originalText = await this.decrypt_data_string(encrypted_object, my_key)
+      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'originalText', originalText)
       return JSON.parse(originalText);
     }catch(e){
-      console.log(e)
+      console.log('apppage', 'fetch_and_decrypt_ipfs_object', e)
       return null
     }
     
@@ -35100,7 +35114,7 @@ class App extends Component {
 
   encrypt_nitro_node_key_with_my_public_key = async (key) => {
     var uint8array = await this.get_account_raw_public_key()
-    var encrypted_key = this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(uint8array))
+    var encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(uint8array))
     return { 'encrypted_key': encrypted_key, 'encryptor_pub_key': this.uint8ToBase64(uint8array)}
   }
 
@@ -35153,6 +35167,7 @@ class App extends Component {
     }
     var messages = []
     var is_first_time = this.state.object_messages[id] == null ? true: false
+    console.log('apppage', 'get_object_messages', 'loaded', all_object_comment_events)
     for(var j=0; j<all_object_comment_events.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
       if(ipfs_message != null){
@@ -35164,6 +35179,7 @@ class App extends Component {
           var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], key_used.toString())
           ipfs_message = JSON.parse(JSON.parse(originalText));
         }
+
         ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
 
@@ -35177,7 +35193,8 @@ class App extends Component {
           this.setState({object_messages: clone})
           // await this.wait(150)
         }
-        
+      }else{
+        console.log('apppage', 'get_object_messages', 'unable to load data for specific comment', all_object_comment_events[j])
       }
       if(j == loaded_target && j+1 >= all_object_comment_events.length){
         await this.wait(3000)

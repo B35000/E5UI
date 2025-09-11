@@ -172,7 +172,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [5]
             ],
         };
     }
@@ -1835,7 +1835,7 @@ class StackPage extends Component {
         var button_opacity = is_running == true ? 0.4 : 1.0
         var button_text = is_running == true ? this.props.app_state.loc['1593cs']/* 'Running...' */ : (this.props.app_state.loc['1456']/* 'Run ' */+this.props.app_state.selected_e5+this.props.app_state.loc['1457']/* ' Transactions' */)
 
-        var estimated_gas_consumption_proportion = ((this.estimated_gas_consumed() / this.get_e5_run_limit(this.props.app_state.selected_e5)) * 100).toFixed(2);
+        var estimated_gas_consumption_proportion = ((parseFloat(this.estimated_gas_consumed()) * 100) / parseFloat(this.get_e5_run_limit(this.props.app_state.selected_e5)));
         estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion
         return(
             <div>
@@ -1924,19 +1924,45 @@ class StackPage extends Component {
         }
         var contract_data = this.props.app_state.created_contract_mapping[e5][2]['data'];
         var contract_config = contract_data[1]
-        return contract_config[11]
+        var e5_gas_limit = contract_config[11]
+        var block_gas_limit = this.get_gas_limit(e5)
+        if(bigInt(block_gas_limit).lesser(e5_gas_limit)){
+            return block_gas_limit
+        }
+        return e5_gas_limit
+    }
 
+    get_latest_block_data(e5){
+        if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
+            return {}
+        }
+        return this.props.app_state.last_blocks[e5][0];
+    }
+
+    get_gas_limit(e5){
+        try{
+            return this.get_latest_block_data(e5).gasLimit || 2_300_000
+        }catch(e){
+            // console.log(e)
+            return 0
+        }
     }
 
     render_message_if_calculating_stack_gas_figures(){
         if(this.state.is_calculating_stack[this.props.app_state.selected_e5] == true){
             return(
-                <div>
+                <div onClick={() => this.reset_calculating_gas_setting()}>
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1593gs']/* 'Calculating your next runs gas figures...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                     <div style={{height:10}}/>
                 </div>
             )
         }
+    }
+
+    reset_calculating_gas_setting(){
+        var clone = structuredClone(this.state.is_calculating_stack)
+        clone[this.props.app_state.selected_e5] = false
+        this.setState({is_calculating_stack: clone})
     }
 
     render_stack_run_space_utilization_if_non_zero(){
@@ -2545,7 +2571,8 @@ class StackPage extends Component {
 
     open_confirmation_bottomsheet(silently){
         var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
-        var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
+        var default_gas_limit = this.estimated_gas_consumed() != 0 ? this.estimated_gas_consumed() + 72_000 : 2_300_000
+        var run_gas_limit = this.state.run_gas_limit == 0 ? default_gas_limit : this.state.run_gas_limit
         var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
 
@@ -3379,7 +3406,7 @@ class StackPage extends Component {
 
                     const participated_objects = []
                     for(var c=0; c<txs[i].messages_to_deliver.length; c++){
-                        var object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        var object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+txs[i].messages_to_deliver[c]['id']
                         if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
                     }
 
@@ -3429,7 +3456,7 @@ class StackPage extends Component {
 
                     const participated_objects = []
                     for(var c=0; c<txs[i].messages_to_deliver.length; c++){
-                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+txs[i].messages_to_deliver[c]['id']
                         if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
                     }
 
@@ -3563,7 +3590,7 @@ class StackPage extends Component {
 
                     const participated_objects = []
                     for(var c=0; c<txs[i].messages_to_deliver.length; c++){
-                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+txs[i].messages_to_deliver[c]['id']
                         if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
                     }
 
@@ -3592,7 +3619,7 @@ class StackPage extends Component {
 
                     const participated_objects = []
                     for(var c=0; c<txs[i].messages_to_deliver.length; c++){
-                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+txs[i].messages_to_deliver[c]['id']
                         if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
                     }
 
@@ -3839,7 +3866,7 @@ class StackPage extends Component {
 
                     const participated_objects = []
                     for(var c=0; c<txs[i].messages_to_deliver.length; c++){
-                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+txs[i].messages_to_deliver[c]['id']
                         if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
                     }
 
@@ -3902,7 +3929,7 @@ class StackPage extends Component {
 
                     const participated_objects = []
                     for(var c=0; c<txs[i].messages_to_deliver.length; c++){
-                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+txs[i].messages_to_deliver[c]['id']
                         if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
                     }
 
@@ -3981,7 +4008,7 @@ class StackPage extends Component {
 
                     const participated_objects = []
                     for(var c=0; c<txs[i].messages_to_deliver.length; c++){
-                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+t.messages_to_deliver[c]['id']
+                        const object_e5_id = txs[i].messages_to_deliver[c]['e5']+':'+txs[i].messages_to_deliver[c]['id']
                         if(!participated_objects.includes(object_e5_id)) participated_objects.push(object_e5_id);
                     }
 
@@ -4343,6 +4370,7 @@ class StackPage extends Component {
 
         const runs = this.props.app_state.E5_runs[e5] == null ? [] : this.props.app_state.E5_runs[e5]
         if(runs.length == 0 || parseInt(runs[runs.length -1].returnValues.p8/* timestamp */) < 1757414035){
+            console.log('stack_page', 'staging public key emission transaction!')
             //if its the first time running a transaction
             const obj = [ /* set data */
                 [20000, 13, 0],
@@ -4786,7 +4814,8 @@ class StackPage extends Component {
 
 
         var account_balance = this.props.app_state.account_balance[e5]
-        var run_gas_limit = this.state.run_gas_limit == 0 ? this.get_e5_run_limit(e5) : this.state.run_gas_limit
+        var default_gas_limit = this.estimated_gas_consumed() != 0 ? this.estimated_gas_consumed() + 72_000 : 2_300_000
+        var run_gas_limit = this.state.run_gas_limit == 0 ? default_gas_limit : this.state.run_gas_limit
         // var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[e5] : this.state.run_gas_price
         var run_gas_price = this.get_gas_price()
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*5/* 5 hours */) : this.state.run_time_expiry

@@ -58,7 +58,7 @@ function number_with_commas(x) {
 class NewMailPage extends Component {
     
     state = {
-        selected: 0,
+        selected: 0, object_type:10,
         id: makeid(8), type:this.props.app_state.loc['285'], e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* i copypasted these! sue me  */
         // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
@@ -297,6 +297,10 @@ class NewMailPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -307,6 +311,8 @@ class NewMailPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6">
+                        {this.render_title_tags_part2()}
+                        <div style={{height:10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -320,6 +326,8 @@ class NewMailPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part2()}
+                        <div style={{height:10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -388,16 +396,18 @@ class NewMailPage extends Component {
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
 
+            </div>
+        )
+    }
+
+    render_title_tags_part2(){
+        return(
+            <div>
                 {this.render_previous_edits_if_existing()}
 
-
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -487,6 +497,28 @@ class NewMailPage extends Component {
                 </div>
             )
         }
+    }
+
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return 'e0'
+        }
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
+        }
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
     }
 
     render_impact_value(object_data){
@@ -587,9 +619,11 @@ class NewMailPage extends Component {
             return;
         }
         const items = this.sort_items(unfiltered_items, previous_edits)
+        if(items.length == 0){
+            return;
+        }
         return(
             <div>
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ds']/* 'Set to previous changes.' */, 'details':this.props.app_state.loc['a311dt']/* 'You can continue where you left off in a pevious edit.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -601,6 +635,7 @@ class NewMailPage extends Component {
                         ))}
                     </ul>
                 </div>
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -618,7 +653,7 @@ class NewMailPage extends Component {
 
     render_previous_edit_item(data){
         const title = this.truncate(data.entered_title_text, 17);
-        const details = (new Date(data.last_modified))+''
+        const details = (new Date(data.last_modified)).toLocaleString()+''
         return(
             <div onClick={() => this.when_previous_edit_tapped(data)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}

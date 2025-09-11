@@ -6963,7 +6963,7 @@ class home_page extends Component {
 
 
     render_stack_gas_figure(){
-        var estimated_gas_consumption_proportion = ((this.estimated_gas_consumed() / this.get_e5_run_limit(this.props.app_state.selected_e5)) * 100).toFixed(2);
+        var estimated_gas_consumption_proportion = ((this.estimated_gas_consumed() / this.get_e5_run_limit(this.props.app_state.selected_e5)) * 100);
         estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion;
         
         return(
@@ -6986,8 +6986,28 @@ class home_page extends Component {
         }
         var contract_data = this.props.app_state.created_contract_mapping[e5][2]['data'];
         var contract_config = contract_data[1]
-        return contract_config[11]
+        var e5_gas_limit = contract_config[11]
+        var block_gas_limit = this.get_gas_limit(e5)
+        if(bigInt(block_gas_limit).lesser(e5_gas_limit)){
+            return block_gas_limit
+        }
+        return e5_gas_limit
+    }
 
+    get_latest_block_data(e5){
+        if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
+            return {}
+        }
+        return this.props.app_state.last_blocks[e5][0];
+    }
+
+    get_gas_limit(e5){
+        try{
+            return this.get_latest_block_data(e5).gasLimit || 2_300_000
+        }catch(e){
+            // console.log(e)
+            return 0
+        }
     }
 
     calculate_wallet_impact_figure(){
