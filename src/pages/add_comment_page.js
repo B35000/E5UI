@@ -610,7 +610,7 @@ class AddCommentPage extends Component {
         const accepted = ['channel', 'mail', 'post']
         if(!accepted.includes(this.state.page)) return;
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', width: '99%'}}>
+            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 10px','padding': '0px 0px 0px 0px', width: '99%'}}>
                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
                     <img alt="" src={this.props.app_state.static_assets['music_label']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('audio', 'create_audio_pick_audio_file', 10**16)}/>
                 </div>

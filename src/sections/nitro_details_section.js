@@ -128,7 +128,7 @@ class NitroDetailsSection extends Component {
             var object = this.get_item_in_array(this.get_nitro_items(), this.props.selected_nitro_item);
 
             if(object == null || object['ipfs'] == null) return;
-            this.props.get_objects_messages(object['id'],  object['e5'])
+            this.props.get_objects_messages(object['id'], object['e5'])
             this.props.load_nitro_node_details(object, true)
             this.props.load_my_account_storage_info(object)
             this.props.get_nitro_purchases(object)
@@ -1879,7 +1879,7 @@ class NitroDetailsSection extends Component {
         var stack = this.props.app_state.stack_items
         var stacked_items = []
         for(var i=0; i<stack.length; i++){
-            if(stack[i].type == this.props.app_state.loc['1593ct']/* 'video-messages' */){
+            if(stack[i].type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */){
                 for(var e=0; e<stack[i].messages_to_deliver.length; e++){
                     var message_obj = stack[i].messages_to_deliver[e]
                     if(message_obj['id'] == convo_id){

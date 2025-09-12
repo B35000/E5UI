@@ -899,27 +899,28 @@ class EthersDetailsSection extends Component {
     }
 
     get_transaction_count_data_points(e5){
-        var xVal = 1, yVal = 0;
-        var dps = [];
-        var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 : this.props.app_state.last_blocks[e5].length;
-        for(var i = noOfDps-1; i >= 0; i--) {
-            if(this.props.app_state.last_blocks[e5][i] != null){
-                var transaction_count = this.props.app_state.last_blocks[e5][i].transactions.length;
-                yVal = transaction_count;
-                if(yVal != null){
-                    if(i%20 == 0 && i != 0){
-                        dps.push({x: xVal,y: yVal, indexLabel: ""+transaction_count});//
-                    }else{
-                        dps.push({x: xVal,y: yVal});//
-                    }
-                }
+        return [];
+        // var xVal = 1, yVal = 0;
+        // var dps = [];
+        // var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 : this.props.app_state.last_blocks[e5].length;
+        // for(var i = noOfDps-1; i >= 0; i--) {
+        //     if(this.props.app_state.last_blocks[e5][i] != null){
+        //         var transaction_count = this.props.app_state.last_blocks[e5][i].transactions.length;
+        //         yVal = transaction_count;
+        //         if(yVal != null){
+        //             if(i%20 == 0 && i != 0){
+        //                 dps.push({x: xVal,y: yVal, indexLabel: ""+transaction_count});//
+        //             }else{
+        //                 dps.push({x: xVal,y: yVal});//
+        //             }
+        //         }
                 
-            }
+        //     }
             
-            xVal++;
-        }
+        //     xVal++;
+        // }
 
-        return dps;
+        // return dps;
     }   
 
     get_highest_gas_figure(e5){

@@ -7070,7 +7070,7 @@ class StackPage extends Component {
             var context = this.props.app_state.selected_e5 == t.messages_to_deliver[i]['e5'] ? 32 : 33
             var int_data = t.messages_to_deliver[i].convo_id
 
-            var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t.messages_to_deliver[i], t.messages_to_deliver[i]['recipient']), calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
+            var string_data = await this.get_object_ipfs_index('', calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(recipient_account)
             obj[2].push(23)
@@ -12192,7 +12192,7 @@ class StackPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <div style={{'margin':'3px 0px 3px 0px'}}>
-                                {this.render_notification_item(item, index)}
+                                {this.render_targeted_notification_item(item, index)}
                             </div>
                         ))}
                     </ul>
@@ -12228,7 +12228,7 @@ class StackPage extends Component {
         return this.sortByAttributeDescending(all_events, 'time')
     }
 
-    render_notification_item(item, index){
+    render_targeted_notification_item(item, index){
        const explore_types = ['bag', 'bag_application_response', 'storefront', 'comment', 'auctionbids']
        const token_type = ['token', 'bill_request']
        const work_type = ['mail', 'message', 'proposal', 'job_application', 'job_request', 'job_application_response', 'job_request_response', 'contract']
@@ -13247,7 +13247,7 @@ class StackPage extends Component {
         else if(node_details == 'unavailable'){
             return(
                 <div>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527v']/* 'Your account doesnt exist in the node.' */})}
+                    {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527v']'Your account doesnt exist in the node.'})} */}
                 </div>
             )
         }
@@ -13902,7 +13902,7 @@ class StackPage extends Component {
                     // reader.readAsDataURL(imageFile);
                     const encrypted_file_data = await this.encrypt_singular_file(imageFile,password, 'e')
                     const size = this.props.get_encrypted_file_size_from_uintarray(encrypted_file_data)
-                    const compressed_image = this.compressImageFromFile(URL.createObjectURL(imageFile))
+                    const compressed_image = await this.compressImageFromFile(URL.createObjectURL(imageFile))
                     
                     const obj = {
                         'data':this.props.process_encrypted_file(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':'', 'nitro':selected_nitro_item, 'binary_size':size, 'encrypted':true, 'extension':extension, 'thumbnail':await this.props.encrypt_data_string(compressed_image, password), 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)

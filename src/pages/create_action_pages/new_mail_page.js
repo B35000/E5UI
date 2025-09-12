@@ -2251,8 +2251,7 @@ return data['data']
     }
 
     get_suggested_accounts(){
-        return[
-        ].concat(this.get_account_suggestions())
+        return this.get_account_suggestions()
     }
 
     get_account_suggestions(){
@@ -2296,7 +2295,7 @@ return data['data']
         const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[e5][account_id]
-            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+            if(!added_aliases.includes(alias) && alias.toLowerCase().startsWith(typed_name.toLowerCase())){
                 aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
             }
         });
@@ -2345,7 +2344,7 @@ return data['data']
     }
 
     when_suggestion_clicked(item){
-        this.setState({target_recipient: item['id']})
+        this.setState({target_recipient: item['details']})
     }
 
 

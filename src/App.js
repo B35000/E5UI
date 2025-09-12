@@ -695,7 +695,7 @@ const arweave = Arweave.init();
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 var bigInt = require("big-integer");
-var primary_following = []
+var primary_following = ['E25:1002']
 const root_e5 = 'E25'
 const root_account = 1002
 const default_nitro_option = '1479E25'
@@ -1901,7 +1901,7 @@ class App extends Component {
       this.get_token('ELV', 'Eluv.io', 'E745'),
       this.get_token('ETHO', 'Etho Protocol', 'E755'),
       this.get_token('OLT', 'One Ledger', 'E765'),
-      this.get_token('HBAR', 'Hedera Hashgraph', 'E775', true),
+      this.get_token('HBAR', 'Hedera Hashgraph', 'E775'),
       this.get_token('IOTA', 'IOTA EVM', 'E785'),
       this.get_token('KAIA', 'KAIA', 'E795'),
       this.get_token('S', 'Sonic', 'E805'),
@@ -7320,7 +7320,7 @@ class App extends Component {
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
-      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)}
+      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)}
       
       />
     )
@@ -16092,6 +16092,10 @@ class App extends Component {
     // const encrypted_nitro_privacy_signature = target_data_to_encrypt == null ? target_data : await this.encrypt_data_string(target_data, user_temp_encryption_key)
     const encrypted_nitro_privacy_signature = await this.encrypt_data_string(target_data, user_temp_encryption_key)
 
+    if(target_data_to_encrypt != null){
+      return encodeURIComponent(encrypted_nitro_privacy_signature)
+    }
+
     return encodeURIComponent(user_temp_hash+'|'+encrypted_nitro_privacy_signature);
   }
 
@@ -17493,27 +17497,53 @@ class App extends Component {
 
   load_decrypted_image_file = async (image) => {
     const url = await this.construct_encrypted_link_from_ecid(image, 'image', 'full_image')
+    console.log('apppage', 'load_decrypted_image_file', 'loading link', image)
     try {
       // Fetch the image as a blob
-      const response = await fetch(encodeURI(url));
+      const response = await fetch(url);
       if (!response.ok) {
-        throw new Error("Failed to fetch zip");
+        console.log('apppage', 'load_decrypted_image_file', response)
+        throw new Error("Failed to fetch image");
       }
+      // console.log('apppage', 'load_decrypted_image_file', 'loaded data', await response.text())
+      // return null;
       const buffer = await response.arrayBuffer()
       const password_mimetype_data = this.fetch_encrypted_files_password(image)
       const password = password_mimetype_data.password
       const mime_type = password_mimetype_data.mime_type
-      const is_file_valid = await this.is_supplied_file_valid(buffer, this.get_file_hash(image))
+      const data_as_uint_array = new Uint8Array(buffer)
+      const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, this.get_file_hash(image))
       if(is_file_valid == false){
+        console.log('apppage', 'load_decrypted_image_file', 'file failed validation test')
         return null
       }
-      const data_as_uint_array = new Uint8Array(buffer)
       const image_url = await this.decryptFile(data_as_uint_array, password, mime_type, 'e')
       return image_url
     } catch (error) {
       console.error("Error downloading the image:", error);
     }
   }
+
+  get_valid_data_hash_from_uint_8_array = async (data) => {
+    let uint8;
+
+    if (data instanceof ArrayBuffer) {
+      uint8 = new Uint8Array(data);
+    } 
+    else if (ArrayBuffer.isView(data)) { // covers Buffer, Uint8Array, etc.
+      uint8 = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+    } 
+    else {
+      throw new Error("Unsupported data type for hashing");
+    }
+
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', uint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+
+    return hashHex.substring(0, 64);
+  }
+
 
   construct_encrypted_link_from_ecid = async (ecid, type, id) => {
     if(!ecid.startsWith(type)) return ecid
@@ -17529,14 +17559,15 @@ class App extends Component {
     const nitro_url = data['data_deconstructed'][0]
     const content_type = data['data_deconstructed'][1]
     const nitro_cid2 = data['data_deconstructed'][2]
-    const file = nitro_cid2+'.'+content_type
-    
-    raw_link.replace(
-      `/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, 
-      `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
-    );
+    const file = nitro_cid2/* +'.'+content_type */
 
-    return raw_link
+    return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
+    
+    // raw_link.replace(
+    //   `/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, 
+    //   `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
+    // );
+    // return raw_link
   }
 
   get_image_from_file(ecid){
@@ -17722,11 +17753,11 @@ class App extends Component {
       const password_mimetype_data = this.fetch_encrypted_files_password(zip)
       const password = password_mimetype_data.password
       const mime_type = password_mimetype_data.mime_type
-      const is_file_valid = await this.is_supplied_file_valid(buffer, this.get_file_hash(zip))
+      const data_as_uint_array = new Uint8Array(buffer)
+      const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, this.get_file_hash(zip))
       if(is_file_valid == false){
         return null
       }
-      const data_as_uint_array = new Uint8Array(buffer)
       const zip_url = await this.decryptFile(data_as_uint_array, password, mime_type, 'e')
       if(zip_url != null){
         this.download_encrypted_zip_from_url(zip_url, name)
@@ -17865,11 +17896,11 @@ class App extends Component {
       const password_mimetype_data = this.fetch_encrypted_files_password(pdf)
       const password = password_mimetype_data.password
       const mime_type = password_mimetype_data.mime_type
-      const is_file_valid = await this.is_supplied_file_valid(buffer, this.get_file_hash(pdf))
+      const data_as_uint_array = new Uint8Array(buffer)
+      const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, this.get_file_hash(pdf))
       if(is_file_valid == false){
         return null
       }
-      const data_as_uint_array = new Uint8Array(buffer)
       const pdf_url = await this.decryptFile(data_as_uint_array, password, mime_type, 'e')
       return pdf_url
     } catch (error) {
@@ -17949,12 +17980,17 @@ class App extends Component {
   }
 
   get_file_hash(ecid){
-    if(!ecid.startsWith('pdf')) return null
-    var ecid_obj = this.get_cid_split2(ecid)
-    if(this.state.uploaded_data[ecid_obj['filetype']] == null) return
-    var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-    if(data == null) return
-    return data['hash']
+    try{
+      var ecid_obj = this.get_cid_split2(ecid)
+      if(this.state.uploaded_data[ecid_obj['filetype']] == null) return
+      var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+      if(data == null) return
+      return data['hash']
+    }catch(e){
+      console.log(e)
+      return null
+    }
+    
   }
 
   get_name_of_file(ecid){
@@ -25833,7 +25869,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3)}],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
       created_subscription_events = all_events[0]
       my_paid_subscription_events = all_events[1]
@@ -26076,7 +26112,7 @@ class App extends Component {
           [web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */:id}],
           [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */}],
         ]
-        var all_events = await this.load_multiple_events_from_nitro(event_params)
+        var { all_events } = await this.load_multiple_events_from_nitro(event_params)
         payment_history_events = all_events[0]
         all_payment_history_events = all_events[1]
         all_subscription_modification_events = all_events[2]
@@ -26087,7 +26123,7 @@ class App extends Component {
           [web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */:id}],
           [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */}],
         ]
-        var all_events = await this.load_multiple_events_from_nitro(event_params)
+        var { all_events } = await this.load_multiple_events_from_nitro(event_params)
         payment_history_events = all_events[0]
         all_subscription_modification_events = all_events[1]
         moderator_data = all_events[2]
@@ -26243,7 +26279,7 @@ class App extends Component {
         [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3}],
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
       created_contract_events = all_events[0]
       entered_contract_events = all_events[1]
@@ -27295,7 +27331,7 @@ class App extends Component {
         [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
         [web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2/* depth_auth_mint */}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       received_tokens_event_data = all_events[0]
       update_balance_event_data = all_events[1]
       stack_depth_swap_event_data = all_events[2]
@@ -27994,7 +28030,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:32}],
         [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:33}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       const my_received_mail_events = (all_events[0]).concat(all_events[1])
       const my_created_mail_events = (all_events[2]).concat(all_events[3])
       const my_received_message_events = (all_events[4]).concat(all_events[5])
@@ -28906,7 +28942,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:23, p2/* sender_acc_id */:account}],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       created_nitro_events = all_events[0]
       bought_nitro_events = all_events[1]
       paid_subscription_events = all_events[2]
@@ -29018,6 +29054,7 @@ class App extends Component {
             keys[ecid] = key_object[ecid]
           });
           if(nitro_data.album_art != null && nitro_data.album_art.startsWith('image')) {
+            // console.log('apppage', 'get_nitro_data', nitro_data.album_art, keys)
             this.fetch_uploaded_data_from_ipfs([nitro_data.album_art], false, keys)
           }
 
@@ -29190,7 +29227,7 @@ class App extends Component {
       //   /* 19 */[web3, E52contractInstance, 'e2', e5, {}],
       // ]
 
-      // var all_events = await this.load_multiple_events_from_nitro(event_params)
+      // var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       // var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12], 'poll':all_events[18], 'all_indexed_events':all_events[19]}
 
       // var all_data_clone = structuredClone(this.state.all_data)
@@ -29208,7 +29245,7 @@ class App extends Component {
         [web3, H52contractInstance, 'e1', e5, {}],/* transfer */
       ]
 
-      var all_events = await this.load_multiple_events_from_nitro(event_params2)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params2)
 
       var obj = {'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'post':[], 'channel':[], 'job':[], 'store':[], 'bag':[], 'contractor':[], 'data':all_events[2], 'metadata':all_events[3], 'withdraw':all_events[4], 'transaction':all_events[5], 'transfer':all_events[6], 'audio':[], 'video':[], 'nitro':[], 'poll':[], 'all_indexed_events':all_events[1]}
 
@@ -29341,14 +29378,12 @@ class App extends Component {
     var return_array = []
     var return_obj = {}
     for(var i=0; i<event_request_batches.length; i++){
-      var { events, event_data } = await this.load_muliple_batch_events_from_nitro(event_request_batches[i], beacon_node, p)
+      const { events, event_data } = await this.load_muliple_batch_events_from_nitro(event_request_batches[i], beacon_node, p)
       return_array = return_array.concat(events)
       Object.assign(return_obj, event_data);
     }
-    if(p != null){
-      return { all_events: return_array, all_events_data: return_obj }
-    }
-    return return_array;
+    
+    return { all_events: return_array, all_events_data: return_obj };
   }
 
   load_muliple_batch_events_from_nitro = async (event_requests, beacon_node, p) => {
@@ -29364,11 +29399,12 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
-      console.log('apppage', 'gotten return data from nitro: ', obj)
+      console.log('apppage', 'get_object_comment_events', 'gotten return data from nitro: ', obj)
       return { events: obj['data'], event_data: obj['hash_data'] }
     }
     catch(e){
-      return []
+      console.log('apppage', 'get_object_messages', e)
+      return { events: [], event_data: {} }
     }
   }
 
@@ -32117,7 +32153,7 @@ class App extends Component {
           used_e5s.push(focused_e5)
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index) => {
         const e5_used = used_e5s[index]
         event_array.forEach(event => {
@@ -33362,7 +33398,7 @@ class App extends Component {
           var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
           if(confirmation_hash != nitro_cid){
             console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
-            return null
+            continue;
           }
           var file_pointer_link = cid_data['data']
           if(file_pointer_link.includes('-')){
@@ -33409,13 +33445,17 @@ class App extends Component {
           }
 
           if(cid_data['encrypted'] == true){
+            console.log('apppage', 'get_nitro_data', 'file is encrypted, decrypting...')
             const file_name = await this.decrypt_data_string(cid_data['name'], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
+            console.log('apppage', 'get_nitro_data', 'obtained file name', file_name)
+
             const password = keys[search_data_cids[nitro_cid]] == 'e' ? this.hash_data_with_randomizer(file_name + cid_data['id'] + private_key) : await this.decrypt_data_string(keys[search_data_cids[nitro_cid]], process.env.REACT_APP_FILE_NAME_ENCRYPTION_KEY)
-            
+            console.log('apppage', 'get_nitro_data', 'encrypted file password', password)
             
             if(filetype == 'image'){
+              console.log('apppage', 'get_nitro_data', 'decrypting thumbnail for image...')
               const thumbnail = await this.decrypt_data_string(cid_data['thumbnail'], password)
-              cid_data['full_image'] = cid_data['data']
+              cid_data['full_image'] = cid_data['data'].slice()
               cid_data['data'] = thumbnail
             }
             else if(filetype == 'audio' || filetype == 'video' || filetype == 'pdf'){
@@ -33457,7 +33497,7 @@ class App extends Component {
       }
     }
     catch(e){
-      console.log('datas', 'error', e)
+      console.log('apppage', 'get_nitro_data', e)
       this.fetch_index[search_index]['successful']++
     }
   }
@@ -33536,11 +33576,12 @@ class App extends Component {
       }
       const buffer = await response.arrayBuffer()
       const mime_type = this.get_file_mimetype(cid_data['extension'])
-      const is_file_valid = await this.is_supplied_file_valid(buffer, cid_data['hash'])
+      const data_as_uint_array = new Uint8Array(buffer)
+      const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, cid_data['hash'])
       if(is_file_valid == false){
         return null
       }
-      const data_as_uint_array = new Uint8Array(buffer)
+      
       if(is_lyric == true){
         const plaintext = await this.decrypt_text_file(data_as_uint_array, password, mime_type, 'e', false)
         return this.parseLyric(plaintext)
@@ -33580,13 +33621,16 @@ class App extends Component {
     const nitro_url = data['data_deconstructed'][0]
     const content_type = data['data_deconstructed'][1]
     const nitro_cid2 = data['data_deconstructed'][2]
-    const file = nitro_cid2+'.'+content_type
+    const file = nitro_cid2/* +'.'+content_type */
 
     await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
-    
-    raw_link.replace(`/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`)
 
-    return raw_link
+
+    return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
+    
+    // raw_link.replace(`/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`)
+
+    // return raw_link
   }
 
   parseLyric(lrc) {
@@ -34091,7 +34135,7 @@ class App extends Component {
       }
 
       const encoded_data = file_datas[e]
-      const extension = await this.get_valid_data_hash(encoded_data, false)
+      const extension = await this.get_valid_data_hash_from_uint_8_array(encoded_data)
       const totalSize = encoded_data.length;
 
       const node_url = nitro_object['ipfs'].node_url
@@ -34148,7 +34192,7 @@ class App extends Component {
       var success = true;
       xhr.onload = () => {
         console.log('uploader',"Upload complete! Server said:", xhr.responseText);
-        var obj = JSON.parse(data)
+        var obj = JSON.parse(xhr.responseText)
         if(obj.success == false){
           console.log('uploader','error during upload', obj.message)
           success = false
@@ -34164,7 +34208,7 @@ class App extends Component {
         this.is_uploading_file = false
       };
 
-      xhr.setRequestHeader("Content-Type", "text/plain");
+      xhr.setRequestHeader("Content-Type", "application/octet-stream");
       xhr.send(encoded_data);
 
       while (this.is_uploading_file == true) {
@@ -34280,6 +34324,7 @@ class App extends Component {
 
 
 
+  
 
 
 
@@ -34339,7 +34384,7 @@ class App extends Component {
       _data['password'] = password
       if(type == 'image'){
         const thumbnail = await this.decrypt_data_string(_data['thumbnail'], password)
-        _data['full_image'] = _data['data']
+        _data['full_image'] = _data['data'].slice()
         _data['data'] = thumbnail
       }
       if(type == 'audio' || type == 'video' || type == 'pdf'){
@@ -34358,6 +34403,7 @@ class App extends Component {
           _data['encrypted_file_data_info'] = encrypted_file_data_info
         }
       }
+      console.log('apppage', 'when_uploading_multiple_encrypted_files_complete', _data)
       if(clone[_data['type']] == null) clone[_data['type']] = {}
       clone[_data['type']][e_cids[i]] = _data
       cid_clone.push(e_cids[i])
@@ -34409,7 +34455,7 @@ class App extends Component {
 
   is_supplied_file_valid = async (encryptedBuffer, valid_hash) => {
     const decrypted_buffer = this.process_encrypted_file(encryptedBuffer)
-    const extension = await this.get_valid_data_hash(decrypted_buffer, false)
+    const extension = await this.get_valid_data_hash_from_uint_8_array(decrypted_buffer, false)
     return extension == valid_hash;
   }
 
@@ -34833,7 +34879,7 @@ class App extends Component {
         [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id}],
         [web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       received_tokens_event_data = all_events[0]
       stack_depth_swap_event_data = all_events[1]
     }else{
@@ -35158,6 +35204,7 @@ class App extends Component {
 
 
   get_objects_messages = async (id, e5, object) => {
+    console.log('apppage', 'get_object_messages', 'loading object comments...')
     const all_object_comment_events = await this.get_object_comment_events(id, e5, 17)
 
     var loaded_target = 0
@@ -35226,7 +35273,8 @@ class App extends Component {
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: target_id, p3/* context */:id, p5: e5_id,}])
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+      console.log('apppage', 'get_object_comment_events', all_events)
       all_events.forEach((event_array, index)=> {
         // var focused_e5 = used_e5s[index]
         var m = 0
@@ -35640,7 +35688,7 @@ class App extends Component {
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17/* shadow_object_container */, p3/* context */:contractor_id, p5/* int_data */:request_id}])
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index)=> {
         var focused_e5 = used_e5s[index]
         var m = 0
@@ -35748,7 +35796,7 @@ class App extends Component {
           event_params.push([web3, H52contractInstance, 'e5', focused_e5, {p3/* awward_context */: id}])
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index)=> {
         var focused_e5 = used_e5s[index]
         for(var l=0; l<event_array.length; l++){
@@ -35878,7 +35926,7 @@ class App extends Component {
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:33, p5/* convo_id */:convo_id}])/* sent_messages_to_mail_in_other_e5s */
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
       for(var e=0; e<all_events.length; e+=4){
         var focused_e5 = used_e5s[e/4]
         const my_received_message_events = (all_events[e]).concat(all_events[e+1])
@@ -36099,7 +36147,7 @@ class App extends Component {
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 25, p3/* context */:id, p5: e5_id, p2/* sender_acc_id */:account_id}])
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index)=> {       
         for(var l=0; l<event_array.length; l++){
           const event = event_array[l]
@@ -36309,7 +36357,7 @@ class App extends Component {
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 27/* 27(creator_group_channel_container) */, p3/* context */:creator_group_context, p5: e5_id,}])
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index)=> {
         // var focused_e5 = used_e5s[index]
         var m = 0
@@ -36448,7 +36496,7 @@ class App extends Component {
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 28 /* 28(creator_group_payout_record_container) */, p3/* context */:id, p5: e5_id, p2/* sender_acc_id */:account_id}])
         }
       }
-      const all_events = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
       all_events.forEach((event_array, index)=> {       
         for(var l=0; l<event_array.length; l++){
           const event = event_array[l]
@@ -36960,7 +37008,7 @@ class App extends Component {
         [web3, G52contractInstance, 'e2', e5, {p1/* contract_id */: id , p3/* action */: 11}],
         [web3, G52contractInstance, 'e2', e5, {p1/* contract_id */: id , p3/* action */: 18}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
       make_proposal_event_data = all_events[0]
       modify_object_event_data = all_events[1]
@@ -37038,7 +37086,7 @@ class App extends Component {
         [web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: id }],
         [web3, G52contractInstance, 'archive', e5, {p1/* proposal_id */: id}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       
       record_proposal_vote_event_data = all_events[0]
       submit_proposal_event_data = all_events[1]
@@ -37077,7 +37125,7 @@ class App extends Component {
         [web3, F5contractInstance, 'e5', e5, {p1/* subscription_id */: id}],
         [web3, F5contractInstance, 'e4', e5, {p1/* subscription_id */: id}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       
       pay_subscription_event_data = all_events[0]
       cancel_subscription_event_data = all_events[1]
@@ -37132,7 +37180,7 @@ class App extends Component {
         [web3, H52contractInstance, 'e3', e5, {p1/* exchange */: id}],
         [web3, H52contractInstance, 'power', e5, {p1/* exchange */: id}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
       update_exchange_ratio_event_data = all_events[0]
       update_proportion_ratio_event_data = all_events[1]
@@ -37205,7 +37253,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:17}],
         [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */: id, p2/* action_type */:16}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       
       modify_moderator_event_data = all_events[0]
       enable_disable_interactible_checkers_event_data = all_events[1]
@@ -37441,7 +37489,7 @@ class App extends Component {
               [web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id }],
               [web3, H52contractInstance, 'e1', e5, {p2/* sender */: id }],
             ]
-            var all_events = await this.load_multiple_events_from_nitro(event_params)
+            var { all_events } = await this.load_multiple_events_from_nitro(event_params)
             make_object_event_data = all_events[0]
             withdraw_event_data = all_events[1]
             pending_withdraw_event_data = all_events[2]
@@ -37948,7 +37996,7 @@ class App extends Component {
         [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
         [web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2 /* depth_auth_mint */}],
       ]
-      var all_events = await this.load_multiple_events_from_nitro(event_params)
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
       send_tokens_event_data = all_events[0]
       received_tokens_event_data = all_events[1]
       update_balance_event_data = all_events[2]
@@ -38146,7 +38194,7 @@ class App extends Component {
 
   check_and_start_rerecording_of_key_in_nitro = async (link) => {
     const nitro_key_data = this.state.nitro_url_temp_hash_data[link]
-    if(nitro_key_data != null && nitro_key_data['root_identifier_from_private_key'] == false && this.state.has_wallet_been_set){
+    if((nitro_key_data != null && nitro_key_data['root_identifier_from_private_key'] == false) || nitro_key_data == null){
       await this.re_record_key_in_nitro_node(nitro_key_data['e5_id'], link)
     }
   }
@@ -38342,8 +38390,9 @@ class App extends Component {
       var parsed_data = JSON.parse(data)
       return parsed_data
     }catch(e){
-      var link_key = this.state.nitro_url_temp_hash_data[link]['endpoint_data_decryption_key']
-      var decrypted_string = await this.decrypt_secure_data(data, '', link_key)
+      // var link_key = this.state.nitro_url_temp_hash_data[link]['endpoint_data_decryption_key']
+      var link_key_string = this.state.nitro_url_temp_hash_data[link]['user_temp_encryption_key']
+      var decrypted_string = await this.decrypt_secure_data(data, link_key_string)
       var decrypted_parsed_data = JSON.parse(decrypted_string)
       return decrypted_parsed_data
     }
@@ -38500,8 +38549,14 @@ class App extends Component {
     return Buffer.concat(encryptedChunks.map(chunk => Buffer.from(chunk)));
   }
 
+
   process_encrypted_file(encryptedChunks){
+    // return encryptedChunks;
     return Buffer.from(encryptedChunks)
+  }
+
+  get_encrypted_file_size_from_uintarray(encrypted_file_data){
+    return Buffer.from(encrypted_file_data).length;
   }
 
   base64ToUint8(base64) {

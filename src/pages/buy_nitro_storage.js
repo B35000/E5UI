@@ -298,7 +298,7 @@ class BuyNitroPage extends Component {
     check_if_sender_can_afford_payments(){
         var object = this.state.nitro_object
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-        var amounts_to_transfer = this.get_final_amounts(node_details['price_per_megabyte']['this.props.app_state.selected_e5'])
+        var amounts_to_transfer = this.get_final_amounts(node_details['price_per_megabyte'][this.props.app_state.selected_e5])
         var e5 = this.state.e5
 
         var can_pay = true;
