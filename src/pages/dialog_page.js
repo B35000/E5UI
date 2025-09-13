@@ -334,6 +334,20 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'view_access_logs'){
+            return(
+                <div>
+                    {this.render_access_logs_ui()}
+                </div>
+            )
+        }
+        else if(option == 'view_error_logs'){
+            return(
+                <div>
+                    {this.render_error_logs_ui()}
+                </div>
+            )
+        }
         
     }
 
@@ -6939,8 +6953,6 @@ return data['data']
         }
     }
 
-
-
     render_export_direct_purchases_data(){
         return(
             <div>
@@ -6986,6 +6998,216 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+    render_access_logs_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_access_logs_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_access_logs_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_access_logs_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_access_logs_data(){
+        const object = this.state.data['object']
+        const telemetry_data = this.props.app_state.nitro_telemetry_data_object[object['e5_id']]
+        const logs = telemetry_data['access_info'].split('\n')
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527dq']/* Raw Access Logs' */, 'details':this.props.app_state.loc['c2527dr']/* 'The raw access logs are shown below.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_logs(logs)}
+            </div>
+        )
+    }
+
+    render_logs(items){
+        if(items.length == 0){
+            items = [0, 1, 2]
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            {this.render_log_item(item)} 
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    render_log_item(item){
+        var parts = item.trim().split(/\s+/);
+        if (parts.length >= 9) {
+            const entry = {
+                user: parts[0],
+                terminal: parts[1],
+                host: parts[2],
+                day: parts[3],
+                month: parts[4],
+                date: parts[5],
+                loginTime: parts[6],
+                logoutTime_Still_Online: parts[8],
+            };
+            if(parts.length >= 10){
+                entry.duration = parts[9]
+            }
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':entry.user, 'details':this.props.app_state.loc['3055ek']/* 'Accessing User' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+                    {this.render_detail_item('3', {'title':entry.terminal, 'details':this.props.app_state.loc['3055el']/* 'Access Terminal' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+                    {this.render_detail_item('3', {'title':entry.host, 'details':this.props.app_state.loc['3055em']/* 'Host IP Address' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+                    {this.render_detail_item('3', {'title':entry.day+', '+entry.month+' '+entry.date, 'details':this.props.app_state.loc['3055en']/* 'Access Date' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+                    {this.render_detail_item('3', {'title':entry.loginTime, 'details':this.props.app_state.loc['3055eo']/* 'Log-In Time (UTC)' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+                    {this.render_still_logged_in_or_logged_out_time(entry)}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':item, 'textsize':'14px', 'font':this.props.app_state.font})} 
+                    <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+    render_still_logged_in_or_logged_out_time(entry){
+        if(entry.duration == null){
+            //still logged in
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':entry.logoutTime_Still_Online, 'details':this.props.app_state.loc['3055ep']/* 'Logged-Out Time (UTC)' */, 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':entry.logoutTime_Still_Online, 'details':this.props.app_state.loc['3055ep']/* 'Logged-Out Time (UTC)' */, 'size':'l'})}
+                    <div style={{height:3}}/>
+                    {this.render_detail_item('3', {'title':entry.duration, 'details':this.props.app_state.loc['3055eq']/* 'Duration Logged On' */, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+    render_error_logs_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_error_logs_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_error_logs_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_error_logs_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_error_logs_data(){
+        const object = this.state.data['object']
+        const file = this.state.data['file']
+        const time = this.state.data['time']
+        const reference_id = object['e5_id'] + file
+        const log_data = this.props.app_state.nitro_error_log_data_object[reference_id]
+        if(log_data == null){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['c2527dw']/* 'e is loading the logs for you...' */, 'textsize':'14px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':''+new Date(time).toLocaleString(), 'details':this.props.app_state.loc['c2527dv']/* 'The files logs are shown below.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('4', {'text':log_data, 'textsize':'14px', 'font':this.props.app_state.font})} 
+            </div>
+        )
+    }
 
 
 

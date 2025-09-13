@@ -89,8 +89,19 @@ class VideoDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[],
-        screen_width:0,visible_hidden_messages:[], selected_rating_group_filter:{},
+        screen_width:0,visible_hidden_messages:[], selected_rating_group_filter:{}, selected_chart_video:{}, time_chart_tags_object:this.time_chart_tags_object()
     };
+
+    time_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+            ],
+        };
+    }
 
     reset_tags(){
         this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags()})
@@ -302,6 +313,8 @@ class VideoDetailsSection extends Component {
 
                     {this.render_video_sales_data(object, item)}
                     <div style={{height: 10}}/>
+
+                    {this.render_stream_charts_if_exists(object)}
 
                     {this.render_discography(object)}
 
@@ -1729,6 +1742,236 @@ class VideoDetailsSection extends Component {
                 {this.render_detail_item('8', {'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_width':'auto'})}
             </div>
         )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_stream_charts_if_exists(object){
+        const available_streaming_files_data = this.get_files_containing_stream_info(object)
+        if(available_streaming_files_data.available_files.length > 0){
+            const current_file = this.state.selected_chart_video[object['e5_id']] || available_streaming_files_data.available_files[0]
+            const files_stream_count_data = this.props.app_state.file_streaming_data[current_file]['files_stream_count']
+            const data_points_data = this.get_steaming_stats_data_points(files_stream_count_data)
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527ce']/* 'Streaming Stats.' */, 'details':this.props.app_state.loc['b2527t']/* 'Chart containing the streaming info for your selected video over the selected period of time.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.render_my_available_videos(available_streaming_files_data.available_files_mapping, object)}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, 'hide_label': true})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.time_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_time_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cg']/* 'Y-Axis: Streamed Data' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+                    
+                </div>
+            )
+        }
+    }
+
+    when_time_chart_tags_object_updated(tag_obj){
+        this.setState({time_chart_tags_object: tag_obj})
+    }
+
+    get_steaming_stats_data_points(memory_stats_data){
+        var data = []
+        var timestamp_datapoints = this.filter_time_events(Object.keys(memory_stats_data), this.state.time_chart_tags_object, true)
+        for(var i=0; i<timestamp_datapoints.length; i++){
+            const focused_item = memory_stats_data[timestamp_datapoints[i]]
+            data.push(focused_item)
+
+            if(i==timestamp_datapoints.length-1){
+                var diff = Date.now() - timestamp_datapoints[i]
+                for(var t=0; t<diff; t+=2300){
+                    if(bigInt(data[data.length-1]).greater(bigInt(1000))){
+                        data.push(bigInt(data[data.length-1]).multiply(9999).divide(10000))
+                    }else{
+                        data.push(data[data.length-1]*0.9999)
+                    }    
+                }
+            }
+            else{
+                var diff = timestamp_datapoints[i+1] - timestamp_datapoints[i]
+                for(var t=0; t<diff; t+=2300){
+                    if(bigInt(data[data.length-1]).greater(bigInt(1000))){
+                        data.push(bigInt(data[data.length-1]).multiply(9999).divide(10000))
+                    }else{
+                        data.push(data[data.length-1]*0.9999)
+                    }       
+                }
+            }
+        }
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var largest = 0;
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum = bigInt(sum).plus(slice[j])
+                }
+                var result = bigInt(sum).divide(slice.length)
+                original_y_val = result;
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if(bigInt(largest).lesser(yVal)){
+                largest = bigInt(yVal)
+            }
+            var formatted_size = this.format_data_size(original_y_val)
+            var indicator = formatted_size['size']+' '+formatted_size['unit']
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            } 
+        }
+
+        for(var e=0; e<dps.length; e++){
+            dps[e].y = bigInt(dps[e].y).multiply(100).divide(largest)
+            if(e>97 && dps[e].y == 0){
+                dps[e].y = dps[e-1].y
+            }
+        }
+
+        return { dps, largest }
+    }
+
+    filter_time_events(timestamp_datapoints, tags, add_if_empty){
+        var selected_item = this.get_selected_item(tags, 'e')
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now() - (filter_value * 1000)
+        timestamp_datapoints.forEach(event => {
+            if(event > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        if(data.length == 0 && timestamp_datapoints.length != 0 && add_if_empty == true){
+            data.push(timestamp_datapoints[timestamp_datapoints.length-1])
+        }
+
+        return data
+    }
+
+    render_my_available_videos(available_files_mapping, object){
+        const items = Object.keys(available_files_mapping)
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_video_item_with_charts(item, available_files_mapping, object, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_files_containing_stream_info(object){
+        var files = []
+        var files_mapping = {}
+        var videos = this.get_videos_to_display(object)
+        videos.forEach(video => {
+            files.push(video['video'])
+            files_mapping[video['video']] = video
+        });
+        var available_files = []
+        var available_files_mapping = {}
+        files.forEach(track => {
+            var ecid_obj = this.get_cid_split(track)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                var file = data['hash']
+                if(this.props.app_state.file_streaming_data[file] != null){
+                    available_files.push(file)
+                    available_files_mapping[file] = files_mapping[track]
+                }
+            }
+        });
+        return { available_files, available_files_mapping }
+    }
+
+    render_video_item_with_charts(selection, available_files_mapping, object, index){
+        const item = available_files_mapping[selection]
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+            var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+            return(
+                <div onClick={() => this.when_chart_song_selected(selection, object)}>
+                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    {this.render_line_if_selected(object, selection, index)}
+                </div>
+            )
+        }else{
+            return(
+                <div onClick={() => this.when_chart_song_selected(selection, object)}>
+                    {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
+                    {this.render_line_if_selected(object, selection, index)}
+                </div>
+            )
+        }
+    }
+
+    render_line_if_selected(object, selection, index){
+        if(this.state.selected_chart_video[object['e5_id']] == selection || (this.state.selected_chart_video[object['e5_id']] == null && index == 0)){
+            return(
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )
+        }
+    }
+
+    when_chart_song_selected(selection, object){
+        var clone = structuredClone(this.state.selected_chart_video)
+        clone[object['e5_id']] = selection
+        this.setState({selected_chart_video: clone})
     }
 
 

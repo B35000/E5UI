@@ -901,7 +901,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(87), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(97), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -961,7 +961,7 @@ class App extends Component {
 
     is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
 
-    gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3,
+    gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3, nitro_telemetry_data_object:{}, nitro_error_log_data_object:{},
   };
 
   get_static_assets(){
@@ -5535,7 +5535,9 @@ class App extends Component {
 
           set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}
           get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
-          get_nitro_purchases={this.get_nitro_purchases.bind(this)} set_audio_pip_opacity_because_of_inactivity={this.set_audio_pip_opacity_because_of_inactivity.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+          get_nitro_purchases={this.get_nitro_purchases.bind(this)} set_audio_pip_opacity_because_of_inactivity={this.set_audio_pip_opacity_because_of_inactivity.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_nitro_telemetry_data={this.get_nitro_telemetry_data.bind(this)} 
+
+          get_nitro_log_stream_data={this.get_nitro_log_stream_data.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -15318,6 +15320,8 @@ class App extends Component {
       'confirm_new_wallet': 200,
       'create_moderator_note':800,
       'export_direct_purchases':500,
+      'view_access_logs':550,
+      'view_error_logs':650,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -29387,6 +29391,7 @@ class App extends Component {
   }
 
   load_muliple_batch_events_from_nitro = async (event_requests, beacon_node, p) => {
+    console.log('apppage', 'get_object_messages', 'making event call to nitro: ', event_requests)
     const params = new URLSearchParams({
       arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify({requests: event_requests, p: p, known: this.get_my_recorded_hashes(p)})),
     });
@@ -29398,12 +29403,13 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
+      // console.log('apppage', 'get_object_messages', 'gotten unencrypted return data:', data)
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
-      console.log('apppage', 'get_object_comment_events', 'gotten return data from nitro: ', obj)
+      console.log('apppage', 'get_object_messages', 'gotten return data from nitro: ', obj)
       return { events: obj['data'], event_data: obj['hash_data'] }
     }
     catch(e){
-      console.log('apppage', 'get_object_messages', e)
+      console.log('apppage', 'get_object_messages', 'load_muliple_batch_events_from_nitro', e)
       return { events: [], event_data: {} }
     }
   }
@@ -35274,7 +35280,7 @@ class App extends Component {
         }
       }
       const { all_events } = await this.load_multiple_events_from_nitro(event_params)
-      console.log('apppage', 'get_object_comment_events', all_events)
+      console.log('apppage', 'get_object_messages', all_events)
       all_events.forEach((event_array, index)=> {
         // var focused_e5 = used_e5s[index]
         var m = 0
@@ -36650,6 +36656,60 @@ class App extends Component {
     clone[e5_id] = all_received_on_chain_events
     this.setState({current_nitro_purchases: clone})
   }
+
+  get_nitro_telemetry_data = async (object) => {
+    var node_url = object['ipfs'].node_url
+    const e5_id = object['e5_id']
+    const start_time = Date.now() - (1000*60*60*24)
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'traffic_stats')}/${await this.fetch_nitro_privacy_signature(node_url, start_time)}/${await this.fetch_nitro_privacy_signature(node_url)}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('all_data', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, node_url);
+
+      const clone = structuredClone(this.state.nitro_telemetry_data_object)
+      clone[e5_id] = obj
+      this.setState({nitro_telemetry_data_object: clone})
+    }
+    catch(e){
+      console.log('apppage', 'get_nitro_telemetry_data', e)
+    }
+  }
+
+  get_nitro_log_stream_data = async (object, file) => {
+    this.prompt_top_notification(this.getLocale()['c2527du']/* Fetching the log file... */, 1800);
+    var node_url = object['ipfs'].node_url
+    const e5_id = object['e5_id']
+    var encrypted_object_backup_key = object['ipfs'].encrypted_key
+    var back_up_key = await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, object['e5'])
+
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'stream_logs')}/${await this.fetch_nitro_privacy_signature(node_url, file)}/${await this.fetch_nitro_privacy_signature(node_url, back_up_key)}/${await this.fetch_nitro_privacy_signature(node_url)}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('all_data', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      console.log('apppage', 'get_nitro_telemetry_data', data)
+      const clone = structuredClone(this.state.nitro_error_log_data_object)
+      const reference_id = e5_id + file
+      clone[reference_id] = data
+      this.setState({nitro_error_log_data_object: clone})
+    }
+    catch(e){
+      console.log('apppage', 'get_nitro_telemetry_data', e)
+    }
+  }
+
+
+
+
+
 
 
 
@@ -38075,6 +38135,17 @@ class App extends Component {
     const nitro_link_directory = await this.load_nitro_directory_details(link)
     const endpoint = nitro_link_directory['marco']
     var request = `${link}/${endpoint}`
+
+    if(this.state.beacon_chain_url == link){
+      //data already loaded, so just set it in place
+      const clone = structuredClone(this.state.nitro_node_details)      
+      clone[object['e5_id']] = this.state.beacon_data
+      this.setState({nitro_node_details: clone})
+    }
+
+    if(this.state.nitro_link_directory_data[link] != null){
+      return;
+    }
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -38160,7 +38231,7 @@ class App extends Component {
       var data = await response.text();
       var obj = JSON.parse(data);
       var success = obj.success
-      if(success == true || obj.existing == true){
+      if(success == true){
         marco_obj['user_temp_hash'] = user_temp_hash
         marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
 
@@ -38233,7 +38304,7 @@ class App extends Component {
       var data = await response.text();
       var obj = JSON.parse(data);
       var success = obj.success
-      if(success == true || obj.existing == true){
+      if(success == true){
         marco_obj['user_temp_hash'] = user_temp_hash
         marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
 
@@ -38390,9 +38461,9 @@ class App extends Component {
       var parsed_data = JSON.parse(data)
       return parsed_data
     }catch(e){
-      // var link_key = this.state.nitro_url_temp_hash_data[link]['endpoint_data_decryption_key']
+      var link_key = this.state.nitro_url_temp_hash_data[link]['endpoint_data_decryption_key']
       var link_key_string = this.state.nitro_url_temp_hash_data[link]['user_temp_encryption_key']
-      var decrypted_string = await this.decrypt_secure_data(data, link_key_string)
+      var decrypted_string = await this.decrypt_secure_data(data, link_key_string, link_key)
       var decrypted_parsed_data = JSON.parse(decrypted_string)
       return decrypted_parsed_data
     }
@@ -38459,10 +38530,11 @@ class App extends Component {
       // this.prompt_top_notification('loaded '+count+' hashes', 3000)
     }
     catch(e){
-      if(depth < 3){
-        await this.wait(this.state.ipfs_delay)
-        return await this.fetch_multiple_cids_from_nitro(events, depth+1, p)
-      }
+      console.log('apppage', 'something went wrong with fetch_multiple_cids_from_nitro', e)
+      // if(depth < 3){
+      //   await this.wait(this.state.ipfs_delay)
+      //   return await this.fetch_multiple_cids_from_nitro(events, depth+1, p)
+      // }
     }
   }
 
