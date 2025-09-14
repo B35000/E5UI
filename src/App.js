@@ -22403,7 +22403,6 @@ class App extends Component {
     }
   }
 
-
   pre_launch_fetch = async () => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
@@ -22415,6 +22414,7 @@ class App extends Component {
       indexing_hash: this.get_valid_post_index(this.get_web3_instance_from_e5('E25')),
       event_fetches: this.get_all_event_fetches(crosschain_identifier),
       known_hashes: this.get_my_recorded_hashes(''),
+      e5s_to_ignore:[]
     }
 
     var body = {
@@ -26128,7 +26128,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3)}],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
-      var { all_events } = this.state.saved_pre_launch_events[e5] != null && this.state.created_subscriptions[e5] == null ? [
+      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5) ? [
         this.state.saved_pre_launch_events[e5]['created_subscription_events'],
         this.state.saved_pre_launch_events[e5]['my_paid_subscription_events'],
         this.state.saved_pre_launch_events[e5]['created_index_events'],
@@ -26543,7 +26543,7 @@ class App extends Component {
         [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3}],
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)}],
       ]
-      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 2) ? [
+      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 5) ? [
         this.state.saved_pre_launch_events[e5]['created_contract_events'],
         this.state.saved_pre_launch_events[e5]['entered_contract_events'],
         this.state.saved_pre_launch_events[e5]['created_index_events'],
@@ -30282,9 +30282,9 @@ class App extends Component {
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
     var created_contract_object_data = []
     var created_contract_mapping = {}
-
+    var all_data = await this.fetch_multiple_objects_data(created_contracts, web3, e5, contract_addresses)
     for(var i=0; i<created_contracts.length; i++){
-      var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
+      var contracts_data = all_data[created_contracts[i]] != null ? all_data[created_contracts[i]] : await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
       var event = created_contract_events[i]
       var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
       var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
@@ -30339,8 +30339,9 @@ class App extends Component {
       account_as_list.push([account])
     }
 
+    var all_data = await this.fetch_multiple_objects_data(created_subscriptions, web3, e5, contract_addresses)
     for(var i=0; i<created_subscriptions.length; i++){
-      var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses);
+      var subscription_data = all_data[created_subscriptions[i]] != null ? all_data[created_subscriptions[i]] : await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses);
 
       var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i],  'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3}
 
@@ -30468,6 +30469,9 @@ class App extends Component {
 
       var my_blocked_time_value_for_all_contracts = created_contracts.length==0? []: await E52contractInstance.methods.f256(created_contracts, account_as_list, 0,3).call((error, result) => {});
 
+      var contracts_proposals = null;
+      var all_submit_proposal_event_data = null;
+
       for(var i=0; i<created_contracts.length; i++){
         var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
         var event = null
@@ -30475,9 +30479,36 @@ class App extends Component {
         var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
 
 
-        var entered_accounts = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]})
+        var entered_accounts = null;
+        var force_exit_events = null;
+        var moderator_data = null;
 
-        var force_exit_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:18/* force_exit(18) */,p1/* contract_id */:created_contracts[i]})
+        if(this.state.beacon_node_enabled == true){
+          var event_params = [
+            [web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]}],
+            [web3, G52contractInstance, 'e2', e5, {p3/* action */:18/* force_exit(18) */,p1/* contract_id */:created_contracts[i]}],
+            [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */}],
+            [web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id}],
+            [web3, G52contractInstance, 'e3', e5, {}]
+          ]
+          var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+          entered_accounts = all_events[0]
+          force_exit_events = all_events[1]
+          moderator_data = all_events[2]
+          contracts_proposals = all_events[3]
+          all_submit_proposal_event_data = all_events[4]
+        }
+        else{
+          entered_accounts = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]})
+
+          force_exit_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:18/* force_exit(18) */,p1/* contract_id */:created_contracts[i]})
+          
+          moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
+
+          contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id})
+
+          all_submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {})
+        }
 
         var contract_entered_accounts = []
         var archive_accounts = []
@@ -30498,7 +30529,6 @@ class App extends Component {
           entered_account_times_data[account] = time
         }
 
-        var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
         var old_moderators = []
 
         for(var e=0; e<moderator_data.length; e++){
@@ -30541,7 +30571,6 @@ class App extends Component {
 
 
 
-      var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id})
       contracts_proposals = contracts_proposals.reverse()
       var proposal_ids = []
       var proposal_ids_events = []
@@ -30554,7 +30583,6 @@ class App extends Component {
       var created_proposal_data = await G5contractInstance.methods.f78(proposal_ids, false).call((error, result) => {});
       var consensus_data = await G52contractInstance.methods.f266(proposal_ids, [], 0).call((error, result) => {});
       var all_data = await this.fetch_multiple_objects_data(proposal_ids, web3, e5, contract_addresses)
-      var all_submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {})
 
       for(var i=0; i<proposal_ids.length; i++){
         var id = proposal_ids[i];
@@ -30604,7 +30632,20 @@ class App extends Component {
       const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
 
-      var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id})
+      var contracts_proposals = null;
+      var all_submit_proposal_event_data = null
+      if(this.state.beacon_node_enabled == true){
+        var event_params = [
+          [web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id}],
+          [web3, G52contractInstance, 'e3', e5, {}]
+        ]
+        var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+        contracts_proposals = all_events[0]
+        all_submit_proposal_event_data = all_events[1]
+      }else{
+        contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contract_id})
+        all_submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {})
+      }
       contracts_proposals = contracts_proposals.reverse()
       var proposal_ids = []
       var proposal_ids_events = []
@@ -30616,9 +30657,18 @@ class App extends Component {
       var created_proposal_object_data = []
       var created_proposal_data = await G5contractInstance.methods.f78(proposal_ids, false).call((error, result) => {});
       var consensus_data = await G52contractInstance.methods.f266(proposal_ids, [], 0).call((error, result) => {});
+      
+      var all_data = await this.fetch_multiple_objects_data(proposal_ids, web3, e5, contract_addresses)
       for(var i=0; i<proposal_ids.length; i++){
-        var proposals_data = await this.fetch_objects_data(proposal_ids[i], web3, e5, contract_addresses);
-        var submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: proposal_ids_events[i] })
+        const id = proposal_ids[i]
+        var proposals_data = all_data[id] == null ? await this.fetch_objects_data(proposal_ids[i], web3, e5, contract_addresses) : all_data[id]
+        // var submit_proposal_event_data = await this.load_event_data(web3, G52contractInstance, 'e3', e5, {p1/* proposal_id */: proposal_ids_events[i] })
+        var submit_proposal_event_data = []
+        all_submit_proposal_event_data.forEach(event_item => {
+          if(event_item.returnValues.p1/* proposal_id */ == id){
+            submit_proposal_event_data.push(event_item)
+          }
+        });
 
         var event = proposal_ids_events[i]
 
