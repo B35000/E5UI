@@ -7636,8 +7636,10 @@ class App extends Component {
   }
 
   when_content_channeling_changed(item){
-    this.setState({content_channeling: item})
+    this.prompt_top_notification(this.getLocale()['2738ap']/* 'Resynchronizing...' */, 2500)
+    this.setState({content_channeling: item, refreshing_content_after_channeling_change:true})
     var me = this;
+
     setTimeout(function() {
       me.set_cookies()
       me.start_get_accounts_data(false, false)
@@ -23910,6 +23912,12 @@ class App extends Component {
     var saved_pre_launch_events_clone = structuredClone(this.state.saved_pre_launch_events)
     saved_pre_launch_events_clone[e5] = saved_pre_launch_data_object
     this.setState({saved_pre_launch_events: saved_pre_launch_events_clone})
+
+     if(this.state.refreshing_content_after_channeling_change == true){
+        this.setState({refreshing_content_after_channeling_change: false})
+        const page = me.homepage.current?.get_selected_page()
+        me.load_data_from_page_in_focus(page)
+      }
 
     // this.get_total_supply_of_ether(e5)
 

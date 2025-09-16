@@ -10832,6 +10832,10 @@ class StackPage extends Component {
     }
 
     when_get_content_channeling_object_updated(tag_group){
+        if(this.props.app_state.refreshing_content_after_channeling_change == true){
+            this.props.notify(this.props.app_state.loc['2738ao']/* 'Wait a bit.' */, 1500)
+            return;
+        }
         this.setState({get_content_channeling_object: tag_group})
         var selected_item = this.get_selected_item(this.state.get_content_channeling_object, 'e')
         this.props.when_content_channeling_changed(selected_item)
