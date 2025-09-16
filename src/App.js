@@ -22414,7 +22414,7 @@ class App extends Component {
       indexing_hash: this.get_valid_post_index(this.get_web3_instance_from_e5('E25')),
       event_fetches: this.get_all_event_fetches(crosschain_identifier),
       known_hashes: this.get_my_recorded_hashes(''),
-      e5s_to_ignore:[]
+      specific_e5s_targeted:[]
     }
 
     var body = {
@@ -26115,7 +26115,7 @@ class App extends Component {
 
   
 
-  get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items) => {
+  get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items, return_created_object_events_only=false, all_return_data={}) => {
     var created_subscription_events = null
     var my_paid_subscription_events = null
     var created_index_events = null
@@ -26128,7 +26128,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3)}],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
-      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5) ? [
+      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5 || return_created_object_events_only == true) ? [
         this.state.saved_pre_launch_events[e5]['created_subscription_events'],
         this.state.saved_pre_launch_events[e5]['my_paid_subscription_events'],
         this.state.saved_pre_launch_events[e5]['created_index_events'],
@@ -26197,6 +26197,10 @@ class App extends Component {
       created_subscription_events = my_events
     }
 
+    if(return_created_object_events_only == true){
+      return created_subscription_events
+    }
+
     var created_subscriptions = []
     for(var i=0; i<created_subscription_events.length; i++){
       var id = created_subscription_events[i].returnValues.p1
@@ -26204,8 +26208,27 @@ class App extends Component {
     }
 
     this.record_number_of_items(e5, 'subscriptions', created_subscriptions.length)
-
-    var created_subscription_data = await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
+    var sort_objects_into_3d_array = (created_subscriptions, all_return_data) => {
+      const object_array = []
+      created_subscriptions.forEach(id => {
+        if(all_return_data[e5]['objects_data']['object_data'][id] != null){
+          object_array.push(all_return_data[e5]['objects_data']['object_data'][id])
+        }else{
+          var data_sizes = [ 20, 20, 0, 0, 0 ]
+          var my_default_object = []
+          data_sizes.forEach(element => {
+            var arr = []
+            for(var q=0; q<element; q++){
+              arr.push(0)
+            }
+            my_default_object.push(arr)
+          });
+          object_array.push(my_default_object)
+        }
+      });
+      return object_array
+    }
+    var created_subscription_data = all_return_data[e5] != null ? sort_objects_into_3d_array(created_subscriptions, all_return_data) : await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
     var created_subscription_object_data = this.state.created_subscriptions[e5] == null ? [] : this.state.created_subscriptions[e5].slice()
     var created_subscription_object_mapping = this.state.created_subscription_object_mapping[e5] == null ? {} : structuredClone(this.state.created_subscription_object_mapping[e5])
     var is_first_time = this.state.created_subscriptions[e5] == null
@@ -26218,7 +26241,7 @@ class App extends Component {
     var my_payments_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await F5contractInstance.methods.f229(created_subscriptions, account_as_list).call((error, result) => {});
 
     var starter = my_paid_subs.length > 53 ? my_paid_subs.length : 53;
-    var all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(0, starter), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(0, starter), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     for(var i=0; i<created_subscriptions.length; i++){
       var subscription_data = all_data[created_subscriptions[i]] == null ? await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses): all_data[created_subscriptions[i]]
@@ -26532,18 +26555,18 @@ class App extends Component {
     return timestamp
   }
 
-  get_contract_data = async (contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items) => {
+  get_contract_data = async (contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items, return_created_object_events_only=false, all_return_data={}) => {
     var created_contract_events = null
     var entered_contract_events = null
     var created_index_events = null
 
     if(this.state.beacon_node_enabled == true){
       var event_params = [
-        [web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */ }],
+        [web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */}],
         [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3}],
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)}],
       ]
-      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 5) ? [
+      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 5 || return_created_object_events_only == true) ? [
         this.state.saved_pre_launch_events[e5]['created_contract_events'],
         this.state.saved_pre_launch_events[e5]['entered_contract_events'],
         this.state.saved_pre_launch_events[e5]['created_index_events'],
@@ -26609,6 +26632,10 @@ class App extends Component {
       created_contract_events = my_events
     }
 
+    if(return_created_object_events_only == true){
+      return created_contract_events
+    }
+
     var created_contracts = [2]
     var accounts_for_expiry_time = [[account]]
     for(var i=0; i<created_contract_events.length; i++){
@@ -26618,8 +26645,28 @@ class App extends Component {
     }
 
     this.record_number_of_items(e5, 'contracts',created_contracts.length)
+    var sort_objects_into_3d_array = (created_contracts, all_return_data) => {
+      const object_array = []
+      created_contracts.forEach(id => {
+        if(all_return_data[e5]['objects_data']['object_data'][id] != null){
+          object_array.push(all_return_data[e5]['objects_data']['object_data'][id])
+        }else{
+          var data_sizes = [ 20, 20, 0, 0, 0 ]
+          var my_default_object = []
+          data_sizes.forEach(element => {
+            var arr = []
+            for(var q=0; q<element; q++){
+              arr.push(0)
+            }
+            my_default_object.push(arr)
+          });
+          object_array.push(my_default_object)
+        }
+      });
+      return object_array
+    }
+    var created_contract_data = all_return_data[e5] != null ? sort_objects_into_3d_array(created_contracts, all_return_data) : await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
 
-    var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
     
     var created_contract_object_data = this.state.created_contracts[e5] == null ? [] : this.state.created_contracts[e5].slice()
@@ -26642,7 +26689,7 @@ class App extends Component {
 
     var enter_exit_accounts_notifications = []
     var starter = entered_contracts.length > 53 ? entered_contracts.length+1 : 53;
-    var all_data = await this.fetch_multiple_objects_data(created_contracts.slice(0, starter), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(created_contracts.slice(0, starter), web3, e5, contract_addresses, all_return_data, 'objects_data')
     
     for(var i=0; i<created_contracts.length; i++){
       var contracts_data = all_data[created_contracts[i]] == null ? await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses) : all_data[created_contracts[i]]
@@ -26877,8 +26924,12 @@ class App extends Component {
 
   }
 
-  get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, accounts_to_load) => {
-    var contracts_ive_entered_events = this.state.saved_pre_launch_events[e5] != null && this.state.my_proposals[e5] == null ? this.state.saved_pre_launch_events[e5]['contracts_ive_entered_events'] : await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */})
+  get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, accounts_to_load, return_created_object_events_only=false, all_return_data={}) => {
+    var contracts_ive_entered_events = (this.state.saved_pre_launch_events[e5] != null && this.state.my_proposals[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['contracts_ive_entered_events'] : await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */})
+
+    if(return_created_object_events_only == true){
+      return contracts_ive_entered_events
+    }
     
     var created_contracts = []
     var accounts_for_expiry_time = []
@@ -26964,7 +27015,27 @@ class App extends Component {
     
 
     var created_proposal_object_data = this.state.my_proposals[e5] == null ? [] : this.state.my_proposals[e5].slice()
-    var created_proposal_data = await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
+    var sort_objects_into_3d_array = (my_proposal_ids, all_return_data) => {
+      const object_array = []
+      my_proposal_ids.forEach(id => {
+        if(all_return_data[e5]['objects_data']['object_data'][id] != null){
+          object_array.push(all_return_data[e5]['objects_data']['object_data'][id])
+        }else{
+          var data_sizes = [ 20, 20, 0, 0, 0 ]
+          var my_default_object = []
+          data_sizes.forEach(element => {
+            var arr = []
+            for(var q=0; q<element; q++){
+              arr.push(0)
+            }
+            my_default_object.push(arr)
+          });
+          object_array.push(my_default_object)
+        }
+      });
+      return object_array
+    }
+    var created_proposal_data = all_return_data[e5] != null ? sort_objects_into_3d_array(created_contracts, all_return_data) : await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
     // var consensus_data = await G52contractInstance.methods.f266(my_proposal_ids, [], 0).call((error, result) => {});
     var is_first_time = this.state.my_proposals[e5] == null
 
@@ -26988,7 +27059,7 @@ class App extends Component {
 
     this.record_number_of_items(e5, 'proposals',my_proposal_ids.length)
     var starter = 53
-    var all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(0, starter), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(0, starter), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     for(var i=0; i<my_proposal_ids.length; i++){
       var proposals_data = all_data[my_proposal_ids[i]] == null ? await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses) : all_data[my_proposal_ids[i]]
@@ -26998,7 +27069,7 @@ class App extends Component {
         proposals_data = {
             selected: 0, id: makeid(8), object_type:32, type:this.getLocale()['312'], e5:this.state.selected_e5,
             contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
-            entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'Malformed!',
+            entered_tag_text: '',entered_indexing_tags:[], entered_title_text:'Malformed!',
     
             page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
             proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
@@ -27774,9 +27845,9 @@ class App extends Component {
     return web3.utils.keccak256(content_channeling).toString()
   }
 
-  get_post_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
+  get_post_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account, return_created_object_events_only=false, all_return_data={}) => {
     console.log('get_post_data', 'starting get post data...')
-    var created_post_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_posts[e5] == null ? this.state.saved_pre_launch_events[e5]['created_post_events'] :  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */, p1:this.get_valid_post_index(web3)})
+    var created_post_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_posts[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_post_events'] :  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */, p1:this.get_valid_post_index(web3)})
     created_post_events = created_post_events.reverse()
 
 
@@ -27827,12 +27898,15 @@ class App extends Component {
     }
     console.log('get_post_data', 'loaded, filtered and sorted the post events...')
 
+    if(return_created_object_events_only == true){
+      return created_post_events
+    }
     
     this.record_number_of_items(e5, 'posts', created_post_events.length)
     var created_posts = this.state.created_posts[e5] == null ? [] : this.state.created_posts[e5].slice()
     var is_first_time = this.state.created_posts[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
     console.log('get_post_data', 'loaded the post data ipfs data...')
 
     for(var i=0; i<created_post_events.length; i++){
@@ -27872,8 +27946,8 @@ class App extends Component {
     console.log('get_post_data', 'post count: '+created_posts.length)
   }
 
-  get_channel_data = async (E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
-    var created_channel_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_channels[e5] == null ? this.state.saved_pre_launch_events[e5]['created_channel_events'] :  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */, p1:this.get_valid_post_index(web3)})
+  get_channel_data = async (E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items, return_created_object_events_only=false, all_return_data={}) => {
+    var created_channel_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_channels[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_channel_events'] :  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */, p1:this.get_valid_post_index(web3)})
     created_channel_events = created_channel_events.reverse()
 
     //prioritize the channels ive participated in first
@@ -27923,11 +27997,15 @@ class App extends Component {
       created_channel_events = my_events
     }
 
+    if(return_created_object_events_only == true){
+      return created_channel_events
+    }
+
     this.record_number_of_items(e5, 'channels', created_channel_events.length)
     var created_channel = this.state.created_channels[e5] == null ? [] : this.state.created_channels[e5].slice()
     var is_first_time = this.state.created_channels[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     const privateKey = this.state.accounts['E25'].privateKey
@@ -28389,8 +28467,8 @@ class App extends Component {
     return arr
   }
 
-  get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts, load_prioritized_accounts_exclusively, specific_items) => {
-    var created_store_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_stores[e5] == null ? this.state.saved_pre_launch_events[e5]['created_store_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */, p1:this.get_valid_post_index(web3)})
+  get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts, load_prioritized_accounts_exclusively, specific_items, return_created_object_events_only=false, all_return_data={}) => {
+    var created_store_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_stores[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_store_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */, p1:this.get_valid_post_index(web3)})
     created_store_events = created_store_events.reverse()
 
 
@@ -28454,13 +28532,17 @@ class App extends Component {
       created_store_events = my_events
     }
 
+    if(return_created_object_events_only == true){
+      return created_store_events
+    }
+
     this.record_number_of_items(e5, 'storefront', created_store_events.length)
     const created_stores = this.state.created_stores[e5] == null ? [] : this.state.created_stores[e5].slice()
     const created_store_mappings = this.state.created_store_mappings[e5] == null ? {} : structuredClone(this.state.created_store_mappings[e5])
     const my_stores = []
     var is_first_time = this.state.created_stores[e5] == null
 
-    const all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    const all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     for(var i=0; i<created_store_events.length; i++){
       var id = created_store_events[i].returnValues.p2
@@ -28536,8 +28618,8 @@ class App extends Component {
     console.log('store count: '+created_stores.length)
   }
 
-  get_bag_data = async (contractInstance, web3, e5, contract_addresses, E52contractInstance, account, prioritized_accounts, specific_items) => {
-    var created_bag_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_bags[e5] == null ? this.state.saved_pre_launch_events[e5]['created_bag_events'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */})
+  get_bag_data = async (contractInstance, web3, e5, contract_addresses, E52contractInstance, account, prioritized_accounts, specific_items, return_created_object_events_only=false, all_return_data={}) => {
+    var created_bag_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_bags[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_bag_events'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */})
     created_bag_events = created_bag_events.reverse();
 
 
@@ -28609,12 +28691,16 @@ class App extends Component {
       created_bag_events = my_events
     }
 
+    if(return_created_object_events_only == true){
+      return created_bag_events
+    }
+
     this.record_number_of_items(e5, 'bags', created_bag_events.length)
     const my_created_bags = this.state.created_bags[e5] == null ? [] : this.state.created_bags[e5].slice()
     var my_created_bag_ids =  []
     var is_first_time = this.state.created_bags[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     var response_count_data = this.state.saved_pre_launch_events[e5] != null && this.state.created_bags[e5] == null ? this.state.saved_pre_launch_events[e5]['response_count_data'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
 
@@ -28792,8 +28878,8 @@ class App extends Component {
     return images
   }
 
-  get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3, account, prioritized_accounts, specific_items) => {
-    var created_contractor_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_contractors[e5] == null ? this.state.saved_pre_launch_events[e5]['created_contractor_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */, p1:this.get_valid_post_index(web3)})
+  get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3, account, prioritized_accounts, specific_items, return_created_object_events_only=false, all_return_data={}) => {
+    var created_contractor_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_contractors[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_contractor_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */, p1:this.get_valid_post_index(web3)})
     created_contractor_events = created_contractor_events.reverse()
 
 
@@ -28828,12 +28914,16 @@ class App extends Component {
       created_contractor_events = my_events
     }
 
+    if(return_created_object_events_only == true){
+      return created_contractor_events
+    }
+
     this.record_number_of_items(e5, 'contractor', created_contractor_events.length)
     var created_contractor = this.state.created_contractors[e5] == null ? [] : this.state.created_contractors[e5].slice()
     var my_contractor_posts = []
     var is_first_time = this.state.created_contractors[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     var all_requests = this.state.saved_pre_launch_events[e5] != null && this.state.created_contractors[e5] == null ? this.state.saved_pre_launch_events[e5]['all_requests'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:38})
     var all_responses = this.state.saved_pre_launch_events[e5] != null && this.state.created_contractors[e5] == null ? this.state.saved_pre_launch_events[e5]['all_responses'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:39})
@@ -28917,8 +29007,8 @@ class App extends Component {
     console.log('contractor count: '+created_contractor.length)
   }
 
-  get_audio_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
-    var created_audio_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_audios[e5] == null ? this.state.saved_pre_launch_events[e5]['created_audio_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */, p1:this.get_valid_post_index(web3)})
+  get_audio_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account, return_created_object_events_only=false, all_return_data={}) => {
+    var created_audio_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_audios[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_audio_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */, p1:this.get_valid_post_index(web3)})
     created_audio_events = created_audio_events.reverse()
 
 
@@ -28968,6 +29058,10 @@ class App extends Component {
       });
       created_audio_events = my_events
     }
+
+    if(return_created_object_events_only == true){
+      return created_audio_events
+    }
     
     this.record_number_of_items(e5, 'audio', created_audio_events.length)
     var created_audios = this.state.created_audios[e5] == null ? [] : this.state.created_audios[e5].slice()
@@ -28976,7 +29070,7 @@ class App extends Component {
     var is_first_time = this.state.created_audios[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     var requests = this.state.saved_pre_launch_events[e5] != null && this.state.created_audios[e5] == null ? this.state.saved_pre_launch_events[e5]['requests'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
@@ -29075,8 +29169,8 @@ class App extends Component {
     console.log('audio count: '+created_audios.length)
   }
 
-  get_video_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
-    var created_video_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_videos[e5] == null ? this.state.saved_pre_launch_events[e5]['created_video_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */, p1:this.get_valid_post_index(web3)})
+  get_video_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account, return_created_object_events_only=false, all_return_data={}) => {
+    var created_video_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_videos[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_video_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */, p1:this.get_valid_post_index(web3)})
     created_video_events = created_video_events.reverse()
 
 
@@ -29125,6 +29219,10 @@ class App extends Component {
       });
       created_video_events = my_events
     }
+
+    if(return_created_object_events_only == true){
+      return created_video_events
+    }
     
     this.record_number_of_items(e5, 'video', created_video_events.length)
     var created_videos = this.state.created_videos[e5] == null ? [] : this.state.created_videos[e5].slice()
@@ -29133,7 +29231,7 @@ class App extends Component {
     var is_first_time = this.state.created_videos[e5] == null
     is_first_time = true
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     var sales_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_videos[e5] == null ? this.state.saved_pre_launch_events[e5]['sales'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
@@ -29416,8 +29514,8 @@ class App extends Component {
     
   }
 
-  get_poll_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account) => {
-    var created_post_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_polls[e5] == null ? this.state.saved_pre_launch_events[e5]['created_poll_events'] :await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */, p1:this.get_valid_post_index(web3)})
+  get_poll_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account, return_created_object_events_only=false, all_return_data={}) => {
+    var created_post_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_polls[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_poll_events'] :await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */, p1:this.get_valid_post_index(web3)})
     created_post_events = created_post_events.reverse()
 
 
@@ -29466,12 +29564,16 @@ class App extends Component {
       });
       created_post_events = my_events
     }
+
+    if(return_created_object_events_only == true){
+      return created_post_events
+    }
     
     this.record_number_of_items(e5, 'poll', created_post_events.length)
     var created_posts = this.state.created_polls[e5] == null ? [] : this.state.created_polls[e5].slice()
     var is_first_time = this.state.created_polls[e5] == null
 
-    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses)
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
     for(var i=0; i<created_post_events.length; i++){
       var id = created_post_events[i].returnValues.p2
@@ -29887,12 +29989,14 @@ class App extends Component {
 
   load_contract_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
+
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var e5_address = this.state.e5s[e5].e5_address;
       if((preferred_e5 != null && e5 != preferred_e5) || (Object.keys(my_prioritized_accounts_data).length > 0 && my_prioritized_accounts_data[e5] == null)){
         e5_address = '';
-      } 
+      }
       if(e5_address != ''){
         var web3_url = this.get_web3_url_from_e5(e5)
         const web3 = new Web3(web3_url);
@@ -29917,7 +30021,7 @@ class App extends Component {
         const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts)
+        this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], false, all_return_data)
       }
     }
     // this.has_gotten_contracts = true
@@ -29925,6 +30029,7 @@ class App extends Component {
 
   load_proposal_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -29951,13 +30056,14 @@ class App extends Component {
         const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts)
+        this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, false, all_return_data)
       }
     }
   }
 
   load_contractor_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -29976,13 +30082,14 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account, filter_data_accounts)
+        this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account, filter_data_accounts, [], false, all_return_data)
       }
     }
   }
 
   load_subscription_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -30009,7 +30116,7 @@ class App extends Component {
         const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts)
+        this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], false, all_return_data)
       }
     }
   }
@@ -30037,6 +30144,7 @@ class App extends Component {
 
   load_post_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -30055,13 +30163,14 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_post_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, account)
+        this.get_post_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, false, all_return_data)
       }
     }
   }
 
   load_channel_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -30080,13 +30189,14 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts)
+        this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, [], false, all_return_data)
       }
     }
   }
 
   load_storefront_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -30109,20 +30219,21 @@ class App extends Component {
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false)
+        this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false, [], false, all_return_data)
       }
     }
   }
 
   load_bag_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
       if((preferred_e5 != null && e5 != preferred_e5) || (Object.keys(my_prioritized_accounts_data).length > 0 && my_prioritized_accounts_data[e5] == null)){
         e5_address = '';
-      } 
+      }
       if(e5_address != ''){
         const web3 = new Web3(web3_url);
 
@@ -30138,7 +30249,7 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account, filter_data_accounts)
+        this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account, filter_data_accounts, [], false, all_return_data)
       }
     }
   }
@@ -30219,6 +30330,7 @@ class App extends Component {
 
   load_poll_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -30237,7 +30349,7 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
-        this.get_poll_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, account)
+        this.get_poll_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, false, all_return_data)
       }
     }
   }
@@ -30845,6 +30957,118 @@ class App extends Component {
     }
 
     return object_type
+  }
+
+  load_created_object_events_mapping_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, item_type) => {
+    const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    const created_object_events_mapping = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var e5_address = this.state.e5s[e5].e5_address;
+      if((preferred_e5 != null && e5 != preferred_e5) || (Object.keys(my_prioritized_accounts_data).length > 0 && my_prioritized_accounts_data[e5] == null)){
+        e5_address = '';
+      }
+      if(e5_address != '' && this.state.saved_pre_launch_events[e5] != null){
+        var web3_url = this.get_web3_url_from_e5(e5)
+        const web3 = new Web3(web3_url);
+
+        var account = this.state.user_account_id[e5]
+        var contract_addresses = this.state.addresses[e5]
+
+        const contractArtifact = require('./contract_abis/E5.json');
+        const contractAddress = e5_address
+        const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        const G5contractArtifact = require('./contract_abis/G5.json');
+        const G5_address = contract_addresses[3];
+        const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+        const G52contractArtifact = require('./contract_abis/G52.json');
+        const G52_address = contract_addresses[4];
+        const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+
+        const F5contractArtifact = require('./contract_abis/F5.json');
+        const F5_address = contract_addresses[2];
+        const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+
+        const H52contractArtifact = require('./contract_abis/H52.json');
+        const H52_address = contract_addresses[6];
+        const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+        const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
+
+        if(item_type == 30/* 30(contract_obj_id) */){
+          created_object_events_mapping[e5] = this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], true)
+        }
+        else if(item_type == 32/* 32(consensus_request) */){
+          created_object_events_mapping[e5] = this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, true)
+        }
+        else if(item_type == 26/* 26(contractor_object) */){
+          created_object_events_mapping[e5] = this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account, filter_data_accounts, [], true)
+        }
+        else if(item_type == 33/* 33(subscription_object) */){
+          created_object_events_mapping[e5] = this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], true)
+        }
+        else if(item_type == 18/* 18(post object) */){
+          created_object_events_mapping[e5] = this.get_post_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, true)
+        }
+        else if(item_type == 36/* 36(type_channel_target) */){
+          created_object_events_mapping[e5] = this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, [], true)
+        }
+        else if(item_type == 27/* 27(storefront-item)  */){
+          created_object_events_mapping[e5] = this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false, [], true)
+        }
+        else if(item_type == 25/* 25(storefront_bag_object)  */){
+          created_object_events_mapping[e5] = this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account, filter_data_accounts, [], true)
+        }
+        else if(item_type == 28/* 28(poll-object)  */){
+          created_object_events_mapping[e5] = this.get_poll_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, true)
+        }
+      }
+    }
+    return await this.pre_object_fetch_call(created_object_events_mapping, item_type)
+  }
+
+  pre_object_fetch_call = async (created_object_events_mapping, item_type) => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+    const arg_obj = {
+      item_type: item_type,
+      max_post_bulk_load_count: this.state.max_post_bulk_load_count,
+      created_object_events_mapping: created_object_events_mapping,
+      known_hashes: this.get_my_recorded_hashes(''),
+      specific_e5s_targeted:[]
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object('', arg_obj))
+    }
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'pre_fetch_object_data')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      const data = await response.text();
+      const obj = await this.process_nitro_api_call_result(data, beacon_node);
+      return obj.all_return_data || {};
+    }
+    catch(e){
+      console.log('apppage', 'something went wrong',e)
+      return {}
+    }
   }
 
 
@@ -32805,16 +33029,13 @@ class App extends Component {
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       load_limit = this.state.nitro_node_details[this.state.my_preferred_nitro]['hash_data_request_limit']
     }
-    const ids = ids_to_load.slice(0, load_limit)
-
-    if(this.state.beacon_node_enabled == false){
+    else if(this.state.beacon_node_enabled == false){
       console.log('all_data', 'beacon node offline')
       return {}
-    }else{
-      console.log('all_data', 'beacon node online, loading: ', ids)
     }
+    const ids = ids_to_load.slice(0, load_limit)
 
-    if(pre_launch_data[e5] != null){
+    if(pre_launch_data[e5] != null && target != ''){
       const id_to_hash_mapping = pre_launch_data[e5][target]['id_to_hash_mapping']
       const ids = Object.keys(id_to_hash_mapping)
       var obj_id_ecid = {}
@@ -32841,12 +33062,34 @@ class App extends Component {
             }
             obj_id_ecid[ids[i]] = {'id':id, 'internal_id':internal_id,'option':option }
             obj_types[id] = option
+            hashes.push(id)
             valid_ids.push(ids[i])
           }catch(e){
             console.log('apppage', e)
           }
         }
       });
+
+      const all_events_data = pre_launch_data[e5][target]['object_hash_data']
+      if(Object.keys(all_events_data).length > 0){
+        for(var i=0; i<hashes.length; i++){
+          var cid_data = all_events_data[hashes[i]]
+          if(cid_data != null){
+            var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+            if(confirmation_hash != hashes[i] && obj_types[hashes[i]] == 'ni'){
+              console.log('apppage', hashes[i], 'data has been modified! bad data!', confirmation_hash)
+            }else{
+              try{
+                var decrypted_data = await this.decrypt_storage_object2(cid_data)
+                // console.log('apppage', 'decrypted object', decrypted_data)
+                this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
+              }catch(e){
+                console.log(e)
+              }
+            }
+          }
+        }
+      }
 
       var data = {}
       for(var i=0; i<valid_ids.length; i++){
@@ -35632,7 +35875,7 @@ class App extends Component {
 
     var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      // await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
       loaded_target = all_object_comment_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var messages = []
@@ -35696,7 +35939,8 @@ class App extends Component {
           event_params.push([web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: target_id, p3/* context */:id, p5: e5_id,}])
         }
       }
-      const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+      const { all_events, all_events_data } = await this.load_multiple_events_from_nitro(event_params, 'comment')
+      await this.set_all_hashes_in_storage(all_events_data)
       console.log('apppage', 'get_object_messages', all_events)
       all_events.forEach((event_array, index)=> {
         // var focused_e5 = used_e5s[index]
@@ -35762,15 +36006,47 @@ class App extends Component {
     return events
   }
 
+  set_all_hashes_in_storage = async (all_events_data) => {
+    const hash_entries = Object.keys(all_events_data)
+    for(var h=0; h<hash_entries.length; h++){
+      const cid_data = all_events_data[hash_entries[h]]
+      var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+      if(confirmation_hash != hash_entries[h]){
+        console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
+      }else{
+        try{
+          const decrypted_data = await this.decrypt_storage_object2(cid_data)
+          this.store_in_local_storage(hash_entries[h], JSON.parse(decrypted_data))
+        }catch(e){
+          console.log('apppage', e)
+        }
+      }
+    }
+  }
+
   get_job_objects_responses = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
+    var created_job_respnse_data = null
+    var application_responses = null
 
-    var application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37})
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params2 = [
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36}],/* created_job_respnse_data */
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37}],/* application_responses */
+      ]
+      const all_events = await this.load_multiple_events_from_nitro(event_params2)
+      created_job_respnse_data = all_events[0]
+      application_responses = all_events[1]
+    }else{
+      created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36})
+
+      application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37})
+    }
+    
 
     var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
@@ -35948,6 +36224,20 @@ class App extends Component {
     var created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38})
 
     var application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39})
+
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params2 = [
+        [web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38}],/* created_job_respnse_data */
+        [web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39}],/* application_responses */
+      ]
+      const all_events = await this.load_multiple_events_from_nitro(event_params2)
+      created_job_respnse_data = all_events[0]
+      application_responses = all_events[1]
+    }else{
+      created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38})
+
+      application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39})
+    }
 
     created_job_respnse_data = created_job_respnse_data.reverse()
 
@@ -36656,7 +36946,7 @@ class App extends Component {
     
     var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
-      await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      // await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
       loaded_target = all_object_comment_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var messages = []
