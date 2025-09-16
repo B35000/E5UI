@@ -7639,7 +7639,8 @@ class App extends Component {
     this.setState({content_channeling: item})
     var me = this;
     setTimeout(function() {
-        me.set_cookies()
+      me.set_cookies()
+      me.start_get_accounts_data(false, false)
     }, (1 * 1000));
   }
 
