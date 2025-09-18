@@ -52,6 +52,7 @@ class PostListSection extends Component {
         direction:'positive',
         typed_search_coin_id:'',
         screen_width:0,
+        current_load_time: {}
     };
 
 
@@ -729,6 +730,57 @@ class PostListSection extends Component {
 
 
 
+    show_new_objects_message_if_any(objects){
+        const page_id = this.props.get_page_id()
+
+        if(this.state.current_load_time[page_id] == null){
+            const current_load_time_clone = structuredClone(this.state.current_load_time)
+            current_load_time_clone[page_id] = Date.now()/1000
+            this.setState({current_load_time: current_load_time_clone})
+        }else{
+            const current_pages_load_time = this.state.current_load_time[page_id]
+            var new_objects = objects.filter(function (object) {
+                return (object['timestamp'] >= current_pages_load_time)
+            })
+
+            if(new_objects.length > 0){
+                const title = this.props.app_state.loc['2509r']/* $ new % loaded. */.replace('$', number_with_commas(new_objects.length)).replace('%', this.get_section_name())
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['2509s']/* 'Tap this to refresh your feed and show them.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                    </div>
+                )
+            }
+        }
+    }
+
+    get_section_name(){
+        var selected_page = this.props.page;
+        if(selected_page == '?'){
+            return this.props.work_page_tags_object['i'].active
+        }
+        else if(selected_page == 'e'){
+            return this.props.explore_page_tags_object['i'].active
+        }
+        else if(selected_page == 'w'){
+            return this.props.wallet_page_tags_object['i'].active
+        }
+    }
+
+    filter_objects_and_remove_very_new_entries(objects){
+        const page_id = this.props.get_page_id()
+        const current_pages_load_time = this.state.current_load_time[page_id] || Date.now()/1000
+        return objects.filter(function (object) {
+            return (object['timestamp'] < current_pages_load_time)
+        })
+    }
+
+
+
+
+
+
 
 
 
@@ -739,7 +791,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_job_items()
+        var all_items = this.get_job_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -747,6 +800,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'jobs')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -764,6 +818,7 @@ class PostListSection extends Component {
                         <AnimatePresence initial={false}>
                             <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                                 {this.show_load_metrics(items, 'jobs')}
+                                {this.show_new_objects_message_if_any(all_items)}
                                 {items.map((item, index) => (
                                     <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                     style={{'padding': padding}}>
@@ -918,7 +973,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_contract_items()
+        var all_items = this.get_contract_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -926,6 +982,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'contracts')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -942,6 +999,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'contracts')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -1057,7 +1115,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_my_proposals()
+        var all_items = this.get_my_proposals()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -1065,6 +1124,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'proposals')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -1081,6 +1141,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'proposals')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -1158,7 +1219,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_nitro_items()
+        var all_items = this.get_nitro_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -1166,6 +1228,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'nitro')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -1183,6 +1246,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics([], 'nitro')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -1269,7 +1333,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_subscription_items()
+        var all_items = this.get_subscription_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -1277,6 +1342,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'subscriptions')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -1293,6 +1359,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'subscriptions')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {this.render_pay_all_upcoming_subscriptions_button(items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
@@ -1398,7 +1465,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_mail_items()
+        var all_items = this.get_mail_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         var selected_item = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
 
@@ -1414,6 +1482,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_mail_message_if_wallet_not_set()}
                         {this.show_load_metrics([], object_type)}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -1430,6 +1499,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, object_type)}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -1562,7 +1632,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_contractor_items()
+        var all_items = this.get_contractor_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -1570,6 +1641,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'contractor')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -1587,6 +1659,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'contractor')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -2159,7 +2232,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_post_items()
+        var all_items = this.get_post_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -2167,6 +2241,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'posts')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -2183,6 +2258,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'posts')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -2439,7 +2515,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_channel_items()
+        var all_items = this.get_channel_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -2447,6 +2524,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'channels')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -2463,6 +2541,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'channels')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -2606,14 +2685,17 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_poll_items()
-        // console.log('poll_loader', items)
+
+        var all_items = this.get_poll_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
+
         if(items.length == 0){
             items = ['0','1'];
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'polls')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -2630,6 +2712,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'polls')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -2736,7 +2819,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_storefront_items()
+        var all_items = this.get_storefront_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -2744,6 +2828,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'storefront')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -2760,6 +2845,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'storefront')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -2964,7 +3050,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_bag_items()
+        var all_items = this.get_bag_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -2972,6 +3059,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'bags')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -2988,6 +3076,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'bags')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding':padding}}>
@@ -3161,8 +3250,8 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_audio_items()
-        
+        var all_items = this.get_audio_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(selected_item == this.props.app_state.loc['1264l']/* 'acquired' */){
             return(
@@ -3187,6 +3276,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'audioport')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -3204,6 +3294,7 @@ class PostListSection extends Component {
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'audioport')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {this.render_search_songs(items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
@@ -3952,7 +4043,8 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_video_items()
+        var all_items = this.get_video_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(selected_item == this.props.app_state.loc['1264l']/* 'acquired' */){
             return(
@@ -3969,6 +4061,7 @@ return data['data']
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'videoport')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -3986,6 +4079,7 @@ return data['data']
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'videoport')}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {this.render_search_videos(items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
@@ -4810,7 +4904,8 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_end_exchange_tokens()
+        var all_items = this.get_end_exchange_tokens()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -4818,6 +4913,7 @@ return data['data']
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'tokens')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -4834,6 +4930,7 @@ return data['data']
                 <AnimatePresence initial={false}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                         {this.show_load_metrics(items, 'tokens')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                             style={{'padding': padding}}>
@@ -4975,7 +5072,8 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_spend_exchange_tokens()
+        var all_items = this.get_spend_exchange_tokens()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -4983,6 +5081,7 @@ return data['data']
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics(items, 'tokens')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -4999,6 +5098,7 @@ return data['data']
                 <AnimatePresence initial={false}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                         {this.show_load_metrics(items, 'tokens')}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                             style={{'padding': padding}}>
@@ -5079,7 +5179,8 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.props.get_bill_items()
+        var all_items = this.props.get_bill_items()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
         if(items.length == 0){
             items = ['0','1'];
@@ -5087,6 +5188,7 @@ return data['data']
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_bills_message_if_wallet_not_set()}
+                        {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
                                 {this.render_empty_object()}
@@ -5103,6 +5205,7 @@ return data['data']
                     <AnimatePresence initial={false}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_pay_all_bills_button(items)}
+                            {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>

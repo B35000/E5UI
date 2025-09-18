@@ -106,6 +106,7 @@ class StackPage extends Component {
         get_audiplayer_position_setting_object:this.get_audiplayer_position_setting_object(),
         get_rating_denomination_setting_object:this.get_rating_denomination_setting_object(),
         get_disable_moderation_setting_object:this.get_disable_moderation_setting_object(),
+        get_post_load_size_setting_object: this.get_post_load_size_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
@@ -1115,6 +1116,45 @@ class StackPage extends Component {
     set_selected_disable_moderation_setting_tag(){
         this.setState({get_disable_moderation_setting_object: this.get_disable_moderation_setting_object(),})
     }
+
+
+
+
+
+
+
+
+
+
+    get_post_load_size_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593jf']/* 'few' */, this.props.app_state.loc['1593jg']/* 'many' */, this.props.app_state.loc['1593jh']/* 'very-many' */, this.props.app_state.loc['1593ji']/* 'as-many-as-possible' */,], [this.get_selected_post_load_size_setting_option()]
+            ],
+        }
+    }
+
+    get_selected_post_load_size_setting_option(){
+        var obj = {'e':0}
+        obj[35] = 1/* few */
+        obj[53] = 2/* many */
+        obj[72] = 3/* very-many */
+        obj[135] = 4/* as-many-as-possible */
+        return obj[this.props.app_state.max_post_bulk_load_count]
+    }
+
+    set_selected_post_load_size_setting_tag(){
+        this.setState({get_post_load_size_setting_object: this.get_post_load_size_setting_object(),})
+    }
+
+
+
+
+
+
 
 
 
@@ -5184,6 +5224,9 @@ class StackPage extends Component {
                     all_final_elements.push(this.props.encrypt_string_using_crypto_js(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     
                     obj['tags'][t.id] = { 'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country) }
+                    if(t.spend_exchange_allowed_countries != null && t.spend_exchange_allowed_countries.length > 0){
+                        obj['tags'][t.id]['targeted_countries'] = t.spend_exchange_allowed_countries
+                    }
                     ipfs_index_array.push({'id':t.id, 'data':t})
 
                     if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */){
@@ -5346,6 +5389,10 @@ class StackPage extends Component {
                     all_final_elements.push(this.props.encrypt_string_using_crypto_js(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY)) 
 
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country)}
+
+                    if(data.spend_exchange_allowed_countries != null && data.spend_exchange_allowed_countries.length > 0){
+                        obj['tags'][data.id]['targeted_countries'] = data.spend_exchange_allowed_countries
+                    }
                     ipfs_index_array.push({'id':data.id, 'data':data})
 
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */ || txs[i].type == this.props.app_state.loc['b311a']/* video */){
@@ -10712,6 +10759,15 @@ class StackPage extends Component {
 
                     {this.render_detail_item('0')}
 
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
+
                 </div>
             </div>
         )
@@ -10779,7 +10835,7 @@ class StackPage extends Component {
     when_theme_tags_updated(tag_group){
         this.setState({get_themes_tags_object: tag_group})
 
-        var selected_item = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
+        var selected_item = this.get_selected_item(tag_group, 'e')
 
         if(selected_item == 'e'){
             selected_item = this.props.app_state.loc['1417']/* 'light' */
@@ -10790,7 +10846,7 @@ class StackPage extends Component {
 
     when_details_orientation_changed(tag_group){
         this.setState({get_orientation_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_orientation_tags_object, this.state.get_orientation_tags_object['i'].active)
+        var selected_item = this.get_selected_item(tag_group, 'e')
 
         if(selected_item == 'e'){
             selected_item = this.props.app_state.loc['1419']/* 'right' */
@@ -10802,14 +10858,14 @@ class StackPage extends Component {
     when_get_selected_e5_tags_object_updated(tag_group){
         this.setState({get_selected_e5_tags_object:tag_group})
 
-        var selected_item = this.get_selected_item(this.state.get_selected_e5_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
 
         this.props.when_selected_e5_changed(selected_item)
     }
 
     when_get_selected_storage_tags_object_updated(tag_group){
         this.setState({get_selected_storage_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_selected_storage_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_storage_option_changed(selected_item)
     }
 
@@ -10821,13 +10877,13 @@ class StackPage extends Component {
 
     when_get_refresh_speed_tags_object_updated(tag_group){
         this.setState({get_refresh_speed_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_refresh_speed_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_refresh_speed_changed(selected_item)
     }
 
     when_get_masked_data_tags_object_updated(tag_group){
         this.setState({get_masked_data_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_masked_data_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_masked_data_setting_changed(selected_item)
     }
 
@@ -10837,110 +10893,110 @@ class StackPage extends Component {
             return;
         }
         this.setState({get_content_channeling_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_content_channeling_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_content_channeling_changed(selected_item)
     }
 
     when_get_content_language_object_updated(tag_group){
         this.setState({get_content_language_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_content_language_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_content_language_changed(selected_item)
     }
 
     when_get_content_filtered_setting_object_updated(tag_group){
         this.setState({get_content_filtered_setting_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_content_filtered_setting_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_content_filter_setting_changed(selected_item)
     }
 
     when_get_tabs_tags_object_updated(tag_group){
         this.setState({get_tabs_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_tabs_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_tabs_setting_changed(selected_item)
     }
 
     when_storage_permissions_object_updated(tag_group){
         this.setState({get_storage_permissions_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_storage_permissions_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_storage_permission_setting_changed(selected_item)
     }
 
     when_stack_optimizer_object_updated(tag_object){
         this.setState({get_stack_optimizer_tags_object: tag_object})
-        var selected_item = this.get_selected_item(this.state.get_stack_optimizer_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_stack_optimizer_setting_changed(selected_item)
         this.run_transactions(true, false)
     }
 
     when_homepage_tags_position_tags_object_updated(tag_group){
         this.setState({get_homepage_tags_position_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_homepage_tags_position_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_homepage_tags_position_tags_changed(selected_item)
     }
 
     when_get_preferred_font_tags_object_updated(tag_group){
         this.setState({get_preferred_font_tags_object: tag_group})
-        var selected_item = this.get_selected_item(this.state.get_preferred_font_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_group, 'e')
         this.props.when_preferred_font_tags_changed(selected_item)
     }
 
     when_get_skip_nsfw_warning_tags_object_updated(tag_object){
         this.setState({get_skip_nsfw_warning_tags_object: tag_object})
-        var selected_item = this.get_selected_item(this.state.get_skip_nsfw_warning_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_skip_nsfw_warning_tags_changed(selected_item)
     }
 
     when_get_graph_type_tags_object_updated(tag_object){
         this.setState({get_graph_type_tags_object: tag_object})
-        var selected_item = this.get_selected_item(this.state.get_graph_type_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_graph_type_tags_changed(selected_item)
     }
 
     when_get_remember_account_tags_object_updated(tag_object){
         this.setState({get_remember_account_tags_object: tag_object});
-        var selected_item = this.get_selected_item(this.state.get_remember_account_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_remember_account_tags_changed(selected_item)
     }
 
     when_get_hide_pip_tags_object_updated(tag_object){
         this.setState({get_hide_pip_tags_object: tag_object})
-        var selected_item = this.get_selected_item(this.state.get_hide_pip_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_hide_pip_tags_changed(selected_item)
     }
 
     when_get_preferred_currency_tags_object_updated(tag_object){
         this.setState({get_preferred_currency_tags_object: tag_object})
-        var selected_item = this.get_selected_item(this.state.get_preferred_currency_tags_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_preferred_currency_tags_changed(selected_item)
     }
 
     when_get_minified_content_setting_object_updated(tag_object){
         this.setState({get_minified_content_setting_object: tag_object})
-        var selected_item = this.get_selected_item(this.state.get_minified_content_setting_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_minified_content_setting_changed(selected_item)
     }
 
     when_get_auto_run_setting_object_updated(tag_object){
         this.setState({get_auto_run_setting_object: tag_object})
-        var selected_item = this.get_selected_item(this.state.get_auto_run_setting_object, 'e')
+        var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_auto_run_setting_changed(selected_item)
     }
 
     when_get_explore_display_type_setting_object_updated(tag_obj){
         this.setState({get_explore_display_type_setting_object: tag_obj})
-        var selected_item = this.get_selected_item(this.state.get_explore_display_type_setting_object, 'e')
+        var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_explore_display_type_changed(selected_item)
     }
 
     when_get_audiplayer_position_setting_object_updated(tag_obj){
         this.setState({get_audiplayer_position_setting_object: tag_obj})
-        var selected_item = this.get_selected_item(this.state.get_audiplayer_position_setting_object, 'e')
+        var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_audiplayer_position_changed(selected_item)
     }
 
     when_get_rating_denomination_setting_object_updated(tag_obj){
         this.setState({get_rating_denomination_setting_object: tag_obj})
-        var selected_item = this.get_selected_item(this.state.get_rating_denomination_setting_object, 'e')
+        var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_rating_denomination_changed(selected_item)
     }
 
@@ -10956,6 +11012,12 @@ class StackPage extends Component {
         this.setState({get_disable_moderation_setting_object: tag_obj})
         var selected_item = this.get_selected_item(this.state.get_disable_moderation_setting_object, 'e')
         this.props.when_disable_moderation_changed(selected_item)
+    }
+
+    when_get_post_load_size_setting_object_updated(tag_obj){
+        this.setState({get_post_load_size_setting_object: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        this.props.when_post_load_size_changed(selected_item)
     }
     
 

@@ -901,7 +901,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(97), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 135, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(67), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -961,7 +961,7 @@ class App extends Component {
 
     is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
 
-    gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3, nitro_telemetry_data_object:{}, nitro_error_log_data_object:{}, saved_pre_launch_events:{}
+    gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3, nitro_telemetry_data_object:{}, nitro_error_log_data_object:{}, saved_pre_launch_events:{},
   };
 
   get_static_assets(){
@@ -3325,7 +3325,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.interval = setInterval(() => me.background_sync(), obj[me.state.refresh_speed]);
-      me.interval2 = setInterval(() => me.start_get_accounts_data(false, true), 35_000)
+      // me.interval2 = setInterval(() => me.start_get_accounts_data(false, true), 35_000)
       me.interval3 = setInterval(() => me.background_coin_sync(), 3*60_000)
       me.interval4 = setInterval(() => me.load_and_notify_flash(), 40_000)
       me.interval6 = setInterval(() => me.update_nitro_privacy_signature(), 40_000)
@@ -3465,6 +3465,8 @@ class App extends Component {
       last_login_time: Date.now(),
       my_created_moderator_notes: this.state.my_created_moderator_notes,
       my_preferred_nitro_link: this.state.my_preferred_nitro_link,
+      
+      max_post_bulk_load_count: this.state.max_post_bulk_load_count,
     }
   }
 
@@ -3648,6 +3650,7 @@ class App extends Component {
       var last_login_time = state.last_login_time == null ? Date.now() : state.last_login_time
       var my_created_moderator_notes = state.my_created_moderator_notes == null ? this.state.my_created_moderator_notes : state.my_created_moderator_notes
       var my_preferred_nitro_link = state.my_preferred_nitro_link == null ? '' : state.my_preferred_nitro_link;
+      var max_post_bulk_load_count = state.max_post_bulk_load_count == null ? this.state.max_post_bulk_load_count : state.max_post_bulk_load_count;
 
       this.setState({
         theme: theme,
@@ -3715,7 +3718,8 @@ class App extends Component {
         stacked_message_ids: stacked_message_ids,
         last_login_time: last_login_time,
         my_created_moderator_notes: my_created_moderator_notes,
-        my_preferred_nitro_link: my_preferred_nitro_link
+        my_preferred_nitro_link: my_preferred_nitro_link,
+        max_post_bulk_load_count: max_post_bulk_load_count
       })
       var me = this;
       setTimeout(function() {
@@ -3768,6 +3772,7 @@ class App extends Component {
       me.stack_page.current?.set_selected_audiplayer_position_setting_tag()
       me.stack_page.current?.set_selected_rating_denomination_setting_tag()
       me.stack_page.current?.set_selected_disable_moderation_setting_tag()
+      me.stack_page.current?.set_selected_post_load_size_setting_tag()
     }, (1 * 1000));
   }
 
@@ -4594,7 +4599,7 @@ class App extends Component {
   background_sync(){
     if(this.state.accounts[this.state.selected_e5] != null){
       if(this.is_allowed_in_e5()){
-        this.start_get_accounts_data(false, false)
+        this.start_get_accounts_data(false, false, true/* should_skip_pre_launch */)
         this.load_data_from_page_in_focus(this.focused_page)
       }
     }
@@ -6139,7 +6144,7 @@ class App extends Component {
 
     web3.eth.sendTransaction(tx)
     .on('transactionHash', function (hash) {
-      me.start_get_accounts_data(false)
+      me.start_get_accounts_data(false, false, true/* should_skip_pre_launch */)
       console.log('send_result: ',hash)
       me.show_successful_send_bottomsheet({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether, 'type':'ether'}, )
       // me.get_transaction_receipt({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether}, hash, web3)
@@ -6147,7 +6152,7 @@ class App extends Component {
     .on('error', function (error) {
       console.error('Failed to send transaction:', error);
       if(error == 'Error: Invalid JSON RPC response: {}'){
-        me.start_get_accounts_data(false)
+        me.start_get_accounts_data(false, false, true/* should_skip_pre_launch */)
         // me.prompt_top_notification(me.getLocale()['2728']/* 'send complete!' */, 15600)
         me.show_successful_send_bottomsheet({'tx':tx, 'hash':'', 'e5':e5, 'ether':ether, 'type':'ether'})
       }else{
@@ -7322,7 +7327,7 @@ class App extends Component {
       calculate_arweave_data_fees={this.calculate_arweave_data_fees.bind(this)} show_dialer_bottomsheet={this.show_dialer_bottomsheet.bind(this)} when_device_theme_image_changed={this.when_device_theme_image_changed.bind(this)} prompt_confirmation_for_arweave_upload={this.prompt_confirmation_for_arweave_upload.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} load_extra_proposal_data={this.load_extra_proposal_data.bind(this)} load_extra_token_data={this.load_extra_token_data.bind(this)} when_minified_content_setting_changed={this.when_minified_content_setting_changed.bind(this)} get_my_private_key={this.get_my_private_key.bind(this)} when_auto_run_setting_changed={this.when_auto_run_setting_changed.bind(this)} show_view_contextual_transfer_bottomsheet={this.show_view_contextual_transfer_bottomsheet.bind(this)} hash_data={this.hash_data.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} set_stack_depth_value={this.set_stack_depth_value.bind(this)} 
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
-      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)}
+      process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
       
       />
     )
@@ -7642,7 +7647,7 @@ class App extends Component {
 
     setTimeout(function() {
       me.set_cookies()
-      me.start_get_accounts_data(false, false)
+      me.start_get_accounts_data(false, false, false/* should_skip_pre_launch */)
     }, (1 * 1000));
   }
 
@@ -8185,6 +8190,19 @@ class App extends Component {
 
   when_disable_moderation_changed(item){
     this.setState({disable_moderation: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_post_load_size_changed(item){
+    var object_mapping = {}
+    object_mapping[this.props.app_state.loc['1593jf']/* 'few' */] = 35
+    object_mapping[this.props.app_state.loc['1593jg']/* 'many' */] = 53
+    object_mapping[this.props.app_state.loc['1593jh']/* 'very-many' */] = 72
+    object_mapping[this.props.app_state.loc['1593ji']/* 'as-many-as-possible' */] = 135
+    this.setState({max_post_bulk_load_count: object_mapping[item]})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -20312,7 +20330,7 @@ class App extends Component {
       if(this.state.accounts[this.state.selected_e5] != null){
         var me = this
         setTimeout(function() {
-            me.start_get_accounts_data(true, false)
+            me.start_get_accounts_data(true, false, false/* should_skip_pre_launch */)
         }, (3 * 1000));
       }else{
         this.when_wallet_data_updated(['(32)'], 0, '', true,) 
@@ -20494,7 +20512,7 @@ class App extends Component {
     
     var me = this
     setTimeout(function() {
-        me.start_get_accounts_data(is_synching, false)
+        me.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
     }, (3 * 10));
 
     this.setState({has_wallet_been_set: true})
@@ -20529,7 +20547,7 @@ class App extends Component {
     }
     var me = this
     setTimeout(async function() {
-        me.start_get_accounts_data(is_synching, false)
+        me.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
         me.setState({my_pub_key: await me.get_my_entire_public_key()})
     }, (3 * 1000));
 
@@ -22398,8 +22416,12 @@ class App extends Component {
     return 3*1024*1024
   }
 
-  start_get_accounts_data = async (is_synching, should_skip_account_data) => {
-    const pre_launch_data = await this.pre_launch_fetch()
+  start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
+    const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
+    // console.log('apppage', 'pre_launch_data', pre_launch_data)
+    if(is_synching == true){
+      this.inc_synch_progress()
+    }
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       await this.start_get_accounts_for_specific_e5(is_synching, e5, should_skip_account_data, pre_launch_data)
@@ -22417,7 +22439,8 @@ class App extends Component {
       indexing_hash: this.get_valid_post_index(this.get_web3_instance_from_e5('E25')),
       event_fetches: this.get_all_event_fetches(crosschain_identifier),
       known_hashes: this.get_my_recorded_hashes(''),
-      specific_e5s_targeted:[]
+      specific_e5s_targeted: [],
+      launch_state: this.state.device_country,
     }
 
     var body = {
@@ -22445,7 +22468,7 @@ class App extends Component {
   }
 
   get_all_event_fetches(crosschain_identifier){
-    const ignore_call_for_all_data = Object.keys(this.state.all_data).length == 0
+    const ignore_call_for_all_data = Object.keys(this.state.all_data).length != 0
     return [
       {'identifier':'e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{}, 'from_filter':{}}},/* e5 runs */
 
@@ -23494,9 +23517,19 @@ class App extends Component {
       const hash_entries = Object.keys(hash_data)
       for(var h=0; h<hash_entries.length; h++){
         const cid_data = hash_data[hash_entries[h]]
-        var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
-        if(confirmation_hash != hash_entries[h]){
-          console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
+        if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm')){
+          var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+          if(confirmation_hash != hash_entries[h]){
+            console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
+          }else{
+            try{
+              const decrypted_data = await this.decrypt_storage_object2(cid_data)
+              // console.log('apppage', 'decrypted object', decrypted_data)
+              this.store_in_local_storage(hash_entries[h], JSON.parse(decrypted_data))
+            }catch(e){
+              console.log('apppage', e)
+            }
+          }
         }else{
           try{
             const decrypted_data = await this.decrypt_storage_object2(cid_data)
@@ -23915,8 +23948,8 @@ class App extends Component {
 
      if(this.state.refreshing_content_after_channeling_change == true){
         this.setState({refreshing_content_after_channeling_change: false})
-        const page = me.homepage.current?.get_selected_page()
-        me.load_data_from_page_in_focus(page)
+        const page = this.homepage.current?.get_selected_page()
+        this.load_data_from_page_in_focus(page)
       }
 
     // this.get_total_supply_of_ether(e5)
@@ -24062,21 +24095,21 @@ class App extends Component {
   load_e5_balance_data = async (web3, contractInstance, account, e5, contract_addresses, pre_launch_data = {}) => {
     var withdraw_balance = pre_launch_data[e5] != null ? pre_launch_data[e5]['account_data']['withdraw_balance'] : await contractInstance.methods.f167([account], [], 1).call((error, result) => {});
     var clone = structuredClone(this.state.withdraw_balance)
-    clone[e5] = withdraw_balance[0]
+    clone[e5] = withdraw_balance == null ? 0 : withdraw_balance[0]
     this.setState({withdraw_balance: clone})
-    console.log('withdraw balance for e5: ',e5,' : ',withdraw_balance[0])
+    // console.log('withdraw balance for e5: ',e5,' : ',withdraw_balance[0])
 
     var basic_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['account_data']['basic_transaction_data'] : await contractInstance.methods.f287([account]).call((error, result) => {});
     var clone = structuredClone(this.state.basic_transaction_data)
-    clone[e5] = basic_transaction_data[0]
+    clone[e5] = basic_transaction_data == null ? [0, 0, 0, 0] : basic_transaction_data[0]
     this.setState({basic_transaction_data: clone})
-    console.log('basic transaction data for e5: ',e5,' : ',basic_transaction_data[0])
+    // console.log('basic transaction data for e5: ',e5,' : ',basic_transaction_data[0])
 
     var E5_balance = pre_launch_data[e5] != null ? pre_launch_data[e5]['E5_balance'] : await contractInstance.methods.f147(1).call((error, result) => {});
     var clone = structuredClone(this.state.E5_balance)
     clone[e5] = E5_balance
     this.setState({E5_balance: clone})
-    console.log('E5 balance for e5: ',e5,' : ',E5_balance)
+    // console.log('E5 balance for e5: ',e5,' : ',E5_balance)
 
 
     var end_balance_of_E5 = pre_launch_data[e5] != null ? pre_launch_data[e5]['token_balances']['end_balance_of_E5'] :  await this.get_balance_in_exchange(3, 2, e5, contract_addresses)
@@ -26137,12 +26170,12 @@ class App extends Component {
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3)}],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
-      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5 || return_created_object_events_only == true) ? [
+      var all_events = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5 || return_created_object_events_only == true) ? [
         this.state.saved_pre_launch_events[e5]['created_subscription_events'],
         this.state.saved_pre_launch_events[e5]['my_paid_subscription_events'],
         this.state.saved_pre_launch_events[e5]['created_index_events'],
         this.state.saved_pre_launch_events[e5]['payment_history_events'],
-      ] : await this.load_multiple_events_from_nitro(event_params)
+      ] : await this.load_multiple_events_from_nitro(event_params).all_events
 
       created_subscription_events = all_events[0]
       my_paid_subscription_events = all_events[1]
@@ -26575,11 +26608,11 @@ class App extends Component {
         [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3}],
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)}],
       ]
-      var { all_events } = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 5 || return_created_object_events_only == true) ? [
+      var all_events = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 5 || return_created_object_events_only == true) ? [
         this.state.saved_pre_launch_events[e5]['created_contract_events'],
         this.state.saved_pre_launch_events[e5]['entered_contract_events'],
         this.state.saved_pre_launch_events[e5]['created_index_events'],
-      ] : await this.load_multiple_events_from_nitro(event_params)
+      ] : (await this.load_multiple_events_from_nitro(event_params)).all_events
 
       created_contract_events = all_events[0]
       entered_contract_events = all_events[1]
@@ -27227,7 +27260,7 @@ class App extends Component {
 
 
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items, pre_launch_data={}) => {
-    var created_token_events = pre_launch_data[e5] != null ? pre_launch_data[e5]['job_objects_data']['exchange_objects_data'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+    var created_token_events = pre_launch_data[e5] != null ? pre_launch_data[e5]['exchange_objects_data']['created_object_events'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
     var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
 
     if(prioritized_accounts && prioritized_accounts.length > 0){
@@ -27699,11 +27732,11 @@ class App extends Component {
         [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
         [web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2/* depth_auth_mint */}],
       ]
-      var { all_events } = pre_launch_data[e5] != null ? [
+      var all_events = pre_launch_data[e5] != null ? [
         pre_launch_data[e5]['received_tokens_event_data'],
         pre_launch_data[e5]['update_balance_event_data'],
         pre_launch_data[e5]['stack_depth_swap_event_data'],
-      ] : await this.load_multiple_events_from_nitro(event_params)
+      ] : (await this.load_multiple_events_from_nitro(event_params)).all_events
       received_tokens_event_data = all_events[0]
       update_balance_event_data = all_events[1]
       stack_depth_swap_event_data = all_events[2]
@@ -27855,7 +27888,7 @@ class App extends Component {
   }
 
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account, return_created_object_events_only=false, all_return_data={}) => {
-    console.log('get_post_data', 'starting get post data...')
+    console.log('get_post_data', 'starting get post data...', all_return_data, this.state.saved_pre_launch_events)
     var created_post_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_posts[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_post_events'] :  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */, p1:this.get_valid_post_index(web3)})
     created_post_events = created_post_events.reverse()
 
@@ -28409,7 +28442,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:32}],
         [web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:33}],
       ]
-      var { all_events } = this.state.saved_pre_launch_events[e5] != null && Object.keys(this.state.all_mail).length == 0 ? [
+      var all_events = this.state.saved_pre_launch_events[e5] != null && Object.keys(this.state.all_mail).length == 0 ? [
         this.state.saved_pre_launch_events[e5]['f30received'],
         this.state.saved_pre_launch_events[e5]['f31received'],
 
@@ -28421,7 +28454,7 @@ class App extends Component {
 
         this.state.saved_pre_launch_events[e5]['e32created'],
         this.state.saved_pre_launch_events[e5]['e33created'],
-      ] : await this.load_multiple_events_from_nitro(event_params)
+      ] : (await this.load_multiple_events_from_nitro(event_params)).all_events
       const my_received_mail_events = (all_events[0]).concat(all_events[1])
       const my_created_mail_events = (all_events[2]).concat(all_events[3])
       const my_received_message_events = (all_events[4]).concat(all_events[5])
@@ -29354,11 +29387,11 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:23, p2/* sender_acc_id */:account}],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
-      var { all_events } = pre_launch_data[e5] != null ? [
+      var all_events = pre_launch_data[e5] != null ? [
         pre_launch_data[e5]['nitro_objects_data']['created_object_events'], 
         pre_launch_data[e5]['bought_nitro_events'],
         pre_launch_data[e5]['paid_subscription_events'],
-      ] : await this.load_multiple_events_from_nitro(event_params)
+      ] : (await this.load_multiple_events_from_nitro(event_params)).all_events
       created_nitro_events = all_events[0]
       bought_nitro_events = all_events[1]
       paid_subscription_events = all_events[2]
@@ -29620,41 +29653,6 @@ class App extends Component {
 
   load_run_data = async (contractInstance, E52contractInstance, e5, web3, H52contractInstance, pre_launch_data={}) => {
     if(this.state.beacon_node_enabled == true){
-      // var event_params = [
-      //   /* 0 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */ }],
-      //   /* 1 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */}],
-      //   /* 2 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:32/* 32(consensus_request) */}],
-      //   /* 3 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}],
-
-      //   /* 4 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */ }],
-      // /* 5 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 36/* 36(type_channel_target) */ }],
-      //   /* 6 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */}],
-      //   /* 7 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */}],
-
-      // /* 8 */[web3, contractInstance, 'e1', e5, {p2/* object_type */:25/* 25(storefront_bag_object) */}],
-
-      //   /* 9 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 26/* 26(contractor_object) */}],
-      //   /* 10 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 19/* 19(audio_object) */}],
-      //   /* 11 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 20/* 20(video_object) */}],
-      //   /* 12 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 21/* 21(nitro_object) */}],
-
-      //   /* 13 */[web3, E52contractInstance, 'e4', e5, {}],/* data */
-      //   /* 14 */[web3, E52contractInstance, 'e5', e5, {}],/* metadata */
-      //   /* 15 */[web3, contractInstance, 'e2', e5, {}],/* withdraw */
-      //   /* 16 */[web3, contractInstance, 'e4', e5, {}],/* transaction */
-      //   /* 17 */[web3, H52contractInstance, 'e1', e5, {}],/* transfer */
-      //   /* 18 */[web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 28/* 28(poll-object) */ }],
-      //   /* 19 */[web3, E52contractInstance, 'e2', e5, {}],
-      // ]
-
-      // var { all_events } = await this.load_multiple_events_from_nitro(event_params)
-      // var obj = {'subscription':all_events[0], 'contract':all_events[1], 'proposal':all_events[2], 'exchange':all_events[3], 'post':all_events[4], 'channel':all_events[5], 'job':all_events[6], 'store':all_events[7], 'bag':all_events[8], 'contractor':all_events[9], 'data':all_events[13], 'metadata':all_events[14], 'withdraw':all_events[15], 'transaction':all_events[16], 'transfer':all_events[17], 'audio':all_events[10], 'video':all_events[11], 'nitro':all_events[12], 'poll':all_events[18], 'all_indexed_events':all_events[19]}
-
-      // var all_data_clone = structuredClone(this.state.all_data)
-      // all_data_clone[e5] = obj
-      // this.setState({all_data: all_data_clone})
-
-
       var event_params2 = [
         [web3, contractInstance, 'e1', e5, {}],/* object_creation */
         [web3, E52contractInstance, 'e2', e5, {}],/* object_indexing */
@@ -29665,7 +29663,7 @@ class App extends Component {
         [web3, H52contractInstance, 'e1', e5, {}],/* transfer */
       ]
 
-      var { all_events } = pre_launch_data[e5] != null ? 
+      var all_events = pre_launch_data[e5] != null ? 
       [
         pre_launch_data[e5]['object_creation'],
         pre_launch_data[e5]['object_indexing'],
@@ -29675,7 +29673,7 @@ class App extends Component {
         pre_launch_data[e5]['transaction'],
         pre_launch_data[e5]['transfer'],
       ]
-      : await this.load_multiple_events_from_nitro(event_params2)
+      : await this.load_multiple_events_from_nitro(event_params2).all_events
 
       var obj = {'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'post':[], 'channel':[], 'job':[], 'store':[], 'bag':[], 'contractor':[], 'data':all_events[2], 'metadata':all_events[3], 'withdraw':all_events[4], 'transaction':all_events[5], 'transfer':all_events[6], 'audio':[], 'video':[], 'nitro':[], 'poll':[], 'all_indexed_events':all_events[1]}
 
@@ -29918,11 +29916,11 @@ class App extends Component {
       this.load_mail_data(prioritized_accounts, null, prioritized_accounts_data)
     }
     if(page == this.getLocale()['1213']/* 'posts' */){
-      this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
+      // this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
       this.load_post_data(prioritized_accounts, null, prioritized_accounts_data)
     }
     if(page == this.getLocale()['1214']/* 'channels' */){
-      this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
+      // this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
       this.load_channel_data(prioritized_accounts, null, prioritized_accounts_data)
     }
     if(page == this.getLocale()['1215']/* 'storefront' */){
@@ -29930,8 +29928,8 @@ class App extends Component {
       this.load_bag_data(prioritized_accounts, null, prioritized_accounts_data)
     }
     if(page == this.getLocale()['1216']/* 'bags' */){
-      this.load_bag_data(prioritized_accounts, null, prioritized_accounts_data)
       this.load_storefront_data([], null, prioritized_accounts_data)
+      this.load_bag_data(prioritized_accounts, null, prioritized_accounts_data)
       this.load_contract_data([], null, prioritized_accounts_data)
     }
     if(page == this.getLocale()['1264k']/* 'audioport' */){
@@ -30511,7 +30509,7 @@ class App extends Component {
       var created_contract_object_data = []
       var created_contract_mapping = {}
 
-      const created_contract_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['main_contracts'] : await G5contractInstance.methods.f78(created_contracts, true).call((error, result) => {});
+      const created_contract_data = pre_launch_data[e5] != null ? [pre_launch_data[e5]['main_contracts']] : await G5contractInstance.methods.f78(created_contracts, true).call((error, result) => {});
 
       for(var i=0; i<created_contracts.length; i++){
         var contracts_data = null;
@@ -30527,7 +30525,7 @@ class App extends Component {
 
         if(created_contract_data[i][1][39] != 0 && created_contract_data[i][1][40] != 0){
           const primary_acc = created_contract_data[i][1][39];
-          const primary_account_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['primary_account_transaction_data'] :  await contractInstance.methods.f287([primary_acc], false).call((error, result) => {});
+          const primary_account_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['primary_account_transaction_data'] : await contractInstance.methods.f287([primary_acc], false).call((error, result) => {});
           const last_tx_time_data = created_contract_data[0][1]
           contract_obj['primary_account'] = primary_acc
           contract_obj['primary_account_tx_period'] = created_contract_data[i][1][40]
@@ -36019,17 +36017,28 @@ class App extends Component {
     const hash_entries = Object.keys(all_events_data)
     for(var h=0; h<hash_entries.length; h++){
       const cid_data = all_events_data[hash_entries[h]]
-      var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
-      if(confirmation_hash != hash_entries[h]){
-        console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
-      }else{
-        try{
-          const decrypted_data = await this.decrypt_storage_object2(cid_data)
-          this.store_in_local_storage(hash_entries[h], JSON.parse(decrypted_data))
-        }catch(e){
-          console.log('apppage', e)
+      if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm')){
+          var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
+          if(confirmation_hash != hash_entries[h]){
+            console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
+          }else{
+            try{
+              const decrypted_data = await this.decrypt_storage_object2(cid_data)
+              // console.log('apppage', 'decrypted object', decrypted_data)
+              this.store_in_local_storage(hash_entries[h], JSON.parse(decrypted_data))
+            }catch(e){
+              console.log('apppage', e)
+            }
+          }
+        }else{
+          try{
+            const decrypted_data = await this.decrypt_storage_object2(cid_data)
+            // console.log('apppage', 'decrypted object', decrypted_data)
+            this.store_in_local_storage(hash_entries[h], JSON.parse(decrypted_data))
+          }catch(e){
+            console.log('apppage', e)
+          }
         }
-      }
     }
   }
 

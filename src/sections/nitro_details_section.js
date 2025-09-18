@@ -948,6 +948,7 @@ class NitroDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':number_with_commas(node_details['total_files_stored']), 'details':this.props.app_state.loc['c2527bf']/* 'Total Files Stored' */, 'size':'l'})}
+                    <div style={{height:10}}/>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527bg']/* 'Total Space Utilized' */, 'subtitle':this.format_power_figure(node_details['total_space_utilized']), 'barwidth':this.get_number_width(node_details['total_space_utilized']), 'number':`${number_with_commas(node_details['total_space_utilized'].toFixed(3))}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}

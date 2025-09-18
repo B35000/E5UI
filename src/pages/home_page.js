@@ -1183,7 +1183,7 @@ class home_page extends Component {
         else{
             //wallet
             var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
-            id = selected_item
+            id = this.state.wallet_page_tags_object['i'].active + selected_item
         }
 
         return id
