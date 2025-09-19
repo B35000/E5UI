@@ -139,16 +139,22 @@ class BuyNitroPage extends Component {
     render_title_and_storage_amount(){
         var object = this.state.nitro_object
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        const space_unit_size = node_details['target_storage_space_unit_denomination_multiplier'] || 1
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3034']/* 'Set the amount of space you wish to buy in the node.' */})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527o']/* 'Storage Purchase Limit.' */, 'subtitle':this.format_power_figure(node_details['max_buyable_capacity']), 'barwidth':this.get_number_width(node_details['max_buyable_capacity']), 'number':`${number_with_commas(node_details['max_buyable_capacity'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527o']/* 'Storage Purchase Limit.' */, 'subtitle':this.format_power_figure(node_details['max_buyable_capacity']), 'barwidth':this.get_number_width(node_details['max_buyable_capacity']), 'number':`${number_with_commas(node_details['max_buyable_capacity'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3054ea']/* Space Units */, })}
                 </div>
-                <div style={{height:20}}/>
+                <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3035']/* 'Selected Space.' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.get_number_width(this.state.amount), 'number':`${this.format_account_balance_figure(this.state.amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054ed']/* 'Space Unit size.' */, 'subtitle':this.format_power_figure(space_unit_size), 'barwidth':this.get_number_width(space_unit_size), 'number':`${this.format_account_balance_figure(space_unit_size)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                </div>
+
+                {this.render_detail_item('0')}
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3035']/* 'Selected Space Units.' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.get_number_width(this.state.amount), 'number':`${this.format_account_balance_figure(this.state.amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3054ea']/* Space Units */, })}
                 </div>
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt(this.get_number_limit())} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -352,7 +358,7 @@ class BuyNitroPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>

@@ -254,7 +254,12 @@ class PostDetailSection extends Component {
     }
 
     reset_detail_section_tags(){
-        this.curent_post_section.current?.reset_tags()
+        try{
+            this.curent_post_section.current?.reset_tags()
+        }catch(e){
+            console.log('detaul_section', e)
+        }
+        
     }
 
 

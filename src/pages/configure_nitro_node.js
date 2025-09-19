@@ -66,7 +66,7 @@ class ConfigureNitroNodePage extends Component {
 
         default_free_storage:0, selected_e5: this.props.app_state.selected_e5, storage_price_data:{},
 
-        added_rpc_urls:[], picked_wei_amount:0
+        added_rpc_urls:[], picked_wei_amount:0, space_unit_size:1, streaming_multiplier_units:0
     };
 
 
@@ -99,7 +99,7 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' *//* , this.props.app_state.loc['3054cl'] *//* 'Recipient' */, this.props.app_state.loc['3054dm']/* 'free-default-storage' *//* , this.props.app_state.loc['3054cu'] *//* 'free-storage' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */, this.props.app_state.loc['3054ck']/* 'Price' *//* , this.props.app_state.loc['3054cl'] *//* 'Recipient' */, this.props.app_state.loc['3054dm']/* 'free-default-storage' */, this.props.app_state.loc['3054ek']/* 'space-unit-size' */, this.props.app_state.loc['3054el']/* 'streaming-multiplier' *//* , this.props.app_state.loc['3054cu'] *//* 'free-storage' */], [1]
             ],
         };
     }
@@ -1550,7 +1550,7 @@ class ConfigureNitroNodePage extends Component {
 
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054cb']/* 'Max buyable Capapacity' */, 'subtitle':this.format_power_figure(this.state.max_buyable_capacity), 'barwidth':this.get_number_width(this.state.max_buyable_capacity), 'number':`${this.format_account_balance_figure(this.state.max_buyable_capacity)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054cb']/* 'Max buyable Capapacity' */, 'subtitle':this.format_power_figure(this.state.max_buyable_capacity), 'barwidth':this.get_number_width(this.state.max_buyable_capacity), 'number':`${this.format_account_balance_figure(this.state.max_buyable_capacity)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3054ea']/* Space Units */, })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -1559,18 +1559,44 @@ class ConfigureNitroNodePage extends Component {
 
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054dl']/* 'Default Free Storage' */, 'subtitle':this.format_power_figure(this.state.default_free_storage), 'barwidth':this.get_number_width(this.state.default_free_storage), 'number':`${this.format_account_balance_figure(this.state.default_free_storage)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054dl']/* 'Default Free Storage' */, 'subtitle':this.format_power_figure(this.state.default_free_storage), 'barwidth':this.get_number_width(this.state.default_free_storage), 'number':`${this.format_account_balance_figure(this.state.default_free_storage)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3054ea']/* Space Units */, })}
                 </div>
                 <div style={{height:10}}/>
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_default_free_storage_set.bind(this)} theme={this.props.theme} power_limit={63}/>
-                <div style={{height:10}}/>
-
 
 
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cs']'Free Basic Storage', 'details':this.props.app_state.loc['3054ct']'If set to enabled, users will be able to store post metadata in your node for free.', 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.basic_storage_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_basic_storage_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054eb']/* 'Space Unit Denomination.' */, 'details':this.props.app_state.loc['3054ec']/* 'Set the size of a space unit in megabytes.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054ed']/* 'Space Unit size.' */, 'subtitle':this.format_power_figure(this.state.space_unit_size), 'barwidth':this.get_number_width(this.state.space_unit_size), 'number':`${this.format_account_balance_figure(this.state.space_unit_size)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_space_unit_size_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054ee']/* 'File Sreaming Renewal Multiplier' */, 'details':this.props.app_state.loc['3054ef']/* 'A multiplier used to calculate streaming fees charged during file renewal, for each file stored on your node.The higher the multiplier, the lower the effective streaming fees.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3054eg']/* Example: Assuming a price of 1 Spend per space unit set to 1 megabyte, a renewal multiplier of 1000 means for every 1000 times your 1 megabyte file is fully streamed, an extra 1 Spend will be charged during renewal. If set to 0, no streaming fees will be charged. */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054eh']/* 'Streaming Multiplier' */, 'subtitle':this.format_power_figure(this.state.streaming_multiplier_units), 'barwidth':this.get_number_width(this.state.streaming_multiplier_units), 'number':`${this.format_account_balance_figure(this.state.streaming_multiplier_units)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3054ei']/* Multiplier Units */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_streaming_multiplier_units_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <div style={{height:10}}/>
                 
             </div>
         )
@@ -1607,6 +1633,14 @@ class ConfigureNitroNodePage extends Component {
         )
     }
 
+    when_streaming_multiplier_units_set(number){
+        this.setState({streaming_multiplier_units: number})
+    }
+
+    when_space_unit_size_set(number){
+        this.setState({space_unit_size: number})
+    }
+
     when_default_free_storage_set(number){
         this.setState({default_free_storage: number})
     }
@@ -1626,8 +1660,8 @@ class ConfigureNitroNodePage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cc']/* 'Storage Price.' */, 'details':this.props.app_state.loc['3054cd']/* 'Set the price per megabyte of storage for your node in your preferred tokens.' */, 'size':'l'})}
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['3054dt']/* The prices you set below will also be used as yearly renewal fees per megabyte consumed. */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054cc']/* 'Storage Price.' */, 'details':this.props.app_state.loc['3054cd']/* 'Set the price per space unit of storage for your node in your preferred tokens.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3054dt']/* The prices you set below will also be used as yearly renewal fees per space unit consumed. */, 'textsize':'11px', 'font':this.props.app_state.font})}
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['237']} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
@@ -1918,12 +1952,17 @@ class ConfigureNitroNodePage extends Component {
         // var target_storage_purchase_recipient_account = this.state.recipient_id
         var default_free_storage = this.state.default_free_storage
         var storage_price_data = this.state.storage_price_data
+        var space_unit_size = this.state.space_unit_size
+        var streaming_multiplier_units = this.state.streaming_multiplier_units
         
         // var selected_basic_storage_setting = this.get_selected_item(this.state.basic_storage_enabled_tags_object, this.state.basic_storage_enabled_tags_object['i'].active) === this.props.app_state.loc['3054cr']/* enabled */
         var selected_basic_storage_setting = true
 
         if(max_buyable_capacity == 0){
             this.props.notify(this.props.app_state.loc['3054cf']/* 'You need to specify a maximum amount of storage that can be bought' */, 4000)
+        }
+        else if(space_unit_size == 0){
+            this.props.notify(this.props.app_state.loc['3054ej']/* 'You need to specify a valid space unit size.' */, 7000)
         }
         else if(Object.keys(storage_price_data).length == 0){
             this.props.notify(this.props.app_state.loc['3054cg']/* 'You need to specify price and recipient information for your storage configuration.' */, 7000)
@@ -1943,7 +1982,7 @@ class ConfigureNitroNodePage extends Component {
                 target_minimum_balance_amounts[storage_e5] = storage_price_data[storage_e5]['minimum_balance']
             });
 
-            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, this.state.nitro_object, default_free_storage, target_minimum_balance_amounts)
+            this.props.boot_storage(entered_backup_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, this.state.nitro_object, default_free_storage, target_minimum_balance_amounts, space_unit_size, streaming_multiplier_units)
         }
     }
 
@@ -2012,19 +2051,28 @@ class ConfigureNitroNodePage extends Component {
     when_reconfigure_storage_title_tags_object_updated(tag_obj){
         this.setState({reconfigure_storage_title_tags_object: tag_obj})
 
+        var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
         var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
         if(selected_item == this.props.app_state.loc['3054ck']/* 'Price' */){
             this.set_storage_price_data()
         }
         else if(selected_item == this.props.app_state.loc['3054cu']/* 'free-storage' */){
-            var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
             var unlimited_basic_storage = node_details['unlimited_basic_storage']
 
             this.setState({basic_storage_enabled_tags_object:this.basic_storage_enabled_tags_object(unlimited_basic_storage)})
         }
         else if(selected_item == this.props.app_state.loc['3054cj']/* 'Max-Buyable-Capacity' */){
-            var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
             this.setState({max_buyable_capacity: node_details['max_buyable_capacity']})
+        }
+        else if(selected_item == this.props.app_state.loc['3054ek']/* 'space-unit-size' */){
+            if(node_details['target_storage_space_unit_denomination_multiplier'] != null){
+                this.setState({space_unit_size: node_details['target_storage_space_unit_denomination_multiplier']})
+            }
+        }
+        else if(selected_item == this.props.app_state.loc['3054el']/* 'streaming-multiplier' */){
+            if(node_details['target_storage_streaming_multiplier'] != null){
+                this.setState({streaming_multiplier_units: node_details['target_storage_streaming_multiplier']})
+            }
         }
     }
 
@@ -2085,6 +2133,20 @@ class ConfigureNitroNodePage extends Component {
             return(
                 <div>
                     {this.render_free_default_storage_picker()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3054ek']/* 'space-unit-size' */){
+            return(
+                <div>
+                    {this.render_space_unit_size_picker()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3054el']/* 'streaming-multiplier' */){
+            return(
+                <div>
+                    {this.render_streaming_multiplier_picker()}
                 </div>
             )
         }
@@ -2257,6 +2319,73 @@ class ConfigureNitroNodePage extends Component {
 
 
 
+    render_space_unit_size_picker(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054eb']/* 'Space Unit Denomination.' */, 'details':this.props.app_state.loc['3054ec']/* 'Set the size of a space unit in megabytes.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054ed']/* 'Space Unit size.' */, 'subtitle':this.format_power_figure(this.state.space_unit_size), 'barwidth':this.get_number_width(this.state.space_unit_size), 'number':`${this.format_account_balance_figure(this.state.space_unit_size)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_space_unit_size_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{height:20}}/>
+                <div onClick={()=> this.when_update_space_unit_size_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3054em']/* 'Update Value' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_update_space_unit_size_tapped(){
+        var entered_backup_text = this.state.entered_backup_text
+        var space_unit_size = this.state.space_unit_size
+        var selected_e5 = this.state.selected_e5
+
+        if(space_unit_size == 0){
+            this.props.notify(this.props.app_state.loc['3054ej']/* 'You need to specify a valid space unit size.' */, 7000)
+            return;
+        }
+
+        this.props.update_storage_config(entered_backup_text, 'target_storage_space_unit_denomination_multiplier', parseInt(space_unit_size), selected_e5, this.state.nitro_object)
+    }
+
+
+
+
+
+    render_streaming_multiplier_picker(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3054ee']/* 'File Sreaming Renewal Multiplier' */, 'details':this.props.app_state.loc['3054ef']/* 'A multiplier used to calculate streaming fees charged during file renewal, for each file stored on your node.The higher the multiplier, the lower the effective streaming fees.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3054eg']/* Example: Assuming a price of 1 Spend per space unit set to 1 megabyte, a renewal multiplier of 1000 means for every 1000 times your 1 megabyte file is fully streamed, an extra 1 Spend will be charged during renewal. If set to 0, no streaming fees will be charged. */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054eh']/* 'Streaming Multiplier' */, 'subtitle':this.format_power_figure(this.state.streaming_multiplier_units), 'barwidth':this.get_number_width(this.state.streaming_multiplier_units), 'number':`${this.format_account_balance_figure(this.state.streaming_multiplier_units)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3054ei']/* Multiplier Units */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999_999_999} when_number_picker_value_changed={this.when_streaming_multiplier_units_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                
+                <div style={{height:20}}/>
+                <div onClick={()=> this.when_update_streaming_multiplier_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3054em']/* 'Update Value' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_update_streaming_multiplier_tapped(){
+        var entered_backup_text = this.state.entered_backup_text
+        var streaming_multiplier_units = this.state.streaming_multiplier_units
+        var selected_e5 = this.state.selected_e5
+
+        this.props.update_storage_config(entered_backup_text, 'target_storage_streaming_multiplier', parseInt(streaming_multiplier_units), selected_e5, this.state.nitro_object)
+    }
 
 
 

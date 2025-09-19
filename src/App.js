@@ -656,6 +656,7 @@ import FulfilAuctionBidPage from './pages/fulfil_auction_bid_page'
 
 import english from "./texts/english";
 import cities from "./resources/cities";
+import currencies from './resources/coins';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -901,7 +902,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(67), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(47), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:29, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -959,7 +960,7 @@ class App extends Component {
 
     stack_size_in_bytes:{}, token_thumbnail_directory:{}, end_tokens:{}, can_switch_e5s:true, my_channels:[], my_polls:[], my_objects:[], file_streaming_data:{}, object_creator_files:{}, stage_creator_payout_results:{}, creator_payout_calculation_times:{}, channel_payout_stagings:{}, channel_creator_payout_records:{}, my_channel_files_directory:{}, channel_id_hash_directory:{},
 
-    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:17, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
+    is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:35, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
 
     gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3, nitro_telemetry_data_object:{}, nitro_error_log_data_object:{}, saved_pre_launch_events:{},
   };
@@ -3188,6 +3189,7 @@ class App extends Component {
     // this.test_beacon_node()
     // this.test_infura()
     // this.test_key_hasher()
+    // this.fetch_filter_and_export_my_coins()
     this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
 
     await this.load_cookies();
@@ -3200,6 +3202,46 @@ class App extends Component {
       me.get_key()
       me.init_db()
     }, (1 * 1000));
+  }
+
+  fetch_filter_and_export_my_coins = async () => {
+    var request = `https://api.coingecko.com/api/v3/coins/list`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('apppage', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var assets = this.get_all_coin_and_ether_symbols_in_lowercase()
+      const filtered_assets = obj.filter(c => assets.includes(c.symbol));
+      const jsonStr = JSON.stringify(filtered_assets, null, 2)
+      const blob =  new Blob([jsonStr], { type: 'application/json' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "coins.json";      
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+    catch(e){
+      console.log('apppage', e)
+    }
+  }
+
+  get_all_coin_and_ether_symbols_in_lowercase(){
+    var all_symbols = []
+    this.state.e5s['data'].forEach(e5 => {
+      var symbol = this.state.e5s[e5].token
+      all_symbols.push(symbol.toLowerCase())
+    });
+    var coins = this.state.coins
+    for (const coin in coins) {
+        if (coins.hasOwnProperty(coin)) {
+          all_symbols.push(coin.toLowerCase())
+        }
+    }
+    return all_symbols
   }
 
   test_key_hasher = async () => {
@@ -3467,6 +3509,7 @@ class App extends Component {
       my_preferred_nitro_link: this.state.my_preferred_nitro_link,
       
       max_post_bulk_load_count: this.state.max_post_bulk_load_count,
+      event_load_chunk_size: this.state.event_load_chunk_size,
     }
   }
 
@@ -3651,6 +3694,7 @@ class App extends Component {
       var my_created_moderator_notes = state.my_created_moderator_notes == null ? this.state.my_created_moderator_notes : state.my_created_moderator_notes
       var my_preferred_nitro_link = state.my_preferred_nitro_link == null ? '' : state.my_preferred_nitro_link;
       var max_post_bulk_load_count = state.max_post_bulk_load_count == null ? this.state.max_post_bulk_load_count : state.max_post_bulk_load_count;
+      var event_load_chunk_size = state.event_load_chunk_size == null ? this.state.event_load_chunk_size : state.event_load_chunk_size
 
       this.setState({
         theme: theme,
@@ -3719,7 +3763,8 @@ class App extends Component {
         last_login_time: last_login_time,
         my_created_moderator_notes: my_created_moderator_notes,
         my_preferred_nitro_link: my_preferred_nitro_link,
-        max_post_bulk_load_count: max_post_bulk_load_count
+        max_post_bulk_load_count: max_post_bulk_load_count,
+        event_load_chunk_size: event_load_chunk_size
       })
       var me = this;
       setTimeout(function() {
@@ -5542,7 +5587,7 @@ class App extends Component {
           get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
           get_nitro_purchases={this.get_nitro_purchases.bind(this)} set_audio_pip_opacity_because_of_inactivity={this.set_audio_pip_opacity_because_of_inactivity.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_nitro_telemetry_data={this.get_nitro_telemetry_data.bind(this)} 
 
-          get_nitro_log_stream_data={this.get_nitro_log_stream_data.bind(this)}
+          get_nitro_log_stream_data={this.get_nitro_log_stream_data.bind(this)} reload_objects_album_arts={this.reload_objects_album_arts.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -8202,7 +8247,7 @@ class App extends Component {
     object_mapping[this.props.app_state.loc['1593jg']/* 'many' */] = 53
     object_mapping[this.props.app_state.loc['1593jh']/* 'very-many' */] = 72
     object_mapping[this.props.app_state.loc['1593ji']/* 'as-many-as-possible' */] = 135
-    this.setState({max_post_bulk_load_count: object_mapping[item]})
+    this.setState({max_post_bulk_load_count: object_mapping[item], event_load_chunk_size: object_mapping[item]})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -17240,7 +17285,7 @@ class App extends Component {
     }
   }
 
-  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, nitro_object, default_free_storage, target_minimum_balance_amounts) => {
+  boot_storage = async (entered_backup_key_text, max_buyable_capacity, selected_e5, price_per_megabyte, target_storage_recipient_accounts, selected_basic_storage_setting, nitro_object, default_free_storage, target_minimum_balance_amounts, space_unit_size, streaming_multiplier_units) => {
     this.prompt_top_notification(this.getLocale()['3054ci']/* Attempting to enable storage with your specified configuration... */, 1200)
     var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
     var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
@@ -17255,6 +17300,8 @@ class App extends Component {
       unlimited_basic_storage: selected_basic_storage_setting,
       free_default_storage: default_free_storage,
       target_minimum_balance_amounts: target_minimum_balance_amounts,
+      target_storage_space_unit_denomination_multiplier: space_unit_size, 
+      target_storage_streaming_multiplier:streaming_multiplier_units,
     }
 
     var body = {
@@ -22256,59 +22303,92 @@ class App extends Component {
 
 
   load_coin_and_ether_coin_prices = async () => {
-    var api_key = `${process.env.REACT_APP_COINAPI_KEY}`;
-    var assets = this.get_all_coin_and_ether_symbols()
-    const assetFilter = assets.join(',');
-    var request = `https://rest.coinapi.io/v1/assets?filter_asset_id=${assetFilter}`
+    // var api_key = `${process.env.REACT_APP_COINAPI_KEY}`;
+    var { all_symbols, symbol_mappings } = this.get_all_coin_and_ether_symbols()
+    const assetFilter = all_symbols.join(',');
+    // var request = `https://rest.coinapi.io/v1/assets?filter_asset_id=${assetFilter}`
+    var request = `https://api.coingecko.com/api/v3/simple/price?ids=${assetFilter}&vs_currencies=usd&include_market_cap=true`
     
-    var body = {
-      method: "GET", // Specify the HTTP method
-      headers: {
-        "Content-Type": "application/json", // Set content type to JSON
-        "X-CoinAPI-Key": api_key
-      },
-    }
+    console.log('apppage', 'load_coin_and_ether_coin_prices', 'request', request)
+    // var body = {
+    //   method: "GET", // Specify the HTTP method
+    //   headers: {
+    //     "Content-Type": "application/json", // Set content type to JSON
+    //     "X-CoinAPI-Key": api_key
+    //   },
+    // }
+
+    https://api.coingecko.com/api/v3/simple/price?ids=&vs_currencies=usd&include_market_cap=true
 
     try{
-      const response = await fetch(request, body);
+      const response = await fetch(request);
       if (!response.ok) {
-        console.log(response)
+        console.log('apppage', 'load_coin_and_ether_coin_prices', response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
       var json_data = JSON.parse(data)
+      console.log('apppage', 'load_coin_and_ether_coin_prices', 'return data', json_data)
       var price_data = {}
-      for(var i=0; i<json_data.length; i++){
-        var asset_id = json_data[i].asset_id
-        var asset_name = json_data[i].name
-        var price_usd = json_data[i].price_usd
-        var volume_1day_usd = json_data[i].volume_1day_usd
-        var volume_1hrs_usd = json_data[i].volume_1hrs_usd
+      var asset_ids = Object.keys(json_data)
+      for(var i=0; i<asset_ids.length; i++){
+        const asset_id_in_focus = asset_ids[i]
+        const price_usd = json_data[asset_id_in_focus]['usd']
+        const market_cap = json_data[asset_id_in_focus]['usd_market_cap']
+        var asset_id = symbol_mappings[asset_id_in_focus].symbol
+        var asset_name = symbol_mappings[asset_id_in_focus].name
         if(price_usd != null){
-          var data = {'id':asset_id, 'name':asset_name, 'price':price_usd, 'day_volume':volume_1day_usd, 'hour_volume':volume_1hrs_usd}
+          var data = {'id':asset_id, 'name':asset_name, 'price':price_usd, 'cap':market_cap}
           price_data[asset_id] = data
         }
       }
+      // for(var i=0; i<json_data.length; i++){
+      //   var asset_id = json_data[i].asset_id
+      //   var asset_name = json_data[i].name
+      //   var price_usd = json_data[i].price_usd
+      //   var volume_1day_usd = json_data[i].volume_1day_usd
+      //   var volume_1hrs_usd = json_data[i].volume_1hrs_usd
+      //   if(price_usd != null){
+      //     var data = {'id':asset_id, 'name':asset_name, 'price':price_usd, 'day_volume':volume_1day_usd, 'hour_volume':volume_1hrs_usd}
+      //     price_data[asset_id] = data
+      //   }
+      // }
+      console.log('apppage', 'load_coin_and_ether_coin_prices', 'final', price_data)
       this.setState({asset_price_data: price_data})
     }
     catch(e){
-
+      console.log('apppage', 'load_coin_and_ether_coin_prices', e)
     }
   }
 
   get_all_coin_and_ether_symbols(){
     var all_symbols = []
-    this.state.e5s['data'].forEach(e5 => {
-      var symbol = this.state.e5s[e5].token
-      all_symbols.push(symbol)
+    var symbol_mappings = {}
+    var state_list = this.state.ether_data
+    state_list.forEach(ether_desc => {
+        if(ether_desc['disabled'] == false){
+          var symbol = ether_desc['symbol']
+          var name = ether_desc['name']
+          const item_to_use = currencies.find(c => c['symbol'] == symbol.toLowerCase());
+          if(!symbol.endsWith('ETH') || symbol == 'ETH'){
+            if(item_to_use != null) {
+              all_symbols.push(item_to_use['id']);
+              symbol_mappings[item_to_use['id']] = { symbol, name }
+            }
+          }
+        } 
     });
     var coins = this.state.coins
     for (const coin in coins) {
         if (coins.hasOwnProperty(coin)) {
-          all_symbols.push(coin)
+          const item_to_use = currencies.find(c => c['symbol'] == coin.toLowerCase());
+          if(item_to_use != null){
+            all_symbols.push(item_to_use['id'])
+            symbol_mappings[item_to_use['id']] = { symbol: coin, name: coins[coin]['name'] }
+          } 
         }
     }
-    return all_symbols
+    return { all_symbols, symbol_mappings }
   }
 
   check_if_beacon_node_is_online = async () => {
@@ -22418,7 +22498,7 @@ class App extends Component {
 
   start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
-    // console.log('apppage', 'pre_launch_data', pre_launch_data)
+    console.log('apppage', 'pre_launch_data', pre_launch_data)
     if(is_synching == true){
       this.inc_synch_progress()
     }
@@ -23476,6 +23556,10 @@ class App extends Component {
     const G52_address = contract_addresses[4];
     const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
+    const F5contractArtifact = require('./contract_abis/F5.json');
+    const F5_address = contract_addresses[2];
+    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+
     /* ---------------------------------------- ACCOUNT DATA ------------------------------------------- */
     var account = null;
     if(pre_launch_data[e5] != null){
@@ -23517,7 +23601,7 @@ class App extends Component {
       const hash_entries = Object.keys(hash_data)
       for(var h=0; h<hash_entries.length; h++){
         const cid_data = hash_data[hash_entries[h]]
-        if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm')){
+        if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm') && !hash_entries[h].endsWith('=')){
           var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
           if(confirmation_hash != hash_entries[h]){
             console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
@@ -23542,23 +23626,6 @@ class App extends Component {
       }
     }
 
-
-
-     /* ---------------------------------------- TOKEN DATA --------------------------------------- */
-    // var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
-    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data)
-    // if(is_syncing){
-    //   this.inc_synch_progress()
-    // }
-
-
-
-    /* ---------------------------------------- JOB DATA ------------------------------------------- */
-    // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
-    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, [], [], pre_launch_data)
-    // if(is_syncing){
-    //   this.inc_synch_progress()
-    // }
 
 
 
@@ -23592,23 +23659,24 @@ class App extends Component {
       pre_launch_data[e5]['contacts'],
       pre_launch_data[e5]['blocked'],
       pre_launch_data[e5]['my_followed'],
-      pre_launch_data[e5]['blocked_posts'],
+      pre_launch_data[e5]['blocked_posts'],/* 4 */
       pre_launch_data[e5]['censored_keywords'],
       pre_launch_data[e5]['promoted_posts'],
       pre_launch_data[e5]['acquired_albums'],
-      pre_launch_data[e5]['playlists'],
+      pre_launch_data[e5]['playlists'],/* 8 */
       pre_launch_data[e5]['section_tags'],
       pre_launch_data[e5]['plays'],
       pre_launch_data[e5]['acquired_videos'],
+      pre_launch_data[e5]['aliases'],/* 12 */
       pre_launch_data[e5]['channel_events'],
       pre_launch_data[e5]['poll_events'],
       pre_launch_data[e5]['object_events'],
-      pre_launch_data[e5]['my_channel_file'],
-      pre_launch_data[e5]['file_renewal'],
-      pre_launch_data[e5]['nitro_link_data'],
+      pre_launch_data[e5]['my_channel_file'],/* 16 */
+      pre_launch_data[e5]['file_renewal'],/* 17 */
+      pre_launch_data[e5]['nitro_link_data'],/* 18 */
       pre_launch_data[e5]['withdraw_event_data'],
       pre_launch_data[e5]['pending_withdraw_event_data'],
-    ] : await this.load_multiple_events_from_nitro(event_params2)
+    ] : (await this.load_multiple_events_from_nitro(event_params2)).all_events
 
 
 
@@ -23619,17 +23687,32 @@ class App extends Component {
     }
 
 
+    await this.wait(1000)
 
 
 
     /* ---------------------------------------- NITRO DATA -------------------------------------- */
-    const F5contractArtifact = require('./contract_abis/F5.json');
-    const F5_address = contract_addresses[2];
-    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
     this.get_nitro_data(E52contractInstance, web3, e5, contract_addresses, [], account, F5contractInstance, [], pre_launch_data)
     if(is_syncing){
       this.inc_synch_progress()
     }
+
+
+     /* ---------------------------------------- TOKEN DATA --------------------------------------- */
+    // var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
+    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+    /* ---------------------------------------- JOB DATA ------------------------------------------- */
+    // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
+    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, [], [], pre_launch_data)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
 
 
 
@@ -24763,6 +24846,7 @@ class App extends Component {
 
   get_my_nitro_link_data = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     var nitro_link_registry = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:400});
+    console.log('apppage', 'get_my_nitro_link_data', 'loaded nitro_link_registry', nitro_link_registry)
     var registered_nitro_links = {}
     var registered_nitro_links_authors = {}
     nitro_link_registry.forEach(event => {
@@ -27625,6 +27709,7 @@ class App extends Component {
     const H52_address = contract_addresses[6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
+    console.log('load_extra_token_data', 'begun loading extra token data', contract_addresses)
 
     var created_tokens = [id]
     var i = 0
@@ -27637,8 +27722,9 @@ class App extends Component {
 
     var my_blocked_time_value_for_all_tokens = await E52contractInstance.methods.f256(created_tokens, account_as_list, 0,3).call((error, result) => {});
 
-
     var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
+
+    console.log('load_extra_token_data', 'loaded accounts exchange data...')
 
     var depth_values = []
     for(var j=0; j<object['data'][3].length; j++){
@@ -27655,6 +27741,8 @@ class App extends Component {
     }
 
     var mod_status_values = await E52contractInstance.methods.f255([created_tokens[i]], [old_moderators]).call((error, result) => {});
+
+    console.log('load_extra_token_data', 'loaded mod status values...')
 
     var moderators = []
     for(var e=0; e<old_moderators.length; e++){
@@ -27674,6 +27762,8 @@ class App extends Component {
     var update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i]})
 
     var update_proportion_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i]})
+
+    console.log('load_extra_token_data', 'loaded update_proportion_ratio_event_data...')
 
     var exchanges_depth = 0
     if(object['ipfs'] != null){
@@ -27712,6 +27802,8 @@ class App extends Component {
     created_token_object_mapping_clone[e5][created_tokens[i]] = object
 
     this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+
+    console.log('load_extra_token_data', 'finished loading all exchange data.')
 
   }
 
@@ -29496,6 +29588,12 @@ class App extends Component {
       if(created_nitro_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_nitro_events[i].returnValues.p1.toString(), web3) || true){
         var nitro_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses) : all_data[id]
         if(nitro_data != null){
+
+          var is_bought = bought_nitros.includes(id)
+          const data = {'id':id, 'ipfs':nitro_data, 'event': created_nitro_events[i], 'e5':e5, 'timestamp':parseInt(created_nitro_events[i].returnValues.p6),
+          'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5, 'bought':is_bought,
+          }
+
           var keys = {}
           const key_object = nitro_data.ecid_encryption_passwords || {}
           var object_keys = Object.keys(key_object)
@@ -29503,18 +29601,11 @@ class App extends Component {
             keys[ecid] = key_object[ecid]
           });
           if(nitro_data.album_art != null && nitro_data.album_art.startsWith('image')) {
-            // console.log('apppage', 'get_nitro_data', nitro_data.album_art, keys)
             this.fetch_uploaded_data_from_ipfs([nitro_data.album_art], false, keys)
           }
 
-          var is_bought = bought_nitros.includes(id)
-          const data = {'id':id, 'ipfs':nitro_data, 'event': created_nitro_events[i], 'e5':e5, 'timestamp':parseInt(created_nitro_events[i].returnValues.p6),
-          'author':created_nitro_events[i].returnValues.p5, 'e5_id':id+e5, 'bought':is_bought,
-          }
-
           if(this.state.my_preferred_nitro == (id+e5) || true){
-            this.load_nitro_node_details(data, false)
-            this.load_my_account_storage_info(data)
+            this.load_nitro_node_details(data, false, true)
           }
 
           const index = created_nitros.findIndex(item => item['e5_id'] === data['e5_id']);
@@ -29554,6 +29645,25 @@ class App extends Component {
 
     console.log('nitro count',created_nitros.length)
     
+  }
+
+  reload_objects_album_arts(objects){
+    const image_links = []
+    const keys = {}
+    for(var i=0; i<objects.length; i++){
+      const object = objects[i]
+
+      const key_object = object['ipfs'].ecid_encryption_passwords || {}
+      var object_keys = Object.keys(key_object)
+      object_keys.forEach(ecid => {
+        keys[ecid] = key_object[ecid]
+      });
+
+      if(object['ipfs'].album_art != null && object['ipfs'].album_art.startsWith('image')) {
+        image_links.push(object['ipfs'].album_art)
+      }
+    }
+    this.fetch_uploaded_data_from_ipfs(image_links, false, keys)
   }
 
   get_poll_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account, return_created_object_events_only=false, all_return_data={}) => {
@@ -33989,6 +34099,7 @@ class App extends Component {
 
 
   fetch_multiple_file_datas_from_nitro_storage = async (ecid_objs, original_cids, keys) => {
+    // console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', 'beginning fetch of files from all nitro storages...')
     var search_data = {}
     var search_data_file_types = {}
     var search_data_cids = {}
@@ -34008,8 +34119,12 @@ class App extends Component {
         search_data_file_types[nitro_cid] = filetype
         search_data_cids[nitro_cid] = original_cids[index]
         nitro_link_to_e5_mapping[nitro_url] = e5_id
+      }else{
+        // console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', 'unable to find nitro url for e5_id:', e5_id, this.state.nitro_links)
       }
     });
+
+    // console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', 'search_data...', search_data)
 
     if(this.fetch_index == null){
       this.fetch_index = {}
@@ -34020,15 +34135,26 @@ class App extends Component {
       const nitro_keys = Object.keys(search_data)
 
       this.fetch_index[search_index] = {'search_item_count':nitro_keys.length, 'successful':0}
-      nitro_keys.forEach(nitro_url => {
+      for(var ni=0; ni<nitro_keys.length; ni++){
+        const nitro_url = nitro_keys[ni]
         const cids = search_data[nitro_url]
         const nitro_url_e5_id = nitro_link_to_e5_mapping[nitro_url]
-        const load_limit = this.state.nitro_node_details[nitro_url_e5_id] != null ? this.state.nitro_node_details[nitro_url_e5_id]['hash_data_request_limit'] : 1024
+        const load_limit = this.state.nitro_node_details[nitro_url_e5_id] != null ? this.state.nitro_node_details[nitro_url_e5_id]['hash_data_request_limit'] : 35
         const cid_chunks = this.splitIntoChunks(cids, load_limit)
-        cid_chunks.forEach(cid_chunk => {
-          this.fetch_multiple_file_datas_from_one_nitro_storage(nitro_url, cid_chunk, search_data_file_types, search_data_cids, search_index, keys)
-        });
-      });
+        for(var ci=0; ci<cid_chunks.length; ci++){
+          const cid_chunk = cid_chunks[ci]
+          this.fetch_multiple_file_datas_from_one_nitro_storage(nitro_url, cid_chunk, search_data_file_types, search_data_cids, search_index, keys, nitro_url_e5_id)
+        }
+      }
+      // nitro_keys.forEach(nitro_url => {
+      //   const cids = search_data[nitro_url]
+      //   const nitro_url_e5_id = nitro_link_to_e5_mapping[nitro_url]
+      //   const load_limit = this.state.nitro_node_details[nitro_url_e5_id] != null ? this.state.nitro_node_details[nitro_url_e5_id]['hash_data_request_limit'] : 1024
+      //   const cid_chunks = this.splitIntoChunks(cids, load_limit)
+      //   cid_chunks.forEach(cid_chunk => {
+      //     this.fetch_multiple_file_datas_from_one_nitro_storage(nitro_url, cid_chunk, search_data_file_types, search_data_cids, search_index, keys)
+      //   });
+      // });
 
       while (this.fetch_index[search_index]['search_item_count'] > this.fetch_index[search_index]['successful']) {
         if (this.fetch_index[search_index]['search_item_count'] == this.fetch_index[search_index]['successful']) break;
@@ -34045,12 +34171,18 @@ class App extends Component {
     return result;
   }
 
-  fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index, keys) => {
+  fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index, keys, nitro_url_e5_id) => {
+    console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', 'starting fetch of files from nitro storage...')
+    await this.check_and_fetch_object_marco_if_non_existant(nitro_url_e5_id, nitro_url)
+    await this.wait(700)
+    await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
+    console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', 'key recorded')
     const arg_string_data = await this.encrypt_arg_string(nitro_url, JSON.stringify({hashes: nitro_cids}))
     const params = new URLSearchParams({
       arg_string: arg_string_data,
     });
     var request = `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'data')}/${await this.fetch_nitro_privacy_signature(nitro_url)}?${params.toString()}`
+    // var request = `${nitro_url}/data/e?${params.toString()}`
     const private_key = this.state.accounts['E25'].privateKey.toString()
     try{
       const response = await fetch(request);
@@ -34170,7 +34302,7 @@ class App extends Component {
       }
     }
     catch(e){
-      console.log('apppage', 'get_nitro_data', e)
+      console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', e)
       this.fetch_index[search_index]['successful']++
     }
   }
@@ -36017,7 +36149,7 @@ class App extends Component {
     const hash_entries = Object.keys(all_events_data)
     for(var h=0; h<hash_entries.length; h++){
       const cid_data = all_events_data[hash_entries[h]]
-      if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm')){
+      if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm') && !hash_entries[h].endsWith('=')){
           var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
           if(confirmation_hash != hash_entries[h]){
             console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
@@ -38855,22 +38987,20 @@ class App extends Component {
 
 
 
-  load_nitro_node_details = async (object, should_load_subscription_if_any) =>{
+  load_nitro_node_details = async (object, should_load_subscription_if_any=false, should_load_account_storage_info=false, image_load_from_nitro_data={}) =>{
     var link = object['ipfs'] == null ? null : object['ipfs'].node_url
-    const nitro_link_directory = await this.load_nitro_directory_details(link)
-    const endpoint = nitro_link_directory['marco']
-    var request = `${link}/${endpoint}`
-
     if(this.state.beacon_chain_url == link){
       //data already loaded, so just set it in place
       const clone = structuredClone(this.state.nitro_node_details)      
       clone[object['e5_id']] = this.state.beacon_data
       this.setState({nitro_node_details: clone})
     }
-
     if(this.state.nitro_link_directory_data[link] != null){
       return;
     }
+    const nitro_link_directory = await this.load_nitro_directory_details(link)
+    const endpoint = nitro_link_directory['marco']
+    var request = `${link}/${endpoint}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -38881,7 +39011,12 @@ class App extends Component {
       var obj = JSON.parse(data);
       var success = obj.success
       if(success == true){
-        await this.record_key_in_nitro_node(obj, link, object, nitro_link_directory)
+        await this.record_key_in_nitro_node(obj, link, object['e5_id'], nitro_link_directory, image_load_from_nitro_data)
+        if(should_load_account_storage_info == true){
+          await this.wait(350)
+          this.load_my_account_storage_info(data)
+        }
+        
       }else{
         var clone = structuredClone(this.state.nitro_node_details)
         clone[object['e5_id']] = 'unavailable'
@@ -38919,7 +39054,51 @@ class App extends Component {
     }
   }
 
-  record_key_in_nitro_node = async (marco_obj, link, object, nitro_link_directory) => {
+  check_and_fetch_object_marco_if_non_existant = async (e5_id, link) => {
+    if(this.state.beacon_chain_url == link){
+      //data already loaded, so just set it in place
+      const clone = structuredClone(this.state.nitro_node_details)      
+      clone[e5_id] = this.state.beacon_data
+      this.setState({nitro_node_details: clone})
+    }
+
+    if(this.state.nitro_link_directory_data[link] != null || this.state.nitro_node_details[e5_id] != null){
+      return;
+    }
+
+    const nitro_link_directory = await this.load_nitro_directory_details(link)
+    const endpoint = nitro_link_directory['marco']
+    var request = `${link}/${endpoint}`
+
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var success = obj.success
+      if(success == true){
+        await this.record_key_in_nitro_node(obj, link, e5_id, nitro_link_directory, {})
+      }else{
+        var clone = structuredClone(this.state.nitro_node_details)
+        clone[e5_id] = 'unavailable'
+        this.setState({nitro_node_details:clone})
+      }
+    }
+    catch(e){
+      var clone = structuredClone(this.state.nitro_node_details)
+      clone[e5_id] = 'unavailable'
+      this.setState({nitro_node_details:clone})
+    }
+  }
+
+  record_key_in_nitro_node = async (marco_obj, link, e5_id, nitro_link_directory, image_load_from_nitro_data) => {
+    if(this.is_re_recording_key_in_nitro_node == null){
+      this.is_re_recording_key_in_nitro_node = {}
+    }
+    this.is_re_recording_key_in_nitro_node[link] = true
     const root_identifier_data = this.generate_id_for_nitro_node_key(link)
     const root_identifier = root_identifier_data.id
     const root_identifier_from_private_key = root_identifier_data.from_private_key
@@ -38930,7 +39109,7 @@ class App extends Component {
     
     if(encrypted_user_temp_encryption_key == null){
       var clone = structuredClone(this.state.nitro_node_details)
-      clone[object['e5_id']] = 'unavailable'
+      clone[e5_id] = 'unavailable'
       this.setState({nitro_node_details:clone})
       return;
     }
@@ -38964,33 +39143,51 @@ class App extends Component {
         var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
         var nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
         
-        clone[object['e5_id']] = marco_obj
+        clone[e5_id] = marco_obj
         nitro_url_temp_hash_data_clone[link] = {
           'user_temp_hash': user_temp_hash, 
           'user_temp_encryption_key' : user_temp_encryption_key,
           'root_identifier_from_private_key' : root_identifier_from_private_key,
           'endpoint_data_decryption_key': await this.get_key_from_password(user_temp_encryption_key, 'f'),
-          'e5_id': object['e5_id']
+          'e5_id': e5_id
         }
         nitro_link_directory_data_clone[link] = nitro_link_directory
         
         this.setState({nitro_node_details: clone, nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone, nitro_link_directory_data: nitro_link_directory_data_clone})
+
+        await this.wait(1000)
+        if(this.is_re_recording_key_in_nitro_node == null){
+          this.is_re_recording_key_in_nitro_node = {}
+        }
+        this.is_re_recording_key_in_nitro_node[link] = false
+        if(image_load_from_nitro_data['album_art'] != null){
+          await this.wait(350)
+          await this.fetch_uploaded_data_from_ipfs([image_load_from_nitro_data['album_art']], false, image_load_from_nitro_data['keys'])
+        }
       }else{
         var clone = structuredClone(this.state.nitro_node_details)
-        clone[object['e5_id']] = 'unavailable'
+        clone[e5_id] = 'unavailable'
         this.setState({nitro_node_details:clone})
       }
     }
     catch(e){
       var clone = structuredClone(this.state.nitro_node_details)
-      clone[object['e5_id']] = 'unavailable'
+      clone[e5_id] = 'unavailable'
       this.setState({nitro_node_details:clone})
     }
   }
 
   check_and_start_rerecording_of_key_in_nitro = async (link) => {
+    if(this.is_re_recording_key_in_nitro_node == null){
+      this.is_re_recording_key_in_nitro_node = {}
+    }
+    while (this.is_re_recording_key_in_nitro_node[link] == true) {
+      if (this.is_re_recording_key_in_nitro_node[link] == false) break;
+      await new Promise(resolve => setTimeout(resolve, 650))
+    }
     const nitro_key_data = this.state.nitro_url_temp_hash_data[link]
-    if((nitro_key_data != null && nitro_key_data['root_identifier_from_private_key'] == false) || nitro_key_data == null){
+    if(nitro_key_data != null && nitro_key_data['root_identifier_from_private_key'] == false){
+      this.is_re_recording_key_in_nitro_node[link] = true
       await this.re_record_key_in_nitro_node(nitro_key_data['e5_id'], link)
     }
   }
@@ -39048,6 +39245,10 @@ class App extends Component {
         this.setState({nitro_node_details: clone, nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone})
 
         await this.wait(700)
+        if(this.is_re_recording_key_in_nitro_node == null){
+          this.is_re_recording_key_in_nitro_node = {}
+        }
+        this.is_re_recording_key_in_nitro_node[link] = false
       }
     }
     catch(e){

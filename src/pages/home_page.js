@@ -1573,6 +1573,32 @@ class home_page extends Component {
         setTimeout(function() {
             me.update_scroll_position()
         }, (1 * 10));
+
+        setTimeout(function() {
+            me.reload_object_album_arts_if_any()
+        }, (1 * 400));
+    }
+
+    reload_object_album_arts_if_any(){
+        const selected_page = this.get_selected_page()
+        if(selected_page == this.props.app_state.loc['1219']/* 'spends' */){
+            this.props.reload_objects_album_arts(this.get_spend_token_items())
+        }
+        else if(selected_page == this.props.app_state.loc['1218']/* 'ends' */){
+            this.props.reload_objects_album_arts(this.get_end_token_items())
+        }
+        else if(selected_page == this.props.app_state.loc['1215']/* 'storefront' */){
+            this.props.reload_objects_album_arts(this.get_storefront_items())
+        }
+        else if(selected_page == this.props.app_state.loc['1264k']/* 'audioport' */){
+            this.props.reload_objects_album_arts(this.get_audio_items())
+        }
+        else if(selected_page == this.props.app_state.loc['1264p']/* 'videoport' */){
+            this.props.reload_objects_album_arts(this.get_video_items())
+        }
+        else if(selected_page == this.props.app_state.loc['1264s']/* 'nitro' */){
+            this.props.reload_objects_album_arts(this.get_nitro_items())
+        }
     }
 
     set_account_in_search_then_reload_section_data(id, selected_page, target_account){
@@ -1659,6 +1685,8 @@ class home_page extends Component {
         }
 
         this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
+
+        this.reload_object_album_arts_if_any()
     }
 
     
@@ -2327,7 +2355,7 @@ class home_page extends Component {
 
             if(type == exchange_type){
                 token_exchanges.push(
-                    {'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'e5_id':exchange_id, 'E5': exchanges_from_sync[i]['e5'], 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'], 'exchange_ratio_data':exchanges_from_sync[i]['exchange_ratio_data'], 'proportion_ratio_data':exchanges_from_sync[i]['proportion_ratio_data'], 'token_balances_data':exchanges_from_sync[i]['token_balances_data'], 'hidden':exchanges_from_sync[i]['hidden'], 'pos':exchanges_from_sync[i]['pos']}
+                    {'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'e5_id':exchange_id, 'E5': exchanges_from_sync[i]['e5'], 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'], 'exchange_ratio_data':exchanges_from_sync[i]['exchange_ratio_data'], 'proportion_ratio_data':exchanges_from_sync[i]['proportion_ratio_data'], 'token_balances_data':exchanges_from_sync[i]['token_balances_data'], 'hidden':exchanges_from_sync[i]['hidden'], 'pos':exchanges_from_sync[i]['pos'], 'timestamp':exchanges_from_sync[i]['timestamp']}
                 )
             }
         }
@@ -3024,7 +3052,7 @@ class home_page extends Component {
                 if(obj != null) my_acquired_albums_in_stack.push(obj)
             }
             var my_acquired_albums = my_acquired_albums_in_stack.concat(this.props.app_state.my_acquired_audios.reverse())
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264m']/* 'playlists' */){
             return this.props.app_state.my_playlists
@@ -3121,7 +3149,7 @@ class home_page extends Component {
                 if(obj != null) my_stacked_videoposts.push(obj)
             }
             var my_acquired_albums = my_stacked_videoposts.concat(this.props.app_state.my_acquired_videos.reverse())
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -4049,7 +4077,7 @@ class home_page extends Component {
         }
         else{
             //wallet
-            var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+            var selected_item = this.state.wallet_page_tags_object['i'].active
             if(selected_item == this.props.app_state.loc['1218']/* 'ends ☝️' */ || selected_item == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
                 return true
             }
@@ -4122,7 +4150,7 @@ class home_page extends Component {
 
             current_search={searched_data} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} play_song={this.props.play_song.bind(this)} get_page_id={this.get_page_id.bind(this)} play_video={this.props.play_video.bind(this)} play_song_from_list_section={this.play_song_from_list_section.bind(this)} play_video_from_list_section={this.play_video_from_list_section.bind(this)} fetch_uploaded_data_from_ipfs={this.props.fetch_uploaded_data_from_ipfs.bind(this)}
 
-            get_spend_token_items={this.get_spend_token_items.bind(this)} get_end_token_items={this.get_end_token_items.bind(this)}
+            get_spend_token_items={this.get_spend_token_items.bind(this)} get_end_token_items={this.get_end_token_items.bind(this)} update_scroll_position2={this.update_scroll_position2.bind(this)}
             />
         )
     }

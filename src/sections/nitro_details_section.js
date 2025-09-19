@@ -818,7 +818,7 @@ class NitroDetailsSection extends Component {
         const telemetry_data = this.props.app_state.nitro_telemetry_data_object[object['e5_id']]
         const node_details = this.props.app_state.nitro_node_details[object['e5_id']]
 
-        if(object['event'].returnValues.p5 == my_account && telemetry_data['access_info'] != null&& telemetry_data['access_info'] != '' && node_details != null && node_details != 'unavailable' && node_details['platform'] == 'linux'){
+        if(object['event'].returnValues.p5 == my_account && telemetry_data != null && telemetry_data['access_info'] != null && telemetry_data['access_info'] != '' && node_details != null && node_details != 'unavailable' && node_details['platform'] == 'linux'){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -977,6 +977,10 @@ class NitroDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527s']/* 'Tracked E5s.' */, 'details':this.props.app_state.loc['c2527ce']/* 'Below are the E5s tracked by the node.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.load_preferred_e5_ui(node_details['tracked_E5s'])}
+                    
+                    {this.render_space_unit_or_default(node_details)}
+                    <div style={{height:10}}/>
+                    {this.render_streaming_fees_if_any(node_details)}
                     {this.render_price_per_megabyte_data(node_details)}
                 </div>
             )
@@ -995,6 +999,34 @@ class NitroDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_space_unit_or_default(node_details){
+        const space_unit_size = node_details['target_storage_space_unit_denomination_multiplier'] || 1
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054ed']/* 'Space Unit size.' */, 'subtitle':this.format_power_figure(space_unit_size), 'barwidth':this.get_number_width(space_unit_size), 'number':`${this.format_account_balance_figure(space_unit_size)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
+                </div>
+            </div>
+        )
+    }
+
+    render_streaming_fees_if_any(node_details){
+        const streaming_multiplier = node_details['target_storage_streaming_multiplier']
+        if(streaming_multiplier == null || streaming_multiplier == 0) return;
+
+        const details = this.props.app_state.loc['c2527dy']/* 'The prices listed below are also charged for every $ streams, for every space unit consumed by your files in this node.' */.replace('$', number_with_commas(streaming_multiplier))
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527dx']/* 'Steaming Charges Enabled.' */, 'details':details, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3054eh']/* 'Streaming Multiplier' */, 'subtitle':this.format_power_figure(streaming_multiplier), 'barwidth':this.get_number_width(streaming_multiplier), 'number':`${this.format_account_balance_figure(streaming_multiplier)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3054ei']/* Multiplier Units */, })}
+                </div>
+            </div>
+        )
     }
 
 

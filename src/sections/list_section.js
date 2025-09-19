@@ -746,13 +746,20 @@ class PostListSection extends Component {
             if(new_objects.length > 0){
                 const title = this.props.app_state.loc['2509r']/* $ new % loaded. */.replace('$', number_with_commas(new_objects.length)).replace('%', this.get_section_name())
                 return(
-                    <div>
+                    <div onClick={() => this.when_refresh_feed_tapped(page_id)}>
                         {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['2509s']/* 'Tap this to refresh your feed and show them.' */, 'size':'l'})}
                         <div style={{height:10}}/>
                     </div>
                 )
             }
         }
+    }
+
+    when_refresh_feed_tapped(page_id){
+        this.props.update_scroll_position2()
+        const current_load_time_clone = structuredClone(this.state.current_load_time)
+        current_load_time_clone[page_id] = Date.now()/1000
+        this.setState({current_load_time: current_load_time_clone})
     }
 
     get_section_name(){
