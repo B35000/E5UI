@@ -107,6 +107,7 @@ class StackPage extends Component {
         get_rating_denomination_setting_object:this.get_rating_denomination_setting_object(),
         get_disable_moderation_setting_object:this.get_disable_moderation_setting_object(),
         get_post_load_size_setting_object: this.get_post_load_size_setting_object(),
+        get_link_handler_setting_object:this.get_link_handler_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
@@ -1150,6 +1151,37 @@ class StackPage extends Component {
         this.setState({get_post_load_size_setting_object: this.get_post_load_size_setting_object(),})
     }
 
+
+
+
+
+
+
+
+
+
+
+    get_link_handler_setting_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593jl']/* 'iframe' */, this.props.app_state.loc['1593jm']/* 'browser' */], [this.get_selected_link_handler_setting_option()]
+            ], 
+        }
+    }
+
+    get_selected_link_handler_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593jl']/* 'iframe' */] = 1
+        obj[this.props.app_state.loc['1593jm']/* 'browser' */] = 2
+        return obj[this.props.app_state.link_handler]
+    }
+
+    set_selected_link_handler_setting_tag(){
+        this.setState({get_link_handler_setting_object: this.get_link_handler_setting_object(),})
+    }
 
 
 
@@ -10596,9 +10628,18 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
 
 
-
-
                 {this.render_disable_moderation_setting()}
+
+
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
 
             </div>
         )
@@ -11018,6 +11059,12 @@ class StackPage extends Component {
         this.setState({get_post_load_size_setting_object: tag_obj})
         var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_post_load_size_changed(selected_item)
+    }
+
+    when_get_link_handler_setting_object_updated(tag_obj){
+        this.setState({get_link_handler_setting_object: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        this.props.when_link_handler_changed(selected_item)
     }
     
 

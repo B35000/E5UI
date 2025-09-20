@@ -886,7 +886,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:this.getLocale()['1593jl']/* 'iframe' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -3512,6 +3512,7 @@ class App extends Component {
       
       max_post_bulk_load_count: this.state.max_post_bulk_load_count,
       event_load_chunk_size: this.state.event_load_chunk_size,
+      link_handler: this.state.link_handler,
     }
   }
 
@@ -3697,6 +3698,7 @@ class App extends Component {
       var my_preferred_nitro_link = state.my_preferred_nitro_link == null ? '' : state.my_preferred_nitro_link;
       var max_post_bulk_load_count = state.max_post_bulk_load_count == null ? this.state.max_post_bulk_load_count : state.max_post_bulk_load_count;
       var event_load_chunk_size = state.event_load_chunk_size == null ? this.state.event_load_chunk_size : state.event_load_chunk_size
+      var link_handler = state.link_handler == null ? this.state.link_handler: state.link_handler
 
       this.setState({
         theme: theme,
@@ -3766,7 +3768,8 @@ class App extends Component {
         my_created_moderator_notes: my_created_moderator_notes,
         my_preferred_nitro_link: my_preferred_nitro_link,
         max_post_bulk_load_count: max_post_bulk_load_count,
-        event_load_chunk_size: event_load_chunk_size
+        event_load_chunk_size: event_load_chunk_size,
+        link_handler: link_handler
       })
       var me = this;
       setTimeout(function() {
@@ -3820,6 +3823,7 @@ class App extends Component {
       me.stack_page.current?.set_selected_rating_denomination_setting_tag()
       me.stack_page.current?.set_selected_disable_moderation_setting_tag()
       me.stack_page.current?.set_selected_post_load_size_setting_tag()
+      me.stack_page.current?.set_selected_link_handler_setting_tag()
     }, (1 * 1000));
   }
 
@@ -7377,7 +7381,7 @@ class App extends Component {
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
-      
+      when_link_handler_changed={this.when_link_handler_changed.bind(this)}
       />
     )
   }
@@ -8252,6 +8256,14 @@ class App extends Component {
     object_mapping[this.props.app_state.loc['1593jh']/* 'very-many' */] = 72
     object_mapping[this.props.app_state.loc['1593ji']/* 'as-many-as-possible' */] = 135
     this.setState({max_post_bulk_load_count: object_mapping[item], event_load_chunk_size: object_mapping[item]})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_link_handler_changed(item){
+    this.setState({link_handler: item})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -20318,16 +20330,20 @@ class App extends Component {
   }
 
   show_view_iframe_link_bottomsheet(object){
-    if(this.state.view_iframe_link_bottomsheet == true){
-      return;
-    }
-    this.open_view_iframe_link_bottomsheet()
-    var me = this;
-    setTimeout(function() {
-      if(me.view_iframe_link_page.current != null){
-        me.view_iframe_link_page.current.set_data(object)
+    if(this.state.link_handler == this.getLocale()['1593jm']/* 'browser' */){
+      window.open(object, "_blank", "noopener,noreferrer");
+    }else{
+      if(this.state.view_iframe_link_bottomsheet == true){
+        return;
       }
-    }, (1 * 500));
+      this.open_view_iframe_link_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.view_iframe_link_page.current != null){
+          me.view_iframe_link_page.current.set_data(object)
+        }
+      }, (1 * 500));
+    }
   }
 
 
