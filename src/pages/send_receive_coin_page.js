@@ -207,7 +207,7 @@ class SendReceiveCoinPage extends Component {
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
 
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} 
                 onClick={() => this.props.view_number({'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit']+'s', 'number':balance_base_unit, 'relativepower':item['base_unit']+'s'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['symbol'], 'subtitle':this.format_power_figure(balance_decimal), 'barwidth':this.calculate_bar_width(balance_decimal), 'number':(balance_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -349,17 +349,14 @@ class SendReceiveCoinPage extends Component {
                     {this.render_detail_item('2', this.get_picked_amount_in_decimal())}
                 </div>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={this.get_coin_decimal_count()}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={this.get_coin_decimal_count()} pick_with_text_area={true}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
                 </div>
 
                 {this.render_detail_item('0')}
-
                 {this.show_gas_price_options()}
-
-                
 
                 <div style={{height: 30}}/>
             </div>
@@ -367,7 +364,7 @@ class SendReceiveCoinPage extends Component {
     }
 
     get_coin_decimal_count(){
-        return this.state.coin['conversion']
+        return this.state.coin['decimals']
     }
 
     get_picked_amount_in_base_units(){
@@ -596,7 +593,7 @@ class SendReceiveCoinPage extends Component {
         else if(money_out > accounts_balance){
             this.props.notify(this.props.app_state.loc['2937']/* 'You don\'t have enough coin to make that transaction.' */, 4000)
         }
-        else if(!this.props.check_if_recipient_address_is_valid()){
+        else if(!this.props.check_if_recipient_address_is_valid(recipient, item)){
             this.props.notify(this.props.app_state.loc['2939']/* 'That recipient address is not valid.' */, 4000)
         }
         else if(set_fee == 0){
@@ -609,8 +606,11 @@ class SendReceiveCoinPage extends Component {
 
 
     when_send_coin_confirmation_received = async () => {
-        this.props.notify(this.props.app_state.loc['2951']/* 'Broadcasting your Transaction...' */, 1000)
         var item = this.state.coin
+        // if(item['symbol'] != 'BTC' && item['symbol'] != 'LTC' && item['symbol'] != 'DOGE' && item['symbol'] != 'DASH'){
+        //     this.props.notify(this.props.app_state.loc['2951']/* 'Broadcasting your Transaction...' */, 1000)
+        // }
+        this.props.notify(this.props.app_state.loc['2951']/* 'Broadcasting your Transaction...' */, 1000)
         var set_fee = await this.get_default_transaction_fee()
         const transfer_amount = parseInt(this.state.picked_sats_amount)
         const recipient = this.state.recipient_address

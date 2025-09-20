@@ -1133,7 +1133,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['1593jf']/* 'few' */, this.props.app_state.loc['1593jg']/* 'many' */, this.props.app_state.loc['1593jh']/* 'very-many' */, this.props.app_state.loc['1593ji']/* 'as-many-as-possible' */,], [this.get_selected_post_load_size_setting_option()]
+                ['xor','',0], ['e', this.props.app_state.loc['1593jf']/* 'few' */, this.props.app_state.loc['1593jg']/* 'many' */, this.props.app_state.loc['1593jh']/* 'very-many' */, this.props.app_state.loc['1593ji']/* 'as-many-as-possible' */,], [this.get_selected_post_load_size_setting_option()]
             ],
         }
     }
@@ -15307,6 +15307,7 @@ class StackPage extends Component {
         const files_to_be_renewed_data = this.fetch_files_to_be_renewed()
         const files_to_be_renewed = files_to_be_renewed_data.files_to_renew
         const space_used = files_to_be_renewed_data.total_spaces_used
+        const total_streaming_spaces_used = files_to_be_renewed_data.total_streaming_spaces_used
         const current_month = new Date().getMonth()
         if(Object.keys(files_to_be_renewed).length == 0 || current_month > 5 && !this.is_space_legible_for_renewal(space_used)){
             return;
@@ -15331,6 +15332,7 @@ class StackPage extends Component {
         var my_files = this.props.app_state.uploaded_data_cids
         var files_to_renew = {}
         var total_spaces_used = {}
+        var total_streaming_spaces_used = {}
         const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
         my_files.forEach(ecid => {
             const data = this.get_cid_split(ecid)
@@ -15341,20 +15343,42 @@ class StackPage extends Component {
                         const time = file_data['id']
                         const nitro = file_data['nitro']
                         const space = file_data['binary_size']
+                        const file_hash = file_data['hash']
                         if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash']) && !this.has_nitro_already_been_renewed(nitro)){
                             if(files_to_renew[nitro] == null){
                                 files_to_renew[nitro] = []
                                 total_spaces_used[nitro] = 0
+                                total_streaming_spaces_used[nitro] = 0
                             }
+                            const files_years_stream_count = this.fetch_file_streaming_count(file_hash, startOfYear-1)
                             files_to_renew[nitro].push({'data':data, 'file_data':file_data, 'time':time})
-                            if(space != null) total_spaces_used[nitro] += space;
+                            if(space != null){
+                                total_spaces_used[nitro] += space;
+                            }
+                            const node_details = this.props.app_state.nitro_node_details[nitro]
+                            if(node_details['target_storage_streaming_multiplier'] != 0 && !bigInt(files_years_stream_count).isZero()){
+                                total_streaming_spaces_used[nitro] += (bigInt(files_years_stream_count).divide(space)).divide(node_details['target_storage_streaming_multiplier'])
+                            }
                         }
                     }
                 }
             }
         });
 
-        return { files_to_renew, total_spaces_used }
+        return { files_to_renew, total_spaces_used, total_streaming_spaces_used }
+    }
+
+    fetch_file_streaming_count(current_file, startOfCurrentYear){
+        const files_stream_count_data = this.props.app_state.file_streaming_data[current_file] == null ? {} : this.props.app_state.file_streaming_data[current_file]['files_stream_count']
+        const stream_times = Object.keys(files_stream_count_data)
+        const start_time = startOfYear - 31_556_952_000/* year in milliseconds */
+        var focused_files_streaming_totals = bigInt(0)
+        stream_times.forEach(stream_time => {
+            if(stream_time >= start_time && stream_time < startOfCurrentYear){
+                focused_files_streaming_totals = bigInt(focused_files_streaming_totals).plus(files_stream_count_data[stream_time])
+            }
+        });
+        return focused_files_streaming_totals
     }
 
     is_file_available(file){

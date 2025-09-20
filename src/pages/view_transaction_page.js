@@ -7670,6 +7670,9 @@ return data['data']
         var size_count = 0
         renew_data.forEach(file_data => {
             size_count += file_data['binary_size']
+            if(file_data['streaming_multiplier'] != null){
+                size_count += file_data['streaming_multiplier']
+            }
         });
 
         var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]

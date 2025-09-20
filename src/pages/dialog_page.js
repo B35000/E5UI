@@ -348,6 +348,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'view_link_option'){
+            return(
+                <div>
+                    {this.render_view_link_options_ui()}
+                </div>
+            )
+        }
         
     }
 
@@ -5697,6 +5704,7 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055dc']/* 'Below is the total amount of money youre set to pay for your files.' */, 'title':this.props.app_state.loc['1593hd']/* 'Renew Uploaded Files.' */})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ex']/* 'If the indexer charges streaming fees on your files, the data streamed is combined with the displayed file size.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 {this.render_nitro_items(files_to_be_renewed_data.files_to_renew)}
                 <div style={{height:10}}/>
@@ -5810,15 +5818,23 @@ return data['data']
                         const time = file_data['id']
                         const nitro = file_data['nitro']
                         const binary_size = file_data['binary_size']
+                        const file_hash = file_data['hash']
                         if(binary_size != null){
                             if(nitro != null){
                                 const nitro_node_data = this.props.app_state.nitro_node_details[nitro]
                                 if(nitro_node_data != null && nitro_node_data != 'unavailable'){
-                                    if(time < startOfYear && nitro != null && this.is_file_available(file_data['hash']) && !this.has_nitro_already_been_renewed(nitro)){
+                                    if(time < startOfYear && nitro != null && this.is_file_available(file_hash) && !this.has_nitro_already_been_renewed(nitro) && this.does_streaming_data_exist(file_hash)){
                                         if(files_to_renew[nitro] == null){
                                             files_to_renew[nitro] = []
                                         }
-                                        files_to_renew[nitro].push({'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size})
+                                        const files_years_stream_count = this.fetch_file_streaming_count(file_hash, startOfYear-1)
+
+                                        const file_data_item = {'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size}
+
+                                        if(nitro_node_data['target_storage_streaming_multiplier'] != 0 && !bigInt(files_years_stream_count).isZero()){
+                                            file_data_item['streaming_multiplier'] = (bigInt(files_years_stream_count).divide(space)).divide(nitro_node_data['target_storage_streaming_multiplier'])
+                                        }
+                                        files_to_renew[nitro].push(file_data_item)
                                         total_files_to_renew++
                                     }
                                 }
@@ -5845,6 +5861,23 @@ return data['data']
         });
 
         return { files_to_renew, has_files_all_loaded, total_files_to_renew, has_all_nitro_metadata_loaded}
+    }
+
+    does_streaming_data_exist(current_file){
+        return this.props.app_state.file_streaming_data[current_file] != null
+    }
+
+    fetch_file_streaming_count(current_file, startOfCurrentYear){
+        const files_stream_count_data = this.props.app_state.file_streaming_data[current_file] == null ? {} : this.props.app_state.file_streaming_data[current_file]['files_stream_count']
+        const stream_times = Object.keys(files_stream_count_data)
+        const start_time = startOfYear - 31_556_952_000/* year in milliseconds */
+        var focused_files_streaming_totals = bigInt(0)
+        stream_times.forEach(stream_time => {
+            if(stream_time >= start_time && stream_time < startOfCurrentYear){
+                focused_files_streaming_totals = bigInt(focused_files_streaming_totals).plus(files_stream_count_data[stream_time])
+            }
+        });
+        return focused_files_streaming_totals
     }
 
     is_file_available(file){
@@ -5892,6 +5925,9 @@ return data['data']
         var size_count = 0
         renew_data.forEach(file_data => {
             size_count += file_data['binary_size']
+            if(file_data['streaming_multiplier'] != null){
+                size_count += file_data['streaming_multiplier']
+            }
         });
 
         var object = this.props.app_state.created_nitro_mappings[nitro_e5] == null ? null : this.props.app_state.created_nitro_mappings[nitro_e5][nitro_id]
@@ -5997,6 +6033,9 @@ return data['data']
             var total_storage_consumed_in_mbs = 0.0
             files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
                 total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
+                if(file_object['streaming_multiplier'] != null){
+                    total_storage_consumed_in_mbs += file_object['streaming_multiplier'] / (1024 * 1024)
+                }
             });
             if(nitro_node_data != null && nitro_node_data != 'unavailable'){
                 var price_data_object = this.get_price_data_to_be_used(nitro_node_data)
@@ -6099,6 +6138,9 @@ return data['data']
             var total_storage_consumed_in_mbs = 0.0
             files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
                 total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
+                if(file_object['streaming_multiplier'] != null){
+                    total_storage_consumed_in_mbs += file_object['streaming_multiplier'] / (1024 * 1024)
+                }
             });
             if(nitro_node_data != null && nitro_node_data != 'unavailable'){
                 var price_data_object = this.get_price_data_to_be_used(nitro_node_data)
@@ -7205,6 +7247,76 @@ return data['data']
                 {this.render_detail_item('3', {'title':''+new Date(time).toLocaleString(), 'details':this.props.app_state.loc['c2527dv']/* 'The files logs are shown below.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_detail_item('4', {'text':log_data, 'textsize':'14px', 'font':this.props.app_state.font})} 
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+    render_view_link_options_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_link_options_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_link_options_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_link_options_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_view_link_options_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055er']/* 'Open Via Iframe' */, 'details':this.props.app_state.loc['3055es']/* 'Open the link inside e using an iframe.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.props.open_link(this.state.data['link'], this.props.app_state.loc['1593jl']/* 'iframe' */)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055et']/* 'Open Iframe' */, 'action':''},)}
+                </div>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055eu']/* 'Open in Browser' */, 'details':this.props.app_state.loc['3055ev']/* 'Open the link in a new tab in your browser.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.props.open_link(this.state.data['link'], this.props.app_state.loc['1593jm']/* 'browser' */)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ew']/* 'Open Browser' */, 'action':''},)}
+                </div>
             </div>
         )
     }

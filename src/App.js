@@ -886,7 +886,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:this.getLocale()['1593jl']/* 'iframe' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -6644,13 +6644,19 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
+    await this.wait(2500)
+    this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
+    return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'btc')
-
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
     }else{
       this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
     }
+  }
+
+  get_tx_size(_in, out){
+    return (_in*148 + out*34 + 10 +- _in)
   }
 
   broadcast_block_cypher_transaction = async (rawTxHex, network) => {
@@ -6668,7 +6674,7 @@ class App extends Component {
       const response = await fetch(request, header);
       if (!response.ok) {
         console.log(response)
-        // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
       var data = await response.text();
       data = JSON.parse(data)
@@ -6678,15 +6684,15 @@ class App extends Component {
         if(hash!= null){
           return hash
         }else{
-          // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+          this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
         }
       }else{
-        // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
     }
     catch(e){
       console.log(e)
-      // this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
@@ -6787,6 +6793,9 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
+    await this.wait(2500)
+    this.show_dialog_bottomsheet({'hash':raw, 'chain':'LTC'}, 'manual_transaction_broadcast')
+    return;
 
     const hash = await this.broadcast_block_cypher_transaction(raw, 'ltc')
     if(hash != null){
@@ -6836,8 +6845,11 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
+    await this.wait(2500)
+    this.show_dialog_bottomsheet({'hash':raw, 'chain':'DOGE'}, 'manual_transaction_broadcast')
+    return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'doge')
-    
+
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
     }else{
@@ -6884,8 +6896,10 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
+    await this.wait(2500)
+    this.show_dialog_bottomsheet({'hash':raw, 'chain':'DASH'}, 'manual_transaction_broadcast')
+    return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'dash')
-
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
     }else{
@@ -15332,12 +15346,13 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-        <DialogPage ref={this.dialog_page} app_state={this.state} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)} 
+        <DialogPage ref={this.dialog_page} app_state={this.state} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} 
+        when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)} 
         delete_nitro_file={this.delete_nitro_file.bind(this)} set_new_wallet={this.set_new_wallet.bind(this)} 
         
         show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_downloaded.bind(this)} when_pdf_file_opened={this.when_pdf_file_accessed.bind(this)} play_individual_track={this.when_audio_file_opened.bind(this)} play_individual_video={this.when_video_file_opened.bind(this)} filter_by_selected_account={this.filter_by_selected_account.bind(this)}
 
-        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)}
+        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)}
         
         />
       </div>
@@ -15398,12 +15413,13 @@ class App extends Component {
       'confirm_upload_nitro_files':600,
       'renew_nitro_uploads':600,
       'view_bid_item':550,
-      'manual_transaction_broadcast':350,
+      'manual_transaction_broadcast':570,
       'confirm_new_wallet': 200,
       'create_moderator_note':800,
       'export_direct_purchases':500,
       'view_access_logs':550,
       'view_error_logs':650,
+      'view_link_option':350,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -16297,6 +16313,11 @@ class App extends Component {
 
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  open_link(url, option){
+    this.open_dialog_bottomsheet()
+    this.show_view_iframe_link(url, option)
   }
 
 
@@ -20330,7 +20351,19 @@ class App extends Component {
   }
 
   show_view_iframe_link_bottomsheet(object){
-    if(this.state.link_handler == this.getLocale()['1593jm']/* 'browser' */){
+    if(this.state.link_handler == 'e' && this.state.dialog_bottomsheet == false){
+      this.show_dialog_bottomsheet({'link':object}, 'view_link_option')
+    }
+    else if(this.state.link_handler == 'e' && this.state.dialog_bottomsheet == true){
+      this.show_view_iframe_link(object, this.getLocale()['1593jm']/* 'browser' */)
+    }
+    else{
+      this.show_view_iframe_link(object, this.state.link_handler)
+    }
+  }
+
+  show_view_iframe_link(object, option){
+    if(option == this.getLocale()['1593jm']/* 'browser' */){
       window.open(object, "_blank", "noopener,noreferrer");
     }else{
       if(this.state.view_iframe_link_bottomsheet == true){
