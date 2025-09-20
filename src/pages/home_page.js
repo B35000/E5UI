@@ -4926,6 +4926,8 @@ class home_page extends Component {
                 get_storefront_auction_bids={this.props.get_storefront_auction_bids.bind(this)}
 
                 get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} when_file_link_tapped={this.props.when_file_link_tapped.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)}
+
+                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)}
                 />
             </div>
         )

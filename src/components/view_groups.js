@@ -67,6 +67,29 @@ class ViewGroups extends Component {
         )
     }
 
+    // linkDecorator = (decoratedHref, decoratedText, key) => {
+    //     return (
+    //         <a key={key} href={decoratedHref} onClick={(e) => this.handleLinkClick(decoratedHref, e)} style={{ color: this.props.theme['secondary_text_color'], cursor: "pointer" }} >
+    //             {decoratedText}
+    //         </a>
+    //     );
+    // };
+
+    linkifyOptions = {
+        render: {
+            url: ({ attributes, content }) => (
+                <a
+                {...attributes}
+                onClick={(e) => this.handleLinkClick(e.target.href, e)}
+                style={{ color: this.props.theme['secondary_text_color'], cursor: "pointer" }}
+                className="custom-link"
+                >
+                {content}
+                </a>
+            )
+        }
+    };
+
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
@@ -300,7 +323,7 @@ class ViewGroups extends Component {
                       <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 10px 5px 10px','border-radius': '8px' }}>
                           
                             <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}>
-                                <Linkify options={{target: '_blank'}}>
+                                <Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>
                                     {
                                         parts.map((part, index) => {
                                             const num = parseInt(part, 10);
@@ -521,7 +544,7 @@ class ViewGroups extends Component {
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
-                        <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
+                        <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(text)}</Linkify></p>
 
                         {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} /> */}
                     </div>
@@ -620,7 +643,7 @@ class ViewGroups extends Component {
                             h5: ({ node, ...props }) => <h5 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
                             h6: ({ node, ...props }) => <h6 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
                             li: ({ node, ...props }) => <li style={{ color: this.props.theme['secondary_text_color'] }} {...props} />,
-                            a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'] }} {...props} target="_blank" rel="noopener noreferrer" />,
+                            a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'] }} {...props} onClick={(e) => this.handleLinkClick(e, props.href)} /* target="_blank" rel="noopener noreferrer" */ />,
                             hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
                             br: ({ node, ...props }) => <br style={{ color: this.props.theme['line_color'] }} {...props} />,
                         }}
@@ -975,6 +998,11 @@ class ViewGroups extends Component {
         }
         
     }
+
+    handleLinkClick = (url, e) => {
+        e.preventDefault(); // stop normal navigation
+        this.props.show_view_iframe_link_bottomsheet(url)
+    };
 
 
     get_image_from_file(ecid){

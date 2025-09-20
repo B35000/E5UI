@@ -1627,7 +1627,7 @@ class FullVideoPage extends Component {
                                 <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                                 </div>
                             </div>
-                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={this.linkifyOptions}  /* options={{target: '_blank'}} */>{
                                 parts.map((part, index) => {
                                     const num = parseInt(part, 10);
                                     const isId = !isNaN(num) && num > 1000;
@@ -1658,6 +1658,26 @@ class FullVideoPage extends Component {
             </div>
         )
     }
+
+    linkifyOptions = {
+        render: {
+            url: ({ attributes, content }) => (
+                <a
+                {...attributes}
+                onClick={(e) => this.handleLinkClick(e.target.href, e)}
+                style={{ color: this.props.theme['secondary_text_color'], cursor: "pointer" }}
+                className="custom-link"
+                >
+                {content}
+                </a>
+            )
+        }
+    };
+
+    handleLinkClick = (url, e) => {
+        e.preventDefault(); // stop normal navigation
+        this.props.show_view_iframe_link_bottomsheet(url)
+    };
 
     show_moderator_note_for_comment_if_any(item){
         if(this.props.app_state.moderator_notes_by_my_following.length == 0 || item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]) return;
@@ -2337,7 +2357,7 @@ class FullVideoPage extends Component {
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

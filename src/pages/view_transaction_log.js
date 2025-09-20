@@ -189,7 +189,7 @@ class ViewTransactionLogPage extends Component {
 
 
 
-     /* renders the specific element in the post or detail object */
+    /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
