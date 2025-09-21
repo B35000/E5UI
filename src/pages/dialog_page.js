@@ -5832,7 +5832,7 @@ return data['data']
                                         const file_data_item = {'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size}
 
                                         if(nitro_node_data['target_storage_streaming_multiplier'] != 0 && !bigInt(files_years_stream_count).isZero()){
-                                            file_data_item['streaming_multiplier'] = (bigInt(files_years_stream_count).divide(space)).divide(nitro_node_data['target_storage_streaming_multiplier'])
+                                            file_data_item['streaming_multiplier'] = (bigInt(files_years_stream_count).divide(binary_size)).divide(nitro_node_data['target_storage_streaming_multiplier'])
                                         }
                                         files_to_renew[nitro].push(file_data_item)
                                         total_files_to_renew++
@@ -5870,7 +5870,7 @@ return data['data']
     fetch_file_streaming_count(current_file, startOfCurrentYear){
         const files_stream_count_data = this.props.app_state.file_streaming_data[current_file] == null ? {} : this.props.app_state.file_streaming_data[current_file]['files_stream_count']
         const stream_times = Object.keys(files_stream_count_data)
-        const start_time = startOfYear - 31_556_952_000/* year in milliseconds */
+        const start_time = startOfCurrentYear - 31_556_952_000/* year in milliseconds */
         var focused_files_streaming_totals = bigInt(0)
         stream_times.forEach(stream_time => {
             if(stream_time >= start_time && stream_time < startOfCurrentYear){
@@ -6034,7 +6034,7 @@ return data['data']
             files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
                 total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
                 if(file_object['streaming_multiplier'] != null){
-                    total_storage_consumed_in_mbs += file_object['streaming_multiplier'] / (1024 * 1024)
+                    total_storage_consumed_in_mbs += file_object['streaming_multiplier']
                 }
             });
             if(nitro_node_data != null && nitro_node_data != 'unavailable'){
@@ -6139,7 +6139,7 @@ return data['data']
             files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
                 total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
                 if(file_object['streaming_multiplier'] != null){
-                    total_storage_consumed_in_mbs += file_object['streaming_multiplier'] / (1024 * 1024)
+                    total_storage_consumed_in_mbs += file_object['streaming_multiplier']
                 }
             });
             if(nitro_node_data != null && nitro_node_data != 'unavailable'){

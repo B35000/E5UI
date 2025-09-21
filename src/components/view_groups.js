@@ -21,7 +21,7 @@
 import React, { Component } from 'react';
 // import Keyboard from "react-keyboard";
 
-import CanvasJSReact from './../externals/canvasjs.react';
+// import CanvasJSReact from './../externals/canvasjs.react';
 import E5EmptyIcon from './../assets/e5empty_icon.png';
 import empty_image from './../assets/default_image_background.png'
 import ImageList from '@mui/material/ImageList';
@@ -32,8 +32,13 @@ import Markdown from 'react-markdown'
 import Rating from 'react-rating';
 import { FaStar } from 'react-icons/fa';
 
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend, } from 'chart.js';
+import { Line } from 'react-chartjs-2';
 
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+// Register Chart.js components
+ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend );
+
+// var CanvasJSChart = CanvasJSReact.CanvasJSChart; //no longer used
 
 
 function urlify(text) {
@@ -385,7 +390,12 @@ class ViewGroups extends Component {
         else if(item_id=='6'){/* chart */
             var default_chart_color = this.props.theme['chart_color'];
             var background_color = this.props.theme['chart_background_color'];
-            var dataPoints = object_data != null ? object_data['dataPoints']: this.generateDataPoints(23);
+            
+            var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
+            var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
+            
+            var dataPoints = object_data != null ? this.format_generated_data_points(object_data['dataPoints'], start_time, end_time) : this.format_generated_data_points(this.generateDataPoints(23), start_time, end_time);
+
             var interval = (object_data != null) ? object_data['interval'] : 0
             var label_font_size = 10
             if(object_data != null && object_data['hide_label'] != null){
@@ -393,77 +403,222 @@ class ViewGroups extends Component {
                     label_font_size = 0
                 }
             }
-            const options = {
-              theme: "light1", // "light1", "dark1", "dark2"
-              animationEnabled: true,
-              zoomEnabled: false,
-              title: {
-                  text: ".",
-                  fontColor: "rgb(210, 210, 210,.0)",
-                  fontSize: 13
-              },
-              backgroundColor: background_color,//#F5F5F5
-              axisX:{
-                  interval: 30,//size of space between labels
-                  labelFontSize: 0,
-                  tickLength: 0,
-                  gridThickness: 0,
-                  lineColor: "rgb(210, 210, 210,.0)",
-                  labelFontColor: this.props.theme['primary_text_color'] //#292929 #DEDEDE
-              },
-              axisY:{
-                  labelFontSize: label_font_size,
-                  interval: interval,//size of space between labels
-                  tickLength: 0,
-                  gridThickness: 0.3,
-                  gridColor: this.props.theme['line_color'],//"#767676"
-                  lineColor: "rgb(210, 210, 210,.0)",
-                  labelFontColor: this.props.theme['primary_text_color'],//#292929 #DEDEDE
-                //   stripLines: [{
-                //         startValue:45,
-				//         endValue:55, // The Y value for the line
-                //         label: "Gucci",
-                //         color: "red",
-                //         labelFontColor: "red",
-                //         labelPlacement: "inside",
-                //         thickness: 0.9,
-                //         labelBackgroundColor:'transparent',
-                //         opacity:0.2,
-                //         showOnTop: true,
-                //     }],
-              },
-              toolTip:{
-                  enabled: false   //enable here
-              },
-              height:230,
-              data: [{
-                        type: this.props.graph_type,//area, splineArea
-                        color:default_chart_color,
-                        lineThickness: 0.5,
-                        fillOpacity: 1,
-                        markerColor: "transparent",
-                        indexLabelFontColor: this.props.theme['primary_text_color'],
-                        indexLabelFontFamily:"Sans-serif",
-                        indexLabelFontWeight:"bold",
-                        dataPoints: dataPoints,
-              }]
-            }
+            var line_tension = this.props.graph_type == 'area' ? 0.95 : 0.4
+
+            const defaultConfig = {
+                chartColor: default_chart_color,
+                chartBackgroundColor: background_color,
+                gridColor: this.props.theme['line_color'],
+                labelFontColor: this.props.theme['primary_text_color'],
+                gridLineWidth: 0.3,
+                labelFontSize: 10,
+                data: dataPoints,
+                x_axis_label_count: 4,
+                y_axis_label_count: 3,
+                display_y_axis_labels: true,
+                labelFontSizeX: 10,
+                labelFontSizeY: label_font_size,
+                line_tension: line_tension
+            };
+            const getChartData = () => {
+                const config = { ...defaultConfig };
+                
+                return {
+                    labels: config.data.map(item => item.x),
+                    datasets: [
+                        {
+                            data: config.data.map(item => item.y),
+                            borderColor: config.chartColor,
+                            backgroundColor: `${config.chartColor}`, // 20% opacity
+                            fill: true,
+                            tension: config.line_tension, // Smooth curve
+                            borderWidth: 0,
+                            pointBackgroundColor: config.chartColor,
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 0,
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                        },
+                    ],
+                };
+            };
+
+            const getChartOptions = () => {
+                const config = { ...defaultConfig };
+                
+                return {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false, // No legend
+                        },
+                        title: {
+                            display: false, // No title
+                        },
+                        tooltip: {
+                            enabled: false
+                        },
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: {
+                                display: true,
+                                color: config.gridColor,
+                                lineWidth: config.gridLineWidth,
+                            },
+                            ticks: {
+                                maxTicksLimit: config.x_axis_label_count,
+                                color: config.labelFontColor,
+                                font: {
+                                    size: config.labelFontSizeX,
+                                },
+                            },
+                        },
+                        y: {
+                            display: config.display_y_axis_labels,
+                            grid: {
+                                display: true,
+                                color: config.gridColor,
+                                lineWidth: config.gridLineWidth,
+                            },
+                            ticks: {
+                                maxTicksLimit: config.y_axis_label_count,
+                                color: config.labelFontColor,
+                                font: {
+                                    size: config.labelFontSizeY,
+                                },
+                            },
+                        },
+                    },
+                    elements: {
+                        point: {
+                            hoverBackgroundColor: config.chartColor,
+                        },
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false,
+                    },
+                };
+            };
+
+            const getIndexLabelPlugin = () => {
+                const config = { ...defaultConfig };
+                
+                return {
+                    id: 'indexLabels',
+                    afterDatasetsDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        const dataset = chart.data.datasets[0];
+                        
+                        config.data.forEach((item, index) => {
+                            if (item.label) {
+                                const meta = chart.getDatasetMeta(0);
+                                const point = meta.data[index];
+                                
+                                if (point) {
+                                    ctx.save();
+                                    ctx.fillStyle = config.labelFontColor;
+                                    ctx.font = `bold ${config.labelFontSize}px Arial`;
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'bottom';
+                                    
+                                    // Position label above the point
+                                    ctx.fillText(item.label, point.x, point.y - 10);
+                                    ctx.restore();
+                                }
+                            }
+                        });
+                    },
+                };
+            };
 
             return(
                 <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:260, 'border-radius': border_radius}}>
-                    <div style={{'padding':'0px 0px 10px 0px', height:250}}>
-                        <div style={{'margin': '10px 0px 0px 0px'}}>
-                          <div style={{ height: 200, width: '100%' ,'position': 'relative'}}>
-                              <div style={{ height: 30, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
-
-                              <CanvasJSChart style={{ width: '100%' , 'z-index':'2' ,'position': 'fixed'}} options = {options}/>
-                              
-                              <div style={{ height: 19, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
-                          </div>
-                      </div>
+                    <div style={{'padding':'0px 0px 10px 0px', height: 'calc(100% - 1px)', position: 'relative'}}>
+                        <Line data={getChartData()} options={getChartOptions()} plugins={[getIndexLabelPlugin()]} />
                     </div>
                 </div>
-            );
+            )
+
+            // const options = {
+            //   theme: "light1", // "light1", "dark1", "dark2"
+            //   animationEnabled: true,
+            //   zoomEnabled: false,
+            //   title: {
+            //       text: ".",
+            //       fontColor: "rgb(210, 210, 210,.0)",
+            //       fontSize: 13
+            //   },
+            //   backgroundColor: background_color,//#F5F5F5
+            //   axisX:{
+            //     interval: 30,//size of space between labels
+            //     labelFontSize: label_font_size,
+            //     tickLength: 0,
+            //     gridThickness: 0,
+            //     gridColor: this.props.theme['line_color'],//"#767676"
+            //     lineColor: "rgb(210, 210, 210,.0)",
+            //     labelFontColor: this.props.theme['primary_text_color'], //#292929 #DEDEDE
+            //     // labelFormatter: function(e){
+            //     //     return  "x: " + e.value;
+            //     // }
+            //   },
+            //   axisY:{
+            //     labelFontSize: label_font_size,
+            //     interval: interval,//size of space between labels
+            //     tickLength: 0,
+            //     gridThickness: 0.3,
+            //     gridColor: this.props.theme['line_color'],//"#767676"
+            //     lineColor: "rgb(210, 210, 210,.0)",
+            //     labelFontColor: this.props.theme['primary_text_color'],//#292929 #DEDEDE
+            //     //   stripLines: [{
+            //     //         startValue:45,
+			// 	//         endValue:55, // The Y value for the line
+            //     //         label: "Gucci",
+            //     //         color: "red",
+            //     //         labelFontColor: "red",
+            //     //         labelPlacement: "inside",
+            //     //         thickness: 0.9,
+            //     //         labelBackgroundColor:'transparent',
+            //     //         opacity:0.2,
+            //     //         showOnTop: true,
+            //     //     }],
+            //   },
+            //   toolTip:{
+            //       enabled: false   //enable here
+            //   },
+            //   height:230,
+            //   data: [{
+            //             type: this.props.graph_type,//area, splineArea
+            //             color:default_chart_color,
+            //             lineThickness: 0.5,
+            //             fillOpacity: 1,
+            //             markerColor: "transparent",
+            //             indexLabelFontColor: this.props.theme['primary_text_color'],
+            //             indexLabelFontFamily:"Sans-serif",
+            //             indexLabelFontWeight:"bold",
+            //             dataPoints: dataPoints,
+            //   }]
+            // }
+
+            // return(
+            //     <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:260, 'border-radius': border_radius}}>
+            //         <div style={{'padding':'0px 0px 10px 0px', height:250}}>
+            //             <div style={{'margin': '10px 0px 0px 0px'}}>
+            //               <div style={{ height: 200, width: '100%' ,'position': 'relative'}}>
+            //                   <div style={{ height: 30, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
+
+            //                   <CanvasJSChart style={{ width: '100%' , 'z-index':'2' ,'position': 'fixed'}} options = {options}/>
+                              
+            //                   <div style={{ height: 19, width: '100%', 'background-color': background_color, 'opacity':1.0,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
+            //               </div>
+            //           </div>
+            //         </div>
+            //     </div>
+            // );
         }
         else if(item_id=='7'){/* banner-icon */
             var header = object_data != null ? object_data['header']:'E35'
@@ -893,6 +1048,49 @@ class ViewGroups extends Component {
           // yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
           // dps.push({x: 101, y: yVal,  indexLabel: "900e3"});
       return dps;
+    }
+
+    /* generates points in an array for showing in the canvas object */
+    format_generated_data_points(dps, start_time, end_time) {
+      const new_dps = []
+      const diffMs = end_time - start_time
+      const time_chunk_period = diffMs / (dps.length - 1)
+      dps.forEach(dp => {
+        const period_of_x = start_time + (dp.x * time_chunk_period)
+        const final_x = this.formatTimestamp(period_of_x, diffMs)
+        new_dps.push({x: final_x, y: dp.y, label: dp.indexLabel})
+      });
+      return new_dps
+    }
+
+    formatTimestamp(timestamp, diffMs) {
+        const date = new Date(timestamp);
+
+        const oneDay = 24 * 60 * 60 * 1000;
+        const oneWeek = 604_800_000;
+        const oneYear = 31_556_952_000; // rough (ignores leap years)
+
+        if (diffMs < oneDay) {
+            // Less than a day → show hours + minutes
+            return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        } 
+        else if (diffMs < oneWeek) {
+            // Less than a week → show weekday + hour
+            return date.toLocaleDateString([], { weekday: "short" }) + " " +
+                date.toLocaleTimeString([], { hour: "2-digit" });
+        } 
+        else if (diffMs < oneYear) {
+            // Less than a year → show month + day
+            return date.toLocaleDateString([], { month: "short", day: "numeric" });
+        } 
+        else if (diffMs < oneYear * 2) {
+            // About a year → show month + year
+            return date.toLocaleDateString([], { month: "short", year: "numeric" });
+        } 
+        else {
+            // Multiple years → just show year
+            return date.getFullYear().toString();
+        }
     }
 
     // handleClick = (e) => {

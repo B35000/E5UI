@@ -2279,26 +2279,26 @@ return data['data']
         var timestamp_datapoints = this.filter_time_events(Object.keys(memory_stats_data), this.state.time_chart_tags_object, true)
         for(var i=0; i<timestamp_datapoints.length; i++){
             const focused_item = memory_stats_data[timestamp_datapoints[i]]
-            data.push(focused_item)
+            data.push(focused_item/(1024*1024))
 
             if(i==timestamp_datapoints.length-1){
-                var diff = Date.now() - timestamp_datapoints[i]
-                for(var t=0; t<diff; t+=2300){
-                    if(bigInt(data[data.length-1]).greater(bigInt(1000))){
-                        data.push(bigInt(data[data.length-1]).multiply(9999).divide(10000))
+                var diff = Date.now()/1000 - timestamp_datapoints[i]
+                for(var t=0; t<diff; t+=60*60*3){
+                    if(data[data.length-1] == 0){
+                        data.push(0)
                     }else{
-                        data.push(data[data.length-1]*0.9999)
-                    }    
+                        data.push(data[data.length-1]*0.9999)   
+                    }  
                 }
             }
             else{
                 var diff = timestamp_datapoints[i+1] - timestamp_datapoints[i]
-                for(var t=0; t<diff; t+=2300){
-                    if(bigInt(data[data.length-1]).greater(bigInt(1000))){
-                        data.push(bigInt(data[data.length-1]).multiply(9999).divide(10000))
+                for(var t=0; t<diff; t+=60*60*3){
+                    if(data[data.length-1] == 0){
+                        data.push(0)
                     }else{
-                        data.push(data[data.length-1]*0.9999)
-                    }       
+                        data.push(data[data.length-1]*0.9999) 
+                    }
                 }
             }
         }
@@ -2309,28 +2309,28 @@ return data['data']
         var noOfDps = 100;
         var factor = Math.round(data.length/noOfDps) +1;
         for(var i = 0; i < noOfDps; i++) {
-            if(i < 100 && data.length > 200){
+            if(i < 100 && data.length > 200 && xVal < 100 && (factor * (xVal+1)) < data.length){
                 var sum = 0
                 var slice = data.slice(factor * xVal, factor * (xVal+1))
                 for(var j = 0; j < slice.length; j++) {
-                    sum = bigInt(sum).plus(slice[j])
+                    sum += slice[j]
                 }
-                var result = bigInt(sum).divide(slice.length)
-                original_y_val = result;
+                var result = sum / (slice.length)
+                original_y_val = result*(1024*1024);
                 // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
                 yVal = result
             }
             else{
-                original_y_val = data[factor * xVal]
+                original_y_val = data[factor * xVal]*(1024*1024)
                 // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
                 yVal = data[factor * xVal]
             }
-            if(bigInt(largest).lesser(yVal)){
-                largest = bigInt(yVal)
+            if((largest) < (yVal)){
+                largest = (yVal)
             }
             var formatted_size = this.format_data_size(original_y_val)
             var indicator = formatted_size['size']+' '+formatted_size['unit']
-            if(yVal != null){
+            if(yVal != null && !isNaN(yVal)){
                 if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
                     dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
                 }else{
@@ -2341,7 +2341,7 @@ return data['data']
         }
 
         for(var e=0; e<dps.length; e++){
-            dps[e].y = bigInt(dps[e].y).multiply(100).divide(largest)
+            dps[e].y = (dps[e].y) * (100) / (largest)
             if(e>97 && dps[e].y == 0){
                 dps[e].y = dps[e-1].y
             }

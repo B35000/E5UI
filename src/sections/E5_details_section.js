@@ -418,12 +418,19 @@ class E5DetailsSection extends Component {
     render_end_to_spend_use_ratio(obj){
         var e5_chart_data = this.props.app_state.all_data[obj['id']]
         if(e5_chart_data != null){
-            var transfer_events = this.filter_transfer_events_for_end_and_spend_transactions(e5_chart_data['transfer'])
+            var end_percentage = null;
+            var spend_percentage = null;
 
-            var total = transfer_events.end_events.length + transfer_events.spend_events.length
-
-            var end_percentage = this.round_off((transfer_events.end_events.length / total) * 100)
-            var spend_percentage = this.round_off((transfer_events.spend_events.length / total) * 100)
+            if(this.props.app_state.saved_pre_launch_events[obj['id']] != null){
+                const render_end_to_spend_use_ratio_obj = this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data']['render_end_to_spend_use_ratio']
+                end_percentage = render_end_to_spend_use_ratio_obj['end_percentage']
+                spend_percentage = render_end_to_spend_use_ratio_obj['spend_percentage']
+            }else{
+                var transfer_events = this.filter_transfer_events_for_end_and_spend_transactions(e5_chart_data['transfer'])
+                var total = transfer_events.end_events.length + transfer_events.spend_events.length
+                end_percentage = this.round_off((transfer_events.end_events.length / total) * 100)
+                spend_percentage = this.round_off((transfer_events.spend_events.length / total) * 100)
+            }
 
             var end_barwidth = end_percentage
             var spend_barwidth = spend_percentage
@@ -508,13 +515,19 @@ class E5DetailsSection extends Component {
         var e5_chart_data = this.props.app_state.all_data[obj['id']]
 
         if(e5_chart_data != null){
-            var transfer_events = this.filter_and_sort_channeling_events(e5_chart_data['all_indexed_events'], obj['id'])
+            var transfer_events = null;
 
-            var total = transfer_events.local_events.length + transfer_events.language_events.length + transfer_events.international_events.length
+            if(this.props.app_state.saved_pre_launch_events[obj['id']] != null){
+                transfer_events = this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data']['filter_and_sort_channeling_events']
+            }else{
+                transfer_events = this.filter_and_sort_channeling_events(e5_chart_data['all_indexed_events'], obj['id'])
+            }
 
-            var local_percentage = this.round_off((transfer_events.local_events.length / total) * 100)
-            var language_percentage = this.round_off((transfer_events.language_events.length / total) * 100)
-            var international_percentage = this.round_off((transfer_events.international_events.length / total) * 100)
+            var total = transfer_events.local_events + transfer_events.language_events + transfer_events.international_events
+
+            var local_percentage = this.round_off((transfer_events.local_events / total) * 100)
+            var language_percentage = this.round_off((transfer_events.language_events / total) * 100)
+            var international_percentage = this.round_off((transfer_events.international_events / total) * 100)
 
             var numbers = this.normalize(local_percentage, language_percentage, international_percentage)
             var local_barwidth = numbers.a
@@ -629,7 +642,7 @@ class E5DetailsSection extends Component {
             }
         });
 
-        return { local_events, language_events, international_events }
+        return { local_events: local_events.length, language_events: language_events.length, international_events: international_events.length }
     }
 
 
@@ -639,7 +652,12 @@ class E5DetailsSection extends Component {
     render_spend_bottom_80_dominance(obj){
         const e5_chart_data = this.props.app_state.all_data[obj['id']]
         if(e5_chart_data != null){
-            const proportion = this.filter_transfer_events_for_end_and_spend_transactions2(e5_chart_data['transfer'])
+            var proportion = null;
+            if(this.props.app_state.saved_pre_launch_events[obj['id']] != null){
+                proportion = this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data']['filter_transfer_events_for_end_and_spend_transactions2']
+            }else{
+                proportion = this.filter_transfer_events_for_end_and_spend_transactions2(e5_chart_data['transfer'])
+            }
             if(proportion == 0) return;
 
             return (
@@ -712,7 +730,12 @@ class E5DetailsSection extends Component {
 
 
     render_traffic_distribution_number(obj){
-        var item = this.load_traffic_proportion_data(obj)
+        var item = null;
+        if(this.props.app_state.saved_pre_launch_events[obj['id']] != null){
+            item = this.props.app_state.saved_pre_launch_events[obj['id']]['load_traffic_proportion_data']
+        }else{
+            item = this.load_traffic_proportion_data(obj)
+        }
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -773,42 +796,57 @@ class E5DetailsSection extends Component {
         if(e5_chart_data != null){
            return(
                <div>
-                    {/* {this.show_subscription_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_contract_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_proposal_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_exchange_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_post_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_channel_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_job_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_stores_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_bag_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_contractor_transaction_count_chart(e5_chart_data)} */}
-                    {this.show_data_transaction_count_chart(e5_chart_data)}
-                    {/* {this.show_metadata_transaction_count_chart(e5_chart_data)} */}
-                    {/* {this.show_withdraw_amount_data_chart(e5_chart_data)} */}
-                    {this.show_deposit_amount_data_chart(e5_chart_data)}
-                    {this.show_transfer_events_chart(e5_chart_data)}
-                    {this.show_transaction_transaction_count_chart(e5_chart_data)}
+                    {this.show_subscription_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_contract_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_proposal_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_exchange_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_post_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_channel_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_job_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_stores_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_bag_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_contractor_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_audio_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_video_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_poll_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_data_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {this.show_metadata_transaction_count_chart(e5_chart_data, obj['id'])}
+                    {/* {this.show_withdraw_amount_data_chart(e5_chart_data, obj['id'])} */}
+                    {this.show_deposit_amount_data_chart(e5_chart_data, obj['id'])}
+                    {this.show_transfer_events_chart(e5_chart_data, obj['id'])}
+                    {this.show_transaction_transaction_count_chart(e5_chart_data, obj['id'])}
                     {this.show_deflation_events_chart(obj['id'])}
                </div>
-           ) 
+           )
         }
     }
 
 
-    show_subscription_transaction_count_chart(e5_chart_data){
+    show_subscription_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['subscription']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_subscription_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p4')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2262']/* Subscriptions Created' */, 'details':this.props.app_state.loc['2263']/* `Chart containing the total number of subscriptions made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2269e']/* 'Y-Axis: Total Subscriptions Made' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
+
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2270']/* 'Total Subscriptions' */, 'number':amount, 'relativepower':this.props.app_state.loc['2271']/* 'subscriptions' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2270']/* 'Total Subscriptions' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2271']/* 'subscriptions' */, })}
                     </div>
@@ -881,17 +919,28 @@ class E5DetailsSection extends Component {
 
 
 
-    show_contract_transaction_count_chart(e5_chart_data){
+    show_contract_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['contract']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_contract_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p4')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2272']/* 'Contracts Created' */, 'details':this.props.app_state.loc['2273']/* `Chart containing the total number of contracts made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2274']/* 'Y-Axis: Total Contracts Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2276']/* 'Total Contracts' */, 'number':amount, 'relativepower':this.props.app_state.loc['2277']/* 'contracts' */})}>
@@ -903,17 +952,29 @@ class E5DetailsSection extends Component {
         }
     }
 
-    show_proposal_transaction_count_chart(e5_chart_data){
+    show_proposal_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['proposal']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_proposal_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p4')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : events.length
+
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2278']/* 'Proposals Created' */, 'details':this.props.app_state.loc['2279']/* `Chart containing the total number of proposals made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2280']/* 'Y-Axis: Total Proposals Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2281']/* 'Total Proposals' */, 'number':amount, 'relativepower':this.props.app_state.loc['2282']/* 'proposals' */})}>
@@ -925,17 +986,30 @@ class E5DetailsSection extends Component {
         }
     }
 
-    show_exchange_transaction_count_chart(e5_chart_data){
+    show_exchange_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['exchange']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_exchange_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p4')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
+
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2283']/* 'Exchanges Created' */, 'details':this.props.app_state.loc['2284']/* `Chart containing the total number of exchanges made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2285']/* 'Y-Axis: Total Exchanges Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2286']/* 'Total Exchanges' */, 'number':amount, 'relativepower':this.props.app_state.loc['2287']/* 'exchanges' */})}>
@@ -950,17 +1024,29 @@ class E5DetailsSection extends Component {
 
 
 
-    show_post_transaction_count_chart(e5_chart_data){
+    show_post_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['post']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_post_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2288']/* 'Indexed Posts Created' */, 'details':this.props.app_state.loc['2289']/* `Chart containing the total number of indexed posts made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2290']/* 'Y-Axis: Total Posts Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2291']/* 'Total Posts' */, 'number':amount, 'relativepower':this.props.app_state.loc['2292']/* 'posts' */})}>
@@ -1037,17 +1123,29 @@ class E5DetailsSection extends Component {
 
 
 
-    show_channel_transaction_count_chart(e5_chart_data){
+    show_channel_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['channel']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_channel_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2293']/* 'Indexed Channels Created' */, 'details':this.props.app_state.loc['2294']/* `Chart containing the total number of indexed channels made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2295']/* 'Y-Axis: Total Channels Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2296']/* 'Total Channels' */, 'number':amount, 'relativepower':this.props.app_state.loc['2297']/* 'channels' */})}>
@@ -1059,17 +1157,30 @@ class E5DetailsSection extends Component {
         }
     }
     
-    show_job_transaction_count_chart(e5_chart_data){
+    show_job_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['job']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_job_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
+
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2298']/* 'Indexed Jobs Created' */, 'details':this.props.app_state.loc['2299']/* `Chart containing the total number of indexed jobs made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2300']/* 'Y-Axis: Total Jobs Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2301']/* 'Total Jobs' */, 'number':amount, 'relativepower':this.props.app_state.loc['2302']/* 'jobs' */})}>
@@ -1081,17 +1192,29 @@ class E5DetailsSection extends Component {
         }
     }
 
-    show_stores_transaction_count_chart(e5_chart_data){
+    show_stores_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['store']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_stores_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2303']/* 'Indexed Storefront Items Created' */, 'details':this.props.app_state.loc['2304']/* `Chart containing the total number of indexed storefront items made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2305']/* 'Y-Axis: Total Storefront Items Made' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2306']/* 'Total Storefront Items' */, 'number':amount, 'relativepower':this.props.app_state.loc['445']/* 'items' */})}>
@@ -1103,17 +1226,29 @@ class E5DetailsSection extends Component {
         }
     }
 
-    show_bag_transaction_count_chart(e5_chart_data){
+    show_bag_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['bag']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_bag_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p4')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2308']/* 'Bags Created' */, 'details':this.props.app_state.loc['2309']/* `Chart containing the total number of bags made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2310']/* 'Y-Axis: Total Bags Made' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2311']/* 'Total Bags' */, 'number':amount, 'relativepower':this.props.app_state.loc['2312']/* 'bags' */})}>
@@ -1125,17 +1260,29 @@ class E5DetailsSection extends Component {
         }
     }
 
-    show_contractor_transaction_count_chart(e5_chart_data){
+    show_contractor_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['contractor']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_contractor_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2313']/* 'Indexed Contractors Created' */, 'details':this.props.app_state.loc['2314']/* `Chart containing the total number of indexed contractors made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2315']/* 'Y-Axis: Total Contractor Posts' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2316']/* 'Total Contractor Posts' */, 'number':amount, 'relativepower':this.props.app_state.loc['1198']/* 'contractors' */})}>
@@ -1147,19 +1294,134 @@ class E5DetailsSection extends Component {
         }
     }
 
-    show_data_transaction_count_chart(e5_chart_data){
+    show_audio_transaction_count_chart(e5_chart_data, e5){
+        var events = e5_chart_data['audio']
+        var amount = events.length
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_audio_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336s']/* 'Indexed Audioposts Created' */, 'details':this.props.app_state.loc['2336t']/* `Chart containing the total number of indexed audioposts made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336u']/* 'Y-Axis: Total Audio Posts' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336v']/* 'Total Audio Posts' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336w']/* 'audioposts' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2336v']/* 'Total Audio Posts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336w']/* 'audioposts' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_video_transaction_count_chart(e5_chart_data, e5){
+        var events = e5_chart_data['video']
+        var amount = events.length
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_video_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336x']/* 'Indexed Videoposts Created' */, 'details':this.props.app_state.loc['2336y']/* `Chart containing the total number of indexed videoposts made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336z']/* 'Y-Axis: Total Video Posts' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336ba']/* 'Total Video Posts' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336bb']/* 'videoposts' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2336ba']/* 'Total Video Posts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336bb']/* 'videoposts' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_poll_transaction_count_chart(e5_chart_data, e5){
+        var events = e5_chart_data['poll']
+        var amount = events.length
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_poll_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336bc']/* 'Indexed Polls Created' */, 'details':this.props.app_state.loc['2336bd']/* `Chart containing the total number of indexed polls made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336be']/* 'Y-Axis: Total Polls' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336bf']/* 'Total Polls' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336bg']/* 'polls' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2336bf']/* 'Total Polls' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336bg']/* 'polls' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_data_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['data']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_bag_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p6')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2317']/* 'Data Throughput' */, 'details':this.props.app_state.loc['2318']/* `Chart containing the data throughput over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2319']/* 'Y-Axis: Total Data Events' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
+
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2320']/* 'Total Data Events' */, 'number':amount, 'relativepower':this.props.app_state.loc['1263']/* 'events' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2320']/* 'Total Data Events' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['1263']/* 'events' */, })}
                     </div>
@@ -1169,20 +1431,124 @@ class E5DetailsSection extends Component {
         }
     }
 
+    get_transaction_data_points_as_average(events, time_p){
+        const return_data_object = {}
+
+        events.forEach(event_item => {
+            const event_time = event_item.returnValues[time_p]
+            const pos = (Math.floor(event_time/(60*60*3)))*(60*60*3)
+            if(return_data_object[pos] == null){
+                return_data_object[pos] = []
+            }
+            return_data_object[pos].push(event_item)
+        });
+
+        return this.get_steaming_stats_data_points(return_data_object)
+    }
+
+    get_steaming_stats_data_points(memory_stats_data){
+        var data = []
+        var timestamp_datapoints = Object.keys(memory_stats_data)
+        for(var i=0; i<timestamp_datapoints.length; i++){
+            const focused_item = memory_stats_data[timestamp_datapoints[i]].length
+            data.push(focused_item)
+
+            if(i==timestamp_datapoints.length-1){
+                var diff = Date.now()/1000 - timestamp_datapoints[i]
+                for(var t=0; t<diff; t+=60*60*3){
+                    if(data[data.length-1] == 0){
+                        data.push(0)
+                    }else{
+                        data.push(data[data.length-1]*0.999)    
+                    }
+                }
+            }
+            else{
+                var diff = timestamp_datapoints[i+1] - timestamp_datapoints[i]
+                for(var t=0; t<diff; t+=60*60*3){
+                    if(data[data.length-1] == 0){
+                        data.push(0)
+                    }else{
+                        data.push(data[data.length-1]*0.999)    
+                    }
+                }
+            }
+        }
+
+        const starting_time = timestamp_datapoints.length == 0 ? (1000*60*60*24) : timestamp_datapoints[0]*1000
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var largest = 0;
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200 && xVal < 100 && (factor * (xVal+1)) < data.length){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = sum / (slice.length)
+                original_y_val = result;
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if((largest) < (yVal)){
+                largest = (yVal)
+            }
+            var indicator = Math.round(yVal) +' '+ this.props.app_state.loc['665']/* 'transactions' */
+            if(yVal != null && !isNaN(yVal)){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        // for(var e=0; e<dps.length; e++){
+        //     dps[e].y = (dps[e].y) * (100) / (largest)
+        //     if(e>97 && dps[e].y == 0){
+        //         dps[e].y = dps[e-1].y
+        //     }
+        // }
+
+        return { dps, starting_time }
+    }
 
 
 
-    show_metadata_transaction_count_chart(e5_chart_data){
+
+    show_metadata_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['metadata']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_metadata_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_metadata_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p5')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2321']/* 'Metadata Throughput' */, 'details':this.props.app_state.loc['2322']/* `Chart containing the total number of metadata events made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_metadata_transaction_count_data_points(events), 'interval':this.get_metadata_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2323']/* 'Y-Axis: Total Metadata Events' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2324']/* 'Total Metadata Events' */, 'number':amount, 'relativepower':this.props.app_state.loc['2325']/* 'events' */})}>
@@ -1351,18 +1717,22 @@ class E5DetailsSection extends Component {
 
 
 
-    show_deposit_amount_data_chart(e5_chart_data){
+    show_deposit_amount_data_chart(e5_chart_data, e5){
         var events = e5_chart_data['transaction']
         var withdraw_events = e5_chart_data['withdraw']
-        var data = this.format_deposit_witdraw_ether_events(events, withdraw_events)
-        if(data.length > 3){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_deposit_amount_data_chart'] : {}
+        var data = nitro_graphs_data['event_count'] != 0 ? [] : this.format_deposit_witdraw_ether_events(events, withdraw_events)
+        if(data.length > 3 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_deposit_amount_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2329']/* 'Deposited Ether' */, 'details':this.props.app_state.loc['2330']/* `The total amount of ether thats been deposited into the E5 over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(data), 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1, 'hide_label': true,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2331']/* 'Y-Axis: Total Deposited Ether' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     {this.render_detail_item('0')}
                 </div>
@@ -1492,17 +1862,29 @@ class E5DetailsSection extends Component {
 
 
 
-    show_transaction_transaction_count_chart(e5_chart_data){
+    show_transaction_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['transaction']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_transaction_transaction_count_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_transaction_count_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p8')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2332']/* 'Transaction Runs' */, 'details':this.props.app_state.loc['2333']/* `Chart containing the total number of E5 runs made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_transaction_count_data_points(events), 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2334']/* 'Y-Axis: Total Runs Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2335']/* 'Total Runs' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336']/* 'runs' */})}>
@@ -1578,17 +1960,29 @@ class E5DetailsSection extends Component {
 
 
 
-    show_transfer_events_chart(e5_chart_data){
+    show_transfer_events_chart(e5_chart_data, e5){
         var events = e5_chart_data['transfer']
         var amount = events.length
-        if(events.length >= 23){
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_transfer_events_chart'] : {}
+        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+            const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transfers_data_points(events)
+            const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+            const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(events, 'p5')
+            const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+            amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
+            events.length
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2336a']/* 'Transfers' */, 'details':this.props.app_state.loc['2336b']/* `Chart containing the total number of transfers made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transfers_data_points(events), 'interval':this.get_transfers_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2336c']/* 'Y-Axis: Total Transfers Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336d']/* 'Total Transfers' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336e']/* 'transfers' */})}>
@@ -1664,20 +2058,31 @@ class E5DetailsSection extends Component {
 
     show_deflation_events_chart(e5){
         var data = this.props.app_state.e5_deflation_data[e5]
-        if(data == null || data[3] == null || data[3].length < 10) return;
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['get_deflation_amount_data_points'] : {}
+        if((data == null || data[3] == null || data[3].length < 10) && nitro_graphs_data['average'] == null) return;
+        const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_deflation_amount_data_points(data)
+        const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+
+        const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(data, 'p5')
+        const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+        
         return(
             <div>
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2336f']/* 'Account Zero Credit.' */, 'details':this.props.app_state.loc['2336g']/* `The amount of end that has been sent to the burn account over time.` */, 'size':'l'})}
-                
-                {this.render_detail_item('6', {'dataPoints':this.get_deflation_amount_data_points(data), 'interval':110, 'hide_label': true})}
+
+                {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1, 'hide_label': true})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2, 'hide_label': true})}
+                <div style={{height: 10}}/>
+
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                 {this.render_detail_item('0')}
             </div>
         )
     }
-
 
     get_deflation_amount_data_points(events){
         // console.log('deflation_dps','events', events)

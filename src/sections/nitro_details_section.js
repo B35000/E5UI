@@ -1294,7 +1294,7 @@ class NitroDetailsSection extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.memory_stats_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_memory_stats_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, /* 'hide_label': true */})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527cq']/* 'Y-Axis: ' */+this.capitalize_first(this.get_selected_item(this.state.memory_stats_chart_tags_object, 'e')), 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1329,13 +1329,13 @@ class NitroDetailsSection extends Component {
             if(i==timestamp_datapoints.length-1){
                 var diff = Date.now() - timestamp_datapoints[i]
                 for(var t=0; t<diff; t+=2300){
-                    data.push(data[data.length-1]*0.9999)     
+                    data.push(data[data.length-1]*0.999)     
                 }
             }
             else{
                 var diff = timestamp_datapoints[i+1] - timestamp_datapoints[i]
                 for(var t=0; t<diff; t+=2300){
-                    data.push(data[data.length-1]*0.9999)      
+                    data.push(data[data.length-1]*0.999)      
                 }
             }
         }
@@ -1377,12 +1377,12 @@ class NitroDetailsSection extends Component {
             } 
         }
 
-        for(var e=0; e<dps.length; e++){
-            dps[e].y = (dps[e].y / largest) * 100
-            if(e>97 && dps[e].y == 0){
-                dps[e].y = dps[e-1].y
-            }
-        }
+        // for(var e=0; e<dps.length; e++){
+        //     dps[e].y = (dps[e].y / largest) * 100
+        //     if(e>97 && dps[e].y == 0){
+        //         dps[e].y = dps[e-1].y
+        //     }
+        // }
 
 
 
@@ -1437,7 +1437,7 @@ class NitroDetailsSection extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.request_stats_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_request_stats_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, /* 'hide_label': true */})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527cq']/* 'Y-Axis: ' */+this.get_selected_item(this.state.request_stats_chart_tags_object, 'e'), 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1467,13 +1467,13 @@ class NitroDetailsSection extends Component {
             if(i==timestamp_datapoints.length-1){
                 var diff = Date.now() - timestamp_datapoints[i]
                 for(var t=0; t<diff; t+=2300){
-                    data.push(data[data.length-1]*0.9999)      
+                    data.push(data[data.length-1]*0.999)      
                 }
             }
             else{
                 var diff = timestamp_datapoints[i+1] - timestamp_datapoints[i]
                 for(var t=0; t<diff; t+=2300){
-                    data.push(data[data.length-1]*0.9999)      
+                    data.push(data[data.length-1]*0.999)      
                 }
             }
         }
@@ -1516,12 +1516,12 @@ class NitroDetailsSection extends Component {
             } 
         }
 
-        for(var e=0; e<dps.length; e++){
-            dps[e].y = (dps[e].y / largest) * 100
-            if(e>97 && dps[e].y == 0){
-                dps[e].y = dps[e-1].y
-            }
-        }
+        // for(var e=0; e<dps.length; e++){
+        //     dps[e].y = (dps[e].y / largest) * 100
+        //     if(e>97 && dps[e].y == 0){
+        //         dps[e].y = dps[e-1].y
+        //     }
+        // }
 
         return { dps, largest }
     }

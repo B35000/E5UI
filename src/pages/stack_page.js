@@ -15371,7 +15371,7 @@ class StackPage extends Component {
     fetch_file_streaming_count(current_file, startOfCurrentYear){
         const files_stream_count_data = this.props.app_state.file_streaming_data[current_file] == null ? {} : this.props.app_state.file_streaming_data[current_file]['files_stream_count']
         const stream_times = Object.keys(files_stream_count_data)
-        const start_time = startOfYear - 31_556_952_000/* year in milliseconds */
+        const start_time = startOfCurrentYear - 31_556_952_000/* year in milliseconds */
         var focused_files_streaming_totals = bigInt(0)
         stream_times.forEach(stream_time => {
             if(stream_time >= start_time && stream_time < startOfCurrentYear){

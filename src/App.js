@@ -22691,7 +22691,8 @@ class App extends Component {
   }
 
   get_all_event_fetches(crosschain_identifier){
-    const ignore_call_for_all_data = Object.keys(this.state.all_data).length != 0
+    // const ignore_call_for_all_data = Object.keys(this.state.all_data).length != 0
+    const ignore_call_for_all_data = true;
     return [
       {'identifier':'e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{}, 'from_filter':{}}},/* e5 runs */
 
@@ -23744,7 +23745,7 @@ class App extends Component {
       const hash_entries = Object.keys(hash_data)
       for(var h=0; h<hash_entries.length; h++){
         const cid_data = hash_data[hash_entries[h]]
-        if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm') && !hash_entries[h].endsWith('=')){
+        if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm') && !this.isBase64(hash_entries[h])){
           var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
           if(confirmation_hash != hash_entries[h]){
             console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
@@ -24161,16 +24162,18 @@ class App extends Component {
 
     if(is_syncing) this.load_run_data(contractInstance, E52contractInstance, e5, web3, H52contractInstance, pre_launch_data);
 
-    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created']
+    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data']
 
-    const saved_pre_launch_data_object = {}
-    saved_pre_launch_data.forEach(target => {
-      saved_pre_launch_data_object[target] = pre_launch_data[e5][target]
-    });
+    if(pre_launch_data[e5] != null){
+      const saved_pre_launch_data_object = {}
+      saved_pre_launch_data.forEach(target => {
+        saved_pre_launch_data_object[target] = pre_launch_data[e5][target]
+      });
 
-    var saved_pre_launch_events_clone = structuredClone(this.state.saved_pre_launch_events)
-    saved_pre_launch_events_clone[e5] = saved_pre_launch_data_object
-    this.setState({saved_pre_launch_events: saved_pre_launch_events_clone})
+      var saved_pre_launch_events_clone = structuredClone(this.state.saved_pre_launch_events)
+      saved_pre_launch_events_clone[e5] = saved_pre_launch_data_object
+      this.setState({saved_pre_launch_events: saved_pre_launch_events_clone})
+    }
 
      if(this.state.refreshing_content_after_channeling_change == true){
         this.setState({refreshing_content_after_channeling_change: false})
@@ -24184,6 +24187,14 @@ class App extends Component {
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
+  }
+
+  isBase64(str) {
+    try {
+      return btoa(atob(str)) === str;
+    } catch (err) {
+      return false;
+    }
   }
 
   get_alias_data = async (E52contractInstance, e5, account, web3, pre_loaded_events) => {
@@ -36292,7 +36303,7 @@ class App extends Component {
     const hash_entries = Object.keys(all_events_data)
     for(var h=0; h<hash_entries.length; h++){
       const cid_data = all_events_data[hash_entries[h]]
-      if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm') && !hash_entries[h].endsWith('=')){
+      if(!hash_entries[h].startsWith('baf') && !hash_entries[h].startsWith('Qm') && !this.isBase64(hash_entries[h])){
           var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
           if(confirmation_hash != hash_entries[h]){
             console.log('apppage', hash_entries[h], 'data has been modified! bad data!', confirmation_hash)
