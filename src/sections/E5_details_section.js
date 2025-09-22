@@ -835,7 +835,6 @@ class E5DetailsSection extends Component {
             amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2262']/* Subscriptions Created' */, 'details':this.props.app_state.loc['2263']/* `Chart containing the total number of subscriptions made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -932,7 +931,6 @@ class E5DetailsSection extends Component {
             amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2272']/* 'Contracts Created' */, 'details':this.props.app_state.loc['2273']/* `Chart containing the total number of contracts made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -966,7 +964,6 @@ class E5DetailsSection extends Component {
 
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2278']/* 'Proposals Created' */, 'details':this.props.app_state.loc['2279']/* `Chart containing the total number of proposals made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1001,7 +998,6 @@ class E5DetailsSection extends Component {
 
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2283']/* 'Exchanges Created' */, 'details':this.props.app_state.loc['2284']/* `Chart containing the total number of exchanges made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1038,7 +1034,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2288']/* 'Indexed Posts Created' */, 'details':this.props.app_state.loc['2289']/* `Chart containing the total number of indexed posts made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1137,7 +1132,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2293']/* 'Indexed Channels Created' */, 'details':this.props.app_state.loc['2294']/* `Chart containing the total number of indexed channels made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1172,7 +1166,6 @@ class E5DetailsSection extends Component {
 
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2298']/* 'Indexed Jobs Created' */, 'details':this.props.app_state.loc['2299']/* `Chart containing the total number of indexed jobs made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1206,7 +1199,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2303']/* 'Indexed Storefront Items Created' */, 'details':this.props.app_state.loc['2304']/* `Chart containing the total number of indexed storefront items made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1240,7 +1232,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2308']/* 'Bags Created' */, 'details':this.props.app_state.loc['2309']/* `Chart containing the total number of bags made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1274,7 +1265,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2313']/* 'Indexed Contractors Created' */, 'details':this.props.app_state.loc['2314']/* `Chart containing the total number of indexed contractors made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1308,7 +1298,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2336s']/* 'Indexed Audioposts Created' */, 'details':this.props.app_state.loc['2336t']/* `Chart containing the total number of indexed audioposts made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1342,7 +1331,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2336x']/* 'Indexed Videoposts Created' */, 'details':this.props.app_state.loc['2336y']/* `Chart containing the total number of indexed videoposts made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1376,7 +1364,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2336bc']/* 'Indexed Polls Created' */, 'details':this.props.app_state.loc['2336bd']/* `Chart containing the total number of indexed polls made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1410,7 +1397,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2317']/* 'Data Throughput' */, 'details':this.props.app_state.loc['2318']/* `Chart containing the data throughput over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1540,7 +1526,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2321']/* 'Metadata Throughput' */, 'details':this.props.app_state.loc['2322']/* `Chart containing the total number of metadata events made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1727,7 +1712,6 @@ class E5DetailsSection extends Component {
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2329']/* 'Deposited Ether' */, 'details':this.props.app_state.loc['2330']/* `The total amount of ether thats been deposited into the E5 over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1, 'hide_label': true,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1876,7 +1860,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2332']/* 'Transaction Runs' */, 'details':this.props.app_state.loc['2333']/* `Chart containing the total number of E5 runs made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -1974,7 +1957,6 @@ class E5DetailsSection extends Component {
             events.length
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2336a']/* 'Transfers' */, 'details':this.props.app_state.loc['2336b']/* `Chart containing the total number of transfers made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
@@ -2068,7 +2050,6 @@ class E5DetailsSection extends Component {
         
         return(
             <div>
-                <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2336f']/* 'Account Zero Credit.' */, 'details':this.props.app_state.loc['2336g']/* `The amount of end that has been sent to the burn account over time.` */, 'size':'l'})}
 
                 {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1, 'hide_label': true})}
