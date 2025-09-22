@@ -7530,14 +7530,23 @@ return data['data']
             return;
         }
 
-        const chunks = this.splitIntoChunks(items, vote_tx_bundle_size)
-        chunks.forEach(chunk => {
-            const obj = {
-                selected: 0, id:makeid(8), type:this.props.app_state.loc['3055fg']/* 'vote_all' */, proposal_items:chunk, entered_indexing_tags:[this.props.app_state.loc['796']/* 'vote' */, this.props.app_state.loc['797']/* 'proposal' */],
-                new_vote_tags_object: new_vote_tags_object, collect_bounties,
+        var e5s = this.props.app_state.e5s['data']
+        for (let i = 0; i < e5s.length; i++) {
+            const e5 = e5s[i]
+            const e5_items = items.filter(function (object) {
+                return (e5 == object['e5'])
+            })
+            if(e5_items.length > 0){
+                const chunks = this.splitIntoChunks(e5_items, vote_tx_bundle_size)
+                chunks.forEach(chunk => {
+                    const obj = {
+                        selected: 0, id:makeid(8), type:this.props.app_state.loc['3055fg']/* 'vote_all' */, proposal_items:chunk, entered_indexing_tags:[this.props.app_state.loc['796']/* 'vote' */, this.props.app_state.loc['797']/* 'proposal' */],
+                        new_vote_tags_object: new_vote_tags_object, collect_bounties, e5
+                    }
+                    this.props.add_vote_proposals_action_to_stack(obj)
+                });
             }
-            this.props.add_vote_proposals_action_to_stack(obj)
-        });
+        }
 
         this.props.finish_add_vote_proposals_action_to_stack()
         this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
