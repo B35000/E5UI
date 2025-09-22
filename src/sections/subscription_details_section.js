@@ -680,7 +680,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695b']/* Subscription Income Stream' */, 'details':this.props.app_state.loc['2695c']/* `Chart containing the amount of value that has been transfered from maturing subscription payments made in the last week.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':datapoints, 'interval':120, 'hide_label':true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints, 'start_time':1000*60*60*24*7,  'interval':120, 'hide_label':true})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695a']/* 'Y-Axis: Average Value Transfer' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -2235,12 +2235,13 @@ class SubscriptionDetailsSection extends Component {
 
     render_chart_data_if_size_works(result){
         if(result['events'].length > 23){
+            const datapoints = this.get_search_result_data_points(result['events'])
             return(
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2692']/* 'Time Units Paid For' */, 'details':this.props.app_state.loc['2693']/* 'Chart containing the amount in time units that have been accumulated.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('6', {'dataPoints':this.get_search_result_data_points(result['events']), 'interval':110, 'hide_label':true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':110, 'hide_label':true})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2694']/* 'Y-Axis: Time Units' */, 'details':this.props.app_state.loc['2695']/* 'X-Axis: Time' */, 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -2301,7 +2302,9 @@ class SubscriptionDetailsSection extends Component {
         }
 
 
-        return dps
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p5*1000
+
+        return { dps, starting_time: chart_starting_time }
     }
 
 

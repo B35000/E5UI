@@ -240,7 +240,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3075w']/* 'stage-creator-payout' */ &&
             item.type != this.props.app_state.loc['2117p']/* 'creator-payout' */ &&
             item.type != this.props.app_state.loc['3055df']/* 'nitro-renewal' */ &&
-            item.type != this.props.app_state.loc['3077']/* 'fulfil-bids' */
+            item.type != this.props.app_state.loc['3077']/* 'fulfil-bids' */ &&
+            item.type != this.props.app_state.loc['3055fg']/* 'vote_all' */
         ){
             return(
                 <div>
@@ -907,6 +908,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_auction_bid_fulfilment_info()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3055fg']/* 'vote_all' */){
+                return(
+                    <div>
+                        {this.render_vote_all_proposals_info()}
                     </div>
                 )
             }
@@ -7977,6 +7985,92 @@ return data['data']
         return data
     }
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_vote_all_proposals_info(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var collect_bounties = transaction_item.collect_bounties == true ? this.props.app_state.loc['3055fm']/* Enabled */ : this.props.app_state.loc['3055fn']/* Disabled */
+        var vote = this.get_selected_item(transaction_item.new_vote_tags_object, 'e')
+        const items = transaction_item.proposal_items
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1979t']/* 'Bundle Size.' */, 'subtitle':'e0', 'barwidth':this.get_number_width(transaction_item.proposal_items.length), 'number':`${number_with_commas(transaction_item.proposal_items.length)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3055fe']/* 'transactions' */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':collect_bounties, 'details':this.props.app_state.loc['3055fl']/* 'Collect End and Spend Bounties.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':vote, 'details':this.props.app_state.loc['3055fo']/* 'Your Vote.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ey']/* 'Active Proposals.' */, 'details':this.props.app_state.loc['3055fp']/* 'Your vote will apply to the following proposals.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {items.map((item, index) => (
+                    <div>
+                        {this.render_proposal_object(item, index)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_proposal_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_my_proposal_item(object)
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
+        return(
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    format_my_proposal_item(object){
+        var tags = object['ipfs'] == null ? ['Proposal'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var sender = this.get_senders_name(object['event'].returnValues.p4, object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+        }
+    }
 
 
 

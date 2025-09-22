@@ -132,7 +132,7 @@ class PostListSection extends Component {
             }
             else if(selected_tag == this.props.app_state.loc['1199']/* 'proposals' */ ){
                 return(
-                <div>{this.render_proposal_list_group()}</div>
+                <div>{this.render_proposal_list_group(selected_item)}</div>
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1200']/* 'subscriptions' */ ){
@@ -1113,7 +1113,7 @@ class PostListSection extends Component {
 
 
 
-    render_proposal_list_group(){
+    render_proposal_list_group(selected_item){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
 
@@ -1149,6 +1149,7 @@ class PostListSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.show_load_metrics(items, 'proposals')}
                             {this.show_new_objects_message_if_any(all_items)}
+                            {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
                             {items.map((item, index) => (
                                 <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
@@ -1160,6 +1161,38 @@ class PostListSection extends Component {
                 </div>
             );
         }
+    }
+
+    render_vote_wait_in_all_proposals_button(all_items, selected_item){
+        if(selected_item == this.props.app_state.loc['1264aa']/* 'main-contract' */){
+            const selected_proposals = this.filter_proposals_by_not_participated_in(all_items)
+            if(selected_proposals.length > 0){
+                return(
+                <div style={{'margin':'5px 0px 10px 0px'}} onClick={() => this.vote_wait_in_all_proposals(selected_proposals)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2509t']/* vote in all */, 'action':''})}
+                </div>
+            )
+            }
+        }
+    }
+
+    vote_wait_in_all_proposals(selected_proposals){
+        this.props.show_dialog_bottomsheet({'selected_proposals': selected_proposals}, 'vote_wait_bottomsheet')
+    }
+
+    filter_proposals_by_not_participated_in(all_items){
+        const saved_pre_launch_data_object = this.props.app_state.saved_pre_launch_data_object
+        const selected_proposals = all_items.filter(function (object) {
+            const e5 = object['e5']
+            const proposal_id = object['id']
+            const time = object['timestamp']
+            const my_vote_events_in_that_e5_contract = saved_pre_launch_data_object[e5]['all_contracts_proposals']
+            const my_vote_events_for_focused_proposal = my_vote_events_in_that_e5_contract.filter(function (event_item) {
+                return (event_item.returnValues.p2/* consensus_id */ == proposal_id)
+            })
+            return (my_vote_events_for_focused_proposal.length == 0 && time > (Date.now()/1000) - (60*60*24*3))
+        })
+        return selected_proposals
     }
 
     render_proposal_object(object, index){

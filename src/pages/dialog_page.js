@@ -20,6 +20,7 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
+import NumberPicker from './../components/number_picker';
 
 import { from } from "@iotexproject/iotex-address-ts";
 import EndImg from './../assets/end_token_icon.png';
@@ -77,7 +78,10 @@ class DialogPage extends Component {
 
         get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', staged_keywords_for_new_note:[], moderator_note_message:'', moderator_note_id:'', visibility_end_time: ((Date.now()/1000) + 60*60*24), entered_file_objects: [], entered_video_object_dimensions: {}, ecid_encryption_passwords:{},
 
-        export_start_time:0, following_search_text:'',
+        export_start_time:0, following_search_text:'', 
+        
+        new_vote_tags_object: this.get_new_vote_tags_object(), ignore_vote_wait_proposals:[],
+        vote_tx_bundle_size:10, get_collect_bounties_tags_object: this.get_collect_bounties_tags_object(),
     };
 
 
@@ -93,6 +97,28 @@ class DialogPage extends Component {
                 ['xor','',0], ['e', this.props.app_state.loc['1593ij']/* 'all-words' */, this.props.app_state.loc['1593ik']/* 'one-word' */], [set_type]
             ], 
         }
+    }
+
+    get_new_vote_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['800']/* 'wait' */, this.props.app_state.loc['801']/* 'yes' */, this.props.app_state.loc['802']/* 'no' */], [1]
+            ],
+        };
+    }
+
+    get_collect_bounties_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['3055fk']/* 'collect' */], [1]
+            ],
+        };
     }
 
 
@@ -352,6 +378,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_view_link_options_ui()}
+                </div>
+            )
+        }
+        else if(option == 'vote_wait_bottomsheet'){
+            return(
+                <div>
+                    {this.render_vote_wait_options_ui()}
                 </div>
             )
         }
@@ -7322,6 +7355,201 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+    render_vote_wait_options_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_vote_wait_options_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_vote_wait_options_proposals()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_vote_wait_options_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_vote_wait_options_proposals()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_vote_wait_options_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_vote_wait_options_proposals()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_vote_wait_options_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055fa']/* 'Select Vote' */, 'details':this.props.app_state.loc['3055fb']/* 'Specify the vote that will be applied to all the proposals listed.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055fi']/* 'Include Bounties.' */, 'details':this.props.app_state.loc['3055fj']/* 'Collect End and Spend bounties from the proposal objects.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_collect_bounties_tags_object} tag_size={'l'} when_tags_updated={this.when_get_collect_bounties_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055fc']/* 'Bundle Limit' */, 'details':this.props.app_state.loc['3055fd']/* 'Specify the number of proposal vote transactions that will be bundled together as one transaction. The default is set to 10.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3055fc']/* 'Bundle Limit' */, 'subtitle':'e0', 'barwidth':this.get_number_width(this.state.vote_tx_bundle_size), 'number':`${number_with_commas(this.state.vote_tx_bundle_size)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3055fe']/* 'transactions' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_vote_tx_bundle_size.bind(this)} theme={this.props.theme} power_limit={63} decimal_count={0} pick_with_text_area={true}/>
+
+                {this.render_detail_item('0')}
+
+                <div onClick={()=>this.vote_in_all_proposals()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ff']/* 'Vote In All' */, 'action':''})}
+                </div>
+
+            </div>
+        )
+    }
+
+    when_vote_tx_bundle_size(number){
+        this.setState({vote_tx_bundle_size: number})
+    }
+
+    when_new_vote_tags_object_updated(tag_obj){
+        this.setState({new_vote_tags_object: tag_obj})
+    }
+
+    when_get_collect_bounties_tags_object_updated(tag_obj){
+        this.setState({get_collect_bounties_tags_object: tag_obj})
+    }
+
+    render_vote_wait_options_proposals(){
+        const items = this.state.data['selected_proposals']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ey']/* 'Active Proposals.' */, 'details':this.props.app_state.loc['3055ez']/* 'The vote you select will be applied to the proposals listed below. Tap a proposal to ignore it in the final list.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {items.map((item, index) => (
+                    <div>
+                        {this.render_proposal_object(item, index)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_proposal_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_proposal_item(object)
+        var alpha = this.state.ignore_vote_wait_proposals.includes(object['e5_id']) ? 0.6 : 1.0
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div style={{'opacity':alpha}} onClick={() => this.when_vote_wait_proposal_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
+        return(
+            <div style={{'opacity':alpha, height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_vote_wait_proposal_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_vote_wait_proposal_item_clicked(index, object)}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    when_vote_wait_proposal_item_clicked(index, object){
+        var clone = this.state.ignore_vote_wait_proposals.slice()
+        const pos = clone.indexOf(object['e5_id'])
+        if(pos == -1){
+            clone.push(object['e5_id'])
+        }else{
+            clone.splice(pos, 1)
+        }
+        this.setState({ignore_vote_wait_proposals: clone})
+    }
+
+
+    vote_in_all_proposals(){
+        const ignore_vote_wait_proposals = this.state.ignore_vote_wait_proposals
+        const unfiltered_items = this.state.data['selected_proposals']
+        const items = unfiltered_items.filter(function (object) {
+            return (!ignore_vote_wait_proposals.includes(object['e5_id']))
+        })
+        const vote_tx_bundle_size = this.state.vote_tx_bundle_size
+        const new_vote_tags_object = this.state.new_vote_tags_object
+        const collect_bounties = this.get_selected_item(this.state.get_collect_bounties_tags_object, 'e') == this.props.app_state.loc['3055fk']/* 'collect' */
+
+        if(vote_tx_bundle_size < 1 || vote_tx_bundle_size > 999){
+            this.props.notify(this.props.app_state.loc['3055fh']/* That bundle limit is invalid. */, 2300)
+            return;
+        }
+        else if(items.length == 0){
+            this.props.notify(this.props.app_state.loc['3055fq']/* You cant ignore all the proposals. */, 2300)
+            return;
+        }
+
+        const chunks = this.splitIntoChunks(items, vote_tx_bundle_size)
+        chunks.forEach(chunk => {
+            const obj = {
+                selected: 0, id:makeid(8), type:this.props.app_state.loc['3055fg']/* 'vote_all' */, proposal_items:chunk, entered_indexing_tags:[this.props.app_state.loc['796']/* 'vote' */, this.props.app_state.loc['797']/* 'proposal' */],
+                new_vote_tags_object: new_vote_tags_object, collect_bounties,
+            }
+            this.props.add_vote_proposals_action_to_stack(obj)
+        });
+
+        this.props.finish_add_vote_proposals_action_to_stack()
+        this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
+    }
+
+    splitIntoChunks(arr, chunkSize) {
+        const result = [];
+        for (let i = 0; i < arr.length; i += chunkSize) {
+        result.push(arr.slice(i, i + chunkSize));
+        }
+        return result;
+    }
 
 
 

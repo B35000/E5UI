@@ -1017,6 +1017,7 @@ class SearchedAccountPage extends Component {
         if(interacted_exchange_data.length == 0) return;
         var selected_exchange = this.get_selected_interacted_exchange(data)[0]
         var event_data = this.get_selected_exchange_data(data, selected_exchange)
+        const datapoints = this.get_deposit_amount_data_points(event_data)
         return(
             <div>
                 {/* {this.render_detail_item('1', {'active_tags':interacted_exchange_data, 'index_option':'indexed', 'when_tapped': 'when_view_account_exchange_tapped', 'selected_tags':this.get_selected_interacted_exchange(data)})} */}
@@ -1024,7 +1025,7 @@ class SearchedAccountPage extends Component {
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
                 
-                {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(event_data), 'interval':110, 'hide_label': true})}
+                {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':110, 'hide_label': true})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'l'})}
                
@@ -1164,6 +1165,7 @@ class SearchedAccountPage extends Component {
         var data = []
         var max_amount = bigInt(0);
         var active_balance = bigInt(0)
+        var data_time_mapping = {}
         try{
             for(var i=0; i<events.length; i++){
                 if(i == 0){
@@ -1204,17 +1206,24 @@ class SearchedAccountPage extends Component {
                        max_amount = bigInt(data[data.length-1]) 
                     }
                 }
+                data_time_mapping[data.length-1] = events[i]['timestamp']
 
                 if(i==events.length-1){
-                    var diff = Date.now()/1000 - events[i]['event'].returnValues.p5
-                    for(var t=0; t<diff; t+=(61*265100)){
-                        data.push(data[data.length-1])      
+                    var diff = Date.now()/1000 - events[i]['timestamp']
+                    var t_diff = parseInt(events[i]['timestamp'])+0;
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1]) 
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff     
                     }
                 }
                 else{
-                    var diff = events[i+1]['event'].returnValues.p5 - events[i]['event'].returnValues.p5
-                    for(var t=0; t<diff; t+=(61*265100)){
-                        data.push(data[data.length-1])      
+                    var diff = events[i+1]['timestamp'] - events[i]['timestamp']
+                    var t_diff = parseInt(events[i]['timestamp'])+0;
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1])
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff      
                     }
                 }
             }
@@ -1223,7 +1232,10 @@ class SearchedAccountPage extends Component {
         }
 
         
-        console.log('data_points',events)
+        const slice_pos = Math.floor(data.length * this.props.app_state.graph_slice_proportion)
+        data = data.slice(slice_pos)
+        const chart_starting_time = data_time_mapping[slice_pos] * 1000
+
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1246,7 +1258,7 @@ class SearchedAccountPage extends Component {
             }
         }
         
-        return dps
+        return { dps, starting_time: chart_starting_time }
     }
 
 
@@ -1336,11 +1348,12 @@ class SearchedAccountPage extends Component {
     show_transaction_transaction_count_chart(events){
         var amount = events.length
         if(events.length != 0){
+            const datapoints = this.get_transaction_transaction_count_data_points(events)
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1725']/* 'Transaction Runs' */, 'details':this.props.app_state.loc['1726']/* `Chart containing the total number of E5 runs theyve made over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_transaction_count_data_points(events), 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1727']/* 'Y-Axis: Total Runs Made' */, 'details':this.props.app_state.loc['1728']/* 'X-Axis: Time' */, 'size':'l'})}
                     {this.render_detail_item('0')}
@@ -1400,7 +1413,9 @@ class SearchedAccountPage extends Component {
         }
 
 
-        return dps
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p8*1000
+
+        return { dps, starting_time: chart_starting_time }
     }
 
     get_transaction_transaction_count_interval_figure(events){

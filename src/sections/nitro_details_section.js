@@ -1294,7 +1294,7 @@ class NitroDetailsSection extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.memory_stats_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_memory_stats_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, /* 'hide_label': true */})}
+                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'start_time': data_points_data.starting_time, 'interval':110, /* 'hide_label': true */})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527cq']/* 'Y-Axis: ' */+this.capitalize_first(this.get_selected_item(this.state.memory_stats_chart_tags_object, 'e')), 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1384,9 +1384,9 @@ class NitroDetailsSection extends Component {
         //     }
         // }
 
+        const chart_starting_time = timestamp_datapoints.length == 0 ? 1000*60*60*24 : timestamp_datapoints[0]
 
-
-        return { dps, largest }
+        return { dps, largest, starting_time: chart_starting_time }
     }
 
     get_selected_memory_stat_position(){
@@ -1437,7 +1437,7 @@ class NitroDetailsSection extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.request_stats_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_request_stats_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, /* 'hide_label': true */})}
+                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'start_time': data_points_data.starting_time, 'interval':110, /* 'hide_label': true */})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527cq']/* 'Y-Axis: ' */+this.get_selected_item(this.state.request_stats_chart_tags_object, 'e'), 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1523,7 +1523,9 @@ class NitroDetailsSection extends Component {
         //     }
         // }
 
-        return { dps, largest }
+        const chart_starting_time = timestamp_datapoints.length == 0 ? 1000*60*60*24 : timestamp_datapoints[0]
+
+        return { dps, largest, starting_time: chart_starting_time }
     }
 
     get_selected_request_stat_position(){

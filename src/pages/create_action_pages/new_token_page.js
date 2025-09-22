@@ -418,7 +418,8 @@ class NewTokenPage extends Component {
     }
 
     componentWillUnmount() {
-        if(this.interval != null)clearInterval(this.interval);
+        if(this.interval != null) clearInterval(this.interval);
+        if(this.interval2 != null) clearInterval(this.interval2);
     }
 
     
@@ -2311,14 +2312,14 @@ return data['data']
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['752q']/* `Chart containing the total supply of the simulated token over simulated time.` */, 'size':'l'})}
-                {this.render_detail_item('6', {'dataPoints':this.get_total_supply_data_points(), 'interval':110, 'hide_label':true})}
+                {this.render_detail_item('6', {'dataPoints':this.get_total_supply_data_points(), 'interval':110, 'hide_label':true, 'start_time':this.state.start_time, 'end_time':this.state.end_time})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
 
 
                 <div style={{height: 20}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
-                {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(), 'interval':this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_data(this.state.UpdateProportionRatios))})}
+                {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(), 'interval':this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_data(this.state.UpdateProportionRatios)), 'start_time':this.state.start_time, 'end_time':this.state.end_time})}
                 <div style={{height: 10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_simulator_reduction_proportion_chart_filters} tag_size={'l'} when_tags_updated={this.when_get_simulator_reduction_proportion_chart_filters.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
@@ -2795,11 +2796,6 @@ return data['data']
         this.interval2 = setInterval(() => this.simulate_mint_action(), this.get_simulator_speed());
     }
 
-    componentWillUnmount() {
-        clearInterval(this.interval);
-        clearInterval(this.interval2);
-    }
-
 
     increase_block(){
         this.setState({simulator_block_number: this.state.simulator_block_number+1})
@@ -2833,6 +2829,9 @@ return data['data']
             simulator_speed:100,
 
             get_simulator_reduction_proportion_chart_filters:this.get_simulator_reduction_proportion_chart_filters(),
+
+            end_time: Date.now()+(1000*60*5),
+            start_time: Date.now()
         })
     }
 
@@ -2844,6 +2843,7 @@ return data['data']
 
         this.update_exchange_ratios(final_tokens_to_receive)
         this.update_total_minted_for_current_block(final_tokens_to_receive)
+        this.setState({end_time: this.state.end_time+this.get_simulator_speed()})
     }
 
     calculate_reduction_proportion_ratios(){

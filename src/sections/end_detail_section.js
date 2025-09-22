@@ -1307,11 +1307,12 @@ return data['data']
         if(exchange_ratio_events.length != 0){
             var average_volume = this.get_average_trading_volume(exchange_ratio_events)
             var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, 'e')
+            const datapoints1 = this.get_trading_volume_data_points(exchange_ratio_events, selected_object)
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2447i']/* 'Trading Volume' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the trading volume of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
 
-                    {this.render_detail_item('6', {'dataPoints':this.get_trading_volume_data_points(exchange_ratio_events, selected_object), 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'hide_label': true})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.trading_volume_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_trading_volume_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -1382,7 +1383,9 @@ return data['data']
             }
         }
 
-        return dps
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p9*1000
+
+        return { dps, starting_time: chart_starting_time }
     }
 
     get_trading_volume_interval_figure(events){
@@ -1416,11 +1419,12 @@ return data['data']
     show_y_aggregate_chart(selected_object, symbol){
         var exchange_ratio_events = selected_object['exchange_ratio_data']
         if(exchange_ratio_events.length != 0){
+            const datapoints1 = this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object)
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2387']/* 'Y-Aggregate' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the y-aggregate and price change of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object), 'interval':this.get_exchange_ratio_interval_figure(exchange_ratio_events, selected_object)})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -1595,7 +1599,9 @@ return data['data']
             } 
         }
 
-        return dps
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p9*1000
+
+        return { dps, starting_time: chart_starting_time }
     }
 
     get_exchange_ratio_interval_figure(events, selected_object){
@@ -1659,11 +1665,12 @@ return data['data']
         var amount = exchange_ratio_events.length;
 
         if(exchange_ratio_events.length != 0){
+            const datapoints1 = this.get_transaction_count_data_points(exchange_ratio_events)
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2392']/* 'Total Transactions' */, 'details':this.props.app_state.loc['2393']/* `Chart containing the total number of buy/sell transactions over time.` */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(exchange_ratio_events), 'interval':this.get_transaction_count_interval_figure(exchange_ratio_events)})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2394']/* 'Y-Axis: Total Transactions' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -1678,6 +1685,7 @@ return data['data']
 
     get_transaction_count_data_points(events){
         var data = []
+        var data_time_mapping = {}
         try{
             for(var i=0; i<events.length; i++){
                 if(i==0){
@@ -1686,17 +1694,24 @@ return data['data']
                 else{
                     data.push(parseInt(data[data.length-1]) + (1))
                 }
+                data_time_mapping[data.length-1] = events[i].returnValues.p9
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p9
+                    var t_diff = parseInt(events[i].returnValues.p9)+0;
                     for(var t=0; t<diff; t+=(60*100)){
-                        data.push(data[data.length-1])      
+                        data.push(data[data.length-1])
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                    var t_diff = parseInt(events[i].returnValues.p9)+0;
                     for(var t=0; t<diff; t+=(60*100)){
-                        data.push(data[data.length-1])      
+                        data.push(data[data.length-1])
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff    
                     }
                 }
                 
@@ -1706,7 +1721,9 @@ return data['data']
         }
         
 
-        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+        const slice_pos = Math.floor(data.length * this.props.app_state.graph_slice_proportion)
+        data = data.slice(slice_pos)
+        const chart_starting_time = data_time_mapping[slice_pos] * 1000
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1728,7 +1745,7 @@ return data['data']
         }
 
 
-        return dps
+        return { dps, starting_time: chart_starting_time }
     }
 
     get_transaction_count_interval_figure(events){
@@ -1759,11 +1776,12 @@ return data['data']
         var exchange_ratio_events = selected_object['exchange_ratio_data']
         var amount = total_supply
         if(exchange_ratio_events.length > 72 && selected_object['id'] != 3){
+            const datapoints1 = this.get_exchange_liquidity_data_points(exchange_ratio_events)
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2396']/* 'Exchange Liquidity' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2398']/* ` in the exchange over time.` */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':this.get_exchange_liquidity_data_points(exchange_ratio_events), 'interval':110})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time})}
                     <div style={{height: 10}}/>
                     {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}
@@ -1780,20 +1798,28 @@ return data['data']
     get_exchange_liquidity_data_points(events){
         // var events = this.filter_proportion_ratio_events(event_data);
         var data = []
+        var data_time_mapping = {}
         try{
             for(var i=0; i<events.length; i++){
                 data.push(bigInt(events[i].returnValues.p4))
+                data_time_mapping[data.length-1] = events[i].returnValues.p9
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p9
+                    var t_diff = parseInt(events[i].returnValues.p9)+0;
                     for(var t=0; t<diff; t+=(60*100)){
-                        data.push(data[data.length-1])      
+                        data.push(data[data.length-1])
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff    
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                    var t_diff = parseInt(events[i].returnValues.p9)+0;
                     for(var t=0; t<diff; t+=(60*100)){
-                        data.push(data[data.length-1])      
+                        data.push(data[data.length-1])
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff
                     }
                 }
                 
@@ -1804,7 +1830,9 @@ return data['data']
         
 
 
-        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+        const slice_pos = Math.floor(data.length * this.props.app_state.graph_slice_proportion)
+        data = data.slice(slice_pos)
+        const chart_starting_time = data_time_mapping[slice_pos] * 1000
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1829,7 +1857,7 @@ return data['data']
         }
 
 
-        return dps
+        return { dps, starting_time: chart_starting_time }
     }
 
     get_exchange_liquidity_interval_figure(events){

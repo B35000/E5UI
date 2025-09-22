@@ -15352,7 +15352,7 @@ class App extends Component {
         
         show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_downloaded.bind(this)} when_pdf_file_opened={this.when_pdf_file_accessed.bind(this)} play_individual_track={this.when_audio_file_opened.bind(this)} play_individual_video={this.when_video_file_opened.bind(this)} filter_by_selected_account={this.filter_by_selected_account.bind(this)}
 
-        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)}
+        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)}
         
         />
       </div>
@@ -15420,6 +15420,7 @@ class App extends Component {
       'view_access_logs':550,
       'view_error_logs':650,
       'view_link_option':350,
+      'vote_wait_bottomsheet':550,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -16318,6 +16319,27 @@ class App extends Component {
   open_link(url, option){
     this.open_dialog_bottomsheet()
     this.show_view_iframe_link(url, option)
+  }
+
+  add_vote_proposals_action_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+  }
+
+  finish_add_vote_proposals_action_to_stack(){
+    this.set_cookies_after_stack_action()
+    this.open_dialog_bottomsheet()
   }
 
 
@@ -22833,6 +22855,8 @@ class App extends Component {
       {'identifier':'e32created','fetch_last_data':'all', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p2/* sender_acc_id */: '%%account%%', p3/* context */:32}, 'from_filter':{}}},/* e32created  */
 
       {'identifier':'e33created','fetch_last_data':'all', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p2/* sender_acc_id */: '%%account%%', p3/* context */:33}, 'from_filter':{}}},/* e33created  */
+
+      {'identifier':'all_my_main_contract_votes','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G52', 'requested_event_id':'e1', 'filter':{p3/* voter_account_id */: '%%account%%', p1/* contract_id */: 2}, 'from_filter':{}}},/* all_my_main_contract_votes  */
     ]
   }
 
@@ -24162,7 +24186,7 @@ class App extends Component {
 
     if(is_syncing) this.load_run_data(contractInstance, E52contractInstance, e5, web3, H52contractInstance, pre_launch_data);
 
-    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data']
+    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals']
 
     if(pre_launch_data[e5] != null){
       const saved_pre_launch_data_object = {}
@@ -24175,11 +24199,12 @@ class App extends Component {
       this.setState({saved_pre_launch_events: saved_pre_launch_events_clone})
     }
 
-     if(this.state.refreshing_content_after_channeling_change == true){
-        this.setState({refreshing_content_after_channeling_change: false})
-        const page = this.homepage.current?.get_selected_page()
-        this.load_data_from_page_in_focus(page)
-      }
+
+    if(this.state.refreshing_content_after_channeling_change == true){
+      this.setState({refreshing_content_after_channeling_change: false})
+      const page = this.homepage.current?.get_selected_page()
+      this.load_data_from_page_in_focus(page)
+    }
 
     // this.get_total_supply_of_ether(e5)
 
@@ -38122,9 +38147,21 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p2/* sender */: id})
+    var send_tokens_event_data = null;
+    var received_tokens_event_data = null;
 
-    var received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: id})
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, H52contractInstance, 'e1', e5, {p2/* sender */: id}],
+        [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: id}],
+      ]
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+      send_tokens_event_data = all_events[0]
+      received_tokens_event_data = all_events[1]
+    }else{
+      send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p2/* sender */: id})
+      received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: id})
+    }
 
     // console.log('get_token_event_data',received_tokens_event_data)
 
@@ -38598,7 +38635,6 @@ class App extends Component {
           }
 
           var contract_token_event_data = await this.get_token_event_data(id, e5);
-
           var ether_balance = await web3.eth.getBalance(account_address)
 
           var end_spend_balance = await H52contractInstance.methods.f140e([3,5], id, [0,0]).call((error, result) => {});
@@ -39011,13 +39047,34 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, { p2/* sender */: contract_id})
+    var send_tokens_event_data = null
+    var received_tokens_event_data = null
+    var update_balance_event_data = null
+    var depth_swap_event_data = null
 
-    var received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: contract_id})
+    if(this.state.beacon_node_enabled == true){
+      var event_params = [
+        [web3, H52contractInstance, 'e1', e5, { p2/* sender */: contract_id}],
+        [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: contract_id}],
+        [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: contract_id}],
+        [web3, H52contractInstance, 'power', e5, {p3/* receiver */: contract_id, p2/* action */:2 /* depth_auth_mint */}]
+      ]
+      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+      
+      send_tokens_event_data = all_events[0]
+      received_tokens_event_data = all_events[1]
+      update_balance_event_data = all_events[2]
+      depth_swap_event_data = all_events[3]
+    }
+    else{
+      send_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, { p2/* sender */: contract_id})
 
-    var update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p2/* receiver */: contract_id})
+      received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: contract_id})
 
-    var depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p3/* receiver */: contract_id, p2/* action */:2 /* depth_auth_mint */})
+      update_balance_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p2/* receiver */: contract_id})
+
+      depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power', e5, {p3/* receiver */: contract_id, p2/* action */:2 /* depth_auth_mint */})
+    }
 
     var all_events = [];
     for(var i=0; i<send_tokens_event_data.length; i++){

@@ -2257,7 +2257,7 @@ return data['data']
                     {this.render_my_available_songs(available_streaming_files_data.available_files_mapping, object)}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'start_time': data_points_data.starting_time, 'interval':110, 'hide_label': true})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.time_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_time_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -2347,7 +2347,9 @@ return data['data']
             }
         }
 
-        return { dps, largest }
+        const chart_starting_time = timestamp_datapoints.length == 0 ? 1000*60*60*24 : timestamp_datapoints[0]
+
+        return { dps, largest, starting_time: chart_starting_time }
     }
 
     filter_time_events(timestamp_datapoints, tags, add_if_empty){

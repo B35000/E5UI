@@ -2307,12 +2307,13 @@ class StackPage extends Component {
     render_gas_history_chart(){
         var events = this.props.app_state.all_E5_runs[this.props.app_state.selected_e5]
         if(events != null && events.length > 10){
+            const datapoints = this.get_gas_history_data_points(events)
             return(
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1458']/* Gas Prices' */, 'details':this.props.app_state.loc['1459']/* `The gas price data recorded on your selected E5 over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':this.get_gas_history_data_points(events), 'interval':this.get_gas_history_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':this.get_gas_history_interval_figure(events)})}
                     <div style={{height: 10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
@@ -2353,7 +2354,9 @@ class StackPage extends Component {
             }
         }
 
-        return dps
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p8*1000
+
+        return { dps, starting_time: chart_starting_time }
     }
 
     get_gas_history_interval_figure(events){
@@ -4276,6 +4279,12 @@ class StackPage extends Component {
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3055fg']/* 'vote_all' */){
+                    var vote_obj = this.format_multi_vote_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(vote_obj)
                 }
                 
                 delete_pos_array.push(i)
@@ -9317,6 +9326,46 @@ class StackPage extends Component {
         }
 
         return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
+    format_multi_vote_object(t){
+        var vote = this.get_selected_item(t.new_vote_tags_object, t.new_vote_tags_object['i'].active)
+        var votes_obj = {'yes':1, 'wait':2, 'no':3}
+        votes_obj[this.props.app_state.loc['801']/* yes */] = 1
+        votes_obj[this.props.app_state.loc['800']/* wait */] = 2
+        votes_obj[this.props.app_state.loc['802']/* no */] = 3
+
+        var obj = [/* vote proposal */
+            [30000, 4, 0],
+            [], [],/* proposal ids */
+            [],/* votes */
+        ]
+
+        t.proposal_items.forEach(proposal => {
+            obj[1].push(proposal['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+            obj[3].push(votes_obj[vote])
+        });
+
+        if(t.collect_bounties == true){
+            t.proposal_items.forEach(proposal => {
+                const pos = obj.length
+                obj.push([])
+                obj.push([])
+                obj.push([])
+
+                obj[pos].push('3')
+                obj[pos+1].push(23)
+                obj[pos+2].push(0)
+
+                obj[pos].push('5')
+                obj[pos+1].push(23)
+                obj[pos+2].push(0)
+            });
+            
+        }
+
+        return obj
     }
 
     

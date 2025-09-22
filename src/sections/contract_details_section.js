@@ -1081,6 +1081,7 @@ class ContractDetailsSection extends Component {
         if(interacted_exchange_data.length == 0) return;
         var selected_exchange = this.get_selected_interacted_exchange(object, data)[0]
         var event_data = this.get_selected_exchange_data(data, selected_exchange)
+        const datapoints = this.get_deposit_amount_data_points(event_data)
         return(
             <div>
                 <div style={{height: 10}}/>
@@ -1089,7 +1090,7 @@ class ContractDetailsSection extends Component {
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
                 
-                {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(event_data), 'interval':110, 'hide_label': true})}
+                {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':110, 'hide_label': true})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                
@@ -1217,6 +1218,7 @@ class ContractDetailsSection extends Component {
         var data = []
         var active_balance = bigInt(0)
         var max_amount = bigInt(0);
+        var data_time_mapping = {}
         try{
             for(var i=0; i<events.length; i++){
                 if(i == 0){
@@ -1254,17 +1256,24 @@ class ContractDetailsSection extends Component {
                        max_amount = bigInt(data[data.length-1]) 
                     }
                 }
+                data_time_mapping[data.length-1] = events[i]['timestamp']
 
                 if(i==events.length-1){
-                    var diff = Date.now()/1000 - events[i]['event'].returnValues.p5
+                    var diff = Date.now()/1000 - events[i]['timestamp']
+                    var t_diff = parseInt(events[i]['timestamp'])+0;
                     for(var t=0; t<diff; t+=(61*2651)){
-                        data.push(data[data.length-1])      
+                        data.push(data[data.length-1]) 
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff     
                     }
                 }
                 else{
-                    var diff = events[i+1]['event'].returnValues.p5 - events[i]['event'].returnValues.p5
+                    var diff = events[i+1]['timestamp'] - events[i]['timestamp']
+                    var t_diff = parseInt(events[i]['timestamp'])+0;
                     for(var t=0; t<diff; t+=(61*2651)){
-                        data.push(data[data.length-1])      
+                        data.push(data[data.length-1])
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff      
                     }
                 }
                 
@@ -1273,7 +1282,9 @@ class ContractDetailsSection extends Component {
             console.log(e)
         }
 
-        data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+        const slice_pos = Math.floor(data.length * this.props.app_state.graph_slice_proportion)
+        data = data.slice(slice_pos)
+        const chart_starting_time = data_time_mapping[slice_pos] * 1000
         
 
         var xVal = 1, yVal = 0;
@@ -1297,7 +1308,7 @@ class ContractDetailsSection extends Component {
             }
         }
         
-        return dps
+        return { dps, starting_time: chart_starting_time }
     }
 
 
