@@ -399,22 +399,9 @@ class AudioDetailSection extends Component {
 
                     {this.render_repost_audiopost_ui(object)}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'details':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
-                    <div style={{height:10}}/>
-                    <div className="row">
-                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                            <div onClick={()=> this.play_album(object)}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527q']/* 'Play Album.' */, 'action':''},)}
-                            </div>
-                        </div>
-                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                            <div onClick={()=> this.shuffle_album(object)}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527s']/* 'Shuffle Album' */, 'action':''},)}
-                            </div>
-                        </div>
-                    </div>
+                    {this.render_play_media_button(object)}
 
+                    {this.render_hide_audiopost_button(object)}
 
                     {this.render_award_button(object)}
 
@@ -1383,6 +1370,51 @@ return data['data']
     }
 
 
+    render_play_media_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'details':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.play_album(object)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527q']/* 'Play Album.' */, 'action':''},)}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.shuffle_album(object)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527s']/* 'Shuffle Album' */, 'action':''},)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+    render_hide_audiopost_button(object){
+        if(this.is_page_my_collection_page()){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527ch']/* `🗑️ Hide/Show Audiopost Tracks` */, 'details':this.props.app_state.loc['a2527ci']/* `Hide or show the tracks youve added in this audiopost.` */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_hide_audiopost_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527cj']/* 'Hide/Show' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_hide_audiopost_ui(object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        var songs = this.get_songs_to_display_if_in_my_collection_page(object)
+        this.props.show_dialog_bottomsheet({'object':object, 'songs_to_hide':songs}, 'hide_audiopost_confirmation')
+    }
 
 
     render_buy_album_button(object){
@@ -1729,7 +1761,17 @@ return data['data']
             var songs_to_display = []
             var items = object['ipfs'].songs
             items.forEach(song => {
-                if(!this.is_song_available_for_adding_to_playlist(song)){
+                if(!this.is_song_available_for_adding_to_playlist(song) && !this.is_song_hidden_from_my_view(object, song)){
+                    songs_to_display.push(song)
+                }
+            });
+            return songs_to_display
+        }
+        else if(this.is_page_my_hidden_page()){
+            var songs_to_display = []
+            var items = object['ipfs'].songs
+            items.forEach(song => {
+                if(!this.is_song_available_for_adding_to_playlist(song) && this.is_song_hidden_from_my_view(object, song)){
                     songs_to_display.push(song)
                 }
             });
@@ -1737,6 +1779,16 @@ return data['data']
         }
         else{
             return []
+        }
+    }
+
+    is_song_hidden_from_my_view(object, song){
+        const hidden_object_data = this.props.app_state.hidden_audioposts[object['e5_id']]
+        if(hidden_object_data != null){
+            const hidden_songs = hidden_object_data['song_ids']
+            return hidden_songs.includes(song['song_id'])
+        }else{
+            return false
         }
     }
 
@@ -1751,6 +1803,15 @@ return data['data']
     is_page_my_collection_page(){
         var page_id = this.props.get_page_id()
         var my_collection_page_id = this.props.app_state.loc['1264k']/* 'audioport' */ + this.props.app_state.loc['1264l']/* 'acquired' */
+        if(page_id == my_collection_page_id){
+            return true
+        }
+        return false
+    }
+
+    is_page_my_hidden_page(){
+        var page_id = this.props.get_page_id()
+        var my_collection_page_id = this.props.app_state.loc['1264k']/* 'audioport' */ + this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */
         if(page_id == my_collection_page_id){
             return true
         }

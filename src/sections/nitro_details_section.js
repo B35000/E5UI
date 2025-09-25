@@ -130,7 +130,7 @@ class NitroDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['a2527a']/* 'comments' */,this.props.app_state.loc['c2527ds']/* 'logs 🗃️' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['a2527a']/* 'comments' */,this.props.app_state.loc['c2527ds']/* 'logs 🗃️' */, this.props.app_state.loc['c2527eb']/* 'reorgs 🔀' */],[1]
           ],
         }
     }
@@ -240,6 +240,13 @@ class NitroDetailsSection extends Component {
             return(
                 <div key={selected_item}>
                     {this.render_nitro_error_logs(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['c2527eb']/* 'reorgs 🔀' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_nitro_reorg_logs(object)}
                 </div>
             )
         }
@@ -1241,7 +1248,7 @@ class NitroDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['c2527ba']/* 'Buy storage' */, 'details':this.props.app_state.loc['c2527bb']/* 'Acquire storage from the provider in their respective node.' */})}
                     <div style={{height:10}}/>
-                    <div onClick={()=> this.buy_storgae(object)}>
+                    <div onClick={()=> this.buy_storage(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527ba']/* 'Buy Storage' */, 'action':''},)}
                     </div>
                 </div>
@@ -1249,7 +1256,7 @@ class NitroDetailsSection extends Component {
         }
     }
 
-    buy_storgae(object){
+    buy_storage(object){
         this.props.show_buy_nitro_storage_bottomsheet(object)
     }
 
@@ -1429,6 +1436,7 @@ class NitroDetailsSection extends Component {
         if(telemetry_data != null){
             const request_stats_data = telemetry_data['request_stats']
             const data_points_data = this.get_request_stats_data_points(request_stats_data, object)
+            
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1635,12 +1643,11 @@ class NitroDetailsSection extends Component {
     }
 
     get_nitro_error_logs(object){
-        var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-        if(node_details == null || node_details == 'unavailable'){
+        const telemetry_data = this.props.app_state.nitro_telemetry_data_object[object['e5_id']]
+        if(telemetry_data == null){
             return { sorted_log_timestamps:[], log_file_references:{} }
         }
-        const encrypted_files_obj = JSON.parse(node_details['encrypted_files_obj'])
-        const log_data = encrypted_files_obj['log_data']
+        const log_data = telemetry_data['files']['log_data']
         const log_timestamps = []
         const log_file_references = {}
         log_data.forEach((log_file, index) => {
@@ -1660,6 +1667,162 @@ class NitroDetailsSection extends Component {
         this.props.show_dialog_bottomsheet({'object':object, 'file':log_file_references[item.toString()], 'time': item}, 'view_error_logs')
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    render_nitro_reorg_logs(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        {this.render_nitro_reorg_top_title(object)}
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{'padding':'0px 7px 0px 7px'}}>
+                            {this.load_preferred_e5_ui2()}
+                            <div style={{height: 10}}/>
+                            {this.render_reorg_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        )
+    }
+
+    render_nitro_reorg_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['c2527dz']/* 'Logged Reorgs.' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    load_preferred_e5_ui2(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked2(item)}>
+                            {this.render_e5_item2(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_e5_item2(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        const selected_item = this.state.selected_e5 || this.props.app_state.selected_e5
+        if(selected_item == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked2(item){
+        this.setState({selected_e5: item})
+    }
+
+    render_reorg_items(object){
+        var middle = this.props.height-220;
+        const log_item_data = this.get_nitro_reorg_logs(object)
+        var items = log_item_data;
+
+        // const my_account = this.props.app_state.user_account_id[object['e5']]
+        // if(object['event'].returnValues.p5 != my_account){
+        //     items = []
+        // }
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}}>
+                                    <div>
+                                        {this.render_detail_item('3', {'title':''+new Date(item['now']).toLocaleString()+ ' • '+this.get_time_diff(Date.now()/1000 - item['now']/1000), 'details':this.props.app_state.loc['c2527ea']/* 'Affected $ Blocks.' */.replace('$', number_with_commas(item['affected_blocks'])), 'size':'l'})}
+                                        <div style={{height: 1}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_nitro_reorg_logs(object){
+        const telemetry_data = this.props.app_state.nitro_telemetry_data_object[object['e5_id']]
+        if(telemetry_data == null){
+            return []
+        }
+        const selected_e5 = this.state.selected_e5 || this.props.app_state.selected_e5
+        const e5_reorg_items = telemetry_data['reorgs'][selected_e5]
+        if(e5_reorg_items == null){
+            return []
+        }
+
+        return this.sortByAttributeDescending(e5_reorg_items['reorgs'], 'now')
+    }
     
 
 

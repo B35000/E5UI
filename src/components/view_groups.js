@@ -394,7 +394,7 @@ class ViewGroups extends Component {
             var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
             var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
             
-            var dataPoints = object_data != null ? this.format_generated_data_points(object_data['dataPoints'], start_time, end_time) : this.format_generated_data_points(this.generateDataPoints(23), start_time, end_time);
+            var dataPoints = object_data != null ? this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time));
 
             var interval = (object_data != null) ? object_data['interval'] : 0
             var label_font_size = 10
@@ -1065,7 +1065,6 @@ class ViewGroups extends Component {
 
     formatTimestamp(timestamp, diffMs) {
         const date = new Date(timestamp);
-
         const oneDay = 24 * 60 * 60 * 1000;
         const oneWeek = 604_800_000;
         const oneYear = 31_556_952_000; // rough (ignores leap years)

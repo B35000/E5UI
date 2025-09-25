@@ -779,17 +779,8 @@ class ConfigureNitroNodePage extends Component {
     }
 
     decrypt_my_backup_files(){
-        var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
-        var encrypted_files_obj = node_details['encrypted_files_obj']
-        // var backup_key = this.state.final_backup_key
-        // var decrypted_files_obj = this.props.decrypt_storage_data_using_key(encrypted_files_obj, backup_key)
-        // if(decrypted_files_obj !== encrypted_files_obj){
-        //     //if the file object was decrypted successfullly
-        //     var obj = JSON.parse(decrypted_files_obj)
-        //     return this.filter_backup_files(obj['data'])
-        // }else{
-        //     return []
-        // }
+        const telemetry_data = this.props.app_state.nitro_telemetry_data_object[this.state.nitro_object['e5_id']]
+        var encrypted_files_obj = telemetry_data['files']['data']
         try{
             var obj = JSON.parse(encrypted_files_obj)
             return this.filter_backup_files(obj['data'])

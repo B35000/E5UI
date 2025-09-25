@@ -174,7 +174,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [5]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
             ],
         };
     }
@@ -2306,14 +2306,21 @@ class StackPage extends Component {
 
     render_gas_history_chart(){
         var events = this.props.app_state.all_E5_runs[this.props.app_state.selected_e5]
-        if(events != null && events.length > 10){
-            const datapoints = this.get_gas_history_data_points(events)
+        const e5 = this.props.app_state.selected_e5
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['get_gas_history_data_points'] : {}
+        if((events != null && events.length > 10) || nitro_graphs_data['1h'] != null){
+            const time_filter_object = {'1h':'1h', '24h':'24h', '7d':'7d', '30d':'30d', '6mo':'6mo'}
+            time_filter_object[this.props.app_state.loc['1416']/* 'all-time' */] = 'all_time'
+
+            var selected_item = this.get_selected_item(this.state.gas_history_chart_tags_object, this.state.gas_history_chart_tags_object['i'].active)
+
+            const datapoints = nitro_graphs_data['1h'] != null ? nitro_graphs_data[time_filter_object[selected_item]] : this.get_gas_history_data_points(events)
             return(
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1458']/* Gas Prices' */, 'details':this.props.app_state.loc['1459']/* `The gas price data recorded on your selected E5 over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':this.get_gas_history_interval_figure(events)})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':0})}
                     <div style={{height: 10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
@@ -4874,6 +4881,37 @@ class StackPage extends Component {
 
         //context ->> 17 in use!!!!
 
+        if(this.props.app_state.update_hidden_values_in_e5 == true){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [18], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+            const hidden_audioposts = this.props.app_state.hidden_audioposts
+            const hidden_videoposts = this.props.app_state.hidden_videoposts
+
+            const key = this.props.app_state.accounts['E25'].privateKey.toString()
+            const unencrypted_data = JSON.stringify({'audioposts':hidden_audioposts, 'videoposts':hidden_videoposts})
+            const encrypted_obj = await this.props.encrypt_data_object(unencrypted_data, key)
+
+            const data = {'cypher':encrypted_obj, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'hidden');
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(18)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
+        }
+
 
 
         if(account_data_object[1].length > 0){
@@ -5736,6 +5774,19 @@ class StackPage extends Component {
             ipfs_index_array.push({'id':'participatedobjects', 'data':data})
         }
 
+        if(this.props.app_state.update_hidden_values_in_e5 == true){
+            var hidden_audioposts = this.props.app_state.hidden_audioposts
+            var hidden_videoposts = this.props.app_state.hidden_videoposts
+
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'audioposts':hidden_audioposts, 'videoposts':hidden_videoposts})
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
+            ipfs_index_object['hidden'] = data
+            ipfs_index_array.push({'id':'hidden', 'data':data})
+        }
+
 
         
         ipfs_index_array.forEach(item => {
@@ -5861,6 +5912,40 @@ class StackPage extends Component {
         }
         
     }
+
+    // calculate_maximum_gas_fee_if_enabled(){
+    //     const e5 = this.props.app_state.selected_e5
+    //     const contract_data = this.props.app_state.created_contract_mapping[e5][2]['data']
+    //     const gas_reduction_proportion = contract_data[1][24/* <24>tx_gas_reduction_proportion */]
+    //     const tx_gas_limit = contract_data[1][11/* <11>tx_gas_limit */]
+    //     const tx_gas_anchor_price = contract_data[1][23/* <23>gas_anchor_price */]
+    //     const tx_gas_price = this.get_gas_price()
+    //     const tx_gas_lower_limit = contract_data[1][26/* <26>tx_gas_lower_limit */]
+
+    //     var gas_amount = tx_gas_limit
+    //     if (gas_reduction_proportion != 0 && bigInt(gas_reduction_proportion).lesserOrEquals(bigInt('1e18')) && tx_gas_price != 0 && tx_gas_anchor_price != 0 && tx_gas_limit != 0) {
+    //         var v2/* steps */ = (tx_gas_price / tx_gas_anchor_price);
+
+    //         if (v2/* steps */ != 0) {
+    //             v1/* gas_amount */ = this.calculate_share_of_total(tx_gas_limit, this.compound(gas_reduction_proportion, steps));
+    //         }
+    //     }
+    // }
+
+    // calculate_share_of_total(p1, p2){
+    //     /* p1: amount   p2: proportion */
+    //     /* 
+    //         it: calculates a proportion of a given amount
+    //             eg. 50% of 4000 = 2000
+    //                 10% of 250 = 25
+    //     */
+    //     if (p1 /* p1: amount */ == 0 || p2 /* p2: proportion */ == 0) return 0;
+        
+    //     return p1 /* p1: amount */ > 10**36
+    //             ? (p1 /* p1: amount */ / 10**18) * p2 /* p2: proportion */ /* (denominator -> 10**18) */
+    //             : (p1 /* p1: amount */ * p2 /* p2: proportion */) / 10**18; /* (denominator -> 10**18) */
+    //     /* prevents an overflow incase the amount is large */
+    // }
 
     set_max_priority_per_gas(){
         if(this.state.picked_max_priority_per_gas_amount == 0){
@@ -10695,11 +10780,11 @@ class StackPage extends Component {
     }
 
     render_disable_moderation_setting(){
-        const is_setting_enabled = this.get_selected_item(this.state.get_audiplayer_position_setting_object, 'e') == this.props.app_state.loc['1593hp']/* 'disable' */
-        if(!this.props.do_i_have_an_account() && !is_setting_enabled){
-            return;
-        }
-        else if(!this.props.do_i_have_a_minimum_number_of_txs_in_account() && !is_setting_enabled){
+        const disable_moderation_setting = this.get_selected_item(this.state.get_disable_moderation_setting_object, 'e')
+        if(
+            (!this.props.do_i_have_an_account() && disable_moderation_setting == 'e') || 
+            (!this.props.do_i_have_a_minimum_number_of_txs_in_account() && disable_moderation_setting == 'e')
+        ){
             return;
         }
         return(
@@ -10811,7 +10896,7 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea'], 'details':this.props.app_state.loc['1593eb'], 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>

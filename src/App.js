@@ -964,6 +964,8 @@ class App extends Component {
     is_reloading_stack_due_to_ios_run:false, latest_file_renewal_time:{}, boot_times:{}, storefront_auction_bids:{}, full_video_window_height:0, document_title:'e(Beta)', stacked_message_ids:[], new_object_changes:{}, last_login_time: Date.now(), current_nitro_purchases:{}, event_load_chunk_size:35, nitro_url_temp_hash_data:{}, e5s_transaction_height:{}, nitro_link_directory_data:{},
 
     gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3, nitro_telemetry_data_object:{}, nitro_error_log_data_object:{}, saved_pre_launch_events:{},
+
+    hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false
   };
 
   get_static_assets(){
@@ -3513,6 +3515,9 @@ class App extends Component {
       max_post_bulk_load_count: this.state.max_post_bulk_load_count,
       event_load_chunk_size: this.state.event_load_chunk_size,
       link_handler: this.state.link_handler,
+      hidden_audioposts: this.state.hidden_audioposts,
+      hidden_videoposts: this.state.hidden_videoposts,
+      update_hidden_values_in_e5: this.state.update_hidden_values_in_e5
     }
   }
 
@@ -3700,6 +3705,10 @@ class App extends Component {
       var event_load_chunk_size = state.event_load_chunk_size == null ? this.state.event_load_chunk_size : state.event_load_chunk_size
       var link_handler = state.link_handler == null ? this.state.link_handler: state.link_handler
 
+      var hidden_audioposts = state.hidden_audioposts == null ? this.state.hidden_audioposts : state.hidden_audioposts
+      var hidden_videoposts = state.hidden_videoposts == null ? this.state.hidden_videoposts : state.hidden_videoposts
+      var update_hidden_values_in_e5 = state.update_hidden_values_in_e5 || this.state.update_hidden_values_in_e5
+
       this.setState({
         theme: theme,
         stack_items: stack_items,
@@ -3769,7 +3778,10 @@ class App extends Component {
         my_preferred_nitro_link: my_preferred_nitro_link,
         max_post_bulk_load_count: max_post_bulk_load_count,
         event_load_chunk_size: event_load_chunk_size,
-        link_handler: link_handler
+        link_handler: link_handler,
+        hidden_audioposts: hidden_audioposts, 
+        hidden_videoposts: hidden_videoposts, 
+        update_hidden_values_in_e5: update_hidden_values_in_e5
       })
       var me = this;
       setTimeout(function() {
@@ -8116,7 +8128,7 @@ class App extends Component {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       if(this.state.e5s[e5].active == true){
-          if(this.state.user_account_id[e5] != null || this.state.user_account_id[e5] > 1000){
+          if(this.state.user_account_id[e5] != null && this.state.user_account_id[e5] > 1000){
             return true;
           }
       }
@@ -8128,7 +8140,7 @@ class App extends Component {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       if(this.state.e5s[e5].active == true){
-        if(this.state.E5_runs[e5] != null || this.state.E5_runs[e5].length >= this.state.minimum_run_count_for_valid_account){
+        if(this.state.E5_runs[e5] != null && this.state.E5_runs[e5].length >= this.state.minimum_run_count_for_valid_account){
           return true;
         }
       }
@@ -8451,6 +8463,7 @@ class App extends Component {
           should_update_censored_keyword_phrases:false, 
           uncommitted_upload_cids:[],
           should_update_posts_reposted_by_me:false,
+          update_hidden_values_in_e5:false
         })
         me.delete_stack_items(delete_pos_array)
         me.reset_gas_calculation_figure(me)
@@ -15352,7 +15365,7 @@ class App extends Component {
         
         show_images={this.show_images.bind(this)} when_zip_file_opened={this.when_zip_file_downloaded.bind(this)} when_pdf_file_opened={this.when_pdf_file_accessed.bind(this)} play_individual_track={this.when_audio_file_opened.bind(this)} play_individual_video={this.when_video_file_opened.bind(this)} filter_by_selected_account={this.filter_by_selected_account.bind(this)}
 
-        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)}
+        add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         />
       </div>
@@ -15421,6 +15434,8 @@ class App extends Component {
       'view_error_logs':650,
       'view_link_option':350,
       'vote_wait_bottomsheet':550,
+      'hide_audiopost_confirmation':550,
+      'hide_videopost_confirmation':550,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -16340,6 +16355,51 @@ class App extends Component {
   finish_add_vote_proposals_action_to_stack(){
     this.set_cookies_after_stack_action()
     this.open_dialog_bottomsheet()
+  }
+
+  hide_audiopost_tracks(object, final_songs_to_hide){
+    this.open_dialog_bottomsheet()
+    const clone = structuredClone(this.state.hidden_audioposts)
+    const song_ids_to_hide = []
+    final_songs_to_hide.forEach(song => {
+      song_ids_to_hide.push(song['song_id'])
+    });
+
+    const hidden_object = {
+      'song_ids':song_ids_to_hide, 
+      'hide_audiopost':song_ids_to_hide.length == object['ipfs'].songs.length
+    }
+
+    clone[object['e5_id']] = hidden_object
+    if(hidden_object['song_ids'].length == 0){
+      delete clone[object['e5_id']]
+    }
+
+    this.setState({hidden_audioposts: clone, update_hidden_values_in_e5:true})
+    this.prompt_top_notification(this.getLocale()['a2527ck']/* 'e will hide those tracks from your collection.' */, 2300)
+    this.set_cookies_after_stack_action()
+  }
+
+  hide_videopost_tracks(object, final_videos_to_hide){
+    this.open_dialog_bottomsheet()
+    const clone = structuredClone(this.state.hidden_videoposts)
+    const video_ids_to_hide = []
+    final_videos_to_hide.forEach(video => {
+      video_ids_to_hide.push(video['video_id'])
+    });
+
+    const hidden_object = {
+      'video_ids':video_ids_to_hide, 
+      'hide_videopost':video_ids_to_hide.length == object['ipfs'].videos.length
+    }
+    clone[object['e5_id']] = hidden_object
+    if(hidden_object['video_ids'].length == 0){
+      delete clone[object['e5_id']]
+    }
+
+    this.setState({hidden_videoposts: clone, update_hidden_values_in_e5: true})
+    this.prompt_top_notification(this.getLocale()['3055fw']/* 'e will hide those videos from your collection.' */, 2300)
+    this.set_cookies_after_stack_action()
   }
 
 
@@ -20694,6 +20754,8 @@ class App extends Component {
       notification_object:{},
       latest_file_renewal_time:{},
       current_nitro_purchases:{},
+      hidden_audioposts:{},
+      hidden_videoposts:{}
     });
 
     this.get_blocked_accounts_data_e5_timestamp = 0
@@ -20706,6 +20768,7 @@ class App extends Component {
     this.my_channel_timestamp = 0
     this.my_poll_timestamp = 0
     this.my_object_timestamp = 0
+    this.my_hidden_objects_timestamp = 0
     // Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
     this.last_load_time = {};
 
@@ -22716,7 +22779,9 @@ class App extends Component {
     // const ignore_call_for_all_data = Object.keys(this.state.all_data).length != 0
     const ignore_call_for_all_data = true;
     return [
-      {'identifier':'e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{}, 'from_filter':{}}},/* e5 runs */
+      {'identifier':'e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{}, 'from_filter':{'p':'p8'/* timestamp */, 'value': Math.floor(Date.now()/1000) - (60*60*24*7*53)}}},/* e5 runs */
+
+      {'identifier':'my_e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{p1/* sender_account_id */: '%%account%%'}, 'from_filter':{}}},/* my_e5_runs */
 
       {'identifier':'contacts','fetch_last_data':'last', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: '%%account%%', p3/* context */:1}, 'from_filter':{}}},/* contacts */
 
@@ -22794,15 +22859,15 @@ class App extends Component {
 
       {'identifier':'my_paid_subscription_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'F5', 'requested_event_id':'e1', 'filter':{p2/* sender_acc_id */:'%%account%%'}, 'from_filter':{}}},/* my_paid_subscription_events  */
 
-      {'identifier':'created_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))}, 'from_filter':{}}},/* created_index_events  */
+      {'identifier':'created_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 30/* contract_obj_id *//* , p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25')) */}, 'from_filter':{}}},/* created_index_events  */
+
+      {'identifier':'created_subscripion_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 33/* subscription_obj_id *//* , p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25')) */}, 'from_filter':{}}},/* created_subscripion_index_events  */
 
       {'identifier':'payment_history_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'F5', 'requested_event_id':'e1', 'filter':{p2/* sender_acc_id */:'%%account%%'}, 'from_filter':{}}},/* payment_history_events  */
 
       {'identifier':'created_contract_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e1', 'filter':{p2/* object_type */:30/* contract_obj_id */}, 'from_filter':{}}},/* created_contract_events  */
 
       {'identifier':'entered_contract_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G52', 'requested_event_id':'e2', 'filter':{p2/* sender_acc */:'%%account%%', p3/* action */:3}, 'from_filter':{}}},/* entered_contract_events  */
-
-      {'identifier':'created_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))}, 'from_filter':{}}},/* created_index_events  */
 
       {'identifier':'all_contracts_proposals','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G5', 'requested_event_id':'e1', 'filter':{}, 'from_filter':{}}},/* all_contracts_proposals  */
 
@@ -22830,11 +22895,11 @@ class App extends Component {
 
       {'identifier':'all_responses','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p3/* context */:39}, 'from_filter':{}}},/* all_responses  */
 
-      {'identifier':'created_audio_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 19/* 19(audio_object) */, p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))}, 'from_filter':{}}},/* created_audio_events  */
+      {'identifier':'created_audio_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 19/* 19(audio_object) *//* , p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25')) */}, 'from_filter':{}}},/* created_audio_events  */
 
       {'identifier':'requests','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: 21}, 'from_filter':{}}},/* requests  */
 
-      {'identifier':'created_video_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 20/* 20(video_object) */, p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))}, 'from_filter':{}}},/* created_video_events  */
+      {'identifier':'created_video_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 20/* 20(video_object) *//* , p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25')) */}, 'from_filter':{}}},/* created_video_events  */
 
       {'identifier':'created_poll_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 28/* 28(poll-object) */, p1:this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))}, 'from_filter':{}}},/* created_poll_events  */
 
@@ -22857,7 +22922,13 @@ class App extends Component {
       {'identifier':'e33created','fetch_last_data':'all', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p2/* sender_acc_id */: '%%account%%', p3/* context */:33}, 'from_filter':{}}},/* e33created  */
 
       {'identifier':'all_my_main_contract_votes','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G52', 'requested_event_id':'e1', 'filter':{p3/* voter_account_id */: '%%account%%', p1/* contract_id */: 2}, 'from_filter':{}}},/* all_my_main_contract_votes  */
+
+      {'identifier':'hidden_objects','fetch_last_data':'last', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: '%%account%%', p3/* context */: 18}, 'from_filter':{}}},/* hidden_objects  */
+
+      {'identifier':'buy_album_video_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p2/* sender_acc_id */: '%%account%%', p1/* target_id */: 21}, 'from_filter':{}}},/* buy_album_video_events  */
+
     ]
+
   }
 
   start_get_accounts_for_specific_e5 = async (is_syncing, e5, should_skip_account_data, pre_launch_data) =>{
@@ -22901,6 +22972,12 @@ class App extends Component {
 
     return events
   }
+
+
+
+
+
+
 
   //needs revision
   load_event_data = async (_web3, contract_instance, event_id, e5, filter) => {
@@ -23040,6 +23117,9 @@ class App extends Component {
   }
 
   
+
+
+
 
   load_event_data_the_old_way = async (_web3, contract_instance, event_id, e5, f) => {
     var web3 = this.get_web3_instance_from_e5(e5)
@@ -23819,7 +23899,9 @@ class App extends Component {
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:17}],/* file_renewal */
       [web3, E52contractInstance, 'e4', e5, {p3/* context */:400}], /* nitro link data */
       [web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: account}],/* withdraw_event_data */
-      [web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: account}]/* pending_withdraw_event_data */
+      [web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: account}],/* pending_withdraw_event_data */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:18}],/* hidden_objects */
+      [web3, contractInstance, 'e4', e5, {p1/* sender_account_id */: account}]/* my_e5_runs */
     ]
     const all_basic_events = pre_launch_data[e5] != null ? 
     [
@@ -23844,6 +23926,8 @@ class App extends Component {
       pre_launch_data[e5]['nitro_link_data'],/* 18 */
       pre_launch_data[e5]['withdraw_event_data'],
       pre_launch_data[e5]['pending_withdraw_event_data'],
+      pre_launch_data[e5]['hidden_objects'],/* 21 */
+      pre_launch_data[e5]['my_e5_runs']
     ] : (await this.load_multiple_events_from_nitro(event_params2)).all_events
 
 
@@ -23897,7 +23981,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- EVENT DATA ------------------------------------------- */
-    this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0])
+    this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0], all_basic_events[22])
     // this.load_my_e5_runs_data(web3, contractInstance, e5, account)
 
     // if(is_syncing){
@@ -24106,6 +24190,17 @@ class App extends Component {
 
 
 
+
+
+    /* ------------------------------------ HIDDEN OBJECT DATA-------------------------- */
+    this.load_my_hidden_values_in_e5(web3,E52contractInstance, e5, account, all_basic_events[21])
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
+
+
     /* ---------------------------------------- SUBSCRIPTION DATA ------------------------------------------- */
     
 
@@ -24186,12 +24281,32 @@ class App extends Component {
 
     if(is_syncing) this.load_run_data(contractInstance, E52contractInstance, e5, web3, H52contractInstance, pre_launch_data);
 
-    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals']
+    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_subscripion_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals', 'buy_album_video_events']
+    
+    await this.wait(700);
 
     if(pre_launch_data[e5] != null){
       const saved_pre_launch_data_object = {}
       saved_pre_launch_data.forEach(target => {
-        saved_pre_launch_data_object[target] = pre_launch_data[e5][target]
+        if(target == 'created_audio_events'){
+          const final_events = this.sort_created_audio_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['buy_album_video_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else if(target == 'created_video_events'){
+          const final_events = this.sort_created_video_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['buy_album_video_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else if(target == 'created_index_events'){
+          const final_events = this.sort_created_contract_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['entered_contract_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else if(target == 'created_subscripion_index_events'){
+          const final_events = this.sort_created_audio_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['my_paid_subscription_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else{
+          saved_pre_launch_data_object[target] = pre_launch_data[e5][target]
+        }
       });
 
       var saved_pre_launch_events_clone = structuredClone(this.state.saved_pre_launch_events)
@@ -24212,6 +24327,86 @@ class App extends Component {
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
+  }
+
+  sort_created_audio_events_for_my_content(events, e5, buy_album_video_events){
+    var ids = []
+    buy_album_video_events.forEach(event_id => {
+      if(!ids.includes(event_id.returnValues.p3/* context */)){
+        ids.push(event_id.returnValues.p3/* context */)
+      }
+    });
+
+    const audio_events_with_my_purchase = events.filter(function (event) {
+      return (ids.includes(event.returnValues.p2/* item */.toString()))
+    })
+
+    const valid_post_index = this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))
+    const audio_events_with_required_hash = events.filter(function (event) {
+      return (!ids.includes(event.returnValues.p2/* item */.toString()) && event.returnValues.p1/* tag */ == valid_post_index)
+    })
+
+    return audio_events_with_my_purchase.concat(audio_events_with_required_hash)
+  }
+
+  sort_created_video_events_for_my_content(events, e5, buy_album_video_events){
+    var ids = []
+    buy_album_video_events.forEach(event_id => {
+      if(!ids.includes(event_id.returnValues.p3/* context */)){
+        ids.push(event_id.returnValues.p3/* context */)
+      }
+    });
+
+    const video_events_with_my_purchase = events.filter(function (event) {
+      return (ids.includes(event.returnValues.p2/* item */.toString()))
+    })
+
+    const valid_post_index = this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))
+    const video_events_with_required_hash = events.filter(function (event) {
+      return (!ids.includes(event.returnValues.p2/* item */.toString()) && event.returnValues.p1/* tag */ == valid_post_index)
+    })
+
+    return video_events_with_my_purchase.concat(video_events_with_required_hash)
+  }
+
+  sort_created_contract_events_for_my_content(events, e5, entered_contract_events){
+    var ids = []
+    entered_contract_events.forEach(event => {
+      if(!ids.includes(event.returnValues.p1)){
+        ids.push(event.returnValues.p1)
+      }
+    });
+
+    const object_events_with_my_purchase = events.filter(function (event) {
+      return (ids.includes(event.returnValues.p2/* item */.toString()))
+    })
+
+    const valid_post_index = this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))
+    const object_events_with_required_hash = events.filter(function (event) {
+      return (!ids.includes(event.returnValues.p2/* item */.toString()) && event.returnValues.p1/* tag */ == valid_post_index)
+    })
+
+    return object_events_with_my_purchase.concat(object_events_with_required_hash)
+  }
+
+  sort_created_subscription_events_for_my_content(events, e5, my_paid_subscription_events){
+    var ids = []
+    my_paid_subscription_events.forEach(event => {
+      if(!ids.includes(event.returnValues.p1)){
+        ids.push(event.returnValues.p1)
+      }
+    });
+
+    const object_events_with_my_purchase = events.filter(function (event) {
+      return (ids.includes(event.returnValues.p2/* item */.toString()))
+    })
+
+    const valid_post_index = this.get_valid_post_index(this.get_web3_instance_from_e5('E25'))
+    const object_events_with_required_hash = events.filter(function (event) {
+      return (!ids.includes(event.returnValues.p2/* item */.toString()) && event.returnValues.p1/* tag */ == valid_post_index)
+    })
+
+    return object_events_with_my_purchase.concat(object_events_with_required_hash)
   }
 
   isBase64(str) {
@@ -24335,14 +24530,14 @@ class App extends Component {
 
   }
 
-  load_all_e5_runs_data = async (web3, contractInstance, e5, account, pre_loaded_events) => {
+  load_all_e5_runs_data = async (web3, contractInstance, e5, account, pre_loaded_events, pre_loaded_events2) => {
     var events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, contractInstance, 'e4', e5, {})
     events = events.reverse()
     var clone = structuredClone(this.state.all_E5_runs)
     clone[e5] = events
     this.setState({all_E5_runs: clone});
 
-    this.filter_and_load_my_e5_runs_data(e5, account, events)
+    this.filter_and_load_my_e5_runs_data(e5, account, pre_loaded_events2)
   }
 
   filter_and_load_my_e5_runs_data(e5, account, events){
@@ -25488,6 +25683,35 @@ class App extends Component {
     }
   }
 
+  load_my_hidden_values_in_e5 = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
+    if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
+    var object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:18})
+
+    if(object_event_data.length > 0){
+      var latest_event = object_event_data[object_event_data.length - 1];
+      var object_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var loaded_objects = await this.decrypt_data(object_data['cypher'])
+      var timestamp = object_data['time']
+
+      const existing_audiopost_hidden = structuredClone(this.state.hidden_audioposts)
+      const existing_videopost_hidden = structuredClone(this.state.hidden_videoposts)
+      const audioposts = loaded_objects['audioposts']
+      const videoposts = loaded_objects['videoposts']
+
+      Object.assign(existing_audiopost_hidden, audioposts)
+      Object.assign(existing_videopost_hidden, videoposts)
+
+      if(this.my_hidden_objects_timestamp == null){
+        this.my_hidden_objects_timestamp = 0
+      }
+      
+      if(parseInt(this.my_hidden_objects_timestamp) < parseInt(timestamp)){
+        this.setState({hidden_audioposts: existing_audiopost_hidden, hidden_videoposts: existing_videopost_hidden})
+        this.my_hidden_objects_timestamp = timestamp
+      }
+    }
+  }
+
 
 
 
@@ -26436,7 +26660,7 @@ class App extends Component {
       var all_events = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5 || return_created_object_events_only == true) ? [
         this.state.saved_pre_launch_events[e5]['created_subscription_events'],
         this.state.saved_pre_launch_events[e5]['my_paid_subscription_events'],
-        this.state.saved_pre_launch_events[e5]['created_index_events'],
+        this.state.saved_pre_launch_events[e5]['created_subscripion_index_events'],
         this.state.saved_pre_launch_events[e5]['payment_history_events'],
       ] : await this.load_multiple_events_from_nitro(event_params).all_events
 
@@ -26450,7 +26674,7 @@ class App extends Component {
 
       my_paid_subscription_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account })
 
-      created_index_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3)})
+      created_index_events = await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3)})
 
       payment_history_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account})
     }

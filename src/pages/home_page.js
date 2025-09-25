@@ -356,10 +356,10 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264ae']/* 'my-responses' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1264k']/* 'audioport' */] = [
-              ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists 💽' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists 💽' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired ✅' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired ✅' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */], [1],[1]
         ]
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = [
             ['xor','',0], [this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
@@ -3023,7 +3023,7 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios))))))
+            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_audios = []
@@ -3032,7 +3032,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios)))))
+            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_audios = []
@@ -3041,7 +3041,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios)))))
+            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
             var my_added_album_ids = this.get_stack_albums().reverse()
@@ -3052,7 +3052,7 @@ class home_page extends Component {
                 if(obj != null) my_acquired_albums_in_stack.push(obj)
             }
             var my_acquired_albums = my_acquired_albums_in_stack.concat(this.props.app_state.my_acquired_audios.reverse())
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
+            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264m']/* 'playlists' */){
             return this.props.app_state.my_playlists
@@ -3071,10 +3071,18 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+            return this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios))))
+            return this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_audios)))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */){
+            const all_audios = this.get_all_sorted_objects(this.props.app_state.created_audios)
+            const hidden_audioposts_ids = Object.keys(this.props.app_state.hidden_audioposts)
+            const final_all_audios = all_audios.filter(function (object) {
+                return (hidden_audioposts_ids.includes(object['e5_id']))
+            })
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(final_all_audios)))))
         }
         else {
             var my_audios = []
@@ -3090,6 +3098,15 @@ class home_page extends Component {
             }
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_audios)))))
         }
+    }
+
+    filter_for_hidden_audioposts(objects){
+        const hidden = this.props.app_state.hidden_audioposts
+        const hidden_audioposts_ids = Object.keys(this.props.app_state.hidden_audioposts)
+        const final_all_audios = objects.filter(function (object) {
+            return (!hidden_audioposts_ids.includes(object['e5_id']) || hidden[object['e5_id']]['hide_audiopost'] == false)
+        })
+        return final_all_audios
     }
 
     get_stack_albums(){
@@ -3120,7 +3137,7 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_videos))))))
+            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_videos)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_videos = []
@@ -3129,7 +3146,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos)))))
+            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_videos = []
@@ -3138,7 +3155,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos)))))
+            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
             var my_added_videopost_ids = this.get_stack_videposts().reverse()
@@ -3149,7 +3166,7 @@ class home_page extends Component {
                 if(obj != null) my_stacked_videoposts.push(obj)
             }
             var my_acquired_albums = my_stacked_videoposts.concat(this.props.app_state.my_acquired_videos.reverse())
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))
+            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -3164,10 +3181,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
+            return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_videos))))
+            return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_videos)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -3180,7 +3197,15 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */){
+            var all_videos = this.get_all_sorted_objects(this.props.app_state.created_videos)
+            const hidden_videoposts_ids = Object.keys(this.props.app_state.hidden_videoposts)
+            const final_all_videos = all_videos.filter(function (object) {
+                return (hidden_videoposts_ids.includes(object['e5_id']))
+            })
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(final_all_videos)))))
         }
         else {
             var my_videos = []
@@ -3196,6 +3221,15 @@ class home_page extends Component {
             }
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_videos)))))
         }
+    }
+
+    filter_for_hidden_videoposts(objects){
+        const hidden = this.props.app_state.hidden_videoposts
+        const hidden_videoposts_ids = Object.keys(hidden)
+        const final_all_videos = objects.filter(function (object) {
+            return (!hidden_videoposts_ids.includes(object['e5_id']) || hidden[object['e5_id']]['hide_videopost'] == false)
+        })
+        return final_all_videos
     }
 
     get_stack_videposts(){

@@ -82,6 +82,8 @@ class DialogPage extends Component {
         
         new_vote_tags_object: this.get_new_vote_tags_object(), ignore_vote_wait_proposals:[],
         vote_tx_bundle_size:10, get_collect_bounties_tags_object: this.get_collect_bounties_tags_object(),
+
+        songs_to_hide_while_showing:[], videos_to_hide_while_showing:[],
     };
 
 
@@ -144,6 +146,13 @@ class DialogPage extends Component {
             })
         }else{
             this.setState({data: data, id: id})
+            
+            if(id == 'hide_audiopost_confirmation'){
+                this.auto_select_tracks_already_hidden(data)
+            }
+            else if(id == 'hide_videopost_confirmation'){
+                this.auto_select_videos_already_hidden(data)
+            }
         }
     }
 
@@ -388,7 +397,20 @@ class DialogPage extends Component {
                 </div>
             )
         }
-        
+        else if(option == 'hide_audiopost_confirmation'){
+            return(
+                <div>
+                    {this.render_hide_audiopost_confirmation_ui()}
+                </div>
+            )
+        }
+        else if(option == 'hide_videopost_confirmation'){
+            return(
+                <div>
+                    {this.render_hide_videopost_confirmation_ui()}
+                </div>
+            )
+        }
     }
 
 
@@ -7407,7 +7429,6 @@ return data['data']
         }
     }
 
-
     render_vote_wait_options_data(){
         return(
             <div>
@@ -7510,7 +7531,6 @@ return data['data']
         this.setState({ignore_vote_wait_proposals: clone})
     }
 
-
     vote_in_all_proposals(){
         const ignore_vote_wait_proposals = this.state.ignore_vote_wait_proposals
         const unfiltered_items = this.state.data['selected_proposals']
@@ -7559,6 +7579,252 @@ return data['data']
         }
         return result;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_hide_audiopost_confirmation_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_hide_audiopost_confirmation_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_hide_audiopost_confirmation_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_hide_audiopost_confirmation_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_hide_audiopost_confirmation_data(){
+        const songs_to_hide = this.state.data['songs_to_hide']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055fr']/* 'Hide Tracks in Audiopost' */, 'details':this.props.app_state.loc['3055fs']/* 'Select the tracks you wish to hide from your collection.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+                {songs_to_hide.map((item, index) => (
+                    <div key={index}>
+                        {this.render_song(item)} 
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.confirm_hide_audiopost()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ft']/* 'Confirm' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    render_song(item){
+        var explicit_selection = item['explicit'] == null ? 0 : this.get_selected_item2(item['explicit'], 'e')
+        var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
+        var song_title = explicit_text + item['song_title']
+        var song_details = item['song_composer']
+        var opacity = this.state.songs_to_hide_while_showing.includes(item['song_id']) ? 0.6 : 1.0
+        return(
+            <div style={{'opacity':opacity}} onClick={() => this.when_song_to_hide_tapped(item)}>
+                {this.render_detail_item('3', {'title':song_title, 'details':song_details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_song_to_hide_tapped(item){
+        var clone = this.state.songs_to_hide_while_showing.slice()
+        const index = clone.indexOf(item['song_id'])
+        if(index == -1){
+            clone.push(item['song_id'])
+        }else{
+            clone.splice(index, 1)
+        }
+        this.setState({songs_to_hide_while_showing: clone})
+    }
+
+    auto_select_tracks_already_hidden(data){
+        const object = data['object']
+        const hidden_object_data = this.props.app_state.hidden_audioposts[object['e5_id']]
+        if(hidden_object_data != null){
+            const hidden_songs = hidden_object_data['song_ids']
+            const clone = this.state.songs_to_hide_while_showing.slice()
+            hidden_songs.forEach(item => {
+                clone.push(item)
+            });
+            this.setState({songs_to_hide_while_showing: clone})
+        }
+    }
+
+    confirm_hide_audiopost(){
+        const object = this.state.data['object']
+        const songs_to_hide = this.state.data['songs_to_hide']
+        const songs_to_hide_while_showing = this.state.songs_to_hide_while_showing
+        const final_songs_to_hide = songs_to_hide.filter(function (song) {
+            return (songs_to_hide_while_showing.includes(song['song_id']))
+        })
+        this.props.hide_audiopost_tracks(object, final_songs_to_hide)
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_hide_videopost_confirmation_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_hide_videopost_confirmation_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_hide_videopost_confirmation_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_hide_videopost_confirmation_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_hide_videopost_confirmation_data(){
+        const videos_to_hide = this.state.data['videos_to_hide']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055fu']/* 'Hide Tracks in Videopost' */, 'details':this.props.app_state.loc['3055fv']/* 'Select the videos you wish to hide from your collection.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+                {videos_to_hide.map((item, index) => (
+                    <div key={index}>
+                        {this.render_video(item)} 
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.confirm_hide_videopost()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ft']/* 'Confirm' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    render_video(item){
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        var opacity = this.state.videos_to_hide_while_showing.includes(item['video_id']) ? 0.6 : 1.0
+        if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+            var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+            return(
+                <div onClick={() => this.when_video_to_hide_tapped(item)} style={{'opacity':opacity}}>
+                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title'], 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.when_video_to_hide_tapped(item)} style={{'opacity':opacity}}>
+                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title'], 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_video_to_hide_tapped(item){
+        var clone = this.state.videos_to_hide_while_showing.slice()
+        const index = clone.indexOf(item['video_id'])
+        if(index == -1){
+            clone.push(item['video_id'])
+        }else{
+            clone.splice(index, 1)
+        }
+        this.setState({videos_to_hide_while_showing: clone})
+    }
+
+    auto_select_videos_already_hidden(data){
+        const object = data['object']
+        const hidden_object_data = this.props.app_state.hidden_videoposts[object['e5_id']]
+        if(hidden_object_data != null){
+            const hidden_videos = hidden_object_data['video_ids']
+            const clone = this.state.videos_to_hide_while_showing.slice()
+            hidden_videos.forEach(item => {
+                clone.push(item)
+            });
+            this.setState({videos_to_hide_while_showing: clone})
+        }
+    }
+
+    confirm_hide_videopost(){
+        const object = this.state.data['object']
+        const videos_to_hide = this.state.data['videos_to_hide']
+        const videos_to_hide_while_showing = this.state.videos_to_hide_while_showing
+        const final_videos_to_hide = videos_to_hide.filter(function (video) {
+            return (videos_to_hide_while_showing.includes(video['video_id']))
+        })
+        this.props.hide_videopost_tracks(object, final_videos_to_hide)
+    }
+
+
+
 
 
 

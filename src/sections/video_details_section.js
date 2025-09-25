@@ -318,12 +318,9 @@ class VideoDetailsSection extends Component {
 
                     {this.render_discography(object)}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['b2527a']/* 'Play Videopost' */, 'details':this.props.app_state.loc['b2527b']/* 'Play all the videos in this videopost.' */})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=> this.play_album(object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['b2527a']/* 'Play Videopost.' */, 'action':''},)}
-                    </div>
+                    {this.render_play_object_button(object)}
+
+                    {this.hide_videos_in_object_button(object)}
 
                     {this.render_edit_object_button(object)}
 
@@ -1077,6 +1074,42 @@ class VideoDetailsSection extends Component {
         if(selected_nsfw_option == 1) return true
     }
 
+    render_play_object_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['b2527a']/* 'Play Videopost' */, 'details':this.props.app_state.loc['b2527b']/* 'Play all the videos in this videopost.' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.play_album(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['b2527a']/* 'Play Videopost.' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    hide_videos_in_object_button(object){
+        if(this.is_page_my_collection_page()){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['b2527u']/* `🗑️ Hide/Show Videopost Tracks` */, 'details':this.props.app_state.loc['b2527v']/* `Hide or show the videos youve added in this videopost.` */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_hide_videopost_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527cj']/* 'Hide/Show' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_hide_videopost_ui(object){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        var videos = this.get_videos_to_display(object)
+        this.props.show_dialog_bottomsheet({'object':object, 'videos_to_hide':videos}, 'hide_videopost_confirmation')
+    }
+
     render_edit_object_button(object){
         // var object = this.get_post_items()[this.props.selected_audio_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
@@ -1289,11 +1322,30 @@ class VideoDetailsSection extends Component {
             var videos_to_display = []
             var items = object['ipfs'].videos
             items.forEach(video => {
-                if(this.is_video_available_for_viewing(video)) videos_to_display.push(video)
+                if(this.is_video_available_for_viewing(video) && !this.is_video_hidden_from_my_view(object, video)) videos_to_display.push(video)
             });
             return videos_to_display
-        }else{
+        }
+        else if(this.is_page_my_hidden_page()){
+            var videos_to_display = []
+            var items = object['ipfs'].videos
+            items.forEach(video => {
+                if(this.is_video_available_for_viewing(video) && this.is_video_hidden_from_my_view(object, video)) videos_to_display.push(video)
+            });
+            return videos_to_display
+        }
+        else{
             return object['ipfs'].videos
+        }
+    }
+
+    is_video_hidden_from_my_view(object, video){
+        const hidden_object_data = this.props.app_state.hidden_videoposts[object['e5_id']]
+        if(hidden_object_data != null){
+            const hidden_videos = hidden_object_data['video_ids']
+            return hidden_videos.includes(video['video_id'])
+        }else{
+            return false
         }
     }
 
@@ -1322,6 +1374,15 @@ class VideoDetailsSection extends Component {
     is_page_my_collection_page(){
         var page_id = this.props.get_page_id()
         var my_collection_page_id = this.props.app_state.loc['1264p']/* 'videoport' */ + this.props.app_state.loc['1264l']/* 'acquired' */
+        if(page_id == my_collection_page_id){
+            return true
+        }
+        return false
+    }
+
+    is_page_my_hidden_page(){
+        var page_id = this.props.get_page_id()
+        var my_collection_page_id = this.props.app_state.loc['1264p']/* 'videoport' */ + this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */
         if(page_id == my_collection_page_id){
             return true
         }
