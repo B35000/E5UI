@@ -19,12 +19,11 @@
 import React from 'react';
 
 class Slider extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: 0,
-        };
-    }
+
+    state = {
+        value: 0,
+        animate: false,
+    };
 
     handleNumber = (number) => {
         this.setState({value: number.target.value})
@@ -32,6 +31,10 @@ class Slider extends React.Component {
     }
 
     when_button_clicked = (event) => {
+        this.setState({ animate: true }, () => {
+            setTimeout(() => this.setState({ animate: false }), 200); // match animation duration
+        });
+
         let me = this;
         if(Date.now() - this.last_all_click_time < 400){
             me.props.unitDecrease()
@@ -48,7 +51,17 @@ class Slider extends React.Component {
     render(){
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px'}}>
-                <div style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px' }} onClick={(e) => this.when_button_clicked(e)}></div>
+                <style>{`
+                    .button-click {
+                        animation: clickAnim 0.2s ease;
+                    }
+                    @keyframes clickAnim {
+                        0%   { transform: scale(1); background-color: ${this.props.theme['bar_background_color']}; }
+                        50%  { transform: scale(0.95); background-color: ${this.props.theme['slider_color']}; }
+                        100% { transform: scale(1); background-color: ${this.props.theme['bar_background_color']}; }
+                    }
+                `}</style>
+                <div ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
 
                 <div style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
 

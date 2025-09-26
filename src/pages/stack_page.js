@@ -37,6 +37,7 @@ import imageCompression from 'browser-image-compression';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { constants } from 'buffer';
+import media_processors from '../resources/media_processors';
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -10640,7 +10641,7 @@ class StackPage extends Component {
 
                 
                 {/* preferred E5 */}
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
                 <div style={{height: 10}}/>
                 {this.load_preferred_e5_ui()}
                 {this.render_detail_item('0')}
@@ -14161,7 +14162,7 @@ class StackPage extends Component {
                     const audioType = audioFile.type
                     const duration = await this.get_audio_duration(audioFile)
                     const chunk_duration = duration < 35 ? duration : 35
-                    const timeToByteMap = await this.buildTimeToByteMap(audioFile, chunk_duration)
+                    const timeToByteMap = await media_processors.buildTimeToByteMap(audioFile, chunk_duration)
                     if(timeToByteMap == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
                         continue;
@@ -14170,27 +14171,33 @@ class StackPage extends Component {
                     const encrypted_file_data = encrypted_file_data_object.encryptedChunks
                     const encrypted_file_data_info = encrypted_file_data_object.encryptedChunksInfo
                     const size = this.props.get_encrypted_file_size(encrypted_file_data)
-                    
+                    var is_loading_mp3_file = true;
                     var me = this
                     parseBlob(audioFile).then(metadata => {
                         me.compressImageFromFile(me.get_audio_file_image(metadata)).then(async metadata_image => {
-                            const metadata = me.process_metadata(metadata)
+                            const processed_metadata = me.process_metadata(metadata)
                             // reader.readAsDataURL(audioFile);
                             const obj = { 
-                                'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':await me.props.encrypt_data_string(JSON.stringify(metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': await me.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension,
+                                'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata':await me.props.encrypt_data_string(JSON.stringify(processed_metadata), password), 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': await me.props.encrypt_data_string(metadata_image, password), 'encrypted':true, 'duration':duration, 'extension':extension,
                                 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info':  await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password),
-                                'audio_type':audioType, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)
+                                'audio_type':audioType, 'author':me.props.hash_data_with_randomizer(me.props.app_state.accounts['E25'].address)
                             }
                             files_to_upload.push(obj)
+                            is_loading_mp3_file = false;
                         })
                     }).catch(async err => {
                         console.error('Error parsing metadata:', err);
                         // reader.readAsDataURL(audioFile);
                         const obj = { 
-                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password), 'audio_type':audioType, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)
+                            'data':me.props.process_encrypted_chunks(encrypted_file_data), 'size': size, 'id':time_in_mills, 'type':type, 'name': file_name, 'data_type':type, 'metadata': null, 'nitro':selected_nitro_item, 'binary_size':size, 'thumbnail': null, 'encrypted':true, 'duration':duration, 'extension':extension, 'timeToByteMap':timeToByteMap, 'encrypted_file_data_info': await me.props.encrypt_data_string(JSON.stringify(encrypted_file_data_info), password), 'audio_type':audioType, 'author':me.props.hash_data_with_randomizer(me.props.app_state.accounts['E25'].address)
                         }
                         files_to_upload.push(obj)
+                        is_loading_mp3_file = false;
                     });
+                    while (is_loading_mp3_file == true) {
+                        if (is_loading_mp3_file == false) break
+                        await new Promise(resolve => setTimeout(resolve, 1000))
+                    }
                 }
                 else if(type == 'video'){
                     var videoFile = e.target.files[i];
@@ -14198,8 +14205,8 @@ class StackPage extends Component {
                     const duration = await this.get_video_duration(videoFile)
                     const videoType = videoFile.type;
                     const chunk_duration = duration < 53 ? duration : 53
-                    const codec = await this.extractMP4Codec(videoFile)
-                    const timeToByteMap = await this.buildVideoTimeToByteMap(videoFile, chunk_duration)
+                    const codec = await media_processors.extractMP4Codec(videoFile)
+                    const timeToByteMap = await media_processors.buildVideoTimeToByteMap(videoFile, chunk_duration)
                     if(timeToByteMap == null || codec == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
                         continue;
@@ -14409,667 +14416,670 @@ class StackPage extends Component {
         });
     }
 
-    readChunk = async (file, offset, size) => {
-        const actualSize = Math.min(size, file.size - offset);
-        const slice = file.slice(offset, offset + actualSize);
-        return await slice.arrayBuffer();
-    };
+    // readChunk = async (file, offset, size) => {
+    //     const actualSize = Math.min(size, file.size - offset);
+    //     const slice = file.slice(offset, offset + actualSize);
+    //     return await slice.arrayBuffer();
+    // };
 
-    getFrameDuration = (header) => {
-        const sampleRates = [44100, 48000, 32000];
-        const sampleRateIndex = (header >> 10) & 0x3;
-        const sampleRate = sampleRates[sampleRateIndex];
-        return 1152 / sampleRate;
-    };
+    // getFrameDuration = (header) => {
+    //     const sampleRates = [44100, 48000, 32000];
+    //     const sampleRateIndex = (header >> 10) & 0x3;
+    //     const sampleRate = sampleRates[sampleRateIndex];
+    //     return 1152 / sampleRate;
+    // };
 
-    getFrameSize = (header) => {
-        const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
-        const sampleRates = [44100, 48000, 32000];
+    // getFrameSize = (header) => {
+    //     const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+    //     const sampleRates = [44100, 48000, 32000];
 
-        const bitrateIndex = (header >> 12) & 0xF;
-        const sampleRateIndex = (header >> 10) & 0x3;
-        const padding = (header >> 9) & 0x1;
+    //     const bitrateIndex = (header >> 12) & 0xF;
+    //     const sampleRateIndex = (header >> 10) & 0x3;
+    //     const padding = (header >> 9) & 0x1;
 
-        const bitrate = bitrates[bitrateIndex] * 1000;
-        const sampleRate = sampleRates[sampleRateIndex];
+    //     const bitrate = bitrates[bitrateIndex] * 1000;
+    //     const sampleRate = sampleRates[sampleRateIndex];
 
-        return Math.floor((144 * bitrate) / sampleRate) + padding;
-    };
+    //     return Math.floor((144 * bitrate) / sampleRate) + padding;
+    // };
 
-    isValidMP3Header = (header) => {
-        if ((header & 0xFFE00000) !== 0xFFE00000) return false;
-        const version = (header >> 19) & 0x3;
-        if (version === 1) return false;
-        const layer = (header >> 17) & 0x3;
-        if (layer === 0) return false;
-        const bitrateIndex = (header >> 12) & 0xF;
-        if (bitrateIndex === 0 || bitrateIndex === 15) return false;
-        const sampleRateIndex = (header >> 10) & 0x3;
-        if (sampleRateIndex === 3) return false;
-        return true;
-    };
+    // isValidMP3Header = (header) => {
+    //     if ((header & 0xFFE00000) !== 0xFFE00000) return false;
+    //     const version = (header >> 19) & 0x3;
+    //     if (version === 1) return false;
+    //     const layer = (header >> 17) & 0x3;
+    //     if (layer === 0) return false;
+    //     const bitrateIndex = (header >> 12) & 0xF;
+    //     if (bitrateIndex === 0 || bitrateIndex === 15) return false;
+    //     const sampleRateIndex = (header >> 10) & 0x3;
+    //     if (sampleRateIndex === 3) return false;
+    //     return true;
+    // };
 
-    findFramesInChunk = (arrayBuffer) => {
-        const frames = [];
-        const view = new DataView(arrayBuffer);
+    // findFramesInChunk = (arrayBuffer) => {
+    //     const frames = [];
+    //     const view = new DataView(arrayBuffer);
 
-        for (let i = 0; i < arrayBuffer.byteLength - 4; i++) {
-        const header = view.getUint32(i, false);
+    //     for (let i = 0; i < arrayBuffer.byteLength - 4; i++) {
+    //         const header = view.getUint32(i, false);
 
-            if (this.isValidMP3Header(header)) {
-                const frameSize = this.getFrameSize(header);
-                if (frameSize > 0 && frameSize < arrayBuffer.byteLength - i) {
-                    frames.push({
-                        offset: i,
-                        header: header,
-                        size: frameSize
-                    });
-                    i += Math.max(frameSize - 1, 0);
-                }
-            }
-        }
+    //         if (this.isValidMP3Header(header)) {
+    //             const frameSize = this.getFrameSize(header);
+    //             if (frameSize > 0 && frameSize < arrayBuffer.byteLength - i) {
+    //                 frames.push({
+    //                     offset: i,
+    //                     header: header,
+    //                     size: frameSize
+    //                 });
+    //                 i += Math.max(frameSize - 1, 0);
+    //             }
+    //         }else{
+    //             console.log()
+    //         }
+    //     }
 
-        return frames;
-    };
+    //     return frames;
+    // };
 
-    getFrameBitrate = (header) => {
-        const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
-        const bitrateIndex = (header >> 12) & 0xF;
-        return bitrates[bitrateIndex];
-    };
+    // getFrameBitrate = (header) => {
+    //     const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+    //     const bitrateIndex = (header >> 12) & 0xF;
+    //     return bitrates[bitrateIndex];
+    // };
 
-    parseFrameHeader = (header) => {
-        const version = (header >> 19) & 0x3;
-        const layer = (header >> 17) & 0x3;
-        const bitrateIndex = (header >> 12) & 0xF;
-        const sampleRateIndex = (header >> 10) & 0x3;
-        const channelMode = (header >> 6) & 0x3;
+    // parseFrameHeader = (header) => {
+    //     const version = (header >> 19) & 0x3;
+    //     const layer = (header >> 17) & 0x3;
+    //     const bitrateIndex = (header >> 12) & 0xF;
+    //     const sampleRateIndex = (header >> 10) & 0x3;
+    //     const channelMode = (header >> 6) & 0x3;
 
-        const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
-        const sampleRates = [44100, 48000, 32000];
-        const channelModes = ['Stereo', 'Joint Stereo', 'Dual Channel', 'Mono'];
+    //     const bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+    //     const sampleRates = [44100, 48000, 32000];
+    //     const channelModes = ['Stereo', 'Joint Stereo', 'Dual Channel', 'Mono'];
 
-        return {
-            version,
-            layer,
-            bitrate: bitrates[bitrateIndex],
-            sampleRate: sampleRates[sampleRateIndex],
-            channelMode: channelModes[channelMode]
-        };
-    };
+    //     return {
+    //         version,
+    //         layer,
+    //         bitrate: bitrates[bitrateIndex],
+    //         sampleRate: sampleRates[sampleRateIndex],
+    //         channelMode: channelModes[channelMode]
+    //     };
+    // };
 
-    getSideInfoSize = (header) => {
-        const version = (header >> 19) & 0x3;
-        const mode = (header >> 6) & 0x3;
+    // getSideInfoSize = (header) => {
+    //     const version = (header >> 19) & 0x3;
+    //     const mode = (header >> 6) & 0x3;
         
-        if (version === 3) { // MPEG 1
-            return mode === 3 ? 17 : 32;
-        } else { // MPEG 2/2.5
-            return mode === 3 ? 9 : 17;
-        }
-    };
+    //     if (version === 3) { // MPEG 1
+    //         return mode === 3 ? 17 : 32;
+    //     } else { // MPEG 2/2.5
+    //         return mode === 3 ? 9 : 17;
+    //     }
+    // };
 
-    parseXingHeader = (arrayBuffer, offset) => {
-        const view = new DataView(arrayBuffer);
-        const flags = view.getUint32(offset + 4, false);
-        let pos = offset + 8;
+    // parseXingHeader = (arrayBuffer, offset) => {
+    //     const view = new DataView(arrayBuffer);
+    //     const flags = view.getUint32(offset + 4, false);
+    //     let pos = offset + 8;
         
-        const vbrInfo = { type: 'Xing' };
+    //     const vbrInfo = { type: 'Xing' };
         
-        if (flags & 0x01) {
-            vbrInfo.frames = view.getUint32(pos, false);
-            pos += 4;
-        }
+    //     if (flags & 0x01) {
+    //         vbrInfo.frames = view.getUint32(pos, false);
+    //         pos += 4;
+    //     }
         
-        if (flags & 0x02) {
-            vbrInfo.bytes = view.getUint32(pos, false);
-            pos += 4;
-        }
+    //     if (flags & 0x02) {
+    //         vbrInfo.bytes = view.getUint32(pos, false);
+    //         pos += 4;
+    //     }
         
-        return vbrInfo;
-    };
+    //     return vbrInfo;
+    // };
 
-    findVBRHeader = (arrayBuffer) => {
-        const view = new DataView(arrayBuffer);
-        for (let i = 0; i < arrayBuffer.byteLength - 8; i++) {
-            const header = view.getUint32(i, false);
+    // findVBRHeader = (arrayBuffer) => {
+    //     const view = new DataView(arrayBuffer);
+    //     for (let i = 0; i < arrayBuffer.byteLength - 8; i++) {
+    //         const header = view.getUint32(i, false);
             
-            if ((header & 0xFFE00000) === 0xFFE00000) {
-                const frameStart = i;
-                let vbrOffset = frameStart + 4 + this.getSideInfoSize(header);
+    //         if ((header & 0xFFE00000) === 0xFFE00000) {
+    //             const frameStart = i;
+    //             let vbrOffset = frameStart + 4 + this.getSideInfoSize(header);
                 
-                if (vbrOffset + 4 < arrayBuffer.byteLength) {
-                    const tag = new TextDecoder().decode(
-                        new Uint8Array(arrayBuffer, vbrOffset, 4)
-                    );
+    //             if (vbrOffset + 4 < arrayBuffer.byteLength) {
+    //                 const tag = new TextDecoder().decode(
+    //                     new Uint8Array(arrayBuffer, vbrOffset, 4)
+    //                 );
                     
-                    if (tag === 'Xing' || tag === 'Info') {
-                        return this.parseXingHeader(arrayBuffer, vbrOffset);
-                    }
-                }
-            }
-        }
-        return null;
-    };
+    //                 if (tag === 'Xing' || tag === 'Info') {
+    //                     return this.parseXingHeader(arrayBuffer, vbrOffset);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return null;
+    // };
 
-    buildVBRSeekTable = async (file, intervalSeconds) => {
-        const timeToByteMap = [];
-        let currentTime = 0;
-        let nextTargetTime = 0;
+    // buildVBRSeekTable = async (file, intervalSeconds) => {
+    //     const timeToByteMap = [];
+    //     let currentTime = 0;
+    //     let nextTargetTime = 0;
         
-        const SCAN_CHUNK_SIZE = 64 * 1024;
-        let fileOffset = 0;
-        const totalSize = file.size;
-        let framesFound = 0;
+    //     const SCAN_CHUNK_SIZE = 64 * 1024;
+    //     let fileOffset = 0;
+    //     const totalSize = file.size;
+    //     let framesFound = 0;
 
-        while (fileOffset < totalSize && currentTime < nextTargetTime + intervalSeconds * 10) {
-            const chunk = await this.readChunk(file, fileOffset, SCAN_CHUNK_SIZE);
-            const frames = this.findFramesInChunk(chunk);
+    //     while (fileOffset < totalSize && currentTime < nextTargetTime + intervalSeconds * 10) {
+    //         const chunk = await this.readChunk(file, fileOffset, SCAN_CHUNK_SIZE);
+    //         const frames = this.findFramesInChunk(chunk);
             
-            for (const frame of frames) {
-                const absoluteBytePos = fileOffset + frame.offset;
-                framesFound++;
+    //         for (const frame of frames) {
+    //             const absoluteBytePos = fileOffset + frame.offset;
+    //             framesFound++;
 
-                if (currentTime >= nextTargetTime) {
-                    timeToByteMap.push([nextTargetTime, absoluteBytePos]);
-                    nextTargetTime += intervalSeconds;
-                }
-                currentTime += this.getFrameDuration(frame.header);
-                if (timeToByteMap.length >= 50) break; // Reasonable limit
-            }
+    //             if (currentTime >= nextTargetTime) {
+    //                 timeToByteMap.push([nextTargetTime, absoluteBytePos]);
+    //                 nextTargetTime += intervalSeconds;
+    //             }
+    //             currentTime += this.getFrameDuration(frame.header);
+    //             if (timeToByteMap.length >= 50) break; // Reasonable limit
+    //         }
 
-            fileOffset += SCAN_CHUNK_SIZE;
-        }
+    //         fileOffset += SCAN_CHUNK_SIZE;
+    //     }
 
-        return timeToByteMap;
-    };
+    //     return timeToByteMap;
+    // };
 
-    buildCBRSeekTable = async (file, fileInfo, intervalSeconds) => {
-        const timeToByteMap = [];
+    // buildCBRSeekTable = async (file, fileInfo, intervalSeconds) => {
+    //     const timeToByteMap = [];
         
-        // Calculate basic parameters
-        const bytesPerSecond = (fileInfo.bitrate * 1000) / 8; // Convert kbps to bytes/sec
-        const duration = (file.size * 8) / (fileInfo.bitrate * 1000); // Total duration in seconds
+    //     // Calculate basic parameters
+    //     const bytesPerSecond = (fileInfo.bitrate * 1000) / 8; // Convert kbps to bytes/sec
+    //     const duration = (file.size * 8) / (fileInfo.bitrate * 1000); // Total duration in seconds
 
-        // Find first frame to get accurate starting position
-        const headerChunk = await this.readChunk(file, 0, 4096);
-        const frames = this.findFramesInChunk(headerChunk);
-        const audioStart = frames.length > 0 ? frames[0].offset : 0;
+    //     // Find first frame to get accurate starting position
+    //     const headerChunk = await this.readChunk(file, 0, 4096);
+    //     const frames = this.findFramesInChunk(headerChunk);
+    //     const audioStart = frames.length > 0 ? frames[0].offset : 0;
 
-        // Generate seek points mathematically
-        for (let time = 0; time <= duration; time += intervalSeconds) {
-            const bytePosition = audioStart + Math.floor(time * bytesPerSecond);
+    //     // Generate seek points mathematically
+    //     for (let time = 0; time <= duration; time += intervalSeconds) {
+    //         const bytePosition = audioStart + Math.floor(time * bytesPerSecond);
             
-            // Ensure we don't exceed file size
-            if (bytePosition < file.size) {
-                timeToByteMap.push([time, bytePosition]);
-            }
-        }
+    //         // Ensure we don't exceed file size
+    //         if (bytePosition < file.size) {
+    //             timeToByteMap.push([time, bytePosition]);
+    //         }
+    //     }
 
-        return timeToByteMap;
-    };
+    //     return timeToByteMap;
+    // };
 
-    analyzeMP3File = async (file) => {
-        const SAMPLE_SIZE = 128 * 1024; // Sample first 128KB
-        const chunk = await this.readChunk(file, 0, SAMPLE_SIZE);
+    // analyzeMP3File = async (file) => {
+    //     const SAMPLE_SIZE = 1024 * 1024; // Sample first 128KB 1MB
+    //     const chunk = await this.readChunk(file, 0, SAMPLE_SIZE);
         
-        // Look for VBR header first
-        const vbrHeader = this.findVBRHeader(chunk);
-        if (vbrHeader) {
-            return {
-                isCBR: false,
-                hasVBRHeader: true,
-                vbrInfo: vbrHeader,
-                totalFrames: vbrHeader.frames,
-                totalBytes: vbrHeader.bytes || file.size
-            };
-        }
+    //     // Look for VBR header first
+    //     const vbrHeader = this.findVBRHeader(chunk);
+    //     if (vbrHeader) {
+    //         return {
+    //             isCBR: false,
+    //             hasVBRHeader: true,
+    //             vbrInfo: vbrHeader,
+    //             totalFrames: vbrHeader.frames,
+    //             totalBytes: vbrHeader.bytes || file.size
+    //         };
+    //     }
 
-        // Sample multiple frames to check bitrate consistency
-        const frames = this.findFramesInChunk(chunk);
-        if (frames.length < 3) {
-            console.log('stackpage','Could not find enough MP3 frames to analyze');
-            return;
-        }
+    //     // Sample multiple frames to check bitrate consistency
+    //     const frames = this.findFramesInChunk(chunk);
+    //     console.log('frames', frames)
+    //     if (frames.length < 3) {
+    //         console.log('stackpage','Could not find enough MP3 frames to analyze');
+    //         return;
+    //     }
 
-        const bitrates = frames.slice(0, 10).map(frame => this.getFrameBitrate(frame.header));
-        const uniqueBitrates = [...new Set(bitrates)];
+    //     const bitrates = frames.slice(0, 10).map(frame => this.getFrameBitrate(frame.header));
+    //     const uniqueBitrates = [...new Set(bitrates)];
         
-        const firstFrame = frames[0];
-        const frameInfo = this.parseFrameHeader(firstFrame.header);
+    //     const firstFrame = frames[0];
+    //     const frameInfo = this.parseFrameHeader(firstFrame.header);
 
-        return {
-            isCBR: uniqueBitrates.length === 1,
-            hasVBRHeader: false,
-            bitrate: bitrates[0],
-            sampleRate: frameInfo.sampleRate,
-            channelMode: frameInfo.channelMode,
-            samplesPerFrame: 1152, // Standard for MP3
-            frameSize: this.getFrameSize(firstFrame.header),
-            averageBitrate: bitrates.reduce((a, b) => a + b, 0) / bitrates.length
-        };
-    };
+    //     return {
+    //         isCBR: uniqueBitrates.length === 1,
+    //         hasVBRHeader: false,
+    //         bitrate: bitrates[0],
+    //         sampleRate: frameInfo.sampleRate,
+    //         channelMode: frameInfo.channelMode,
+    //         samplesPerFrame: 1152, // Standard for MP3
+    //         frameSize: this.getFrameSize(firstFrame.header),
+    //         averageBitrate: bitrates.reduce((a, b) => a + b, 0) / bitrates.length
+    //     };
+    // };
 
-    buildTimeToByteMap = async (file, intervalSeconds) => {
-        try{
-            const fileInfo = await this.analyzeMP3File(file);
-            let seekTable;
-            if (fileInfo.isCBR) {
-                seekTable = await this.buildCBRSeekTable(file, fileInfo, intervalSeconds);
-            } else {
-                seekTable = await this.buildVBRSeekTable(file, intervalSeconds);
-            }
-            return new Map(seekTable)
-        }
-        catch(e){
-            console.log('stackpage', 'something went wrong while building timeToByteMap', e)
-        }
-    }
-
-
+    // buildTimeToByteMap = async (file, intervalSeconds) => {
+    //     try{
+    //         const fileInfo = await this.analyzeMP3File(file);
+    //         let seekTable;
+    //         if (fileInfo.isCBR) {
+    //             seekTable = await this.buildCBRSeekTable(file, fileInfo, intervalSeconds);
+    //         } else {
+    //             seekTable = await this.buildVBRSeekTable(file, intervalSeconds);
+    //         }
+    //         return new Map(seekTable)
+    //     }
+    //     catch(e){
+    //         console.log('stackpage', 'something went wrong while building timeToByteMap', e)
+    //     }
+    // }
 
 
-    buildSeekTableLinear = async (file, intervalSeconds) => {
-        const timeToByteMap = [];
-        const estimatedDuration = file.size / (2 * 1024 * 1024); // Assume ~2MB/s average
-        for (let time = 0; time <= estimatedDuration; time += intervalSeconds) {
-            const timeRatio = time / estimatedDuration;
-            const bytePosition = Math.floor(timeRatio * file.size);
-            timeToByteMap.push([time, bytePosition]);
-        }
-        return timeToByteMap;
-    };
 
-    // Build seek table using sample-based estimation
-    buildSeekTableFromSamples = async (file, mp4Info, intervalSeconds) => {
-        const timeToByteMap = [];
-        const duration = mp4Info.duration;
+
+    // buildSeekTableLinear = async (file, intervalSeconds) => {
+    //     const timeToByteMap = [];
+    //     const estimatedDuration = file.size / (2 * 1024 * 1024); // Assume ~2MB/s average
+    //     for (let time = 0; time <= estimatedDuration; time += intervalSeconds) {
+    //         const timeRatio = time / estimatedDuration;
+    //         const bytePosition = Math.floor(timeRatio * file.size);
+    //         timeToByteMap.push([time, bytePosition]);
+    //     }
+    //     return timeToByteMap;
+    // };
+
+    // // Build seek table using sample-based estimation
+    // buildSeekTableFromSamples = async (file, mp4Info, intervalSeconds) => {
+    //     const timeToByteMap = [];
+    //     const duration = mp4Info.duration;
         
-        if (!duration || duration <= 0) {
-            // Fallback to linear byte estimation
-            return this.buildSeekTableLinear(file, intervalSeconds);
-        }
+    //     if (!duration || duration <= 0) {
+    //         // Fallback to linear byte estimation
+    //         return this.buildSeekTableLinear(file, intervalSeconds);
+    //     }
         
-        // Calculate approximate data rate
-        const dataSize = file.size - mp4Info.moovPosition; // Approximate data size
+    //     // Calculate approximate data rate
+    //     const dataSize = file.size - mp4Info.moovPosition; // Approximate data size
 
-        for (let time = 0; time <= duration; time += intervalSeconds) {
-            // Estimate byte position based on time ratio and average bitrate
-            const timeRatio = time / duration;
-            // Start from mdat position (actual video data)
-            const estimatedBytePos = mp4Info.mdatPosition + Math.floor(timeRatio * dataSize);
-            // Ensure we don't exceed file size
-            const bytePosition = Math.min(estimatedBytePos, file.size - 1);
+    //     for (let time = 0; time <= duration; time += intervalSeconds) {
+    //         // Estimate byte position based on time ratio and average bitrate
+    //         const timeRatio = time / duration;
+    //         // Start from mdat position (actual video data)
+    //         const estimatedBytePos = mp4Info.mdatPosition + Math.floor(timeRatio * dataSize);
+    //         // Ensure we don't exceed file size
+    //         const bytePosition = Math.min(estimatedBytePos, file.size - 1);
             
-            timeToByteMap.push([time, bytePosition]);
-        }
+    //         timeToByteMap.push([time, bytePosition]);
+    //     }
 
-        return timeToByteMap;
-    };
+    //     return timeToByteMap;
+    // };
 
-    // Build seek table using keyframe analysis (most accurate)
-    buildSeekTableFromKeyFrames = async (file, mp4Info, intervalSeconds) => {
-        // This would require parsing stss (sync sample) box for keyframes
-        // For now, fall back to sample-based approach
-        return this.buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
-    };
+    // // Build seek table using keyframe analysis (most accurate)
+    // buildSeekTableFromKeyFrames = async (file, mp4Info, intervalSeconds) => {
+    //     // This would require parsing stss (sync sample) box for keyframes
+    //     // For now, fall back to sample-based approach
+    //     return this.buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
+    // };
 
-    // Parse individual track box
-    parseTrakBox = (trakBuffer, trackIndex) => {
-        const boxes = this.parseMP4Boxes(trakBuffer);
-        const tkhdBox = boxes.find(box => box.type === 'tkhd');
-        const mdiaBox = boxes.find(box => box.type === 'mdia');
+    // // Parse individual track box
+    // parseTrakBox = (trakBuffer, trackIndex) => {
+    //     const boxes = this.parseMP4Boxes(trakBuffer);
+    //     const tkhdBox = boxes.find(box => box.type === 'tkhd');
+    //     const mdiaBox = boxes.find(box => box.type === 'mdia');
         
-        if (!tkhdBox || !mdiaBox) return null;
+    //     if (!tkhdBox || !mdiaBox) return null;
 
-        // Parse track header
-        const tkhdData = trakBuffer.slice(tkhdBox.dataOffset, tkhdBox.dataOffset + tkhdBox.size - 8);
-        const tkhdView = new DataView(tkhdData);
-        const version = tkhdView.getUint8(0);
+    //     // Parse track header
+    //     const tkhdData = trakBuffer.slice(tkhdBox.dataOffset, tkhdBox.dataOffset + tkhdBox.size - 8);
+    //     const tkhdView = new DataView(tkhdData);
+    //     const version = tkhdView.getUint8(0);
         
-        let trackId, duration;
-        if (version === 0) {
-            trackId = tkhdView.getUint32(12, false);
-            duration = tkhdView.getUint32(20, false);
-        } else {
-            trackId = tkhdView.getUint32(20, false);
-            duration = tkhdView.getBigUint64(28, false);
-        }
+    //     let trackId, duration;
+    //     if (version === 0) {
+    //         trackId = tkhdView.getUint32(12, false);
+    //         duration = tkhdView.getUint32(20, false);
+    //     } else {
+    //         trackId = tkhdView.getUint32(20, false);
+    //         duration = tkhdView.getBigUint64(28, false);
+    //     }
 
-        // Parse media box
-        const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
-        const mdiaBoxes = this.parseMP4Boxes(mdiaData);
-        const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
+    //     // Parse media box
+    //     const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
+    //     const mdiaBoxes = this.parseMP4Boxes(mdiaData);
+    //     const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
         
-        let mediaType = 'unknown';
-        if (hdlrBox) {
-            const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
-            mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
-        }
+    //     let mediaType = 'unknown';
+    //     if (hdlrBox) {
+    //         const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
+    //         mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
+    //     }
 
-        return {
-            trackId: Number(trackId),
-            trackIndex,
-            mediaType,
-            duration: Number(duration),
-            hasKeyFrames: false // Will be determined later if needed
-        };
-    };
+    //     return {
+    //         trackId: Number(trackId),
+    //         trackIndex,
+    //         mediaType,
+    //         duration: Number(duration),
+    //         hasKeyFrames: false // Will be determined later if needed
+    //     };
+    // };
 
-    // Parse moov box for track and timing information
-    parseMoovBox = (moovBuffer) => {
-        const boxes = this.parseMP4Boxes(moovBuffer);
-        const mvhdBox = boxes.find(box => box.type === 'mvhd');
-        const trakBoxes = boxes.filter(box => box.type === 'trak');
+    // // Parse moov box for track and timing information
+    // parseMoovBox = (moovBuffer) => {
+    //     const boxes = this.parseMP4Boxes(moovBuffer);
+    //     const mvhdBox = boxes.find(box => box.type === 'mvhd');
+    //     const trakBoxes = boxes.filter(box => box.type === 'trak');
         
-        let duration = 0;
-        let timescale = 1000;
+    //     let duration = 0;
+    //     let timescale = 1000;
         
-        // Parse movie header
-        if (mvhdBox) {
-            const mvhdData = moovBuffer.slice(mvhdBox.dataOffset, mvhdBox.dataOffset + mvhdBox.size - 8);
-            const mvhdView = new DataView(mvhdData);
-            const version = mvhdView.getUint8(0);
+    //     // Parse movie header
+    //     if (mvhdBox) {
+    //         const mvhdData = moovBuffer.slice(mvhdBox.dataOffset, mvhdBox.dataOffset + mvhdBox.size - 8);
+    //         const mvhdView = new DataView(mvhdData);
+    //         const version = mvhdView.getUint8(0);
             
-            if (version === 0) {
-                timescale = mvhdView.getUint32(12, false);
-                duration = mvhdView.getUint32(16, false);
-            } else {
-                timescale = mvhdView.getUint32(20, false);
-                duration = mvhdView.getBigUint64(24, false);
-            }
-        }
+    //         if (version === 0) {
+    //             timescale = mvhdView.getUint32(12, false);
+    //             duration = mvhdView.getUint32(16, false);
+    //         } else {
+    //             timescale = mvhdView.getUint32(20, false);
+    //             duration = mvhdView.getBigUint64(24, false);
+    //         }
+    //     }
 
-        // Parse tracks
-        const tracks = trakBoxes.map((trakBox, index) => {
-            const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
-            return this.parseTrakBox(trakData, index);
-        }).filter(track => track !== null);
+    //     // Parse tracks
+    //     const tracks = trakBoxes.map((trakBox, index) => {
+    //         const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
+    //         return this.parseTrakBox(trakData, index);
+    //     }).filter(track => track !== null);
 
-        return {
-            duration: Number(duration) / timescale,
-            timescale,
-            tracks,
-            hasKeyFrameIndex: tracks.some(track => track.hasKeyFrames)
-        };
-    };
+    //     return {
+    //         duration: Number(duration) / timescale,
+    //         timescale,
+    //         tracks,
+    //         hasKeyFrameIndex: tracks.some(track => track.hasKeyFrames)
+    //     };
+    // };
 
-    // Parse ftyp box to determine file type
-    parseFtypBox = (buffer, ftypBox) => {
-        const majorBrand = new TextDecoder().decode(
-            buffer.slice(ftypBox.dataOffset, ftypBox.dataOffset + 4)
-        );
-        const minorVersion = new DataView(buffer).getUint32(ftypBox.dataOffset + 4, false);
-        return { majorBrand, minorVersion };
-    };
+    // // Parse ftyp box to determine file type
+    // parseFtypBox = (buffer, ftypBox) => {
+    //     const majorBrand = new TextDecoder().decode(
+    //         buffer.slice(ftypBox.dataOffset, ftypBox.dataOffset + 4)
+    //     );
+    //     const minorVersion = new DataView(buffer).getUint32(ftypBox.dataOffset + 4, false);
+    //     return { majorBrand, minorVersion };
+    // };
 
-    // Parse MP4 boxes from buffer
-    parseMP4Boxes = (buffer) => {
-        const boxes = [];
-        const view = new DataView(buffer);
-        let offset = 0;
+    // // Parse MP4 boxes from buffer
+    // parseMP4Boxes = (buffer) => {
+    //     const boxes = [];
+    //     const view = new DataView(buffer);
+    //     let offset = 0;
 
-        while (offset < buffer.byteLength - 8) {
-            const size = view.getUint32(offset, false);
-            const type = new TextDecoder().decode(buffer.slice(offset + 4, offset + 8));
+    //     while (offset < buffer.byteLength - 8) {
+    //         const size = view.getUint32(offset, false);
+    //         const type = new TextDecoder().decode(buffer.slice(offset + 4, offset + 8));
             
-            if (size === 0) break; // Size 0 means box extends to end of file
-            if (size < 8) break; // Invalid box size
+    //         if (size === 0) break; // Size 0 means box extends to end of file
+    //         if (size < 8) break; // Invalid box size
             
-            boxes.push({
-                type,
-                size,
-                offset,
-                dataOffset: offset + 8
-            });
+    //         boxes.push({
+    //             type,
+    //             size,
+    //             offset,
+    //             dataOffset: offset + 8
+    //         });
             
-            offset += size;
-        }
+    //         offset += size;
+    //     }
 
-        return boxes;
-    };
+    //     return boxes;
+    // };
 
-    // Parse MP4 container structure
-    parseMP4Structure = async (file) => {
-        const headerSize = Math.min(1024 * 1024, file.size); // Read first 1MB
-        const headerBuffer = await this.readChunk(file, 0, headerSize);
+    // // Parse MP4 container structure
+    // parseMP4Structure = async (file) => {
+    //     const headerSize = Math.min(1024 * 1024, file.size); // Read first 1MB
+    //     const headerBuffer = await this.readChunk(file, 0, headerSize);
         
-        const boxes = this.parseMP4Boxes(headerBuffer);
-        const ftypBox = boxes.find(box => box.type === 'ftyp');
-        const moovBox = boxes.find(box => box.type === 'moov');
+    //     const boxes = this.parseMP4Boxes(headerBuffer);
+    //     const ftypBox = boxes.find(box => box.type === 'ftyp');
+    //     const moovBox = boxes.find(box => box.type === 'moov');
         
-        if (!ftypBox) {
-            throw new Error('Not a valid MP4 file (missing ftyp box)');
-        }
+    //     if (!ftypBox) {
+    //         throw new Error('Not a valid MP4 file (missing ftyp box)');
+    //     }
 
-        let videoInfo = {
-            fileType: this.parseFtypBox(headerBuffer, ftypBox),
-            tracks: [],
-            duration: 0,
-            hasKeyFrameIndex: false,
-            moovPosition: moovBox?.offset || 0,
-            mdatPosition: 0
-        };
+    //     let videoInfo = {
+    //         fileType: this.parseFtypBox(headerBuffer, ftypBox),
+    //         tracks: [],
+    //         duration: 0,
+    //         hasKeyFrameIndex: false,
+    //         moovPosition: moovBox?.offset || 0,
+    //         mdatPosition: 0
+    //     };
 
-        if (moovBox) {
-            // Parse moov box for detailed track information
-            const moovData = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
-            videoInfo = { ...videoInfo, ...this.parseMoovBox(moovData) };
-        } else {
-            // moov box might be at the end of file, try to find it
-            const tailSize = Math.min(1024 * 1024, file.size);
-            const tailBuffer = await this.readChunk(file, file.size - tailSize, tailSize);
-            const tailBoxes = this.parseMP4Boxes(tailBuffer);
-            const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
+    //     if (moovBox) {
+    //         // Parse moov box for detailed track information
+    //         const moovData = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
+    //         videoInfo = { ...videoInfo, ...this.parseMoovBox(moovData) };
+    //     } else {
+    //         // moov box might be at the end of file, try to find it
+    //         const tailSize = Math.min(1024 * 1024, file.size);
+    //         const tailBuffer = await this.readChunk(file, file.size - tailSize, tailSize);
+    //         const tailBoxes = this.parseMP4Boxes(tailBuffer);
+    //         const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
             
-            if (tailMoovBox) {
-                const moovData = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
-                videoInfo = { ...videoInfo, ...this.parseMoovBox(moovData) };
-                videoInfo.moovPosition = file.size - tailSize + tailMoovBox.offset;
-            }
-        }
+    //         if (tailMoovBox) {
+    //             const moovData = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
+    //             videoInfo = { ...videoInfo, ...this.parseMoovBox(moovData) };
+    //             videoInfo.moovPosition = file.size - tailSize + tailMoovBox.offset;
+    //         }
+    //     }
 
-        // Find mdat box position
-        const mdatBox = boxes.find(box => box.type === 'mdat');
-        if (mdatBox) {
-            videoInfo.mdatPosition = mdatBox.offset;
-        }
+    //     // Find mdat box position
+    //     const mdatBox = boxes.find(box => box.type === 'mdat');
+    //     if (mdatBox) {
+    //         videoInfo.mdatPosition = mdatBox.offset;
+    //     }
 
-        return videoInfo;
-    };
+    //     return videoInfo;
+    // };
 
-    // Main method to build time-to-byte mapping for MP4 videos
-    buildVideoTimeToByteMap = async (file, intervalSeconds) => {
-        try {
-            // Parse MP4 structure to find moov box and track info
-            const mp4Info = await this.parseMP4Structure(file);
-            let seekTable;
-            if (mp4Info.hasKeyFrameIndex) {
-                // Use keyframe index for precise seeking
-                seekTable = await this.buildSeekTableFromKeyFrames(file, mp4Info, intervalSeconds);
-            } else {
-                // Fallback to sample-based estimation
-                seekTable = await this.buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
-            }
-            return new Map(seekTable);
-        }
-        catch (error) {
-            console.log('stackpage', 'something went wrong with the buildVideoTimeToByteMap function', error)
-        }
-    };
+    // // Main method to build time-to-byte mapping for MP4 videos
+    // buildVideoTimeToByteMap = async (file, intervalSeconds) => {
+    //     try {
+    //         // Parse MP4 structure to find moov box and track info
+    //         const mp4Info = await this.parseMP4Structure(file);
+    //         let seekTable;
+    //         if (mp4Info.hasKeyFrameIndex) {
+    //             // Use keyframe index for precise seeking
+    //             seekTable = await this.buildSeekTableFromKeyFrames(file, mp4Info, intervalSeconds);
+    //         } else {
+    //             // Fallback to sample-based estimation
+    //             seekTable = await this.buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
+    //         }
+    //         return new Map(seekTable);
+    //     }
+    //     catch (error) {
+    //         console.log('stackpage', 'something went wrong with the buildVideoTimeToByteMap function', error)
+    //     }
+    // };
 
 
-    // Parse HEVC (H.265) codec string
-    parseHEVCCodec = (stsdData, offset) => {
-        // Look for hvcC box
-        let pos = offset + 78; // Skip sample entry header
-        const maxPos = stsdData.byteLength - 8;
+    // // Parse HEVC (H.265) codec string
+    // parseHEVCCodec = (stsdData, offset) => {
+    //     // Look for hvcC box
+    //     let pos = offset + 78; // Skip sample entry header
+    //     const maxPos = stsdData.byteLength - 8;
         
-        while (pos < maxPos) {
-            const view = new DataView(stsdData);
-            const boxSize = view.getUint32(pos, false);
-            const boxType = new TextDecoder().decode(stsdData.slice(pos + 4, pos + 8));
+    //     while (pos < maxPos) {
+    //         const view = new DataView(stsdData);
+    //         const boxSize = view.getUint32(pos, false);
+    //         const boxType = new TextDecoder().decode(stsdData.slice(pos + 4, pos + 8));
             
-            if (boxType === 'hvcC' && boxSize > 23) {
-                // Parse hvcC content
-                const hvcCOffset = pos + 8;
-                const configByte1 = view.getUint8(hvcCOffset + 1);
-                const levelId = view.getUint8(hvcCOffset + 12);
+    //         if (boxType === 'hvcC' && boxSize > 23) {
+    //             // Parse hvcC content
+    //             const hvcCOffset = pos + 8;
+    //             const configByte1 = view.getUint8(hvcCOffset + 1);
+    //             const levelId = view.getUint8(hvcCOffset + 12);
                 
-                const profileSpace = (configByte1 >> 6) & 0x3;
-                const tierFlag = (configByte1 >> 5) & 0x1;
-                const profileId = configByte1 & 0x1f;
+    //             const profileSpace = (configByte1 >> 6) & 0x3;
+    //             const tierFlag = (configByte1 >> 5) & 0x1;
+    //             const profileId = configByte1 & 0x1f;
                 
-                return `hev1.${profileSpace}.${profileId}.${tierFlag}.L${levelId}.B0`;
-            }
+    //             return `hev1.${profileSpace}.${profileId}.${tierFlag}.L${levelId}.B0`;
+    //         }
             
-            pos += boxSize || 8;
-        }
+    //         pos += boxSize || 8;
+    //     }
         
-        return 'hev1.1.6.L93.B0'; // Default main profile
-    };
+    //     return 'hev1.1.6.L93.B0'; // Default main profile
+    // };
 
-    // Parse AVC (H.264) codec string
-    parseAVCCodec = (stsdData, offset) => {
-        // Look for avcC box
-        let pos = offset + 78; // Skip sample entry header
-        const maxPos = stsdData.byteLength - 8;
+    // // Parse AVC (H.264) codec string
+    // parseAVCCodec = (stsdData, offset) => {
+    //     // Look for avcC box
+    //     let pos = offset + 78; // Skip sample entry header
+    //     const maxPos = stsdData.byteLength - 8;
         
-        while (pos < maxPos) {
-            const view = new DataView(stsdData);
-            const boxSize = view.getUint32(pos, false);
-            const boxType = new TextDecoder().decode(stsdData.slice(pos + 4, pos + 8));
+    //     while (pos < maxPos) {
+    //         const view = new DataView(stsdData);
+    //         const boxSize = view.getUint32(pos, false);
+    //         const boxType = new TextDecoder().decode(stsdData.slice(pos + 4, pos + 8));
             
-            if (boxType === 'avcC' && boxSize > 11) {
-                // Parse avcC content
-                const avcCOffset = pos + 8;
-                const profile = view.getUint8(avcCOffset + 1);
-                const compatibility = view.getUint8(avcCOffset + 2);
-                const level = view.getUint8(avcCOffset + 3);
+    //         if (boxType === 'avcC' && boxSize > 11) {
+    //             // Parse avcC content
+    //             const avcCOffset = pos + 8;
+    //             const profile = view.getUint8(avcCOffset + 1);
+    //             const compatibility = view.getUint8(avcCOffset + 2);
+    //             const level = view.getUint8(avcCOffset + 3);
                 
-                const profileHex = profile.toString(16).padStart(2, '0');
-                const compatHex = compatibility.toString(16).padStart(2, '0');
-                const levelHex = level.toString(16).padStart(2, '0');
+    //             const profileHex = profile.toString(16).padStart(2, '0');
+    //             const compatHex = compatibility.toString(16).padStart(2, '0');
+    //             const levelHex = level.toString(16).padStart(2, '0');
                 
-                return `avc1.${profileHex}${compatHex}${levelHex}`;
-            }
+    //             return `avc1.${profileHex}${compatHex}${levelHex}`;
+    //         }
             
-            pos += boxSize || 8;
-        }
+    //         pos += boxSize || 8;
+    //     }
         
-        return 'avc1.42001e'; // Default baseline
-    };
+    //     return 'avc1.42001e'; // Default baseline
+    // };
 
-    extractTrackCodec = (trakBuffer) => {
-        const boxes = this.parseMP4Boxes(trakBuffer);
-        const mdiaBox = boxes.find(box => box.type === 'mdia');
+    // extractTrackCodec = (trakBuffer) => {
+    //     const boxes = this.parseMP4Boxes(trakBuffer);
+    //     const mdiaBox = boxes.find(box => box.type === 'mdia');
         
-        if (!mdiaBox) return null;
+    //     if (!mdiaBox) return null;
         
-        const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
-        const mdiaBoxes = this.parseMP4Boxes(mdiaData);
+    //     const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
+    //     const mdiaBoxes = this.parseMP4Boxes(mdiaData);
         
-        // Get media type
-        const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
-        let mediaType = 'unknown';
-        if (hdlrBox) {
-            const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
-            mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
-        }
+    //     // Get media type
+    //     const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
+    //     let mediaType = 'unknown';
+    //     if (hdlrBox) {
+    //         const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
+    //         mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
+    //     }
         
-        // Find stsd box for codec info
-        const minfBox = mdiaBoxes.find(box => box.type === 'minf');
-        if (!minfBox) return null;
+    //     // Find stsd box for codec info
+    //     const minfBox = mdiaBoxes.find(box => box.type === 'minf');
+    //     if (!minfBox) return null;
         
-        const minfData = mdiaData.slice(minfBox.dataOffset, minfBox.dataOffset + minfBox.size - 8);
-        const minfBoxes = this.parseMP4Boxes(minfData);
-        const stblBox = minfBoxes.find(box => box.type === 'stbl');
+    //     const minfData = mdiaData.slice(minfBox.dataOffset, minfBox.dataOffset + minfBox.size - 8);
+    //     const minfBoxes = this.parseMP4Boxes(minfData);
+    //     const stblBox = minfBoxes.find(box => box.type === 'stbl');
         
-        if (!stblBox) return null;
+    //     if (!stblBox) return null;
         
-        const stblData = minfData.slice(stblBox.dataOffset, stblBox.dataOffset + stblBox.size - 8);
-        const stblBoxes = this.parseMP4Boxes(stblData);
-        const stsdBox = stblBoxes.find(box => box.type === 'stsd');
+    //     const stblData = minfData.slice(stblBox.dataOffset, stblBox.dataOffset + stblBox.size - 8);
+    //     const stblBoxes = this.parseMP4Boxes(stblData);
+    //     const stsdBox = stblBoxes.find(box => box.type === 'stsd');
         
-        if (!stsdBox) return null;
+    //     if (!stsdBox) return null;
         
-        const stsdData = stblData.slice(stsdBox.dataOffset, stsdBox.dataOffset + stsdBox.size - 8);
-        const view = new DataView(stsdData);
+    //     const stsdData = stblData.slice(stsdBox.dataOffset, stsdBox.dataOffset + stsdBox.size - 8);
+    //     const view = new DataView(stsdData);
         
-        // Skip version/flags and entry count
-        if (stsdData.byteLength < 16) return null;
+    //     // Skip version/flags and entry count
+    //     if (stsdData.byteLength < 16) return null;
         
-        const codecType = new TextDecoder().decode(stsdData.slice(12, 16));
+    //     const codecType = new TextDecoder().decode(stsdData.slice(12, 16));
         
-        // Generate codec string based on type
-        switch (codecType) {
-            case 'avc1':
-            case 'avc3':
-            return this.parseAVCCodec(stsdData, 16);
-            case 'hev1':
-            case 'hvc1':
-            return this.parseHEVCCodec(stsdData, 16);
-            case 'mp4a':
-            return 'mp4a.40.2'; // Default AAC-LC
-            case 'vp09':
-            return 'vp09.00.10.08';
-            default:
-            return codecType;
-        }
-    };
+    //     // Generate codec string based on type
+    //     switch (codecType) {
+    //         case 'avc1':
+    //         case 'avc3':
+    //         return this.parseAVCCodec(stsdData, 16);
+    //         case 'hev1':
+    //         case 'hvc1':
+    //         return this.parseHEVCCodec(stsdData, 16);
+    //         case 'mp4a':
+    //         return 'mp4a.40.2'; // Default AAC-LC
+    //         case 'vp09':
+    //         return 'vp09.00.10.08';
+    //         default:
+    //         return codecType;
+    //     }
+    // };
 
-    // Simple MP4 codec extractor - returns just the codec string
-    extractMP4Codec = async (file) => {
-        try {
-            // Read first 1MB to find moov box
-            const headerSize = Math.min(1024 * 1024, file.size);
-            const headerBuffer = await this.readChunk(file, 0, headerSize);
+    // // Simple MP4 codec extractor - returns just the codec string
+    // extractMP4Codec = async (file) => {
+    //     try {
+    //         // Read first 1MB to find moov box
+    //         const headerSize = Math.min(1024 * 1024, file.size);
+    //         const headerBuffer = await this.readChunk(file, 0, headerSize);
             
-            let moovBuffer = null;
+    //         let moovBuffer = null;
             
-            // Find moov box in header
-            const headerBoxes = this.parseMP4Boxes(headerBuffer);
-            const moovBox = headerBoxes.find(box => box.type === 'moov');
+    //         // Find moov box in header
+    //         const headerBoxes = this.parseMP4Boxes(headerBuffer);
+    //         const moovBox = headerBoxes.find(box => box.type === 'moov');
             
-            if (moovBox) {
-                moovBuffer = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
-            } else {
-                // Try end of file (some MP4s have moov at end)
-                const tailSize = Math.min(1024 * 1024, file.size);
-                const tailBuffer = await this.readChunk(file, file.size - tailSize, tailSize);
-                const tailBoxes = this.parseMP4Boxes(tailBuffer);
-                const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
+    //         if (moovBox) {
+    //             moovBuffer = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
+    //         } else {
+    //             // Try end of file (some MP4s have moov at end)
+    //             const tailSize = Math.min(1024 * 1024, file.size);
+    //             const tailBuffer = await this.readChunk(file, file.size - tailSize, tailSize);
+    //             const tailBoxes = this.parseMP4Boxes(tailBuffer);
+    //             const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
                 
-                if (tailMoovBox) {
-                    moovBuffer = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
-                }
-            }
+    //             if (tailMoovBox) {
+    //                 moovBuffer = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
+    //             }
+    //         }
             
-            if (!moovBuffer) {
-            throw new Error('No moov box found');
-            }
+    //         if (!moovBuffer) {
+    //         throw new Error('No moov box found');
+    //         }
             
-            // Parse tracks from moov
-            const moovBoxes = this.parseMP4Boxes(moovBuffer);
-            const trakBoxes = moovBoxes.filter(box => box.type === 'trak');
+    //         // Parse tracks from moov
+    //         const moovBoxes = this.parseMP4Boxes(moovBuffer);
+    //         const trakBoxes = moovBoxes.filter(box => box.type === 'trak');
             
-            const codecs = [];
+    //         const codecs = [];
             
-            for (const trakBox of trakBoxes) {
-                const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
-                const codec = this.extractTrackCodec(trakData);
-                if (codec) {
-                    codecs.push(codec);
-                }
-            }
+    //         for (const trakBox of trakBoxes) {
+    //             const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
+    //             const codec = this.extractTrackCodec(trakData);
+    //             if (codec) {
+    //                 codecs.push(codec);
+    //             }
+    //         }
             
-            return codecs.length > 0 ? codecs.join(', ') : null;
+    //         return codecs.length > 0 ? codecs.join(', ') : null;
             
-        } catch (error) {
-            console.error('Codec extraction failed:', error);
-            return null;
-        }
-    };
+    //     } catch (error) {
+    //         console.error('Codec extraction failed:', error);
+    //         return null;
+    //     }
+    // };
 
     
 

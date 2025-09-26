@@ -16357,7 +16357,7 @@ class App extends Component {
     this.open_dialog_bottomsheet()
   }
 
-  hide_audiopost_tracks(object, final_songs_to_hide){
+  hide_audiopost_tracks(object, final_songs_to_hide, collection_items){
     this.open_dialog_bottomsheet()
     const clone = structuredClone(this.state.hidden_audioposts)
     const song_ids_to_hide = []
@@ -16367,7 +16367,7 @@ class App extends Component {
 
     const hidden_object = {
       'song_ids':song_ids_to_hide, 
-      'hide_audiopost':song_ids_to_hide.length == object['ipfs'].songs.length
+      'hide_audiopost':song_ids_to_hide.length == collection_items.length
     }
 
     clone[object['e5_id']] = hidden_object
@@ -16380,7 +16380,7 @@ class App extends Component {
     this.set_cookies_after_stack_action()
   }
 
-  hide_videopost_tracks(object, final_videos_to_hide){
+  hide_videopost_tracks(object, final_videos_to_hide, collection_items){
     this.open_dialog_bottomsheet()
     const clone = structuredClone(this.state.hidden_videoposts)
     const video_ids_to_hide = []
@@ -16390,7 +16390,7 @@ class App extends Component {
 
     const hidden_object = {
       'video_ids':video_ids_to_hide, 
-      'hide_videopost':video_ids_to_hide.length == object['ipfs'].videos.length
+      'hide_videopost':video_ids_to_hide.length == collection_items.length
     }
     clone[object['e5_id']] = hidden_object
     if(hidden_object['video_ids'].length == 0){

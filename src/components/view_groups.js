@@ -420,16 +420,36 @@ class ViewGroups extends Component {
                 labelFontSizeY: label_font_size,
                 line_tension: line_tension
             };
+
             const getChartData = () => {
                 const config = { ...defaultConfig };
                 
+                // Create gradient for the fill area
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 250); // 250 is approximate chart height
+                
+                // Add color stops: top (1.0 opacity) to bottom (0.6 opacity)
+                gradient.addColorStop(0, `${config.chartColor}FF`); // 100% opacity (FF in hex)
+                gradient.addColorStop(0.75, `${config.chartColor}FF`);
+                gradient.addColorStop(0.8, `${config.chartColor}33`);
+                gradient.addColorStop(1, `${config.chartColor}33`);
+                /* 
+                    FF = 100% opacity
+                    CC = 80% opacity
+                    99 = 60% opacity
+                    66 = 40% opacity
+                    33 = 20% opacity
+                    00 = 0% opacity
+                */
+
                 return {
                     labels: config.data.map(item => item.x),
                     datasets: [
                         {
                             data: config.data.map(item => item.y),
                             borderColor: config.chartColor,
-                            backgroundColor: `${config.chartColor}`, // 20% opacity
+                            backgroundColor: config.chartColor, //gradient, config.chartColor
                             fill: true,
                             tension: config.line_tension, // Smooth curve
                             borderWidth: 0,

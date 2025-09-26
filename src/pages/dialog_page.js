@@ -7696,7 +7696,7 @@ return data['data']
         const final_songs_to_hide = songs_to_hide.filter(function (song) {
             return (songs_to_hide_while_showing.includes(song['song_id']))
         })
-        this.props.hide_audiopost_tracks(object, final_songs_to_hide)
+        this.props.hide_audiopost_tracks(object, final_songs_to_hide, songs_to_hide)
     }
 
 
@@ -7820,7 +7820,7 @@ return data['data']
         const final_videos_to_hide = videos_to_hide.filter(function (video) {
             return (videos_to_hide_while_showing.includes(video['video_id']))
         })
-        this.props.hide_videopost_tracks(object, final_videos_to_hide)
+        this.props.hide_videopost_tracks(object, final_videos_to_hide, videos_to_hide)
     }
 
 
