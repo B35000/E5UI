@@ -3963,7 +3963,7 @@ return data['data']
                 var stream_data = this.props.app_state.file_streaming_data[file]
                 if(stream_data != null){
                     const views = stream_data.files_view_count
-                    view_count+= views
+                    view_count = bigInt(view_count).plus(views)
                 }
             }
         });
@@ -4474,7 +4474,7 @@ return data['data']
                 var stream_data = this.props.app_state.file_streaming_data[file]
                 if(stream_data != null){
                     const views = stream_data.files_view_count
-                    view_count+= views
+                    view_count = bigInt(view_count).plus(views)
                 }
             }
         });

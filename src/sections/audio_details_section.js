@@ -1293,7 +1293,7 @@ return data['data']
                 var stream_data = this.props.app_state.file_streaming_data[file]
                 if(stream_data != null){
                     const views = stream_data.files_view_count
-                    view_count+= views
+                    view_count = bigInt(view_count).plus(views)
                 }
             }
         });
@@ -2339,7 +2339,7 @@ return data['data']
         var data = []
         var timestamp_datapoints = this.filter_time_events(Object.keys(memory_stats_data), this.state.time_chart_tags_object, true)
         for(var i=0; i<timestamp_datapoints.length; i++){
-            const focused_item = memory_stats_data[timestamp_datapoints[i]]
+            const focused_item = parseFloat(memory_stats_data[timestamp_datapoints[i]])
             data.push(focused_item/(1024*1024))
 
             if(i==timestamp_datapoints.length-1){
