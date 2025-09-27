@@ -1957,7 +1957,7 @@ class StackPage extends Component {
 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px', 'opacity':button_opacity}} onClick={()=> this.open_confirmation_bottomsheet(false)}>
-                    {this.render_detail_item('5', {'text':button_text, 'action':''})}
+                    {this.render_detail_item('5', {'text':button_text, 'action':'', 'opacity':button_opacity})}
                 </div>
                 <div style={{height:7}}/>
                 {this.show_e5_locked_message_if_locked()}
@@ -2308,7 +2308,7 @@ class StackPage extends Component {
     render_gas_history_chart(){
         var events = this.props.app_state.all_E5_runs[this.props.app_state.selected_e5]
         const e5 = this.props.app_state.selected_e5
-        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['get_gas_history_data_points'] : {}
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['get_gas_history_data_points'] : {}
         if((events != null && events.length > 10) || nitro_graphs_data['1h'] != null){
             const time_filter_object = {'1h':'1h', '24h':'24h', '7d':'7d', '30d':'30d', '6mo':'6mo'}
             time_filter_object[this.props.app_state.loc['1416']/* 'all-time' */] = 'all_time'
@@ -13700,6 +13700,13 @@ class StackPage extends Component {
     }
 
     render_open_options_picker_upload_button(){
+        const opacity = this.props.app_state.file_upload_status == '' ? 1.0 : 0.5
+        const text_obj = {
+            '': this.props.app_state.loc['1593gj']/* 'Upload File.' */,
+            'preparing': this.props.app_state.loc['1593jn']/* 'Preparing...' */,
+            'uploading': this.props.app_state.loc['1593jo']/* 'Uploading..' */,
+        }
+        const text = text_obj[this.props.app_state.file_upload_status]
         return(
             <div>
                 <input ref={this.image_input} style={{display: 'none'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
@@ -13716,14 +13723,15 @@ class StackPage extends Component {
 
                 <input ref={this.vtt_input} style={{display: 'none'}} id="upload" type="file" accept =".vtt" onChange ={this.when_vtt_picked.bind(this)} multiple/>
 
-                <div onClick={() => this.when_upload_file_button_tapped()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gj']/* 'Upload File.' */, 'action':''})}
+                <div style={{'opacity':opacity}} onClick={() => this.when_upload_file_button_tapped()}>
+                    {this.render_detail_item('5', {'text':text, 'action':'', 'opacity':opacity})}
                 </div>
             </div>
         )
     }
 
     when_upload_file_button_tapped(){
+        if(this.props.app_state.file_upload_status != '') return;
         var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
 
         var file_type = ''
@@ -13780,126 +13788,126 @@ class StackPage extends Component {
         }
     }
 
-    render_upload_button(){
-        var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
-        var icon = this.props.theme['close']
+    // render_upload_button(){
+    //     var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
+    //     var icon = this.props.theme['close']
 
-        var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
+    //     var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
 
-        if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
-            if(selected_item == this.props.app_state.loc['1593bk']/* all */ || selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //     if(upload_storage_selected_item == this.props.app_state.loc['1593ew']/* arweave */){
+    //         if(selected_item == this.props.app_state.loc['1593bk']/* all */ || selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)}/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593bm']/* 'audio' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)}/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593bm']/* 'audio' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)}/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593bn']/* 'video' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)}/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593bn']/* 'video' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)}/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)}/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)}/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
-           return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)}/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
+    //        return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)}/>
-                    </div>
-                </div>
-            ) 
-        }
-        }
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)}/>
+    //                 </div>
+    //             </div>
+    //         ) 
+    //     }
+    //     }
 
-        if(selected_item == this.props.app_state.loc['1593bk']/* all */ || selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //     if(selected_item == this.props.app_state.loc['1593bk']/* all */ || selected_item == this.props.app_state.loc['1593bl']/* 'images' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593bm']/* 'audio' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".png, .jpeg, .jpg, .gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593bm']/* 'audio' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)} multiple/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593bn']/* 'video' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)} multiple/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593bn']/* 'video' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)} multiple/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
-            return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)} multiple/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593cd']/* 'pdf' */){
+    //         return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)} multiple/>
-                    </div>
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
-           return(
-                <div>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)} multiple/>
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    //     else if(selected_item == this.props.app_state.loc['1593ed']/* 'zip' */){
+    //        return(
+    //             <div>
+    //                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+    //                     <img src={icon} style={{height:36, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         
-                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)} multiple/>
-                    </div>
-                </div>
-            ) 
-        }
-    }
+    //                     <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".zip" onChange ={this.when_zip_picked.bind(this)} multiple/>
+    //                 </div>
+    //             </div>
+    //         ) 
+    //     }
+    // }
 
 
     /* called when images have been picked from picker */
@@ -14137,6 +14145,7 @@ class StackPage extends Component {
             const selected_nitro_item = this.state.selected_nitro_item
             const files_to_upload = []
             const time_in_mills = Date.now()
+            this.props.set_file_upload_status('preparing');
 
             for(var i = 0; i < selected_files_length; i++){
                 const unencrypted_file_name = e.target.files[i]['name']
@@ -14161,7 +14170,7 @@ class StackPage extends Component {
                     var audioFile = e.target.files[i];
                     const audioType = audioFile.type
                     const duration = await this.get_audio_duration(audioFile)
-                    const chunk_duration = duration < 35 ? duration : 35
+                    const chunk_duration = duration < 35 ? duration/2 : 35
                     const timeToByteMap = await media_processors.buildTimeToByteMap(audioFile, chunk_duration)
                     if(timeToByteMap == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
@@ -14204,14 +14213,14 @@ class StackPage extends Component {
                     // reader.readAsDataURL(videoFile);
                     const duration = await this.get_video_duration(videoFile)
                     const videoType = videoFile.type;
-                    const chunk_duration = duration < 53 ? duration : 53
+                    const chunk_duration = duration < 53 ? (duration/2) : 53
                     const codec = await media_processors.extractMP4Codec(videoFile)
                     const timeToByteMap = await media_processors.buildVideoTimeToByteMap(videoFile, chunk_duration)
                     if(timeToByteMap == null || codec == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
                         continue;
                     }
-                    const encrypted_file_data_object = await this.encrypt_file_in_chunks(audioFile, password, 'e', timeToByteMap)
+                    const encrypted_file_data_object = await this.encrypt_file_in_chunks(videoFile, password, 'e', timeToByteMap)
                     const encrypted_file_data = encrypted_file_data_object.encryptedChunks
                     const encrypted_file_data_info = encrypted_file_data_object.encryptedChunksInfo
                     
@@ -14274,7 +14283,10 @@ class StackPage extends Component {
                 }
             }
             
-            if(files_to_upload.length > 0) this.upload_encrypted_files(selected_nitro_item, files_to_upload, type);
+            if(files_to_upload.length > 0){
+                this.upload_encrypted_files(selected_nitro_item, files_to_upload, type);
+            }
+            this.props.set_file_upload_status('');
         }
     }
 
@@ -15154,6 +15166,7 @@ class StackPage extends Component {
     when_file_picked_for_arweave = async (e, type) => {
         if(e.target.files && e.target.files[0]){
             this.props.notify(this.props.app_state.loc['1593ex']/* 'Preparing File...' */, 2000)
+            this.props.set_file_upload_status('preparing');
             this.selected_file_type = type
             let reader = new FileReader();
             reader.onload = async function(ev){
@@ -15183,6 +15196,7 @@ class StackPage extends Component {
                 }else{
                     this.props.notify(this.props.app_state.loc['1593ey']/* 'The file size exceeds the current upload limit.' */, 9000)
                 }
+                this.props.set_file_upload_status('');
             }.bind(this);
             
             this.file_name = e.target.files[0]['name'];
@@ -15527,7 +15541,7 @@ class StackPage extends Component {
 
     is_file_available(file){
         if(file == null) return true;
-        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
+        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted == false)
         return is_file_available
     }
 

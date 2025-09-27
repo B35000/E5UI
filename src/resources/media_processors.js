@@ -605,6 +605,7 @@ const buildSeekTableFromSamples = async (file, mp4Info, intervalSeconds) => {
     const duration = mp4Info.duration;
     
     if (!duration || duration <= 0) {
+        console.log('Falling back to linear estimation');
         // Fallback to linear byte estimation
         return buildSeekTableLinear(file, intervalSeconds);
     }
@@ -633,51 +634,22 @@ const buildSeekTableFromKeyFrames = async (file, mp4Info, intervalSeconds) => {
     return buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
 };
 
-// Parse individual track box
-const parseTrakBox = (trakBuffer, trackIndex) => {
-    const boxes = parseMP4Boxes(trakBuffer);
-    const tkhdBox = boxes.find(box => box.type === 'tkhd');
-    const mdiaBox = boxes.find(box => box.type === 'mdia');
-    
-    if (!tkhdBox || !mdiaBox) return null;
-
-    // Parse track header
-    const tkhdData = trakBuffer.slice(tkhdBox.dataOffset, tkhdBox.dataOffset + tkhdBox.size - 8);
-    const tkhdView = new DataView(tkhdData);
-    const version = tkhdView.getUint8(0);
-    
-    let trackId, duration;
-    if (version === 0) {
-        trackId = tkhdView.getUint32(12, false);
-        duration = tkhdView.getUint32(20, false);
-    } else {
-        trackId = tkhdView.getUint32(20, false);
-        duration = tkhdView.getBigUint64(28, false);
-    }
-
-    // Parse media box
-    const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
-    const mdiaBoxes = parseMP4Boxes(mdiaData);
-    const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
-    
-    let mediaType = 'unknown';
-    if (hdlrBox) {
-        const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
-        mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
-    }
-
-    return {
-        trackId: Number(trackId),
-        trackIndex,
-        mediaType,
-        duration: Number(duration),
-        hasKeyFrames: false // Will be determined later if needed
-    };
+// Updated parseFtypBox to work with the new structure
+const parseFtypBox = (buffer, ftypBox) => {
+    const majorBrand = new TextDecoder().decode(
+        buffer.slice(ftypBox.dataOffset, ftypBox.dataOffset + 4)
+    );
+    const minorVersion = new DataView(buffer).getUint32(ftypBox.dataOffset + 4, false);
+    return { majorBrand, minorVersion };
 };
 
-// Parse moov box for track and timing information
+// Enhanced parseMoovBox with better logging
 const parseMoovBox = (moovBuffer) => {
+    console.log('Parsing moov box, buffer size:', moovBuffer.byteLength);
+    
     const boxes = parseMP4Boxes(moovBuffer);
+    console.log('Found boxes in moov:', boxes.map(b => b.type));
+    
     const mvhdBox = boxes.find(box => box.type === 'mvhd');
     const trakBoxes = boxes.filter(box => box.type === 'trak');
     
@@ -686,40 +658,118 @@ const parseMoovBox = (moovBuffer) => {
     
     // Parse movie header
     if (mvhdBox) {
-        const mvhdData = moovBuffer.slice(mvhdBox.dataOffset, mvhdBox.dataOffset + mvhdBox.size - 8);
-        const mvhdView = new DataView(mvhdData);
-        const version = mvhdView.getUint8(0);
-        
-        if (version === 0) {
-            timescale = mvhdView.getUint32(12, false);
-            duration = mvhdView.getUint32(16, false);
-        } else {
-            timescale = mvhdView.getUint32(20, false);
-            duration = mvhdView.getBigUint64(24, false);
+        try {
+            const mvhdData = moovBuffer.slice(mvhdBox.dataOffset, mvhdBox.dataOffset + mvhdBox.size - 8);
+            const mvhdView = new DataView(mvhdData);
+            const version = mvhdView.getUint8(0);
+            
+            console.log('mvhd version:', version);
+            
+            if (version === 0) {
+                // Skip version(1) + flags(3) + creation_time(4) + modification_time(4) = 12 bytes
+                timescale = mvhdView.getUint32(12, false);
+                duration = mvhdView.getUint32(16, false);
+            } else {
+                // Skip version(1) + flags(3) + creation_time(8) + modification_time(8) = 20 bytes
+                timescale = mvhdView.getUint32(20, false);
+                duration = Number(mvhdView.getBigUint64(24, false));
+            }
+            
+            console.log('Raw duration:', duration, 'timescale:', timescale);
+        } catch (error) {
+            console.error('Error parsing mvhd box:', error);
         }
+    } else {
+        console.log('No mvhd box found');
     }
 
     // Parse tracks
-    const tracks = trakBoxes.map((trakBox, index) => {
-        const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
-        return parseTrakBox(trakData, index);
-    }).filter(track => track !== null);
+    const tracks = [];
+    trakBoxes.forEach((trakBox, index) => {
+        try {
+            const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
+            const track = parseTrakBox(trakData, index);
+            if (track) {
+                tracks.push(track);
+            }
+        } catch (error) {
+            console.error(`Error parsing track ${index}:`, error);
+        }
+    });
+
+    const finalDuration = duration / timescale;
+    console.log('Final calculated duration (seconds):', finalDuration);
 
     return {
-        duration: Number(duration) / timescale,
+        duration: finalDuration,
         timescale,
         tracks,
         hasKeyFrameIndex: tracks.some(track => track.hasKeyFrames)
     };
 };
 
-// Parse ftyp box to determine file type
-const parseFtypBox = (buffer, ftypBox) => {
-    const majorBrand = new TextDecoder().decode(
-        buffer.slice(ftypBox.dataOffset, ftypBox.dataOffset + 4)
-    );
-    const minorVersion = new DataView(buffer).getUint32(ftypBox.dataOffset + 4, false);
-    return { majorBrand, minorVersion };
+// Fixed parseTrakBox with correct offset calculations
+const parseTrakBox = (trakBuffer, trackIndex) => {
+    const boxes = parseMP4Boxes(trakBuffer);
+    const tkhdBox = boxes.find(box => box.type === 'tkhd');
+    const mdiaBox = boxes.find(box => box.type === 'mdia');
+    
+    if (!tkhdBox || !mdiaBox) {
+        console.log('Missing required boxes in track:', {tkhdBox: !!tkhdBox, mdiaBox: !!mdiaBox});
+        return null;
+    }
+
+    let trackId, duration;
+    
+    try {
+        // Parse track header
+        const tkhdData = trakBuffer.slice(tkhdBox.dataOffset, tkhdBox.dataOffset + tkhdBox.size - 8);
+        const tkhdView = new DataView(tkhdData);
+        const version = tkhdView.getUint8(0);
+        
+        if (version === 0) {
+            // Version 0 structure: version(1) + flags(3) + creation_time(4) + modification_time(4) + track_ID(4) + reserved(4) + duration(4)
+            trackId = tkhdView.getUint32(12, false);
+            duration = tkhdView.getUint32(20, false);
+        } else {
+            // Version 1 structure: version(1) + flags(3) + creation_time(8) + modification_time(8) + track_ID(4) + reserved(4) + duration(8)
+            trackId = tkhdView.getUint32(20, false);
+            duration = Number(tkhdView.getBigUint64(28, false));
+        }
+    } catch (error) {
+        console.error('Error parsing tkhd:', error);
+        return null;
+    }
+
+    let mediaType = 'unknown';
+    
+    try {
+        // Parse media box
+        const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
+        const mdiaBoxes = parseMP4Boxes(mdiaData);
+        const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
+        
+        if (hdlrBox) {
+            const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
+            // Skip version(1) + flags(3) + pre_defined(4) = 8 bytes to get to handler_type
+            if (hdlrData.byteLength >= 12) {
+                mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
+            }
+        }
+    } catch (error) {
+        console.error('Error parsing mdia/hdlr:', error);
+    }
+
+    const track = {
+        trackId: Number(trackId),
+        trackIndex,
+        mediaType,
+        duration: Number(duration),
+        hasKeyFrames: false
+    };
+    
+    // console.log('Parsed track:', track);
+    return track;
 };
 
 // Parse MP4 boxes from buffer
@@ -748,51 +798,49 @@ const parseMP4Boxes = (buffer) => {
     return boxes;
 };
 
-// Parse MP4 container structure
+// Parse MP4 container structure using the efficient file structure analyzer
 const parseMP4Structure = async (file) => {
-    const headerSize = Math.min(1024 * 1024, file.size); // Read first 1MB
-    const headerBuffer = await readChunk(file, 0, headerSize);
+    // First, scan the file structure efficiently
+    const fileStructure = await analyzeMP4Structure(file);
     
-    const boxes = parseMP4Boxes(headerBuffer);
-    const ftypBox = boxes.find(box => box.type === 'ftyp');
-    const moovBox = boxes.find(box => box.type === 'moov');
+    const ftypBox = fileStructure.boxes.find(box => box.type === 'ftyp');
+    const moovBox = fileStructure.moov;
+    const mdatBox = fileStructure.mdat;
     
     if (!ftypBox) {
         throw new Error('Not a valid MP4 file (missing ftyp box)');
     }
+    
+    if (!moovBox) {
+        throw new Error('No moov box found in MP4 file');
+    }
+
+    // Read the ftyp box data for file type info
+    const ftypBuffer = await readChunk(file, ftypBox.dataOffset, ftypBox.size - 8);
+    const fileType = parseFtypBox(ftypBuffer, { dataOffset: 0 });
 
     let videoInfo = {
-        fileType: parseFtypBox(headerBuffer, ftypBox),
+        fileType,
         tracks: [],
         duration: 0,
         hasKeyFrameIndex: false,
-        moovPosition: moovBox?.offset || 0,
-        mdatPosition: 0
+        moovPosition: moovBox.offset,
+        mdatPosition: mdatBox ? mdatBox.offset : 0
     };
 
-    if (moovBox) {
-        // Parse moov box for detailed track information
-        const moovData = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
-        videoInfo = { ...videoInfo, ...parseMoovBox(moovData) };
-    } else {
-        // moov box might be at the end of file, try to find it
-        const tailSize = Math.min(1024 * 1024, file.size);
-        const tailBuffer = await readChunk(file, file.size - tailSize, tailSize);
-        const tailBoxes = parseMP4Boxes(tailBuffer);
-        const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
-        
-        if (tailMoovBox) {
-            const moovData = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
-            videoInfo = { ...videoInfo, ...parseMoovBox(moovData) };
-            videoInfo.moovPosition = file.size - tailSize + tailMoovBox.offset;
-        }
-    }
+    // Read and parse the moov box
+    const moovBuffer = await readChunk(file, moovBox.dataOffset, moovBox.size - 8);
+    const moovInfo = parseMoovBox(moovBuffer);
+    videoInfo = { ...videoInfo, ...moovInfo };
 
-    // Find mdat box position
-    const mdatBox = boxes.find(box => box.type === 'mdat');
-    if (mdatBox) {
-        videoInfo.mdatPosition = mdatBox.offset;
-    }
+    console.log('Parsed MP4 structure:', {
+        fileSize: file.size,
+        ftypPosition: ftypBox.offset,
+        moovPosition: moovBox.offset,
+        mdatPosition: mdatBox?.offset || 'not found',
+        duration: videoInfo.duration,
+        tracks: videoInfo.tracks.length
+    });
 
     return videoInfo;
 };
@@ -802,6 +850,8 @@ const buildVideoTimeToByteMap = async (file, intervalSeconds) => {
     try {
         // Parse MP4 structure to find moov box and track info
         const mp4Info = await parseMP4Structure(file);
+        console.log('MP4 Info:', mp4Info);
+
         let seekTable;
         if (mp4Info.hasKeyFrameIndex) {
             // Use keyframe index for precise seeking
@@ -810,7 +860,11 @@ const buildVideoTimeToByteMap = async (file, intervalSeconds) => {
             // Fallback to sample-based estimation
             seekTable = await buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
         }
-        return new Map(seekTable);
+
+        const seek_table = new Map(seekTable);
+        console.log('buildVideoTimeToByteMap', 'seek_table', seek_table)
+
+        return seek_table;
     }
     catch (error) {
         console.log('stackpage', 'something went wrong with the buildVideoTimeToByteMap function', error)
@@ -943,36 +997,48 @@ const extractTrackCodec = (trakBuffer) => {
     }
 };
 
+const analyzeMP4Structure = async (file) => {
+    const structure = { boxes: [], moov: null, mdat: null };
+    let offset = 0;
+    
+    while (offset < file.size - 8) {
+        // Read just the box header (8 bytes)
+        const headerBuffer = await readChunk(file, offset, 8);
+        const view = new DataView(headerBuffer);
+        
+        const size = view.getUint32(0, false);
+        const type = new TextDecoder().decode(headerBuffer.slice(4, 8));
+        
+        if (size < 8) break; // Invalid box
+        
+        const boxInfo = { type, size, offset, dataOffset: offset + 8 };
+        structure.boxes.push(boxInfo);
+        
+        // Track important boxes
+        if (type === 'moov') {
+            structure.moov = boxInfo;
+        } else if (type === 'mdat') {
+            structure.mdat = boxInfo;
+        }
+        
+        offset += size;
+    }
+    
+    return structure;
+};
+
 // Simple MP4 codec extractor - returns just the codec string
 const extractMP4Codec = async (file) => {
     try {
-        // Read first 1MB to find moov box
-        const headerSize = Math.min(1024 * 1024, file.size);
-        const headerBuffer = await readChunk(file, 0, headerSize);
+        // First, scan the file structure efficiently
+        const fileStructure = await analyzeMP4Structure(file);
         
-        let moovBuffer = null;
-        
-        // Find moov box in header
-        const headerBoxes = parseMP4Boxes(headerBuffer);
-        const moovBox = headerBoxes.find(box => box.type === 'moov');
-        
-        if (moovBox) {
-            moovBuffer = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
-        } else {
-            // Try end of file (some MP4s have moov at end)
-            const tailSize = Math.min(1024 * 1024, file.size);
-            const tailBuffer = await readChunk(file, file.size - tailSize, tailSize);
-            const tailBoxes = parseMP4Boxes(tailBuffer);
-            const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
-            
-            if (tailMoovBox) {
-                moovBuffer = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
-            }
+        if (!fileStructure.moov) {
+            throw new Error('No moov box found');
         }
         
-        if (!moovBuffer) {
-        throw new Error('No moov box found');
-        }
+        // Read only the moov box
+        const moovBuffer = await readChunk(file, fileStructure.moov.offset + 8, fileStructure.moov.size - 8);
         
         // Parse tracks from moov
         const moovBoxes = parseMP4Boxes(moovBuffer);
@@ -987,13 +1053,66 @@ const extractMP4Codec = async (file) => {
                 codecs.push(codec);
             }
         }
-        
-        return codecs.length > 0 ? codecs.join(', ') : null;
-        
+        const found_codec = codecs.length > 0 ? codecs.join(', ') : null;
+        console.log('media_processor', 'found codec', found_codec)
+        return found_codec;        
     } catch (error) {
-        console.error('Codec extraction failed:', error);
+        console.error('Fast codec extraction failed:', error);
         return null;
     }
+    // try {
+    //     // Read first 1MB to find moov box
+    //     const headerSize = Math.min(1024 * 1024, file.size);
+    //     const headerBuffer = await readChunk(file, 0, headerSize);
+        
+    //     let moovBuffer = null;
+        
+    //     // Find moov box in header
+    //     const headerBoxes = parseMP4Boxes(headerBuffer);
+    //     console.log('extractMP4Codec', 'headerBoxes', headerBoxes)
+    //     const moovBox = headerBoxes.find(box => box.type === 'moov');
+        
+    //     if (moovBox) {
+    //         moovBuffer = headerBuffer.slice(moovBox.offset, moovBox.offset + moovBox.size);
+    //     } else {
+    //         // Try end of file (some MP4s have moov at end)
+    //         const tailSize = Math.min(1024 * 1024, file.size);
+    //         const tailBuffer = await readChunk(file, file.size - tailSize, tailSize);
+    //         const tailBoxes = parseMP4Boxes(tailBuffer);
+    //         const tailMoovBox = tailBoxes.find(box => box.type === 'moov');
+            
+    //         if (tailMoovBox) {
+    //             moovBuffer = tailBuffer.slice(tailMoovBox.offset, tailMoovBox.offset + tailMoovBox.size);
+    //         }
+    //     }
+        
+    //     if (!moovBuffer) {
+    //     throw new Error('No moov box found');
+    //     }
+        
+    //     // Parse tracks from moov
+    //     const moovBoxes = parseMP4Boxes(moovBuffer);
+    //     const trakBoxes = moovBoxes.filter(box => box.type === 'trak');
+        
+    //     const codecs = [];
+        
+    //     for (const trakBox of trakBoxes) {
+    //         const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
+    //         const codec = extractTrackCodec(trakData);
+    //         if (codec) {
+    //             codecs.push(codec);
+    //         }
+    //     }
+        
+    //     const found_codec = codecs.length > 0 ? codecs.join(', ') : null;
+
+    //     console.log('media_processor', 'found codec', found_codec)
+    //     return found_codec;
+        
+    // } catch (error) {
+    //     console.error('Codec extraction failed:', error);
+    //     return null;
+    // }
 };
 
 

@@ -274,7 +274,7 @@ class PickFilePage extends Component {
 
     is_file_available(file){
         if(file == null) return true;
-        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
+        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted == false)
         return is_file_available
     }
 

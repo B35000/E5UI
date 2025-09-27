@@ -306,7 +306,7 @@ class AudioPip extends Component {
                     <div style={{width:this.props.player_size, height:40, 'margin':'0px 0px 0px 0px', 'z-index':'3', 'position': 'absolute'}}/>
                     <div style={{width:2, height:2, 'margin':'px 0px 0px 0px', 'z-index':'2', 'position': 'absolute'}}>
                         <audio onEnded={this.handleAudioEnd} onTimeUpdate={this.handleTimeUpdate} onProgress={this.onProgress} controlsList="nodownload" controls ref={this.audio}>
-                            <source ref={this.mpegRef} src={this.get_audio_file()} type={audio_type}></source>
+                            {track_data['encrypted'] != true && (<source ref={this.mpegRef} src={this.get_audio_file()} type={audio_type}></source>)}
                             Your browser does not support the audio element.
                         </audio>
                     </div>
@@ -316,17 +316,30 @@ class AudioPip extends Component {
     }
 
     streamAndPlayEncryptedAudio = async (should_reset_everything) => {
+        console.log('streamAndPlayEncryptedAudio')
         if(should_reset_everything != false){
+            console.log('streamAndPlayEncryptedAudio', 'resetting everything...')
             await this.reset_stream_decryptor_function()
         }
         const track_data = this.get_audio_file_data()
         if(track_data['encrypted'] != true){
             return;
         }
-        const mediaSource = new MediaSource();
-        const audioElement = this.mpegRef.current;
-        audioElement.src = URL.createObjectURL(mediaSource);
 
+        const mediaSource = new MediaSource();
+        const audioElement = this.audio.current;
+
+        // Check MediaSource support
+        if (!window.MediaSource) {
+            console.error('MediaSource not supported');
+            return;
+        }
+
+        if (!audioElement) {
+            console.error('Audio element not found');
+            return;
+        }
+        
         this.is_loading_and_decrypting_track = true;
         mediaSource.addEventListener('sourceopen', async () => {
             const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
@@ -341,6 +354,7 @@ class AudioPip extends Component {
             }
             while (current_timestamp_key_pos < timestamp_keys.length && this.current_file == track_data['data']) {
                 if(this.should_continue_loading(track_data) && !this.has_already_loaded_current_timestamp_key_pos(current_timestamp_key_pos)){
+                    console.log('streamAndPlayEncryptedAudio', 'loading pos: ', current_timestamp_key_pos)
                     const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]]
                     const start = focused_timestamp_info.encryptedStartByte
                     const end = start + focused_timestamp_info.encryptedSize - 1;
@@ -351,18 +365,25 @@ class AudioPip extends Component {
                         });
                         if (response.status === 206 || response.status === 200) {
                             const value = await response.arrayBuffer()
-                            const chunk = new Uint8Array(value.length);
-                            chunk.set(value);
+                            const chunk = new Uint8Array(value);
                             try{
                                 const iv = chunk.slice(0, 12);
                                 const encryptedData = chunk.slice(12);
-                                const decrypted = await crypto.subtle.decrypt(
+                                const decrypted = await window.crypto.subtle.decrypt(
                                     { name: 'AES-GCM', iv },
                                     key,
                                     encryptedData
                                 );
                                 if(this.current_file == track_data['data']){
                                     await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                                    if(this.state.play_pause_state == 1){
+                                        this.audio.current?.play()
+                                    }
+                                    if(this.loaded_timestamp_key_pos == null){
+                                        this.loaded_timestamp_key_pos = []
+                                    }
+                                    this.loaded_timestamp_key_pos.push(current_timestamp_key_pos)
+                                    current_timestamp_key_pos++;
                                 }else{
                                     mediaSource.endOfStream();
                                     return;
@@ -373,17 +394,16 @@ class AudioPip extends Component {
                                 mediaSource.endOfStream('decode');
                                 return;
                             }
-                            if(this.loaded_timestamp_key_pos == null){
-                                this.loaded_timestamp_key_pos = []
-                            }
-                            this.loaded_timestamp_key_pos.push(current_timestamp_key_pos)
-                            current_timestamp_key_pos++;
                         }
                         else{
                             console.log('failed to fetch file chunk from node', response.status, response.statusText)
                         }
                     }
                 }
+                else if(this.has_already_loaded_current_timestamp_key_pos(current_timestamp_key_pos)){
+                    current_timestamp_key_pos++;
+                }
+
                 if(this.current_file == track_data['data']){
                     if(this.update_start_time_pos != null){
                         current_timestamp_key_pos = this.update_start_time_pos
@@ -391,7 +411,7 @@ class AudioPip extends Component {
                         sourceBuffer.timestampOffset = load_time_to_set;
                         delete this.update_start_time_pos;
                     }else{
-                        const pause_time = this.should_continue_loading(track_data) ? 1000 : 1500
+                        const pause_time = this.should_continue_loading(track_data) ? 100 : 1500
                         await new Promise(resolve => setTimeout(resolve, pause_time))
                     }
                 }
@@ -399,6 +419,16 @@ class AudioPip extends Component {
             mediaSource.endOfStream();
             this.is_loading_and_decrypting_track = false;
         });
+
+        mediaSource.addEventListener('sourceended', () => {
+            console.log('MediaSource ended');
+        });
+
+        mediaSource.addEventListener('error', (e) => {
+            console.error('MediaSource error:', e);
+        });
+        audioElement.src = URL.createObjectURL(mediaSource);
+        console.log('streamAndPlayEncryptedAudio', 'audioElement', audioElement)
     }
 
     has_already_loaded_current_timestamp_key_pos(pos){
@@ -410,8 +440,8 @@ class AudioPip extends Component {
 
     update_stream_start_value_after_scrub(time){
         const track_data = this.get_audio_file_data()
-        const seek_data = this.seekToTime(time, track_data['timeToByteMap'])
-        this.update_start_time_pos = Object.keys(track_data['encrypted_file_data_info']).indexOf(seek_data.time)
+        const seek_data = this.seekToTime(time, track_data['encrypted_file_data_info'])
+        this.update_start_time_pos = seek_data.pos
 
         if(this.is_loading_and_decrypting_track != true){
             this.streamAndPlayEncryptedAudio(false)
@@ -431,18 +461,17 @@ class AudioPip extends Component {
     }
 
     seekToTime = (targetSeconds, seekTable) => {
-        const entries = Array.from(seekTable.entries()).sort((a, b) => a[0] - b[0]);
+        const entries = Array.from(Object.keys(seekTable)).sort((a, b) => a[0] - b[0]);
         if (entries.length === 0) return 0;
         let closestEntry = entries[0];
-        for (const [time, byte] of entries) {
-            if (time <= targetSeconds) {
-                closestEntry = [time, byte];
-            } else {
-                break;
+        for(var e=0; e<entries.length; e++){
+            const time = parseInt(entries[e])
+            if (time <= parseInt(targetSeconds)) {
+                closestEntry = [time, seekTable[time].originalStartByte, e];
             }
         }
 
-        return { time: closestEntry[0], byte: closestEntry[1] }
+        return { time: closestEntry[0], byte: closestEntry[1], pos: closestEntry[2]}
     };
 
     should_continue_loading(track_data){
@@ -451,7 +480,7 @@ class AudioPip extends Component {
         const track_duration = track_data['duration']
         const buffer_difference_percentage = buffer - value
         const remaining_time = (buffer_difference_percentage / 100) * track_duration;
-        return remaining_time < 23
+        return remaining_time < 85
     }
 
     appendBufferAsync(sourceBuffer, chunk) {
@@ -544,7 +573,7 @@ class AudioPip extends Component {
     }
 
     should_start_from_last_timestamp(object){
-        var listing_type = object['ipfs'] == null ? this.props.app_state.loc['a311ar']/* 'Album' */ :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var listing_type = object['ipfs'] == null || object['ipfs'].get_listing_type_tags_option == null ? this.props.app_state.loc['a311ar']/* 'Album' */ :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
         if(listing_type == this.props.app_state.loc['a311at']/* 'Audiobook' */ || listing_type == this.props.app_state.loc['a311au']/* 'Podcast' */){
             return true
         }

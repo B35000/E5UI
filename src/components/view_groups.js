@@ -363,11 +363,13 @@ class ViewGroups extends Component {
             var action = 'none'
             var text_transform = 'capitalize'
             var prevent_default = false
+            var opacity = 1.0
             if(object_data!= null){
                 text = object_data['text'];
                 action = object_data['action']
                 prevent_default = object_data['prevent_default'] == null ? false : object_data['prevent_default']
                 text_transform = object_data['text_transform'] == null ? 'capitalize' : object_data['text_transform']
+                opacity = object_data['opacity'] == null ? 1.0 : object_data['opacity']
             }
             return(
                 <div /* onClick={()=> this.when_action_button_clicked(action)} */ style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
@@ -381,7 +383,7 @@ class ViewGroups extends Component {
                             100% { transform: scale(1); background-color: ${this.props.theme['button_color']}; }
                         }
                     `}</style>
-                    <button ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action)}>
+                    <button ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action, opacity)}>
                       {text}
                     </button>
                 </div>  
@@ -997,7 +999,10 @@ class ViewGroups extends Component {
         }
     }
 
-    when_any_button_tapped(e, prevent_default, action){
+    when_any_button_tapped(e, prevent_default, action, opacity){
+        if(opacity != 1.0){
+            return;
+        }
         if(prevent_default){
             e.preventDefault()
             console.log('prevented default!')

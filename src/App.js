@@ -965,7 +965,7 @@ class App extends Component {
 
     gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3, nitro_telemetry_data_object:{}, nitro_error_log_data_object:{}, saved_pre_launch_events:{},
 
-    hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false
+    hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */
   };
 
   get_static_assets(){
@@ -6099,12 +6099,41 @@ class App extends Component {
   };
 
   close_syncronizing_page(){
+    let me = this;
+    if(Date.now() - this.last_all_click_time < 400){
+        me.close_syncronizing_page_after_double_tap()
+        clearTimeout(this.all_timeout);
+    }else{
+        this.all_timeout = setTimeout(function() {
+          clearTimeout(this.all_timeout);
+          me.close_syncronizing_page_after_single_tap();
+        }, 400);
+    }
+    this.last_all_click_time = Date.now();
+  }
+
+  close_syncronizing_page_after_single_tap(){
     if(this.state.syncronizing_progress >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == false){
       this.open_syncronizing_page_bottomsheet()
-    }else{
-      // this.prompt_top_notification('Not yet!', 700)
     }
   }
+
+  close_syncronizing_page_after_double_tap(){
+    if(this.state.syncronizing_progress >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == false){
+      this.setState({storage_permissions: this.getLocale()['1428']/* 'enabled' */})
+      this.prompt_top_notification(this.getLocale()['2738aq']/* 'preserving state.' */, 1000)
+      var me = this;
+      setTimeout(function() {
+          me.set_cookies()
+          me.stack_page.current?.set_storage_permissions_tag()
+          if(me.state.syncronizing_progress >= 100 && me.state.should_keep_synchronizing_bottomsheet_open == false){
+            me.open_syncronizing_page_bottomsheet()
+          }
+      }, (1 * 1200));
+    }
+  }
+
+
 
 
 
@@ -7407,7 +7436,7 @@ class App extends Component {
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
-      when_link_handler_changed={this.when_link_handler_changed.bind(this)}
+      when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)}
       />
     )
   }
@@ -8294,6 +8323,10 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+  }
+
+  set_file_upload_status(item){
+    this.setState({file_upload_status: item})
   }
 
 
@@ -18375,10 +18408,10 @@ class App extends Component {
     this.show_dialog_bottomsheet(data, 'view_uploaded_file')
   }
 
-  when_audio_file_opened(item){
+  when_audio_file_opened = async (item) => {
     this.prompt_top_notification(this.getLocale()['2976']/* 'Loading...' */, 5800)
     this.setState({is_audio_pip_showing: true})
-    var queue = this.get_mock_queue(item)
+    var queue = await this.get_mock_queue(item)
     this.setState({current_playing_song: queue[0], current_playing_time: 0.0})
 
     var me = this;
@@ -18389,7 +18422,7 @@ class App extends Component {
     }, (1 * 500));
   }
 
-  get_mock_queue(item){
+  get_mock_queue = async (item) => {
     var songs = []
     var ecid_obj = this.get_cid_split(item)
     var image = this.state.static_assets['music_label']
@@ -18399,7 +18432,8 @@ class App extends Component {
     const song = {'song_id':item, 'song_title':data['name'], 'song_composer':'', 'price_data':[], 'track':item, 'songs_free_plays_count':10**14, 'basic_data':this.get_song_basic_data(item), 'lyrics':null, 'subtitle_type':null, 'track_lyric_file_name':null, 'credits':'', 'explicit':null, 'mock':true}
 
     song['album_art'] = image
-    song['object'] = {}
+    song['object'] = {'ipfs':{ecid_encryption_passwords:{}}}
+    song['object']['ipfs']['ecid_encryption_passwords'][item] = await this.get_ecid_file_password_if_any(item)
     songs.push(song)
 
     return songs
@@ -19096,12 +19130,12 @@ class App extends Component {
       this.setState({full_video_window_height: window_height})
       await this.wait(400)
     }
-    var queue = this.get_mock_video_queue(item)
+    var queue = await this.get_mock_video_queue(item)
     this.show_full_video_bottomsheet(queue, {})
     this.load_video_queue(queue, 0)
   }
 
-  get_mock_video_queue(item){
+  get_mock_video_queue = async (item) => {
     var videos = []
     var ecid_obj = this.get_cid_split(item)
     var image = this.state.static_assets['video_label']
@@ -19113,7 +19147,8 @@ class App extends Component {
     const video = {'video_id':this.make_number_id(12), 'video_title':data['name'], 'video_composer':'', 'price_data':[], 'video':item, 'subtitles':null, 'release_time':0}
 
     video['album_art'] = image
-    video['object'] = {}
+    video['object'] = {'ipfs':{ecid_encryption_passwords:{}}}
+    video['object']['ipfs']['ecid_encryption_passwords'][item] = await this.get_ecid_file_password_if_any(item)
     videos.push(video)
 
     return videos
@@ -24744,7 +24779,7 @@ class App extends Component {
 
   get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account, pre_launch_data) => {
     if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
-    var section_cid_data_events = pre_launch_data[e5] != null ? pre_launch_data[e5]['uploaded_cid_data '] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
+    var section_cid_data_events = (pre_launch_data[e5] != null && pre_launch_data[e5]['uploaded_cid_data '] != null) ? pre_launch_data[e5]['uploaded_cid_data '] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
     var loaded_target = 0
     if(section_cid_data_events.length != 0){
       const cids = [];
@@ -24763,11 +24798,16 @@ class App extends Component {
         if(section_cid_data != null){
           if(section_cid_data['encrypted'] != null && section_cid_data['encrypted'] == true){
             const decrypted_data_object = await this.decrypt_data(section_cid_data['cids'])
-            decrypted_data_object['data'].forEach(item => {
-              if(item != null && !cids.includes(item)){
-                cids.push(item)
-              }
-            });
+            try{
+              decrypted_data_object['data'].forEach(item => {
+                if(item != null && !cids.includes(item)){
+                  cids.push(item)
+                }
+              });
+            }catch(e){
+              console.log('apppage', e)
+            }
+            
           }
           // else{
           //   // console.log('datas', 'decrypted_data_object', section_cid_data)
@@ -34732,7 +34772,7 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, nitro_url);
-      console.log('fetch_view_data', obj)
+      // console.log('fetch_view_data', obj)
       if(obj.success != false){
         var file_streaming_data_clone = structuredClone(this.state.file_streaming_data)
         for(var f=0; f<files_to_fetch_view_data.length; f++){
@@ -34740,7 +34780,7 @@ class App extends Component {
           const files_view_count = obj.views[file]
           const files_stream_count = obj.streams[file]
           const files_renewal_years = obj.renewal_years == null ? [] : obj.renewal_years[file]
-          const is_file_deleted = obj.file_status == null ? false : obj.file_status[file]
+          const is_file_deleted = obj.file_status == null ? false : (obj.file_status[file] == true)
           file_streaming_data_clone[file] = {files_view_count, files_stream_count, files_renewal_years, is_file_deleted}
         }
         this.setState({file_streaming_data: file_streaming_data_clone})
@@ -34826,13 +34866,15 @@ class App extends Component {
 
   construct_encrypted_link_from_ecid_object = async (data, id) => {
     var raw_link = data[id]
+    // console.log('construct_encrypted_link_from_ecid_object', 'data deconstructed', data['data_deconstructed'])
     const nitro_url = data['data_deconstructed'][0]
-    const content_type = data['data_deconstructed'][1]
+    const content_type = data['data_deconstructed'][1] == null ? data['extension'] : data['data_deconstructed'][1]
     const nitro_cid2 = data['data_deconstructed'][2]
     const file = nitro_cid2/* +'.'+content_type */
 
+    // console.log('construct_encrypted_link_from_ecid_object', 'check_and_start_rerecording_of_key_in_nitro')
     await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
-
+    // console.log('construct_encrypted_link_from_ecid_object', 'done proceeding...')
 
     return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
     
@@ -34993,6 +35035,7 @@ class App extends Component {
 
   upload_multiple_encrypted_files_to_nitro_node = async (datas, type, nitro_object, node_details) => {
     this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
+    this.set_file_upload_status('uploading')
     var file_datas = []
     var file_types = []
     var total_size = 0
@@ -35008,6 +35051,7 @@ class App extends Component {
     var file_names = await this.upload_multiple_encrypted_datas_to_nitro_node(file_datas, file_types, nitro_object, node_details, total_size, file_sizes)
     if(file_names == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      this.set_file_upload_status('')
       return;
     }
 
@@ -35027,6 +35071,7 @@ class App extends Component {
     var file_object_cids = await this.upload_file_objects_to_nitro(final_objects, nitro_object, node_details)
     if(file_object_cids == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+      this.set_file_upload_status('')
       return;
     }
 
@@ -35040,7 +35085,8 @@ class App extends Component {
 
     this.when_uploading_multiple_encrypted_files_complete(e_cids, '', final_objects_2, type)
     this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
-    this.load_my_account_storage_info(nitro_object)
+    await this.load_my_account_storage_info(nitro_object)
+    this.set_file_upload_status('')
   }
 
 
@@ -35075,6 +35121,7 @@ class App extends Component {
 
   upload_file_to_arweave = async (data) => {
     this.setState({is_uploading_to_arweave: true})
+    this.set_file_upload_status('uploading')
     this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
     var wallet_data = this.state.coin_data['AR']
     if(wallet_data != null){
@@ -35119,6 +35166,7 @@ class App extends Component {
         var cid = await this.store_data_in_nitro(JSON.stringify(_data), null, default_nitro_option, null)
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
+          this.set_file_upload_status('')
           this.setState({is_uploading_to_arweave: false})
           return;
         }else{
@@ -35128,6 +35176,7 @@ class App extends Component {
         }
         this.when_uploading_multiple_files_complete(e_cids, cids, [_data])
         this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
+        this.set_file_upload_status('')
         
         this.setState({storage_permissions:this.getLocale()['1428']/* 'enabled' */})
         var me = this;
@@ -35139,6 +35188,7 @@ class App extends Component {
         console.log('Error uploading data: ', e)
         this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
         this.setState({is_uploading_to_arweave: false})
+        this.set_file_upload_status('')
       }
     }
   }
@@ -35577,7 +35627,7 @@ class App extends Component {
         var nitro_cid2 = split_cid_array2[1]
 
         var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
-        var content_type = this.get_file_extension(file_name)
+        var content_type = this.get_file_extension(file_name) || _data['extension'];
         if(nitro_url != null){
           _data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`
           _data['data_deconstructed'] = [nitro_url, content_type, nitro_cid2, content_type]
@@ -39590,11 +39640,6 @@ class App extends Component {
         
         this.setState({nitro_node_details: clone, nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone, nitro_link_directory_data: nitro_link_directory_data_clone})
 
-        await this.wait(1000)
-        if(this.is_re_recording_key_in_nitro_node == null){
-          this.is_re_recording_key_in_nitro_node = {}
-        }
-        this.is_re_recording_key_in_nitro_node[link] = false
         if(image_load_from_nitro_data['album_art'] != null){
           await this.wait(350)
           await this.fetch_uploaded_data_from_ipfs([image_load_from_nitro_data['album_art']], false, image_load_from_nitro_data['keys'])
@@ -39604,11 +39649,23 @@ class App extends Component {
         clone[e5_id] = 'unavailable'
         this.setState({nitro_node_details:clone})
       }
+
+      await this.wait(700)
+      if(this.is_re_recording_key_in_nitro_node == null){
+        this.is_re_recording_key_in_nitro_node = {}
+      }
+      this.is_re_recording_key_in_nitro_node[link] = false
     }
     catch(e){
       var clone = structuredClone(this.state.nitro_node_details)
       clone[e5_id] = 'unavailable'
       this.setState({nitro_node_details:clone})
+
+      await this.wait(700)
+      if(this.is_re_recording_key_in_nitro_node == null){
+        this.is_re_recording_key_in_nitro_node = {}
+      }
+      this.is_re_recording_key_in_nitro_node[link] = false
     }
   }
 
@@ -39618,6 +39675,7 @@ class App extends Component {
     }
     while (this.is_re_recording_key_in_nitro_node[link] == true) {
       if (this.is_re_recording_key_in_nitro_node[link] == false) break;
+      console.log('waiting...')
       await new Promise(resolve => setTimeout(resolve, 650))
     }
     const nitro_key_data = this.state.nitro_url_temp_hash_data[link]
@@ -39678,16 +39736,20 @@ class App extends Component {
         }
         
         this.setState({nitro_node_details: clone, nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone})
-
-        await this.wait(700)
-        if(this.is_re_recording_key_in_nitro_node == null){
-          this.is_re_recording_key_in_nitro_node = {}
-        }
-        this.is_re_recording_key_in_nitro_node[link] = false
       }
+
+      await this.wait(700)
+      if(this.is_re_recording_key_in_nitro_node == null){
+        this.is_re_recording_key_in_nitro_node = {}
+      }
+      this.is_re_recording_key_in_nitro_node[link] = false
     }
     catch(e){
-      
+      await this.wait(700)
+      if(this.is_re_recording_key_in_nitro_node == null){
+        this.is_re_recording_key_in_nitro_node = {}
+      }
+      this.is_re_recording_key_in_nitro_node[link] = false
     }
   }
 

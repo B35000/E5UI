@@ -1845,7 +1845,9 @@ return data['data']
                         {this.render_file_image()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_file_data()}
+                        <div style={{'maxHeight':360, 'overflow-y': 'auto'}}>
+                            {this.render_file_data()}
+                        </div>
                     </div>
                 </div>
                 
@@ -1859,7 +1861,9 @@ return data['data']
                         {this.render_file_image()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_file_data()}
+                        <div style={{'maxHeight':360, 'overflow-y': 'auto'}}>
+                            {this.render_file_data()}
+                        </div>
                     </div>
                 </div>
                 
@@ -2031,8 +2035,8 @@ return data['data']
 
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('4', {'text':view_count_message, 'textsize':'13px', 'font':this.props.app_state.font})}
-                    <div style={{height:10}}/>
                 </div>
             )
         }
@@ -2047,7 +2051,6 @@ return data['data']
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['2509p']/* 'Streamed.' */, 'title':size, 'size':'l'})}
-                    <div style={{height:10}}/>
                 </div>
             )
         }
@@ -2059,9 +2062,9 @@ return data['data']
         if(stream_data != null){
             var stream_data_object = stream_data.files_stream_count
             var time_keys = Object.keys(stream_data_object)
-            var bytes_treamed = 0
+            var bytes_treamed = bigInt(0)
             time_keys.forEach(key => {
-                bytes_treamed += stream_data_object[key]
+                bytes_treamed = bigInt(bytes_treamed).plus(stream_data_object[key])
             });
 
             return bytes_treamed
@@ -2151,6 +2154,7 @@ return data['data']
         if(hash != null && this.is_file_available(hash) && data['nitro'] != null && this.props.app_state.file_streaming_data[hash] != null && am_i_author == true){
             return(
                 <div>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055do']/* '🗑️ Delete File' */, 'details':this.props.app_state.loc['3055dp']/* 'Delete the file from the node and halt its streaming immediately and forever. This action cannot be undone.' */, 'size':'l'})}
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['3055dq']/* 'You wont get the file\'s space back but you wont pay for the files renewal.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
                     <div style={{height:10}}/>
@@ -5937,7 +5941,7 @@ return data['data']
 
     is_file_available(file){
         if(file == null) return true;
-        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted)
+        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted == false)
         return is_file_available
     }
 

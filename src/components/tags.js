@@ -53,7 +53,7 @@ class tags extends Component {
         items[this.props.app_state.loc['1262']/* account-data */] = '🔐'
         items[this.props.app_state.loc['1263']/* events */] = '🚨'
         items[this.props.app_state.loc['1264']/* moderator-events */] = '🧑‍⚖️'
-        items[this.props.app_state.loc['1593aj']/* 'signatures' */] = '✍️'
+        items[this.props.app_state.loc['1593aj']/* 'signatures' */] = 'ᝰ'
         items[this.props.app_state.loc['1264k']/* audioport */] = '🎧'
         items[this.props.app_state.loc['1264p']/* 'videoport' */] = '📺'
         items[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'

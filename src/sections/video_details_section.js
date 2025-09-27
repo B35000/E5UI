@@ -1025,7 +1025,7 @@ class VideoDetailsSection extends Component {
                     var stream_data_object = stream_data.files_stream_count
                     var time_keys = Object.keys(stream_data_object)
                     time_keys.forEach(key => {
-                        bytes_treamed += stream_data_object[key]
+                        bytes_treamed = bigInt(bytes_treamed).plus(stream_data_object[key])
                     });
                 }
             }
