@@ -7345,7 +7345,7 @@ class home_page extends Component {
     show_subscription_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['subscription']
         var amount = events.length
-        var nitro_graphs_data =  this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_subscription_transaction_count_chart'] : {}
+        var nitro_graphs_data =  this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_subscription_transaction_count_chart'] : {}
         if(events.length >= 23 || nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null

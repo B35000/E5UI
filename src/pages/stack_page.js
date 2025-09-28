@@ -1565,7 +1565,7 @@ class StackPage extends Component {
             middle = this.props.height-100;
         }
         var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
-        var items = [].concat(runs)
+        var items = [].concat(runs).reverse()
 
         if(items.length == 0){
             items = [0,3,0]
@@ -2414,7 +2414,7 @@ class StackPage extends Component {
 
     render_simplified_stack_history(){
         var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
-        var items = [].concat(this.remove_duplicates(runs))
+        var items = [].concat(this.remove_duplicates(runs)).reverse()
         var background_color = this.props.theme['card_background_color']
 
         if(items.length == 0){
@@ -14170,7 +14170,7 @@ class StackPage extends Component {
                     var audioFile = e.target.files[i];
                     const audioType = audioFile.type
                     const duration = await this.get_audio_duration(audioFile)
-                    const chunk_duration = duration < 35 ? duration/2 : 35
+                    const chunk_duration = duration < 35 ? 5 : 35
                     const timeToByteMap = await media_processors.buildTimeToByteMap(audioFile, chunk_duration)
                     if(timeToByteMap == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
@@ -14213,14 +14213,15 @@ class StackPage extends Component {
                     // reader.readAsDataURL(videoFile);
                     const duration = await this.get_video_duration(videoFile)
                     const videoType = videoFile.type;
-                    const chunk_duration = duration < 53 ? (duration/2) : 53
+                    const chunk_duration = duration < 53 ? 5 : 53
                     const codec = await media_processors.extractMP4Codec(videoFile)
-                    const timeToByteMap = await media_processors.buildVideoTimeToByteMap(videoFile, chunk_duration)
+                    const return_packaged_data = await media_processors.buildVideoTimeToByteMap(videoFile, chunk_duration)
+                    const timeToByteMap = return_packaged_data.mapping
                     if(timeToByteMap == null || codec == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
                         continue;
                     }
-                    const encrypted_file_data_object = await this.encrypt_file_in_chunks(videoFile, password, 'e', timeToByteMap)
+                    const encrypted_file_data_object = await this.encrypt_file_in_chunks2(return_packaged_data.combined, password, 'e', timeToByteMap)
                     const encrypted_file_data = encrypted_file_data_object.encryptedChunks
                     const encrypted_file_data_info = encrypted_file_data_object.encryptedChunksInfo
                     
@@ -14311,29 +14312,57 @@ class StackPage extends Component {
         return result;
     }
 
-    // encrypt_in_chunks = async (file, password, salt, CHUNK_SIZE) => {
-    //     const key = await this.props.get_key_from_password(password, salt);
-    //     const encryptedChunks = [];
-    //     const fileSize = file.size;
+    encrypt_file_in_chunks2 = async (combined, password, salt, timeToByteMap) => {
+        const key = await this.props.get_key_from_password(password, salt);
+        const encryptedChunks = [];
+        const encryptedChunksInfo = {}
+        const chunkSeekMap = new Map();
+        const fileSize = combined.length;
 
-    //     for (let offset = 0; offset < fileSize; offset += CHUNK_SIZE) {
-    //         const chunk = file.slice(offset, offset + CHUNK_SIZE);
-    //         const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
-    //         const iv = crypto.getRandomValues(new Uint8Array(12));
-    //         const encrypted = await window.crypto.subtle.encrypt(
-    //             { name: 'AES-GCM', iv }, // unique IV per chunk
-    //             key,
-    //             chunkBuffer
-    //         );
-    //         const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
-    //         chunkWithIV.set(iv);
-    //         chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+        const seekPoints = Array.from(timeToByteMap.entries()).sort((a, b) => a[0] - b[0]);
+        let encryptedBytePosition = 0;
 
-    //         encryptedChunks.push(chunkWithIV);
-    //     }
+        for (let i = 0; i < seekPoints.length; i++) {
+            const [currentTime, currentBytePos] = seekPoints[i];
+            let chunkEndPos;
+            if (i < seekPoints.length - 1) {
+                chunkEndPos = seekPoints[i + 1][1];
+            } else {
+                chunkEndPos = fileSize;
+            }
+            const chunkSize = chunkEndPos - currentBytePos;
+            if (chunkSize <= 0) continue;
+            chunkSeekMap.set(currentTime, encryptedBytePosition);
 
-    //     return encryptedChunks;
-    // }
+            const chunk = combined.slice(currentBytePos, chunkEndPos);
+
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            // Encrypt the chunk
+            const encrypted = await window.crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv },
+                key,
+                chunk
+            );
+
+            const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
+            chunkWithIV.set(iv);
+            chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+            encryptedChunks.push(chunkWithIV);
+            encryptedChunksInfo[currentTime] = {
+                timestamp: currentTime,
+                originalStartByte: currentBytePos,
+                originalEndByte: chunkEndPos,
+                originalSize: chunkSize,
+                encryptedSize: chunkWithIV.length,
+                encryptedStartByte: encryptedBytePosition
+            }
+
+            // Update encrypted byte position for next chunk
+            encryptedBytePosition += chunkWithIV.length;
+        }
+
+        return { encryptedChunks, encryptedChunksInfo };
+    }
 
     encrypt_file_in_chunks = async (file, password, salt, timeToByteMap) => {
         const key = await this.props.get_key_from_password(password, salt);

@@ -1,3 +1,5 @@
+import { createFile } from 'mp4box';
+
 const readChunk = async (file, offset, size) => {
     const actualSize = Math.min(size, file.size - offset);
     const slice = file.slice(offset, offset + actualSize);
@@ -583,288 +585,92 @@ const buildTimeToByteMap = async (file, intervalSeconds) => {
 
 
 
+// MP4 to fMP4 Converter with Fragment Generation
+// This converts regular MP4 to fragmented MP4 suitable for MSE streaming
+//-----------------------------------------MP4 to fMP4 Converter-----------------------------------------
 
 
 
 
-//-----------------------------------------VIDEO-----------------------------------------------
-const buildSeekTableLinear = async (file, intervalSeconds) => {
-    const timeToByteMap = [];
-    const estimatedDuration = file.size / (2 * 1024 * 1024); // Assume ~2MB/s average
-    for (let time = 0; time <= estimatedDuration; time += intervalSeconds) {
-        const timeRatio = time / estimatedDuration;
-        const bytePosition = Math.floor(timeRatio * file.size);
-        timeToByteMap.push([time, bytePosition]);
-    }
-    return timeToByteMap;
-};
 
-// Build seek table using sample-based estimation
-const buildSeekTableFromSamples = async (file, mp4Info, intervalSeconds) => {
-    const timeToByteMap = [];
-    const duration = mp4Info.duration;
-    
-    if (!duration || duration <= 0) {
-        console.log('Falling back to linear estimation');
-        // Fallback to linear byte estimation
-        return buildSeekTableLinear(file, intervalSeconds);
-    }
-    
-    // Calculate approximate data rate
-    const dataSize = file.size - mp4Info.moovPosition; // Approximate data size
 
-    for (let time = 0; time <= duration; time += intervalSeconds) {
-        // Estimate byte position based on time ratio and average bitrate
-        const timeRatio = time / duration;
-        // Start from mdat position (actual video data)
-        const estimatedBytePos = mp4Info.mdatPosition + Math.floor(timeRatio * dataSize);
-        // Ensure we don't exceed file size
-        const bytePosition = Math.min(estimatedBytePos, file.size - 1);
-        
-        timeToByteMap.push([time, bytePosition]);
-    }
 
-    return timeToByteMap;
-};
+function fragmentMP4(file, chunkDuration = 5) {
+  return new Promise((resolve, reject) => {
+    const mp4boxFile = createFile();
+    const reader = new FileReader();
+    let totalSize = 0;
 
-// Build seek table using keyframe analysis (most accurate)
-const buildSeekTableFromKeyFrames = async (file, mp4Info, intervalSeconds) => {
-    // This would require parsing stss (sync sample) box for keyframes
-    // For now, fall back to sample-based approach
-    return buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
-};
-
-// Updated parseFtypBox to work with the new structure
-const parseFtypBox = (buffer, ftypBox) => {
-    const majorBrand = new TextDecoder().decode(
-        buffer.slice(ftypBox.dataOffset, ftypBox.dataOffset + 4)
-    );
-    const minorVersion = new DataView(buffer).getUint32(ftypBox.dataOffset + 4, false);
-    return { majorBrand, minorVersion };
-};
-
-// Enhanced parseMoovBox with better logging
-const parseMoovBox = (moovBuffer) => {
-    console.log('Parsing moov box, buffer size:', moovBuffer.byteLength);
-    
-    const boxes = parseMP4Boxes(moovBuffer);
-    console.log('Found boxes in moov:', boxes.map(b => b.type));
-    
-    const mvhdBox = boxes.find(box => box.type === 'mvhd');
-    const trakBoxes = boxes.filter(box => box.type === 'trak');
-    
-    let duration = 0;
-    let timescale = 1000;
-    
-    // Parse movie header
-    if (mvhdBox) {
-        try {
-            const mvhdData = moovBuffer.slice(mvhdBox.dataOffset, mvhdBox.dataOffset + mvhdBox.size - 8);
-            const mvhdView = new DataView(mvhdData);
-            const version = mvhdView.getUint8(0);
-            
-            console.log('mvhd version:', version);
-            
-            if (version === 0) {
-                // Skip version(1) + flags(3) + creation_time(4) + modification_time(4) = 12 bytes
-                timescale = mvhdView.getUint32(12, false);
-                duration = mvhdView.getUint32(16, false);
-            } else {
-                // Skip version(1) + flags(3) + creation_time(8) + modification_time(8) = 20 bytes
-                timescale = mvhdView.getUint32(20, false);
-                duration = Number(mvhdView.getBigUint64(24, false));
-            }
-            
-            console.log('Raw duration:', duration, 'timescale:', timescale);
-        } catch (error) {
-            console.error('Error parsing mvhd box:', error);
-        }
-    } else {
-        console.log('No mvhd box found');
-    }
-
-    // Parse tracks
-    const tracks = [];
-    trakBoxes.forEach((trakBox, index) => {
-        try {
-            const trakData = moovBuffer.slice(trakBox.dataOffset, trakBox.dataOffset + trakBox.size - 8);
-            const track = parseTrakBox(trakData, index);
-            if (track) {
-                tracks.push(track);
-            }
-        } catch (error) {
-            console.error(`Error parsing track ${index}:`, error);
-        }
-    });
-
-    const finalDuration = duration / timescale;
-    console.log('Final calculated duration (seconds):', finalDuration);
-
-    return {
-        duration: finalDuration,
-        timescale,
-        tracks,
-        hasKeyFrameIndex: tracks.some(track => track.hasKeyFrames)
+    reader.onload = function(e) {
+      const buffer = e.target.result;
+      buffer.fileStart = 0; // mp4box.js needs this
+      mp4boxFile.appendBuffer(buffer);
+      mp4boxFile.flush();
     };
-};
 
-// Fixed parseTrakBox with correct offset calculations
-const parseTrakBox = (trakBuffer, trackIndex) => {
-    const boxes = parseMP4Boxes(trakBuffer);
-    const tkhdBox = boxes.find(box => box.type === 'tkhd');
-    const mdiaBox = boxes.find(box => box.type === 'mdia');
-    
-    if (!tkhdBox || !mdiaBox) {
-        console.log('Missing required boxes in track:', {tkhdBox: !!tkhdBox, mdiaBox: !!mdiaBox});
-        return null;
-    }
+    mp4boxFile.onReady = (info) => {
+      // Tell mp4box to create fragments for each track
+      info.tracks.forEach(track => {
+        mp4boxFile.setSegmentOptions(track.id, null, { duration: chunkDuration*1000 });
+      });
 
-    let trackId, duration;
-    
-    try {
-        // Parse track header
-        const tkhdData = trakBuffer.slice(tkhdBox.dataOffset, tkhdBox.dataOffset + tkhdBox.size - 8);
-        const tkhdView = new DataView(tkhdData);
-        const version = tkhdView.getUint8(0);
-        
-        if (version === 0) {
-            // Version 0 structure: version(1) + flags(3) + creation_time(4) + modification_time(4) + track_ID(4) + reserved(4) + duration(4)
-            trackId = tkhdView.getUint32(12, false);
-            duration = tkhdView.getUint32(20, false);
-        } else {
-            // Version 1 structure: version(1) + flags(3) + creation_time(8) + modification_time(8) + track_ID(4) + reserved(4) + duration(8)
-            trackId = tkhdView.getUint32(20, false);
-            duration = Number(tkhdView.getBigUint64(28, false));
-        }
-    } catch (error) {
-        console.error('Error parsing tkhd:', error);
-        return null;
-    }
+      const initializationSegments = mp4boxFile.initializeSegmentation();
+      const chunks = [];
+      mp4boxFile.onSegment = (id, user, buffer, sampleNum) => {
+        const timestamp = (chunks.length) * chunkDuration;
+        const seg = new Uint8Array(buffer);
+        chunks.push({ buffer: seg, timestamp }); // sampleNum ~= start time in samples
+        totalSize += seg.byteLength;
+      };
 
-    let mediaType = 'unknown';
-    
-    try {
-        // Parse media box
-        const mdiaData = trakBuffer.slice(mdiaBox.dataOffset, mdiaBox.dataOffset + mdiaBox.size - 8);
-        const mdiaBoxes = parseMP4Boxes(mdiaData);
-        const hdlrBox = mdiaBoxes.find(box => box.type === 'hdlr');
-        
-        if (hdlrBox) {
-            const hdlrData = mdiaData.slice(hdlrBox.dataOffset, hdlrBox.dataOffset + hdlrBox.size - 8);
-            // Skip version(1) + flags(3) + pre_defined(4) = 8 bytes to get to handler_type
-            if (hdlrData.byteLength >= 12) {
-                mediaType = new TextDecoder().decode(hdlrData.slice(8, 12));
-            }
-        }
-    } catch (error) {
-        console.error('Error parsing mdia/hdlr:', error);
-    }
+      mp4boxFile.start();
+      mp4boxFile.flush();
 
-    const track = {
-        trackId: Number(trackId),
-        trackIndex,
-        mediaType,
-        duration: Number(duration),
-        hasKeyFrames: false
+      resolve({chunks, totalSize, initializationSegments: initializationSegments.buffer, codec: info.tracks[0].codec});
     };
-    
-    // console.log('Parsed track:', track);
-    return track;
-};
 
-// Parse MP4 boxes from buffer
-const parseMP4Boxes = (buffer) => {
-    const boxes = [];
-    const view = new DataView(buffer);
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+const process_and_package_mp4_with_map = (fragment_data) => {
+    // Convert initSegs to Uint8Array
+    let mapping = new Map();
+    let totalSize = fragment_data.totalSize;
+    const initArray = new Uint8Array(fragment_data.initializationSegments);
+    totalSize += initArray.byteLength;
+
+    // Allocate final buffer
+    const combined = new Uint8Array(totalSize);
+
+    // Copy init segment first
     let offset = 0;
+    combined.set(initArray, offset);
+    mapping.set(0, offset)
+    offset += initArray.byteLength;
 
-    while (offset < buffer.byteLength - 8) {
-        const size = view.getUint32(offset, false);
-        const type = new TextDecoder().decode(buffer.slice(offset + 4, offset + 8));
-        
-        if (size === 0) break; // Size 0 means box extends to end of file
-        if (size < 8) break; // Invalid box size
-        
-        boxes.push({
-            type,
-            size,
-            offset,
-            dataOffset: offset + 8
-        });
-        
-        offset += size;
+    // Copy chunks and record mapping
+    for (const c of fragment_data.chunks) {
+        combined.set(c.buffer, offset);
+        if(c.timestamp != 0){
+            mapping.set(c.timestamp, offset) 
+        }
+        offset += c.buffer.byteLength;
     }
 
-    return boxes;
-};
-
-// Parse MP4 container structure using the efficient file structure analyzer
-const parseMP4Structure = async (file) => {
-    // First, scan the file structure efficiently
-    const fileStructure = await analyzeMP4Structure(file);
-    
-    const ftypBox = fileStructure.boxes.find(box => box.type === 'ftyp');
-    const moovBox = fileStructure.moov;
-    const mdatBox = fileStructure.mdat;
-    
-    if (!ftypBox) {
-        throw new Error('Not a valid MP4 file (missing ftyp box)');
-    }
-    
-    if (!moovBox) {
-        throw new Error('No moov box found in MP4 file');
-    }
-
-    // Read the ftyp box data for file type info
-    const ftypBuffer = await readChunk(file, ftypBox.dataOffset, ftypBox.size - 8);
-    const fileType = parseFtypBox(ftypBuffer, { dataOffset: 0 });
-
-    let videoInfo = {
-        fileType,
-        tracks: [],
-        duration: 0,
-        hasKeyFrameIndex: false,
-        moovPosition: moovBox.offset,
-        mdatPosition: mdatBox ? mdatBox.offset : 0
-    };
-
-    // Read and parse the moov box
-    const moovBuffer = await readChunk(file, moovBox.dataOffset, moovBox.size - 8);
-    const moovInfo = parseMoovBox(moovBuffer);
-    videoInfo = { ...videoInfo, ...moovInfo };
-
-    console.log('Parsed MP4 structure:', {
-        fileSize: file.size,
-        ftypPosition: ftypBox.offset,
-        moovPosition: moovBox.offset,
-        mdatPosition: mdatBox?.offset || 'not found',
-        duration: videoInfo.duration,
-        tracks: videoInfo.tracks.length
-    });
-
-    return videoInfo;
-};
+    return { combined, mapping }
+}
 
 // Main method to build time-to-byte mapping for MP4 videos
 const buildVideoTimeToByteMap = async (file, intervalSeconds) => {
+    const final_interval_seconds = intervalSeconds == 53 ? intervalSeconds : 5
     try {
-        // Parse MP4 structure to find moov box and track info
-        const mp4Info = await parseMP4Structure(file);
-        console.log('MP4 Info:', mp4Info);
+        const fragment_data = await fragmentMP4(file, final_interval_seconds)
+        const return_packaged_data = process_and_package_mp4_with_map(fragment_data)
+        console.log('fragments data', return_packaged_data)
 
-        let seekTable;
-        if (mp4Info.hasKeyFrameIndex) {
-            // Use keyframe index for precise seeking
-            seekTable = await buildSeekTableFromKeyFrames(file, mp4Info, intervalSeconds);
-        } else {
-            // Fallback to sample-based estimation
-            seekTable = await buildSeekTableFromSamples(file, mp4Info, intervalSeconds);
-        }
-
-        const seek_table = new Map(seekTable);
-        console.log('buildVideoTimeToByteMap', 'seek_table', seek_table)
-
-        return seek_table;
+        return return_packaged_data;
     }
     catch (error) {
         console.log('stackpage', 'something went wrong with the buildVideoTimeToByteMap function', error)
@@ -937,6 +743,32 @@ const parseAVCCodec = (stsdData, offset) => {
     }
     
     return 'avc1.42001e'; // Default baseline
+};
+
+// Parse MP4 boxes from buffer
+const parseMP4Boxes = (buffer) => {
+    const boxes = [];
+    const view = new DataView(buffer);
+    let offset = 0;
+
+    while (offset < buffer.byteLength - 8) {
+        const size = view.getUint32(offset, false);
+        const type = new TextDecoder().decode(buffer.slice(offset + 4, offset + 8));
+        
+        if (size === 0) break; // Size 0 means box extends to end of file
+        if (size < 8) break; // Invalid box size
+        
+        boxes.push({
+            type,
+            size,
+            offset,
+            dataOffset: offset + 8
+        });
+        
+        offset += size;
+    }
+
+    return boxes;
 };
 
 const extractTrackCodec = (trakBuffer) => {

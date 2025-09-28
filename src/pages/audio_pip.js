@@ -343,6 +343,9 @@ class AudioPip extends Component {
         this.is_loading_and_decrypting_track = true;
         mediaSource.addEventListener('sourceopen', async () => {
             const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+            sourceBuffer.addEventListener('error', (e) => {
+                console.error('SourceBuffer error:', e);
+            });
             const key = await this.props.get_key_from_password(track_data['password'], 'e');
             const timestamp_keys = Object.keys(track_data['encrypted_file_data_info'])
             var current_timestamp_key_pos = 0;
@@ -411,7 +414,7 @@ class AudioPip extends Component {
                         sourceBuffer.timestampOffset = load_time_to_set;
                         delete this.update_start_time_pos;
                     }else{
-                        const pause_time = this.should_continue_loading(track_data) ? 100 : 1500
+                        const pause_time = this.should_continue_loading(track_data) ? 50 : 200
                         await new Promise(resolve => setTimeout(resolve, pause_time))
                     }
                 }
@@ -475,12 +478,19 @@ class AudioPip extends Component {
     };
 
     should_continue_loading(track_data){
-        const value = this.get_bar_length()
-        const buffer = this.state.buffer
-        const track_duration = track_data['duration']
-        const buffer_difference_percentage = buffer - value
-        const remaining_time = (buffer_difference_percentage / 100) * track_duration;
-        return remaining_time < 85
+        // const value = this.get_bar_length()
+        // const buffer = this.state.buffer
+        // const track_duration = track_data['duration']
+        // const buffer_difference_percentage = buffer - value
+        // const remaining_time = (buffer_difference_percentage / 100) * track_duration;
+        // return remaining_time < 85
+
+        const audioElement = this.audio.current;
+        if (!audioElement || !audioElement.buffered.length) return true;
+        const currentTime = audioElement.currentTime;
+        const bufferedEnd = audioElement.buffered.end(audioElement.buffered.length - 1);
+        const remainingBuffer = bufferedEnd - currentTime;
+        return remainingBuffer < 45;
     }
 
     appendBufferAsync(sourceBuffer, chunk) {
@@ -489,8 +499,14 @@ class AudioPip extends Component {
                 if (sourceBuffer.updating) {
                     sourceBuffer.addEventListener('updateend', tryAppend, { once: true });
                 } else {
-                    sourceBuffer.appendBuffer(chunk);
-                    sourceBuffer.addEventListener('updateend', resolve, { once: true });
+                    try {
+                        sourceBuffer.appendBuffer(chunk);
+                        sourceBuffer.addEventListener('updateend', resolve, { once: true });
+                        sourceBuffer.addEventListener('error', reject, { once: true });
+                    } catch (error) {
+                        console.error('appendBufferAsync', error)
+                        reject(error);
+                    }
                 }
             };
             tryAppend();
@@ -546,6 +562,7 @@ class AudioPip extends Component {
         var new_time = (new_value / 100) * current_song_length
         this.audio.current.currentTime = parseFloat(new_time)
         this.setState({value: new_time})
+        this.update_stream_start_value_after_scrub(new_time)
     }
 
 
@@ -596,7 +613,6 @@ class AudioPip extends Component {
             this.props.notify_account_to_make_purchase()
         }
         var current_time = this.audio.current?.currentTime
-        this.update_stream_start_value_after_scrub(current_time)
         this.setState({value: current_time})
         this.props.when_time_updated(current_time, this.state.songs[this.state.pos])
     }

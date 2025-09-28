@@ -5499,8 +5499,8 @@ class App extends Component {
           {this.render_view_bid_in_auction_bottomsheet()}
           {this.render_fulfil_auction_bid_bottomsheet()}
 
-          {this.render_full_video_bottomsheet()}
           {this.render_dialog_bottomsheet()}
+          {this.render_full_video_bottomsheet()}
           {this.render_view_image_bottomsheet()}
           {this.render_view_pdf_bottomsheet()}
           {this.render_view_iframe_link_bottomsheet()}
@@ -8509,7 +8509,7 @@ class App extends Component {
 
         me.clear_stacked_messages_after_run(e5)
         setTimeout(function() {
-          me.start_get_accounts_for_specific_e5(false, e5, false)
+          me.start_get_accounts_for_specific_e5(false, e5, false, )
         }, (1 * 500));
         setTimeout(function() {
           me.set_cookies()
@@ -15426,7 +15426,7 @@ class App extends Component {
         if(me.state != null){
           me.setState({dialog_bottomsheet: !me.state.dialog_bottomsheet});
           if(me.dialog_bottomsheet != null){
-            me.dialog_page.current?.setState(me.dialog_bottomsheet)
+            // me.dialog_page.current?.setState(me.dialog_bottomsheet)
           }
         }
       }, (1 * 200));
@@ -16186,7 +16186,7 @@ class App extends Component {
       },
       body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj)) // Convert the data object to a JSON string
     }
-    const endpoint = this.load_registered_endpoint_from_link(node_url, 'delete_file')
+    const endpoint = this.load_registered_endpoint_from_link(node_url, 'delete_files')
     var request = `${node_url}/${endpoint}/${await this.fetch_nitro_privacy_signature(node_url)}`
     try{
       const response = await fetch(request, body);
@@ -19071,7 +19071,7 @@ class App extends Component {
       <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             <FullVideoPage ref={this.full_video_page} app_state={this.state} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
             update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
-            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)}
             />
       </div>
     )
@@ -35610,7 +35610,7 @@ class App extends Component {
   }
 
   when_uploading_multiple_encrypted_files_complete = async (e_cids, cids, datas, type) => {
-    var clone = structuredClone(this.state.uploaded_data)
+    var uploaded_data_clone = structuredClone(this.state.uploaded_data)
     var cid_clone = this.state.uploaded_data_cids.slice()
     var cid_clone_2 = this.state.uncommitted_upload_cids.slice()
     const private_key = this.state.accounts['E25'].privateKey.toString()
@@ -35649,6 +35649,12 @@ class App extends Component {
         if(_data['thumbnail'] != null){
           const thumbnail = await this.decrypt_data_string(_data['thumbnail'], password)
           _data['thumbnail'] = thumbnail
+
+          if(type == 'video'){
+            var clone = structuredClone(this.state.video_thumbnails)
+            clone[e_cids[i]] = thumbnail
+            this.setState({video_thumbnails: clone})
+          }
         }
         if(type == 'audio'){
           const metadata = JSON.parse(await this.decrypt_data_string(_data['metadata'], password))
@@ -35662,13 +35668,13 @@ class App extends Component {
         }
       }
       console.log('apppage', 'when_uploading_multiple_encrypted_files_complete', _data)
-      if(clone[_data['type']] == null) clone[_data['type']] = {}
-      clone[_data['type']][e_cids[i]] = _data
+      if(uploaded_data_clone[_data['type']] == null) uploaded_data_clone[_data['type']] = {}
+      uploaded_data_clone[_data['type']][e_cids[i]] = _data
       cid_clone.push(e_cids[i])
       cid_clone_2.push(e_cids[i])
     }
 
-    this.setState({uploaded_data: clone, uploaded_data_cids: cid_clone, update_data_in_E5: true, uncommitted_upload_cids: cid_clone_2, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    this.setState({uploaded_data: uploaded_data_clone, uploaded_data_cids: cid_clone, update_data_in_E5: true, uncommitted_upload_cids: cid_clone_2, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
     var me = this;
     setTimeout(function() {
       me.set_cookies()

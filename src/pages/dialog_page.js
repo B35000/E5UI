@@ -1956,6 +1956,10 @@ return data['data']
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data == null) return;
+        if(!this.is_file_available(data['hash'])){
+            this.props.notify(this.props.app_state.loc['3055fx']/* 'You deleted that file.' */, 1200)
+            return;
+        } 
 
         if(data['type'] == 'image'){
             this.props.show_images([ecid], 0)

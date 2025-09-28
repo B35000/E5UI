@@ -774,7 +774,7 @@ class JobDetailsSection extends Component {
             return(
                 <div>
                     {items.map((item, index) => (
-                        <div key={index}>
+                        <div key={'d'+index}>
                             {this.render_detail_item(item['type'], item['data'])} 
                             <div style={{height:2}}/>
                         </div>
@@ -1038,7 +1038,7 @@ class JobDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
-                                <div key={index}>
+                                <div key={'i'+index}>
                                     {this.render_job_response_item(item, object)}
                                 </div>
                             </li> 
