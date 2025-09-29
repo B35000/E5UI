@@ -39,6 +39,8 @@ class E5DetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_e5_list_detail_tags_object: this.get_navigate_view_e5_list_detail_tags(),
+        get_selected_chart_item_tags_object:this.get_selected_chart_item_tags_object(),
+        get_selected_contract_chart_item_tags_object: this.get_selected_contract_chart_item_tags_object(),
     };
 
     get_navigate_view_e5_list_detail_tags(){
@@ -788,27 +790,41 @@ class E5DetailsSection extends Component {
 
 
 
+    get_selected_chart_item_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1196']/* 'e.jobs' */,this.props.app_state.loc['1197']/* 'e.contracts' */,this.props.app_state.loc['1198']/* 'e.contractors' */, this.props.app_state.loc['1199']/* 'e.proposals' */, this.props.app_state.loc['1200']/* 'e.subscriptions' */, this.props.app_state.loc['1213']/* 'e.posts' */,this.props.app_state.loc['1214']/* 'e.channels' */,this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1215']/* 'e.storefront' */, this.props.app_state.loc['1216']/* 'e.bags' */, this.props.app_state.loc['1264k']/* 'e.audioport' */, this.props.app_state.loc['1264p']/* 'videoport' */, this.props.app_state.loc['1264bj']/* 'exchanges' */], [1]
+            ],
+        };
+    }
 
+    get_selected_contract_chart_item_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','E5', 'E52', 'F5', 'G5', 'G52', 'H5', 'H52'], [1]
+            ],
+        };
+    }
     
     
     load_E5_charts(obj){
         var e5_chart_data = this.props.app_state.all_data[obj['id']]
-        if(e5_chart_data != null){
+        if(e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)){
            return(
                <div>
-                    {this.show_subscription_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_contract_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_proposal_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_exchange_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_post_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_channel_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_job_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_stores_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_bag_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_contractor_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_audio_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_video_transaction_count_chart(e5_chart_data, obj['id'])}
-                    {this.show_poll_transaction_count_chart(e5_chart_data, obj['id'])}
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_chart_item_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_chart_item_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    
+                    {this.render_selected_chart_item(e5_chart_data, obj['id'])}
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_contract_chart_item_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_contract_chart_item_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    {this.render_selected_contract_chart_item(obj['id'])}
+
                     {this.show_data_transaction_count_chart(e5_chart_data, obj['id'])}
                     {this.show_metadata_transaction_count_chart(e5_chart_data, obj['id'])}
                     {/* {this.show_withdraw_amount_data_chart(e5_chart_data, obj['id'])} */}
@@ -819,6 +835,154 @@ class E5DetailsSection extends Component {
                </div>
            )
         }
+    }
+
+    when_get_selected_contract_chart_item_tags_object_updated(tag_obj){
+        this.setState({get_selected_contract_chart_item_tags_object: tag_obj})
+    }
+
+    when_get_selected_chart_item_tags_object_updated(tag_obj){
+        this.setState({get_selected_chart_item_tags_object: tag_obj})
+    }
+
+    render_selected_chart_item(e5_chart_data, e5){
+        var selected_item = this.get_selected_item(this.state.get_selected_chart_item_tags_object, 'e')
+        
+        if(selected_item == this.props.app_state.loc['1196']/* 'e.jobs' */){
+            return(
+                <div>
+                    {this.show_job_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1197']/* 'e.contracts' */){
+            return(
+                <div>
+                    {this.show_contract_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1198']/* 'e.contractors' */){
+            return(
+                <div>
+                    {this.show_contractor_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1199']/* 'e.proposals' */){
+            return(
+                <div>
+                    {this.show_proposal_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1200']/* 'e.subscriptions' */){
+            return(
+                <div>
+                    {this.show_subscription_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1213']/* 'e.posts' */){
+            return(
+                <div>
+                    {this.show_post_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1214']/* 'e.channels' */){
+            return(
+                <div>
+                    {this.show_channel_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1264ao']/* 'polls' */){
+            return(
+                <div>
+                    {this.show_poll_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1215']/* 'e.storefront' */){
+            return(
+                <div>
+                    {this.show_stores_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1216']/* 'e.bags' */){
+            return(
+                <div>
+                    {this.show_bag_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1264k']/* 'e.audioport' */){
+            return(
+                <div>
+                    {this.show_audio_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1264p']/* 'videoport' */){
+            return(
+                <div>
+                    {this.show_video_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1264bj']/* 'exchanges' */){
+            return(
+                <div>
+                    {this.show_exchange_transaction_count_chart(e5_chart_data, e5)}
+                </div>
+            )
+        }
+    }
+
+    render_selected_contract_chart_item(e5){
+        var selected_item = this.get_selected_item(this.state.get_selected_contract_chart_item_tags_object, 'e')
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['get_all_contracts_data_points'] : {}
+
+        if(nitro_graphs_data[selected_item] == null) return;
+
+        var graph_data = nitro_graphs_data[selected_item]        
+        const dataPoints1 = graph_data['total']['dps']
+        const start_time1 = graph_data['total']['chart_starting_time']
+
+        const dataPoints2 = graph_data['average']['dps']
+        const start_time2 = graph_data['average']['chart_starting_time']
+        const amount = graph_data['event_count']
+
+        const detailer_obj = {
+            'E5':this.props.app_state.loc['2336bm']/* Primary Data Contract */, 
+            'E52':this.props.app_state.loc['2336bn']/* Secondary Data Contract */, 
+            'F5':this.props.app_state.loc['2336bo']/* Subscription Data Contract */, 
+            'G5':this.props.app_state.loc['2336bp']/* Primary Contract & Proposal Contract */, 
+            'G52':this.props.app_state.loc['2336bq']/* Secondary Contract & Proposal Contract */, 
+            'H5':this.props.app_state.loc['2336br']/* Primary Exchange Contract */, 
+            'H52':this.props.app_state.loc['2336bs']/* Secondary Exchange Contract */
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2336bh']/* Logged Events.' */.replace('$', detailer_obj[selected_item]), 'details':this.props.app_state.loc['2336bi']/* `Chart containing the total number of logged events in the selected contract $ over time.` */.replace('$', selected_item), 'size':'l'})}
+                
+                {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('6', {'dataPoints':dataPoints2, 'interval':110, 'start_time':start_time2})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2336bj']/* 'Y-Axis: Total Logged Events.' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336bk']/* 'Total Logged Events.' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336bl']/* 'events' */})}>
+                    {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2336bk']/* 'Total Logged Events.' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336bl']/* 'events' */, })}
+                </div>
+                {this.render_detail_item('0')}
+            </div>
+        )
     }
 
 
@@ -2047,9 +2211,12 @@ class E5DetailsSection extends Component {
 
         const dataPoints2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['dps'] : this.get_transaction_data_points_as_average(data, 'p5')
         const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
+
+        if(dataPoints1 == null || dataPoints1.length == 0 || dataPoints2 == null || dataPoints2.length == 0 || nitro_graphs_data['event_count'] < 10) return;
         
         return(
             <div>
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2336f']/* 'Account Zero Credit.' */, 'details':this.props.app_state.loc['2336g']/* `The amount of end that has been sent to the burn account over time.` */, 'size':'l'})}
 
                 {this.render_detail_item('6', {'dataPoints':dataPoints1,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1, 'hide_label': true})}
@@ -2060,7 +2227,7 @@ class E5DetailsSection extends Component {
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
-                {this.render_detail_item('0')}
+                
             </div>
         )
     }

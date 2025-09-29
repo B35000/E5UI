@@ -109,6 +109,7 @@ class StackPage extends Component {
         get_disable_moderation_setting_object:this.get_disable_moderation_setting_object(),
         get_post_load_size_setting_object: this.get_post_load_size_setting_object(),
         get_link_handler_setting_object:this.get_link_handler_setting_object(),
+        get_floating_close_button_object:this.get_floating_close_button_object(), get_floating_close_button_position_object:this.get_floating_close_button_position_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
@@ -1188,6 +1189,67 @@ class StackPage extends Component {
 
 
 
+
+
+
+
+
+
+    get_floating_close_button_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593fj']/* 'enabled' */], [this.get_selected_floating_close_button_setting_option()]
+            ], 
+        }
+    }
+
+    get_selected_floating_close_button_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593fj']/* 'enabled' */] = 1
+        return obj[this.props.app_state.show_floating_close_button]
+    }
+
+    set_floating_close_button_object(){
+        this.setState({get_floating_close_button_object: this.get_floating_close_button_object(),})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    get_floating_close_button_position_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593jt']/* 'left' */,this.props.app_state.loc['1593ju']/* 'right' */], [this.get_selected_floating_close_button_position_setting_option()]
+            ],
+        }
+    }
+
+    get_selected_floating_close_button_position_setting_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593jt']/* 'left' */] = 1
+        obj[this.props.app_state.loc['1593ju']/* 'right' */] = 2
+        return obj[this.props.app_state.floating_close_button_position]
+    }
+
+    set_floating_close_button_position_object(){
+        this.setState({get_floating_close_button_position_object: this.get_floating_close_button_position_object(),})
+    }
 
 
 
@@ -10769,10 +10831,21 @@ class StackPage extends Component {
 
 
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                 {this.render_detail_item('0')}
 
@@ -10941,6 +11014,16 @@ class StackPage extends Component {
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -11200,6 +11283,18 @@ class StackPage extends Component {
         this.setState({get_link_handler_setting_object: tag_obj})
         var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_link_handler_changed(selected_item)
+    }
+
+    when_get_floating_close_button_object_updated(tag_obj){
+        this.setState({get_floating_close_button_object: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        this.props.when_enable_floating_close_button_changed(selected_item)
+    }
+
+    when_get_floating_close_button_position_object_updated(tag_obj){
+        this.setState({get_floating_close_button_position_object: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        this.props.when_set_floating_close_button_position_changed(selected_item)
     }
     
 
@@ -14312,6 +14407,30 @@ class StackPage extends Component {
         return result;
     }
 
+    // encrypt_in_chunks = async (file, password, salt, CHUNK_SIZE) => {
+    //     const key = await this.props.get_key_from_password(password, salt);
+    //     const encryptedChunks = [];
+    //     const fileSize = file.size;
+
+    //     for (let offset = 0; offset < fileSize; offset += CHUNK_SIZE) {
+    //         const chunk = file.slice(offset, offset + CHUNK_SIZE);
+    //         const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
+    //         const iv = crypto.getRandomValues(new Uint8Array(12));
+    //         const encrypted = await window.crypto.subtle.encrypt(
+    //             { name: 'AES-GCM', iv }, // unique IV per chunk
+    //             key,
+    //             chunkBuffer
+    //         );
+    //         const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
+    //         chunkWithIV.set(iv);
+    //         chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+
+    //         encryptedChunks.push(chunkWithIV);
+    //     }
+
+    //     return encryptedChunks;
+    // }
+
     encrypt_file_in_chunks2 = async (combined, password, salt, timeToByteMap) => {
         const key = await this.props.get_key_from_password(password, salt);
         const encryptedChunks = [];
@@ -14335,7 +14454,7 @@ class StackPage extends Component {
             chunkSeekMap.set(currentTime, encryptedBytePosition);
 
             const chunk = combined.slice(currentBytePos, chunkEndPos);
-
+            
             const iv = crypto.getRandomValues(new Uint8Array(12));
             // Encrypt the chunk
             const encrypted = await window.crypto.subtle.encrypt(

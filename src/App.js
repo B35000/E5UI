@@ -886,7 +886,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -965,7 +965,7 @@ class App extends Component {
 
     gateway_traffic_stats_cache_time_limit: (3*60*1000), my_created_moderator_notes:[], moderator_notes_by_my_following:[], hide_audio_pip_due_to_inactivity: false, minimum_run_count_for_valid_account:3, nitro_telemetry_data_object:{}, nitro_error_log_data_object:{}, saved_pre_launch_events:{},
 
-    hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */
+    hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */ opened_bottomsheets:[],
   };
 
   get_static_assets(){
@@ -3517,7 +3517,10 @@ class App extends Component {
       link_handler: this.state.link_handler,
       hidden_audioposts: this.state.hidden_audioposts,
       hidden_videoposts: this.state.hidden_videoposts,
-      update_hidden_values_in_e5: this.state.update_hidden_values_in_e5
+      update_hidden_values_in_e5: this.state.update_hidden_values_in_e5,
+
+      show_floating_close_button: this.state.show_floating_close_button,
+      floating_close_button_position:this.state.floating_close_button_position,
     }
   }
 
@@ -3708,6 +3711,8 @@ class App extends Component {
       var hidden_audioposts = state.hidden_audioposts == null ? this.state.hidden_audioposts : state.hidden_audioposts
       var hidden_videoposts = state.hidden_videoposts == null ? this.state.hidden_videoposts : state.hidden_videoposts
       var update_hidden_values_in_e5 = state.update_hidden_values_in_e5 || this.state.update_hidden_values_in_e5
+      var show_floating_close_button = state.show_floating_close_button || this.state.show_floating_close_button
+      var floating_close_button_position = state.floating_close_button_position || this.state.floating_close_button_position
 
       this.setState({
         theme: theme,
@@ -3781,7 +3786,9 @@ class App extends Component {
         link_handler: link_handler,
         hidden_audioposts: hidden_audioposts, 
         hidden_videoposts: hidden_videoposts, 
-        update_hidden_values_in_e5: update_hidden_values_in_e5
+        update_hidden_values_in_e5: update_hidden_values_in_e5,
+        show_floating_close_button: show_floating_close_button,
+        floating_close_button_position: floating_close_button_position
       })
       var me = this;
       setTimeout(function() {
@@ -3836,6 +3843,8 @@ class App extends Component {
       me.stack_page.current?.set_selected_disable_moderation_setting_tag()
       me.stack_page.current?.set_selected_post_load_size_setting_tag()
       me.stack_page.current?.set_selected_link_handler_setting_tag()
+      me.stack_page.current?.set_floating_close_button_object()
+      me.stack_page.current?.set_floating_close_button_position_object()
     }, (1 * 1000));
   }
 
@@ -4506,11 +4515,11 @@ class App extends Component {
     var seed = ''+process.env.REACT_APP_SEED_API_KEY
     var web3_url = this.get_web3_url_from_e5('E55')
     var account = this.get_account_from_seed(seed, web3_url)
-    console.log(account)
+    // console.log(account)
     // console.log(toBech32(account.address))
 
     const web3 = new Web3(web3_url);
-    var balance = await web3.eth.getBalance(account.address)
+    // var balance = await web3.eth.getBalance(account.address)
     // var gas_price = await web3.eth.getGasPrice();
     // console.log('get_key','deploy account balance: ',(balance/10**18))
     // console.log('get_key','chain gas price: ', gas_price)
@@ -5420,6 +5429,7 @@ class App extends Component {
     }else{
       return (
         <div>
+          {this.render_close_button()}
           {this.render_audio_pip()}
           {this.render_page()}
           {this.render_synchronizing_bottomsheet()}
@@ -5608,6 +5618,7 @@ class App extends Component {
 
           get_nitro_log_stream_data={this.get_nitro_log_stream_data.bind(this)} reload_objects_album_arts={this.reload_objects_album_arts.bind(this)}
           show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}
+          when_bottomsheet_opened_or_closed={this.when_bottomsheet_opened_or_closed.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -6087,9 +6098,9 @@ class App extends Component {
   }
 
   open_syncronizing_page_bottomsheet(){
-      if(this.state != null){
-        this.setState({syncronizing_page_bottomsheet: !this.state.syncronizing_page_bottomsheet});
-      }
+    if(this.state != null){
+      this.setState({syncronizing_page_bottomsheet: !this.state.syncronizing_page_bottomsheet});
+    }
   };
 
   keep_syncronizing_page_open(){
@@ -6175,6 +6186,7 @@ class App extends Component {
   }
 
   open_send_receive_ether_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_send_receive_ether_bottomsheet')
     if(this.state.send_receive_bottomsheet == true){
       //closing
       this.send_receive_bottomsheet = this.send_receive_ether_page.current?.state;
@@ -6302,6 +6314,7 @@ class App extends Component {
   }
 
   open_send_receive_coin_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_send_receive_coin_bottomsheet')
     if(this.state.send_receive_coin_bottomsheet == true){
       //closing
       this.send_receive_coin_bottomsheet = this.send_receive_coin_page.current?.state;
@@ -7436,12 +7449,13 @@ class App extends Component {
       set_stack_size_in_bytes={this.set_stack_size_in_bytes.bind(this)} when_explore_display_type_changed={this.when_explore_display_type_changed.bind(this)} stringToBigNumber={this.stringToBigNumber.bind(this)} 
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
-      when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)}
+      when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)}
       />
     )
   }
 
   open_stack_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_stack_bottomsheet')
     if(this.state.stack_bottomsheet == true){
       //closing
       this.stack_bottomsheet = this.stack_page.current?.state;
@@ -8329,6 +8343,22 @@ class App extends Component {
     this.setState({file_upload_status: item})
   }
 
+  when_enable_floating_close_button_changed(item){
+    this.setState({show_floating_close_button: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_set_floating_close_button_position_changed(item){
+    this.setState({floating_close_button_position: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
 
 
 
@@ -8802,6 +8832,7 @@ class App extends Component {
   }
 
   open_wiki_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_wiki_bottomsheet')
     if(this.state.wiki_bottomsheet == true){
       //closing
       this.wiki_bottomsheet = this.wiki_page.current?.state;
@@ -8874,6 +8905,7 @@ class App extends Component {
   }
 
   open_new_object_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_new_object_bottomsheet')
     if(this.state.new_object_bottomsheet == true){
       //closing
       
@@ -9325,6 +9357,7 @@ class App extends Component {
   }
 
   open_edit_token_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_token_bottomsheet')
     if(this.state.edit_token_bottomsheet == true){
       //closing
       this.edit_token_bottomsheet = this.edit_token_page.current?.state;
@@ -9405,6 +9438,7 @@ class App extends Component {
   }
 
   open_edit_channel_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_channel_bottomsheet')
     if(this.state.edit_channel_bottomsheet == true){
       //closing
       this.edit_channel_bottomsheet = this.edit_channel_page.current?.state;
@@ -9487,6 +9521,7 @@ class App extends Component {
   }
 
   open_edit_contractor_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_contractor_bottomsheet')
     if(this.state.edit_contractor_bottomsheet == true){
       //closing
       this.edit_contractor_bottomsheet = this.edit_contractor_page.current?.state;
@@ -9567,6 +9602,7 @@ class App extends Component {
   }
 
   open_edit_job_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_job_bottomsheet')
     if(this.state.edit_job_bottomsheet == true){
       //closing
       this.edit_job_bottomsheet = this.edit_job_page.current?.state;
@@ -9647,6 +9683,7 @@ class App extends Component {
   }
 
   open_edit_post_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_post_bottomsheet')
     if(this.state.edit_post_bottomsheet == true){
       //closing
       this.edit_post_bottomsheet = this.edit_post_page.current?.state;
@@ -9728,6 +9765,7 @@ class App extends Component {
   }
 
   open_edit_storefront_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_storefront_bottomsheet')
     if(this.state.edit_storefront_bottomsheet == true){
       //closing
       this.edit_storefront_bottomsheet = this.edit_storefront_page.current?.state;
@@ -9809,6 +9847,7 @@ class App extends Component {
   }
 
   open_edit_proposal_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_proposal_bottomsheet')
     if(this.state.edit_proposal_bottomsheet == true){
       //closing
       this.edit_proposal_bottomsheet = this.edit_proposal_page.current?.state;
@@ -9893,6 +9932,7 @@ class App extends Component {
   }
 
   open_edit_audiopost_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_audiopost_bottomsheet')
     if(this.state.edit_audiopost_bottomsheet == true){
       //closing
       this.edit_audiopost_bottomsheet = this.edit_audiopost_page.current?.state;
@@ -9988,6 +10028,7 @@ class App extends Component {
   }
 
   open_edit_videopost_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_videopost_bottomsheet')
     if(this.state.edit_videopost_bottomsheet == true){
       //closing
       this.edit_videopost_bottomsheet = this.edit_videopost_page.current?.state;
@@ -10073,6 +10114,7 @@ class App extends Component {
   }
 
   open_edit_nitropost_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_nitropost_bottomsheet')
     if(this.state.edit_nitropost_bottomsheet == true){
       //closing
       this.edit_nitropost_bottomsheet = this.edit_nitropost_page.current?.state;
@@ -10154,6 +10196,7 @@ class App extends Component {
   }
 
   open_edit_poll_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_poll_bottomsheet')
     if(this.state.edit_poll_bottomsheet == true){
       //closing
       this.edit_poll_bottomsheet = this.edit_poll_page.current?.state;
@@ -10302,6 +10345,7 @@ class App extends Component {
   }
 
   open_mint_token_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_mint_token_bottomsheet')
     if(this.state.mint_token_bottomsheet == true){
       //closing
       this.mint_token_bottomsheet = this.new_mint_dump_token_page.current?.state;
@@ -10396,6 +10440,7 @@ class App extends Component {
   }
 
   open_transfer_token_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_transfer_token_bottomsheet')
     if(this.state.transfer_token_bottomsheet == true){
       //closing
       this.transfer_token_bottomsheet = this.new_transfer_token_page.current?.state;
@@ -10485,6 +10530,7 @@ class App extends Component {
   }
 
   open_enter_contract_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_enter_contract_bottomsheet')
     if(this.state.enter_contract_bottomsheet == true){
       //closing
       this.enter_contract_bottomsheet = this.enter_contract_page.current?.state;
@@ -10589,6 +10635,7 @@ class App extends Component {
   }
 
   open_extend_contract_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_extend_contract_bottomsheet')
     if(this.state.extend_contract_bottomsheet == true){
       //closing
       this.extend_contract_bottomsheet = this.extend_contract_page.current?.state;
@@ -10678,6 +10725,7 @@ class App extends Component {
   }
 
   open_exit_contract_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_exit_contract_bottomsheet')
     if(this.state.exit_contract_bottomsheet == true){
       //closing
       this.exit_contract_bottomsheet = this.exit_contract_page.current?.state;
@@ -10760,6 +10808,7 @@ class App extends Component {
   }
 
   open_new_proposal_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_new_proposal_bottomsheet')
     if(this.state.new_proposal_bottomsheet == true){
       //closing
       this.new_proposal_bottomsheet = this.new_proposal_page.current?.state;
@@ -10852,6 +10901,7 @@ class App extends Component {
   }
 
   open_vote_proposal_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_vote_proposal_bottomsheet')
     if(this.state.vote_proposal_bottomsheet == true){
       //closing
       this.vote_proposal_bottomsheet = this.vote_proposal_page.current?.state;
@@ -10877,7 +10927,6 @@ class App extends Component {
     }
   }
 
-
   show_vote_proposal_bottomsheet(proposal_item){
     this.open_vote_proposal_bottomsheet()
     var me = this;
@@ -10888,7 +10937,6 @@ class App extends Component {
     }, (1 * 500));
     
   }
-
 
   add_vote_proposal_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
@@ -10945,6 +10993,7 @@ class App extends Component {
   }
 
   open_submit_proposal_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_submit_proposal_bottomsheet')
     if(this.state.submit_proposal_bottomsheet == true){
       //closing
       this.submit_proposal_bottomsheet = this.submit_proposal_page.current?.state;
@@ -10981,7 +11030,6 @@ class App extends Component {
     
 
   }
-
 
   add_submit_proposal_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
@@ -11033,6 +11081,7 @@ class App extends Component {
   }
 
   open_pay_subscription_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_pay_subscription_bottomsheet')
     if(this.state.pay_subscription_bottomsheet == true){
       //closing
       this.pay_subscription_bottomsheet = this.pay_subscription_page.current?.state;
@@ -11124,6 +11173,7 @@ class App extends Component {
   }
 
   open_cancel_subscription_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_cancel_subscription_bottomsheet')
     if(this.state.cancel_subscription_bottomsheet == true){
       //closing
       this.cancel_subscription_bottomsheet = this.cancel_subscription_page.current?.state;
@@ -11218,6 +11268,7 @@ class App extends Component {
   }
 
   open_collect_subscription_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_collect_subscription_bottomsheet')
     if(this.state.collect_subscription_bottomsheet == true){
       //closing
       this.collect_subscription_bottomsheet = this.collect_subscription_page.current?.state;
@@ -11311,6 +11362,7 @@ class App extends Component {
   }
 
   open_modify_subscription_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_modify_subscription_bottomsheet')
     if(this.state.modify_subscription_bottomsheet == true){
       //closing
       this.modify_subscription_bottomsheet = this.modify_subscription_page.current?.state;
@@ -11403,6 +11455,7 @@ class App extends Component {
   }
 
   open_modify_contract_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_modify_contract_bottomsheet')
     if(this.state.modify_contract_bottomsheet == true){
       //closing
       this.modify_contract_bottomsheet = this.modify_contract_page.current?.state;
@@ -11495,6 +11548,7 @@ class App extends Component {
   }
 
   open_modify_token_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_modify_token_bottomsheet')
     if(this.state.modify_token_bottomsheet == true){
       //closing
       this.modify_token_bottomsheet = this.modify_token_page.current?.state;
@@ -11587,6 +11641,7 @@ class App extends Component {
   }
 
   open_exchange_transfer_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_exchange_transfer_bottomsheet')
     if(this.state.exchange_transfer_bottomsheet == true){
       //closing
       this.exchange_transfer_bottomsheet = this.exchange_transfer_page.current?.state;
@@ -11679,6 +11734,7 @@ class App extends Component {
   }
 
   open_force_exit_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_force_exit_bottomsheet')
     if(this.state.force_exit_bottomsheet == true){
       //closing
       this.force_exit_bottomsheet = this.force_exit_page.current?.state;
@@ -11772,6 +11828,7 @@ class App extends Component {
   }
 
   open_archive_proposal_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_archive_proposal_bottomsheet')
     if(this.state.archive_proposal_bottomsheet == true){
       //closing
       this.archive_proposal_bottomsheet = this.archive_proposal_page.current?.state;
@@ -11808,7 +11865,6 @@ class App extends Component {
     
 
   }
-
 
   add_archive_proposal_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
@@ -11863,6 +11919,7 @@ class App extends Component {
   }
 
   open_freeze_unfreeze_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_freeze_unfreeze_bottomsheet')
      if(this.state.freeze_unfreeze_bottomsheet == true){
       //closing
       this.freeze_unfreeze_bottomsheet = this.freeze_unfreeze_page.current?.state;
@@ -12001,6 +12058,7 @@ class App extends Component {
   }
 
   open_authmint_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_authmint_bottomsheet')
     if(this.state.authmint_bottomsheet == true){
       //closing
       this.authmint_bottomsheet = this.authmint_page.current?.state;
@@ -12093,6 +12151,7 @@ class App extends Component {
   }
 
   open_moderator_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_moderator_bottomsheet')
     if(this.state.moderator_bottomsheet == true){
       //closing
       this.moderator_bottomsheet = this.moderator_page.current?.state;
@@ -12185,6 +12244,7 @@ class App extends Component {
   }
 
   open_respond_to_job_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_respond_to_job_bottomsheet')
     if(this.state.respond_to_job_bottomsheet == true){
       //closing
       this.respond_to_job_bottomsheet = this.respond_to_job_page.current?.state;
@@ -12287,6 +12347,7 @@ class App extends Component {
   }
 
   open_view_application_contract_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_application_contract_bottomsheet')
     if(this.state.view_application_contract_bottomsheet == true){
       //closing
       this.view_application_contract_bottomsheet = this.view_application_contract_page.current?.state;
@@ -12324,7 +12385,6 @@ class App extends Component {
     
 
   }
-
 
   add_job_acceptance_action_to_stack(state_obj){
     var item = state_obj.application_item
@@ -12392,6 +12452,7 @@ class App extends Component {
   }
 
   open_view_transaction_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_transaction_bottomsheet')
     if(this.state.view_transaction_bottomsheet == true){
       //closing
       this.view_transaction_bottomsheet = this.view_transaction_page.current?.state;
@@ -13085,6 +13146,7 @@ class App extends Component {
   }
 
   open_view_transaction_log_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_transaction_log_bottomsheet')
     if(this.state.view_transaction_log_bottomsheet == true){
       //closing
       this.view_transaction_log_bottomsheet = this.view_transaction_page.current?.state;
@@ -13160,6 +13222,7 @@ class App extends Component {
   }
 
   open_add_to_bag_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_add_to_bag_bottomsheet')
     if(this.state.add_to_bag_bottomsheet == true){
       //closing
       this.add_to_bag_bottomsheet = this.add_to_bag_page.current?.state;
@@ -13269,6 +13332,7 @@ class App extends Component {
   }
 
   open_fulfil_bag_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_fulfil_bag_bottomsheet')
     if(this.state.fulfil_bag_bottomsheet == true){
       //closing
       this.fulfil_bag_bottomsheet = this.fulfil_bag_page.current?.state;
@@ -13365,6 +13429,7 @@ class App extends Component {
   }
 
   open_view_bag_application_contract_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_bag_application_contract_bottomsheet')
     if(this.state.view_bag_application_contract_bottomsheet == true){
       //closing
       this.view_bag_application_contract_bottomsheet = this.view_bag_application_contract_page.current?.state;
@@ -13463,6 +13528,7 @@ class App extends Component {
   }
 
   open_direct_purchase_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_direct_purchase_bottomsheet')
     if(this.state.direct_purchase_bottomsheet == true){
       //closing
       this.direct_purchase_bottomsheet = this.direct_purchase_page.current?.state;
@@ -13552,6 +13618,7 @@ class App extends Component {
   }
 
   open_clear_purchase_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_clear_purchase_bottomsheet')
     if(this.state.clear_purchase_bottomsheet == true){
       //closing
       this.clear_purchase_bottomsheet = this.clear_purchase_page.current?.state;
@@ -13588,7 +13655,6 @@ class App extends Component {
 
   }
 
-
   generate_signature = async (data) => {
     if(!this.state.has_wallet_been_set){
       this.prompt_top_notification(this.getLocale()['2906']/* 'You need to set your wallet first.' */, 5000)
@@ -13616,7 +13682,6 @@ class App extends Component {
     }
     
   }
-
 
   add_clearing_purchase_action_to_stack(state_obj){
     var stack = this.state.stack_items.slice()
@@ -13678,6 +13743,7 @@ class App extends Component {
   }
 
   open_send_job_request_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_send_job_request_bottomsheet')
     if(this.state.send_job_request_bottomsheet == true){
       //closing
       this.send_job_request_bottomsheet = this.send_job_request_page.current?.state;
@@ -13775,6 +13841,7 @@ class App extends Component {
   }
 
   open_view_job_request_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_job_request_bottomsheet')
     if(this.state.view_job_request_bottomsheet == true){
       //closing
       this.view_job_request_bottomsheet = this.view_job_request_page.current?.state;
@@ -13896,6 +13963,7 @@ class App extends Component {
   }
 
   open_view_job_request_contract_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_job_request_contract_bottomsheet')
     if(this.state.view_job_request_contract_bottomsheet == true){
       //closing
       this.view_job_request_contract_bottomsheet = this.view_job_request_page.current?.state;
@@ -14002,6 +14070,7 @@ class App extends Component {
   }
 
   open_withdraw_ether_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_withdraw_ether_bottomsheet')
     if(this.state.withdraw_ether_bottomsheet == true){
       //closing
       this.withdraw_ether_bottomsheet = this.withdraw_ether_page.current?.state;
@@ -14137,6 +14206,7 @@ class App extends Component {
   }
 
   open_give_award_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_give_award_bottomsheet')
     if(this.state.give_award_bottomsheet == true){
       //closing
       this.give_award_bottomsheet = this.give_award_page.current?.state;
@@ -14255,6 +14325,7 @@ class App extends Component {
   }
 
   open_add_comment_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_add_comment_bottomsheet')
     if(this.state.add_comment_bottomsheet == true){
       //closing
       this.add_comment_bottomsheet = this.add_comment_page.current?.state;
@@ -14437,6 +14508,7 @@ class App extends Component {
   }
 
   open_depthmint_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_depthmint_bottomsheet')
     if(this.state.depthmint_bottomsheet == true){
       //closing
       this.depthmint_bottomsheet = this.depthmint_page.current?.state;
@@ -14531,6 +14603,7 @@ class App extends Component {
   }
 
   open_stage_royalties_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_stage_royalties_bottomsheet')
     if(this.state.stage_royalties_bottomsheet == true){
       //closing
       this.stage_royalties_bottomsheet = this.stage_royalties_page.current?.state;
@@ -14626,6 +14699,7 @@ class App extends Component {
   }
 
   open_view_staged_royalties_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_staged_royalties_bottomsheet')
     if(this.state.view_staged_royalties_bottomsheet == true){
       //closing
       this.view_staged_royalties_bottomsheet = this.view_staged_royalties_page.current?.state;
@@ -14747,6 +14821,7 @@ class App extends Component {
   }
 
   open_searched_account_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_searched_account_bottomsheet')
     if(this.state.searched_account_bottomsheet == true){
       //closing
       this.searched_account_bottomsheet = this.searched_account_page.current?.state;
@@ -14923,6 +14998,7 @@ class App extends Component {
   }
 
   open_rpc_settings_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_rpc_settings_bottomsheet')
     if(this.state.rpc_settings_bottomsheet == true){
       //closing
       this.rpc_settings_bottomsheet = this.rpc_settings_page.current?.state;
@@ -15050,6 +15126,7 @@ class App extends Component {
   }
 
   open_confirm_run_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_confirm_run_bottomsheet')
     if(this.state.confirm_run_bottomsheet == true){
       //closing
       this.confirm_run_bottomsheet = this.confirm_run_page.current?.state;
@@ -15136,6 +15213,7 @@ class App extends Component {
   }
 
   open_successful_send_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_successful_send_bottomsheet')
     if(this.state.successful_send_bottomsheet == true){
       //closing
       this.successful_send_bottomsheet = this.successful_send_page.current?.state;
@@ -15213,6 +15291,7 @@ class App extends Component {
   }
 
   open_view_number_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_number_bottomsheet')
     if(this.state.view_number_bottomsheet == true){
       //closing
       this.view_number_bottomsheet = this.view_number_page.current?.state;
@@ -15299,6 +15378,7 @@ class App extends Component {
   }
 
   open_scan_code_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_scan_code_bottomsheet')
     if(this.state.scan_code_bottomsheet == true){
       //closing
       this.scan_code_bottomsheet = this.scan_code_page.current?.state;
@@ -15406,6 +15486,7 @@ class App extends Component {
   }
 
   open_dialog_bottomsheet(sheet_size){
+    this.when_bottomsheet_opened_or_closed('open_dialog_bottomsheet')
     if(sheet_size){
       this.setState({dialog_size: sheet_size})
     }
@@ -16479,6 +16560,7 @@ class App extends Component {
   }
 
   open_pay_upcoming_subscriptions_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_pay_upcoming_subscriptions_bottomsheet')
     if(this.state.pay_upcoming_subscriptions_bottomsheet == true){
       //closing
       this.pay_upcoming_subscriptions_bottomsheet = this.pay_upcoming_subscriptions_page.current?.state;
@@ -16570,6 +16652,7 @@ class App extends Component {
   }
 
   open_pick_file_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_pick_file_bottomsheet')
     if(this.state.pick_file_bottomsheet == true){
       //closing
       this.pick_file_bottomsheet = this.pick_file_page.current?.state;
@@ -16795,6 +16878,7 @@ class App extends Component {
   }
 
   open_buy_album_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_buy_album_bottomsheet')
     if(this.state.buy_album_bottomsheet == true){
       //closing
       this.buy_album_bottomsheet = this.buy_album_page.current?.state;
@@ -16888,6 +16972,7 @@ class App extends Component {
   }
 
   open_buy_video_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_buy_video_bottomsheet')
     if(this.state.buy_video_bottomsheet == true){
       //closing
       this.buy_video_bottomsheet = this.buy_video_page.current?.state;
@@ -16990,6 +17075,7 @@ class App extends Component {
   }
 
   open_buy_nitro_storage_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_buy_nitro_storage_bottomsheet')
     if(this.state.buy_nitro_storage_bottomsheet == true){
       //closing
       this.buy_nitro_storage_bottomsheet = this.buy_nitro_storage_page.current?.state;
@@ -17092,6 +17178,7 @@ class App extends Component {
   }
 
   open_configure_nitro_node_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_configure_nitro_node_bottomsheet')
     if(this.state.configure_nitro_node_bottomsheet == true){
       //closing
       this.configure_nitro_node_bottomsheet = this.configure_nitro_node_page.current?.state;
@@ -17637,6 +17724,7 @@ class App extends Component {
   }
 
   open_view_image_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_image_bottomsheet')
     if(this.state.view_image_bottomsheet == true){
       //closing
       this.setState({view_image_bottomsheet: !this.state.view_image_bottomsheet});
@@ -18057,6 +18145,7 @@ class App extends Component {
   }
 
   open_view_pdf_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_pdf_bottomsheet')
     if(this.state.view_pdf_bottomsheet == true){
       //closing
       this.setState({view_pdf_bottomsheet: !this.state.view_pdf_bottomsheet});
@@ -18810,6 +18899,7 @@ class App extends Component {
   }
 
   open_full_audio_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_full_audio_bottomsheet')
     if(this.state.full_audio_bottomsheet == true){
       //closing
       this.full_audio_bottomsheet = this.full_audio_page.current?.state;
@@ -18960,6 +19050,7 @@ class App extends Component {
   }
 
   open_add_to_playlist_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_add_to_playlist_bottomsheet')
     if(this.state.add_to_playlist_bottomsheet == true){
       //closing
       this.add_to_playlist_bottomsheet = this.add_to_playlist_page.current?.state;
@@ -19078,6 +19169,7 @@ class App extends Component {
   }
 
   open_full_video_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_full_video_bottomsheet')
     if(this.state.full_video_bottomsheet == true){
       //closing
       if(this.is_picture_in_pictiure_showing()){
@@ -19303,6 +19395,7 @@ class App extends Component {
   }
 
   open_dialer_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_dialer_bottomsheet')
     if(this.state.dialer_bottomsheet == true){
       //closing
       this.dialer_bottomsheet = this.dialer_page.current?.state;
@@ -19487,6 +19580,7 @@ class App extends Component {
   }
 
   open_view_notification_log_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_notification_log_bottomsheet')
     if(this.state.view_notification_log_bottomsheet == true){
       //closing
       this.view_notification_log_bottomsheet = this.view_transaction_page.current?.state;
@@ -19625,6 +19719,7 @@ class App extends Component {
   }
 
   open_view_contextual_transfer_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_contextual_transfer_bottomsheet')
     if(this.state.view_contextual_transfer_bottomsheet == true){
       //closing
       this.view_contextual_transfer_bottomsheet = this.view_transaction_page.current?.state;
@@ -19801,6 +19896,7 @@ class App extends Component {
   }
 
   open_view_vote_poll_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_vote_poll_bottomsheet')
     if(this.state.view_vote_poll_bottomsheet == true){
       //closing
       this.view_vote_poll_bottomsheet = this.view_transaction_page.current?.state;
@@ -19902,6 +19998,7 @@ class App extends Component {
   }
 
   open_view_calculate_poll_result_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_calculate_poll_result_bottomsheet')
     if(this.state.view_calculate_poll_result_bottomsheet == true){
       //closing
       this.view_calculate_poll_result_bottomsheet = this.view_transaction_page.current?.state;
@@ -20067,6 +20164,7 @@ class App extends Component {
   }
 
   open_view_stage_creator_payout_result_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_stage_creator_payout_result_bottomsheet')
     if(this.state.view_stage_creator_payout_result_bottomsheet == true){
       //closing
       this.view_stage_creator_payout_result_bottomsheet = this.view_transaction_page.current?.state;
@@ -20239,6 +20337,7 @@ class App extends Component {
   }
 
   open_view_bid_in_auction_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_bid_in_auction_bottomsheet')
     if(this.state.view_bid_in_auction_bottomsheet == true){
       //closing
       this.view_bid_in_auction_bottomsheet = this.view_transaction_page.current?.state;
@@ -20339,6 +20438,7 @@ class App extends Component {
   }
 
   open_fulfil_auction_bid_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_fulfil_auction_bid_bottomsheet')
     if(this.state.fulfil_auction_bid_bottomsheet == true){
       //closing
       this.fulfil_auction_bid_bottomsheet = this.view_transaction_page.current?.state;
@@ -20442,6 +20542,7 @@ class App extends Component {
   }
 
   open_view_iframe_link_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_iframe_link_bottomsheet')
     if(this.state.view_iframe_link_bottomsheet == true){
       //closing
       this.view_iframe_link_bottomsheet = this.view_transaction_page.current?.state;
@@ -20496,6 +20597,99 @@ class App extends Component {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_close_button(){
+    var size = this.getScreenSize();
+    var os = this.state.os
+    const accepted_os = ['iOS', 'Android']
+    if(size == 'l' || this.state.opened_bottomsheets.length == 0 || this.state.show_floating_close_button == 'e' || this.state.syncronizing_page_bottomsheet == true || !accepted_os.includes(os)) return;
+
+    var opacity = 1.0
+    var player_size = size == 's' ? 50 : 55
+
+    var x_pos = this.state.width - (player_size + 12)
+    var y_pos = this.state.height - (player_size + 12)
+
+    if(this.state.floating_close_button_position == this.getLocale()['1593jt']/* 'left' */){
+      x_pos = 12
+    }
+
+    if(size == 's'){
+      y_pos = y_pos - 75 - 180
+    }
+    else if(size == 'm'){
+      y_pos = y_pos - 65 - 230
+    }
+
+    const resource_object = {}
+    resource_object[this.getLocale()['1417']/* 'light' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['1418']/* 'dark' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['2740']/* midnight */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['2741']/* green */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3056']/* 'light-green' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3057']/* 'red' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3058']/* 'light-red' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3059']/* 'blue' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3060']/* 'light-blue' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3061']/* 'yellow' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3062']/* 'light-yellow' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3063']/* 'pink' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3064']/* 'light-pink' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3065']/* 'orange' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3066']/* 'light-orange' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['1593a']/* 'auto' */] = resource_object[this.get_time_of_day_theme()]
+    const resource_name = resource_object[this.state.theme['name']]
+
+    return(
+      <div style={{'opacity':opacity}}>
+        <Draggable handle="strong" bounds="body" defaultPosition={{x: x_pos, y: y_pos}}>
+          <div className={classes2.pipWindow}>
+            <div className="box no-cursor" style={{'position': 'relative'}}>
+              <div style={{ width:player_size, height:player_size,'z-index':'410', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
+                <img onClick={() => this.when_close_button_clicked()} alt="" src={this.state.static_assets[resource_name]} style={{width: player_size, height: player_size, 'border-radius': '10px'}} />
+              </div>
+            </div>
+          </div>
+        </Draggable>
+      </div>
+    )
+  }
+
+  when_close_button_clicked(){
+    const pos = this.state.opened_bottomsheets.length - 1
+    if(pos < 0) return;
+    const last_opened_bottomsheet = this.state.opened_bottomsheets[pos]
+    const homepage_functions = ['open_post_nsfw_bottomsheet', 'open_post_preview_bottomsheet', 'open_filter_section_bottomsheet', 'open_view_object_bottomsheet']
+    
+    if(homepage_functions.includes(last_opened_bottomsheet)){
+      this.homepage.current?.call_bottomsheet_function(last_opened_bottomsheet)
+    }else{
+      this[last_opened_bottomsheet]();
+    }
+  }
+
+  when_bottomsheet_opened_or_closed(function_name){
+    const clone = this.state.opened_bottomsheets.slice()
+    const index = clone.indexOf(function_name)
+    if(index == -1){
+      clone.push(function_name)
+    }else{
+      clone.splice(index, 1)
+    }
+    this.setState({opened_bottomsheets: clone})
+  }
 
 
 
@@ -21008,12 +21202,14 @@ class App extends Component {
     if(coin == 'XLM' || should_update_all) coin_data = await this.update_xlm_balance(coin_data);
     if(coin == 'DOT' || should_update_all) coin_data = await this.update_dot_balance(coin_data);
     if(coin == 'KSM' || should_update_all) coin_data = await this.update_ksm_balance(coin_data);
+    await this.wait(150);
     if(coin == 'ALGO' || should_update_all) coin_data = await this.update_algorand_balance(coin_data);
     if(coin == 'XTZ' || should_update_all) coin_data = await this.update_tezos_balance(coin_data);
     if(coin == 'ATOM' || should_update_all) coin_data = await this.update_cosmos_balance(coin_data);
     if(coin == 'SOL' || should_update_all) coin_data = await this.update_solana_balance(coin_data);
     if(coin == 'APT' || should_update_all) coin_data = await this.update_aptos_balance(coin_data);
     if(coin == 'ADA' || should_update_all) coin_data = await this.update_ada_balance(coin_data);
+    await this.wait(150);
     if(coin == 'STX' || should_update_all) coin_data = await this.update_stacks_balance(coin_data);
     if(coin == 'SUI' || should_update_all) coin_data = await this.update_sui_balance(coin_data);
     if(coin == 'TIA' || should_update_all) coin_data = await this.update_celestia_balance(coin_data);
@@ -21626,7 +21822,7 @@ class App extends Component {
     const secret_from_hex_seed = rs_api.encodeHex(private_key)
     
     const test_wallet = xrpl.Wallet.fromSeed(secret_from_hex_seed['secret_b58'])
-    console.log(test_wallet)
+    // console.log(test_wallet)
 
     /* 
     {
@@ -24319,6 +24515,8 @@ class App extends Component {
     const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_subscripion_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals', 'buy_album_video_events']
     
     await this.wait(700);
+
+    console.log('apppage', 'pre_launch_data', pre_launch_data[e5])
 
     if(pre_launch_data[e5] != null){
       const saved_pre_launch_data_object = {}
@@ -31562,31 +31760,31 @@ class App extends Component {
         const filter_data_accounts = my_prioritized_accounts_data[e5] || prioritized_accounts;
 
         if(item_type == 30/* 30(contract_obj_id) */){
-          created_object_events_mapping[e5] = this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], true)
+          created_object_events_mapping[e5] = this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], true) || []
         }
         else if(item_type == 32/* 32(consensus_request) */){
-          created_object_events_mapping[e5] = this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, true)
+          created_object_events_mapping[e5] = this.get_proposal_data(G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, true) || []
         }
         else if(item_type == 26/* 26(contractor_object) */){
-          created_object_events_mapping[e5] = this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account, filter_data_accounts, [], true)
+          created_object_events_mapping[e5] = this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account, filter_data_accounts, [], true) || []
         }
         else if(item_type == 33/* 33(subscription_object) */){
-          created_object_events_mapping[e5] = this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], true)
+          created_object_events_mapping[e5] = this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], true) || []
         }
         else if(item_type == 18/* 18(post object) */){
-          created_object_events_mapping[e5] = this.get_post_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, true)
+          created_object_events_mapping[e5] = this.get_post_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, true) || []
         }
         else if(item_type == 36/* 36(type_channel_target) */){
-          created_object_events_mapping[e5] = this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, [], true)
+          created_object_events_mapping[e5] = this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, [], true) || []
         }
         else if(item_type == 27/* 27(storefront-item)  */){
-          created_object_events_mapping[e5] = this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false, [], true)
+          created_object_events_mapping[e5] = this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false, [], true) || []
         }
         else if(item_type == 25/* 25(storefront_bag_object)  */){
-          created_object_events_mapping[e5] = this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account, filter_data_accounts, [], true)
+          created_object_events_mapping[e5] = this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account, filter_data_accounts, [], true) || []
         }
         else if(item_type == 28/* 28(poll-object)  */){
-          created_object_events_mapping[e5] = this.get_poll_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, true)
+          created_object_events_mapping[e5] = this.get_poll_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, true) || []
         }
       }
     }
