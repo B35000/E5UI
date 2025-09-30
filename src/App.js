@@ -8351,8 +8351,14 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  when_set_floating_close_button_position_changed(item){
+  when_set_floating_close_button_position_changed = async (item) => {
     this.setState({floating_close_button_position: item})
+
+    var set_show_floating_close_button_item = this.state.show_floating_close_button
+    this.setState({show_floating_close_button: 'e'})
+    await this.wait(600)
+    this.setState({show_floating_close_button: set_show_floating_close_button_item})
+    
     var me = this;
     setTimeout(function() {
       me.set_cookies()

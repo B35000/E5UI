@@ -3117,7 +3117,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['b311v']/* 'You need to add a video track.' */, 3800)
         }
         else{
-            var video = {'video_id':make_number_id(12), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles, 'release_time':video_availability_timestamp}
+            var video = {'video_id':make_number_id(18), 'video_title':video_title, 'video_composer':video_composer, 'price_data':price_data2, 'video':video_file, 'subtitles':subtitles, 'release_time':video_availability_timestamp}
 
             var clone = this.state.videos.slice()
             if(this.state.edit_video_item_pos != -1){

@@ -52,6 +52,18 @@ function makeid(length) {
     return result;
 }
 
+function make_number_id(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return parseInt(result);
+}
+
 class EditAudioPage extends Component {
     
     state = {
@@ -3176,7 +3188,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['a311w']/* 'You need to add an audio track.' */, 3800)
         }
         else{
-            var song = {'song_id':makeid(8), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics, 'subtitle_type':subtitle_type, 'track_lyric_file_name':track_lyric_file_name,'credits':song_credits, 'explicit':explicit}
+            var song = {'song_id':make_number_id(18), 'song_title':song_title, 'song_composer':song_composer, 'price_data':price_data2, 'track':audio_file, 'songs_free_plays_count':songs_free_plays_count, 'basic_data':this.get_song_basic_data(audio_file), 'lyrics':song_lyrics, 'subtitle_type':subtitle_type, 'track_lyric_file_name':track_lyric_file_name,'credits':song_credits, 'explicit':explicit}
 
             var clone = this.state.songs.slice()
             if(this.state.edit_song_item_pos != -1){
