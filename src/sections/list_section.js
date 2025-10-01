@@ -52,7 +52,7 @@ class PostListSection extends Component {
         direction:'positive',
         typed_search_coin_id:'',
         screen_width:0,
-        current_load_time: {}
+        clt: 0
     };
 
 
@@ -341,6 +341,8 @@ class PostListSection extends Component {
         this.end_list = React.createRef();
         this.spend_list = React.createRef();
         this.bill_list = React.createRef();
+
+        this.current_load_time = {}
     }
 
 
@@ -731,19 +733,18 @@ class PostListSection extends Component {
 
 
     show_new_objects_message_if_any(objects){
+        return;
         const page_id = this.props.get_page_id()
 
-        if(this.state.current_load_time[page_id] == null){
-            const current_load_time_clone = structuredClone(this.state.current_load_time)
-            current_load_time_clone[page_id] = Date.now()/1000
-            this.setState({current_load_time: current_load_time_clone})
+        if(this.current_load_time[page_id] == null){
+            this.current_load_time[page_id] = Date.now()/1000
         }else{
-            const current_pages_load_time = this.state.current_load_time[page_id]
+            const current_pages_load_time = this.current_load_time[page_id]
             var new_objects = objects.filter(function (object) {
                 return (object['timestamp'] >= current_pages_load_time)
             })
 
-            if(new_objects.length > 0){
+            if(new_objects.length > 0 && this.state.clt >= 0){
                 const title = this.props.app_state.loc['2509r']/* $ new % loaded. */.replace('$', number_with_commas(new_objects.length)).replace('%', this.get_section_name())
                 return(
                     <div onClick={() => this.when_refresh_feed_tapped(page_id)}>
@@ -756,18 +757,23 @@ class PostListSection extends Component {
     }
 
     when_refresh_feed_tapped(page_id){
-        this.props.update_scroll_position2()
-        const current_load_time_clone = structuredClone(this.state.current_load_time)
-        current_load_time_clone[page_id] = Date.now()/1000
-        this.setState({current_load_time: current_load_time_clone})
+        this.props.update_scroll_position2(true)
+        this.current_load_time[page_id] = Date.now()/1000
+        this.setState({clt: Math.random()*1000})
     }
 
     get_section_name(){
         var selected_page = this.props.page;
         if(selected_page == '?'){
+            if(this.props.work_page_tags_object['i'].active == 'e'){
+                return this.props.app_state.loc['1196']/* 'jobs' */
+            }
             return this.props.work_page_tags_object['i'].active
         }
         else if(selected_page == 'e'){
+            if(this.props.explore_page_tags_object['i'].active == 'e'){
+                return 'E5s'
+            }
             return this.props.explore_page_tags_object['i'].active
         }
         else if(selected_page == 'w'){
@@ -776,8 +782,9 @@ class PostListSection extends Component {
     }
 
     filter_objects_and_remove_very_new_entries(objects){
+        return objects;
         const page_id = this.props.get_page_id()
-        const current_pages_load_time = this.state.current_load_time[page_id] || Date.now()/1000
+        const current_pages_load_time = this.current_load_time[page_id] || Date.now()/1000
         return objects.filter(function (object) {
             return (object['timestamp'] < current_pages_load_time)
         })

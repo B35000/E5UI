@@ -524,8 +524,7 @@ import { InMemorySigner } from '@taquito/signer';
 import { b58cencode, prefix, validateAddress, ValidationResult } from '@taquito/utils';
 import * as sodium from 'libsodium-wrappers';
 import { DirectSecp256k1Wallet } from '@cosmjs/proto-signing';
-import { Secp256k1 } from '@cosmjs/crypto';
-import { sha256 } from '@cosmjs/crypto';
+import { Secp256k1, sha256 } from '@cosmjs/crypto';
 import { SigningStargateClient, StargateClient } from "@cosmjs/stargate"
 import bchaddr from 'bchaddrjs';
 import { isValidClassicAddress } from 'ripple-address-codec';
@@ -656,7 +655,7 @@ import FulfilAuctionBidPage from './pages/fulfil_auction_bid_page'
 import OpenedIframeLinkPage from './pages/view_opened_iframe_link_page'
 
 import english from "./texts/english";
-import cities from "./resources/cities";
+// import cities from "./resources/cities";
 import currencies from './resources/coins';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
@@ -701,9 +700,10 @@ var primary_following = ['E25:1002']
 const root_e5 = 'E25'
 const root_account = 1002
 const default_nitro_option = '1479E25'
-const originalConsole = { ...console };
+// const originalConsole = { ...console };
 
 
+console.log('App.js rendering');
 
 function makeid(length) {
     let result = '';
@@ -977,7 +977,7 @@ class App extends Component {
       'expand_icon':expand_icon,
       'close_pip':close_pip,
       'empty_image':empty_image,
-      'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/',
+      'all_cities':'https://bafybeiaibwpsdgbgc25p6ynw23ru5z2gmetphqctwtbvltegh6wv7s56sy.ipfs.w3s.link/'/* 'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/' */,
       'download_icon':download_icon,
       'zoom_in_icon':zoom_in_icon,
       'zoom_out_icon':zoom_out_icon,
@@ -1986,9 +1986,9 @@ class App extends Component {
 
         'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
 
-        // 'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
+        'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
 
-        // 'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
+        'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
 
         'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
 
@@ -2057,6 +2057,7 @@ class App extends Component {
         'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U',
         '0x9abd642fd75a4dfd26bbc3c3d39d38776336df5adb204355864caebd17e169d3',
         'celestia18tux8kpx82v6z0p9mgc6s6kym352486l480dkg',
+        'addr1qxxwkgscq7dlcg4pukrc4wavwdkrwux5mjuc7axsx9q83qlephez0vmahssvewkj7gt20y4240a3s2e8ech92whq2j3sw22rsy'
     ]
     return default_addresses
   }
@@ -3179,12 +3180,12 @@ class App extends Component {
       me.start_everything();
     }, (1 * 500));
 
-    var me = this;
-    setTimeout(function() {
-      if(me.state.syncronizing_progress < 5 && me.is_allowed_in_e5()){
-        // me.prompt_top_notification(me.getLocale()['2738c']/* 'Bad Connection.' */, 15000)
-      }
-    }, (40 * 1000));
+    // var me = this;
+    // setTimeout(function() {
+    //   if(me.state.syncronizing_progress < 5 && me.is_allowed_in_e5()){
+    //     // me.prompt_top_notification(me.getLocale()['2738c']/* 'Bad Connection.' */, 15000)
+    //   }
+    // }, (40 * 1000));
 
     // this.test_nft_storage()
   }
@@ -5433,6 +5434,7 @@ class App extends Component {
           {this.render_audio_pip()}
           {this.render_page()}
           {this.render_synchronizing_bottomsheet()}
+
           {this.render_send_receive_ether_bottomsheet()}
           {this.render_stack_bottomsheet()}
           {this.render_view_transaction_bottomsheet()}
@@ -6085,16 +6087,39 @@ class App extends Component {
 
   render_synchronizing_bottomsheet(){
     var background_color = this.state.theme['syncronizing_page_background_color'];
-    var size = this.getScreenSize();
+    var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
+    var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
+    var os = getOS()
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.syncronizing_page_bottomsheet} onClose={this.open_syncronizing_page_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+    //                       <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} view_number={this.view_number.bind(this)} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+    //                       />
+    //                   </div>
+    //                 </Sheet.Content>
+    //                 <ToastContainer limit={3} containerId="id2"/>
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.when_synchronizing_page_top_part_tapped()}/>
+    //         </Sheet>
+    //     )
+    // }
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'3'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
           <div style={{ height: this.state.height-50, 'background-color': background_color, 'margin': '0px 0px 0px 0px', 'padding':'10px 10px 0px 10px', 'overflow-y':'auto'}}>
-            <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} view_number={this.view_number.bind(this)} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-            
+            <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} view_number={this.view_number.bind(this)} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
             />
           </div>
       </SwipeableBottomSheet>
     );
+  }
+
+  when_synchronizing_page_top_part_tapped(){
+    if(this.state.syncronizing_page_bottomsheet == true && !this.state.should_keep_synchronizing_bottomsheet_open){
+      this.open_syncronizing_page_bottomsheet()
+    }
   }
 
   open_syncronizing_page_bottomsheet(){
@@ -6105,7 +6130,7 @@ class App extends Component {
 
   keep_syncronizing_page_open(){
     if(!this.state.syncronizing_page_bottomsheet && this.state.should_keep_synchronizing_bottomsheet_open){
-        this.open_syncronizing_page_bottomsheet();
+      this.open_syncronizing_page_bottomsheet();
     }
   };
 
@@ -7075,39 +7100,39 @@ class App extends Component {
   }
 
   create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-    // var seed = this.state.final_seed
-    // const wallet = await this.generate_dot_wallet(seed)
-    // const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-    // const api = await ApiPromise.create({ provider: wsProvider });
-    // await api.isReady;
+    var seed = this.state.final_seed
+    const wallet = await this.generate_dot_wallet(seed)
+    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
 
-    // try{
-    //   const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
-    //   this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
-    // }catch(e){
-    //   console.log(e)
-    //   this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
-    // }
+    try{
+      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
 
-    // await api.disconnect()
+    await api.disconnect()
   }
 
   create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-    // var seed = this.state.final_seed
-    // const wallet = await this.generate_ksm_wallet(seed)
-    // const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-    // const api = await ApiPromise.create({ provider: wsProvider });
-    // await api.isReady;
+    var seed = this.state.final_seed
+    const wallet = await this.generate_ksm_wallet(seed)
+    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
 
-    // try{
-    //   const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
-    //   this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
-    // }catch(e){
-    //   console.log(e)
-    //   this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
-    // }
+    try{
+      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
 
-    // await api.disconnect()
+    await api.disconnect()
   }
 
   create_and_broadcast_algorand_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
@@ -20620,7 +20645,7 @@ class App extends Component {
     var size = this.getScreenSize();
     var os = this.state.os
     const accepted_os = ['iOS', 'Android']
-    if(size == 'l' || this.state.opened_bottomsheets.length == 0 || this.state.show_floating_close_button == 'e' || this.state.syncronizing_page_bottomsheet == true || !accepted_os.includes(os)) return;
+    if(size == 'l' || this.state.opened_bottomsheets.length == 0 || this.state.show_floating_close_button == 'e' || this.state.syncronizing_page_bottomsheet == true /* || !accepted_os.includes(os) */) return;
 
     var opacity = 1.0
     var player_size = size == 's' ? 50 : 55
@@ -20640,21 +20665,21 @@ class App extends Component {
     }
 
     const resource_object = {}
-    resource_object[this.getLocale()['1417']/* 'light' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['1418']/* 'dark' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['2740']/* midnight */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['2741']/* green */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3056']/* 'light-green' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3057']/* 'red' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3058']/* 'light-red' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3059']/* 'blue' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3060']/* 'light-blue' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3061']/* 'yellow' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3062']/* 'light-yellow' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3063']/* 'pink' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3064']/* 'light-pink' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3065']/* 'orange' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3066']/* 'light-orange' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['1417']/* 'light' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['1418']/* 'dark' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['2740']/* midnight */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['2741']/* green */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3056']/* 'light-green' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3057']/* 'red' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3058']/* 'light-red' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3059']/* 'blue' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3060']/* 'light-blue' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3061']/* 'yellow' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3062']/* 'light-yellow' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3063']/* 'pink' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3064']/* 'light-pink' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['3065']/* 'orange' */] = 'e5_empty_icon3'
+    resource_object[this.getLocale()['3066']/* 'light-orange' */] = 'e5_empty_icon'
     resource_object[this.getLocale()['1593a']/* 'auto' */] = resource_object[this.get_time_of_day_theme()]
     const resource_name = resource_object[this.state.theme['name']]
 
@@ -20850,15 +20875,15 @@ class App extends Component {
   }
 
   disableConsole() {
-    for (let method in console) {
-      if (typeof console[method] === "function") {
-        console[method] = function () {};
-      }
-    }
+    // for (let method in console) {
+    //   if (typeof console[method] === "function") {
+    //     console[method] = function () {};
+    //   }
+    // }
   }
 
   enableConsole() {
-    Object.assign(console, originalConsole);
+    // Object.assign(console, originalConsole);
   }
 
   check_and_set_default_rpc = async () => {
@@ -21022,7 +21047,7 @@ class App extends Component {
     
     var me = this
     setTimeout(function() {
-        me.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
+      me.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
     }, (3 * 10));
 
     this.setState({has_wallet_been_set: true})
@@ -21942,52 +21967,52 @@ class App extends Component {
 
 
   get_and_set_dot_wallet_info = async (seed1) => {
-    // var seed = seed1
-    // const wallet = await this.generate_dot_wallet(seed)
-    // const address = wallet.dot_address
-    // const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-    // const api = await ApiPromise.create({ provider: wsProvider });
-    // await api.isReady;
-    // const existential_deposit = await this.get_existential_dot_deposit(api)
-    // const address_balance = await this.get_dot_balance(address, api)
-    // await api.disconnect()
+    var seed = seed1
+    const wallet = await this.generate_dot_wallet(seed)
+    const address = wallet.dot_address
+    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+    const existential_deposit = await this.get_existential_dot_deposit(api)
+    const address_balance = await this.get_dot_balance(address, api)
+    await api.disconnect()
 
-    // var fee_info = {'fee':await this.get_dot_transaction_fee(), 'type':'fixed', 'per':'transaction'}
-    // var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
-    // var clone = structuredClone(this.state.coin_data)
-    // clone['DOT'] = data;
-    // this.setState({coin_data: clone})
-    // await this.wait(100)
-    // return data
+    var fee_info = {'fee':await this.get_dot_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
+    var clone = structuredClone(this.state.coin_data)
+    clone['DOT'] = data;
+    this.setState({coin_data: clone})
+    await this.wait(100)
+    return data
   }
 
   generate_dot_wallet = async (mnemonic) => {
-    // await waitReady();
-    // const keyring = new Keyring({ type: 'sr25519' });
+    await waitReady();
+    const keyring = new Keyring({ type: 'sr25519' });
     
-    // const keys = keyring.addFromMnemonic(mnemonic)
-    // const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
-    // return {keys: keys, dot_address: public_address}
+    const keys = keyring.addFromMnemonic(mnemonic)
+    const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
+    return {keys: keys, dot_address: public_address}
   }
 
   get_dot_balance = async (address, api) => {
-    // if(!this.is_address_set(address)) return 0
-    // try{
-    //   const { nonce, data: balance } = await api.query.system.account(address);
-    //   const address_balance = (balance.free.toString())
-    //   return address_balance
-    // }catch(e){
-    //   console.log(e)
-    //   return 0
-    // }
+    if(!this.is_address_set(address)) return 0
+    try{
+      const { nonce, data: balance } = await api.query.system.account(address);
+      const address_balance = (balance.free.toString())
+      return address_balance
+    }catch(e){
+      console.log(e)
+      return 0
+    }
   }
 
   get_existential_dot_deposit = async (api) => {
-    // try{
-    //   return api.consts.balances.existentialDeposit.toNumber()
-    // }catch(e){
-    //   console.log(e)
-    // }
+    try{
+      return api.consts.balances.existentialDeposit.toNumber()
+    }catch(e){
+      console.log(e)
+    }
   }
 
   get_dot_transaction_fee = async () => {
@@ -21995,66 +22020,66 @@ class App extends Component {
   }
 
   update_dot_balance = async (clone) => {
-    // // var clone = structuredClone(this.state.coin_data)
-    // const address = clone['DOT']['address']
-    // const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
-    // const api = await ApiPromise.create({ provider: wsProvider });
-    // await api.isReady;
-    // const address_balance = await this.get_dot_balance(address, api)
-    // await api.disconnect()
-    // clone['DOT']['balance'] = address_balance
-    // // this.setState({coin_data: clone})
-    // return clone
+    // var clone = structuredClone(this.state.coin_data)
+    const address = clone['DOT']['address']
+    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+    const address_balance = await this.get_dot_balance(address, api)
+    await api.disconnect()
+    clone['DOT']['balance'] = address_balance
+    // this.setState({coin_data: clone})
+    return clone
   }
 
 
 
 
   get_and_set_kusama_wallet_info = async (seed) => {
-    // const wallet = await this.generate_ksm_wallet(seed)
-    // const address = wallet.ksm_address
-    // const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-    // const api = await ApiPromise.create({ provider: wsProvider });
-    // await api.isReady
-    // const existential_deposit = await this.get_existential_ksm_deposit(api)
-    // const balance = await this.get_ksm_balance(address, api)
-    // await api.disconnect()
+    const wallet = await this.generate_ksm_wallet(seed)
+    const address = wallet.ksm_address
+    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady
+    const existential_deposit = await this.get_existential_ksm_deposit(api)
+    const balance = await this.get_ksm_balance(address, api)
+    await api.disconnect()
 
-    // var fee_info = {'fee':await this.get_ksm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
-    // var data = {'balance':balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
-    // // var clone = structuredClone(this.state.coin_data)
-    // // clone['KSM'] = data;
-    // // this.setState({coin_data: clone})
-    // // await this.wait(100)
-    // return data
+    var fee_info = {'fee':await this.get_ksm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['KSM'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    return data
   }
 
   generate_ksm_wallet = async (mnemonic) => {
-    // await waitReady();
-    // const keyring = new Keyring({ type: 'sr25519' });
-    // const keys = keyring.addFromMnemonic(mnemonic)
-    // const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
-    // return {keys: keys, ksm_address: public_address}
+    await waitReady();
+    const keyring = new Keyring({ type: 'sr25519' });
+    const keys = keyring.addFromMnemonic(mnemonic)
+    const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
+    return {keys: keys, ksm_address: public_address}
   }
 
   get_ksm_balance = async (address, api) => {
-    // if(!this.is_address_set(address)) return 0
-    // try{
-    //   const { nonce, data: balance } = await api.query.system.account(address);
-    //   const address_balance = (balance.free.toString())
-    //   return address_balance
-    // }catch(e){
-    //   console.log(e)
-    //   return 0
-    // }
+    if(!this.is_address_set(address)) return 0
+    try{
+      const { nonce, data: balance } = await api.query.system.account(address);
+      const address_balance = (balance.free.toString())
+      return address_balance
+    }catch(e){
+      console.log(e)
+      return 0
+    }
   }
 
   get_existential_ksm_deposit = async (api) => {
-    // try{
-    //   return api.consts.balances.existentialDeposit.toNumber()
-    // }catch(e){
-    //   console.log(e)
-    // }
+    try{
+      return api.consts.balances.existentialDeposit.toNumber()
+    }catch(e){
+      console.log(e)
+    }
   }
 
   get_ksm_transaction_fee = async () => {
@@ -22062,14 +22087,14 @@ class App extends Component {
   }
 
   update_ksm_balance = async (clone) => {
-    // const address = clone['KSM']['address']
-    // const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
-    // const api = await ApiPromise.create({ provider: wsProvider });
-    // await api.isReady;
-    // const address_balance = await this.get_ksm_balance(address, api)
-    // await api.disconnect()
-    // clone['KSM']['balance'] = address_balance
-    // return clone
+    const address = clone['KSM']['address']
+    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await api.isReady;
+    const address_balance = await this.get_ksm_balance(address, api)
+    await api.disconnect()
+    clone['KSM']['balance'] = address_balance
+    return clone
   }
 
 
@@ -23942,10 +23967,10 @@ class App extends Component {
   }
 
   load_cities_data = async () => {
-    if(cities != null){
-      await this.load_cities_data_from_file()
-      return;
-    }
+    // if(cities != null){
+    //   await this.load_cities_data_from_file()
+    //   return;
+    // }
     if(this.state.all_cities.length > 0) return;
 
     var request = this.state.static_assets['all_cities']
@@ -23964,7 +23989,9 @@ class App extends Component {
         var city = json_obj[i]['name'].toLowerCase()
         var country = json_obj[i]['country']
         var id = parseInt(json_obj[i]['id'])
-        storage_obj.push({'city':city, 'country':country, 'id':id})
+        if(country.toLowerCase() == this.state.device_country.toLowerCase()){
+          storage_obj.push({'city':city, 'country':country, 'id':id})
+        }
       }
       this.setState({all_cities: storage_obj})
     }
@@ -23975,15 +24002,15 @@ class App extends Component {
   }
 
   load_cities_data_from_file = async() => {
-    const json_obj = cities['data']
-    const storage_obj = []
-    for(var i=0; i<json_obj.length; i++){
-      var city = json_obj[i]['name'].toLowerCase()
-      var country = json_obj[i]['country']
-      var id = parseInt(json_obj[i]['id'])
-      storage_obj.push({'city':city, 'country':country, 'id':id})
-    }
-    this.setState({all_cities: storage_obj})
+    // const json_obj = cities['data']
+    // const storage_obj = []
+    // for(var i=0; i<json_obj.length; i++){
+    //   var city = json_obj[i]['name'].toLowerCase()
+    //   var country = json_obj[i]['country']
+    //   var id = parseInt(json_obj[i]['id'])
+    //   storage_obj.push({'city':city, 'country':country, 'id':id})
+    // }
+    // this.setState({all_cities: storage_obj})
   }
 
 
@@ -24797,7 +24824,7 @@ class App extends Component {
 
     var basic_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['account_data']['basic_transaction_data'] : await contractInstance.methods.f287([account]).call((error, result) => {});
     var clone = structuredClone(this.state.basic_transaction_data)
-    clone[e5] = basic_transaction_data == null ? [0, 0, 0, 0] : basic_transaction_data[0]
+    clone[e5] = basic_transaction_data == null ? [0, 0, 0, 0] : (pre_launch_data[e5] != null ? basic_transaction_data : basic_transaction_data[0])
     this.setState({basic_transaction_data: clone})
     // console.log('basic transaction data for e5: ',e5,' : ',basic_transaction_data[0])
 
@@ -36075,7 +36102,7 @@ class App extends Component {
 
 
   encrypt_secure_data = async(text, password, ready_made_key) => {
-    const iv = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
+    const iv = window.crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
     const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
     const encoder = new TextEncoder();
     const encoded = encoder.encode(text);
@@ -40273,6 +40300,7 @@ class App extends Component {
   }
 
   //node_modules/react-scripts/config/webpack.config.js
+  //192.168.100.7
 }
 
 export default App;

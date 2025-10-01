@@ -99,6 +99,7 @@
     "react-zoom-pan-pinch": "^3.6.1",
     "ripple-secret-codec": "^1.0.3",
     "socket.io-client": "^4.8.1",
+    "stacktrace-js": "^2.0.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "text-encoding": "^0.7.0",
@@ -114,12 +115,12 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "start2": "craco start",
-    "build2": "craco build",
-    "test2": "craco test"
+    "start2": "react-scripts start",
+    "build2": "react-scripts build",
+    "test2": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
   },
   "eslintConfig": {
     "extends": [
@@ -140,7 +141,11 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-named-capturing-groups-regex": "^7.27.1",
     "@craco/craco": "^7.1.0",
+    "@welldone-software/why-did-you-render": "^10.0.1",
+    "circular-dependency-plugin": "^5.2.2",
+    "core-js": "^3.45.1",
     "gh-pages": "^6.1.1",
     "html5-qrcode": "^2.3.8"
   }

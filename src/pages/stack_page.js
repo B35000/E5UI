@@ -14387,7 +14387,7 @@ class StackPage extends Component {
     }
 
     encrypt_singular_file = async (file, password, salt) => {
-        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
         const key = await this.props.get_key_from_password(password, salt);
 
         const fileBuffer = await file.arrayBuffer();
@@ -14415,7 +14415,7 @@ class StackPage extends Component {
     //     for (let offset = 0; offset < fileSize; offset += CHUNK_SIZE) {
     //         const chunk = file.slice(offset, offset + CHUNK_SIZE);
     //         const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
-    //         const iv = crypto.getRandomValues(new Uint8Array(12));
+    //         const iv = window.crypto.getRandomValues(new Uint8Array(12));
     //         const encrypted = await window.crypto.subtle.encrypt(
     //             { name: 'AES-GCM', iv }, // unique IV per chunk
     //             key,
@@ -14455,7 +14455,7 @@ class StackPage extends Component {
 
             const chunk = combined.slice(currentBytePos, chunkEndPos);
             
-            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
             // Encrypt the chunk
             const encrypted = await window.crypto.subtle.encrypt(
                 { name: 'AES-GCM', iv },
@@ -14508,7 +14508,7 @@ class StackPage extends Component {
             const chunk = file.slice(currentBytePos, chunkEndPos);
             const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
 
-            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
             // Encrypt the chunk
             const encrypted = await window.crypto.subtle.encrypt(
                 { name: 'AES-GCM', iv },

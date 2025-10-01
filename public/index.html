@@ -5,6 +5,12 @@
     <script>
       // Required by some npm packages
       window.process = { browser: true, env: { ENVIRONMENT: "BROWSER" } };
+      window.addEventListener("error", function (e) {
+        console.log(e)
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        console.log(e)
+      });
     </script>
     <!-- <script src="html5-qrcode.min.js"></script> -->
     <link rel="icon" href="%PUBLIC_URL%/app_icon.png" />

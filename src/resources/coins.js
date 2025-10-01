@@ -15,6 +15,16 @@ const currencies = [
     "name": "ApeCoin"
   },
   {
+    "id": "polkadot",
+    "symbol": "dot",
+    "name": "Polkadot"
+  },
+  {
+    "id": "kusama",
+    "symbol": "ksm",
+    "name": "Kusama"
+  },
+  {
     "id": "aptos",
     "symbol": "apt",
     "name": "Aptos"

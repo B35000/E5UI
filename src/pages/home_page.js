@@ -1875,7 +1875,7 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
-    update_scroll_position2(){
+    update_scroll_position2(ignore_notification_if_at_top){
         if(this.page_scroll_data == null) this.page_scroll_data = {}
 
         if(this.state.page == '?'){
@@ -1884,7 +1884,9 @@ class home_page extends Component {
 
             // var scroll_pos = this.page_scroll_data[id]
             if(this.page_scroll_data[id] == null || this.page_scroll_data[id] == 0){
-                this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+                if(ignore_notification_if_at_top != true){
+                    this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+                }
             }else{
                 this.render_top_notification(this.props.app_state.loc['1264bi']/* 'Scrolling to the top...' */, 1500)
             }
