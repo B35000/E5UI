@@ -6624,7 +6624,7 @@ class App extends Component {
 
 
 
-  broadcast_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, memo_text) => {
+  broadcast_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, memo_text, kill_wallet='e') => {
     var data = this.state.coin_data[item['symbol']]
     if(item['symbol'] == 'BTC'){
       await this.create_and_broadcast_bitcoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
@@ -6645,16 +6645,16 @@ class App extends Component {
       await this.create_and_broadcast_tron_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
     else if(item['symbol'] == 'XRP'){
-      await this.create_and_broadcast_xrp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_xrp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet)
     }
     else if(item['symbol'] == 'XLM'){
-      await this.create_and_broadcast_xlm_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+      await this.create_and_broadcast_xlm_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, kill_wallet)
     }
     else if(item['symbol'] == 'DOT'){
-      await this.create_and_broadcast_dot_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_dot_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet)
     }
     else if(item['symbol'] == 'KSM'){
-      await this.create_and_broadcast_kusama_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      await this.create_and_broadcast_kusama_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet)
     }
     else if(item['symbol'] == 'ALGO'){
       await this.create_and_broadcast_algorand_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
@@ -7010,7 +7010,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_xrp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_xrp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
     var seed = this.state.final_seed
     const client = new xrpl.Client("wss://xrplcluster.com/")
     await client.connect()
@@ -7022,6 +7022,14 @@ class App extends Component {
       "Account": address,
       "Amount": transfer_amount.toString(),
       "Destination": recipient_address
+    }
+
+    if(kill_wallet != 'e'){
+      tx_obj = {
+        "TransactionType": "AccountDelete",
+        "Account": address,
+        "Destination": recipient_address
+      }
     }
 
     try{
@@ -7044,7 +7052,7 @@ class App extends Component {
     await client.disconnect()
   }
 
-  create_and_broadcast_xlm_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_xlm_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, kill_wallet) => {
     var seed = this.state.final_seed
     const server = new StellarSdk.Horizon.Server("https://horizon.stellar.org/")
     const wallet = await this.make_xlm_wallet(seed)
@@ -7071,11 +7079,18 @@ class App extends Component {
       return;
     }
 
-    transaction.addOperation(StellarSdk.Operation.payment({
-      destination: recipient_address,
-      asset: StellarSdk.Asset.native(),
-      amount: this.get_send_amount_in_lumens(send_amount)
-    }));
+    if(kill_wallet != 'e'){
+      transaction.addOperation(StellarSdk.Operation.accountMerge({
+        destination: recipient_address
+      }));
+    }
+    else{
+      transaction.addOperation(StellarSdk.Operation.payment({
+        destination: recipient_address,
+        asset: StellarSdk.Asset.native(),
+        amount: this.get_send_amount_in_lumens(send_amount)
+      }));
+    }
 
     transaction.addMemo(StellarSdk.Memo.text(memo_text))
     transaction.setTimeout(60)
@@ -7099,7 +7114,7 @@ class App extends Component {
     return x.toString()
   }
 
-  create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_dot_wallet(seed)
     const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
@@ -7107,7 +7122,7 @@ class App extends Component {
     await api.isReady;
 
     try{
-      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+      const hash = kill_wallet != 'e' ? await api.tx.balances.transferAll(recipient_address, false).signAndSend(wallet.keys) : await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
     }catch(e){
       console.log(e)
@@ -7117,7 +7132,7 @@ class App extends Component {
     await api.disconnect()
   }
 
-  create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_ksm_wallet(seed)
     const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
@@ -7125,7 +7140,7 @@ class App extends Component {
     await api.isReady;
 
     try{
-      const hash = await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+      const hash = kill_wallet != 'e' ? await api.tx.balances.transferAll(recipient_address, false).signAndSend(wallet.keys) : await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
     }catch(e){
       console.log(e)
@@ -21830,13 +21845,13 @@ class App extends Component {
     await client.connect()
     const wallet = await this.make_xrp_wallet(seed)
     const address = wallet['classicAddress']
-
+    const min_deposit = await this.get_xrp_existensial_deposit(client)
     const balance = await this.get_xrp_balance(address, client)
     await client.disconnect()
 
     var fee_info = {'fee':await this.get_xrp_transaction_fee(), 'type':'fixed', 'per':'transaction'}
 
-    var data = {'balance':balance, 'address':address, 'min_deposit':10_000_000, 'fee':fee_info}
+    var data = {'balance':balance, 'address':address, 'min_deposit':min_deposit, 'fee':fee_info}
     // var clone = structuredClone(this.state.coin_data)
     // clone['XRP'] = data;
     // this.setState({coin_data: clone})
@@ -21883,6 +21898,11 @@ class App extends Component {
     return balance
   }
 
+  get_xrp_existensial_deposit = async (client) => {
+    const serverInfo = await client.request({ command: 'server_state' });
+    return serverInfo.result.state.validated_ledger.reserve_base
+  }
+
   get_xrp_transaction_fee = async () => {
     return 10
   }
@@ -21909,9 +21929,10 @@ class App extends Component {
     const address = wallet.publicKey()
     var account = await this.load_xlm_account_info(address, server)
     const balance = this.get_xlm_balance_from_address(account)
+    var minimum_deposit = await this.get_xlm_existential_deposit(server)
 
     var fee_info = {'fee':await this.get_xlm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
-    var data = {'balance':balance, 'address':address, 'min_deposit':10_000_000, 'fee':fee_info}
+    var data = {'balance':balance, 'address':address, 'min_deposit':minimum_deposit, 'fee':fee_info}
     // var clone = structuredClone(this.state.coin_data)
     // clone['XLM'] = data;
     // this.setState({coin_data: clone})
@@ -21933,6 +21954,21 @@ class App extends Component {
       return account;
     } catch (error) {
       return null
+    }
+  }
+
+  get_xlm_existential_deposit = async (server) => {
+    try {
+      // Get the latest ledger information
+      const ledgers = await server.ledgers()
+        .order('desc')
+        .limit(1)
+        .call();
+      
+      const latestLedger = ledgers.records[0];
+      return latestLedger.base_reserve_in_stroops;
+    } catch (error) {
+      console.error('Error:', error);
     }
   }
 

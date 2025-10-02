@@ -41,7 +41,8 @@ class SendReceiveCoinPage extends Component {
         coin:null,
         get_send_receive_coin_tags_obj:this.get_send_receive_coin_tags_obj(),
         recipient_address:'', picked_sats_amount:0, picked_sats_fee_amount:0,
-        memo_text:''
+        memo_text:'',
+        get_kill_substrate_wallet_tags_obj:this.get_kill_substrate_wallet_tags_obj()
     };
 
 
@@ -52,6 +53,17 @@ class SendReceiveCoinPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */], [1]
+            ],
+        };
+    }
+
+    get_kill_substrate_wallet_tags_obj(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['1407k']/* 'transfer-all' */], [0]
             ],
         };
     }
@@ -73,6 +85,7 @@ class SendReceiveCoinPage extends Component {
                         </div>
                     </div>
                 </div>
+                
                 
                 {this.render_everything()}
             </div> 
@@ -148,6 +161,7 @@ class SendReceiveCoinPage extends Component {
                     {this.render_send_coin_parts()}
                     <div style={{height: 30}}/>
                     {this.render_send_coin_parts2()}
+                    <div style={{height: 30}}/>
                 </div>
             )
         }
@@ -157,10 +171,12 @@ class SendReceiveCoinPage extends Component {
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts()}
                         <div style={{height: 10}}/>
-                        {this.render_empty_views(3)}
+                        {this.show_empty_views_if_needbe()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts2()}
+                        <div style={{height: 10}}/>
+                        {this.show_empty_views_if_needbe2()}
                     </div>
                 </div>
             )
@@ -171,11 +187,37 @@ class SendReceiveCoinPage extends Component {
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts()}
                         <div style={{height: 10}}/>
-                        {this.render_empty_views(3)}
+                        {this.show_empty_views_if_needbe()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_coin_parts2()}
+                        <div style={{height: 10}}/>
+                        {this.show_empty_views_if_needbe2()}
                     </div>
+                </div>
+            )
+        }
+    }
+
+    show_empty_views_if_needbe(){
+        var item = this.state.coin
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(data['fee']['type'] == 'variable'){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+    }
+
+    show_empty_views_if_needbe2(){
+        var item = this.state.coin
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(data['fee']['type'] != 'variable'){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }
@@ -339,6 +381,7 @@ class SendReceiveCoinPage extends Component {
 
 
     render_send_coin_parts2(){
+        var item = this.state.coin
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1381']/* 'Amount to Send' */, 'details':this.props.app_state.loc['1382']/* 'Set the amount to send in the number picker below.' */, 'size':'l'})}
@@ -355,12 +398,24 @@ class SendReceiveCoinPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
                 </div>
 
-                {this.render_detail_item('0')}
-                {this.show_gas_price_options()}
 
-                <div style={{height: 30}}/>
+                {(item['symbol'] == 'KSM' || item['symbol'] == 'DOT' || item['symbol'] == 'XRP'|| item['symbol'] == 'XLM') && (
+                    <div>
+                        <div style={{height: 20}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1407m']/* 'Transfer and Kill' */, 'details':this.props.app_state.loc['1407l']/* 'Transfer all the coin in your address, including the existential deposit, to another address.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_kill_substrate_wallet_tags_obj} tag_size={'l'} when_tags_updated={this.when_get_kill_substrate_wallet_tags_obj_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                )}
+
+                
+                {this.show_gas_price_options()}
             </div>
         )
+    }
+
+    when_get_kill_substrate_wallet_tags_obj_updated(tag_obj){
+        this.setState({get_kill_substrate_wallet_tags_obj: tag_obj})
     }
 
     get_coin_decimal_count(){
@@ -515,6 +570,7 @@ class SendReceiveCoinPage extends Component {
         if(data['fee']['type'] == 'variable'){
             return(
                 <div style={{}}>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2931']/* 'Transaction Fee.' */, 'details':this.props.app_state.loc['2932']/* 'Set the amount you wish to pay for your transaction.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
@@ -574,6 +630,7 @@ class SendReceiveCoinPage extends Component {
         const memo_text = this.state.memo_text
         var item = this.state.coin
         var data = this.props.app_state.coin_data[item['symbol']]
+        const kill_wallet = this.get_selected_item(this.state.get_kill_substrate_wallet_tags_obj, 'e')
         if(this.state.picked_sats_fee_amount != 0){
             set_fee = this.state.picked_sats_fee_amount
         }
@@ -581,13 +638,13 @@ class SendReceiveCoinPage extends Component {
         const money_out = set_fee + transfer_amount
         const accounts_balance = data['balance']
 
-        if(transfer_amount == 0){
+        if(transfer_amount == 0 && kill_wallet != this.props.app_state.loc['1407k']/* 'transfer-all' */){
             this.props.notify(this.props.app_state.loc['2935']/* 'Please Set an amount to transfer.' */, 4000)
         }
         else if(recipient == ''){
             this.props.notify(this.props.app_state.loc['2938']/* 'Please set a recipient for the transfer.' */, 4000)
         }
-        else if(money_out > (accounts_balance - data['min_deposit']) && money_out < accounts_balance){
+        else if((money_out > (accounts_balance - data['min_deposit']) && money_out < accounts_balance) || ((item['symbol'] == 'KSM' || item['symbol'] == 'DOT'|| item['symbol'] == 'XRP'|| item['symbol'] == 'XLM') && kill_wallet != this.props.app_state.loc['1407k']/* 'transfer-all' */)){
             this.props.notify(this.props.app_state.loc['2936']/* 'You can\'t include the minimum deposit in your transaction.' */, 4000)
         }
         else if(money_out > accounts_balance){
@@ -600,7 +657,7 @@ class SendReceiveCoinPage extends Component {
             this.props.notify(this.props.app_state.loc['2940']/* 'That transaction fee is invalid.' */, 4000)
         }
         else{
-            this.props.show_dialog_bottomsheet({'coin':item, 'fee':set_fee, 'amount':transfer_amount,'recipient':recipient, 'sender':this.get_account_address(), 'memo':memo_text}, 'confirm_send_coin_dialog')
+            this.props.show_dialog_bottomsheet({'coin':item, 'fee':set_fee, 'amount':transfer_amount,'recipient':recipient, 'sender':this.get_account_address(), 'memo':memo_text, 'kill_wallet': kill_wallet}, 'confirm_send_coin_dialog')
         }
     }
 
@@ -615,10 +672,11 @@ class SendReceiveCoinPage extends Component {
         const transfer_amount = parseInt(this.state.picked_sats_amount)
         const recipient = this.state.recipient_address
         const memo_text = this.state.memo_text
+        const kill_wallet = this.get_selected_item(this.state.get_kill_substrate_wallet_tags_obj, 'e')
         if(this.state.picked_sats_fee_amount != 0){
             set_fee = this.state.picked_sats_fee_amount
         }
-        this.props.broadcast_transaction(item, set_fee, transfer_amount, recipient, this.get_account_address(),memo_text)
+        this.props.broadcast_transaction(item, set_fee, transfer_amount, recipient, this.get_account_address(),memo_text, kill_wallet)
         this.setState({recipient_address:''})
     }
 

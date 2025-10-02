@@ -876,6 +876,7 @@ class DialogPage extends Component {
         var fee = this.state.data['fee']
         var coin = this.state.data['coin']
         var memo_text = this.state.data['memo_text']
+        var kill_wallet = this.state.data['kill_wallet'] != 'e' 
         return(
             <div>
                 <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1407f']}{/* Confirmation */}</h3>
@@ -900,6 +901,13 @@ class DialogPage extends Component {
                 <div style={{height: 10}}/>
                 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'s'})}
+
+                {kill_wallet == true && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1407n']/* 'Transfer and Kill Enabled.' */, 'details':this.props.app_state.loc['1407o']/* 'Your address will not be kept alive.'' */, 'size':'s'})}
+                    </div>
+                )}
 
                 {this.show_memo_if_included(memo_text)}
 
