@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.3e0b24f8.css",
-    "main.js": "/static/js/main.b76b613f.js",
+    "main.js": "/static/js/main.9e5c7f20.js",
     "static/js/231.de23fbad.chunk.js": "/static/js/231.de23fbad.chunk.js",
     "static/js/898.ba3f9bb9.chunk.js": "/static/js/898.ba3f9bb9.chunk.js",
     "static/js/386.9d146b60.chunk.js": "/static/js/386.9d146b60.chunk.js",
@@ -348,7 +348,6 @@
     "static/media/corn.png": "/static/media/corn.dbe498bd37a2e43feca7.png",
     "static/media/ethereum.png": "/static/media/ethereum.fae42c3676e96477ef10.png",
     "static/media/world.png": "/static/media/world.235c193ab795a289ec24.png",
-    "static/media/peth.png": "/static/media/peth.de0ea4c25f24a7aea37c.png",
     "static/media/cronos.png": "/static/media/cronos.9c90c698481a92f34702.png",
     "static/media/cmp.png": "/static/media/cmp.1cde4d220a30d66f731f.png",
     "static/media/core.png": "/static/media/core.208a218e61367c26488f.png",
@@ -419,6 +418,7 @@
     "static/media/mode.png": "/static/media/mode.4716ee238d1434898734.png",
     "static/media/hemi.png": "/static/media/hemi.61662b28f8d805f8dfb5.png",
     "static/media/zoom_in_icon.png": "/static/media/zoom_in_icon.7fc39003e4aa63d6d378.png",
+    "static/media/zkpolygon.png": "/static/media/zkpolygon.cfbc864f10243d42503d.png",
     "static/media/neon.png": "/static/media/neon.cbbe28408e73477717c7.png",
     "static/media/katana.png": "/static/media/katana.687bbd42cb845199c182.png",
     "static/media/bsquared.png": "/static/media/bsquared.e14bd0becb0ecd9c1584.png",
@@ -490,6 +490,6 @@
   },
   "entrypoints": [
     "static/css/main.3e0b24f8.css",
-    "static/js/main.b76b613f.js"
+    "static/js/main.9e5c7f20.js"
   ]
 }
