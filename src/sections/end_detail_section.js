@@ -44,14 +44,30 @@ class EndDetailSection extends Component {
     };
 
     y_aggregate_chart_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+                ['xor','',0], ['e','e.'+this.props.app_state.loc['2447u']/* 'filter-time' */,'e.'+this.props.app_state.loc['2447v']/* 'chart-type' */], [0]
+            ],
+            'filter-time':[
+                ['xor','',0], [this.props.app_state.loc['2447u']/* 'filter-time' */,'1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+            ],
+            'chart-type':[
+                ['xor','',0], [this.props.app_state.loc['2447v']/* 'chart-type' */,this.props.app_state.loc['2447w']/* 'linear' */,this.props.app_state.loc['2447x']/* 'logarithmic' */], [1]
             ],
         };
+
+        obj[this.props.app_state.loc['2447u']/* 'filter-time' */] = [
+            ['xor','',0], [this.props.app_state.loc['2447u']/* 'filter-time' */,'1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+        ]
+
+        obj[this.props.app_state.loc['2447v']/* 'chart-type' */] = [
+            ['xor','',0], [this.props.app_state.loc['2447v']/* 'chart-type' */, this.props.app_state.loc['2447w']/* 'linear' */,this.props.app_state.loc['2447x']/* 'logarithmic' */], [1]
+        ]
+
+        return obj
     }
 
     trading_volume_chart_tags_object(){
@@ -664,6 +680,9 @@ class EndDetailSection extends Component {
         if(buy_exchanges_count == 1 && selected_object['data'][3][0] == 0){
             is_type_end = true
         }
+        if(selected_object['hidden'] == true){
+            return;
+        }
         if(selected_object['id'] != 3 && !is_type_end){
             return(
                 <div>
@@ -1227,7 +1246,7 @@ class EndDetailSection extends Component {
 
 
     render_exchange_balance_proportions(selected_object){
-        if(selected_object['ipfs'] == null) return;
+        if(selected_object['ipfs'] == null || selected_object['hidden'] == true) return;
         var original_exchange_ratio_y = selected_object['ipfs'].token_exchange_ratio_y
         var current_exchange_ratio_y = selected_object['data'][2][1/* <1>token_exchange_ratio_y */];
         var difference = bigInt(current_exchange_ratio_y).minus(original_exchange_ratio_y)
@@ -1420,14 +1439,15 @@ return data['data']
         var exchange_ratio_events = selected_object['exchange_ratio_data']
         if(exchange_ratio_events.length != 0){
             const datapoints1 = this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object)
+            var selected_chart_item_type = this.get_selected_item(this.state.y_aggregate_chart_tags_object, this.props.app_state.loc['2447v']/* 'chart-type' */) == this.props.app_state.loc['2447w']/* 'linear' */ ? 'linear': 'logarithmic';
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2387']/* 'Y-Aggregate' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the y-aggregate and price change of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'type':selected_chart_item_type})}
                     <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2390']/* 'Y-Axis: Y-aggregate' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -1550,7 +1570,7 @@ return data['data']
     }
 
     get_exchange_ratio_data_points(event_data, selected_object){
-        var events = this.filter_exchange_ratio_events(event_data, this.state.y_aggregate_chart_tags_object, true);
+        var events = this.filter_exchange_ratio_events2(event_data, this.state.y_aggregate_chart_tags_object, true);
         var data = []
         for(var i=0; i<events.length; i++){
             var input_amount = 1
@@ -1615,6 +1635,43 @@ return data['data']
         });
         var largest = Math.max.apply(Math, data);
         return largest
+    }
+
+    filter_exchange_ratio_events2(events, tags, add_if_empty){
+        var selected_item = this.get_selected_item(tags, this.props.app_state.loc['2447u']/* 'filter-time' */)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now()/1000 - filter_value
+        events.forEach(event => {
+            if(event.returnValues.p9 > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        if(data.length == 0 && events.length != 0 && add_if_empty == true){
+            data.push(events[events.length-1])
+        }
+
+        return data
     }
 
     filter_exchange_ratio_events(events, tags, add_if_empty){

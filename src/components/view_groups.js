@@ -32,14 +32,14 @@ import Markdown from 'react-markdown'
 import Rating from 'react-rating';
 import { FaStar } from 'react-icons/fa';
 
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend, } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LogarithmicScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend, } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
 
 var bigInt = require("big-integer");
 
 // Register Chart.js components
-ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend );
+ChartJS.register( CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Filler, Legend );
 
 // var CanvasJSChart = CanvasJSReact.CanvasJSChart; //no longer used
 
@@ -416,6 +416,7 @@ class ViewGroups extends Component {
             var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
             var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
             const scale = object_data != null && object_data['scale'] != null ? object_data['scale'] : 1
+            const chart_type = object_data != null && object_data['type'] != null ? object_data['type'] : 'linear'/* 'logarithmic' */
             
             const dataPoints = object_data != null ? 
             this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
@@ -522,6 +523,7 @@ class ViewGroups extends Component {
                             },
                         },
                         y: {
+                            type: chart_type,
                             display: config.display_y_axis_labels,
                             grid: {
                                 display: true,
