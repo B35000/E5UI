@@ -1012,7 +1012,7 @@ class EndDetailSection extends Component {
         }
 
         var item = selected_object;
-        var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : [].concat(item['ipfs'].entered_indexing_tags)
+        var active_tags = item['ipfs'] == null ? [''+title, ''+type, this.props.app_state.loc['601']/* token */] : [].concat(item['ipfs'].entered_indexing_tags)
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
         // if(symbol == null){

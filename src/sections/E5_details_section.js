@@ -1874,11 +1874,12 @@ class E5DetailsSection extends Component {
         if(data.length > 3 || nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_deposit_amount_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
+            const scale = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['scale'] : null
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2329']/* 'Deposited Ether' */, 'details':this.props.app_state.loc['2330']/* `The total amount of ether thats been deposited into the E5 over time.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':dataPoints1, 'hide_label': true,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1})}
+                    {this.render_detail_item('6', {'dataPoints':dataPoints1, 'hide_label': scale == null,/*  'interval':this.get_transaction_count_interval_figure(events) */ 'start_time':start_time1, 'scale':scale})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2331']/* 'Y-Axis: Total Deposited Ether' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}

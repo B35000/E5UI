@@ -35,6 +35,9 @@ import { FaStar } from 'react-icons/fa';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend, } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
+
+var bigInt = require("big-integer");
+
 // Register Chart.js components
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend );
 
@@ -56,6 +59,10 @@ function urlify(text) {
     
 }
 
+function number_with_commas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 class ViewGroups extends Component {
       
     state = {
@@ -63,6 +70,19 @@ class ViewGroups extends Component {
         animate: false,
     
     };
+
+    constructor(props) {
+        super(props);
+        this.chart = React.createRef()
+    }
+
+    componentDidUpdate(prevProps){
+        if (prevProps.object_data !== this.props.object_data) {
+            if (this.chart.current && this.props.item_id == '6') {
+                this.update_chart_plugins(this.props.object_data)
+            }
+        }
+    }
 
     render(){
         return(
@@ -395,8 +415,11 @@ class ViewGroups extends Component {
             
             var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
             var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
+            const scale = object_data != null && object_data['scale'] != null ? object_data['scale'] : 1
             
-            var dataPoints = object_data != null ? this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time));
+            const dataPoints = object_data != null ? 
+            this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
+            this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time));
 
             var interval = (object_data != null) ? object_data['interval'] : 0
             var label_font_size = 10
@@ -511,6 +534,18 @@ class ViewGroups extends Component {
                                 font: {
                                     size: config.labelFontSizeY,
                                 },
+                                callback: function(value, index, ticks) {
+                                    if(value.toString().includes('.')){
+                                        return (value * scale).toString()
+                                    }
+                                    const final_value = bigInt(value).multiply(scale)
+                                    if(bigInt(final_value).lesser(bigInt(1_000_000))){
+                                        return number_with_commas(final_value.toString())
+                                    }else{
+                                        var power = final_value.toString().length - 3
+                                        return number_with_commas(final_value.toString().substring(0, 3)) +'e'+power
+                                    }
+                                }
                             },
                         },
                     },
@@ -534,14 +569,12 @@ class ViewGroups extends Component {
                     id: 'indexLabels',
                     afterDatasetsDraw: (chart) => {
                         const ctx = chart.ctx;
-                        const dataset = chart.data.datasets[0];
-                        
                         config.data.forEach((item, index) => {
-                            if (item.label) {
+                            if (item.label != null) {
                                 const meta = chart.getDatasetMeta(0);
                                 const point = meta.data[index];
                                 
-                                if (point) {
+                                if (point != null) {
                                     ctx.save();
                                     ctx.fillStyle = config.labelFontColor;
                                     ctx.font = `bold ${config.labelFontSize}px Arial`;
@@ -561,7 +594,7 @@ class ViewGroups extends Component {
             return(
                 <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:260, 'border-radius': border_radius}}>
                     <div style={{'padding':'0px 0px 10px 0px', height: 'calc(100% - 1px)', position: 'relative'}}>
-                        <Line data={getChartData()} options={getChartOptions()} plugins={[getIndexLabelPlugin()]} />
+                        <Line ref={this.chart} data={getChartData()} options={getChartOptions()} plugins={[getIndexLabelPlugin()]} />
                     </div>
                 </div>
             )
@@ -911,6 +944,60 @@ class ViewGroups extends Component {
         }
     }
 
+    update_chart_plugins(object_data){
+        var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
+        var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
+
+        const dataPoints = object_data != null ? 
+        this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
+        this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time));
+
+        const defaultConfig = {
+            gridColor: this.props.theme['line_color'],
+            labelFontColor: this.props.theme['primary_text_color'],
+            gridLineWidth: 0.3,
+            labelFontSize: 10,
+            data: dataPoints,
+            x_axis_label_count: 4,
+            y_axis_label_count: 3,
+            display_y_axis_labels: true,
+            labelFontSizeX: 10,
+        };
+
+        const getIndexLabelPlugin = () => {
+            const config = { ...defaultConfig };
+            
+            return {
+                id: 'indexLabels',
+                afterDatasetsDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    config.data.forEach((item, index) => {
+                        if (item.label != null) {
+                            const meta = chart.getDatasetMeta(0);
+                            const point = meta.data[index];
+                            
+                            if (point != null) {
+                                ctx.save();
+                                ctx.fillStyle = config.labelFontColor;
+                                ctx.font = `bold ${config.labelFontSize}px Arial`;
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'bottom';
+                                
+                                // Position label above the point
+                                ctx.fillText(item.label, point.x, point.y - 10);
+                                ctx.restore();
+                            }
+                        }
+                    });
+                },
+            };
+        };
+
+        this.chart.current.config.plugins.splice(0, 1)
+        this.chart.current.config.plugins.push(getIndexLabelPlugin())
+        this.chart.current.update();
+    }
+
     render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data){
         if(blur_image == true){
             return(
@@ -1077,15 +1164,15 @@ class ViewGroups extends Component {
 
     /* generates points in an array for showing in the canvas object */
     format_generated_data_points(dps, start_time, end_time) {
-      const new_dps = []
-      const diffMs = end_time - start_time
-      const time_chunk_period = diffMs / (dps.length - 1)
-      dps.forEach(dp => {
-        const period_of_x = start_time + (dp.x * time_chunk_period)
-        const final_x = this.formatTimestamp(period_of_x, diffMs)
-        new_dps.push({x: final_x, y: dp.y, label: dp.indexLabel})
-      });
-      return new_dps
+        const new_dps = []
+        const diffMs = end_time - start_time
+        const time_chunk_period = diffMs / (dps.length - 1)
+        dps.forEach(dp => {
+            const period_of_x = start_time + (dp.x * time_chunk_period)
+            const final_x = this.formatTimestamp(period_of_x, diffMs)
+            new_dps.push({x: final_x, y: dp.y, label: dp['indexLabel']})
+        });
+        return new_dps
     }
 
     formatTimestamp(timestamp, diffMs) {

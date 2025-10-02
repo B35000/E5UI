@@ -5050,7 +5050,6 @@ return data['data']
     get_exchanges_data(object_array, token_id, img, item){
         var type = object_array[0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
         var supply = object_array[2][2/* <2>token_exchange_liquidity/total_supply */]
-        var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
         if(token_id == 3){
             // var obj = {'E15':'E15', 'E25':'E25', 'E35':'E35'}
@@ -5060,6 +5059,7 @@ return data['data']
             // name = obj[item['e5']]
             name = item['e5'].replace('E','3')
         }
+        var active_tags = item['ipfs'] == null ? [''+type, this.props.app_state.loc['601']/* token */, name] : item['ipfs'].entered_indexing_tags
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
         // var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         var image = img

@@ -127,6 +127,9 @@ class NewTokenPage extends Component {
         get_simulator_reduction_proportion_chart_filters:this.get_simulator_reduction_proportion_chart_filters(),
         simulator_state:'stopped',
 
+        end_time: Date.now()+(1000*60*5),
+        start_time: Date.now(),
+
     };
 
     get_new_token_page_tags_object(){
@@ -2299,35 +2302,45 @@ return data['data']
     }
 
     render_control_ui(){
+        const supply_data_points = this.get_total_supply_data_points()
+        const rp_data_points = this.get_proportion_ratio_data_points()
         return(
             <div>
                 {this.render_simulator_speed_picker()}
                 {this.render_detail_item('0')}
 
-                
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['752aj']/* ''Simulated Block Time.' */, 'details':this.props.app_state.loc['752ak']/* 'Set the simulated block time below.' */, 'size':'l'})}
 
                 <div style={{height:20}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_simulator_block_time} tag_size={'l'} when_tags_updated={this.when_get_simulator_block_time.bind(this)} theme={this.props.theme}/>
-                {this.render_detail_item('0')}
+                
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['752q']/* `Chart containing the total supply of the simulated token over simulated time.` */, 'size':'l'})}
-                {this.render_detail_item('6', {'dataPoints':this.get_total_supply_data_points(), 'interval':110, 'hide_label':true, 'start_time':this.state.start_time, 'end_time':this.state.end_time})}
-                <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
-
-
-                <div style={{height: 20}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
-                {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(), 'interval':this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_data(this.state.UpdateProportionRatios)), 'start_time':this.state.start_time, 'end_time':this.state.end_time})}
-                <div style={{height: 10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_simulator_reduction_proportion_chart_filters} tag_size={'l'} when_tags_updated={this.when_get_simulator_reduction_proportion_chart_filters.bind(this)} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2578']/* Y-Axis: Proportion' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                {supply_data_points.dps.length > 0 && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['752q']/* `Chart containing the total supply of the simulated token over simulated time.` */, 'size':'l'})}
+                        {this.render_detail_item('6', {'dataPoints':supply_data_points.dps, 'interval':110, 'hide_label':false, 'start_time':this.state.start_time, 'end_time':this.state.end_time, 'scale': supply_data_points.scale})}
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+                    </div>
+                )}
 
 
-                {this.render_detail_item('0')}
+                {rp_data_points.length > 0 && (
+                    <div>
+                        <div style={{height: 20}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
+                        {this.render_detail_item('6', {'dataPoints':rp_data_points, 'interval':this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_data(this.state.UpdateProportionRatios)), 'start_time':this.state.start_time, 'end_time':this.state.end_time})}
+                        <div style={{height: 10}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_simulator_reduction_proportion_chart_filters} tag_size={'l'} when_tags_updated={this.when_get_simulator_reduction_proportion_chart_filters.bind(this)} theme={this.props.theme}/>
+                        <div style={{height: 10}}/>
+
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2578']/* Y-Axis: Proportion' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+
+                
                 {this.render_detail_item('3', {'title':this.get_block_speed_value(), 'details':this.props.app_state.loc['752r']/* 'Simulator Block Time.' */, 'size':'l'})}
 
                 <div style={{height: 10}}/>
@@ -2449,7 +2462,7 @@ return data['data']
 
     get_total_supply_data_points(){
         var data =  this.filter_total_supply_data(this.state.UpdateExchangeRatiosEvents)
-        if(data.length <= 15) return []
+        if(data.length <= 5) return { dps: [], scale: 1 }
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -2462,8 +2475,10 @@ return data['data']
             yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
             // yVal = data[factor * xVal]
             // yVal = data[i]
+            var val_35 = data.length < noOfDps ? Math.round(data.length * 0.35) : 35
+            var val_65 = data.length < noOfDps ? Math.round(data.length * 0.65) : 65
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/7)) == 0 && i != 0){
+                if(i == val_35 || i == val_65){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
@@ -2473,7 +2488,9 @@ return data['data']
             
         }
 
-        return dps
+        // console.log('dps', 'get_total_supply_data_points', dps)
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
+        return { dps: dps, scale: scale }
     }
 
     filter_total_supply_data(data){
@@ -2506,7 +2523,7 @@ return data['data']
 
     get_proportion_ratio_data_points(){
         var data = this.filter_proportion_ratio_data(this.state.UpdateProportionRatios)
-        if(data.length <= 15) return []
+        if(data.length <= 5) return []
 
 
         var xVal = 1, yVal = 0;
@@ -2517,8 +2534,10 @@ return data['data']
         for(var i = 0; i < noOfDps; i++) {
             yVal = data[factor * xVal]
             // yVal = data[i]
+            var val_35 = data.length < noOfDps ? Math.round(data.length * 0.35) : 35
+            var val_65 = data.length < noOfDps ? Math.round(data.length * 0.65) : 65
             if(yVal != null){
-                if(i%(Math.round(noOfDps/10)) == 0 && i != 0){
+                if(i == val_35 || i == val_65){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+yVal+"%"});//
                 }else{
                     dps.push({x: xVal, y: yVal});//

@@ -271,6 +271,11 @@ class SpendDetailSection extends Component {
         }
     }
 
+
+
+
+
+
     render_spend_main_details_section(selected_object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-60
@@ -372,7 +377,7 @@ class SpendDetailSection extends Component {
                     {/* <div style={{height:10}}/> */}
                     {/* {this.show_24_hour_volume_data(selected_object, symbol)} */}
 
-                    {this.render_detail_item('0')}
+                    
                     {this.render_price_of_token(selected_object)}
                     {this.render_detail_item('0')}
 
@@ -713,8 +718,14 @@ class SpendDetailSection extends Component {
         var buy_tokens = [].concat(selected_object['data'][3])
         var buy_amounts = [].concat(selected_object['data'][4])
         var buy_depths = [].concat(selected_object['data'][5])
+
+        if(buy_tokens.length == 1 && buy_tokens[0] == 0 && buy_amounts[0] == 0){
+            return;
+        }
+
         return(
             <div>
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2570']/* 'The amount you get when selling one unit of the token.' */, 'title':this.props.app_state.loc['2571']/* 'Token Price' */})}
                 <div style={{height:10}}/>
 
@@ -1007,7 +1018,7 @@ class SpendDetailSection extends Component {
         }
 
         var item = selected_object;
-        var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : [].concat(item['ipfs'].entered_indexing_tags)
+        var active_tags = item['ipfs'] == null ? [''+title, ''+type, this.props.app_state.loc['601']/* token */] : [].concat(item['ipfs'].entered_indexing_tags)
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
         
@@ -1205,7 +1216,7 @@ class SpendDetailSection extends Component {
             
         }
 
-        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p9*1000
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p5*1000
 
         return { dps, starting_time: chart_starting_time }
     }
@@ -1459,7 +1470,7 @@ return data['data']
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2389']/* ` over time.` */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'interval':110, 'hide_label':true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'interval':110, 'hide_label':false, 'scale':datapoints1.scale})}
                     <div style={{height: 10}}/>
                     {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}
@@ -1520,7 +1531,7 @@ return data['data']
             // yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null && data[factor * xVal] != null){
-                if(i == 25 || i == 76){
+                if(i == 35 || i == 72){
                 //if(i%(Math.round(noOfDps/2)) == 0 && i != 0){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
@@ -1531,8 +1542,8 @@ return data['data']
             
         }
 
-
-        return { dps, starting_time: chart_starting_time }
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
+        return { dps, starting_time: chart_starting_time, scale }
     }
 
     get_total_supply_interval_figure(events){
