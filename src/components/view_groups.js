@@ -525,6 +525,13 @@ class ViewGroups extends Component {
                         y: {
                             type: chart_type,
                             display: config.display_y_axis_labels,
+                            afterDataLimits: (scale) => {
+                                // Add 10% padding to the top
+                                const range = scale.max - scale.min;
+                                scale.max = scale.max + (range * 0.001);
+                                // Optionally add padding to bottom too
+                                // scale.min = scale.min - (range * 0.1);
+                            },
                             grid: {
                                 display: true,
                                 color: config.gridColor,

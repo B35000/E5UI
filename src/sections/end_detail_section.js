@@ -40,8 +40,20 @@ function number_with_commas(x) {
 class EndDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(), y_aggregate_chart_tags_object: this.y_aggregate_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object()
+        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(), y_aggregate_chart_tags_object: this.y_aggregate_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object(),
+        chart_type_tag_object: this.chart_type_tag_object(),
     };
+
+    chart_type_tag_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['2447w']/* 'linear' */,this.props.app_state.loc['2447x']/* 'logarithmic' */], [1]
+            ],
+        };
+    }
 
     y_aggregate_chart_tags_object(){
         var obj = {
@@ -375,11 +387,7 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('0')}
 
-                    
-                    <div style={{height:10}}/>
                     {this.render_token_cap(selected_object)}
-
-                    {this.render_detail_item('0')}
 
                     
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['max_supply']['title'], 'number':item['max_supply']['n'], 'relativepower':item['max_supply']['relativepower']})}>
@@ -391,7 +399,8 @@ class EndDetailSection extends Component {
                         {this.render_detail_item('2', item['wallet_dominance'])}
                     </div>
 
-                    <div style={{height:10}}/>
+                    {this.render_detail_item('0')}
+
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['ratio_x']['title'], 'number':item['ratio_x']['n'], 'relativepower':item['ratio_x']['relativepower']})}>
                         {this.render_detail_item('2', item['ratio_x'])}
                     </div>
@@ -1129,6 +1138,13 @@ class EndDetailSection extends Component {
         return final_max_supply
     }
 
+
+
+
+
+
+
+
     render_token_cap(selected_object){
         var max_supply = this.calculate_maximum_supply(selected_object)
         var input_amount = 1
@@ -1138,7 +1154,6 @@ class EndDetailSection extends Component {
         var buy_tokens = [].concat(selected_object['data'][3])
         var buy_amounts = [].concat(selected_object['data'][4])
         var buy_depths = [].concat(selected_object['data'][5])
-
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2382']/* 'The Market Capitalization of the token in its respective denominations.' */, 'title':this.props.app_state.loc['2383']/* 'Token Market Cap' */})}
@@ -1154,6 +1169,9 @@ class EndDetailSection extends Component {
                         ))}
                     </ul>
                 </div>
+                
+                {this.render_cap_chart_if_e_token(selected_object)}
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -1163,6 +1181,137 @@ class EndDetailSection extends Component {
         var powered_cap =  (Math.round(price_per_unit * cap)).toString().toLocaleString('fullwide', {useGrouping:false})
         return bigInt(powered_cap)
     }
+
+    render_cap_chart_if_e_token(selected_object){
+        var buy_tokens = [].concat(selected_object['data'][3])
+        var buy_amounts = [].concat(selected_object['data'][4])
+        if(buy_tokens.length == 1 && buy_tokens[0] == 5 && buy_amounts[0] == 1){
+            var exchange_ratio_events = selected_object['exchange_ratio_data']
+            if(exchange_ratio_events.length != 0){
+                const datapoints1 = this.get_token_cap_data_points(this.process_token_cap_data_events(selected_object), selected_object)
+                var selected_chart_item_type = this.get_selected_item(this.state.chart_type_tag_object, 'e') == this.props.app_state.loc['2447w']/* 'linear' */ ? 'linear': 'logarithmic';
+                return(
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'type':selected_chart_item_type, 'scale':datapoints1.scale})}
+                        <div style={{height: 10}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.chart_type_tag_object} tag_size={'l'} when_tags_updated={this.when_chart_type_tag_object_updated.bind(this)} theme={this.props.theme}/>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2447z']/* 'Y-Axis: Market Capitalization' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+                    </div>
+                )
+            }
+        }
+    }
+
+    when_chart_type_tag_object_updated(tag_object){
+        this.setState({chart_type_tag_object: tag_object})
+    }
+
+    process_token_cap_data_events(object){
+        const total = object['ipfs'].token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : object['ipfs'].token_exchange_liquidity_total_supply
+        const all_events = []
+        const depth_mint_events = this.get_item_logs(object, 'depth_mint')
+        const exchange_ratio_events = object['exchange_ratio_data']
+        exchange_ratio_events.forEach(ratio_event => {
+            const ratio_timestamp = ratio_event.returnValues.p9
+            var supply = bigInt(total)
+            depth_mint_events.forEach(depth_event => {
+                if(depth_event.returnValues.p7/* timestamp */< ratio_timestamp){
+                    supply = bigInt(supply).plus(depth_event.returnValues.p5/* amount */)
+                }
+            });
+            const clone = structuredClone(ratio_event)
+            clone.returnValues.supply = supply
+            all_events.push(clone)
+        });
+        return all_events
+    }
+
+    get_token_cap_data_points(events, selected_object){
+        var data = []
+        var largest_number = bigInt(0)
+        for(var i=0; i<events.length; i++){
+            var input_amount = 1
+            var input_reserve_ratio = events[i].returnValues.p5/* exchange_ratio_x */
+            var output_reserve_ratio = events[i].returnValues.p6/* exchange_ratio_y */
+            var supply = events[i].returnValues.supply
+            var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, selected_object)
+            
+            if(price < 1){
+                var value = bigInt(Math.floor(price*10000000000)).multiply(supply).divide(10000000000)
+                data.push(value)
+                if(largest_number.lesser(value)) largest_number = value;
+            }
+            else if(price < 1_000_000_000){
+                var value = bigInt(Math.floor(price*10000000000)).multiply(supply).divide(10000000000)
+                data.push(value)
+                if(largest_number.lesser(value)) largest_number = value;
+            }
+            else{
+                data.push(bigInt(price).multiply(supply))
+                if(largest_number.lesser(value)) largest_number = value;
+            }
+
+            if(i==events.length-1){
+                var diff = Date.now()/1000 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }
+            else{
+                var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }  
+        }
+
+
+        // data = data.slice(Math.floor(data.length * this.props.app_state.graph_slice_proportion))
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var largest = 0;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0;
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number));
+
+            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
+            var final_indicator = this.props.app_state.loc['2447y']/* $ SPEND */.replace('$', indicator)
+            if(largest < yVal){
+                largest = yVal
+            }
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        for(var e=0; e<dps.length; e++){
+            dps[e].y = (dps[e].y / largest) * 100
+            if(e>97 && dps[e].y == 0){
+                dps[e].y = dps[e-1].y
+            }
+        }
+
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p9*1000
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
+
+        return { dps, starting_time: chart_starting_time, scale }
+    }
+
+
+
+
+
 
 
     render_buy_token_uis(selected_object){
@@ -1960,7 +2109,6 @@ return data['data']
             </div>
         )
     }
-
 
     render_royalty_staging_item_logs(object){
         var middle = this.props.height - 120;
