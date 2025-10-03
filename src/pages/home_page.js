@@ -7296,7 +7296,7 @@ class home_page extends Component {
             traffic_proportion_events = this.load_traffic_proportion_data()
         }
 
-        console.log('render_transaction_data','saved_pre_launch_events', this.props.app_state.saved_pre_launch_events)
+        // console.log('render_transaction_data','saved_pre_launch_events', this.props.app_state.saved_pre_launch_events)
 
         var subscription_events = nitro_graphs_data['show_subscription_transaction_count_chart'] != null ? nitro_graphs_data['show_subscription_transaction_count_chart']['event_count'] : this.load_all_event_data('subscription').length
         var contract_events = nitro_graphs_data['show_contract_transaction_count_chart'] != null ? nitro_graphs_data['show_contract_transaction_count_chart']['event_count'] : this.load_all_event_data('contract').length

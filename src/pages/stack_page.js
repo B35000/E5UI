@@ -5207,7 +5207,7 @@ class StackPage extends Component {
                     const all_final_elements = []
                     for(var te=0; te<bag_tags.length; te++){
                         const word = bag_tags[te]
-                        all_final_elements.push(this.props.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                        all_final_elements.push(await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     }
                     obj['tags'][t.id] = {'elements':all_final_elements, 'type':25, 'lan':final_bag_object.device_language_setting, 'state': this.props.hash_data_with_randomizer(final_bag_object.device_country)}
 
@@ -5390,10 +5390,10 @@ class StackPage extends Component {
                     for(var te=0; te<all_elements.length; te++){
                         const word = all_elements[te]
                         // all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
-                        all_final_elements.push(this.props.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                        all_final_elements.push(await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     }
 
-                    all_final_elements.push(this.props.encrypt_string_using_crypto_js(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    all_final_elements.push(await this.props.encryptTag(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     
                     obj['tags'][t.id] = { 'elements':all_final_elements, 'type':t.object_type, 'lan':t.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country) }
                     if(t.spend_exchange_allowed_countries != null && t.spend_exchange_allowed_countries.length > 0){
@@ -5554,11 +5554,11 @@ class StackPage extends Component {
                         const word = all_elements[te]
 
                         // all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
-                        all_final_elements.push(this.props.encrypt_string_using_crypto_js(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                        all_final_elements.push(await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
                     }
                     
                     // all_final_elements.push(await this.props.encrypt_data_string(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
-                    all_final_elements.push(this.props.encrypt_string_using_crypto_js(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY)) 
+                    all_final_elements.push(await this.props.encryptTag(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY)) 
 
                     obj['tags'][data.id] = {'elements':all_final_elements, 'type':data.object_type, 'lan':data.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country)}
 

@@ -982,7 +982,7 @@ class App extends Component {
 
     hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */ opened_bottomsheets:[], update_pinns_on_chain:false, all_my_pinns:{},
 
-    sliced_object_load_count:5, sliced_object_load_increment_count:3
+    sliced_object_load_count:4, sliced_object_load_increment_count:3
   };
 
   get_static_assets(){
