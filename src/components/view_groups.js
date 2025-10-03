@@ -286,6 +286,10 @@ class ViewGroups extends Component {
                     if(object_data['image_width'] != null) image_width = object_data['image_width'];
                     if(object_data['blur_image'] != null) blur_image = object_data['blur_image'];
                 }
+                
+                const text_width = object_data != null && object_data['includes_subtitle_text'] == true ? '70%' : '99%'
+                const subtitle = object_data != null && object_data['subtitle'] == null ? '' : object_data['subtitle']
+                const subdetails = object_data != null && object_data['subdetails'] == null ? '' : object_data['subdetails']
 
                return (
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
@@ -293,14 +297,20 @@ class ViewGroups extends Component {
                             <div>
                                 {this.render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data)}
                             </div>
-                            <div style={{'margin':'0px 0px 0px 10px'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])}>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
-                                
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} onClick={() => this.copy_id_to_clipboard(details)}>{
-                                    parts.map((part, index) => {
-                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
-                                    })
-                                }</p>
+                            <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])}>
+                                <div style={{width: '99%', 'display': 'flex','flex-direction': 'row',}}>
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2, width: text_width}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+
+                                    {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2}} onClick={() => this.copy_id_to_clipboard(title)}>{subtitle}</p>  */}
+                                </div>
+                                <div style={{width: '99%', 'display': 'flex','flex-direction': 'row'}}>
+                                    <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, width: text_width }} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                        parts.map((part, index) => {
+                                            return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                        })
+                                    }</p>
+                                    {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['secondary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value}} onClick={() => this.copy_id_to_clipboard(title)}>{subdetails}</p>  */}
+                                </div>
                             </div>
                         </div>
                     </div>

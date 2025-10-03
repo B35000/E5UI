@@ -437,7 +437,7 @@ class EndDetailSection extends Component {
                     {this.render_last_swap_timestamp(selected_object)}
                     {this.render_last_swap_transaction_count(selected_object)}
                     {this.render_last_entered_contracts_count(selected_object)}
-                    <div style={{height:10}}/>
+                    
                     {this.render_buy_sell_token_button(selected_object, item)}
                     
                     
@@ -633,6 +633,7 @@ class EndDetailSection extends Component {
         }
         return(
             <div>
+                <div style={{height:10}}/>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2344']/* 'Buy or Sell the token for a specified account' */, 'title':this.props.app_state.loc['2345']/* 'Buy/Sell' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=>this.open_mint_burn_token_ui(selected_object)}>

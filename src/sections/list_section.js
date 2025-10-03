@@ -5072,13 +5072,92 @@ return data['data']
         var balance = item['balance']
         var age = item['event'] == null ? this.props.app_state.boot_times[item['e5']]['block'] : item['event'].returnValues.p5
         var time = item['event'] == null ? this.props.app_state.boot_times[item['e5']]['time'] : item['event'].returnValues.p4
+
+        var buy_tokens = [].concat(object_array[3])
+        var buy_amounts = [].concat(object_array[4])
+        var input_amount = 1
+        var input_reserve_ratio = object_array[2][0]
+        var output_reserve_ratio = object_array[2][1]
+
+        var price = 0
+        var subtitle = ''
+        var subdetails = ''
+        var includes_subtitle_text = false
+        if(buy_tokens.length == 1 && buy_tokens[0] == 0 && buy_amounts[0] == 0){
+            //
+        }else{
+            includes_subtitle_text = true;
+            var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, object_array[0][3])
+
+            const max_supply = this.calculate_maximum_supply(item)
+            subtitle = this.format_price(this.calculate_total_cap_amount(buy_amounts[0], price, max_supply))+ ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]]
+
+            subdetails = this.format_price(this.calculate_price_from_sell_action(buy_amounts[0], price)) + ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]]
+
+            // subtitle = ''
+            // subdetails = ''
+            includes_subtitle_text = false;
+        }
+
         return{
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
-            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
+            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':''},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%'}
+            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':''}
         }
+    }
+
+    calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, token_type){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
+        if(token_type == 3){
+            var price = (bigInt(input_amount).times(bigInt(output_reserve_ratio))).divide(bigInt(input_reserve_ratio).plus(input_amount))
+            if(price == 0){
+                price = (input_amount * output_reserve_ratio) / (input_reserve_ratio + input_amount)
+            }
+            return price
+        }else{
+            var price = (bigInt(input_amount).times(bigInt(output_reserve_ratio))).divide(bigInt(input_reserve_ratio))
+            if(price == 0){
+                price = (input_amount * output_reserve_ratio) / (input_reserve_ratio)
+            }
+            return price
+        }
+    }
+
+    calculate_price_from_sell_action(amount, price){
+        if(amount >10**18 || price >10**18){
+            return bigInt(amount).times(bigInt(price))
+        }else{
+            return amount*price
+        }
+    }
+
+    format_price(price_value){
+        if(price_value > 1000){
+            return this.format_account_balance_figure(price_value)
+        }
+        else{
+            let roundedNumber = parseFloat(price_value.toFixed(7));
+            return roundedNumber
+        }
+    }
+
+    calculate_maximum_supply(object){
+        if(object['id'] == 3) return bigInt('1e72');
+        var total = object['ipfs'].token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : object['ipfs'].token_exchange_liquidity_total_supply
+        var set_max_supply = bigInt(total)
+        var depthminted_amount = 0;
+
+        var final_max_supply = bigInt(depthminted_amount).add(set_max_supply)
+        return final_max_supply
+    }
+
+    calculate_total_cap_amount(buy_amounts, price, cap){
+        var price_per_unit = this.calculate_price_from_sell_action(buy_amounts, price)
+        var powered_cap =  (Math.round(price_per_unit * cap)).toString().toLocaleString('fullwide', {useGrouping:false})
+        return bigInt(powered_cap)
     }
 
     format_account_balance_figure(amount){
