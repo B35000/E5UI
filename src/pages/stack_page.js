@@ -4975,6 +4975,36 @@ class StackPage extends Component {
             // ints.push(transaction_obj)
         }
 
+        if(this.props.app_state.update_pinns_on_chain == true){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [19], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+            const all_my_pinns = this.props.app_state.all_my_pinns
+
+            const key = this.props.app_state.accounts['E25'].privateKey.toString()
+            const unencrypted_data = JSON.stringify({'pins':all_my_pinns})
+            const encrypted_obj = await this.props.encrypt_data_object(unencrypted_data, key)
+
+            const data = {'cypher':encrypted_obj, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'pins');
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(19)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
+        }
+
 
 
         if(account_data_object[1].length > 0){
@@ -5848,6 +5878,17 @@ class StackPage extends Component {
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['hidden'] = data
             ipfs_index_array.push({'id':'hidden', 'data':data})
+        }
+
+        if(this.props.app_state.update_pinns_on_chain == true){
+            var all_my_pinns = this.props.app_state.all_my_pinns
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'pins':all_my_pinns})
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
+            ipfs_index_object['pins'] = data
+            ipfs_index_array.push({'id':'pins', 'data':data})
         }
 
 

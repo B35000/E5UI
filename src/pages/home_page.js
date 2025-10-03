@@ -104,7 +104,7 @@ class home_page extends Component {
         
         view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
-        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], viewed_nitros:[], viewed_polls:[], viewed_tokens:[],
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], viewed_nitros:[], viewed_polls:[], viewed_tokens:[], viewed_objects:[],
         
         confirmation_dialog_box: false, contact_to_add:0, 
         
@@ -132,7 +132,11 @@ class home_page extends Component {
 
 
     set_cookies(){
-        this.props.set_local_storage_data_if_enabled("viewed", JSON.stringify(this.get_persistent_data()));
+        if(this.props.app_state.storage_permissions == this.props.app_state.loc['1428']/* 'enabled' */){
+            this.props.update_data_in_db(JSON.stringify(this.get_persistent_data()), 'viewed');
+        }else{
+            this.props.update_data_in_db('', 'viewed');
+        }
     }
 
     componentDidMount() {
@@ -148,7 +152,7 @@ class home_page extends Component {
     }
 
     set_cupcake_data = async () => {
-        var cupcake_state = await this.props.get_local_storage_data_if_enabled("viewed");
+        var cupcake_state = await this.props.load_data_from_indexdb('viewed');
         if(cupcake_state != null && cupcake_state != ""){
             cupcake_state = JSON.parse(cupcake_state)
         }
@@ -180,6 +184,20 @@ class home_page extends Component {
             if(cupcake_state.viewed_contractors != null){
                 this.setState({viewed_contractors:cupcake_state.viewed_contractors})
             }
+            if(cupcake_state.viewed_nitros != null){
+                this.setState({viewed_nitros:cupcake_state.viewed_nitros})
+            }
+            if(cupcake_state.viewed_videos != null){
+                this.setState({viewed_videos:cupcake_state.viewed_videos})
+            }
+            if(cupcake_state.viewed_objects != null){
+                this.setState({viewed_objects:cupcake_state.viewed_objects})
+            }
+            if(cupcake_state.viewed_tokens != null){
+                this.setState({viewed_tokens:cupcake_state.viewed_tokens})
+            }
+
+
             if(cupcake_state.pinned_bags != null){
                 this.setState({pinned_bags: cupcake_state.pinned_bags})
             }
@@ -234,6 +252,10 @@ class home_page extends Component {
             viewed_bags:this.state.viewed_bags, 
             viewed_contractors:this.state.viewed_contractors,
             viewed_audios:this.state.viewed_audios,
+            viewed_nitros:this.state.viewed_nitros,
+            viewed_videos:this.state.viewed_videos,
+            viewed_objects:this.state.viewed_objects,
+            viewed_tokens:this.state.viewed_tokens,
 
             pinned_bags: this.state.pinned_bags,
             pinned_channels: this.state.pinned_channels,
@@ -1575,6 +1597,9 @@ class home_page extends Component {
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1222']/* 'pinned 📌' */)){
             posts_to_load = posts_to_load.concat(this.state.all_pinns)
         }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1203']/* 'viewed' */)){
+            posts_to_load = posts_to_load.concat(this.state.viewed_objects)
+        }
 
 
         this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
@@ -1692,6 +1717,9 @@ class home_page extends Component {
         }
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1222']/* 'pinned 📌' */)){
             posts_to_load = posts_to_load.concat(this.state.all_pinns)
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1203']/* 'viewed' */)){
+            posts_to_load = posts_to_load.concat(this.state.viewed_objects)
         }
 
         this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
@@ -3542,7 +3570,7 @@ class home_page extends Component {
         var searched_input = this.state.page_search_data[id]
         var searched_tags = this.state.tags_search_data[id]
 
-        if(searched_input == null) searched_input = ''
+        if(searched_input == null || searched_input == '') searched_input = this.get_typed_text()
         if(searched_tags == null) searched_tags = []
 
         var searched_string_words = searched_input.trim().split(/\s+/).filter(word => word.length >= 3)
@@ -4219,9 +4247,19 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
+    record_viewed_item(e5_id){
+        var viewed_objects_clone = this.state.viewed_objects.slice()
+        var pos = viewed_objects_clone.indexOf(e5_id)
+        if(pos == -1){
+            viewed_objects_clone.push(e5_id)
+            this.setState({viewed_objects: viewed_objects_clone})
+            this.update_cookies()
+        }
+    }
 
     when_ends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_end_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
         var viewed_tokens_clone = this.state.viewed_tokens.slice()
         var pos = viewed_tokens_clone.indexOf(id)
@@ -4246,6 +4284,7 @@ class home_page extends Component {
 
     when_spends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_spend_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
         var viewed_tokens_clone = this.state.viewed_tokens.slice()
         var pos = viewed_tokens_clone.indexOf(id)
@@ -4284,6 +4323,7 @@ class home_page extends Component {
 
     when_job_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_job_post_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1196']/* 'jobs' */)
         this.reset_post_detail_object()
@@ -4307,6 +4347,7 @@ class home_page extends Component {
 
     when_contract_item_clicked(index, id, e5, ignore_set_details_data, object){
         this.setState({selected_contract_item: id+e5})
+        this.record_viewed_item(id+e5)
         this.props.set_extra_contract_data(object)
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1197']/* 'contracts' */)
@@ -4331,6 +4372,7 @@ class home_page extends Component {
 
     when_subscription_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.props.set_extra_subsctiption_data(object)
+        this.record_viewed_item(id+e5)
         this.setState({selected_subscription_item: id+e5})
         if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1200']/* 'subscriptions' */)
@@ -4366,6 +4408,7 @@ class home_page extends Component {
 
     open_post(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_post_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1213']/* 'posts' */)
         this.reset_post_detail_object()
@@ -4389,6 +4432,7 @@ class home_page extends Component {
 
     when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_channel_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1214']/* 'channels' */)
         this.reset_post_detail_object()
@@ -4416,6 +4460,7 @@ class home_page extends Component {
 
     when_proposal_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_proposal_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
         this.props.load_extra_proposal_data(object)
         this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1199']/* 'proposals' */)
@@ -4453,6 +4498,7 @@ class home_page extends Component {
 
     when_storefront_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_storefront_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1215']/* 'storefront' */)
         this.reset_post_detail_object()
@@ -4477,6 +4523,7 @@ class home_page extends Component {
 
     when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_bag_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1216']/* 'bags' */)
         this.reset_post_detail_object()
@@ -4509,6 +4556,7 @@ class home_page extends Component {
 
     when_contractor_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_contractor_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
         this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1198']/* 'contractors' */)
         this.reset_post_detail_object()
@@ -4531,6 +4579,7 @@ class home_page extends Component {
 
     when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_audio_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264k']/* 'audioport' */)
         this.reset_post_detail_object()
@@ -4662,6 +4711,7 @@ class home_page extends Component {
 
     open_video(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_video_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264p']/* 'videoport' */)
         this.reset_post_detail_object()
@@ -4748,6 +4798,7 @@ class home_page extends Component {
 
     when_nitro_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_nitro_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1264s']/* 'nitro' */)
         this.reset_post_detail_object()
@@ -4786,6 +4837,7 @@ class home_page extends Component {
 
     when_poll_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_poll_item: id+e5})
+        this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
         this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264ao']/* 'polls' */)
         this.reset_post_detail_object()
@@ -5254,6 +5306,10 @@ class home_page extends Component {
     }
 
     pin_bag(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_bag_clone = this.state.pinned_bags.slice()
@@ -5278,6 +5334,10 @@ class home_page extends Component {
     }
 
     pin_channel(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_channel_clone = this.state.pinned_channels.slice()
@@ -5302,6 +5362,10 @@ class home_page extends Component {
     }
 
     pin_item(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_item.slice()
@@ -5326,6 +5390,10 @@ class home_page extends Component {
     }
 
     pin_post(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_post.slice()
@@ -5350,6 +5418,10 @@ class home_page extends Component {
     }
 
     pin_subscription(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_subscriptions.slice()
@@ -5374,6 +5446,10 @@ class home_page extends Component {
     }
 
     pin_proposal(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_proposal.slice()
@@ -5398,6 +5474,10 @@ class home_page extends Component {
     }
 
     pin_contractor(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_contractor.slice()
@@ -5422,6 +5502,10 @@ class home_page extends Component {
     }
 
     pin_contract(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_contract.slice()
@@ -5449,6 +5533,10 @@ class home_page extends Component {
     }
 
     pin_job(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_job.slice()
@@ -5473,6 +5561,10 @@ class home_page extends Component {
     }
 
     pin_audio(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_audios.slice()
@@ -5497,6 +5589,10 @@ class home_page extends Component {
     }
 
     pin_video(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_videos.slice()
@@ -5521,6 +5617,10 @@ class home_page extends Component {
     }
 
     pin_nitro(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_nitros.slice()
@@ -5545,6 +5645,10 @@ class home_page extends Component {
     }
 
     pin_bill(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_bills.slice()
@@ -5569,6 +5673,10 @@ class home_page extends Component {
     }
 
     pin_poll(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_item_clone = this.state.pinned_polls.slice()
@@ -5593,6 +5701,10 @@ class home_page extends Component {
     }
 
     pin_token(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.add_item_to_all_pinns(item)
         var id = item['id']
         var pinned_data_clone = this.state.pinned_tokens.slice()
@@ -5629,6 +5741,7 @@ class home_page extends Component {
             this.setState({all_pinns: pinned_item_clone})
             this.update_cookies()
         }
+        this.props.when_update_pinns_tapped(item)
     }
 
 

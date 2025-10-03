@@ -40,7 +40,8 @@ function number_with_commas(x) {
 class SpendDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object()
+        selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object(),
+        mint_limit_chart_tags_object: this.block_limit_chart_tags_object()
     };
 
     componentDidMount() {
@@ -109,14 +110,30 @@ class SpendDetailSection extends Component {
     }
 
     trading_volume_chart_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+                ['xor','',0], ['e','e.'+this.props.app_state.loc['2447u']/* 'filter-time' */,'e.'+this.props.app_state.loc['2447v']/* 'chart-type' */], [0]
+            ],
+            'filter-time':[
+                ['xor','',0], [this.props.app_state.loc['2447u']/* 'filter-time' */,'1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+            'chart-type':[
+                ['xor','',0], [this.props.app_state.loc['2447v']/* 'chart-type' */,this.props.app_state.loc['2447w']/* 'linear' */,this.props.app_state.loc['2447x']/* 'logarithmic' */], [1]
             ],
         };
+
+        obj[this.props.app_state.loc['2447u']/* 'filter-time' */] = [
+            ['xor','',0], [this.props.app_state.loc['2447u']/* 'filter-time' */,'1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+        ]
+
+        obj[this.props.app_state.loc['2447v']/* 'chart-type' */] = [
+            ['xor','',0], [this.props.app_state.loc['2447v']/* 'chart-type' */, this.props.app_state.loc['2447w']/* 'linear' */,this.props.app_state.loc['2447x']/* 'logarithmic' */], [1]
+        ]
+
+        return obj
     }
 
     render(){
@@ -304,15 +321,14 @@ class SpendDetailSection extends Component {
                     {this.render_object_age(selected_object, item)}
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                     {this.render_detail_item('0')}
+
                     {this.render_detail_item('3', item['token_type'])}
                     <div style={{height:10}}/>
-                    
                     {this.render_detail_item('3', item['unlocked_supply'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['unlocked_liquidity'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['fully_custom'])}
-                    <div style={{height:10}}/>
 
                     {this.render_detail_item('0')}
 
@@ -345,7 +361,6 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', item['minimum_transactions_for_first_buy'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['minimum_entered_contracts_for_first_buy'])}
-                    <div style={{height:10}}/>
 
                     {this.render_detail_item('0')}
 
@@ -354,7 +369,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', item['exchange_authority'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['trust_fee_target'])}
-                    <div style={{height:10}}/>
+                    
 
                     {this.render_revoke_author_privelages_event(selected_object)}
 
@@ -405,24 +420,21 @@ class SpendDetailSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
 
-                    <div style={{height:10}}/>
                     {this.render_proportion_ratio_chart(selected_object)}
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['active_mint_limit']['title'], 'number':item['active_mint_limit']['n'], 'relativepower':item['active_mint_limit']['relativepower']})}>
                         {this.render_detail_item('2', item['active_mint_limit'])}
                     </div>
-                    
                     <div style={{height:10}}/>
 
                     {this.render_token_liquidity_balance(selected_object, symbol)}
-      
 
                     {this.render_last_swap_block(selected_object)}
                     {this.render_last_swap_timestamp(selected_object)}
                     {this.render_last_swap_transaction_count(selected_object)}
                     {this.render_last_entered_contracts_count(selected_object)}
 
-                    <div style={{height:10}}/>
+                    
                     {this.render_mint_dump_token_button(selected_object, item)}
 
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2562']/* 'Make a token transfer to a specified account' */, 'title':this.props.app_state.loc['2563']/* 'Send/Transfer' */})}
@@ -618,6 +630,7 @@ class SpendDetailSection extends Component {
         }
         return(
             <div>
+                <div style={{height:10}}/>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2560']/* 'Mint or Dump the token for a specified account' */, 'title':this.props.app_state.loc['2561']/* 'Mint/Dump' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=>this.open_mint_burn_spend_token_ui(object)}>
@@ -695,12 +708,14 @@ class SpendDetailSection extends Component {
         if(events.length != 0){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2566']/* 'Author Moderator Privelages Disabled' */, 'details':this.props.app_state.loc['2567']/* 'Author of Object is not a Moderator by default' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2568']/* 'Author Moderator Privelages Enabled' */, 'details':this.props.app_state.loc['2569']/* 'Author of Object is a Moderator by default' */, 'size':'l'})}
                 </div>
             )
@@ -1162,17 +1177,33 @@ class SpendDetailSection extends Component {
         var proportion_ratio_events = selected_object['proportion_ratio_data']
         if(proportion_ratio_events.length != 0){
             const datapoints1 = this.get_proportion_ratio_data_points(proportion_ratio_events)
+            var spend_type = selected_object['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
+            var symbol = selected_object['ipfs'] == null ? ''+spend_type : selected_object['ipfs'].entered_symbol_text
+            const datapoints2 = this.get_mint_limit_data_points(proportion_ratio_events, selected_object['data'][1][0/* mint_limit */], symbol)
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2602b']/* 'Inverse Demand Pressure' */, 'details':this.props.app_state.loc['2602c']/* 'Chart containing the inverse demand pressure over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'interval':this.get_interval_for_proportion_ratio_chart(proportion_ratio_events)})}
                     <div style={{height: 10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2578']/* Y-Axis: Proportion' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2602d']/* 'Mint Limit Levels.' */, 'details':this.props.app_state.loc['2602e']/* 'Chart containing the mint limit over time.' */, 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints2.dps, 'start_time':datapoints2.starting_time, 'scale':datapoints2.scale})}
+                    <div style={{height: 10}}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.mint_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_mint_limit_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2602f']/* Y-Axis: Mint Limit' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
             )
         }
+    }
+
+    when_mint_limit_chart_tags_object_updated(tag_obj){
+        this.setState({mint_limit_chart_tags_object: tag_obj})
     }
 
     get_proportion_ratio_data_points(event_data){
@@ -1221,6 +1252,58 @@ class SpendDetailSection extends Component {
         return { dps, starting_time: chart_starting_time }
     }
 
+    get_mint_limit_data_points(event_data, mint_limit, token_name){
+        var events = this.filter_proportion_ratio_events2(event_data);
+        var data = []
+        var largest_number = bigInt(0)
+        for(var i=0; i<events.length; i++){
+            var value = bigInt(Math.round(events[i].returnValues.p2/10**18) * 100).multiply(mint_limit).divide(100)
+            data.push(value)
+            if(largest_number.lesser(value)) largest_number = value;
+
+            if(i==events.length-1){
+                var diff = Date.now()/1000 - events[i].returnValues.p5
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }
+            else{
+                var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }
+            
+        }
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0;
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number));
+            
+            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
+            var final_indicator = '$ %'.replace('$', indicator).replace('%', token_name)
+            if(yVal != null && data[factor * xVal] != null){
+                if(i == 23 || i == 72){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+        const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p5*1000
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
+        return { dps, starting_time: chart_starting_time, scale }
+    }
+
     get_proportion_ratio_interval_figure(events){
         var data = []
         events.forEach(event => {
@@ -1244,8 +1327,41 @@ class SpendDetailSection extends Component {
         return largest
     }
 
-    filter_proportion_ratio_events(events){
+    filter_proportion_ratio_events(events, selected_item){
         var selected_item = this.get_selected_item(this.state.block_limit_chart_tags_object, this.state.block_limit_chart_tags_object['i'].active)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now()/1000 - filter_value
+        events.forEach(event => {
+            if(event.returnValues.p5 > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        return data
+    }
+
+    filter_proportion_ratio_events2(events, selected_item){
+        var selected_item = this.get_selected_item(this.state.mint_limit_chart_tags_object, this.state.mint_limit_chart_tags_object['i'].active)
 
         var filter_value = 60*60
         if(selected_item == '1h'){
@@ -1311,14 +1427,15 @@ return data['data']
         var exchange_ratio_events = selected_object['exchange_ratio_data']
         if(exchange_ratio_events.length != 0){
             var average_volume = this.get_average_trading_volume(exchange_ratio_events)
-            var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, 'e')
+            var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, this.props.app_state.loc['2447u']/* 'filter-time' */)
+            var selected_chart_item_type = this.get_selected_item(this.state.y_aggregate_chart_tags_object, this.props.app_state.loc['2447v']/* 'chart-type' */) == this.props.app_state.loc['2447w']/* 'linear' */ ? 'linear': 'logarithmic';
             const datapoints1 = this.get_trading_volume_data_points(exchange_ratio_events, selected_object)
             return(
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2447i']/* 'Trading Volume' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the trading volume of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
 
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'hide_label': false, 'scale':datapoints1.scale, 'type':selected_chart_item_type})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.trading_volume_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_trading_volume_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -1339,7 +1456,7 @@ return data['data']
     }
 
     get_trading_volume_data_points(event_data, selected_object){
-        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        var events = this.filter_exchange_ratio_events2(event_data, this.state.trading_volume_chart_tags_object, false);
         var data = []
         var largest_number = bigInt(0)
         for(var i=0; i<events.length; i++){
@@ -1384,8 +1501,9 @@ return data['data']
         }
 
         const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p9*1000
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
 
-        return { dps, starting_time: chart_starting_time }
+        return { dps, starting_time: chart_starting_time, scale }
     }
 
     get_trading_volume_interval_figure(events){
@@ -1398,17 +1516,57 @@ return data['data']
     }
 
     get_average_trading_volume(event_data){
-        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        var events = this.filter_exchange_ratio_events2(event_data, this.state.trading_volume_chart_tags_object, false);
         if(events.length == 0) return bigInt(0)
         var total = bigInt(0)
         events.forEach(event => {
             total = total.plus(bigInt(event.returnValues.p8/* amount */))
         });
-        return total.divide(events.length)
+        const first_event_time = events[0].returnValues.p9/* timestamp */
+        const last_event_time = events[events.length-1].returnValues.p9/* timestamp */
+        const denominator = last_event_time == first_event_time ? 1 : Math.round((last_event_time - first_event_time) / (60*60*24))
+        return total.divide(denominator)
     }
 
     filter_exchange_ratio_events(events, tags, add_if_empty){
         var selected_item = this.get_selected_item(tags, 'e')
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now()/1000 - filter_value
+        events.forEach(event => {
+            if(event.returnValues.p9 > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        if(data.length == 0 && events.length != 0 && add_if_empty == true){
+            data.push(events[events.length-1])
+        }
+
+        return data
+    }
+
+    filter_exchange_ratio_events2(events, tags, add_if_empty){
+        var selected_item = this.get_selected_item(tags, this.props.app_state.loc['2447u']/* 'filter-time' */)
 
         var filter_value = 60*60
         if(selected_item == '1h'){

@@ -5083,20 +5083,20 @@ return data['data']
         var subtitle = ''
         var subdetails = ''
         var includes_subtitle_text = false
-        if(buy_tokens.length == 1 && buy_tokens[0] == 0 && buy_amounts[0] == 0){
+        if((buy_tokens.length == 1 && buy_tokens[0] == 0 && buy_amounts[0] == 0) || token_id == 5){
             //
         }else{
-            includes_subtitle_text = true;
-            var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, object_array[0][3])
+            // includes_subtitle_text = true;
+            // var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, object_array[0][3])
 
-            const max_supply = this.calculate_maximum_supply(item)
-            subtitle = this.format_price(this.calculate_total_cap_amount(buy_amounts[0], price, max_supply))+ ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]]
+            // const max_supply = this.calculate_maximum_supply(item)
+            // subtitle = this.format_price(this.calculate_total_cap_amount(buy_amounts[0], price, max_supply))+ ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]]
 
-            subdetails = this.format_price(this.calculate_price_from_sell_action(buy_amounts[0], price)) + ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]]
+            // subdetails = this.format_price(this.calculate_price_from_sell_action(buy_amounts[0], price)) + ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]]
 
-            // subtitle = ''
-            // subdetails = ''
-            includes_subtitle_text = false;
+            // // subtitle = ''
+            // // subdetails = ''
+            // includes_subtitle_text = false;
         }
 
         return{

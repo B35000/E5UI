@@ -83,14 +83,30 @@ class EndDetailSection extends Component {
     }
 
     trading_volume_chart_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+                ['xor','',0], ['e','e.'+this.props.app_state.loc['2447u']/* 'filter-time' */,'e.'+this.props.app_state.loc['2447v']/* 'chart-type' */], [0]
+            ],
+            'filter-time':[
+                ['xor','',0], [this.props.app_state.loc['2447u']/* 'filter-time' */,'1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+            'chart-type':[
+                ['xor','',0], [this.props.app_state.loc['2447v']/* 'chart-type' */,this.props.app_state.loc['2447w']/* 'linear' */,this.props.app_state.loc['2447x']/* 'logarithmic' */], [1]
             ],
         };
+
+        obj[this.props.app_state.loc['2447u']/* 'filter-time' */] = [
+            ['xor','',0], [this.props.app_state.loc['2447u']/* 'filter-time' */,'1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+        ]
+
+        obj[this.props.app_state.loc['2447v']/* 'chart-type' */] = [
+            ['xor','',0], [this.props.app_state.loc['2447v']/* 'chart-type' */, this.props.app_state.loc['2447w']/* 'linear' */,this.props.app_state.loc['2447x']/* 'logarithmic' */], [1]
+        ]
+
+        return obj
     }
 
 
@@ -336,7 +352,6 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', item['unlocked_liquidity'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['fully_custom'])}
-                    <div style={{height:10}}/>
 
                     {this.render_detail_item('0')}
 
@@ -354,13 +369,11 @@ class EndDetailSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['exchanges_liquidity']['title'], 'number':item['exchanges_liquidity']['n'], 'relativepower':item['exchanges_liquidity']['relativepower']})}>
                         {this.render_detail_item('2', item['exchanges_liquidity'])}
                     </div>
-                    <div style={{height:10}}/>
 
                     {this.show_exchange_liquidity_chart(item, selected_object, symbol)}
 
                     {this.render_detail_item('0')}
                     
-                    <div style={{height:10}}/>
                     {this.render_detail_item('3', item['minimum_transactions_between_swap'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['minimum_blocks_between_swap'])}
@@ -372,7 +385,6 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', item['minimum_transactions_for_first_buy'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['minimum_entered_contracts_for_first_buy'])}
-                    <div style={{height:10}}/>
 
                     {this.render_detail_item('0')}
 
@@ -381,7 +393,7 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', item['exchange_authority'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['trust_fee_target'])}
-                    <div style={{height:10}}/>
+                    
 
                     {this.render_revoke_author_privelages_event(selected_object)}
 
@@ -723,12 +735,14 @@ class EndDetailSection extends Component {
         if(events.length != 0){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2351']/* 'Author Moderator Privelages Disabled' */, 'details':this.props.app_state.loc['2352']/* 'Author of Object is not a Moderator by default' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2353']/* 'Author Moderator Privelages Enabled' */, 'details':this.props.app_state.loc['2354']/* 'Author of Object is a Moderator by default' */, 'size':'l'})}
                 </div>
             )
@@ -1475,16 +1489,17 @@ return data['data']
         var exchange_ratio_events = selected_object['exchange_ratio_data']
         if(exchange_ratio_events.length != 0){
             var average_volume = this.get_average_trading_volume(exchange_ratio_events)
-            var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, 'e')
+            var selected_item = this.get_selected_item(this.state.trading_volume_chart_tags_object, this.props.app_state.loc['2447u']/* 'filter-time' */)
+            var selected_chart_item_type = this.get_selected_item(this.state.y_aggregate_chart_tags_object, this.props.app_state.loc['2447v']/* 'chart-type' */) == this.props.app_state.loc['2447w']/* 'linear' */ ? 'linear': 'logarithmic';
             const datapoints1 = this.get_trading_volume_data_points(exchange_ratio_events, selected_object)
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2447i']/* 'Trading Volume' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the trading volume of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
 
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'hide_label': false, 'scale':datapoints1.scale, 'type':selected_chart_item_type})}
                     <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.trading_volume_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_trading_volume_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.trading_volume_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_trading_volume_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2447k']/* 'Y-Axis: Volume' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
 
@@ -1502,7 +1517,7 @@ return data['data']
     }
 
     get_trading_volume_data_points(event_data, selected_object){
-        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        var events = this.filter_exchange_ratio_events2(event_data, this.state.trading_volume_chart_tags_object, false);
         var data = []
         var largest_number = bigInt(0)
         for(var i=0; i<events.length; i++){
@@ -1553,8 +1568,9 @@ return data['data']
         }
 
         const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p9*1000
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
 
-        return { dps, starting_time: chart_starting_time }
+        return { dps, starting_time: chart_starting_time, scale }
     }
 
     get_trading_volume_interval_figure(events){
@@ -1567,13 +1583,16 @@ return data['data']
     }
 
     get_average_trading_volume(event_data){
-        var events = this.filter_exchange_ratio_events(event_data, this.state.trading_volume_chart_tags_object, false);
+        var events = this.filter_exchange_ratio_events2(event_data, this.state.trading_volume_chart_tags_object, false);
         if(events.length == 0) return bigInt(0)
         var total = bigInt(0)
         events.forEach(event => {
             total = total.plus(bigInt(event.returnValues.p8/* amount */))
         });
-        return total.divide(events.length)
+        const first_event_time = events[0].returnValues.p9/* timestamp */
+        const last_event_time = events[events.length-1].returnValues.p9/* timestamp */
+        const denominator = last_event_time == first_event_time ? 1 : Math.round((last_event_time - first_event_time) / (60*60*24))
+        return total.divide(denominator)
     }
 
 

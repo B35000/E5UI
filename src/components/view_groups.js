@@ -538,7 +538,7 @@ class ViewGroups extends Component {
                             afterDataLimits: (scale) => {
                                 // Add 10% padding to the top
                                 const range = scale.max - scale.min;
-                                scale.max = scale.max + (range * 0.001);
+                                scale.max = scale.max + (range * 0.01);
                                 // Optionally add padding to bottom too
                                 // scale.min = scale.min - (range * 0.1);
                             },
