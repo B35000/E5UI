@@ -2334,7 +2334,7 @@ class E5DetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width} transactions_text={this.props.app_state.loc['2867']/* 'transactions' */}/>
             </div>
         )
 

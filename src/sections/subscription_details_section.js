@@ -680,7 +680,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695b']/* Subscription Income Stream' */, 'details':this.props.app_state.loc['2695c']/* `Chart containing the amount of value that has been transfered from maturing subscription payments made in the last week.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':datapoints, 'start_time':1000*60*60*24*7,  'interval':120, 'hide_label':true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints, 'start_time':Date.now() - (1000*60*60*24*7),  'interval':120, 'hide_label':true})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695a']/* 'Y-Axis: Average Value Transfer' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>

@@ -924,7 +924,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(45), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -3641,6 +3641,8 @@ class App extends Component {
     const state_theme = this.state.theme['name']
     const my_language = this.get_language()
 
+    // console.log('apppage', 'indexdb loaded', state)
+
     if(state != null){
       this.setState({index_db_size: this.state.index_db_size + this.lengthInUtf8Bytes(state)})
       state = this.fetch_data(state)
@@ -4669,10 +4671,11 @@ class App extends Component {
       });
       var data = await db.data.get({id: id})
       if(data == null) return;
-      var data_obj = JSON.parse(data)
-      return await this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      var data_obj = JSON.parse(data['encrypted_data'])
+      console.log('apppage', `loaded data from indexdb:`, data_obj);
+      return await this.decrypt_storage_object_using_provided_key(data_obj, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     }catch(e){
-      console.log('transform_image_by_theme', `Failed : ${e}`);
+      console.log('apppage', `Failed to load data from indexdb`, e);
       return null
     }
   }
@@ -9355,26 +9358,34 @@ class App extends Component {
 
   set_local_storage_data_if_enabled = async (identifier, data) => {
     if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
-      const encrypted_data = await this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
-      localStorage.setItem(identifier, encrypted_data)
+      var x = JSON.stringify(data, (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value
+      )
+      await this.update_data_in_db(x, identifier)
+      // const encrypted_data = await this.encrypt_storage_object_using_provided_key(data, {}, `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      // localStorage.setItem(identifier, encrypted_data)
     }else{
-      localStorage.setItem(identifier, '')
+      // localStorage.setItem(identifier, '')
+      await this.update_data_in_db('', identifier)
     }
   }
 
   get_local_storage_data_if_enabled = async (identifier) => {
     if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
-      const data = localStorage.getItem(identifier)
-      if(data == null) return;
-      var data_obj = JSON.parse(data)
-      return await this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
+      return await this.load_data_from_indexdb(identifier)
+      // const data = localStorage.getItem(identifier)
+      // if(data == null) return;
+      // var data_obj = JSON.parse(data)
+      // return await this.decrypt_storage_object_using_provided_key(data_obj['data'], `${process.env.REACT_APP_LOCALSTORAGE_KEY}`)
     }
     return;
   }
 
   update_local_storage_data_once_storage_permissions_disabled(){
     if(this.state.storage_permissions != this.getLocale()['1428']/* 'enabled' */){
-      localStorage.clear();
+      // localStorage.clear();
     }
   }
 
@@ -36304,7 +36315,7 @@ class App extends Component {
     var cipher_text = data
     var secure = false
     try{
-      var json_object = JSON.parse(data)
+      var json_object = data
       cipher_text = json_object['ciphertext']
       if(json_object['c'] != null && json_object['c'] == true){
         //the object was compressed
@@ -36312,7 +36323,7 @@ class App extends Component {
         cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
         // console.log('apppage', 'uncompressed ciphertext', cipher_text)
       }
-      secure = json_object['a']
+      secure = json_object['a'] == true
       // console.log('apppage', 'obtained cyphertext in the form of an object', json_object)
     }catch(f){
       // console.log('apppage', f)
@@ -37215,7 +37226,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36}],/* created_job_respnse_data */
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37}],/* application_responses */
       ]
-      const all_events = await this.load_multiple_events_from_nitro(event_params2)
+      const all_events = (await this.load_multiple_events_from_nitro(event_params2)).all_events
       created_job_respnse_data = all_events[0]
       application_responses = all_events[1]
     }else{

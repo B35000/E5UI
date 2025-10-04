@@ -7591,7 +7591,7 @@ class home_page extends Component {
 
     render_selected_contract_chart_item(e5){
         var selected_item = this.get_selected_item(this.state.get_selected_contract_chart_item_tags_object, 'e')
-        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['get_all_contracts_data_points'] : {}
+        var nitro_graphs_data = this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['get_all_contracts_data_points'] : {}
 
         if(nitro_graphs_data[selected_item] == null) return;
 
@@ -8838,7 +8838,7 @@ class home_page extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} transactions_text={this.props.app_state.loc['2867']/* 'transactions' */}/>
             </div>
         )
 
