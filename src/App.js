@@ -801,7 +801,13 @@ function shuffle(array) {
 }
 
 function isJsonObject(data) {
-  return typeof data === "object" && data !== null && !Array.isArray(data);
+  try{
+    const entries = Object.keys(data)
+    return true
+  }catch(e){
+    return false
+  }
+  // return typeof data === "object" && data !== null && !Array.isArray(data);
 }
 
 function base64ToUint8Array(base64) {
@@ -918,7 +924,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(47), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(45), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -3540,7 +3546,9 @@ class App extends Component {
       show_floating_close_button: this.state.show_floating_close_button,
       floating_close_button_position:this.state.floating_close_button_position,
       update_pinns_on_chain:this.state.update_pinns_on_chain, 
-      all_my_pinns:this.state.all_my_pinns
+      all_my_pinns:this.state.all_my_pinns,
+
+      language:this.get_language(),
     }
   }
 
@@ -3628,8 +3636,8 @@ class App extends Component {
   }
 
   load_cookies = async () => {
-    var state_language = await this.get_local_storage_data_if_enabled("language");
     var state = await this.load_data_from_indexdb('123')
+    var state_language = state != null ? (state.language || this.get_language()) : this.get_language()
     const state_theme = this.state.theme['name']
     const my_language = this.get_language()
 
@@ -24204,13 +24212,14 @@ class App extends Component {
 
       const hash_entries = Object.keys(hash_data)
       for(var h=0; h<hash_entries.length; h++){
+        const hash = this.get_data_id_from_ecid(hash_entries[h])
+        const object_type = hash_entries[h].slice(0, 2)
         const cid_data = hash_data[hash_entries[h]]
         try{
-          const decrypted_data = await this.decrypt_storage_object2(cid_data)
-          // console.log('apppage', 'decrypted object', decrypted_data)
-          this.store_in_local_storage(hash_entries[h], JSON.parse(decrypted_data))
+          const decrypted_data = object_type.startsWith('ni') ? await this.decrypt_storage_object(cid_data) : await this.decrypt_storage_object2(cid_data);
+          this.store_in_local_storage(hash, JSON.parse(decrypted_data))
         }catch(e){
-          console.log('apppage', e)
+          console.log('apppage', 'get_post_data', e)
         }
       }
     }
@@ -24304,7 +24313,7 @@ class App extends Component {
 
     /* ---------------------------------------- JOB DATA ------------------------------------------- */
     // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
-    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, 0, [], [], pre_launch_data)
+    if(is_syncing) this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data)
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -27197,9 +27206,10 @@ class App extends Component {
     var my_payments_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await F5contractInstance.methods.f229(created_subscriptions, account_as_list).call((error, result) => {});
 
     var starter = my_paid_subs.length > 53 ? my_paid_subs.length : 53;
-    const all_return_data_loaded_event_count = this.get_ids_from_events(created_subscriptions).slice(0, starter).length
+    const all_return_data_loaded_event_count = created_subscriptions.slice(0, starter).length
     var all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
+    var load_pos = this.state.sliced_object_load_count
     for(var i=0; i<created_subscriptions.length; i++){
       var subscription_data = all_data[created_subscriptions[i]] == null ? await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses): all_data[created_subscriptions[i]]
       var my_payment = my_payments_for_all_subscriptions[i]
@@ -27247,13 +27257,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_subscriptions[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_subscriptions.length && all_data[created_subscriptions[i+1]] == null){
-        await this.wait(3000)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
         all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -27650,77 +27662,18 @@ class App extends Component {
 
     var enter_exit_accounts_notifications = []
     var starter = entered_contracts.length > 53 ? entered_contracts.length+1 : 53;
-    const all_return_data_loaded_event_count = this.get_ids_from_events(created_contracts).slice(0, starter).length
+    const all_return_data_loaded_event_count = created_contracts.slice(0, starter).length
     var all_data = await this.fetch_multiple_objects_data(created_contracts.slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
     
     for(var i=0; i<created_contracts.length; i++){
       var contracts_data = all_data[created_contracts[i]] == null ? await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses) : all_data[created_contracts[i]]
       var event = i>0 ? created_contract_events[i-1]: null
-      
-      // var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
-      // var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
-
-      // var entered_accounts = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]})
-
-      // var contract_entered_accounts = []
-      // var archive_accounts = []
-      // for(var e=0; e<entered_accounts.length; e++){
-      //   // var account_entered_time = await G52contractInstance.methods.f266([created_contracts[i]], [[entered_accounts[e].returnValues.p2]], 3).call((error, result) => {});
-
-      //   if(!contract_entered_accounts.includes(entered_accounts[e].returnValues.p2) /* && account_entered_time > Date.now()/1000 */){
-      //     contract_entered_accounts.push(entered_accounts[e].returnValues.p2)
-      //   }
-      //   if(!archive_accounts.includes(entered_accounts[e].returnValues.p2)){
-      //     archive_accounts.push(entered_accounts[e].returnValues.p2)
-      //   }
-      // }
-
-      // var entered_account_times = await G52contractInstance.methods.f266([created_contracts[i]], [contract_entered_accounts], 3).call((error, result) => {});
-      // var entered_account_times_data = {}
-      // for(var e=0; e<contract_entered_accounts.length; e++){
-      //   var time = entered_account_times[0][e]
-      //   var account = contract_entered_accounts[e]
-      //   entered_account_times_data[account] = time
-      // }
-
-
-      // var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
-      // var old_moderators = []
-
-      // for(var e=0; e<moderator_data.length; e++){
-      //   var mod_id = moderator_data[e].returnValues.p3
-      //   old_moderators.push(mod_id)
-      // }
-
-      // var mod_status_values = await E52contractInstance.methods.f255([created_contracts[i]], [old_moderators]).call((error, result) => {});
-
-      // var moderators = []
-      // for(var e=0; e<old_moderators.length; e++){
-      //   var their_status = mod_status_values[0][e]
-      //   if(their_status == true){
-      //     moderators.push(old_moderators[e])
-      //   }
-      // }
-
-      // var interactible_checker_status_values = /* await E52contractInstance.methods.f254([created_contracts[i]],0).call((error, result) => {}); */interactible_checker_status_values_for_all_contracts
-
-      // var my_interactable_time_value = /* await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,2).call((error, result) => {}); */ my_interactable_time_value_for_all_contracts
-
-      // var my_blocked_time_value =/*  await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_contracts
 
       var timestamp = event == null ? 0 : parseInt(event.returnValues.p4)
       var author = event == null ? 0 : event.returnValues.p3
       var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':0/* end_balance */, 'spend_balance':0/* spend_balance */, 'participants':[]/* contract_entered_accounts */, 'participant_times':[]/* entered_account_times_data */, 'archive_accounts':[]/* archive_accounts */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */, 'my_interactable_time_value':0/* my_interactable_time_value[i][0] */, 'my_blocked_time_value':0/* my_blocked_time_value[i][0] */, 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5, 'hidden':true, 'pos': created_contract_object_data.length, 'object_type':'contract'}
 
-      // if(interactible_checker_status_values[0] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
-      //   contract_obj['hidden'] = true
-      // }
-      // else if(my_blocked_time_value[i][0] > Date.now()/1000){
-      //   contract_obj['hidden'] = true
-      // }
-      // else{
-      //   contract_obj['hidden'] = false
-      // }
       if(this.homepage.current?.state.selected_contract_item == created_contracts[i]+e5){
         const previous_obj = this.state.created_contracts[e5].find(e => e['e5_id'] == created_contracts[i]+e5)
         if(previous_obj != null){
@@ -27761,13 +27714,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_contracts[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         all_data = await this.fetch_multiple_objects_data(created_contracts.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_contracts.length && all_data[created_contracts[i+1]] == null){
-        await this.wait(3000)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
         all_data = await this.fetch_multiple_objects_data(created_contracts.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -28025,8 +27980,9 @@ class App extends Component {
 
     this.record_number_of_items(e5, 'proposals',my_proposal_ids.length)
     var starter = 53
-    const all_return_data_loaded_event_count = this.get_ids_from_events(my_proposal_ids).slice(0, starter).length
+    const all_return_data_loaded_event_count = my_proposal_ids.slice(0, starter).length
     var all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     for(var i=0; i<my_proposal_ids.length; i++){
       var proposals_data = all_data[my_proposal_ids[i]] == null ? await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses) : all_data[my_proposal_ids[i]]
@@ -28096,13 +28052,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[my_proposal_ids[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= my_proposal_ids.length && all_data[my_proposal_ids[i+1]] == null){
-        await this.wait(3000)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
         all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -28316,9 +28274,10 @@ class App extends Component {
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
 
     var starter = exchanges_to_load_first.length > 53 ? exchanges_to_load_first.length+2 : 53;
-    const all_return_data_loaded_event_count = this.get_ids_from_events(created_tokens).slice(0, starter).length
+    const all_return_data_loaded_event_count = created_tokens.slice(0, starter).length
     var all_data = await this.fetch_multiple_objects_data(created_tokens.slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, pre_launch_data, 'exchange_objects_data')
 
+    var load_pos = this.state.sliced_object_load_count
     for(var i=0; i<created_tokens.length; i++){
       var tokens_data = all_data[created_tokens[i]] == null ? ((created_tokens[i] == 3 || created_tokens[i] == 5) ? null : await this.fetch_objects_data(created_tokens[i], web3, e5, contract_addresses)) : all_data[created_tokens[i]]
       var event = i>1 ? created_token_events[i-2]: null
@@ -28441,13 +28400,15 @@ class App extends Component {
         }
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_tokens[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         all_data = await this.fetch_multiple_objects_data(created_tokens.slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'exchange_objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_tokens.length && all_data[created_tokens[i+1]] == null){
-        await this.wait(3000)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
         all_data = await this.fetch_multiple_objects_data(created_tokens.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -28894,13 +28855,20 @@ class App extends Component {
     var is_first_time = this.state.created_posts[e5] == null
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count).length
+    // console.log('get_post_data', 'starting ids', this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count))
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
-    console.log('get_post_data', 'loaded the post data ipfs data...', all_data)
+    // console.log('get_post_data', 'loaded the post data ipfs data...', all_data)
 
+    var load_pos = this.state.sliced_object_load_count
     for(var i=0; i<created_post_events.length; i++){
       var id = created_post_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_post_events[i].returnValues.p1.toString(), web3)){
+        // if(all_data[id] == null){
+        //   console.log('get_post_data', 'data for ', id, 'NOT found...')
+        // }else{
+        //   console.log('get_post_data', 'data for ', id, 'FOUND...')
+        // }
         var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
         
         const obj = {'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5, 'object_type':'post'}
@@ -28917,17 +28885,23 @@ class App extends Component {
         var created_posts_clone = structuredClone(this.state.created_posts)
         created_posts_clone[e5] = created_posts
         this.setState({created_posts: created_posts_clone}) 
-        console.log('get_post_data', 'set the state for 1 post item...')
+        // console.log('get_post_data', 'set the state for 1 post item...', i)
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_post_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_post_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        // console.log('get_post_data', 'slice', created_post_events.slice(i+1, end))
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
+        // console.log('get_post_data', 'state of all_return_data...',all_return_data)
+        // console.log('get_post_data', 'loaded more ipfs data...', all_data)
       }else
-      if(i+1 >= created_post_events.length && all_data[created_post_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_post_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
+        // console.log('get_post_data', 'loaded more ipfs data...', all_data)
       }
     }
 
@@ -28998,6 +28972,7 @@ class App extends Component {
     var is_first_time = this.state.created_channels[e5] == null
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_channel_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     const privateKey = this.state.accounts['E25'].privateKey
@@ -29052,13 +29027,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_channel_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_channel_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_channel_events.length && all_data[created_channel_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_channel_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -29165,7 +29142,10 @@ class App extends Component {
     var is_first_time = this.state.created_jobs[e5] == null
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_job_events).slice(0, this.state.max_post_bulk_load_count).length
+    // console.log('apppage', 'fetch_multiple_objects_data', 'starting fetch_multiple_objects_data...', pre_launch_data)
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, pre_launch_data, 'job_objects_data')
+    // console.log('apppage', 'fetch_multiple_objects_data', 'finished fetch_multiple_objects_data...', all_data)
+    var load_pos = this.state.sliced_object_load_count
 
     var all_response_count = pre_launch_data[e5] != null ? pre_launch_data[e5]['all_response_count'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
     var response_data = {}
@@ -29214,13 +29194,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_job_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_job_events.slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'job_objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'job_objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_job_events.length && all_data[created_job_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_job_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -29544,6 +29526,7 @@ class App extends Component {
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_store_events).slice(0, this.state.max_post_bulk_load_count).length
     const all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     for(var i=0; i<created_store_events.length; i++){
       var id = created_store_events[i].returnValues.p2
@@ -29589,13 +29572,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_store_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_store_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_store_events.length && all_data[created_store_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_store_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -29705,8 +29690,9 @@ class App extends Component {
     var my_created_bag_ids =  []
     var is_first_time = this.state.created_bags[e5] == null
 
-    const all_return_data_loaded_event_count = this.get_ids_from_events(created_bag_events).slice(0, this.state.max_post_bulk_load_count).length
+    const all_return_data_loaded_event_count = this.get_ids_from_events3(created_bag_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     var response_count_data = this.state.saved_pre_launch_events[e5] != null && this.state.created_bags[e5] == null ? this.state.saved_pre_launch_events[e5]['response_count_data'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:36})
 
@@ -29771,13 +29757,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_bag_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_bag_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_bag_events.length && all_data[created_bag_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_bag_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
     // console.log('all_data2', 'reached end of loading bag data')
@@ -29935,6 +29923,7 @@ class App extends Component {
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_contractor_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     var all_requests = this.state.saved_pre_launch_events[e5] != null && this.state.created_contractors[e5] == null ? this.state.saved_pre_launch_events[e5]['all_requests'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:38})
     var all_responses = this.state.saved_pre_launch_events[e5] != null && this.state.created_contractors[e5] == null ? this.state.saved_pre_launch_events[e5]['all_responses'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:39})
@@ -29994,13 +29983,15 @@ class App extends Component {
         // await this.wait(150)
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_contractor_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_contractor_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_contractor_events.length && all_data[created_contractor_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_contractor_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -30087,6 +30078,7 @@ class App extends Component {
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_audio_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     var requests = this.state.saved_pre_launch_events[e5] != null && this.state.created_audios[e5] == null ? this.state.saved_pre_launch_events[e5]['requests'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
@@ -30170,13 +30162,15 @@ class App extends Component {
         // await this.wait(150)       
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_audio_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_audio_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_audio_events.length && all_data[created_audio_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_audio_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -30253,6 +30247,7 @@ class App extends Component {
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_video_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     var sales_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_videos[e5] == null ? this.state.saved_pre_launch_events[e5]['sales'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 21})
 
@@ -30339,13 +30334,15 @@ class App extends Component {
         // await this.wait(150)     
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_video_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_video_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_video_events.length && all_data[created_video_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_video_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -30473,6 +30470,7 @@ class App extends Component {
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_nitro_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, pre_launch_data, 'nitro_objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     for(var i=0; i<created_nitro_events.length; i++){
       var id = created_nitro_events[i].returnValues.p2
@@ -30521,13 +30519,15 @@ class App extends Component {
         // await this.wait(150)     
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_nitro_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_nitro_events.slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'nitro_objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'nitro_objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_nitro_events.length && all_data[created_nitro_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_nitro_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -30623,6 +30623,7 @@ class App extends Component {
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var load_pos = this.state.sliced_object_load_count
 
     for(var i=0; i<created_post_events.length; i++){
       var id = created_post_events[i].returnValues.p2
@@ -30646,13 +30647,15 @@ class App extends Component {
         this.setState({created_polls: created_polls_clone}) 
       }
 
-      if(i+1 >= all_return_data_loaded_event_count && all_data[created_post_events[i+1]] == null){
-        const end = i+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : i+this.state.sliced_object_load_increment_count
-        all_data = await this.fetch_multiple_objects_data(created_post_events.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+      if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
+        load_pos += this.state.sliced_object_load_increment_count
       }else
-      if(i+1 >= created_post_events.length && all_data[created_post_events[i+1]] == null){
-        await this.wait(3000)
-        all_data = await this.fetch_multiple_objects_data(created_post_events.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+      if(i+1 >= load_pos){
+        await this.wait(1000)
+        all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
+        load_pos += this.state.event_load_chunk_size
       }
     }
 
@@ -30886,12 +30889,44 @@ class App extends Component {
     if(p == null) return [];
     var list = []
     if(this.gateway_traffic_cache_pointers != null){
-      list = list.concat(Object.keys(this.gateway_traffic_cache_pointers))
+      Object.keys(this.gateway_traffic_cache_pointers).forEach(key => {
+        list.push(this.get_data_id_from_ecid(key))
+      });
     }
     if(this.gateway_traffic_cache != null){
-      list = list.concat(Object.keys(this.gateway_traffic_cache))
+      Object.keys(this.gateway_traffic_cache).forEach(key => {
+        list.push(this.get_data_id_from_ecid(key))
+      });
     }
     return list
+  }
+
+  get_data_id_from_ecid(ecid_input){
+    var ecid = ecid_input
+    if(ecid == 'ar.MY_Kh9i3VhChJuTzo_Cyu6bG6hCvasqzWGfo4oniNnA_1xjiAYxW') return ecid
+    
+    if(ecid.includes('-')){
+      var split_cid_array3 = ecid.split('-');
+      ecid = split_cid_array3[1]
+    }
+    if(!ecid.includes('.')){
+      return ecid
+    }
+    var split_cid_array = ecid.split('.');
+    var option = split_cid_array[0]
+    var cid = split_cid_array[1]
+
+    var included_underscore = false
+    var id = cid;
+    var internal_id = ''
+    if(cid.includes('_')){
+      included_underscore = true;
+      var split_cid_array2 = cid.split('_');
+      id = split_cid_array2[0]
+      internal_id = split_cid_array2[1]
+    }
+
+    return id
   }
 
 
@@ -30981,7 +31016,7 @@ class App extends Component {
     return data;
   }
 
-  load_jobs_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_jobs_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -31005,7 +31040,7 @@ class App extends Component {
     }
   }
 
-  load_contract_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_contract_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
 
@@ -31045,7 +31080,7 @@ class App extends Component {
     // this.has_gotten_contracts = true
   }
 
-  load_proposal_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_proposal_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 32/* 32(consensus_request) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31079,7 +31114,7 @@ class App extends Component {
     }
   }
 
-  load_contractor_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_contractor_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 26/* 26(contractor_object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31105,7 +31140,7 @@ class App extends Component {
     }
   }
 
-  load_subscription_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_subscription_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 33/* subscription_object */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31160,7 +31195,7 @@ class App extends Component {
     }
   }
 
-  load_post_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_post_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 18/* 18(post object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31186,7 +31221,7 @@ class App extends Component {
     }
   }
 
-  load_channel_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_channel_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 36/* 36(type_channel_target) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31212,7 +31247,7 @@ class App extends Component {
     }
   }
 
-  load_storefront_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_storefront_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 27/* 27(storefront-item) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31242,7 +31277,7 @@ class App extends Component {
     }
   }
 
-  load_bag_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_bag_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 25/* 25(storefront_bag_object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31272,7 +31307,7 @@ class App extends Component {
     }
   }
 
-  load_token_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_token_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -31346,7 +31381,7 @@ class App extends Component {
     }
   }
 
-  load_poll_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_poll_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 28/* 28(poll-object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31372,7 +31407,7 @@ class App extends Component {
     }
   }
 
-  load_audio_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_audio_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 19/* 19(audio_object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31398,7 +31433,7 @@ class App extends Component {
     }
   }
 
-  load_video_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_video_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 20/* 20(video_object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -31424,7 +31459,7 @@ class App extends Component {
     }
   }
 
-  load_nitro_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data) => {
+  load_nitro_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -32066,6 +32101,7 @@ class App extends Component {
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
+    // console.log('get_post_data','known_hashes', this.get_my_recorded_hashes(''))
     const arg_obj = {
       item_type: item_type,
       max_post_bulk_load_count: this.state.max_post_bulk_load_count,
@@ -34073,7 +34109,7 @@ class App extends Component {
 
 
 
-  fetch_multiple_objects_data = async (ids_to_load, web3, e5, addresses, pre_launch_data={}, target='nitro_objects_data') => {
+  fetch_multiple_objects_data = async (ids_to_load, web3, e5, addresses, pre_launch_data={}, target='') => {
     var load_limit = 1023
     if(ids_to_load.length == 0){
       return {}
@@ -34097,8 +34133,9 @@ class App extends Component {
       var hashes = []
       var valid_ids = []
       var obj_types = {}
-      // console.log('apppage', 'fetch_multiple_objects_data', 'ids', ids)
-      // console.log('apppage', 'fetch_multiple_objects_data', 'hash_ids', hash_ids)
+      
+      // if(target == 'job_objects_data') console.log('apppage', 'fetch_multiple_objects_data', 'ids', ids);
+      // if(target == 'job_objects_data') console.log('apppage', 'fetch_multiple_objects_data', 'hash_ids', hash_ids);
       hash_ids.forEach(loaded_id => {
         const ecid = id_to_hash_mapping[loaded_id]
         if(ecid != 'e3' && ecid != 'e2' && ecid != 'e1' && ecid != 'e'){
@@ -34117,6 +34154,10 @@ class App extends Component {
               id = split_cid_array2[0]
               internal_id = split_cid_array2[1]
             }
+            if(id.includes('-')){
+              var split_cid_array3 = id.split('-');
+              id = split_cid_array3[1]
+            }
             if(ids.includes(loaded_id)){
               obj_id_ecid[loaded_id] = {'id':id, 'internal_id':internal_id,'option':option }
               obj_types[id] = option
@@ -34129,10 +34170,12 @@ class App extends Component {
         }
       });
 
+      // if(target == 'job_objects_data'){
       // console.log('apppage', 'fetch_multiple_objects_data', 'obj_id_ecid', obj_id_ecid)
       // console.log('apppage', 'fetch_multiple_objects_data', 'obj_types', obj_types)
-      // console.log('apppage', 'fetch_multiple_objects_data', 'hashes', hashes)
-      // console.log('apppage', 'fetch_multiple_objects_data', 'valid_ids', valid_ids)
+      // console.log('apppage', 'fetch_multiple_objects_data', 'get_post_data', 'hashes', hashes)
+      // console.log('apppage', 'fetch_multiple_objects_data', 'get_post_data', 'valid_ids', valid_ids)
+      // }
 
       const all_events_data = pre_launch_data[e5][target]['object_hash_data']
       if(Object.keys(all_events_data).length > 0){
@@ -34140,35 +34183,37 @@ class App extends Component {
           var cid_data = all_events_data[hashes[i]]
           if(cid_data != null){
             try{
-              var decrypted_data = await this.decrypt_storage_object2(cid_data)
-              // console.log('apppage', 'decrypted object', decrypted_data)
+              var decrypted_data = obj_types[hashes[i]] == 'ni' ? await this.decrypt_storage_object(cid_data) : await this.decrypt_storage_object2(cid_data);
               this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
               await this.wait(50)
             }catch(e){
-              console.log(e)
+              console.log('fetch_multiple_objects_data', e)
             }
           }
         }
       }
-      console.log('apppage', 'fetch_multiple_objects_data', 'stored ids in local storage...')
+      // if(target == 'job_objects_data')console.log('apppage', 'fetch_multiple_objects_data', 'stored ids in local storage...');
       await this.wait(300)
 
       var return_data = {}
-      for(var i=0; i<valid_ids.length; i++){
-        var valid_id = valid_ids[i]
+      for(var l=0; l<valid_ids.length; l++){
+        var valid_id = valid_ids[l]
         var valid_id_cid = obj_id_ecid[valid_id]['id']
         var valid_id_internal_id = obj_id_ecid[valid_id]['internal_id']
         var valid_id_data = await this.fetch_from_storage(valid_id_cid)
         if(valid_id_data != null){
           var final_data = valid_id_data
+          // console.log('apppage', 'fetch_multiple_objects_data', 'get_post_data',  'data object for', valid_id, final_data)
           if(valid_id_internal_id != ''){
             final_data = valid_id_data[valid_id_internal_id]
           }
           return_data[valid_id] = final_data
+        }else{
+          // console.log('apppage', 'fetch_multiple_objects_data', 'get_post_data',  'failed to load', valid_id)
         }
       }
 
-      console.log('apppage', 'fetch_multiple_objects_data', 'return_data', return_data)
+      // if(target == 'job_objects_data') console.log('apppage', 'fetch_multiple_objects_data', 'return_data', return_data);
       return return_data
     }
 
@@ -34228,7 +34273,7 @@ class App extends Component {
             console.log('apppage', hashes[i], 'data has been modified! bad data!', confirmation_hash)
           }else{
             try{
-              var decrypted_data = await this.decrypt_storage_object2(cid_data)
+              var decrypted_data = obj_types[hashes[i]] == 'ni' ? await this.decrypt_storage_object(cid_data) : await this.decrypt_storage_object2(cid_data);
               // console.log('apppage', 'decrypted object', decrypted_data)
               this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
             }catch(e){
@@ -34270,7 +34315,7 @@ class App extends Component {
               console.log('apppage', hashes[i], 'data has been modified! bad data!', confirmation_hash)
             }else{
               try{
-                var decrypted_data = await this.decrypt_storage_object2(cid_data)
+                var decrypted_data = obj_types[hashes[i]] == 'ni' ? await this.decrypt_storage_object(cid_data) : await this.decrypt_storage_object2(cid_data);
                 // console.log('apppage', 'decrypted object', decrypted_data)
                 this.store_in_local_storage(hashes[i], JSON.parse(decrypted_data))
               }catch(e){
@@ -34716,6 +34761,7 @@ class App extends Component {
   }
 
   fetch_object_data_from_infura = async (cid, depth) => {
+    return null
     if(
       cid.includes('QmYBx95TyCASAEx8bu2fG6yT7fMQirwZxnRbLgANg5MdKG') || 
       cid.includes('QmdSTjEkHPVwrbrFpuVRshCnPEx1rxSXxatPtkj29V6muA') ||
@@ -34832,6 +34878,7 @@ class App extends Component {
     //   console.log(e)
     //   return null
     // }
+    return null
 
     var gateways = [
       `https://ipfs.io/ipfs/${cid}/bry.json`,
@@ -34893,6 +34940,7 @@ class App extends Component {
   }
 
   fetch_objects_data_from_nft_storage = async (cid, depth) => {
+    return null
     await this.wait(this.state.ipfs_delay)
 
     var gateways = [
@@ -36324,19 +36372,14 @@ class App extends Component {
   }
 
   decrypt_storage_object2 = async (data) => {
+    const attempt_1 = await this.decrypt_storage_object3(data)
+    if(attempt_1 != null){
+      return attempt_1
+    }
     const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
     var cipher_text = data
-    if(isJsonObject(data)){
-      try{
-        cipher_text = data['ciphertext']
-        if(data['c'] != null && data['c'] == true){
-          //the object was compressed
-          cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
-        }
-      }catch(f){
-        // console.log('apppage',f)
-      }
-    }else{
+    var secure = false
+    if(data.toString().includes('{')){
       try{
         var json_object = JSON.parse(data)
         cipher_text = json_object['ciphertext']
@@ -36344,15 +36387,16 @@ class App extends Component {
           //the object was compressed
           cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
         }
+        secure = json_object['a'] == true
       }catch(f){
-        // console.log(f)
+        console.log('apppage', 'get_post_data', 'f', secure, cipher_text, f, )
       }
     }
     try{
-      if(data['a'] == true){
+      if(secure == true){
         return await this.decrypt_secure_data(cipher_text, APP_KEY)
       }
-      var bytes  = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
+      var bytes = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
       if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
         var originalText = bytes.toString(CryptoJS.enc.Utf8);
         return originalText
@@ -36361,8 +36405,41 @@ class App extends Component {
         return data
       }
     }catch(e){
-      console.log('apppage', e)
+      // console.log('apppage', 'get_post_data', secure, cipher_text, e)
       return data
+    }
+  }
+
+  decrypt_storage_object3 = async (data) => {
+    const APP_KEY = `${process.env.REACT_APP_APPKEY_API_KEY}`
+    var cipher_text = data
+    var secure = false
+    try{
+      var json_object = data
+      cipher_text = json_object['ciphertext']
+      if(json_object['c'] != null && json_object['c'] == true){
+        //the object was compressed
+        cipher_text = uint8ArrayToBase64(pako.inflate(base64ToUint8Array(cipher_text)))
+      }
+      secure = json_object['a'] == true
+    }catch(f){
+      console.log('apppage', 'get_post_data', 'f', secure, cipher_text, f, )
+    }
+    try{
+      if(secure == true){
+        return await this.decrypt_secure_data(cipher_text, APP_KEY)
+      }
+      var bytes = CryptoJS.AES.decrypt(cipher_text, APP_KEY);
+      if (bytes && bytes.sigBytes > 0 && bytes.sigBytes < 1_300_000) {
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        return originalText
+      } else {
+        console.error('apppage',"Decryption failed: invalid bytes output.");
+        return null
+      }
+    }catch(e){
+      // console.log('apppage', 'get_post_data', secure, cipher_text, e)
+      return null
     }
   }
 
@@ -36375,12 +36452,12 @@ class App extends Component {
 
 
   encrypt_secure_data = async(text, password, ready_made_key) => {
-    const iv = window.crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
     const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
     const encoder = new TextEncoder();
     const encoded = encoder.encode(text);
 
-    const ciphertext = await window.crypto.subtle.encrypt(
+    const ciphertext = await crypto.subtle.encrypt(
       { name: "AES-GCM", iv: iv },
       key,
       encoded
@@ -36399,13 +36476,14 @@ class App extends Component {
     const ciphertext = data.slice(12);
 
     const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
-    const decrypted = await window.crypto.subtle.decrypt(
+    const decrypted = await crypto.subtle.decrypt(
       { name: "AES-GCM", iv: iv },
       key,
       ciphertext
     );
     const decoder = new TextDecoder();
-    return decoder.decode(new Uint8Array(decrypted))
+    const encoded_data = new Uint8Array(decrypted)
+    return decoder.decode(encoded_data)
   }
 
   encrypt_string_using_crypto_js(data, key){
@@ -37111,11 +37189,12 @@ class App extends Component {
   set_all_hashes_in_storage = async (all_events_data) => {
     const hash_entries = Object.keys(all_events_data)
     for(var h=0; h<hash_entries.length; h++){
+      const hash = this.get_data_id_from_ecid(hash_entries[h])
+      const object_type = hash_entries[h].slice(0, 3)
       const cid_data = all_events_data[hash_entries[h]]
       try{
-        const decrypted_data = await this.decrypt_storage_object2(cid_data)
-        // console.log('apppage', 'decrypted object', decrypted_data)
-        this.store_in_local_storage(hash_entries[h], JSON.parse(decrypted_data))
+        const decrypted_data = object_type.startsWith('ni') ? await this.decrypt_storage_object(cid_data) : await this.decrypt_storage_object2(cid_data);
+        this.store_in_local_storage(hash, JSON.parse(decrypted_data))
       }catch(e){
         console.log('apppage', e)
       }
