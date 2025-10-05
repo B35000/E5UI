@@ -1189,7 +1189,8 @@ class ViewGroups extends Component {
         dps.forEach(dp => {
             const period_of_x = start_time + (dp.x * time_chunk_period)
             const final_x = this.formatTimestamp(period_of_x, diffMs)
-            new_dps.push({x: final_x, y: dp.y, label: dp['indexLabel'].replace('transactions', this.props.transactions_text) || 'transactions'})
+            const new_label = dp['indexLabel'] == null ? null : dp['indexLabel'].replace('transactions', this.props.transactions_text) || 'transactions'
+            new_dps.push({x: final_x, y: dp.y, label: new_label})
         });
         return new_dps
     }

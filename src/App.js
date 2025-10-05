@@ -657,6 +657,8 @@ import OpenedIframeLinkPage from './pages/view_opened_iframe_link_page'
 import english from "./texts/english";
 // import cities from "./resources/cities";
 import currencies from './resources/coins';
+import WorkerFactory from './WorkerFactory';
+import myWorker from './resources/encryptor_decryptor_worker';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -988,8 +990,16 @@ class App extends Component {
 
     hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */ opened_bottomsheets:[], update_pinns_on_chain:false, all_my_pinns:{},
 
-    sliced_object_load_count:4, sliced_object_load_increment_count:3
+    sliced_object_load_count:4, sliced_object_load_increment_count:3, can_change_theme:true, thread_pool_size: this.get_thread_pool_size(),
   };
+
+  get_thread_pool_size(){
+    var size = navigator.hardwareConcurrency
+    if(size <= 0){
+      return 1;
+    }
+    return size
+  }
 
   get_static_assets(){
     return {
@@ -3198,6 +3208,7 @@ class App extends Component {
   
     }, (1 * 500)); */
 
+
     var me = this;
     setTimeout(function() {
       me.start_everything();
@@ -3220,6 +3231,8 @@ class App extends Component {
     // this.fetch_filter_and_export_my_coins()
     this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
 
+    this.instantiate_webworkers()
+
     await this.load_cookies();
     this.load_cookies2()
     var me = this;
@@ -3230,6 +3243,25 @@ class App extends Component {
       me.get_key()
       me.init_db()
     }, (1 * 1000));
+  }
+
+  instantiate_webworkers = async () => {
+    if(this.worker_pool == null){
+      this.worker_pool = []
+      this.worker_pool_counter = 0
+      this.worker_availability = {};
+      this.worker_queue = []
+    }
+    for(var w=0; w<this.state.thread_pool_size; w++){
+      this.worker_pool.push(WorkerFactory.create(myWorker))
+      this.worker_availability[w] = true;
+    }
+  }
+
+  shutdown_webworkers = async () => {
+    this.worker_pool.forEach(worker => {
+      worker.terminate();
+    });
   }
 
   fetch_filter_and_export_my_coins = async () => {
@@ -3371,6 +3403,7 @@ class App extends Component {
 
     this.set_cookies()
     this.delete_data_in_db_when_app_closed()
+    this.shutdown_webworkers()
   }
 
   reset_background_sync(){
@@ -7552,6 +7585,7 @@ class App extends Component {
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
+      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)}
       />
     )
   }
@@ -7612,77 +7646,131 @@ class App extends Component {
       // this.setState({e5s: ether_state_clone, coins: original_coin_settings})
     }
     else{
+      this.setState({can_change_theme: false})
+      var me = this;
+      setTimeout(function() {
+        me.setState({can_change_theme: true})
+      }, (1 * 3500));
+
+      const transformation_id = makeid(9)    
       console.log('transform_image_by_theme', 'beginning image transformation work')
-      const existing_image_data = await this.fetch_image_theme_data_in_storage(theme)
-      console.log('transform_image_by_theme', 'existing_image_data', existing_image_data)
-      var should_update_storage = false
-      if(existing_image_data[theme] == null){
-        existing_image_data[theme] = {}
-        should_update_storage = true
+      this.existing_image_data = this.existing_image_data != null ? structuredClone(this.existing_image_data) : {}
+      this.existing_image_data[transformation_id] = await this.fetch_image_theme_data_in_storage(theme)
+      console.log('transform_image_by_theme', 'existing_image_data', this.existing_image_data)
+
+      this.image_transformation_counter = this.image_transformation_counter != null ? structuredClone(this.image_transformation_counter) : {};
+      this.should_update_storage = this.should_update_storage != null ? structuredClone(this.should_update_storage) : {};
+      this.image_transformation_counter[transformation_id] = 0
+      this.should_update_storage[transformation_id] = false
+      if(this.existing_image_data[transformation_id][theme] == null){
+        this.existing_image_data[transformation_id][theme] = {}
+        this.should_update_storage[transformation_id] = true
       }
       const original_ether_settings = this.get_e5s()
       var ether_state_clone = structuredClone(this.state.e5s)
       var e5s = ether_state_clone['data']
+      
+
       for(var i=0; i<e5s.length; i++){
         var e5 = e5s[i]
-        console.log('transform_image_by_theme', 'processing', original_ether_settings[e5].token)
-        const updated_image = existing_image_data[theme][e5] == null ? await this.transform_image_by_theme(original_ether_settings[e5].ether_image, theme) : existing_image_data[theme][e5]
+        this.image_transformation_counter[transformation_id]++;
+        this.update_ether_image(e5, original_ether_settings, theme, transformation_id)
+        // const updated_image = this.existing_image_data[theme][e5] == null ? await this.transform_image_by_theme(original_ether_settings[e5].ether_image, theme) : this.existing_image_data[theme][e5]
 
-        if(existing_image_data[theme][e5] == null){
-          existing_image_data[theme][e5] = updated_image
-          should_update_storage = true
-        }
+        // if(this.existing_image_data[theme][e5] == null){
+        //   this.existing_image_data[theme][e5] = updated_image
+        //   should_update_storage = true
+        // }
 
-        if(this.state.theme['name'] != theme && i > 7 && should_update_storage == true){
-          return;
-        }
+        // if(this.state.theme['name'] != theme && i > 7 && should_update_storage == true){
+        //   return;
+        // }
         
-        ether_state_clone[e5].ether_image = updated_image
-        this.setState({e5s: ether_state_clone})
+        // ether_state_clone[e5].ether_image = updated_image
+        // this.setState({e5s: ether_state_clone})
       }
-
-      console.log('transform_image_by_theme', 'done processing ethers...')
 
       const original_coin_settings = this.get_coin_data()
       var coin_state_clone = structuredClone(this.state.coins)
       var coin_keys = Object.keys(coin_state_clone)
       for(var j=0; j<coin_keys.length; j++){
         var coin = coin_keys[j]
-        console.log('transform_image_by_theme', 'processing', coin)
-        var image_to_use = original_coin_settings[coin]['label']['image']
-        if(coin == 'ALGO'){
-          image_to_use = algorand2_logo
-        }
-        else if(coin == 'SOL'){
-          image_to_use = solana2_logo
-        }
+        this.image_transformation_counter[transformation_id]++;
+        this.update_coin_image(coin, original_coin_settings, theme, transformation_id)
+        // var image_to_use = original_coin_settings[coin]['label']['image']
+        // if(coin == 'ALGO'){
+        //   image_to_use = algorand2_logo
+        // }
+        // else if(coin == 'SOL'){
+        //   image_to_use = solana2_logo
+        // }
   
-        const updated_image = existing_image_data[theme][coin] == null ? await this.transform_image_by_theme(image_to_use, theme) : existing_image_data[theme][coin]
+        // const updated_image = this.existing_image_data[theme][coin] == null ? await this.transform_image_by_theme(image_to_use, theme) : this.existing_image_data[theme][coin]
 
-        if(existing_image_data[theme][coin] == null){
-          existing_image_data[theme][coin] = updated_image
-          should_update_storage = true
-        }
+        // if(this.existing_image_data[theme][coin] == null){
+        //   this.existing_image_data[theme][coin] = updated_image
+        //   should_update_storage = true
+        // }
 
-        if(this.state.theme['name'] != theme && j > 7 && should_update_storage == true){
-          return;
-        }
+        // if(this.state.theme['name'] != theme && j > 7 && should_update_storage == true){
+        //   return;
+        // }
 
-        coin_state_clone[coin]['label']['image'] = updated_image
-        coin_state_clone[coin]['banner-icon']['image'] = updated_image
-        this.setState({coins: coin_state_clone})
+        // coin_state_clone[coin]['label']['image'] = updated_image
+        // coin_state_clone[coin]['banner-icon']['image'] = updated_image
+        // this.setState({coins: coin_state_clone})
       }
-      // this.setState({e5s: ether_state_clone, coins: original_coin_settings})
       
-      if(should_update_storage == true){
+      while (this.image_transformation_counter[transformation_id] > 0) {
+        if (this.image_transformation_counter[transformation_id] == 0) break;
+        await new Promise(resolve => setTimeout(resolve, 1000))
+      }
+
+      if(this.should_update_storage[transformation_id] == true){
         if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
-          this.update_image_theme_data_in_storage(existing_image_data[theme], theme)
+          this.update_image_theme_data_in_storage(this.existing_image_data[transformation_id][theme], theme)
         }else{
-          this.setState({background_images_with_custom_themes: existing_image_data})
+          this.setState({background_images_with_custom_themes: this.existing_image_data[transformation_id]})
         }
-        
       }
     }
+  }
+
+  update_coin_image = async (coin, original_coin_settings, theme, transformation_id) => {
+    var image_to_use = original_coin_settings[coin]['label']['image']
+    if(coin == 'ALGO'){
+      image_to_use = algorand2_logo
+    }
+    else if(coin == 'SOL'){
+      image_to_use = solana2_logo
+    }
+
+    const updated_image = this.existing_image_data[transformation_id][theme][coin] == null ? await this.transform_image_by_theme(image_to_use, theme) : this.existing_image_data[transformation_id][theme][coin]
+
+    if(this.existing_image_data[transformation_id][theme][coin] == null){
+      this.existing_image_data[transformation_id][theme][coin] = updated_image
+      this.should_update_storage = true
+    }
+
+    const coin_state_clone = structuredClone(this.state.coins)
+    coin_state_clone[coin]['label']['image'] = updated_image
+    coin_state_clone[coin]['banner-icon']['image'] = updated_image
+    this.setState({coins: coin_state_clone})
+    this.image_transformation_counter[transformation_id]--;
+  }
+
+  update_ether_image = async (e5, original_ether_settings, theme, transformation_id) => {
+    const updated_image = this.existing_image_data[transformation_id][theme][e5] == null ? await this.transform_image_by_theme(original_ether_settings[e5].ether_image, theme) : this.existing_image_data[transformation_id][theme][e5]
+
+    if(this.existing_image_data[transformation_id][theme][e5] == null){
+      this.existing_image_data[transformation_id][theme][e5] = updated_image
+      this.should_update_storage = true
+    }
+
+    const ether_state_clone = structuredClone(this.state.e5s)
+    ether_state_clone[e5].ether_image = updated_image
+    this.setState({e5s: ether_state_clone})
+    this.image_transformation_counter[transformation_id]--;
   }
 
   update_theme_image_data_once_storage_permissions_enabled(){
@@ -7734,7 +7822,7 @@ class App extends Component {
       const img = new Image();
       const maxWidth = 400 
   
-      img.onload = () => {
+      img.onload = async () => {
         const canvas = document.createElement('canvas');
         canvas.width = maxWidth;
         canvas.height = maxWidth;
@@ -7742,34 +7830,8 @@ class App extends Component {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, maxWidth, maxWidth);
-        const data = imageData.data;
-
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-          const a = data[i + 3];
-
-          if (this.is_close_to(r, 179) && this.is_close_to(g, 179) && this.is_close_to(b, 179) && a > 0) {
-            //if ring color
-            data[i]     = main_rgba.r;   // R -> green
-            data[i + 1] = main_rgba.g; // G
-            data[i + 2] = main_rgba.b;   // B
-          }
-          else if (this.is_close_to(r, 128) && this.is_close_to(g, 128) && this.is_close_to(b, 128) && a > 0) {
-            //if ring color
-            data[i]     = main_rgba.r;   // R -> green
-            data[i + 1] = main_rgba.g; // G
-            data[i + 2] = main_rgba.b;   // B
-          }
-          else if (this.is_close_to(r, 255) && this.is_close_to(g, 255) && this.is_close_to(b, 255) && a > 0) {
-            //if ring color
-            data[i]     = main_rgba.r;   // R -> green
-            data[i + 1] = main_rgba.g; // G
-            data[i + 2] = main_rgba.b;   // B
-          }
-        }
-        ctx.putImageData(imageData, 0, 0);
+        const updated_image_data = await this.transform_image(imageData, main_rgba);
+        ctx.putImageData(updated_image_data, 0, 0);
         var return_blob = canvas.toDataURL("image/jpeg", 1.0);
         resolve(return_blob);
       };
@@ -7779,8 +7841,69 @@ class App extends Component {
     });
   }
 
-  is_close_to(number, target){
-    return Math.abs(number-target) <= 6
+  get_available_position(){
+    this.worker_pool.forEach((element, index) => {
+      if(this.worker_availability[index] == true){
+        return index
+      }
+    });
+    return this.worker_pool_counter
+  }
+
+  are_all_workers_unavailable(){
+    this.worker_pool.forEach((element, index) => {
+      if(this.worker_availability[index] == true){
+        return false
+      }
+    });
+    return true
+  }
+
+  wait_for_at_least_one_worker_to_become_available = async (work_identifier) => {
+    this.worker_queue.push(work_identifier)
+    while (this.are_all_workers_unavailable() == true) {
+      if (this.are_all_workers_unavailable() == false && this.worker_queue[0] == work_identifier) break
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    this.worker_queue.splice(0, 1)
+  }
+
+  transform_image = async (imageData, main_rgba) => {
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+          type: 'transform_image',
+          payload: {
+            imageData, 
+            main_rgba,
+            message_id
+          }
+      });
+      
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'transform_image' && e.data.message_id == message_id) {
+            resolve(e.data.data);
+            this.worker_availability[available_worker_index] = true
+        } else if (e.data.type === 'ERROR' && e.data.message == 'transform_image' && e.data.message_id == message_id) {
+            reject(e.data.error);
+            this.worker_availability[available_worker_index] = true
+        }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+        this.worker_availability[available_worker_index] = true
+      };
+    });
   }
 
   hexToRgba(hex) {
@@ -18603,7 +18726,7 @@ class App extends Component {
     return(
       <div style={{width:player_size, height:player_size}}>
         <AudioPip ref={this.audio_pip_page} app_state={this.state} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} player_size={player_size} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
-        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} schedule_audio_pip_visibility_because_of_inactivity={this.schedule_audio_pip_visibility_because_of_inactivity.bind(this)} restore_audio_pip_visibility_because_of_touch={this.restore_audio_pip_visibility_because_of_touch.bind(this)}
+        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} schedule_audio_pip_visibility_because_of_inactivity={this.schedule_audio_pip_visibility_because_of_inactivity.bind(this)} restore_audio_pip_visibility_because_of_touch={this.restore_audio_pip_visibility_because_of_touch.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)}
         />
       </div>
     )
@@ -19279,7 +19402,7 @@ class App extends Component {
       <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             <FullVideoPage ref={this.full_video_page} app_state={this.state} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
             update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
-            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)}
+            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)}
             />
       </div>
     )
@@ -21070,7 +21193,7 @@ class App extends Component {
     const randomizer = selected_item_2 == this.getLocale()['1593hm']/* 'enabled' */ ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
     var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
     this.generate_one_account_for_all_e5s(seed)
-    this.generate_account_data_for_each_coin(seed)
+    
     this.setState({
       account_balance: {}, 
       account_seed: seed, 
@@ -21136,7 +21259,12 @@ class App extends Component {
     var me = this
     setTimeout(function() {
       me.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
-    }, (3 * 10));
+    }, (200));
+
+    var me = this
+    setTimeout(function() {
+      me.generate_account_data_for_each_coin(seed)
+    }, (3000));
 
     this.setState({has_wallet_been_set: true})
 
@@ -21214,71 +21342,90 @@ class App extends Component {
     var seed = seed1.replace('|',' ')
     seed = this.get_formatted_seed(seed)
     this.setState({final_seed: seed})
-    console.log('coin', 'starting...')
-    var coin_data = this.state.coin_data
+    var coin_data = structuredClone(this.state.coin_data)
     coin_data['BTC'] = await this.get_and_set_bitcoin_wallet_info(seed)
     // console.log('coin', 'bitcoin...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['FIL'] = await this.get_and_set_filecoin_wallet_info(seed)
     // console.log('coin', 'filecoin...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['BCH'] = await this.get_and_set_bitcoin_cash_wallet_info(seed)
     // console.log('coin', 'bitcoin cash...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['LTC'] = await this.get_and_set_litecoin_wallet_info(seed)
     // console.log('coin', 'litecoin...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['DOGE'] = await this.get_and_set_dogecoin_wallet_info(seed)
     // console.log('coin', 'dogecoin...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['DASH'] = await this.get_and_set_dash_wallet_info(seed)
     // console.log('coin', 'dash...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['TRX'] = await this.get_and_set_tron_wallet_info(seed)
     // console.log('coin', 'tron...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['XRP'] = await this.get_and_set_xrp_wallet_info(seed)
     // console.log('coin', 'xrp...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['XLM'] = await this.get_and_set_xlm_wallet_info(seed)
     // console.log('coin', 'xlm...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['DOT'] = await this.get_and_set_dot_wallet_info(seed)
     // console.log('coin', 'dot...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['KSM'] = await this.get_and_set_kusama_wallet_info(seed)
     // console.log('coin', 'kusama...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['ALGO'] = await this.get_and_set_algorand_wallet_info(seed)
     // console.log('coin', 'algorand...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['XTZ'] = await this.get_and_set_tezos_wallet_info(seed)
     // console.log('coin', 'tezos...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['ATOM'] = await this.get_and_set_cosmos_wallet_info(seed)
     // console.log('coin', 'cosmos...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['SOL'] = await this.get_and_set_solana_wallet_info(seed)
     // console.log('coin', 'solana...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['APT'] = await this.get_and_set_aptos_wallet_info(seed)
     // console.log('coin', 'aptos...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['ADA'] = await this.get_and_set_cardano_wallet_info(seed)
     // console.log('coin', 'cardano...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['STX'] = await this.get_and_set_stacks_wallet_info(seed)
     // console.log('coin', 'stacks...')
     // console.log('coin', this.state.coin_data)
+    this.setState({coin_data: coin_data})
     coin_data['SUI'] = await this.get_and_set_sui_wallet_info(seed)
+
+    this.setState({coin_data: coin_data})
     coin_data['TIA'] = await this.get_and_set_celestia_wallet_info(seed)
 
+    this.setState({coin_data: coin_data})
     //should be last
     coin_data['AR'] = await this.get_and_set_arweave_wallet_info(seed)
     // console.log('coin', 'arweave...')
     // console.log('coin', this.state.coin_data)
-    console.log('coin', coin_data)
-    this.setState({coin_data_status: 'set', coin_data:coin_data})
+    this.setState({coin_data_status: 'set', coin_data: coin_data})
   }
 
   get_formatted_seed(seed){
@@ -24654,7 +24801,7 @@ class App extends Component {
 
     if(is_syncing) this.load_run_data(contractInstance, E52contractInstance, e5, web3, H52contractInstance, pre_launch_data);
 
-    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_subscripion_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals', 'buy_album_video_events']
+    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_subscripion_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals', 'buy_album_video_events', 'uploaded_cid_data']
     
     await this.wait(700);
 
@@ -25121,6 +25268,11 @@ class App extends Component {
     if(!this.state.has_wallet_been_set || this.state.user_account_id[this.state.selected_e5] == 1) return;
     var section_cid_data_events = (pre_launch_data[e5] != null && pre_launch_data[e5]['uploaded_cid_data '] != null) ? pre_launch_data[e5]['uploaded_cid_data '] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
     var loaded_target = 0
+
+    section_cid_data_events = section_cid_data_events.filter(function (event) {
+      return (event.returnValues.p4/* data */.startsWith('ni.'))
+    })
+
     if(section_cid_data_events.length != 0){
       const cids = [];
       const latest_events = section_cid_data_events
@@ -25147,16 +25299,7 @@ class App extends Component {
             }catch(e){
               console.log('apppage', e)
             }
-            
           }
-          // else{
-          //   // console.log('datas', 'decrypted_data_object', section_cid_data)
-          //   section_cid_data['cids'].forEach(item => {
-          //     if(item != null && !cids.includes(item)){
-          //       cids.push(item)
-          //     }
-          //   });
-          // }
         }
         if(c == loaded_target && c+1 >= latest_events.length){
           await this.wait(3000)
@@ -25173,7 +25316,10 @@ class App extends Component {
         }
       });
       console.log('apppage', 'loaded uplpaded cid datas', clone)
-      this.fetch_uploaded_data_from_ipfs(clone, true, keys)
+      const final_clone = clone.filter(function (item) {
+        return (item.startsWith('ni.'))
+      })
+      this.fetch_uploaded_data_from_ipfs(final_clone, true, keys)
     }else{
       if(this.uploaded_data_user != account && this.uploaded_data_user != null && this.uploaded_data_user != 1){
         this.setState({uploaded_data_cids:[]})
@@ -25184,7 +25330,10 @@ class App extends Component {
           clone.forEach(cid => {
             keys[cid] = 'e'
           });
-          this.fetch_uploaded_data_from_ipfs(clone, true, keys)
+          const final_clone = clone.filter(function (item) {
+            return (item.startsWith('ni.'))
+          })
+          this.fetch_uploaded_data_from_ipfs(final_clone, true, keys)
         }
       }
     }
@@ -31951,6 +32100,28 @@ class App extends Component {
     this.load_storefront_data(storefronts_to_load)
   }
 
+  // load_my_file_items = async () => {
+  //   // get_e5_uploaded_cid_data  = async (web3, E52contractInstance, e5, account, pre_launch_data)
+
+  //   for(var i=0; i<this.state.e5s['data'].length; i++){
+  //     var e5 = this.state.e5s['data'][i]
+  //     var web3_url = this.get_web3_url_from_e5(e5)
+  //     var e5_address = this.state.e5s[e5].e5_address;
+  //     if(e5_address != ''){
+  //       const web3 = new Web3(web3_url);
+
+  //       var account = this.state.user_account_id[e5]
+  //       var contract_addresses = this.state.addresses[e5]
+
+  //       const E52contractArtifact = require('./contract_abis/E52.json');
+  //       const E52_address = contract_addresses[1];
+  //       const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+  //       this.get_e5_uploaded_cid_data(web3, E52contractInstance, e5, account, this.state.saved_pre_launch_events)
+  //     }
+  //   }
+  // }
+
   when_e5_link_tapped = async (id) => {
     this.show_dialog_bottomsheet({'id':id}, 'view_e5_link')
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -36245,22 +36416,71 @@ class App extends Component {
   }
 
   decryptFile = async (encryptedBuffer, password, mime_type, salt) => {
-    const iv = encryptedBuffer.slice(0, 12); // First 12 bytes
-    const data = encryptedBuffer.slice(12);  // Remaining bytes
+    // const iv = encryptedBuffer.slice(0, 12); // First 12 bytes
+    // const data = encryptedBuffer.slice(12);  // Remaining bytes
 
-    const key = await this.get_key_from_password(password, salt);
+    // const key = await this.get_key_from_password(password, salt);
+    // try{
+    //   const decrypted = await window.crypto.subtle.decrypt(
+    //     { name: 'AES-GCM', iv: new Uint8Array(iv) },
+    //     key,
+    //     data
+    //   );
+    //   const blob =  new Blob([decrypted], { type: mime_type });
+    //   return URL.createObjectURL(blob);
+    // }catch(e){
+    //   console.log('apppage', 'something went wrong while decrypting buffer', e)
+    // }
+    var data_or_error = await this.decrypt_file_data(encryptedBuffer, password, salt)
+
     try{
-      const decrypted = await window.crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: new Uint8Array(iv) },
-        key,
-        data
-      );
-      const blob =  new Blob([decrypted], { type: mime_type });
+      const blob =  new Blob([data_or_error], { type: mime_type });
       return URL.createObjectURL(blob);
     }catch(e){
       console.log('apppage', 'something went wrong while decrypting buffer', e)
     }
-    
+  }
+
+  decrypt_file_data = async (encryptedBuffer, password, salt) => {
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+        type: 'DECRYPT-BUFFER',
+        payload: {
+          encryptedBuffer,
+          password,
+          salt,
+          REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+          message_id
+        }
+      });
+      
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'DECRYPT-BUFFER' && e.data.message_id == message_id) {
+          resolve(e.data.data);
+          this.worker_availability[available_worker_index] = true
+        } 
+        else if (e.data.type === 'ERROR' && e.data.message == 'DECRYPT-BUFFER' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+        this.worker_availability[available_worker_index] = true
+      };
+      
+    });
   }
 
   make_file2(dataURL, file_name){
@@ -36463,38 +36683,85 @@ class App extends Component {
 
 
   encrypt_secure_data = async(text, password, ready_made_key) => {
-    const iv = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM needs 12-byte IV
-    const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
-    const encoder = new TextEncoder();
-    const encoded = encoder.encode(text);
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+      
+      worker.postMessage({
+        type: 'ENCRYPT',
+        payload: {
+          text,
+          password,
+          ready_made_key, 
+          REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+          message_id
+        }
+      });
 
-    const ciphertext = await crypto.subtle.encrypt(
-      { name: "AES-GCM", iv: iv },
-      key,
-      encoded
-    );
-
-    const result = new Uint8Array(iv.length + ciphertext.byteLength);
-    result.set(iv, 0);
-    result.set(new Uint8Array(ciphertext), iv.length);
-
-    return this.uint8ToBase64(result); // return as base64 string
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'ENCRYPT' && e.data.message_id == message_id) {
+          resolve(this.uint8ToBase64(e.data.data));
+          this.worker_availability[available_worker_index] = true
+        } 
+        else if (e.data.type === 'ERROR' && e.data.message == 'ENCRYPT' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+        this.worker_availability[available_worker_index] = true
+      };
+    });
   }
 
   decrypt_secure_data = async (encrypted, password, ready_made_key) => {
-    const data = this.base64ToUint8(encrypted);
-    const iv = data.slice(0, 12);
-    const ciphertext = data.slice(12);
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+      
+      worker.postMessage({
+        type: 'DECRYPT',
+        payload: {
+          encrypted: this.base64ToUint8(encrypted),
+          password,
+          ready_made_key, 
+          REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+          message_id
+        }
+      });
 
-    const key = ready_made_key == null ? await this.get_key_from_password(password, 'f') : ready_made_key;
-    const decrypted = await crypto.subtle.decrypt(
-      { name: "AES-GCM", iv: iv },
-      key,
-      ciphertext
-    );
-    const decoder = new TextDecoder();
-    const encoded_data = new Uint8Array(decrypted)
-    return decoder.decode(encoded_data)
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'DECRYPT' && e.data.message_id == message_id) {
+          resolve(e.data.data);
+          this.worker_availability[available_worker_index] = true
+        } 
+        else if (e.data.type === 'ERROR' && e.data.message == 'DECRYPT' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+        this.worker_availability[available_worker_index] = true
+      };
+    });
   }
 
   encrypt_string_using_crypto_js(data, key){
@@ -36516,6 +36783,165 @@ class App extends Component {
       return data
     }
   }
+  
+  encrypt_singular_file = async (file, password, salt) => {
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+        type: 'encrypt_singular_file',
+        payload: {
+          file: file.arrayBuffer(), 
+          password, 
+          salt,
+          REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+          message_id
+        }
+      });
+      
+      worker.onmessage = (e) => {
+          if (e.data.type === 'SUCCESS' && e.data.message == 'encrypt_singular_file' && e.data.message_id == message_id) {
+            resolve(e.data.data);
+            this.worker_availability[available_worker_index] = true
+          } 
+          else if (e.data.type === 'ERROR' && e.data.message == 'encrypt_singular_file' && e.data.message_id == message_id) {
+            reject(e.data.error);
+            this.worker_availability[available_worker_index] = true
+          }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+        this.worker_availability[available_worker_index] = true
+      };
+    });
+  }
+
+  encrypt_file_in_chunks2 = async (combined, password, salt, timeToByteMap) => {
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+        type: 'encrypt_file_in_chunks2',
+        payload: {
+          combined, 
+          password, 
+          salt, 
+          timeToByteMap,
+          REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+          message_id
+        }
+      });
+      
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'encrypt_file_in_chunks2' && e.data.message_id == message_id) {
+          resolve(e.data.data);
+          this.worker_availability[available_worker_index] = true
+        } else if (e.data.type === 'ERROR' && e.data.message == 'encrypt_file_in_chunks2' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+      };
+    });
+  }
+
+  encrypt_file_in_chunks = async (file, password, salt, timeToByteMap) => {
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+        type: 'encrypt_file_in_chunks',
+        payload: {
+          file: file.arrayBuffer(), 
+          password, 
+          salt, 
+          timeToByteMap,
+          REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+          filesize: file.size,
+          message_id
+        }
+      });
+      
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'encrypt_file_in_chunks' && e.data.message_id == message_id) {
+          resolve(e.data.data);
+          this.worker_availability[available_worker_index] = true
+        } else if (e.data.type === 'ERROR' && e.data.message == 'encrypt_file_in_chunks' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+      };
+    });
+  }
+
+  decrypt_chunk = async (chunk, key) => {
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+        type: 'decrypt_chunk',
+        payload: {
+          chunk,
+          key,
+          message_id
+        }
+      });
+        
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'decrypt_chunk' && e.data.message_id == message_id) {
+          resolve(e.data.data);
+          this.worker_availability[available_worker_index] = true
+        }
+        else if (e.data.type === 'ERROR' && e.data.message == 'decrypt_chunk' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+        
+      worker.onerror = (error) => {
+        reject(error);
+      };
+    });
+}
 
 
 

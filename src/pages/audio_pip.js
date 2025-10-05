@@ -19,6 +19,8 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import WorkerFactory from '../WorkerFactory';
+import myWorker from '../resources/encryptor_decryptor_worker';
 // import SwipeableViews from 'react-swipeable-views';
 
 var bigInt = require("big-integer");
@@ -32,6 +34,18 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class AudioPip extends Component {
     
     state = {
@@ -39,6 +53,14 @@ class AudioPip extends Component {
         play_pause_state:0, is_full_screen_open:false, is_repeating:false, is_shuffling:false,
         original_song_list:[], isloading:false, buffer:0
     };
+
+    componentDidMount(){
+        // this.audio_worker = WorkerFactory.create(myWorker);
+    }
+
+    componentWillUnmount(){
+        // this.audio_worker.terminate()
+    }
 
     set_data(songs, pos, unshuffled_songs, is_shuffling){
         // console.log('set_data', songs, pos)
@@ -370,15 +392,9 @@ class AudioPip extends Component {
                             const value = await response.arrayBuffer()
                             const chunk = new Uint8Array(value);
                             try{
-                                const iv = chunk.slice(0, 12);
-                                const encryptedData = chunk.slice(12);
-                                const decrypted = await window.crypto.subtle.decrypt(
-                                    { name: 'AES-GCM', iv },
-                                    key,
-                                    encryptedData
-                                );
+                                const decrypted_chunk_array = await this.decrypt_chunk(chunk, key)
                                 if(this.current_file == track_data['data']){
-                                    await this.appendBufferAsync(sourceBuffer, new Uint8Array(decrypted));
+                                    await this.appendBufferAsync(sourceBuffer, decrypted_chunk_array);
                                     if(this.state.play_pause_state == 1){
                                         this.audio.current?.play()
                                     }
@@ -432,6 +448,35 @@ class AudioPip extends Component {
         });
         audioElement.src = URL.createObjectURL(mediaSource);
         console.log('streamAndPlayEncryptedAudio', 'audioElement', audioElement)
+    }
+
+    decrypt_chunk = async (chunk, key) => {
+        return await this.props.decrypt_chunk(chunk, key)
+        // return new Promise((resolve, reject) => {
+        //     const worker = this.audio_worker;
+        //     const message_id = makeid(9)
+
+        //     worker.postMessage({
+        //         type: 'decrypt_chunk',
+        //         payload: {
+        //             chunk, 
+        //             key,
+        //             message_id
+        //         }
+        //     });
+            
+        //     worker.onmessage = (e) => {
+        //         if (e.data.type === 'SUCCESS'&& e.data.message_id == message_id) {
+        //             resolve(e.data.data);
+        //         } else if (e.data.type === 'ERROR'&& e.data.message_id == message_id) {
+        //             reject(e.data.error);
+        //         }
+        //     };
+            
+        //     worker.onerror = (error) => {
+        //         reject(error);
+        //     };
+        // });
     }
 
     has_already_loaded_current_timestamp_key_pos(pos){

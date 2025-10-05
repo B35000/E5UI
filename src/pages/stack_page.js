@@ -38,6 +38,8 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { constants } from 'buffer';
 import media_processors from '../resources/media_processors';
+import WorkerFactory from '../WorkerFactory';
+import myWorker from '../resources/encryptor_decryptor_worker';
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -11133,6 +11135,10 @@ class StackPage extends Component {
     
 
     when_theme_tags_updated(tag_group){
+        if(this.props.app_state.can_change_theme == false){
+            this.props.notify(this.props.app_state.loc['1593jv']/* wait a bit. */, 2000)
+            return;
+        }
         this.setState({get_themes_tags_object: tag_group})
 
         var selected_item = this.get_selected_item(tag_group, 'e')
@@ -14427,27 +14433,6 @@ class StackPage extends Component {
         }
     }
 
-    encrypt_singular_file = async (file, password, salt) => {
-        const iv = window.crypto.getRandomValues(new Uint8Array(12));
-        const key = await this.props.get_key_from_password(password, salt);
-
-        const fileBuffer = await file.arrayBuffer();
-        const encrypted = await window.crypto.subtle.encrypt(
-            { name: 'AES-GCM', iv },
-            key,
-            fileBuffer
-        );
-
-        // Combine IV + encrypted data
-        const ivBuffer = new Uint8Array(iv);
-        const encryptedBuffer = new Uint8Array(encrypted);
-        const result = new Uint8Array(ivBuffer.length + encryptedBuffer.length);
-        result.set(ivBuffer, 0);
-        result.set(encryptedBuffer, ivBuffer.length);
-
-        return result;
-    }
-
     // encrypt_in_chunks = async (file, password, salt, CHUNK_SIZE) => {
     //     const key = await this.props.get_key_from_password(password, salt);
     //     const encryptedChunks = [];
@@ -14472,109 +14457,222 @@ class StackPage extends Component {
     //     return encryptedChunks;
     // }
 
-    encrypt_file_in_chunks2 = async (combined, password, salt, timeToByteMap) => {
-        const key = await this.props.get_key_from_password(password, salt);
-        const encryptedChunks = [];
-        const encryptedChunksInfo = {}
-        const chunkSeekMap = new Map();
-        const fileSize = combined.length;
+    encrypt_singular_file = async (file, password, salt) => {
+        return await this.props.encrypt_singular_file(file, password, salt)
+        // const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        // const key = await this.props.get_key_from_password(password, salt);
 
-        const seekPoints = Array.from(timeToByteMap.entries()).sort((a, b) => a[0] - b[0]);
-        let encryptedBytePosition = 0;
+        // const fileBuffer = await file.arrayBuffer();
+        // const encrypted = await window.crypto.subtle.encrypt(
+        //     { name: 'AES-GCM', iv },
+        //     key,
+        //     fileBuffer
+        // );
 
-        for (let i = 0; i < seekPoints.length; i++) {
-            const [currentTime, currentBytePos] = seekPoints[i];
-            let chunkEndPos;
-            if (i < seekPoints.length - 1) {
-                chunkEndPos = seekPoints[i + 1][1];
-            } else {
-                chunkEndPos = fileSize;
-            }
-            const chunkSize = chunkEndPos - currentBytePos;
-            if (chunkSize <= 0) continue;
-            chunkSeekMap.set(currentTime, encryptedBytePosition);
+        // // Combine IV + encrypted data
+        // const ivBuffer = new Uint8Array(iv);
+        // const encryptedBuffer = new Uint8Array(encrypted);
+        // const result = new Uint8Array(ivBuffer.length + encryptedBuffer.length);
+        // result.set(ivBuffer, 0);
+        // result.set(encryptedBuffer, ivBuffer.length);
 
-            const chunk = combined.slice(currentBytePos, chunkEndPos);
+        // return result;
+
+        // return new Promise((resolve, reject) => {
+        //     const worker = WorkerFactory.create(myWorker);
+
+        //     worker.postMessage({
+        //         type: 'encrypt_singular_file',
+        //         payload: {
+        //             file: file.arrayBuffer(), 
+        //             password, 
+        //             salt,
+        //             REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY
+        //         }
+        //     });
             
-            const iv = window.crypto.getRandomValues(new Uint8Array(12));
-            // Encrypt the chunk
-            const encrypted = await window.crypto.subtle.encrypt(
-                { name: 'AES-GCM', iv },
-                key,
-                chunk
-            );
+        //     worker.onmessage = (e) => {
+        //         if (e.data.type === 'SUCCESS') {
+        //             resolve(e.data.data);
+        //         } else if (e.data.type === 'ERROR') {
+        //             reject(e.data.error);
+        //         }
+        //         worker.terminate(); // Clean up the worker
+        //     };
+            
+        //     worker.onerror = (error) => {
+        //         reject(error);
+        //         worker.terminate();
+        //     };
+            
+        // });
+    }
 
-            const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
-            chunkWithIV.set(iv);
-            chunkWithIV.set(new Uint8Array(encrypted), iv.length);
-            encryptedChunks.push(chunkWithIV);
-            encryptedChunksInfo[currentTime] = {
-                timestamp: currentTime,
-                originalStartByte: currentBytePos,
-                originalEndByte: chunkEndPos,
-                originalSize: chunkSize,
-                encryptedSize: chunkWithIV.length,
-                encryptedStartByte: encryptedBytePosition
-            }
+    encrypt_file_in_chunks2 = async (combined, password, salt, timeToByteMap) => {
+        return await this.props.encrypt_file_in_chunks2(combined, password, salt, timeToByteMap)
+        // const key = await this.props.get_key_from_password(password, salt);
+        // const encryptedChunks = [];
+        // const encryptedChunksInfo = {}
+        // const chunkSeekMap = new Map();
+        // const fileSize = combined.length;
 
-            // Update encrypted byte position for next chunk
-            encryptedBytePosition += chunkWithIV.length;
-        }
+        // const seekPoints = Array.from(timeToByteMap.entries()).sort((a, b) => a[0] - b[0]);
+        // let encryptedBytePosition = 0;
 
-        return { encryptedChunks, encryptedChunksInfo };
+        // for (let i = 0; i < seekPoints.length; i++) {
+        //     const [currentTime, currentBytePos] = seekPoints[i];
+        //     let chunkEndPos;
+        //     if (i < seekPoints.length - 1) {
+        //         chunkEndPos = seekPoints[i + 1][1];
+        //     } else {
+        //         chunkEndPos = fileSize;
+        //     }
+        //     const chunkSize = chunkEndPos - currentBytePos;
+        //     if (chunkSize <= 0) continue;
+        //     chunkSeekMap.set(currentTime, encryptedBytePosition);
+
+        //     const chunk = combined.slice(currentBytePos, chunkEndPos);
+            
+        //     const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        //     // Encrypt the chunk
+        //     const encrypted = await window.crypto.subtle.encrypt(
+        //         { name: 'AES-GCM', iv },
+        //         key,
+        //         chunk
+        //     );
+
+        //     const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
+        //     chunkWithIV.set(iv);
+        //     chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+        //     encryptedChunks.push(chunkWithIV);
+        //     encryptedChunksInfo[currentTime] = {
+        //         timestamp: currentTime,
+        //         originalStartByte: currentBytePos,
+        //         originalEndByte: chunkEndPos,
+        //         originalSize: chunkSize,
+        //         encryptedSize: chunkWithIV.length,
+        //         encryptedStartByte: encryptedBytePosition
+        //     }
+
+        //     // Update encrypted byte position for next chunk
+        //     encryptedBytePosition += chunkWithIV.length;
+        // }
+
+        // return { encryptedChunks, encryptedChunksInfo };
+
+        // return new Promise((resolve, reject) => {
+        //     const worker = WorkerFactory.create(myWorker);
+
+        //     worker.postMessage({
+        //         type: 'encrypt_file_in_chunks2',
+        //         payload: {
+        //             combined, 
+        //             password, 
+        //             salt, 
+        //             timeToByteMap,
+        //             REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY
+        //         }
+        //     });
+            
+        //     worker.onmessage = (e) => {
+        //         if (e.data.type === 'SUCCESS') {
+        //             resolve(e.data.data);
+        //         } else if (e.data.type === 'ERROR') {
+        //             reject(e.data.error);
+        //         }
+        //         worker.terminate(); // Clean up the worker
+        //     };
+            
+        //     worker.onerror = (error) => {
+        //         reject(error);
+        //         worker.terminate();
+        //     };
+            
+        // });
     }
 
     encrypt_file_in_chunks = async (file, password, salt, timeToByteMap) => {
-        const key = await this.props.get_key_from_password(password, salt);
-        const encryptedChunks = [];
-        const encryptedChunksInfo = {}
-        const chunkSeekMap = new Map();
-        const fileSize = file.size;
+        return await this.props.encrypt_file_in_chunks(file, password, salt, timeToByteMap)
+        // const key = await this.props.get_key_from_password(password, salt);
+        // const encryptedChunks = [];
+        // const encryptedChunksInfo = {}
+        // const chunkSeekMap = new Map();
+        // const fileSize = file.size;
 
-        const seekPoints = Array.from(timeToByteMap.entries()).sort((a, b) => a[0] - b[0]);
-        let encryptedBytePosition = 0;
+        // const seekPoints = Array.from(timeToByteMap.entries()).sort((a, b) => a[0] - b[0]);
+        // let encryptedBytePosition = 0;
 
-        for (let i = 0; i < seekPoints.length; i++) {
-            const [currentTime, currentBytePos] = seekPoints[i];
-            let chunkEndPos;
-            if (i < seekPoints.length - 1) {
-                chunkEndPos = seekPoints[i + 1][1];
-            } else {
-                chunkEndPos = fileSize;
-            }
-            const chunkSize = chunkEndPos - currentBytePos;
-            if (chunkSize <= 0) continue;
-            chunkSeekMap.set(currentTime, encryptedBytePosition);
+        // for (let i = 0; i < seekPoints.length; i++) {
+        //     const [currentTime, currentBytePos] = seekPoints[i];
+        //     let chunkEndPos;
+        //     if (i < seekPoints.length - 1) {
+        //         chunkEndPos = seekPoints[i + 1][1];
+        //     } else {
+        //         chunkEndPos = fileSize;
+        //     }
+        //     const chunkSize = chunkEndPos - currentBytePos;
+        //     if (chunkSize <= 0) continue;
+        //     chunkSeekMap.set(currentTime, encryptedBytePosition);
 
-            const chunk = file.slice(currentBytePos, chunkEndPos);
-            const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
+        //     const chunk = file.slice(currentBytePos, chunkEndPos);
+        //     const chunkBuffer = await this.readChunkAsArrayBuffer(chunk);
 
-            const iv = window.crypto.getRandomValues(new Uint8Array(12));
-            // Encrypt the chunk
-            const encrypted = await window.crypto.subtle.encrypt(
-                { name: 'AES-GCM', iv },
-                key,
-                chunkBuffer
-            );
+        //     const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        //     // Encrypt the chunk
+        //     const encrypted = await window.crypto.subtle.encrypt(
+        //         { name: 'AES-GCM', iv },
+        //         key,
+        //         chunkBuffer
+        //     );
 
-            const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
-            chunkWithIV.set(iv);
-            chunkWithIV.set(new Uint8Array(encrypted), iv.length);
-            encryptedChunks.push(chunkWithIV);
-            encryptedChunksInfo[currentTime] = {
-                timestamp: currentTime,
-                originalStartByte: currentBytePos,
-                originalEndByte: chunkEndPos,
-                originalSize: chunkSize,
-                encryptedSize: chunkWithIV.length,
-                encryptedStartByte: encryptedBytePosition
-            }
+        //     const chunkWithIV = new Uint8Array(iv.length + encrypted.byteLength);
+        //     chunkWithIV.set(iv);
+        //     chunkWithIV.set(new Uint8Array(encrypted), iv.length);
+        //     encryptedChunks.push(chunkWithIV);
+        //     encryptedChunksInfo[currentTime] = {
+        //         timestamp: currentTime,
+        //         originalStartByte: currentBytePos,
+        //         originalEndByte: chunkEndPos,
+        //         originalSize: chunkSize,
+        //         encryptedSize: chunkWithIV.length,
+        //         encryptedStartByte: encryptedBytePosition
+        //     }
 
-            // Update encrypted byte position for next chunk
-            encryptedBytePosition += chunkWithIV.length;
-        }
+        //     // Update encrypted byte position for next chunk
+        //     encryptedBytePosition += chunkWithIV.length;
+        // }
 
-        return { encryptedChunks, encryptedChunksInfo };
+        // return { encryptedChunks, encryptedChunksInfo };
+
+        // return new Promise((resolve, reject) => {
+        //     const worker = WorkerFactory.create(myWorker);
+
+        //     worker.postMessage({
+        //         type: 'encrypt_file_in_chunks',
+        //         payload: {
+        //             file: file.arrayBuffer(), 
+        //             password, 
+        //             salt, 
+        //             timeToByteMap,
+        //             REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+        //             filesize: file.size
+        //         }
+        //     });
+            
+        //     worker.onmessage = (e) => {
+        //         if (e.data.type === 'SUCCESS') {
+        //             resolve(e.data.data);
+        //         } else if (e.data.type === 'ERROR') {
+        //             reject(e.data.error);
+        //         }
+        //         worker.terminate(); // Clean up the worker
+        //     };
+            
+        //     worker.onerror = (error) => {
+        //         reject(error);
+        //         worker.terminate();
+        //     };
+        // });
     }
 
     readChunkAsArrayBuffer(blob) {

@@ -27,6 +27,8 @@ import ImageListItem from '@mui/material/ImageListItem';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
+import WorkerFactory from '../WorkerFactory';
+import myWorker from '../resources/encryptor_decryptor_worker';
 
 var bigInt = require("big-integer");
 
@@ -98,19 +100,22 @@ class FullVideoPage extends Component {
         selected: 0, videos:null, object:null, pos:null,
         detials_or_queue_tags:this.detials_or_queue_tags(), is_player_resetting:false,
         subtitle_option_tags:null, queue_or_comments_tags:this.queue_or_comments_tags(),
-        entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], value:0
+        entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], 
+        value:0, lastTap: 0, tapTimeout: null, seekFeedback: null,
     };
 
 
     componentDidMount(){
         this.setState({screen_width: this.screen.current.offsetWidth})
         this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
+        // this.video_worker = WorkerFactory.create(myWorker);
     }
 
     componentWillUnmount(){
         this.video_player.current?.removeEventListener('leavepictureinpicture', this.when_pip_closed);
         this.video_player.current?.removeEventListener('timeupdate', this.when_time_updated);
         clearInterval(this.interval);
+        // this.video_worker.terminate()
     }
 
     check_for_new_responses_and_messages() {
@@ -445,18 +450,21 @@ class FullVideoPage extends Component {
             if(this.props.app_state.os == 'iOS'){
                 return(
                     <div style={{}}>
-                        <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls disablePictureInPicture>
+                        <div onTouchEnd={this.handleVideoTap} onClick={this.handleVideoTap} style={{ position: 'relative', cursor: 'pointer' }}>
+                            <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls disablePictureInPicture>
                             {video_file_data['encrypted'] != true && (<source ref={this.sourceRef} src={video} type={video_type}/>)}
-                            {tracks.map((item, index) => (
-                                <track
-                                    label={item.label} 
-                                    kind={item.kind}
-                                    srclang={item.srcLang} 
-                                    src={item.src}
-                                />
-                            ))}
-                            Your browser does not support the video tag.
-                        </video>
+                                {tracks.map((item, index) => (
+                                    <track
+                                        label={item.label} 
+                                        kind={item.kind}
+                                        srclang={item.srcLang} 
+                                        src={item.src}
+                                    />
+                                ))}
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        
                         <div style={{height:10}}/>
                         {this.render_subtitle_options(subtitles)}
                     </div>
@@ -464,24 +472,85 @@ class FullVideoPage extends Component {
             }
             return(
                 <div style={{}}>
-                    <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
+                    <div onTouchEnd={this.handleVideoTap} onClick={this.handleVideoTap} style={{ position: 'relative', cursor: 'pointer' }}>
+                        <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls>
                         {video_file_data['encrypted'] != true && (<source ref={this.sourceRef} src={video} type={video_type}/>)}
-                        {tracks.map((item, index) => (
-                            <track
-                                label={item.label} 
-                                kind="subtitles" 
-                                srclang={item.srcLang} 
-                                src={item.src}
-                            />
-                        ))}
-                        Your browser does not support the video tag.
-                    </video>
+                            {tracks.map((item, index) => (
+                                <track
+                                    label={item.label} 
+                                    kind="subtitles" 
+                                    srclang={item.srcLang} 
+                                    src={item.src}
+                                />
+                            ))}
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    
                     <div style={{height:10}}/>
                     {this.render_subtitle_options(subtitles)}
                 </div>
             )
         }
         
+    }
+
+    handleVideoTap = (e) => {
+        const currentTime = new Date().getTime();
+        const tapDelay = currentTime - this.state.lastTap;
+        
+        // Clear any existing timeout
+        if (this.state.tapTimeout) {
+            clearTimeout(this.state.tapTimeout);
+        }
+        
+        // Double tap detected (within 300ms)
+        if (tapDelay < 300 && tapDelay > 0) {
+            this.handleDoubleTap(e);
+            this.setState({ lastTap: 0, tapTimeout: null });
+        } else {
+            // Single tap - set timeout to reset
+            const timeout = setTimeout(() => {
+                this.setState({ lastTap: 0 });
+            }, 300);
+            
+            this.setState({ 
+                lastTap: currentTime,
+                tapTimeout: timeout 
+            });
+        }
+    }
+
+    handleDoubleTap = (e) => {
+        const video = this.video_player.current;
+        if (!video) return;
+        
+        // Get tap position relative to video width
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const tapPosition = x - rect.left;
+        const videoWidth = rect.width;
+        
+        // Determine if tap was on left or right side (divide video into thirds)
+        if (tapPosition < videoWidth / 3) {
+            // Left side - rewind 5 seconds
+            video.currentTime = Math.max(0, video.currentTime - 5);
+        } 
+        else if (tapPosition > (videoWidth * 2) / 3) {
+            // Right side - fast forward 5 seconds
+            video.currentTime = Math.min(video.duration, video.currentTime + 5);
+        }
+        this.update_stream_start_value_after_scrub(video.currentTime)
+        this.setState({value: video.currentTime})
+
+        
+        if(tapPosition < videoWidth / 3){
+            this.props.notify(this.props.app_state.loc['3083']/* '5 second rewind' */, 800)
+        }else{
+            this.props.notify(this.props.app_state.loc['3084']/* '5 second forward' */, 800)
+        }
+        // this.setState({ seekFeedback: tapPosition < videoWidth / 3 ? 'backward' : 'forward' });
+        // setTimeout(() => this.setState({ seekFeedback: null }), 500)
     }
 
     get_subtitle_file(item, current_video){
@@ -1098,18 +1167,7 @@ class FullVideoPage extends Component {
                     throw new Error('Chunk too small for IV extraction');
                 }
                 
-                const iv = chunk.slice(0, 12);
-                const encryptedData = chunk.slice(12);
-                
-                console.log(`IV length: ${iv.length}, Encrypted data length: ${encryptedData.length}`);
-                
-                const decrypted = await window.crypto.subtle.decrypt(
-                    { name: 'AES-GCM', iv },
-                    key,
-                    encryptedData
-                );
-                
-                const decryptedArray = new Uint8Array(decrypted);
+                const decryptedArray = await this.decrypt_chunk(chunk, key)
                 console.log(`Decrypted chunk size: ${decryptedArray.length} bytes`);
                 
                 // Double-check we're still using the same MediaSource
@@ -1144,6 +1202,35 @@ class FullVideoPage extends Component {
             console.error('Error loading chunk:', error);
             return false;
         }
+    }
+
+    decrypt_chunk = async (chunk, key) => {
+        return await this.props.decrypt_chunk(chunk, key)
+        // return new Promise((resolve, reject) => {
+        //     const worker = this.video_worker;
+        //     const message_id = makeid(9)
+
+        //     worker.postMessage({
+        //         type: 'decrypt_chunk',
+        //         payload: {
+        //             chunk, 
+        //             key,
+        //             message_id
+        //         }
+        //     });
+            
+        //     worker.onmessage = (e) => {
+        //         if (e.data.type === 'SUCCESS'&& e.data.message_id == message_id) {
+        //             resolve(e.data.data);
+        //         } else if (e.data.type === 'ERROR'&& e.data.message_id == message_id) {
+        //             reject(e.data.error);
+        //         }
+        //     };
+            
+        //     worker.onerror = (error) => {
+        //         reject(error);
+        //     };
+        // });
     }
 
     // Updated reset function

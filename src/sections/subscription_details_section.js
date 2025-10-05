@@ -665,22 +665,25 @@ class SubscriptionDetailsSection extends Component {
             var total_payment_data = null
             var total_payment_data_keys = null
             var datapoints = null
+            var scale = null
             if(income_stream_data_points != null){
                 total_payment_data = income_stream_data_points.total_payment_data
                 total_payment_data_keys = Object.keys(total_payment_data)
                 datapoints = income_stream_data_points.dps
+                scale = income_stream_data_points.scale
             }else{
                 var data_point_data = this.get_income_stream_data_points(events, modification_events, object)
                 total_payment_data = data_point_data.total_payment_data
                 total_payment_data_keys = Object.keys(total_payment_data)
                 datapoints = data_point_data.dps
+                scale = data_point_data.scale
             }
             return(
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695b']/* Subscription Income Stream' */, 'details':this.props.app_state.loc['2695c']/* `Chart containing the amount of value that has been transfered from maturing subscription payments made in the last week.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':datapoints, 'start_time':Date.now() - (1000*60*60*24*7),  'interval':120, 'hide_label':true})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints, 'start_time':Date.now() - (1000*60*60*24*7),  'interval':120, 'hide_label':false, 'scale':scale})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695a']/* 'Y-Axis: Average Value Transfer' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -839,7 +842,8 @@ class SubscriptionDetailsSection extends Component {
             }
         }
 
-        return {dps, total_payment_data}
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
+        return {dps, total_payment_data, scale}
     }
 
     get_total_supply_interval_figure(valid_data){
