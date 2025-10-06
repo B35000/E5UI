@@ -79,7 +79,12 @@ class ViewGroups extends Component {
     componentDidUpdate(prevProps){
         if (prevProps.object_data !== this.props.object_data) {
             if (this.chart.current && this.props.item_id == '6') {
-                this.update_chart_plugins(this.props.object_data)
+                if(this.props.object_data['always_update_chart_plugins'] == true){
+                    this.update_chart_plugins(this.props.object_data)
+                }
+                else if(prevProps.theme['primary_text_color'] != this.props.theme['primary_text_color']){
+                    this.update_chart_plugins(this.props.object_data)
+                }
             }
         }
     }
@@ -91,14 +96,6 @@ class ViewGroups extends Component {
             </div>
         )
     }
-
-    // linkDecorator = (decoratedHref, decoratedText, key) => {
-    //     return (
-    //         <a key={key} href={decoratedHref} onClick={(e) => this.handleLinkClick(decoratedHref, e)} style={{ color: this.props.theme['secondary_text_color'], cursor: "pointer" }} >
-    //             {decoratedText}
-    //         </a>
-    //     );
-    // };
 
     linkifyOptions = {
         render: {
@@ -1223,17 +1220,6 @@ class ViewGroups extends Component {
             return date.getFullYear().toString();
         }
     }
-
-    // handleClick = (e) => {
-    //     // Force re-trigger of animation by toggling class
-    //     this.setState({ animate: false }, () => {
-    //     void this.button.offsetWidth; // 🔑 force reflow
-    //     this.setState({ animate: true });
-    //     });
-
-    //     // Your existing handler
-    //     this.when_any_button_tapped(e, this.props.prevent_default);
-    // };
 
     when_action_button_clicked(action_id){
         if(action_id == 'send_receive_ether'){

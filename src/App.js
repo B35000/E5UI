@@ -990,7 +990,7 @@ class App extends Component {
 
     hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */ opened_bottomsheets:[], update_pinns_on_chain:false, all_my_pinns:{},
 
-    sliced_object_load_count:4, sliced_object_load_increment_count:3, can_change_theme:true, thread_pool_size: this.get_thread_pool_size(),
+    sliced_object_load_count:4, sliced_object_load_increment_count:3, can_change_theme:true, thread_pool_size: this.get_thread_pool_size(), update_search_object_load_count:4
   };
 
   get_thread_pool_size(){
@@ -5691,7 +5691,7 @@ class App extends Component {
           show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}
           when_bottomsheet_opened_or_closed={this.when_bottomsheet_opened_or_closed.bind(this)}
 
-          when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)}
+          when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -7851,21 +7851,26 @@ class App extends Component {
   }
 
   are_all_workers_unavailable(){
-    this.worker_pool.forEach((element, index) => {
+    for(var index=0; index<this.worker_pool.length; index++){
       if(this.worker_availability[index] == true){
         return false
       }
-    });
+    }
     return true
   }
 
   wait_for_at_least_one_worker_to_become_available = async (work_identifier) => {
-    this.worker_queue.push(work_identifier)
     while (this.are_all_workers_unavailable() == true) {
+      if(!this.worker_queue.includes(work_identifier)){
+        this.worker_queue.push(work_identifier)
+      }
       if (this.are_all_workers_unavailable() == false && this.worker_queue[0] == work_identifier) break
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise(resolve => setTimeout(resolve, 400))
     }
-    this.worker_queue.splice(0, 1)
+    const index = this.worker_queue.indexOf(work_identifier)
+    if(index != -1){
+      this.worker_queue.splice(index, 1)
+    }
   }
 
   transform_image = async (imageData, main_rgba) => {
@@ -27415,6 +27420,13 @@ class App extends Component {
 
         this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
         // await this.wait(150)
+
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_subscriptions.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1200']/* 'subscriptions' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -27872,6 +27884,12 @@ class App extends Component {
 
         this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone, enter_exit_accounts_notifications: enter_exit_accounts_notifications_clone})
         // await this.wait(150)
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_contracts.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1197']/* 'contracts' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -28210,6 +28228,12 @@ class App extends Component {
         my_proposals_clone[e5] = created_proposal_object_data
         this.setState({my_proposals: my_proposals_clone})
         // await this.wait(150)
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == my_proposal_ids.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1199']/* 'proposals' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -28554,10 +28578,18 @@ class App extends Component {
 
         this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
         
-        if(i%4 == 0 && i != 0){
+        if((i%4 == 0 || i == created_tokens.length-1)){
           await this.wait(350)
           this.resolve_token_name_details()
         }
+
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_tokens.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1218']/* 'ends' */)
+            me.homepage.current?.start_update_search(me.getLocale()['1219']/* 'spends' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -29047,6 +29079,12 @@ class App extends Component {
         this.setState({created_posts: created_posts_clone}) 
         // console.log('get_post_data', 'set the state for 1 post item...', i)
         // await this.wait(150)
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_post_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -29185,6 +29223,12 @@ class App extends Component {
         created_channels_clone[e5] = created_channel
         this.setState({created_channels: created_channels_clone})
         // await this.wait(150)
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_channel_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1214']/* 'channels' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -29352,6 +29396,13 @@ class App extends Component {
 
         this.setState({created_jobs: created_jobs_clone, created_job_mappings:created_job_mappings_clone});
         // await this.wait(150)
+
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_job_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -29730,6 +29781,13 @@ class App extends Component {
         
         this.setState({created_stores: created_stores_clone, created_store_mappings:created_store_mappings_clone})
         // await this.wait(150)
+
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_store_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1215']/* 'storefront' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -29915,6 +29973,13 @@ class App extends Component {
         created_bags_clone[e5] = my_created_bags
         this.setState({created_bags: created_bags_clone})
         // await this.wait(150)
+
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_bag_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1216']/* 'bags' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -30141,6 +30206,12 @@ class App extends Component {
         created_contractors_clone[e5] = created_contractor
         this.setState({created_contractors: created_contractors_clone,})
         // await this.wait(150)
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_contractor_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1198']/* 'contractors' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -30319,7 +30390,13 @@ class App extends Component {
         created_audios_clone[e5] = created_audios
         created_audio_mappings_clone[e5] = created_audio_mappings
         this.setState({created_audios: created_audios_clone, created_audio_mappings:created_audio_mappings_clone, my_acquired_audios: my_acquired_audios}) 
-        // await this.wait(150)       
+        // await this.wait(150) 
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_audio_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1264k']/* 'audioport' */)
+          }
+        }, (1 * 500));      
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -30491,7 +30568,13 @@ class App extends Component {
         created_video_mappings_clone[e5] = created_video_mappings
 
         this.setState({created_videos: created_videos_clone, created_video_mappings: created_video_mappings_clone, my_acquired_videos: my_acquired_videos})   
-        // await this.wait(150)     
+        // await this.wait(150)
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_video_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1264p']/* 'videoport' */)
+          }
+        }, (1 * 500));   
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -30676,7 +30759,13 @@ class App extends Component {
         created_nitro_mappings_clone[e5] = created_nitro_mappings
         
         this.setState({created_nitros: created_nitros_clone, created_nitro_mappings: created_nitro_mappings_clone})   
-        // await this.wait(150)     
+        // await this.wait(150)  
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_nitro_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1264s']/* 'nitro' */)
+          }
+        }, (1 * 500));   
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -30805,6 +30894,13 @@ class App extends Component {
         var created_polls_clone = structuredClone(this.state.created_polls)
         created_polls_clone[e5] = created_posts
         this.setState({created_polls: created_polls_clone}) 
+
+        var me = this;
+        setTimeout(function() {
+          if((i%me.state.update_search_object_load_count == 0 || i == created_post_events.length-1)){
+            me.homepage.current?.start_update_search(me.getLocale()['1264ao']/* 'polls' */)
+          }
+        }, (1 * 500));
       }
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
@@ -36941,7 +37037,44 @@ class App extends Component {
         reject(error);
       };
     });
-}
+  }
+
+  filter_using_searched_text = async (objects, searched_input) => {
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+        type: 'filter_using_searched_text',
+        payload: {
+          objects, searched_input, E_alias_owners:this.get_all_sorted_objects_mappings(this.state.alias_owners), E_user_account_id: this.state.user_account_id, END: this.getLocale()['3078']/* END */, SPEND: this.getLocale()['3079']/* SPEND */,
+          message_id
+        }
+      });
+        
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'filter_using_searched_text' && e.data.message_id == message_id) {
+          resolve(e.data.data);
+          this.worker_availability[available_worker_index] = true
+        }
+        else if (e.data.type === 'ERROR' && e.data.message == 'filter_using_searched_text' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+        
+      worker.onerror = (error) => {
+        reject(error);
+      };
+    });
+  }
 
 
 

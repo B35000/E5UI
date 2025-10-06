@@ -2319,7 +2319,7 @@ return data['data']
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['752q']/* `Chart containing the total supply of the simulated token over simulated time.` */, 'size':'l'})}
-                        {this.render_detail_item('6', {'dataPoints':supply_data_points.dps, 'interval':110, 'hide_label':false, 'start_time':this.state.start_time, 'end_time':this.state.end_time, 'scale': supply_data_points.scale})}
+                        {this.render_detail_item('6', {'dataPoints':supply_data_points.dps, 'interval':110, 'hide_label':false, 'start_time':this.state.start_time, 'end_time':this.state.end_time, 'scale': supply_data_points.scale, 'always_update_chart_plugins':true})}
                         <div style={{height: 10}}/>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                     </div>
@@ -2330,7 +2330,7 @@ return data['data']
                     <div>
                         <div style={{height: 20}}/>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
-                        {this.render_detail_item('6', {'dataPoints':rp_data_points, 'interval':this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_data(this.state.UpdateProportionRatios)), 'start_time':this.state.start_time, 'end_time':this.state.end_time})}
+                        {this.render_detail_item('6', {'dataPoints':rp_data_points, 'interval':this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_data(this.state.UpdateProportionRatios)), 'start_time':this.state.start_time, 'end_time':this.state.end_time, 'always_update_chart_plugins':true})}
                         <div style={{height: 10}}/>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_simulator_reduction_proportion_chart_filters} tag_size={'l'} when_tags_updated={this.when_get_simulator_reduction_proportion_chart_filters.bind(this)} theme={this.props.theme}/>
                         <div style={{height: 10}}/>

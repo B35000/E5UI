@@ -156,8 +156,28 @@ export default () => {
             self.postMessage({
                 type: 'ERROR',
                 message: type,
+                message_id: payload.message_id,
                 error: error.message
             });
+            }
+        }
+        else if(type == 'filter_using_searched_text'){
+            try {
+                const processeddata = filter_using_searched_text(payload.objects, payload.searched_input, payload.E_alias_owners, payload.E_user_account_id, payload.END, payload.SPEND);
+
+                self.postMessage({
+                    type: 'SUCCESS',
+                    message: type,
+                    message_id: payload.message_id,
+                    data: processeddata
+                });
+            } catch (error) {
+                self.postMessage({
+                    type: 'ERROR',
+                    message: type,
+                    message_id: payload.message_id,
+                    error: error.message
+                });
             }
         }
         
@@ -355,6 +375,7 @@ export default () => {
 
 
 
+
     async function get_key_from_password(password, salt, REACT_APP_ENCRYPTION_SALT_KEY){
         const final_salt = salt == 'e' ? REACT_APP_ENCRYPTION_SALT_KEY : salt
         const encoder = new TextEncoder();
@@ -411,6 +432,172 @@ export default () => {
 
     function is_close_to(number, target){
         return Math.abs(number-target) <= 6
+    }
+
+
+
+
+
+    function filter_using_searched_text(objects, searched_input, E_alias_owners, E_user_account_id, END, SPEND){
+        var return_objs = []
+        var tag_objs = []
+        var searched_string_words = searched_input.trim().split(/\s+/).filter(word => word.length >= 3)
+
+        objects.forEach(object => {
+            var entered_title_text = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text;
+            if(entered_title_text == null) entered_title_text = '';
+            var entered_symbol_text = '';
+            if(object['id'] == 3){
+                entered_title_text = object['e5']
+                entered_symbol_text = END
+            }
+            if(object['id'] == 5){
+                entered_title_text = object['e5'].replace('E', '3')
+                entered_symbol_text = SPEND
+            }
+
+            var is_valid_video_or_audiopost = false;
+            if(object['ipfs'] != null && object['ipfs'].videos != null){
+                object['ipfs'].videos.forEach(video => {
+                    var video_title = video['video_title'];
+                    var video_composer = video['video_composer']
+                    if(
+                        containsAllWords(video_title, searched_string_words) || 
+                        containsAllWords(video_composer, searched_string_words)
+                    ){
+                        is_valid_video_or_audiopost = true;
+                    }
+                });
+                if(object['ipfs'].audio_type != null && searched_string_words.includes(object['ipfs'].audio_type.toLowerCase())){
+                    is_valid_video_or_audiopost = true;
+                }
+            }
+            else if(object['ipfs'] != null && object['ipfs'].songs != null){
+                object['ipfs'].songs.forEach(song => {
+                    var song_title = song['song_title']
+                    var song_composer = song['song_composer']
+                    if(
+                        containsAllWords(song_title, searched_string_words) || 
+                        containsAllWords(song_composer, searched_string_words)
+                    ){
+                        is_valid_video_or_audiopost = true;
+                    }
+                });
+                if(object['ipfs'].audio_type != null && searched_string_words.includes(object['ipfs'].audio_type.toLowerCase())){
+                    is_valid_video_or_audiopost = true;
+                }
+            }
+
+            var should_ignore_object_because_anonymous = false
+            if((is_post_anonymous(object) || should_hide_contract_info_because_private(object, E_user_account_id)) && searched_string_words.includes(object['id'].toString())){
+                should_ignore_object_because_anonymous = true;
+            }
+
+            var object_author = object['author'] == null ? '0' : object['author']
+            var tag_hits_data = check_if_object_includes_tags(object, searched_string_words, END, SPEND)
+            if(
+                object['id'].toString() == (searched_input) || 
+                object['e5_id'].toString() == (searched_input) || 
+                entered_title_text.toLowerCase().includes(searched_input.toLowerCase()) || 
+                get_searched_input_account_id(searched_input, E_alias_owners) == object_author.toString() ||
+                entered_symbol_text.toLowerCase().includes(searched_input.toLowerCase()) ||
+                is_valid_video_or_audiopost == true
+            ){
+                if(should_ignore_object_because_anonymous == false){
+                    return_objs.push(object['e5_id'])
+                }
+            }
+            else if(tag_hits_data.return_value == true){
+                if(should_ignore_object_because_anonymous == false){
+                    tag_objs.push({'hits':tag_hits_data.tag_count, 'object':object})
+                }
+            }
+        });
+
+        const sorted_tag_objs = sortByAttributeDescending(tag_objs, 'hits')
+        sorted_tag_objs.forEach(data_object => {
+            return_objs.push(data_object['object']['e5_id'])
+        });
+
+        return return_objs
+    }
+
+    function is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'] != null && object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
+    }
+
+    function get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
+    function should_hide_contract_info_because_private(object, E_user_account_id){
+        if(object['ipfs'] == null){
+            return false
+        }
+        var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
+        if(E_user_account_id[object['e5']] == object['author']){
+            return false
+        }
+        return should_show
+    }
+
+    function containsAllWords(text, requiredWords) {
+        const lowerText = text.toLowerCase();
+        if(requiredWords.length > 1){
+            const matchCount = requiredWords.filter(word => lowerText.includes(word.toLowerCase())).length;
+            return matchCount >= 2;
+        }
+        return requiredWords.some(word => lowerText.includes(word.trim().toLowerCase()));
+    }
+
+    function get_searched_input_account_id(name, E_alias_owners){
+        if(!isNaN(name)) return name
+        return (E_alias_owners[name] == null ? name : E_alias_owners[name])
+    }
+
+    function check_if_object_includes_tags(object, searched_tags, END, SPEND){
+        var return_value = true
+        var tag_count = 0
+        var entered_title_text = object['ipfs'] == null ? null : object['ipfs'].entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3);
+        if(entered_title_text == null) entered_title_text = [];
+
+        if(object['id'] == 3){
+            entered_title_text.push(object['e5'])
+            entered_title_text.push(END)
+        }
+        if(object['id'] == 5){
+            entered_title_text.push(object['e5'].replace('E', '3'))
+            entered_title_text.push(SPEND)
+        }
+        var obj_tags = object['ipfs'] == null ? entered_title_text : entered_title_text.concat(object['ipfs'].entered_indexing_tags)
+        
+        searched_tags.forEach(tag => {
+            if(!obj_tags.includes(tag)){
+                return_value = false;
+            }else{
+                tag_count++;
+            }
+        });
+        return { return_value, tag_count };
+    }
+
+    function sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
     }
 
 };
