@@ -1262,13 +1262,12 @@ class StackPage extends Component {
 
     render(){
         return(
-            <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
+            <div style={{'margin':'10px 10px 0px 10px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.props.os == 'iOS' ? 85 : 120), maxWidth: this.props.app_state.width-30}}>
+                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.props.os == 'iOS' ? 85 : 120), maxWidth: this.props.app_state.width}}>
                     {this.render_everything()}
                 </div>
-                
             </div>
         )
     }
