@@ -825,8 +825,8 @@ class template extends Component {
         const e5 = this.props.app_state.selected_e5
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] : {}
 
-        var transaction_events = nitro_graphs_data['show_transaction_transaction_count_chart'] != null ? nitro_graphs_data['show_transaction_transaction_count_chart']['event_count'] : this.load_all_event_data('transaction').length
-        var transfer_events = nitro_graphs_data['show_transfer_events_chart'] != null ? nitro_graphs_data['show_transfer_events_chart']['event_count'] : this.load_all_event_data('transfer').length
+        var transaction_events = nitro_graphs_data['show_transaction_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_transaction_transaction_count_chart') : this.load_all_event_data('transaction').length
+        var transfer_events = nitro_graphs_data['show_transfer_events_chart'] != null ? this.count_events_in_all_e5s('show_transfer_events_chart'): this.load_all_event_data('transfer').length
 
         var traffic_proportion_events = null;
         if(this.props.app_state.saved_pre_launch_events[e5] != null){
@@ -835,22 +835,21 @@ class template extends Component {
             traffic_proportion_events = this.load_traffic_proportion_data()
         }
 
-        // console.log('render_transaction_data','saved_pre_launch_events', this.props.app_state.saved_pre_launch_events)
 
-        var subscription_events = nitro_graphs_data['show_subscription_transaction_count_chart'] != null ? nitro_graphs_data['show_subscription_transaction_count_chart']['event_count'] : this.load_all_event_data('subscription').length
-        var contract_events = nitro_graphs_data['show_contract_transaction_count_chart'] != null ? nitro_graphs_data['show_contract_transaction_count_chart']['event_count'] : this.load_all_event_data('contract').length
-        var proposal_events = nitro_graphs_data['show_proposal_transaction_count_chart'] != null ? nitro_graphs_data['show_proposal_transaction_count_chart']['event_count'] : this.load_all_event_data('proposal').length
-        var exchange_events = nitro_graphs_data['show_exchange_transaction_count_chart'] != null ? nitro_graphs_data['show_exchange_transaction_count_chart']['event_count'] : this.load_all_event_data('exchange').length
-        var post_events = nitro_graphs_data['show_post_transaction_count_chart'] != null ? nitro_graphs_data['show_post_transaction_count_chart']['event_count'] : this.load_all_event_data('post').length
-        var channel_events = nitro_graphs_data['show_channel_transaction_count_chart'] != null ? nitro_graphs_data['show_channel_transaction_count_chart']['event_count'] : this.load_all_event_data('channel').length
-        var job_events = nitro_graphs_data['show_job_transaction_count_chart'] != null ? nitro_graphs_data['show_job_transaction_count_chart']['event_count'] : this.load_all_event_data('job').length
-        var store_events = nitro_graphs_data['show_stores_transaction_count_chart'] != null ? nitro_graphs_data['show_stores_transaction_count_chart']['event_count'] : this.load_all_event_data('store').length
-        var bag_events = nitro_graphs_data['show_bag_transaction_count_chart'] != null ? nitro_graphs_data['show_bag_transaction_count_chart']['event_count'] : this.load_all_event_data('bag').length
-        var contractor_events = nitro_graphs_data['show_contractor_transaction_count_chart'] != null ? nitro_graphs_data['show_contractor_transaction_count_chart']['event_count'] : this.load_all_event_data('contractor').length
-        var audio_events = nitro_graphs_data['show_audio_transaction_count_chart'] != null ? nitro_graphs_data['show_audio_transaction_count_chart']['event_count'] : this.load_all_event_data('audio').length
-        var video_events = nitro_graphs_data['show_video_transaction_count_chart'] != null ? nitro_graphs_data['show_video_transaction_count_chart']['event_count'] : this.load_all_event_data('video').length
-        var nitro_events = nitro_graphs_data['show_nitro_transaction_count_chart'] != null ? nitro_graphs_data['show_nitro_transaction_count_chart']['event_count'] : this.load_all_event_data('nitro').length
-        var poll_events = nitro_graphs_data['show_poll_transaction_count_chart'] != null ? nitro_graphs_data['show_poll_transaction_count_chart']['event_count'] : this.load_all_event_data('poll').length
+        var subscription_events = nitro_graphs_data['show_subscription_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_subscription_transaction_count_chart') : this.load_all_event_data('subscription').length
+        var contract_events = nitro_graphs_data['show_contract_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_contract_transaction_count_chart') : this.load_all_event_data('contract').length
+        var proposal_events = nitro_graphs_data['show_proposal_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_proposal_transaction_count_chart') : this.load_all_event_data('proposal').length
+        var exchange_events = nitro_graphs_data['show_exchange_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_exchange_transaction_count_chart') : this.load_all_event_data('exchange').length
+        var post_events = nitro_graphs_data['show_post_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_post_transaction_count_chart') : this.load_all_event_data('post').length
+        var channel_events = nitro_graphs_data['show_channel_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_channel_transaction_count_chart') : this.load_all_event_data('channel').length
+        var job_events = nitro_graphs_data['show_job_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_job_transaction_count_chart') : this.load_all_event_data('job').length
+        var store_events = nitro_graphs_data['show_stores_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_stores_transaction_count_chart') : this.load_all_event_data('store').length
+        var bag_events = nitro_graphs_data['show_bag_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_bag_transaction_count_chart') : this.load_all_event_data('bag').length
+        var contractor_events = nitro_graphs_data['show_contractor_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_contractor_transaction_count_chart') : this.load_all_event_data('contractor').length
+        var audio_events = nitro_graphs_data['show_audio_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_audio_transaction_count_chart') : this.load_all_event_data('audio').length
+        var video_events = nitro_graphs_data['show_video_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_video_transaction_count_chart') : this.load_all_event_data('video').length
+        var nitro_events = nitro_graphs_data['show_nitro_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_nitro_transaction_count_chart') : this.load_all_event_data('nitro').length
+        var poll_events = nitro_graphs_data['show_poll_transaction_count_chart'] != null ? this.count_events_in_all_e5s('show_poll_transaction_count_chart') : this.load_all_event_data('poll').length
 
         return(
             <div>
@@ -898,10 +897,22 @@ class template extends Component {
         )
     }
 
+    count_events_in_all_e5s(identifier){
+        var count = 0
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] : {}
+                count += (nitro_graphs_data[identifier] != null ? nitro_graphs_data[identifier]['event_count'] : 0)
+            }
+        }
+        return count
+    }
+
     render_object_count_elements(items){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1264bk']/* Total Objects Created. */, 'details':this.props.app_state.loc['1264bl']/* In the current E5 youve selected. */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1264bk']/* Total Objects Created. */, 'details':this.props.app_state.loc['1264bl']/* In all the E5s indexed. */, 'size':'l'})}
                 <div style={{height: 7}}/>
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>

@@ -18,21 +18,115 @@
 // IN THE SOFTWARE.
 import React from 'react';
 
+function getOS() {
+  if(iOS()) return 'iOS'
+  const userAgent = window.navigator.userAgent,
+      platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
+      macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+      windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+      iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+  let os = null;
+
+  if (macosPlatforms.indexOf(platform) !== -1) {
+    os = 'Mac OS';
+  } else if (iosPlatforms.indexOf(platform) !== -1) {
+    os = 'iOS';
+  } else if (windowsPlatforms.indexOf(platform) !== -1) {
+    os = 'Windows';
+  } else if (/Android/.test(userAgent)) {
+    os = 'Android';
+  } else if (/Linux/.test(platform)) {
+    os = 'Linux';
+  }
+
+  return os;
+}
+
+function iOS() {
+  return [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+}
+
 class Slider extends React.Component {
 
     state = {
         value: 0,
         animate: false,
+        has_interacted: false,
     };
 
+    constructor(props){
+        super(props);
+        this.sliderContainerRef = React.createRef();
+    }
+
+    
+
     handleNumber = (number) => {
-        this.setState({value: number.target.value})
+        this.setState({value: number.target.value, has_interacted: true})
         this.props.whenNumberChanged(number)
+    }
+
+    handleSliderClick = (event) => {
+        if(getOS() != 'iOS') return;
+        const container = this.sliderContainerRef.current;
+        if (!container) return;
+
+        const rect = container.getBoundingClientRect();
+        const clickPosition = event.clientX - rect.left;
+        const percentage = clickPosition / rect.width;
+        const newValue = Math.round(percentage * 999); // max is 999
+        
+        // Clamp value between 0 and 999
+        const clampedValue = Math.max(0, Math.min(999, newValue));
+        
+        // Create synthetic event to match expected format
+        const syntheticEvent = {
+            target: {
+                value: clampedValue
+            }
+        };
+        
+        this.setState({value: clampedValue, has_interacted: true});
+        this.props.whenNumberChanged(syntheticEvent);
+    }
+
+    handleTouchStart = (event) => {
+        if(getOS() != 'iOS') return;
+        const container = this.sliderContainerRef.current;
+        if (!container) return;
+
+        const touch = event.touches[0];
+        const rect = container.getBoundingClientRect();
+        const touchPosition = touch.clientX - rect.left;
+        const percentage = touchPosition / rect.width;
+        const newValue = Math.round(percentage * 999);
+        
+        // Clamp value between 0 and 999
+        const clampedValue = Math.max(0, Math.min(999, newValue));
+        
+        // Create synthetic event to match expected format
+        const syntheticEvent = {
+            target: {
+                value: clampedValue
+            }
+        };
+        
+        this.setState({value: clampedValue, has_interacted: true});
+        this.props.whenNumberChanged(syntheticEvent);
     }
 
     when_button_clicked = (event) => {
         this.setState({ animate: true }, () => {
-            setTimeout(() => this.setState({ animate: false }), 200); // match animation duration
+            setTimeout(() => this.setState({ animate: false, has_interacted: true }), 200); // match animation duration
         });
 
         let me = this;
@@ -49,6 +143,7 @@ class Slider extends React.Component {
     }
 
     render(){
+        const value_to_use = (this.state.has_interacted == true && this.props.value == 0) ? this.props.value : 350
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px'}}>
                 <style>{`
@@ -63,13 +158,13 @@ class Slider extends React.Component {
                 `}</style>
                 <div ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
 
-                <div style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
+                <div /* ref={this.sliderContainerRef} onClick={this.handleSliderClick} onTouchStart={this.handleTouchStart} */ style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
 
                     <div className="progress" style={{ height: 30, width: '100%', 'background-color': this.props.theme['bar_background_color'] , 'z-index':'1' , 'border-radius': '17px', 'position': 'absolute'}}>
-                        <div className="progress-bar" role="progressbar" style={{ width: (this.props.value/10)+"%", 'background-image': 'none','background-color': this.props.theme['slider_color'] }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>
+                        <div className="progress-bar" role="progressbar" style={{ width: (value_to_use/10)+"%", 'background-image': 'none','background-color': this.props.theme['slider_color'] }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>
                     </div>
 
-                    <input type="range" value={this.props.value} min="0" max="999" className="form-range" onChange={this.handleNumber} style={{opacity: 0, width: '100%', height: 40, 'position': 'absolute', 'z-index':'10'}}/>
+                    <input type="range" value={value_to_use} min="0" max="999" className="form-range" onChange={this.handleNumber} style={{opacity: 0, width: '100%', height: 40, 'position': 'absolute', 'z-index':'10'}}/>
 
                 </div>
 

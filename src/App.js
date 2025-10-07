@@ -994,7 +994,7 @@ class App extends Component {
   };
 
   get_thread_pool_size(){
-    var size = navigator.hardwareConcurrency
+    var size = navigator.hardwareConcurrency || 2;
     if(size <= 0){
       return 1;
     }

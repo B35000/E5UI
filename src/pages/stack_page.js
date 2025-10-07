@@ -129,7 +129,7 @@ class StackPage extends Component {
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
         default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true, 
-        
+        setting_text:'',
         
     };
 
@@ -1265,7 +1265,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.props.os == 'iOS' ? 85 : 120)}}>
+                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.props.os == 'iOS' ? 85 : 120), maxWidth: this.props.app_state.width-30}}>
                     {this.render_everything()}
                 </div>
                 
@@ -1423,7 +1423,7 @@ class StackPage extends Component {
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 
                 <div style={{height:10}}/>
-                <div style={{'padding': '5px'}} onClick={()=>this.set_tx_gas_limit()}>
+                <div style={{}} onClick={()=>this.set_tx_gas_limit()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1432']/* 'Auto-Set Gas Limit' */, 'action':''})}
                 </div>
 
@@ -1677,7 +1677,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px'}}>
+                <div style={{'padding': '0px 0px 0px 0px',  'overflow-x':'none'}}>
                     {this.render_stack_gas_part()}
                     {this.render_simplified_stack_history()}
                     {this.render_detail_item('0')}
@@ -1685,6 +1685,7 @@ class StackPage extends Component {
                     {this.render_gas_history_chart()}
                     {this.render_mempool_metrics()}
                     {this.render_dialog_ui()}
+                    {this.render_extra_information()}
                     {this.render_beacon_node_enabled_message()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -1692,12 +1693,13 @@ class StackPage extends Component {
             )
         }else if(size == 'm'){
             return(
-                <div>
+                <div style={{'overflow-x':'none'}}>
                     <div className="row">
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {this.render_gas_history_chart()}
+                            {this.render_extra_information()}
                             {this.render_beacon_node_enabled_message()}
                         </div>
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
@@ -1710,12 +1712,13 @@ class StackPage extends Component {
             )
         }else if(size == 'l'){
             return(
-                <div>
+                <div style={{'overflow-x':'none'}}>
                     <div className="row">
                         <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {this.render_gas_history_chart()}
+                            {this.render_extra_information()}
                             {this.render_beacon_node_enabled_message()}
                         </div>
                         <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
@@ -1736,18 +1739,27 @@ class StackPage extends Component {
         if(this.props.app_state.beacon_node_enabled == true){
             return(
                 <div onClick={() => this.props.show_dialer_bottomsheet()}>
-                    <div style={{height: 20}}/>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['1593ej']/* 'Beacon Node Online.' */})}
                 </div>
             )
         }else{
             return(
                 <div onClick={() => this.props.show_dialer_bottomsheet()}>
-                    <div style={{height: 20}}/>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['1593ek']/* 'Beacon Node Offline.' */})}
                 </div>
             )
         }
+    }
+
+    render_extra_information(){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':number_with_commas(this.props.app_state.thread_pool_size), 'details':this.props.app_state.loc['1264bm']/* The number of logical processors available on your device. */, 'size':'l'})}
+            </div>
+        )
     }
 
     render_stack_transactions_part(){
@@ -2020,7 +2032,7 @@ class StackPage extends Component {
                 {this.render_arweave_network_fee_if_selected()}
 
                 <div style={{height:10}}/>
-                <div style={{'padding': '5px', 'opacity':button_opacity}} onClick={()=> this.open_confirmation_bottomsheet(false)}>
+                <div style={{'opacity':button_opacity}} onClick={()=> this.open_confirmation_bottomsheet(false)}>
                     {this.render_detail_item('5', {'text':button_text, 'action':'', 'opacity':button_opacity})}
                 </div>
                 <div style={{height:7}}/>
@@ -10692,8 +10704,10 @@ class StackPage extends Component {
         if(size == 's'){
             return(
                 <div>
+                    {this.render_search_bar_input()}
                     {this.render_settings_details()}
                     {this.render_settings_details2()}
+                    {this.render_empty_views(2)}
                 </div>
             )
         }
@@ -10701,10 +10715,13 @@ class StackPage extends Component {
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_search_bar_input()}
                         {this.render_settings_details()}
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_settings_details2()}
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 
@@ -10714,10 +10731,13 @@ class StackPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_search_bar_input()}
                         {this.render_settings_details()}
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_settings_details2()}
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 
@@ -10726,54 +10746,85 @@ class StackPage extends Component {
         
     }
 
+    render_search_bar_input(){
+        return(
+            <div style={{margin:'0px 0px 20px 0px'}}>
+                <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1593jw']/* Search Setting... */} when_text_input_field_changed={this.when_setting_search_text_input_field_changed.bind(this)} text={this.state.setting_text} theme={this.props.theme}/>
+            </div>
+        )
+    }
+
+    when_setting_search_text_input_field_changed(text){
+        this.setState({setting_text: text})
+    }
+
     render_settings_details(){
         return(
             <div>
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {this.does_title_details_contain_searched_text('1528','1529') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
 
-                {this.render_detail_item('0')}
 
+                {this.does_title_details_contain_searched_text('2813', '2814') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
 
                 
-                {/* preferred E5 */}
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
-                <div style={{height: 10}}/>
-                {this.load_preferred_e5_ui()}
-                {this.render_detail_item('0')}
+                {this.does_title_details_contain_searched_text('1530', '1531') && (
+                    <div>
+                        {/* preferred E5 */}
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
+                        <div style={{height: 10}}/>
+                        {this.load_preferred_e5_ui()}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
                 
 
 
+                {this.does_title_details_contain_searched_text('1593dd', '1593de') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                {this.load_my_nitro_objects_to_select()}
-                {this.render_detail_item('0')}
-
-
-
-
-
-
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        {this.load_my_nitro_objects_to_select()}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
                 
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
 
-                {this.render_detail_item('0')}
+
+
+
+
+                {this.does_title_details_contain_searched_text('1593en', '1593eo') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
 
 
@@ -10790,36 +10841,48 @@ class StackPage extends Component {
 
 
 
+                {this.does_title_details_contain_searched_text('1535', '1536') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                {this.render_detail_item('0')}
-
-
-
-
-
-
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
 
 
 
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {this.does_title_details_contain_searched_text('1537', '1538') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
+
+
+
+
+                {this.does_title_details_contain_searched_text('1539', '1540') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
 
 
@@ -10837,35 +10900,49 @@ class StackPage extends Component {
 
 
 
+                {this.does_title_details_contain_searched_text('2893', '2894') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
                 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                {this.render_detail_item('0')}
 
 
 
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
                 {this.render_auto_run_setting_if_not_ios()}
 
 
 
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
 
                 {this.render_disable_moderation_setting()}
@@ -10873,24 +10950,32 @@ class StackPage extends Component {
 
 
 
+                {this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                {this.render_detail_item('0')}
-
-
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
 
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                {this.does_title_details_contain_searched_text('1593jr', '1593js') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                {this.render_detail_item('0')}
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
 
             </div>
         )
@@ -10906,12 +10991,17 @@ class StackPage extends Component {
         }
         return(
             <div>
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hn']/* 'Disable All Moderation.' */, 'details':this.props.app_state.loc['1593ho']/* 'Show all the hidden posts and content by your chosen moderators.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {this.does_title_details_contain_searched_text('1593hn', '1593ho') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hn']/* 'Disable All Moderation.' */, 'details':this.props.app_state.loc['1593ho']/* 'Show all the hidden posts and content by your chosen moderators.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disable_moderation_setting_object} tag_size={'l'} when_tags_updated={this.when_get_disable_moderation_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disable_moderation_setting_object} tag_size={'l'} when_tags_updated={this.when_get_disable_moderation_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
             </div>
         )
     }
@@ -10921,14 +11011,19 @@ class StackPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fw']/* 'Auto-Run Stack.' */, 'details':this.props.app_state.loc['1593fx']/* 'Run all your stacked transactions automatically in the background at the frequency you set below.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {this.does_title_details_contain_searched_text('1593fw', '1593fx') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fw']/* 'Auto-Run Stack.' */, 'details':this.props.app_state.loc['1593fx']/* 'Run all your stacked transactions automatically in the background at the frequency you set below.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_auto_run_setting_object} tag_size={'l'} when_tags_updated={this.when_get_auto_run_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_auto_run_setting_object} tag_size={'l'} when_tags_updated={this.when_get_auto_run_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fy']/* 'Youll need to set your wallet for the runs to occur.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fy']/* 'Youll need to set your wallet for the runs to occur.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+                
             </div>
         )
     }
@@ -10938,138 +11033,197 @@ class StackPage extends Component {
         return(
             <div>
                 <div style={{'padding': '0px 0px 0px 0px'}}>
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
+                    {this.does_title_details_contain_searched_text('1543', '1544') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                    {this.render_detail_item('0')}
-
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
 
+                    {this.does_title_details_contain_searched_text('1545', '1546') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
 
 
+                    {this.does_title_details_contain_searched_text('1547', '1548') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
 
 
+
+                    {this.does_title_details_contain_searched_text('1593i', '1593j') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+
+
+
+
+
+                    {this.does_title_details_contain_searched_text('1593m', '1593n') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
 
                     
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
+                    {this.does_title_details_contain_searched_text('1593o', '1593p') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                    {this.render_detail_item('0')}
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
+                    {this.does_title_details_contain_searched_text('2754', '2755') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                    {this.render_detail_item('0')}
-
-
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
-                    <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                    {this.render_detail_item('0')}
+                    {this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+
+
+
+                    {this.does_title_details_contain_searched_text('1593el', '1593em') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
                     {this.render_theme_image_setting_if_any()}
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
+                    {this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                    {this.render_detail_item('0')}
-
-
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
 
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
+                    {this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                    {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
 
+
+
+                    {this.does_title_details_contain_searched_text('1593jd', '1593je') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+
+
+
+
+                    {this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
                 </div>
             </div>
         )
@@ -11093,17 +11247,22 @@ class StackPage extends Component {
             items = items == null ? default_items : items.concat(default_items)
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593eu']/* 'Background Theme' */, 'details':this.props.app_state.loc['1593ev']/* 'Set the background theme image for the webapp. */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                            {items.map((item, index) => (
-                                <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.set_background_image(item)}>
-                                    {this.render_image(item)}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {this.does_title_details_contain_searched_text('1593eu', '1593ev') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593eu']/* 'Background Theme' */, 'details':this.props.app_state.loc['1593ev']/* 'Set the background theme image for the webapp. */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+                            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                                    {items.map((item, index) => (
+                                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.set_background_image(item)}>
+                                            {this.render_image(item)}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                    
                 </div>
             )
         }
@@ -11128,6 +11287,11 @@ class StackPage extends Component {
 
     set_background_image(item){
         this.props.when_device_theme_image_changed(item)
+    }
+
+    does_title_details_contain_searched_text(title, details){
+        const searched_text = this.state.setting_text.toLowerCase()
+        return searched_text == '' || this.props.app_state.loc[title].toLowerCase().includes(searched_text) || this.props.app_state.loc[details].toLowerCase().includes(searched_text);
     }
 
 
@@ -11444,7 +11608,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'overflow-x':'none'}}>
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
@@ -11454,7 +11618,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row" style={{'padding': '0px 0px 0px 0px', 'overflow-x':'none'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_wallet_settings_part()}
                     </div>
@@ -11469,7 +11633,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row" style={{'padding': '0px 0px 0px 0px', 'overflow-x':'none'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_wallet_settings_part()}
                     </div>
@@ -11703,7 +11867,7 @@ class StackPage extends Component {
     render_reload_wallet_if_wallet_is_set(){
         if(this.props.app_state.has_wallet_been_set || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1){
             return(
-                <div style={{'padding':'0px 5px 0px 5px'}} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
+                <div style={{}} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
                     <div style={{height: 20}}/>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
                 </div>
@@ -11740,7 +11904,7 @@ class StackPage extends Component {
         var w = size == 's' ? '95%' : '99%'
         return(
             <div style={{'padding': '0px 0px 0px 0px'}}>
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Type a word then click \'e|\' to add a word, or tap the word to remove and double tap the text area to unmask.' */, 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Type a word then click \'e\' to add it, or tap the word to remove it. Also, double tap the text area to unmask.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
                 <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
@@ -11779,7 +11943,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1593it']/* 'Please Note ⚠️' */, 'details':this.props.app_state.loc['1593iu']/* 'If you didnt know to keep these provided details private, or dont know why they should remain private, kindly stop using this webapp.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <div style={{'padding':'0px 5px 0px 5px'}}>
+                <div style={{}}>
                     {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
                 </div>
 
