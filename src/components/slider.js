@@ -143,7 +143,7 @@ class Slider extends React.Component {
     }
 
     render(){
-        const value_to_use = (this.state.has_interacted == true && this.props.value == 0) ? this.props.value : 350
+        const value_to_use = this.props.value
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px'}}>
                 <style>{`
@@ -158,7 +158,7 @@ class Slider extends React.Component {
                 `}</style>
                 <div ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
 
-                <div /* ref={this.sliderContainerRef} onClick={this.handleSliderClick} onTouchStart={this.handleTouchStart} */ style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
+                <div ref={this.sliderContainerRef} onClick={this.handleSliderClick} onTouchStart={this.handleTouchStart} style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
 
                     <div className="progress" style={{ height: 30, width: '100%', 'background-color': this.props.theme['bar_background_color'] , 'z-index':'1' , 'border-radius': '17px', 'position': 'absolute'}}>
                         <div className="progress-bar" role="progressbar" style={{ width: (value_to_use/10)+"%", 'background-image': 'none','background-color': this.props.theme['slider_color'] }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>

@@ -3553,10 +3553,10 @@ class home_page extends Component {
         const id = this.get_page_id()
         
         if(searched_text != null && searched_text != '' && this.state.search_results[id] != null && this.state.search_results[id][searched_text] != null){
-            console.log('homepage', 'calling get_items_from_array_and_pointers', this.state.search_results[id][searched_text], id, searched_text)
+            // console.log('homepage', 'calling get_items_from_array_and_pointers', this.state.search_results[id][searched_text], id, searched_text)
             return this.get_items_from_array_and_pointers(pages_objects, this.state.search_results[id][searched_text])
         }else{
-            console.log('homepage', 'returning pages_objects', pages_objects.length)
+            // console.log('homepage', 'returning pages_objects', pages_objects.length)
             return pages_objects
         }
     }
@@ -6698,7 +6698,7 @@ class home_page extends Component {
 
 
     render_metrics_section(h){
-        console.log('homepage', 're-rendering metrics section...')
+        // console.log('homepage', 're-rendering metrics section...')
         return(
             <HomepageSidebar h={h} app_state={this.props.app_state} theme={this.props.theme} close_audio_pip={this.props.close_audio_pip.bind(this)} when_selected_e5_changed={this.props.when_selected_e5_changed.bind(this)} show_view_notification_log_bottomsheet={this.props.show_view_notification_log_bottomsheet.bind(this)} play_pause_from_stack={this.props.play_pause_from_stack.bind(this)}
             />
