@@ -3548,7 +3548,7 @@ class home_page extends Component {
     }
 
     get_items_for_page(provided_pages_objects){
-        const pages_objects = provided_pages_objects || this.get_pages_objects(this.get_selected_page())
+        const pages_objects = provided_pages_objects || this.get_pages_objects(this.get_selected_page()) || []
         const searched_text = this.get_typed_text()
         const id = this.get_page_id()
         

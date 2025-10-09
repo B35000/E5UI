@@ -23254,7 +23254,7 @@ class App extends Component {
   }
 
   start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
-    this.start_get_accounts_wallet_data(is_synching)
+    this.start_get_accounts_wallet_data(false)
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
     if(is_synching == true){
@@ -23481,6 +23481,7 @@ class App extends Component {
     var e5_address = this.state.e5s[e5].e5_address;
     var account_for_e5 = this.state.accounts[e5]
     if(web3_url != ''){
+      this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
       await this.wait(300)
       if(this.get_contract_from_e5(e5) != ''){
         this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data)
@@ -24468,7 +24469,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- NITRO LINK DATA -------------------------------------- */
-    this.get_my_nitro_link_data(web3, E52contractInstance, e5, account, all_basic_events[18]);
+    if(is_syncing) this.get_my_nitro_link_data(web3, E52contractInstance, e5, account, all_basic_events[18]);
     if(is_syncing){
       this.inc_synch_progress()
     }
@@ -24505,8 +24506,8 @@ class App extends Component {
 
 
     /* ---------------------------------------- BALANCE DATA -------------------------------------- */
-    this.load_e5_balance_data(web3, contractInstance, account, e5, contract_addresses, pre_launch_data);
-    this.load_pending_withdraw_event_data(web3, contractInstance, account, e5, contract_addresses, [all_basic_events[19], all_basic_events[20]])
+     this.load_e5_balance_data(web3, contractInstance, account, e5, contract_addresses, pre_launch_data);
+     this.load_pending_withdraw_event_data(web3, contractInstance, account, e5, contract_addresses, [all_basic_events[19], all_basic_events[20]])
     if(is_syncing){
       this.inc_synch_progress()
     }
@@ -24516,7 +24517,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- EVENT DATA ------------------------------------------- */
-    this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0], all_basic_events[22])
+     this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0], all_basic_events[22])
     // this.load_my_e5_runs_data(web3, contractInstance, e5, account)
 
     // if(is_syncing){
@@ -24529,7 +24530,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- CONTACTS DATA------------------------------------------- */
-    this.get_contacts_data(web3, E52contractInstance, e5, account, all_basic_events[1])
+     this.get_contacts_data(web3, E52contractInstance, e5, account, all_basic_events[1])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24542,7 +24543,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- BLOCKED ACCOUNTS DATA ------------------------------------------- */
-    this.get_blocked_accounts_data(web3, E52contractInstance, e5, account, all_basic_events[2])
+     this.get_blocked_accounts_data(web3, E52contractInstance, e5, account, all_basic_events[2])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24554,7 +24555,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- FOLLOWED ACCOUNTS DATA ------------------------------------------- */
-    this.get_my_followed_accounts_data(web3, E52contractInstance, e5, account, all_basic_events[3])
+     this.get_my_followed_accounts_data(web3, E52contractInstance, e5, account, all_basic_events[3])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24566,7 +24567,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY BLOCKED POSTS DATA ------------------------------------------- */
-    this.load_my_blocked_posts(web3, E52contractInstance, e5, account, all_basic_events[4])
+     this.load_my_blocked_posts(web3, E52contractInstance, e5, account, all_basic_events[4])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24576,7 +24577,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY CENSORED KEYWORDS DATA ------------------------------------------- */
-    this.load_my_censored_keywords(web3, E52contractInstance, e5, account, all_basic_events[5])
+     this.load_my_censored_keywords(web3, E52contractInstance, e5, account, all_basic_events[5])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24588,7 +24589,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY PROMOTED POSTS DATA ------------------------------------------- */
-    this.load_my_promoted_posts(web3, E52contractInstance, e5, account, all_basic_events[6])
+     this.load_my_promoted_posts(web3, E52contractInstance, e5, account, all_basic_events[6])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24598,7 +24599,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ALBUM COLLECTION DATA ------------------------------------------- */
-    this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[7])
+     this.get_my_collection_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[7])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24609,7 +24610,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- PLAYLIST COLLECTION DATA ------------------------------------------- */
-    this.get_my_playlists_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[8])
+     this.get_my_playlists_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[8])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24620,7 +24621,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- SECTION TAGS DATA ------------------------------------------- */
-    this.get_section_tags_data(web3, E52contractInstance, e5, account, all_basic_events[9])
+     this.get_section_tags_data(web3, E52contractInstance, e5, account, all_basic_events[9])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24631,7 +24632,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY PLAYS DATA ------------------------------------------- */
-    this.get_my_plays_data(web3, E52contractInstance, e5, account, all_basic_events[10])
+     this.get_my_plays_data(web3, E52contractInstance, e5, account, all_basic_events[10])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24642,7 +24643,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MY VIDEOS DATA ------------------------------------------- */
-    this.get_my_videos_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[11])
+     this.get_my_videos_data(web3, E52contractInstance, e5, account, address_account.address, all_basic_events[11])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24664,7 +24665,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- ALIAS DATA------------------------------------------- */
-    if(is_syncing) this.get_alias_data(E52contractInstance, e5, account, web3, all_basic_events[12]);
+    if(is_syncing)  this.get_alias_data(E52contractInstance, e5, account, web3, all_basic_events[12]);
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24677,7 +24678,7 @@ class App extends Component {
 
 
     /* ------------------------------------ CHANNEL PARTICIPATION DATA-------------------------- */
-    this.load_my_participated_channel_ids(web3, E52contractInstance, e5, account, all_basic_events[13])
+     this.load_my_participated_channel_ids(web3, E52contractInstance, e5, account, all_basic_events[13])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24686,7 +24687,7 @@ class App extends Component {
 
 
     /* ------------------------------------ POLL PARTICIPATION DATA-------------------------- */
-    this.load_my_participated_poll_ids(web3, E52contractInstance, e5, account, all_basic_events[14])
+     this.load_my_participated_poll_ids(web3, E52contractInstance, e5, account, all_basic_events[14])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24695,7 +24696,7 @@ class App extends Component {
 
 
     /* ------------------------------------ OBJECT PARTICIPATION DATA-------------------------- */
-    this.load_my_participated_object_ids(web3, E52contractInstance, e5, account, all_basic_events[15])
+     this.load_my_participated_object_ids(web3, E52contractInstance, e5, account, all_basic_events[15])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24708,7 +24709,7 @@ class App extends Component {
 
 
     /* ------------------------------------ CHANNEL FILE UPLOAD RECROD DATA-------------------------- */
-    this.load_my_channel_file_records(web3, E52contractInstance, e5, account, all_basic_events[16])
+     this.load_my_channel_file_records(web3, E52contractInstance, e5, account, all_basic_events[16])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24717,7 +24718,7 @@ class App extends Component {
 
 
     /* ------------------------------------ NITRO FILE RENEWAL RECROD DATA-------------------------- */
-    this.load_my_file_renewal_records(web3,E52contractInstance, e5, account, all_basic_events[17])
+     this.load_my_file_renewal_records(web3,E52contractInstance, e5, account, all_basic_events[17])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24728,7 +24729,7 @@ class App extends Component {
 
 
     /* ------------------------------------ HIDDEN OBJECT DATA-------------------------- */
-    this.load_my_hidden_values_in_e5(web3,E52contractInstance, e5, account, all_basic_events[21])
+     this.load_my_hidden_values_in_e5(web3,E52contractInstance, e5, account, all_basic_events[21])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24738,7 +24739,7 @@ class App extends Component {
 
 
     /* ------------------------------------ PINNED OBJECT DATA-------------------------- */
-    this.load_my_pinned_in_e5(web3,E52contractInstance, e5, account, all_basic_events[23])
+     this.load_my_pinned_in_e5(web3,E52contractInstance, e5, account, all_basic_events[23])
     // if(is_syncing){
     //   this.inc_synch_progress()
     // }
@@ -24761,7 +24762,7 @@ class App extends Component {
     
 
 
-    this.load_main_contracts(e5, pre_launch_data)
+    if(is_syncing)  this.load_main_contracts(e5, pre_launch_data)
     // this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance)
     // if(is_syncing){
     //   this.inc_synch_progress()
@@ -25294,7 +25295,7 @@ class App extends Component {
     var loaded_section_cid_data_events = (pre_launch_data[e5] != null && pre_launch_data[e5]['uploaded_cid_data '] != null) ? pre_launch_data[e5]['uploaded_cid_data '] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:4})
     var loaded_target = 0
 
-    const section_cid_data_events = loaded_section_cid_data_events.slice()
+    const section_cid_data_events = loaded_section_cid_data_events.slice().reverse()
 
     if(section_cid_data_events.length != 0){
       var cids = [];
@@ -25307,7 +25308,7 @@ class App extends Component {
           console.log('apppage', e)
         }
       }
-      for(var c = latest_events.length - 1; c >= 0; c--){
+      for(var c=0; c<latest_events.length; c++){
         const latest_event = latest_events[c];
         const section_cid_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
         if(section_cid_data != null){
@@ -25330,17 +25331,18 @@ class App extends Component {
           loaded_target = c+this.state.max_post_bulk_load_count
         }
         if(cids.length >= 4 || c == latest_events.length-1){
-          const clone = this.state.uploaded_data_cids.slice()
+          // const clone = this.state.uploaded_data_cids.slice()
           const keys = {}
           const cids_to_fetch = []
           cids.forEach(cid => {
-            if(!clone.includes(cid) && !this.state.deleted_files.includes(cid)){
+            if(!this.has_ecid_loaded(cid) /* && !this.state.deleted_files.includes(cid) */){
               cids_to_fetch.push(cid)
             }
             keys[cid] = 'e'
           });
-          console.log('apppage', 'loaded uplpaded cid datas', clone)
-          await this.fetch_uploaded_data_from_ipfs(cids_to_fetch, true, keys)
+          // console.log('apppage', 'loaded uplpaded cid datas', clone)
+          console.log('apppage', 'cids to fetch', cids_to_fetch)
+          this.fetch_uploaded_data_from_ipfs(cids_to_fetch, true, keys)
           cids = []
         }
       }
@@ -25361,6 +25363,14 @@ class App extends Component {
     }
 
     this.uploaded_data_user = account
+  }
+
+  has_ecid_loaded(cid){
+    var ecid_obj = this.get_cid_split(cid)
+    if(this.state.uploaded_data[ecid_obj['filetype']] == null){
+      return false
+    }
+    return this.state.uploaded_data[ecid_obj['filetype']][cid] != null
   }
 
   fetch_uploaded_data_from_ipfs = async (cids, is_my_cids, keys) => {
@@ -27286,7 +27296,7 @@ class App extends Component {
         this.state.saved_pre_launch_events[e5]['my_paid_subscription_events'],
         this.state.saved_pre_launch_events[e5]['created_subscripion_index_events'],
         this.state.saved_pre_launch_events[e5]['payment_history_events'],
-      ] : await this.load_multiple_events_from_nitro(event_params).all_events
+      ] : (await this.load_multiple_events_from_nitro(event_params)).all_events
 
       created_subscription_events = all_events[0]
       my_paid_subscription_events = all_events[1]
@@ -27327,7 +27337,9 @@ class App extends Component {
       })
       created_subscription_events.forEach(event => {
         if(my_paid_subs.includes(event.returnValues.p1)){
-          my_posted_events.push(event)
+          if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
+            my_posted_events.push(event)
+          }
         }
       });
       created_subscription_events.forEach(event => {
@@ -27351,6 +27363,7 @@ class App extends Component {
     }
 
     if(return_created_object_events_only == true){
+      // console.log('get_subscription_data', 'returning events only: ', created_subscription_events, this.state.saved_pre_launch_events[e5]['created_subscription_events'], created_index_events)
       return created_subscription_events
     }
 
@@ -27392,15 +27405,18 @@ class App extends Component {
     for(var i=0; i<created_subscriptions.length; i++){
       account_as_list.push([account])
     }
+    // console.log('get_subscription_data', 'calling my_payments_for_all_subscriptions f229')
     var my_payments_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await F5contractInstance.methods.f229(created_subscriptions, account_as_list).call((error, result) => {});
 
     var starter = my_paid_subs.length > 53 ? my_paid_subs.length : 53;
     const all_return_data_loaded_event_count = created_subscriptions.slice(0, starter).length
+    // console.log('get_subscription_data', 'calling fetch_multiple_objects_data...')
     var all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    // console.log('get_subscription_data', 'done calling fetch_multiple_objects_data...', all_data)
 
     var load_pos = this.state.sliced_object_load_count
     for(var i=0; i<created_subscriptions.length; i++){
-      var subscription_data = all_data[created_subscriptions[i]] == null ? await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses): all_data[created_subscriptions[i]]
+      var subscription_data = all_data[created_subscriptions[i]] == null ? await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses) : all_data[created_subscriptions[i]]
       var my_payment = my_payments_for_all_subscriptions[i]
 
       
@@ -27444,6 +27460,7 @@ class App extends Component {
 
         this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
         // await this.wait(150)
+        console.log('get_subscription_data', 'done setting created_subscriptions into state', created_subscription_object_data_clone)
 
         var me = this;
         setTimeout(function() {
@@ -32368,10 +32385,11 @@ class App extends Component {
           created_object_events_mapping[e5] = await this.get_contractor_data(E52contractInstance, contract_addresses, e5, web3, account, filter_data_accounts, [], true) || []
         }
         else if(item_type == 33/* 33(subscription_object) */){
+          console.log('created_object_events_mapping', 'my_prioritized_accounts_data[e5]', my_prioritized_accounts_data[e5])
+          console.log('created_object_events_mapping', 'prioritized_accounts', prioritized_accounts)
           created_object_events_mapping[e5] = await this.get_subscription_data(contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, filter_data_accounts, [], true) || []
         }
         else if(item_type == 18/* 18(post object) */){
-          console.log('created_object_events_mapping', 'filter_data_accounts', filter_data_accounts)
           created_object_events_mapping[e5] = await this.get_post_data(E52contractInstance, web3, e5, contract_addresses, filter_data_accounts, [], account, true) || []
         }
         else if(item_type == 36/* 36(type_channel_target) */){
@@ -32539,9 +32557,9 @@ class App extends Component {
       }
     }
 
-    if(prioritized_accounts.length == 0){
-      prioritized_accounts = prioritized_accounts.concat(this.fetch_all_followed_accounts())
-    }
+    // if(prioritized_accounts.length == 0){
+    //   prioritized_accounts = prioritized_accounts.concat(this.fetch_all_followed_accounts())
+    // }
     this.prioritized_accounts = prioritized_accounts
     if(accounts != null){
       this.prioritized_accounts = accounts.concat(this.prioritized_accounts)
@@ -32556,7 +32574,7 @@ class App extends Component {
       var item = loaded_followed_accounts[i]
       var split_account_array = item.split(':')
       var account = split_account_array[1]
-      accepted_ids.push(account)
+      accepted_ids.push(parseInt(account))
     }
     return accepted_ids
   }
@@ -32637,26 +32655,11 @@ class App extends Component {
     await this.load_and_notify_user_of_incoming_payments()
     await this.load_and_notify_user_of_incoming_mail()
     await this.load_and_notify_user_of_incoming_messages()
-    // this.load_and_notify_user_of_incoming_proposals()
-    // this.load_and_notify_user_of_incoming_job_applications()
-    // this.load_and_notify_user_of_incoming_job_requests()
-    // this.load_and_notify_user_of_incoming_job_application_responses()
-    // this.load_and_notify_user_of_incoming_job_request_responses()
-    // this.load_and_notify_user_of_incoming_entered_contracts()
-    // this.load_and_notify_user_of_incoming_bag_application()
-    // this.load_and_nofity_user_of_incoming_bag_application_responses()
-    // this.load_and_notify_user_of_incoming_storefront_direct_order()
-    // this.load_and_notify_user_of_incoming_bills()
-
-    // await this.update_watched_account_data()
-    // await this.update_contextual_transfer_account_data()
   }
 
   load_and_notify_flash2 = async () => {
     if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account()) return;
-    // this.load_and_notify_user_of_incoming_payments()
-    // this.load_and_notify_user_of_incoming_mail()
-    // this.load_and_notify_user_of_incoming_messages()
+  
     await this.load_and_notify_user_of_incoming_proposals()
     await this.load_and_notify_user_of_incoming_job_applications()
     await this.load_and_notify_user_of_incoming_job_requests()
@@ -32668,8 +32671,7 @@ class App extends Component {
     await this.load_and_notify_user_of_incoming_storefront_direct_order()
     await this.load_and_notify_user_of_incoming_bills()
 
-    // this.update_watched_account_data()
-    // this.update_contextual_transfer_account_data()
+    
   }
 
   load_and_notify_flash3 = async () => {
