@@ -348,17 +348,11 @@ import lightyellow4 from './assets/lightyellow4.jpg'
 import lightyellow5 from './assets/lightyellow5.jpg'
 
 import default_page_background_green from './assets/default_page_background_green_dark.png'
-import default_page_background_green_light from './assets/default_page_background_green_light.png'
 import default_page_background_red from './assets/default_page_background_red_dark.png'
-import default_page_background_red_light from './assets/default_page_background_red_light.png'
 import default_page_background_yellow from './assets/default_page_background_yellow_dark.png'
-import default_page_background_yellow_light from './assets/default_page_background_yellow_light.png'
 import default_page_background_blue from './assets/default_page_background_blue_dark.png'
-import default_page_background_blue_light from './assets/default_page_background_blue_light.png'
 import default_page_background_pink from './assets/default_page_background_pink_dark.png'
-import default_page_background_pink_light from './assets/default_page_background_pink_light.png'
 import default_page_background_orange from './assets/default_page_background_orange_dark.png'
-import default_page_background_orange_light from './assets/default_page_background_orange_light.png'
 
 // import  from './assets/'
 // import  from './assets/'
@@ -4949,6 +4943,8 @@ class App extends Component {
         'shuffle':shuffle_dark,
         'repeat':repeat_dark,
 
+        'highlight_text_background':true,
+
         'letter':letter,
         'e5_logo':e5_logo_dark,
         'backgrounds':[],
@@ -5076,7 +5072,7 @@ class App extends Component {
         'letter':letter_darkgreen,
         'e5_logo':e5_logo_darkgreen,
         'backgrounds':[lightgreen1, lightgreen2, lightgreen3, lightgreen4, lightgreen5],
-        'page_background':default_page_background_green_light,
+        'page_background':default_page_background_green,
       }
     }
 
@@ -5159,7 +5155,7 @@ class App extends Component {
         'letter':letter_darkred,
         'e5_logo':e5_logo_darkred,
         'backgrounds':[lightred1, lightred2, lightred3, lightred4, lightred5],
-        'page_background':default_page_background_red_light,
+        'page_background':default_page_background_red,
       }
     }
 
@@ -5242,7 +5238,7 @@ class App extends Component {
         'letter':letter_darkblue,
         'e5_logo':e5_logo_darkblue,
         'backgrounds':[lightblue1, lightblue2, lightblue3, lightblue4, lightblue5],
-        'page_background':default_page_background_blue_light,
+        'page_background':default_page_background_blue,
       }
     }
 
@@ -5325,7 +5321,7 @@ class App extends Component {
         'letter':letter_darkyellow,
         'e5_logo':e5_logo_darkyellow,
         'backgrounds':[lightyellow1, lightyellow2, lightyellow3, lightyellow4, lightyellow5],
-        'page_background':default_page_background_yellow_light,
+        'page_background':default_page_background_yellow,
       }
     }
 
@@ -5408,7 +5404,7 @@ class App extends Component {
         'letter':letter_darkpink,
         'e5_logo':e5_logo_darkpink,
         'backgrounds':[lightpink1, lightpink2, lightpink3, lightpink4, lightpink5],
-        'page_background':default_page_background_pink_light,
+        'page_background':default_page_background_pink,
       }
     }
 
@@ -5491,7 +5487,7 @@ class App extends Component {
         'letter':letter_darkorange,
         'e5_logo':e5_logo_darkorange,
         'backgrounds':[lightorange1, lightorange2, lightorange3, lightorange4, lightorange5],
-        'page_background':default_page_background_orange_light,
+        'page_background':default_page_background_orange,
       }
     }
 
@@ -5504,7 +5500,7 @@ class App extends Component {
   }
 
   get_time_of_day_theme(){
-    var hour = new Date().getHours() 
+    var hour = new Date().getHours()
     if(hour >= 18 || hour < 7){
       if(hour >= 23 || hour < 4){
         return this.getLocale()['2740']/* midnight */
@@ -15870,12 +15866,12 @@ class App extends Component {
       'view_bid_item':550,
       'manual_transaction_broadcast':570,
       'confirm_new_wallet': 200,
-      'create_moderator_note':800,
+      'create_moderator_note':700,
       'export_direct_purchases':500,
       'view_access_logs':550,
       'view_error_logs':650,
       'view_link_option':350,
-      'vote_wait_bottomsheet':550,
+      'vote_wait_bottomsheet':700,
       'hide_audiopost_confirmation':550,
       'hide_videopost_confirmation':550,
     };

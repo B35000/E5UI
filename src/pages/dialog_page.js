@@ -118,7 +118,7 @@ class DialogPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['3055fk']/* 'collect' */], [1]
+                ['or','',0], ['e',this.props.app_state.loc['3055fk']/* 'collect' */], [0]
             ],
         };
     }
@@ -7471,6 +7471,8 @@ return data['data']
 
                 {this.render_detail_item('0')}
 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ff']/* 'Vote In All' */, 'details':this.props.app_state.loc['3055fy']/* 'Vote in all the selected proposals.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
                 <div onClick={()=>this.vote_in_all_proposals()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ff']/* 'Vote In All' */, 'action':''})}
                 </div>
@@ -7493,16 +7495,17 @@ return data['data']
 
     render_vote_wait_options_proposals(){
         const items = this.state.data['selected_proposals']
-
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ey']/* 'Active Proposals.' */, 'details':this.props.app_state.loc['3055ez']/* 'The vote you select will be applied to the proposals listed below. Tap a proposal to ignore it in the final list.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
-                {items.map((item, index) => (
-                    <div>
-                        {this.render_proposal_object(item, index)}
-                    </div>
-                ))}
+                <div style={{maxHeight: '600px', overflow: 'auto'}}>
+                    {items.map((item, index) => (
+                        <div style={{'padding':'5px'}}>
+                            {this.render_proposal_object(item, index)}
+                        </div>
+                    ))}
+                </div>
             </div>
         )
     }

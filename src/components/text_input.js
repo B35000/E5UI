@@ -80,9 +80,10 @@ class TextInput extends Component {
   render_text_input_field(){
     var os = getOS()
     var f = os == 'iOS' ? '16px' : '13px'
+    const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 1px 1px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
     return(
       <div style={{'padding': '0px 0px 0px 0px'}}>
-        <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'],'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
+        <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'], 'box-shadow': box_shadow,'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
           {this.render_textarea_or_input(f)}
         </div>
       </div>

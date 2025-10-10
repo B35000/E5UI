@@ -1071,7 +1071,8 @@ class PostListSection extends Component {
     format_contract_item(object){
         var main_contract_tags = ['Contract', 'main', object['e5'] ]
         var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
-        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+
+        var title = object['ipfs'] == null ? (object['id'] == 2 ? this.props.app_state.loc['2509v']/* 'The Main Contract for $' */.replace('$', object['e5']) :this.props.app_state.loc['2509u']/* Contract */) : object['ipfs'].entered_title_text
         var age = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['block'] : object['event'].returnValues.p5
         var time = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['time'] : object['event'].returnValues.p4
         var id_text = ' • '+object['id']
@@ -1188,7 +1189,7 @@ class PostListSection extends Component {
     }
 
     filter_proposals_by_not_participated_in(all_items){
-        const saved_pre_launch_data_object = this.props.app_state.saved_pre_launch_data_object
+        const saved_pre_launch_data_object = this.props.app_state.saved_pre_launch_events
         const selected_proposals = all_items.filter(function (object) {
             const e5 = object['e5']
             const proposal_id = object['id']

@@ -274,7 +274,7 @@ class ViewGroups extends Component {
                 details = '...'
             }
             const parts = details.split(' ');
-            
+            const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 1px 1px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
             if(item_id == '8'){
                 var img = E5EmptyIcon;
                 if(object_data != null){
@@ -289,7 +289,7 @@ class ViewGroups extends Component {
                 const subdetails = object_data != null && object_data['subdetails'] == null ? '' : object_data['subdetails']
 
                return (
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                             <div>
                                 {this.render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data)}
@@ -314,7 +314,7 @@ class ViewGroups extends Component {
                 ); 
             }else{
                 return(
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
                                 <div style={{'display': 'flex','flex-direction': 'row'}}>
@@ -405,9 +405,9 @@ class ViewGroups extends Component {
                             animation: clickAnim 0.2s ease;
                         }
                         @keyframes clickAnim {
-                            0%   { transform: scale(1); background-color: ${this.props.theme['button_color']}; }
-                            50%  { transform: scale(0.95); background-color: ${this.props.theme['button_color']}; }
-                            100% { transform: scale(1); background-color: ${this.props.theme['button_color']}; }
+                            0%   { transform: scale(1); }
+                            50%  { transform: scale(0.95); }
+                            100% { transform: scale(1); }
                         }
                     `}</style>
                     <button ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action, opacity)}>
