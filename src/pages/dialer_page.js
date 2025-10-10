@@ -301,7 +301,7 @@ class DialerPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'e(Beta)', 'E5(Beta)', 'E5'], [0]
+                ['xor','',0], ['e', 'e(Beta)', 'E5(Beta)', 'E5'], [pos]
             ],
         };
     }
@@ -682,6 +682,7 @@ class DialerPage extends Component {
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4', {'text':'Enable access for all countries.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('10', {'text':'~~Remember to enable this manually in the code~~', 'textsize':'10px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_available_for_all_tags_object} tag_size={'l'} when_tags_updated={this.when_get_available_for_all_tags_object.bind(this)} theme={this.props.theme}/>
 
@@ -705,9 +706,153 @@ class DialerPage extends Component {
                 {this.render_detail_item('4', {'text':'Enable E5 and ether softwrite. If disabled, app will use the hardcoded e5 and ether data instead of the data set here.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_ether_e5_softwrite_object} tag_size={'l'} when_tags_updated={this.when_get_ether_e5_softwrite_object.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Current post size', 'details':'Below is the size of your dialer post with all the details youve set.', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_transaction_size_indicator()}
+                {/* {this.show_all_sizes_for_all_keys()} */}
             </div>
         )
     }
+
+    // show_all_sizes_for_all_keys(){
+    //     const state_keys = Object.keys(this.state.data)
+    //     return(
+    //         <div>
+    //             {state_keys.map((item) => (
+    //                 <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+    //                     {this.render_detail_item('4', {'text':item.toString(), 'textsize':'12px', 'font':this.props.app_state.font})}
+    //                     {this.render_transaction_size_indicator2(this.state.data[item])}
+    //                      <div style={{height:30}}/>
+    //                 </li>
+    //             ))}
+    //         </div>
+    //     )
+    // }
+
+    // render_transaction_size_indicator2(item){
+    //     var current_stack_size = this.props.app_state.stack_size_in_bytes[this.state.e5] == null ? 50 : this.props.app_state.stack_size_in_bytes[this.state.e5]
+    //     if(current_stack_size != -1){
+    //         const size = this.lengthInUtf8Bytes(JSON.stringify({'data': item}))
+    //         const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
+            
+    //         var existing_percentage = this.round_off((current_stack_size / this.props.app_state.upload_object_size_limit) * 100)
+    //         var additional_percentage = this.round_off((size / this.props.app_state.upload_object_size_limit) * 100)
+            
+    //         if(existing_percentage >= 100){
+    //             existing_percentage = 99.99
+    //             additional_percentage = 0.01
+    //         }
+
+    //         if(existing_percentage + additional_percentage >= 100){
+    //             additional_percentage = 100 - existing_percentage;
+    //         }
+
+    //         return(
+    //             <div>
+    //                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+    //                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['a311da']/* 'Post Size.' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
+
+    //                     {this.render_impact_value({'title':this.props.app_state.loc['a311db']/* 'Impact on Run.' */, 'subtitle':'e0', 'barwidth':existing_percentage+'%', 'barwidth2':additional_percentage+'%', 'number':(existing_percentage + additional_percentage)+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */,})}
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    // }
+
+    render_transaction_size_indicator(){
+        var current_stack_size = this.props.app_state.stack_size_in_bytes[this.state.e5] == null ? 50 : this.props.app_state.stack_size_in_bytes[this.state.e5]
+        if(current_stack_size != -1){
+            const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+            const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
+            
+            var existing_percentage = this.round_off((current_stack_size / this.props.app_state.upload_object_size_limit) * 100)
+            var additional_percentage = this.round_off((size / this.props.app_state.upload_object_size_limit) * 100)
+            
+            if(existing_percentage >= 100){
+                existing_percentage = 99.99
+                additional_percentage = 0.01
+            }
+
+            if(existing_percentage + additional_percentage >= 100){
+                additional_percentage = 100 - existing_percentage;
+            }
+
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['a311da']/* 'Post Size.' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
+
+                        {this.render_impact_value({'title':this.props.app_state.loc['a311db']/* 'Impact on Run.' */, 'subtitle':'e0', 'barwidth':existing_percentage+'%', 'barwidth2':additional_percentage+'%', 'number':(existing_percentage + additional_percentage)+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */,})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_impact_value(object_data){
+        var title = object_data != null ? object_data['title']:'Post Block Number'
+        var subtitle = object_data != null ? object_data['subtitle']:'depth'
+        var barwidth = object_data != null ? object_data['barwidth']:'84%'
+        var barwidth2 = object_data != null ? object_data['barwidth2']:'5%'
+        var number = object_data != null ? object_data['number']:'123,445,555'
+        var barcolor = this.props.theme['bar_color']
+        var relativepower = object_data != null ? object_data['relativepower']:'500 blocks'
+        return(
+            <div style={{'margin': '5px 20px 0px 15px'}}>
+                <div className="row">
+                    <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.app_state.font}} className="fw-bold">{title}</p>
+                    </div>
+                    <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '11px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.app_state.font}} className="text-end">{subtitle}</p>
+                    </div>
+                </div>
+                
+                <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
+                    <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
+                        <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': 'white', 'border-radius': '0px 0px 0px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"/>
+
+                        <div className="progress-bar" role="progressbar" style={{ width: barwidth2, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 0px 0px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"/>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.app_state.font}} className="fw-bold">{number}</p>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '10px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.app_state.font}} className="text-end">{relativepower}</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    format_data_size2(size){
+        if(size > 1_000_000_000){
+            return {'size':this.round_off(parseFloat(size)/(1_024*1_024*1_024)), 'unit':'GBs'}
+        }
+        else if(size > 1_000_000){
+            return {'size':this.round_off(parseFloat(size)/(1_024*1_024)), 'unit':'MBs'}
+        }
+        else if(size > 1_000){
+            return {'size':this.round_off(parseFloat(size)/1024), 'unit':'KBs'}
+        }
+        else{
+            return {'size':parseFloat(size), 'unit':'bytes'}
+        }
+    }
+
+    lengthInUtf8Bytes(str) {
+        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+        var m = encodeURIComponent(str).match(/%[89ABab]/g);
+        return str.length + (m ? m.length : 0);
+    }
+
+
 
     when_country_input_field_changed(country_name){
         this.setState({typed_country_name: country_name})

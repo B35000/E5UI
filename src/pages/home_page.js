@@ -560,7 +560,7 @@ class home_page extends Component {
                 return(
                     <div>
                         <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -578,7 +578,7 @@ class home_page extends Component {
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                         </div>
@@ -595,7 +595,7 @@ class home_page extends Component {
                                 {this.render_metrics_section((middle+55))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -607,14 +607,14 @@ class home_page extends Component {
                     </div>
                 ) 
             }else{
-               return(
+                return(
                     <div>
                         <div className="row" style={{height:(middle+54), 'padding':'0px 1px 0px 15px'}}>
                             <div ref={this.posts_container} className="col-4" style={{height: (middle+55)}}>
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                             
@@ -639,7 +639,7 @@ class home_page extends Component {
                         {this.render_top_tag_bar(size)}
                     </div>
                     
-                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
+                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}>
                         {this.render_post_list_group(size, this.props.height-129)}
                     </div>
                 </div>
@@ -722,10 +722,10 @@ class home_page extends Component {
         var os = getOS()
         if(os == 'iOS'){
             return(
-                <Sheet isOpen={this.state.view_post_bottomsheet} onClose={this.open_view_object_bottomsheet.bind(this)} detent="content-height" disableDrag={true} >
+                <Sheet isOpen={this.state.view_post_bottomsheet} onClose={this.open_view_object_bottomsheet.bind(this)} detent="content-height" disableDrag={true}>
                     <Sheet.Container>
                         <Sheet.Content>
-                            <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '0px 0px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
+                            <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '0px 0px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', }}>
                                 {this.render_post_detail_object(size, this.props.height-40, this.props.width)}
                             </div>
                         </Sheet.Content>
@@ -739,7 +739,7 @@ class home_page extends Component {
         m = '0px 0px 0px 0px'
         return(
             <SwipeableBottomSheet /* fullScreen={true} */  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':m, 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-                <div style={{ height: this.props.height-40, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
+                <div style={{ height: this.props.height-40, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', }}>
                     {this.render_post_detail_object(size, this.props.height-40, this.props.width)}
                 </div>
             </SwipeableBottomSheet>
@@ -1355,7 +1355,7 @@ class home_page extends Component {
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var size = this.props.size
         return(
-            <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                 <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)} pin_channel={this.pin_channel.bind(this)}  pin_audio={this.pin_audio.bind(this)} pin_video={this.pin_video.bind(this)}/>
             </div>
         )
@@ -1411,7 +1411,7 @@ class home_page extends Component {
         var size = this.props.size
         var os = getOS()
         if(os == 'iOS'){
-             return(
+            return(
                 <Sheet isOpen={this.state.post_nsfw_bottomsheet} onClose={this.open_post_nsfw_bottomsheet.bind(this)} detent="content-height">
                     <Sheet.Container>
                         {/* <Sheet.Header>
@@ -1420,7 +1420,7 @@ class home_page extends Component {
                             </div>
                         </Sheet.Header> */}
                         <Sheet.Content>
-                            <div style={{ height: 370, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                            <div style={{ height: 370, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                                 <NsfwPage ref={this.post_nsfw_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_warning_ignored={this.when_warning_ignored.bind(this)}/>
                             </div>
                         </Sheet.Content>
@@ -1432,7 +1432,7 @@ class home_page extends Component {
         }
         return(
         <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_post_nsfw_bottomsheet.bind(this)} open={this.state.post_nsfw_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
-            <div style={{ height: 370, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <div style={{ height: 370, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.props.linear_gradient_text(background_color)},url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                 <NsfwPage ref={this.post_nsfw_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_warning_ignored={this.when_warning_ignored.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
@@ -5219,7 +5219,7 @@ class home_page extends Component {
         }
         return (
             <div>
-                <div style={{'background-color':this.props.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40}}>
+                <div style={{'background-color':this.props.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40, backgroundImage: `${this.props.linear_gradient_text(this.props.theme['toast_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                     <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
                         <img src={this.props.theme['alert_icon']} style={{height:25,width:'auto','scale': '0.9'}} />
                     </div>
