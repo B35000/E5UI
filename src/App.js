@@ -39,8 +39,11 @@ import lyric_icon from './assets/lrc_file.png'
 import subtitle_icon from './assets/subtitle_file.png'
 import pdf_icon from './assets/pdf_image.png'
 import puzzle_background from './assets/puzzle_background.png'
+import puzzle_background_dark_grey from './assets/puzzle_background_dark_grey.png'
+import puzzle_background_dark from './assets/puzzle_background_dark.png'
 import default_page_background from './assets/default_page_background.png'
 import default_page_background_dark from './assets/default_page_background_dark.png'
+import default_page_background_dark_grey from './assets/default_page_background_dark_grey.png'
 
 import alert_icon from './assets/alert_icon.png'
 import add_icon from './assets/add_icon.png'
@@ -4907,6 +4910,7 @@ class App extends Component {
         'e5_logo':e5_logo_light,
         'backgrounds':[],
         'page_background':default_page_background,
+        'puzzle_background':puzzle_background,
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
@@ -4948,7 +4952,8 @@ class App extends Component {
         'letter':letter,
         'e5_logo':e5_logo_dark,
         'backgrounds':[],
-        'page_background':default_page_background_dark,
+        'page_background':default_page_background_dark_grey,
+        'puzzle_background':puzzle_background_dark_grey,
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -4990,6 +4995,7 @@ class App extends Component {
         'e5_logo':e5_logo_dark,
         'backgrounds':[],
         'page_background':default_page_background_dark,
+        'puzzle_background':puzzle_background_dark,
       }
     }
 
@@ -6247,8 +6253,8 @@ class App extends Component {
 
   linear_gradient_text(background_color){
     const rgba_object = this.calculate_rgb(background_color)
-
-    return `linear-gradient(rgba(${rgba_object.r}, ${rgba_object.g}, ${rgba_object.b}, ${this.state.background_alpha}), rgba(${rgba_object.r}, ${rgba_object.g}, ${rgba_object.b}, ${this.state.background_alpha}))`
+    const alpha = this.state.background_alpha
+    return `linear-gradient(rgba(${rgba_object.r}, ${rgba_object.g}, ${rgba_object.b}, ${alpha}), rgba(${rgba_object.r}, ${rgba_object.g}, ${rgba_object.b}, ${alpha}))`
   }
 
   linear_gradient_text2(background_color){
@@ -6286,7 +6292,7 @@ class App extends Component {
     if(this.is_allowed_in_e5()){
       return this.state.theme['page_background']
     }else{
-      return puzzle_background
+      return this.state.theme['puzzle_background']
     }
   }
 
