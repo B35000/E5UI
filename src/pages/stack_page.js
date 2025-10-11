@@ -803,17 +803,15 @@ class StackPage extends Component {
         }
     }
 
-
     get_selected_graph_type_option(){
-        if(this.props.app_state.graph_type == this.props.app_state.loc['2753']/* 'area' */){
-            return 1
-        }
-        else if(this.props.app_state.graph_type == this.props.app_state.loc['2752']/* 'splineArea' */){
-            return 2
-        }
-        return 1;
+        // if(this.props.app_state.graph_type == this.props.app_state.loc['2753']/* 'area' */){
+        //     return 1
+        // }
+        // else if(this.props.app_state.graph_type == this.props.app_state.loc['2752']/* 'splineArea' */){
+        //     return 2
+        // }
+        return this.props.app_state.graph_type;
     }
-
 
     set_selected_graph_type_tag(){
         this.setState({get_graph_type_tags_object: this.get_graph_type_tags_object(),})

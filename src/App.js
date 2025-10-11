@@ -923,7 +923,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -3444,16 +3444,22 @@ class App extends Component {
     obj2[this.getLocale()['1593fu']/* '5min' */] = 5*60*1000
     obj2[this.getLocale()['1593fv']/* '10min' */] = 10*60*1000
 
+    var obj3 = {}
+    obj3[this.getLocale()['1421']/* sluggish */] = 210_000
+    obj3[this.getLocale()['1422']/* slow */] = 150_000
+    obj3[this.getLocale()['1423']/* average */] = 95_000
+    obj3[this.getLocale()['1424']/* fast */] = 60_000
+
     var me = this;
     setTimeout(function() {
       me.interval = setInterval(() => me.background_sync(), obj[me.state.refresh_speed]);
       // me.interval2 = setInterval(() => me.start_get_accounts_data(false, true), 35_000)
       me.interval3 = setInterval(() => me.background_coin_sync(), 3*60_000)
-      me.interval4 = setInterval(() => me.load_and_notify_flash(), 40_000)
+      me.interval4 = setInterval(() => me.load_and_notify_flash(), obj3[me.state.refresh_speed])
       if(me.state.auto_run != 'e'){
         me.interval5 = setInterval(() => me.background_run(), obj2[me.state.auto_run]);
       }
-      me.interval6 = setInterval(() => me.update_nitro_privacy_signature(), 40_000)
+      me.interval6 = setInterval(() => me.update_nitro_privacy_signature(), 100_000)
       me.interval7 = setInterval(() => me.load_and_notify_flash2(), 720_000)
       me.interval8 = setInterval(() => me.load_and_notify_flash3(), 270_000)
     }, (1 * 100));
@@ -3730,7 +3736,7 @@ class App extends Component {
       var homepage_tags_position = state.homepage_tags_position
       var font = state.font
       var auto_skip_nsfw_warning = state.auto_skip_nsfw_warning
-      var graph_type = state.graph_type
+      var graph_type = isNaN(state.graph_type) ? this.state.graph_type : state.graph_type
       var remember_account = state.remember_account
       var account_data = state.account_data
 
@@ -8170,7 +8176,10 @@ class App extends Component {
   }
 
   when_graph_type_tags_changed(item){
-    this.setState({graph_type: item})
+    const object = {}
+    object[this.props.app_state.loc['2753']/* 'area' */] = 1;
+    object[this.props.app_state.loc['2752']/* 'splineArea' */] = 2;
+    this.setState({graph_type: object[item]})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -23354,7 +23363,7 @@ class App extends Component {
   }
 
   start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
-    this.start_get_accounts_wallet_data(false)
+    if(is_synching == false) this.start_get_accounts_wallet_data(false);
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
     if(is_synching == true){
@@ -23374,7 +23383,7 @@ class App extends Component {
       var account_for_e5 = this.state.accounts[e5]
       if(web3_url != ''){
         this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
-        await this.wait(300)
+        await this.wait(2000)
       }
     }
   }
@@ -23581,7 +23590,7 @@ class App extends Component {
     var e5_address = this.state.e5s[e5].e5_address;
     var account_for_e5 = this.state.accounts[e5]
     if(web3_url != ''){
-      this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+      if(is_syncing == true) this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5);
       await this.wait(300)
       if(this.get_contract_from_e5(e5) != ''){
         this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data)
@@ -36142,8 +36151,13 @@ class App extends Component {
         var cids = []
         var _data = structuredClone(data)
         _data['data'] = `https://arweave.net/${transaction_hash}`
-        // var cid = await this.store_data_in_infura2(JSON.stringify(_data), null, null)
-        var cid = await this.store_data_in_nitro(_data, null, default_nitro_option, null)
+        
+        const all_nitros = this.get_all_sorted_objects(this.state.created_nitros)
+        const nitro_object = this.get_item_in_array2(default_nitro_option, all_nitros)
+        const node_details = this.state.nitro_node_details[default_nitro_option]
+        const file_object_cids = await this.upload_file_objects_to_nitro([JSON.stringify(_data)], nitro_object, node_details)
+        const cid = file_object_cids == null ? '' : file_object_cids[0]
+        
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
           this.set_file_upload_status('')
@@ -36171,6 +36185,11 @@ class App extends Component {
         this.set_file_upload_status('')
       }
     }
+  }
+
+  get_item_in_array2(e5_id, object_array){
+    var object = object_array.find(x => x['e5_id'] === e5_id);
+    return object
   }
 
   check_if_required_confirmations2 = async (transaction_hash) => {

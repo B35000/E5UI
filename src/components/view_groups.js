@@ -436,7 +436,7 @@ class ViewGroups extends Component {
                     label_font_size = 0
                 }
             }
-            var line_tension = this.props.graph_type == 'area' ? 0.95 : 0.4
+            var line_tension = this.props.graph_type == 1 ? 0.95 : 0.4
 
             const defaultConfig = {
                 chartColor: default_chart_color,
