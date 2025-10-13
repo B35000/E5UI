@@ -667,6 +667,7 @@ import StageCreatorPayoutPage from './pages/stage_creator_payout_page'
 import BidInAuctionPage from './pages/bid_in_auction_page'
 import FulfilAuctionBidPage from './pages/fulfil_auction_bid_page'
 import OpenedIframeLinkPage from './pages/view_opened_iframe_link_page'
+import LocationMapInput from './pages/location_map_input'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -860,7 +861,7 @@ function hexToArrayBuffer(hex) {
   return bytes.buffer;
 }
 
-const PDFViewerWrapper  = forwardRef(({ fileUrl, theme /* , record_page, current_page */ }, ref) => {
+const PDFViewerWrapper = forwardRef(({ fileUrl, theme /* , record_page, current_page */ }, ref) => {
   const zoomPluginInstance = zoomPlugin();  
   const zoomLevels = [0.5, 1.0, 1.5, 2.0, 3.0];
   const [currentZoom, setCurrentZoom] = useState(0.5);
@@ -917,7 +918,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -940,7 +941,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135,
+    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -1024,7 +1025,8 @@ class App extends Component {
       'expand_icon':expand_icon,
       'close_pip':close_pip,
       'empty_image':empty_image,
-      'all_cities':'https://bafybeiaibwpsdgbgc25p6ynw23ru5z2gmetphqctwtbvltegh6wv7s56sy.ipfs.w3s.link/'/* 'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/' */,
+      'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/'
+      /* 'https://bafybeiaibwpsdgbgc25p6ynw23ru5z2gmetphqctwtbvltegh6wv7s56sy.ipfs.w3s.link/' */,
       'download_icon':download_icon,
       'zoom_in_icon':zoom_in_icon,
       'zoom_out_icon':zoom_out_icon,
@@ -3196,6 +3198,7 @@ class App extends Component {
     this.view_bid_in_auction_page = React.createRef();
     this.fulfil_auction_bid_page = React.createRef();
     this.view_iframe_link_page = React.createRef();
+    this.set_map_location_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4112,7 +4115,7 @@ class App extends Component {
     var userCountry;
     var userTimeZone;
 
-    console.log(timeZoneCityToCountry)
+    // console.log(timeZoneCityToCountry)
 
     if (Intl) {
       userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -4122,10 +4125,10 @@ class App extends Component {
       userCountry = timeZoneCityToCountry[userCity];
     }
     
-    console.log("Time Zone:", userTimeZone);
-    console.log("Region:", userRegion);
-    console.log("City:", userCity);
-    console.log("Country:", userCountry);
+    // console.log("Time Zone:", userTimeZone);
+    // console.log("Region:", userRegion);
+    // console.log("City:", userCity);
+    // console.log("Country:", userCountry);
 
     return { userCountry: userCountry, userRegion: userRegion, userCity: userCity }
 
@@ -4246,7 +4249,7 @@ class App extends Component {
       {name: 'Jersey', code: 'JE', color:['g']}, 
       {name: 'Jordan', code: 'JO', color:['y']}, 
       {name: 'Kazakhstan', code: 'KZ', color:['y']}, 
-      {name: 'Kenya', code: 'KE', color:['g'], allc: false}, 
+      {name: 'Kenya', code: 'KE', color:['g'], allc: false, capital: 'nairobi'}, 
       {name: 'Kiribati', code: 'KI', color:['g']},
       {name: 'Korea, Democratic People\'s Republic of', code: 'KP', color:['r']}, 
       {name: 'Korea, Republic of', code: 'KR', color:['r']}, 
@@ -4848,7 +4851,7 @@ class App extends Component {
   }
 
   /* gets the screensize in three categories, small medium and large */
-  getScreenSize() {
+  getScreenSize(){
     var width = this.state.width;
     var height = this.state.height;
 
@@ -4897,7 +4900,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light', 'json_view_theme':'summerfruit:inverted',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light', 'json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIcon, 'ExploreIcon': ExploreIcon, 'WalletIcon':WalletIcon, 'StackIcon': StackIcon, 
 
@@ -4930,7 +4933,7 @@ class App extends Component {
         
         'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
 
-        'view_group_card_item_background':'#2e2e2e','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white',
+        'view_group_card_item_background':'#292929','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white',
 
         'chart_color':'#333333','chart_background_color':'#232323',
 
@@ -4938,7 +4941,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#2e2e2e', 'text_input_color':'white', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#2e2e2e', 'text_input_color':'white', 'messsage_reply_background':'black','markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
         
@@ -4981,7 +4984,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#1a1a1a', 'text_input_color':'white', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_dark, 'add_icon':add_icon_dark, 'text_input_background':'#1a1a1a', 'text_input_color':'white', 'messsage_reply_background':'#0f0f0f', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'black',
 
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIconDark, 'ExploreIcon': ExploreIconDark, 'WalletIcon':WalletIconDark, 'StackIcon': StackIconDark,
@@ -5025,7 +5028,7 @@ class App extends Component {
         'number_picker_power_color':'rgb(185, 247, 198,.9)','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#02f902', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#13190c', 'text_input_color':'#04e504', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#13190c', 'text_input_color':'#04e504', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
 
 
         'background':background_green, 'JobIcon':job_icon_green, 'ExploreIcon': explore_icon_green, 'WalletIcon':wallet_icon_green, 'StackIcon': stack_icon_green,
@@ -5066,7 +5069,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#c5e8d6','number_picker_label_text_color':'#01c601', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkgreen, 'add_icon':add_icon_darkgreen, 'text_input_background':'#d4e2cc', 'text_input_color':'#029302', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
+        'slider_color':'#03a003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkgreen, 'add_icon':add_icon_darkgreen, 'text_input_background':'#d4e2cc', 'text_input_color':'#029302', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background_darkgreen, 'JobIcon':job_icon_darkgreen, 'ExploreIcon': explore_icon_darkgreen, 'WalletIcon':wallet_icon_darkgreen, 'StackIcon': stack_icon_darkgreen,
 
@@ -5108,7 +5111,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#3f0101','number_picker_label_text_color':'#f90202', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#190c0c', 'text_input_color':'#f70404', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#190c0c', 'text_input_color':'#f70404', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
 
 
         'background':background_red, 'JobIcon':job_icon_red, 'ExploreIcon': explore_icon_red, 'WalletIcon':wallet_icon_red, 'StackIcon': stack_icon_red,
@@ -5149,7 +5152,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9d1d1','number_picker_label_text_color':'#c60b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkred, 'add_icon':add_icon_darkred, 'text_input_background':'#e2cdcc', 'text_input_color':'#930101', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
+        'slider_color':'#a00803', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkred, 'add_icon':add_icon_darkred, 'text_input_background':'#e2cdcc', 'text_input_color':'#930101', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background_darkred, 'JobIcon':job_icon_darkred, 'ExploreIcon': explore_icon_darkred, 'WalletIcon':wallet_icon_darkred, 'StackIcon': stack_icon_darkred,
 
@@ -5191,7 +5194,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#183651','number_picker_label_text_color':'#0079ff', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#0d0c19', 'text_input_color':'#0079ff', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#0d0c19', 'text_input_color':'#0079ff', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
 
 
         'background':background_blue, 'JobIcon':job_icon_blue, 'ExploreIcon': explore_icon_blue, 'WalletIcon':wallet_icon_blue, 'StackIcon': stack_icon_blue,
@@ -5232,7 +5235,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#d1ebf9','number_picker_label_text_color':'#0181c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkblue, 'add_icon':add_icon_darkblue, 'text_input_background':'#ccdce2', 'text_input_color':'#017493', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
+        'slider_color':'#0374a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkblue, 'add_icon':add_icon_darkblue, 'text_input_background':'#ccdce2', 'text_input_color':'#017493', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background_darkblue, 'JobIcon':job_icon_darkblue, 'ExploreIcon': explore_icon_darkblue, 'WalletIcon':wallet_icon_darkblue, 'StackIcon': stack_icon_darkblue,
 
@@ -5274,7 +5277,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#505118','number_picker_label_text_color':'#efec4c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'#19190c', 'text_input_color':'#efec4c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'#19190c', 'text_input_color':'#efec4c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
 
 
         'background':background_yellow, 'JobIcon':job_icon_yellow, 'ExploreIcon': explore_icon_yellow, 'WalletIcon':wallet_icon_yellow, 'StackIcon': stack_icon_yellow,
@@ -5315,7 +5318,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#DCDCDC','number_picker_label_text_color':'#9ba003', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#9ba003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkyellow, 'add_icon':add_icon_darkyellow, 'text_input_background':'#e2e2cc', 'text_input_color':'#757701', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
+        'slider_color':'#9ba003', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkyellow, 'add_icon':add_icon_darkyellow, 'text_input_background':'#e2e2cc', 'text_input_color':'#757701', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background_darkyellow, 'JobIcon':job_icon_darkyellow, 'ExploreIcon': explore_icon_darkyellow, 'WalletIcon':wallet_icon_darkyellow, 'StackIcon': stack_icon_darkyellow,
 
@@ -5357,7 +5360,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#491851','number_picker_label_text_color':'#dc4cef', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#160c19', 'text_input_color':'#c94cef', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#160c19', 'text_input_color':'#c94cef', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
 
 
         'background':background_pink, 'JobIcon':job_icon_pink, 'ExploreIcon': explore_icon_pink, 'WalletIcon':wallet_icon_pink, 'StackIcon': stack_icon_pink,
@@ -5398,7 +5401,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f2d1f9','number_picker_label_text_color':'#af01c6', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkpink, 'add_icon':add_icon_darkpink, 'text_input_background':'#decce2', 'text_input_color':'#930191', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
+        'slider_color':'#8e03a0', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkpink, 'add_icon':add_icon_darkpink, 'text_input_background':'#decce2', 'text_input_color':'#930191', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background_darkpink, 'JobIcon':job_icon_darkpink, 'ExploreIcon': explore_icon_darkpink, 'WalletIcon':wallet_icon_darkpink, 'StackIcon': stack_icon_darkpink,
 
@@ -5440,7 +5443,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#513a18','number_picker_label_text_color':'#ef964c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#19130c', 'text_input_color':'#efa04c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit',
+        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#19130c', 'text_input_color':'#efa04c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
 
 
         'background':background_orange, 'JobIcon':job_icon_orange, 'ExploreIcon': explore_icon_orange, 'WalletIcon':wallet_icon_orange, 'StackIcon': stack_icon_orange,
@@ -5481,7 +5484,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9ebd1','number_picker_label_text_color':'#c67b01', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkorange, 'add_icon':add_icon_darkorange, 'text_input_background':'#e2d7cc', 'text_input_color':'#935b01', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted',
+        'slider_color':'#a05403', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon_darkorange, 'add_icon':add_icon_darkorange, 'text_input_background':'#e2d7cc', 'text_input_color':'#935b01', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light','json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background_darkorange, 'JobIcon':job_icon_darkorange, 'ExploreIcon': explore_icon_darkorange, 'WalletIcon':wallet_icon_darkorange, 'StackIcon': stack_icon_darkorange,
 
@@ -5626,6 +5629,7 @@ class App extends Component {
           {this.render_view_bid_in_auction_bottomsheet()}
           {this.render_fulfil_auction_bid_bottomsheet()}
 
+          {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
           {this.render_full_video_bottomsheet()}
           {this.render_view_image_bottomsheet()}
@@ -9311,7 +9315,7 @@ class App extends Component {
       return(
         <div>
           <NewJobPage ref={this.new_job_page} app_state={this.state} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)}
           />
         </div>
       )
@@ -9490,12 +9494,12 @@ class App extends Component {
             var e5 = ''
             var account = ''
             if(data_point_array.length == 2){
-                e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
-                account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                e5 = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                account = data_point_array[1].trim().replace(/[^\p{L}\p{N} ]/gu, '')
             }
             else if(data_point_array.length == 1){
                 e5 = this.state.e5
-                account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                account = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
             }
             if(e5 != '' && account != ''){
                 if(this.state.e5s['data'].includes(e5)){
@@ -9531,7 +9535,7 @@ class App extends Component {
                 }
                 try{
                     object[key].forEach(account => {
-                        var trimed_account = account.toString().trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                        var trimed_account = account.toString().trim().replace(/[^\p{L}\p{N} ]/gu, '')
                         if(!isNaN(trimed_account) && parseInt(trimed_account) < 10**16 && parseInt(account)>1000){
                             final_obj[key].push(parseInt(trimed_account))
                             account_entries++
@@ -17169,8 +17173,6 @@ class App extends Component {
       this.new_audio_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
       this.edit_audiopost_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
     }
-
-    
   }
 
 
@@ -21054,6 +21056,98 @@ class App extends Component {
 
 
 
+  render_set_map_location_bottomsheet(){
+    if(this.state.set_map_location_bottomsheet2 != true) return;
+    var os = getOS()
+    return(
+      <Sheet isOpen={this.state.set_map_location_bottomsheet} onClose={this.open_set_map_location_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+          <Sheet.Container>
+              <Sheet.Content>
+                {this.render_set_map_location_element()}
+              </Sheet.Content>
+              <ToastContainer limit={3} containerId="id2"/>
+          </Sheet.Container>
+          <Sheet.Backdrop onTap={()=> this.open_set_map_location_bottomsheet()}/>
+      </Sheet>
+    )
+  }
+
+  render_set_map_location_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    const minus = this.state.os == 'iOS' ? 90 : 120;
+    return(
+      <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+        <LocationMapInput ref={this.set_map_location_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} return_pins={this.return_pins.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_set_map_location_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_set_map_location_bottomsheet')
+    if(this.state.set_map_location_bottomsheet == true){
+      //closing
+      this.set_map_location_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({set_map_location_bottomsheet: !this.state.set_map_location_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({set_map_location_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({set_map_location_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({set_map_location_bottomsheet: !me.state.set_map_location_bottomsheet});
+
+          if(me.set_map_location_bottomsheet != null){
+            // me.view_transaction_page.current?.setState(me.set_map_location_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_set_map_location(object){
+    this.open_set_map_location_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.set_map_location_page.current != null){
+        me.set_map_location_page.current.set_data(object)
+      }
+    }, (1 * 500));
+  }
+
+  return_pins(pins, page){
+    this.open_set_map_location_bottomsheet()
+    this.new_job_page.current?.set_pins(pins)
+    this.edit_job_page.current?.set_pins(pins)
+    this.new_storefront_item_page.current?.set_pins(pins)
+    this.edit_storefront_page.current?.set_pins(pins)
+    this.new_contractor_page.current?.set_pins(pins)
+    this.edit_contractor_page.current?.set_pins(pins)
+    this.add_to_bag_page.current?.set_pins(pins)
+    this.direct_purchase_page.current?.set_pins(pins)
+    this.send_job_request_page.current?.set_pins(pins)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -23335,7 +23429,7 @@ class App extends Component {
         this.setState({nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone, beacon_data: marco_obj})
 
         await this.wait(700)
-        console.log('apppage', 'nitro_url_temp_hash_data after beacon node setting', nitro_url_temp_hash_data_clone)
+        // console.log('apppage', 'nitro_url_temp_hash_data after beacon node setting', nitro_url_temp_hash_data_clone)
       }else{
         console.log('apppage', 'something went wrong with registering my key', obj)
       }
@@ -24359,7 +24453,7 @@ class App extends Component {
     //   await this.load_cities_data_from_file()
     //   return;
     // }
-    if(this.state.all_cities.length > 0) return;
+    // if(this.state.all_cities.length > 0) return;
 
     var request = this.state.static_assets['all_cities']
     // if(!this.is_address_set(address)) return {}
@@ -24373,18 +24467,22 @@ class App extends Component {
       var data = await response.text();
       var json_obj = JSON.parse(data);
       var storage_obj = []
+      var my_country_code = this.get_country_code(this.state.device_country)
       for(var i=0; i<json_obj.length; i++){
         var city = json_obj[i]['name'].toLowerCase()
         var country = json_obj[i]['country']
         var id = parseInt(json_obj[i]['id'])
-        if(country.toLowerCase() == this.state.device_country.toLowerCase()){
-          storage_obj.push({'city':city, 'country':country, 'id':id})
+        var lat = parseFloat(json_obj[i]['lat'])
+        var lon = parseFloat(json_obj[i]['lon'])
+        if(country.toLowerCase() == my_country_code.toLowerCase()){
+          storage_obj.push({'city':city, 'country':country, 'id':id, 'lat':lat, 'lon':lon})
         }
       }
+      // console.log('apppage', 'finished up storage obj', storage_obj)
       this.setState({all_cities: storage_obj})
     }
     catch(e){
-      console.log('something went wrong:', e)
+      console.log('apppage', e)
       
     }
   }
@@ -25436,18 +25534,21 @@ class App extends Component {
           loaded_target = c+this.state.max_post_bulk_load_count
         }
         if(cids.length >= 4 || c == latest_events.length-1){
-          // const clone = this.state.uploaded_data_cids.slice()
+          // const uploaded_data_cids_clone = this.state.uploaded_data_cids.slice()
           const keys = {}
           const cids_to_fetch = []
+          const already_fetched_cids = []
           cids.forEach(cid => {
-            if(!this.has_ecid_loaded(cid) /* && !this.state.deleted_files.includes(cid) */){
-              cids_to_fetch.push(cid)
-            }
+            // if(!this.has_ecid_loaded(cid) /* && !this.state.deleted_files.includes(cid) */){
+            //   cids_to_fetch.push(cid)
+            // }else{
+            // }
+            cids_to_fetch.push(cid)
             keys[cid] = 'e'
           });
           // console.log('apppage', 'loaded uplpaded cid datas', clone)
           console.log('apppage', 'cids to fetch', cids_to_fetch)
-          this.fetch_uploaded_data_from_ipfs(cids_to_fetch, true, keys)
+          this.fetch_uploaded_data_from_ipfs(cids_to_fetch, true, keys, already_fetched_cids)
           cids = []
         }
       }
@@ -25478,11 +25579,12 @@ class App extends Component {
     return this.state.uploaded_data[ecid_obj['filetype']][cid] != null
   }
 
-  fetch_uploaded_data_from_ipfs = async (cids, is_my_cids, keys) => {
+  fetch_uploaded_data_from_ipfs = async (cids, is_my_cids, keys, already_loaded_cids) => {
     console.log('apppage', 'fetching all these cids', cids)
     if(is_my_cids == true){
       var uploaded_data_cids_clone = this.state.uploaded_data_cids.slice();
-      cids.forEach(cid => {
+      const all_cids = already_loaded_cids == null ? [].concat(cids) : cids.concat(already_loaded_cids)
+      all_cids.forEach(cid => {
         if(!uploaded_data_cids_clone.includes(cid)){
           uploaded_data_cids_clone.push(cid)
         }
@@ -35012,7 +35114,7 @@ class App extends Component {
   fetch_data_from_arweave = async (id) => {
     try{
       const decoded = Buffer.from(id, 'base64').toString();
-      console.log(decoded)
+      // console.log(decoded)
       // var data = await arweave.transactions.getData(decoded, {decode: true, string: true})
       var return_data = await fetch(`https://arweave.net/${decoded}`)
       var data = await return_data.text()
@@ -35628,13 +35730,9 @@ class App extends Component {
       for(var s=0; s<nitro_cids.length; s++){
         const nitro_cid = nitro_cids[s]
         const filetype = search_data_file_types[nitro_cid]
-        const cid_data = object_data[nitro_cid]
-        if(cid_data != null){
-          var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
-          if(confirmation_hash != nitro_cid){
-            console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
-            continue;
-          }
+        const loaded_cid_data = await this.process_file_cid_data(object_data[nitro_cid], nitro_cid)
+        if(loaded_cid_data.modified == false){
+          const cid_data = loaded_cid_data.loaded_cid_data
           var file_pointer_link = cid_data['data']
           if(file_pointer_link.includes('-')){
             var split_cid_array2 = file_pointer_link.split('-');
@@ -35736,6 +35834,31 @@ class App extends Component {
     catch(e){
       console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', e)
       this.fetch_index[search_index]['successful']++
+    }
+  }
+
+  process_file_cid_data = async (loaded_cid_data, nitro_cid) => {
+    if(loaded_cid_data != null){
+      var confirmation_hash = await this.generate_hash(JSON.stringify(loaded_cid_data))
+      if(confirmation_hash != nitro_cid){
+        console.log('apppage', nitro_cid, 'data has been modified', confirmation_hash)
+        return { modified: true, loaded_cid_data: loaded_cid_data }
+      }
+
+      try{
+        const decrypted_data = await this.decrypt_storage_object(loaded_cid_data)
+        if(decrypted_data == loaded_cid_data){
+          return { modified: false, loaded_cid_data: loaded_cid_data }
+        }
+        else{
+          return { modified: false, loaded_cid_data: JSON.parse(decrypted_data) }
+        }
+      }
+      catch(e){
+        return { modified: false, loaded_cid_data: loaded_cid_data }
+      }
+    }else{
+      return { modified: true, loaded_cid_data: loaded_cid_data }
     }
   }
 
@@ -35997,7 +36120,8 @@ class App extends Component {
       var file_cid = file_names[i]
       var link = nitro_object_e5_id+'-'+file_cid
       data2['data'] = link
-      final_objects.push(JSON.stringify(data2))
+      const encrypted_object = await this.encrypt_storage_object(JSON.stringify(data2), {})
+      final_objects.push(encrypted_object)
     }
 
     var file_object_cids = await this.upload_file_objects_to_nitro(final_objects, nitro_object, node_details)
@@ -36053,7 +36177,8 @@ class App extends Component {
       var file_cid = file_names[i]
       var link = nitro_object_e5_id+'-'+file_cid
       data2['data'] = link
-      final_objects.push(JSON.stringify(data2))
+      const encrypted_object = await this.encrypt_storage_object(JSON.stringify(data2), {})
+      final_objects.push(encrypted_object)
       final_objects_2.push(data2)
     }
 
@@ -36152,11 +36277,7 @@ class App extends Component {
         var _data = structuredClone(data)
         _data['data'] = `https://arweave.net/${transaction_hash}`
         
-        const all_nitros = this.get_all_sorted_objects(this.state.created_nitros)
-        const nitro_object = this.get_item_in_array2(default_nitro_option, all_nitros)
-        const node_details = this.state.nitro_node_details[default_nitro_option]
-        const file_object_cids = await this.upload_file_objects_to_nitro([JSON.stringify(_data)], nitro_object, node_details)
-        const cid = file_object_cids == null ? '' : file_object_cids[0]
+        const cid = await this.store_data_in_nitro(JSON.stringify(_data), false, default_nitro_option, {})
         
         if(cid == ''){
           this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
@@ -37295,7 +37416,7 @@ class App extends Component {
         this.gateway_traffic_cache_pointers = {}
       }
       keys.forEach(key => {
-        if(this.gateway_traffic_cache[key]['author'] != my_address_signature){
+        if(this.gateway_traffic_cache[key] == null || this.gateway_traffic_cache[key]['author'] != my_address_signature){
           var str = JSON.stringify(this.gateway_traffic_cache[key], (key, value) =>
             typeof value === 'bigint'
                 ? value.toString()
@@ -37313,7 +37434,7 @@ class App extends Component {
       )
       this.update_data_in_db(x, this.gateway_traffic_cache_pointers_index.toString()).then(result => {
         Object.keys(this.gateway_traffic_cache).forEach(key => {
-            if(this.gateway_traffic_cache[key]['author'] != my_address_signature) {
+            if(this.gateway_traffic_cache[key] == null || this.gateway_traffic_cache[key]['author'] != my_address_signature) {
               delete this.gateway_traffic_cache[key]
             }
         });
@@ -37329,7 +37450,7 @@ class App extends Component {
       cached_keys.forEach(key => {
         if(this.gateway_traffic_stats_cache[key] != null){
           const time_difference = Date.now() - this.gateway_traffic_stats_cache[key]['t']
-          if(time_difference > this.state.gateway_traffic_stats_cache_time_limit && this.gateway_traffic_cache[key]['author'] != my_address_signature && this.gateway_traffic_cache[key]['size'] == null){
+          if(time_difference > this.state.gateway_traffic_stats_cache_time_limit && (this.gateway_traffic_cache[key] == null || this.gateway_traffic_cache[key]['author'] != my_address_signature) && this.gateway_traffic_cache[key]['size'] == null){
             delete this.gateway_traffic_cache[key]
           }
         }
@@ -37343,7 +37464,7 @@ class App extends Component {
     const my_address_signature = this.hash_data_with_randomizer(this.state.accounts['E25'].address)
     const my_personal_data = {}
     cached_keys.forEach(key => {
-      if(this.gateway_traffic_cache[key]['author'] != my_address_signature){
+      if(this.gateway_traffic_cache[key] != null && this.gateway_traffic_cache[key]['author'] == my_address_signature){
         my_personal_data[key] = this.gateway_traffic_cache[key]
       }
     });
@@ -37980,7 +38101,7 @@ class App extends Component {
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
 
-      if(ipfs_message['encrypted_data'] != null){
+      if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
         var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)

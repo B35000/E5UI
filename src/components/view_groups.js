@@ -274,7 +274,7 @@ class ViewGroups extends Component {
                 details = '...'
             }
             const parts = details.split(' ');
-            const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 1px 1px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
+            const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 0px 0px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
             if(item_id == '8'){
                 var img = E5EmptyIcon;
                 if(object_data != null){
@@ -1070,7 +1070,7 @@ class ViewGroups extends Component {
     mask_word_if_censored(word){
         var all_censored_phrases = this.props.censored_keyword_phrases == null ? [] : this.props.censored_keyword_phrases
         
-        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ''))){
+        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ''))){
             if (word == null || word.length <= 1) return word; // nothing to mask
             return word[0] + '*'.repeat(word.length - 1);
         }else{

@@ -1250,7 +1250,7 @@ class home_page extends Component {
         }
         var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
         contained_words_in_string.forEach(word => {
-            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
                 const e5_id = this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
@@ -1266,7 +1266,7 @@ class home_page extends Component {
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
         the_other_words.forEach(word => {
-            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(trimmed_word.length > 3){
                 const e5_id = this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
@@ -1539,7 +1539,7 @@ class home_page extends Component {
         }
         var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
         contained_words_in_string.forEach(word => {
-            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
                 const e5_id = this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
@@ -1555,7 +1555,7 @@ class home_page extends Component {
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
         the_other_words.forEach(word => {
-            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(trimmed_word.length > 3){
                 const e5_id = this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
@@ -1660,7 +1660,7 @@ class home_page extends Component {
         
         var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
         contained_words_in_string.forEach(word => {
-            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
                 const e5_id = this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
@@ -1676,7 +1676,7 @@ class home_page extends Component {
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
         the_other_words.forEach(word => {
-            var trimmed_word = word.trim().toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
+            var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(trimmed_word.length > 3){
                 const e5_id = this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){

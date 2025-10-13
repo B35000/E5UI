@@ -1584,14 +1584,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_my_transaction_history()}
                 </div>
             )
         }else if(size == 'm'){
             return(
                 <div>
-                    <div className="row">
+                    <div className="row" style={{'width':'99%'}}>
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_my_transaction_history()}
                         </div>
@@ -1604,7 +1604,7 @@ class StackPage extends Component {
         }else if(size == 'l'){
             return(
                 <div>
-                    <div className="row">
+                    <div className="row" style={{'width':'99%'}}>
                         <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_my_transaction_history()}
                         </div>
@@ -1674,7 +1674,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px',  'overflow-x':'none'}}>
+                <div style={{'padding': '0px 0px 0px 0px',  'overflow-x':'none', 'width':'99%'}}>
                     {this.render_stack_gas_part()}
                     {this.render_simplified_stack_history()}
                     {this.render_detail_item('0')}
@@ -1691,7 +1691,7 @@ class StackPage extends Component {
         }else if(size == 'm'){
             return(
                 <div style={{'overflow-x':'none'}}>
-                    <div className="row">
+                    <div className="row" style={{'width':'99%'}}>
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
@@ -1710,7 +1710,7 @@ class StackPage extends Component {
         }else if(size == 'l'){
             return(
                 <div style={{'overflow-x':'none'}}>
-                    <div className="row">
+                    <div className="row" style={{'width':'99%'}}>
                         <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
@@ -1763,14 +1763,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_stack_transactions()}
                 </div>
             )
         }else if(size == 'm'){
             return(
                 <div>
-                    <div className="row">
+                    <div className="row" style={{'width':'99%'}}>
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_transactions()}
                         </div>
@@ -1783,7 +1783,7 @@ class StackPage extends Component {
         }else if(size == 'l'){
             return(
                 <div>
-                    <div className="row">
+                    <div className="row" style={{'width':'99%'}}>
                         <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_transactions()}
                         </div>
@@ -5369,7 +5369,7 @@ class StackPage extends Component {
                         t = await this.process_channel_object(txs[i])
                     }
                     var extra_tags = []
-                    extra_tags = extra_tags.concat(t.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
+                    extra_tags = extra_tags.concat(t.entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */){
                         var songs = t.songs
                         songs.forEach(song => {
@@ -5533,7 +5533,7 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[data.id] = data
                     var extra_tags = []
-                    extra_tags = extra_tags.concat(data.entered_title_text.trim().split(/\s+/).filter(word => word.length >= 3))
+                    extra_tags = extra_tags.concat(data.entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
                         var songs = data.songs
                         songs.forEach(song => {
@@ -10700,7 +10700,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_search_bar_input()}
                     {this.render_settings_details()}
                     {this.render_settings_details2()}
@@ -10710,7 +10710,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_search_bar_input()}
                         {this.render_settings_details()}
@@ -10726,7 +10726,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_search_bar_input()}
                         {this.render_settings_details()}
@@ -11605,7 +11605,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'overflow-x':'none'}}>
+                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'overflow-x':'none', 'width':'99%'}}>
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
@@ -11615,7 +11615,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px', 'overflow-x':'none'}}>
+                <div className="row" style={{'padding': '0px 0px 0px 0px', 'overflow-x':'none', 'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_wallet_settings_part()}
                     </div>
@@ -11625,12 +11625,11 @@ class StackPage extends Component {
                         {this.render_my_balances()}
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px', 'overflow-x':'none'}}>
+                <div className="row" style={{'padding': '0px 0px 0px 0px', 'overflow-x':'none', 'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_wallet_settings_part()}
                     </div>
@@ -12115,7 +12114,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_new_contact_ui()}
                     {this.render_users_contacts()}
                 </div>
@@ -12123,7 +12122,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_new_contact_ui()}
                         {this.render_users_contacts()}
@@ -12137,7 +12136,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_new_contact_ui()}
                         {this.render_users_contacts()}
@@ -12287,7 +12286,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_blacklisted_picker_ui()}
                     {this.render_users_blocked_accounts()}
                 </div>
@@ -12295,7 +12294,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_blacklisted_picker_ui()}
                         {this.render_users_blocked_accounts()}
@@ -12309,7 +12308,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_blacklisted_picker_ui()}
                         {this.render_users_blocked_accounts()}
@@ -12428,7 +12427,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_alias_picker_ui()}
                     {this.render_users_aliases()}
                 </div>
@@ -12436,7 +12435,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_alias_picker_ui()}
                         {this.render_users_aliases()}
@@ -12450,7 +12449,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_alias_picker_ui()}
                         {this.render_users_aliases()}
@@ -12683,14 +12682,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_my_notifications()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_my_notifications()}
                     </div>
@@ -12702,7 +12701,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_my_notifications()}
                     </div>
@@ -12926,14 +12925,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_watched_account_ui_data()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_watched_account_ui_data()}
                     </div>
@@ -12946,7 +12945,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_watched_account_ui_data()}
                     </div>
@@ -13157,14 +13156,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_sign_data_ui_data()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_sign_data_ui_data()}
                     </div>
@@ -13177,7 +13176,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_sign_data_ui_data()}
                     </div>
@@ -13324,14 +13323,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_verify_data_ui_data()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_verify_data_ui_data()}
                     </div>
@@ -13344,7 +13343,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_verify_data_ui_data()}
                     </div>
@@ -13447,7 +13446,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_storage_settings_data()}
                     {this.render_detail_item('0')}
                     {this.render_upload_files_ui()}
@@ -13456,7 +13455,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_storage_settings_data()}
                     </div>
@@ -13469,7 +13468,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_storage_settings_data()}
                     </div>
@@ -16382,14 +16381,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_set_following_moderator_data()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_set_following_moderator_data()}
                     </div>
@@ -16402,7 +16401,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_set_following_moderator_data()}
                     </div>
@@ -16547,14 +16546,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_censor_keywords_data()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_censor_keywords_data()}
                     </div>
@@ -16567,7 +16566,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_censor_keywords_data()}
                     </div>
@@ -16675,7 +16674,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_contextual_transfers_data()}
                     {this.load_itransfer_search_results()}
                 </div>
@@ -16683,7 +16682,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_contextual_transfers_data()}
                         {this.render_empty_views(2)}
@@ -16697,7 +16696,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_contextual_transfers_data()}
                         {this.render_empty_views(2)}
@@ -16706,7 +16705,6 @@ class StackPage extends Component {
                         {this.load_itransfer_search_results()}
                     </div>
                 </div>
-                
             )
         }
     }
@@ -16878,14 +16876,14 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'99%'}}>
                     {this.render_moderator_notes_data()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_moderator_notes_data()}
                     </div>
@@ -16898,7 +16896,7 @@ class StackPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div className="row">
+                <div className="row" style={{'width':'99%'}}>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_moderator_notes_data()}
                     </div>

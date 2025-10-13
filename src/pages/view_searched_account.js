@@ -209,7 +209,7 @@ class SearchedAccountPage extends Component {
             <div>
                 <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
                     </div>
                 </div>
             </div>

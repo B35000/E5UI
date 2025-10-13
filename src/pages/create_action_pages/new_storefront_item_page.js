@@ -4459,12 +4459,12 @@ return data['data']
                 var e5 = ''
                 var account = ''
                 if(data_point_array.length == 2){
-                    e5 = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
-                    account = data_point_array[1].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    e5 = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    account = data_point_array[1].trim().replace(/[^\p{L}\p{N} ]/gu, '')
                 }
                 else if(data_point_array.length == 1){
                     e5 = this.state.e5
-                    account = data_point_array[0].trim().replace(/[^a-zA-Z0-9 ]/g, '')
+                    account = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
                 }
                 if(e5 != '' && account != ''){
                     if(this.props.app_state.e5s['data'].includes(e5) && this.props.app_state.e5s[e5].active == true){

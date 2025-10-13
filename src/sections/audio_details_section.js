@@ -3226,7 +3226,7 @@ return data['data']
             var censor_data = this.props.app_state.post_censored_data[sender+sender_e5]
             all_censored_phrases = all_censored_phrases.concat(censor_data['censored_keywords'])
         }
-        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ''))){
+        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ''))){
             if (word == null || word.length <= 1) return word; // nothing to mask
             return word[0] + '*'.repeat(word.length - 1);
         }else{

@@ -75,7 +75,7 @@ class NewJobPage extends Component {
         typed_link_text:'', link_search_results:[], added_links:[], 
         edit_text_item_pos:-1, get_sort_links_tags_object:this.get_sort_links_tags_object(), get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[],
 
-        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
+        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], pins:[]
     };
     
 
@@ -85,7 +85,7 @@ class NewJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'e.'+this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['274']], [0]
+                ['or','',0], ['e', 'e.'+this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['284a']/* location */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['274']], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
@@ -276,6 +276,13 @@ class NewJobPage extends Component {
             return(
                 <div>
                     {this.render_enter_zip_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['284a']/* location */){
+            return(
+                <div>
+                    {this.render_enter_location_part()}
                 </div>
             )
         }
@@ -2072,6 +2079,7 @@ return data['data']
             )
         }
     }
+
     render_markdown_or_empty(){
         if(this.state.markdown.trim() == ''){
             return(
@@ -2165,6 +2173,105 @@ return data['data']
     when_markdown_shortcut_clicked(text){
         this.setState({markdown: this.state.markdown+'\n'+text})
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_enter_location_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_location_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_location_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_location_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_location_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['284p']/* 'Specify Some Locations.' */, 'details':this.props.app_state.loc['284b']/* 'You can specify some points on a map if the job is location specific. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
+                </div>
+                {this.render_detail_item('0')}
+                {this.render_selected_pins()}
+            </div>
+        )
+    }
+
+    set_pins(pins){
+        this.setState({pins: pins})
+    }
+
+    render_selected_pins(){
+        var items = this.state.pins
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {items.map((pin, index) => (
+                    <div>
+                        {this.render_pin_item(pin)}
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+
+
 
 
 
