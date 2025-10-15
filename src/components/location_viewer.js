@@ -25,44 +25,7 @@ import pin_icon from '../assets/pin_icon.png'
 import pin_icon_dark from '../assets/pin_icon_dark.png'
 import pin_icon_grey from '../assets/pin_icon_grey.png'
 
-import location_picker_pin from '../assets/location_picker_pin.png'
-import location_picker_pin_grey from '../assets/location_picker_pin_grey.png'
-import location_picker_pin_dark from '../assets/location_picker_pin_dark.png'
-
 import my_location_icon from '../assets/my_location_icon.png'
-
-function CenterMarker({ theme = 'light', size }) {
-    const map = useMap();
-    const [center, setCenter] = useState(map.getCenter());
-
-    React.useEffect(() => {
-        const handleMove = () => {
-            setCenter(map.getCenter());
-        };
-
-        map.on('move', handleMove);
-        return () => map.off('move', handleMove);
-    }, [map]);
-
-    const pin_object = {
-        'light': location_picker_pin,
-        'black': location_picker_pin_dark,
-        'dark': location_picker_pin,
-    }
-
-    const icon_size_obj = { 's':56, 'm':84, 'l':128 };
-    const icon_size = icon_size_obj[size];
-    const customIcon = L.icon({
-        iconUrl: pin_object[theme], // Path to your custom image
-        iconSize: [icon_size, icon_size], // Size of the icon [width, height]
-        iconAnchor: [icon_size/2, icon_size], // Point of the icon which will correspond to marker's location [x, y]
-        popupAnchor: [0, -icon_size] // Point from which the popup should open relative to the iconAnchor
-    });
-
-    return (
-        <Marker position={center} icon={customIcon} />
-    );
-}
 
 function SetViewOnClick({ animateRef }) {
   const map = useMapEvent('click', (e) => {
@@ -72,8 +35,24 @@ function SetViewOnClick({ animateRef }) {
   return null
 }
 
+function FitBounds({ pins, my_location }) {
+  const map = useMap();
+
+  React.useEffect(() => {
+    if (!map || !pins?.length) return;
+    const bounds_positions = pins.map(pin => [pin.lat, pin.lng])
+    if(my_location != null){
+        bounds_positions.push([my_location.lat, my_location.lon])
+    }
+    const bounds = L.latLngBounds(bounds_positions);
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }, [map, pins, my_location]);
+
+  return null;
+}
+
 const LocationPicker = forwardRef((props, ref) => {
-    const { height, theme, center, pins, size, my_location } = props;
+    const { height, theme, center, pins, size, input_enabled, my_location } = props;
     const mapRef = React.useRef();
 
     // This function will be callable from outside
@@ -110,6 +89,7 @@ const LocationPicker = forwardRef((props, ref) => {
         popupAnchor: [0, -icon_size] // Point from which the popup should open relative to the iconAnchor
     });
 
+
     const icon_size_obj2 = { 's':24, 'm':36, 'l':48 };
     const icon_size2 = icon_size_obj2[size];
     const my_location_marker_icon = L.icon({
@@ -133,6 +113,8 @@ const LocationPicker = forwardRef((props, ref) => {
     }
     const url = url_object[theme]
 
+    const bounds = L.latLngBounds(pins.map(pin => [pin['lat'], pin['lng']]));
+
     const my_location_circle_colors = {
         'light': 'black',
         'black': 'white',
@@ -140,9 +122,19 @@ const LocationPicker = forwardRef((props, ref) => {
     }
     const my_location_circle_color = my_location_circle_colors[theme]
 
+    if(pins.length == 0){
+        return (
+            <div style={{ height: height, width: '100%' }}>
+                <MapContainer zoomControl={input_enabled} scrollWheelZoom={false} dragging={input_enabled} touchZoom={input_enabled} doubleClickZoom={input_enabled} boxZoom={input_enabled} keyboard={input_enabled} ref={mapRef} center={[center.lat, center.lon]} zoom={15} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px'}}>
+                    <TileLayer attribution={attribution} url={url} />
+                </MapContainer>
+            </div>
+        );
+    }
+
     return (
-        <div style={{ height: height, width: '100%' }}>
-            <MapContainer ref={mapRef} center={[center.lat, center.lon]} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
+        <div style={{ height: height, width: '100%'}}>
+            <MapContainer zoomControl={input_enabled} scrollWheelZoom={false} dragging={input_enabled} touchZoom={input_enabled} doubleClickZoom={input_enabled} boxZoom={input_enabled} keyboard={input_enabled} ref={mapRef} bounds={bounds} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
                 <TileLayer attribution={attribution} url={url} />
                 {pins.map((pin, index) => (
                     <Marker position={[pin['lat'], pin['lng']]} icon={customIcon}>
@@ -151,16 +143,16 @@ const LocationPicker = forwardRef((props, ref) => {
                         </Popup>
                     </Marker>
                 ))}
+                <SetViewOnClick/>
+                <FitBounds pins={pins} my_location={my_location} />
                 {my_location != null && (
                     <div>
                         <Marker position={[my_location.lat, my_location.lon]} icon={my_location_marker_icon}/>
-                        <CircleMarker center={[my_location.lat, my_location.lon]} pathOptions={{ color: my_location_circle_color, weight: 1, opacity: 0.7, fillColor: my_location_circle_color, fillOpacity: 0.5 }} radius={200}>
+                        <CircleMarker center={[my_location.lat, my_location.lon]} pathOptions={{ color: my_location_circle_color, weight: 1, opacity: 0.7, fillColor: my_location_circle_color, fillOpacity: 0.5  }} radius={200}>
                             <Popup>🫵</Popup>
                         </CircleMarker>
                     </div>
                 )}
-                <CenterMarker theme={theme} size={size} />
-                <SetViewOnClick/>
             </MapContainer>
         </div>
     );

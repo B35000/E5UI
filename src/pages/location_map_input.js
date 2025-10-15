@@ -50,11 +50,31 @@ class LocationMapInput extends Component {
     state = {
         selected: 0, page:null,
         device_city:'', pin_description:'',
-        pins:[]
+        pins:[], my_location: null,
     };
 
     set_data(current_pins){
         this.setState({pins: current_pins})
+        var me = this;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const location_data = { lat: latitude, lon: longitude }
+                    console.log('position found: ', location_data)
+                    setTimeout(function() {
+                        me.locationPickerRef.current?.set_center(location_data);
+                    }, (2 * 1000));
+                    this.setState({my_location: location_data})
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    console.log('location_map_input','Unable to get your location. Please check permissions.');
+                }
+            );
+        } else {
+            console.log('location_map_input','Geolocation is not supported by your browser.');
+        }
     }
 
     render(){
@@ -243,8 +263,8 @@ class LocationMapInput extends Component {
 
 
     render_set_pins(){
-        var items = this.state.pins
-        if(this.state.pins.length == 0){
+        var items = [].concat(this.state.pins)
+        if(items == 0){
             items = [1, 2, 3]
             return(
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -325,7 +345,7 @@ class LocationMapInput extends Component {
 
     constructor(props) {
         super(props);
-        this.locationPickerRef = React.createRef(); // create a ref
+        this.locationPickerRef = React.createRef();
     }
 
     render_map(){
@@ -334,7 +354,7 @@ class LocationMapInput extends Component {
         return(
             <div>
                 <div style={{}}>
-                    <LocationPicker ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.state.pins} size={this.props.size}
+                    <LocationPicker ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.state.pins} size={this.props.size} my_location={this.state.my_location}
                     />
                 </div>
             </div>

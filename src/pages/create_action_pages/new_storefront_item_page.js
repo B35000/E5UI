@@ -88,7 +88,7 @@ class NewStorefrontItemPage extends Component {
 
         option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], edit_option_group_item_pos:-1, get_option_group_type_object: this.get_option_group_type_object(), option_group_details:'', 
 
-        auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0, viewers:[], viewer:'',
+        auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0, viewers:[], viewer:'', pins:[]
     };
 
     get_new_job_page_tags_object(){
@@ -546,10 +546,76 @@ class NewStorefrontItemPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_shipping_detail_suggestions()}
                     <div style={{height:10}}/>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.props.show_dialog_bottomsheet({'pins':this.state.pins}, 'pick_from_my_locations')}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{height:10}}/>
+                    {this.render_selected_pins()}
                 </div>
             )
         }
     }
+
+    render_selected_pins(){
+        var items = [].concat(this.state.pins)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['284u']/* 'Specified Locations.' */, 'details':this.props.app_state.loc['284t']/* 'When you set locations from the location picker, they will show here. */, 'size':'l'})}
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div onClick={() => this.setState({pins: items.slice()})}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['284r']/* 'Specify Some Locations.' */, 'details':this.props.app_state.loc['284s']/* 'Below are the locations youve set from the location picker.' */, 'size':'l'})}
+                </div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    set_pins(pins){
+        this.setState({pins: pins})
+    }
+
 
     render_subscription_configuration_part2(){
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
@@ -4837,7 +4903,7 @@ return data['data']
                     entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
                     entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
                     entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-                    purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:'', typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:'', entered_zip_objects:[], option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], edit_option_group_item_pos:-1, get_option_group_type_object: me.get_option_group_type_object(), option_group_details:''
+                    purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:'', typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:'', entered_zip_objects:[], option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], edit_option_group_item_pos:-1, get_option_group_type_object: me.get_option_group_type_object(), option_group_details:'', pins:[]
                 })
                 
             }, (1 * 1000));

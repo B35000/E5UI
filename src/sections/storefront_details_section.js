@@ -23,6 +23,7 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 // import E5EmptyIcon from './../assets/e5empty_icon.png';
 // import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
+import LocationViewer from './../components/location_viewer';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
@@ -327,6 +328,8 @@ class StorefrontDetailsSection extends Component {
                             <div style={{height: 10}}/>
                         </div>
                     )}
+                    
+                    {this.render_storefront_location_info(object)}
                     
                     {this.render_detail_item('3', {'title':capitalizeFirstLetter(sale_type), 'details':this.props.app_state.loc['535ak']/* Storefront Type */, 'size':'l'})}
 
@@ -917,6 +920,83 @@ class StorefrontDetailsSection extends Component {
           }
           return 0;
       });
+    }
+
+
+
+
+
+
+
+
+
+
+    render_storefront_location_info(object){
+        if(object['ipfs'].pins != null && object['ipfs'].pins.length > 0){
+            const pins = object['ipfs'].pins
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064k']/* 'Included Locations Pins.' */, 'details':this.props.app_state.loc['2064l']/* 'Some locations have been included in the object. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={() => this.props.show_view_map_location_pins(pins)}>
+                        <LocationViewer ref={this.locationPickerRef} height={270} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={false}
+                        />
+                    </div>
+                    {this.render_selected_pins(pins)}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_default_center(){
+        const my_city = this.props.app_state.device_city.toLowerCase()
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities_objects = all_cities.filter(function (el) {
+            return (el['city'].startsWith(my_city) || el['city'] == my_city)
+        });
+
+        if(specific_cities_objects.length > 0){
+            var city_obj = specific_cities_objects[0];
+            return { lat: city_obj['lat'], lon: city_obj['lon'] }
+        }
+        else{
+            return { lat: 51.505, lon: -0.09 }
+        }
+    }
+
+    render_selected_pins(pins){
+        var items = [].concat(pins)
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div onClick={() => this.when_pin_item_clicked2(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    when_pin_item_clicked2(item){
+        const location_data = { lat: item['lat'], lon: item['lng'] }
+        this.locationPickerRef.current?.set_center(location_data);
     }
 
 
@@ -2320,6 +2400,7 @@ class StorefrontDetailsSection extends Component {
         super(props);
         this.messagesEnd = React.createRef();
         this.has_user_scrolled = {}
+        this.locationPickerRef = React.createRef();
     }
 
     componentDidUpdate(){
@@ -2818,7 +2899,7 @@ class StorefrontDetailsSection extends Component {
         }
         if(all_censored_phrases.includes(word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ''))){
             if (word == null || word.length <= 1) return word; // nothing to mask
-            return word[0] + '*'.repeat(word.length - 1);
+            return word[0] + '?'.repeat(word.length - 1);;
         }else{
             return word
         }

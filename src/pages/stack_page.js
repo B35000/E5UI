@@ -26,6 +26,7 @@ import QRCode from "react-qr-code";
 import { parseBlob } from 'music-metadata';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 import EndImg from './../assets/end_token_icon.png';
+import LocationViewer from './../components/location_viewer';
 
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
@@ -159,7 +160,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1261']/* 'settings-data' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' *//* , this.props.app_state.loc['1593cr'] *//* 'gateway 🚧' */, ], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' *//* , this.props.app_state.loc['1593cr'] *//* 'gateway 🚧' */, this.props.app_state.loc['284a']/* 'locations' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'censor 🚫' */, this.props.app_state.loc['1593ir']/* 'notes ℹ️' */], [1],[1]
@@ -1394,6 +1395,13 @@ class StackPage extends Component {
             return(
                 <div key={selected_item}>
                     {this.render_moderator_notes_ui()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['284a']/* 'locations' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_locations_ui()}
                 </div>
             )
         }
@@ -5016,6 +5024,36 @@ class StackPage extends Component {
             // ints.push(transaction_obj)
         }
 
+        if(this.props.app_state.should_update_default_location_pins_in_e5 == true){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [20], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+            const all_my_pinns = this.props.app_state.default_location_pins
+
+            const key = this.props.app_state.accounts['E25'].privateKey.toString()
+            const unencrypted_data = JSON.stringify({'locations':all_my_pinns})
+            const encrypted_obj = await this.props.encrypt_data_object(unencrypted_data, key)
+
+            const data = {'cypher':encrypted_obj, 'time':Date.now()}
+            const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'locations');
+
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(20)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
+        }
+
 
 
         if(account_data_object[1].length > 0){
@@ -5212,7 +5250,7 @@ class StackPage extends Component {
                     });
 
                     var final_bag_object = {
-                        'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time, ecid_encryption_passwords: ecid_encryption_passwords
+                        'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, pins: txs[i].pins, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time, ecid_encryption_passwords: ecid_encryption_passwords
                     }
 
                     const all_final_elements = []
@@ -5253,7 +5291,9 @@ class StackPage extends Component {
                     const job_author_e5 = t.storefront_item['e5']
                     const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
 
-                    var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups)}
+                    var purchase_object = {
+                        'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 'pins': t.pins
+                    }
 
                     if(!newly_participated_objects.includes(t.storefront_item['e5_id'])){
                         newly_participated_objects.push(t.storefront_item['e5_id'])
@@ -5307,7 +5347,9 @@ class StackPage extends Component {
                     var t = txs[i]
                     var now = parseInt(now.toString() + i)
                     const key_data = await this.get_encrypted_job_request_key(t)
-                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data.key_data}
+                    var application_obj = {
+                        'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data.key_data, 'pins': t.pins
+                    }
 
                     if(!newly_participated_objects.includes(t.contractor_item['e5_id'])){
                         newly_participated_objects.push(t.contractor_item['e5_id'])
@@ -5900,6 +5942,17 @@ class StackPage extends Component {
             var data = {'cypher':encrypted_obj, 'time':Date.now()}
             ipfs_index_object['pins'] = data
             ipfs_index_array.push({'id':'pins', 'data':data})
+        }
+
+        if(this.props.app_state.should_update_default_location_pins_in_e5 == true){
+            var default_location_pins = this.props.app_state.default_location_pins
+            var key = this.props.app_state.accounts['E25'].privateKey.toString()
+            var data = JSON.stringify({'locations':default_location_pins})
+            var encrypted_obj = await this.props.encrypt_data_object(data, key)
+
+            var data = {'cypher':encrypted_obj, 'time':Date.now()}
+            ipfs_index_object['locations'] = data
+            ipfs_index_array.push({'id':'locations', 'data':data})
         }
 
 
@@ -13999,6 +14052,7 @@ class StackPage extends Component {
         this.zip_input = React.createRef()
         this.lrc_input = React.createRef()
         this.vtt_input = React.createRef()
+        this.locationPickerRef = React.createRef()
     }
 
     render_open_options_picker_upload_button(){
@@ -16991,6 +17045,158 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_locations_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div style={{'width':'99%'}}>
+                    {this.render_pick_location_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_location_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_location_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_location_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593jx']/* 'Default Delivery Locations.' */, 'details':this.props.app_state.loc['1593jy']/* 'You can specify some default locations that can be included in your bags and direct purchases upon creation. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <LocationViewer ref={this.locationPickerRef} height={230} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.props.app_state.default_location_pins} size={this.props.size} input_enabled={false}
+                />
+                <div style={{height:10}}/>
+
+                <div onClick={()=> this.props.show_set_map_location(this.props.app_state.default_location_pins)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
+                </div>
+                {this.render_detail_item('0')}
+                {this.render_selected_pins()}
+            </div>
+        )
+    }
+
+    get_default_center(){
+        const my_city = this.props.app_state.device_city.toLowerCase()
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities_objects = all_cities.filter(function (el) {
+            return (el['city'].startsWith(my_city) || el['city'] == my_city)
+        });
+
+        if(specific_cities_objects.length > 0){
+            var city_obj = specific_cities_objects[0];
+            return { lat: city_obj['lat'], lon: city_obj['lon'] }
+        }
+        else{
+            return { lat: 51.505, lon: -0.09 }
+        }
+    }
+
+    set_pins(pins){
+        this.props.when_set_my_location_pins(pins)
+    }
+
+    render_selected_pins(){
+        var items = [].concat(this.props.app_state.default_location_pins)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['284u']/* 'Specified Locations.' */, 'details':this.props.app_state.loc['284t']/* 'When you set locations from the location picker, they will show here. */, 'size':'l'})}
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div onClick={() => this.setState({pins: items.slice()})}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['284r']/* 'Specify Some Locations.' */, 'details':this.props.app_state.loc['284s']/* 'Below are the locations youve set from the location picker.' */, 'size':'l'})}
+                </div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div onClick={() => this.when_pin_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_item_clicked(item){
+        const location_data = { lat: item['lat'], lon: item['lng'] }
+        this.locationPickerRef.current?.set_center(location_data);
     }
 
 

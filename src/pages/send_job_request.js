@@ -74,7 +74,7 @@ class SendJobRequestPage extends Component {
     state = {
         selected: 0, contractor_item:{'id':0},  type:this.props.app_state.loc['1363']/* 'job-request' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1364']/* 'send' */, this.props.app_state.loc['1365']/* 'job' */, this.props.app_state.loc['1366']/* 'request' */], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
-        entered_title_text:'', entered_image_objects:[], e5: this.props.app_state.selected_e5, entered_pdf_objects:[],
+        entered_title_text:'', entered_image_objects:[], e5: this.props.app_state.selected_e5, entered_pdf_objects:[],  pins:[]
     };
 
     get_send_job_request_title_tags_object(){
@@ -224,6 +224,25 @@ class SendJobRequestPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1345']/* 'Set some details for your new job request. It should be task specific.' */})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1346']/* 'Enter Details...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
+
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1368a']/* 'Location Info.' */, 'details':this.props.app_state.loc['1368b']/* 'You can optionally specify some locations from your saved pins or on a map if the job is location specific.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.props.show_dialog_bottomsheet({'pins':this.state.pins}, 'pick_from_my_locations')}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_selected_pins()}
+                    
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1042f']/* 'Gray stages images and black stages a pdf. Then tap to remove.' */})}
@@ -234,6 +253,52 @@ class SendJobRequestPage extends Component {
         )
     }
 
+    render_selected_pins(){
+        var items = [].concat(this.state.pins)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    set_pins(pins){
+        this.setState({pins: pins})
+    }
 
     when_title_text_input_field_changed(text){
         this.setState({entered_title_text: text})

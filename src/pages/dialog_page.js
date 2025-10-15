@@ -21,6 +21,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
+import LocationViewer from './../components/location_viewer';
 
 import { from } from "@iotexproject/iotex-address-ts";
 import EndImg from './../assets/end_token_icon.png';
@@ -83,7 +84,7 @@ class DialogPage extends Component {
         new_vote_tags_object: this.get_new_vote_tags_object(), ignore_vote_wait_proposals:[],
         vote_tx_bundle_size:10, get_collect_bounties_tags_object: this.get_collect_bounties_tags_object(),
 
-        songs_to_hide_while_showing:[], videos_to_hide_while_showing:[],
+        songs_to_hide_while_showing:[], videos_to_hide_while_showing:[], selected_pins:[]
     };
 
 
@@ -152,6 +153,9 @@ class DialogPage extends Component {
             }
             else if(id == 'hide_videopost_confirmation'){
                 this.auto_select_videos_already_hidden(data)
+            }
+            else if(id == 'pick_from_my_locations'){
+                this.setState({selected_pins: data['pins']})
             }
         }
     }
@@ -408,6 +412,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_hide_videopost_confirmation_ui()}
+                </div>
+            )
+        }
+        else if(option == 'pick_from_my_locations'){
+            return(
+                <div>
+                    {this.render_select_my_locations_ui()}
                 </div>
             )
         }
@@ -2226,6 +2237,11 @@ return data['data']
         } 
     }
 
+    constructor(props) {
+        super(props);
+        this.locationPickerRef = React.createRef();
+    }
+
     render_view_purchase_data(){
         var item = this.state.data['item']
         var sender_type = this.state.data['sender_type']
@@ -2239,6 +2255,7 @@ return data['data']
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':item['shipping_detail']})}
                     <div style={{height:10}}/>
+                    {this.render_direct_purchase_location_pins(item['pins'])}
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1114c']/* 'custom_specifications ' */, 'details':item['custom_specifications']})}
@@ -2320,6 +2337,73 @@ return data['data']
     clear_purchase(item, sender_type, object){
         this.props.open_dialog_bottomsheet()
         this.props.open_clear_purchase(item, sender_type, object)
+    }
+
+    render_direct_purchase_location_pins(pins){
+        if(pins != null && pins.length > 0){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064k']/* 'Included Locations Pins.' */, 'details':this.props.app_state.loc['2064l']/* 'Some locations have been included in the object. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={() => this.props.show_view_map_location_pins(pins)}>
+                        <LocationViewer ref={this.locationPickerRef} height={270} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={false}
+                        />
+                    </div>
+                    {this.render_selected_pins(pins)}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_default_center(){
+        const my_city = this.props.app_state.device_city.toLowerCase()
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities_objects = all_cities.filter(function (el) {
+            return (el['city'].startsWith(my_city) || el['city'] == my_city)
+        });
+
+        if(specific_cities_objects.length > 0){
+            var city_obj = specific_cities_objects[0];
+            return { lat: city_obj['lat'], lon: city_obj['lon'] }
+        }
+        else{
+            return { lat: 51.505, lon: -0.09 }
+        }
+    }
+
+    render_selected_pins(pins){
+        var items = [].concat(pins)
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div onClick={() => this.when_pin_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    when_pin_item_clicked(item){
+        const location_data = { lat: item['lat'], lon: item['lng'] }
+        this.locationPickerRef.current?.set_center(location_data);
     }
 
 
@@ -7843,6 +7927,127 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+    render_select_my_locations_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_my_locations_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_hide_videopost_confirmation_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_hide_videopost_confirmation_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_select_my_locations_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055fz']/* 'Select From My Locations.' */, 'details':this.props.app_state.loc['3055ga']/* 'You can select the default delivery pins you set in the stack page.' */, 'size':'l'})}
+                {this.render_selected_pins()}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.props.return_selected_pins(this.state.selected_pins)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_selected_pins(){
+        var items = [].concat(this.props.app_state.default_location_pins)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        const alpha = this.does_pin_exist(item) ? 0.6 : 1.0
+        return(
+            <div style={{'opacity':alpha}} onClick={() => this.when_pin_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    does_pin_exist(focused_pin){
+        const index = this.state.selected_pins.findIndex(pin => (pin['lat'] == focused_pin['lat'] && pin['lng'] == focused_pin['lng']));
+        return index != -1;
+    }
+
+    when_pin_item_clicked(focused_pin){
+        const clone = this.state.selected_pins.slice()
+        const index = clone.findIndex(pin => (pin['lat'] == focused_pin['lat'] && pin['lng'] == focused_pin['lng']));
+        if(index != -1){
+            clone.splice(index, 1)
+        }
+        else{
+            clone.push(focused_pin)
+        }
+        this.setState({selected_pins: clone})
+    }
 
 
 

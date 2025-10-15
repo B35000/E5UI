@@ -19,6 +19,7 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import LocationViewer from './../components/location_viewer';
 // import Letter from './../assets/letter.png'; 
 // import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 
@@ -45,6 +46,11 @@ class ContractorDetailsSection extends Component {
     state = {
         selected: 0, navigate_view_contractors_list_detail_tags_object: this.get_navigate_view_contracts_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}
     };
+
+    constructor(props) {
+        super(props);
+        this.locationPickerRef = React.createRef();
+    }
 
     componentDidMount() {
         this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
@@ -214,6 +220,7 @@ class ContractorDetailsSection extends Component {
                     {this.render_markdown_if_any(object)}
 
                     {this.render_detail_item('0')}
+                    {this.render_contractor_location_info(object)}
                     {this.fee_per_hour_or_per_job(object)}
                     <div style={{height:10}}/>
                     {this.render_price_amounts(object)}
@@ -879,6 +886,79 @@ class ContractorDetailsSection extends Component {
         return all_objects
     }
 
+
+
+
+
+
+
+    render_contractor_location_info(object){
+        if(object['ipfs'].pins != null && object['ipfs'].pins.length > 0){
+            const pins = object['ipfs'].pins
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064k']/* 'Included Locations Pins.' */, 'details':this.props.app_state.loc['2064l']/* 'Some locations have been included in the object. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={() => this.props.show_view_map_location_pins(pins)}>
+                        <LocationViewer ref={this.locationPickerRef} height={270} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={false}
+                        />
+                    </div>
+                    
+                    {this.render_selected_pins(pins)}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_default_center(){
+        const my_city = this.props.app_state.device_city.toLowerCase()
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities_objects = all_cities.filter(function (el) {
+            return (el['city'].startsWith(my_city) || el['city'] == my_city)
+        });
+
+        if(specific_cities_objects.length > 0){
+            var city_obj = specific_cities_objects[0];
+            return { lat: city_obj['lat'], lon: city_obj['lon'] }
+        }
+        else{
+            return { lat: 51.505, lon: -0.09 }
+        }
+    }
+
+    render_selected_pins(pins){
+        var items = [].concat(pins)
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div onClick={() => this.when_pin_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    when_pin_item_clicked(item){
+        const location_data = { lat: item['lat'], lon: item['lng'] }
+        this.locationPickerRef.current?.set_center(location_data);
+    }
 
 
 

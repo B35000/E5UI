@@ -1515,7 +1515,7 @@ class PostsDetailsSection extends Component {
         }
         if(all_censored_phrases.includes(word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ''))){
             if (word == null || word.length <= 1) return word; // nothing to mask
-            return word[0] + '*'.repeat(word.length - 1);
+            return word[0] + '?'.repeat(word.length - 1);;
         }else{
             return word
         }

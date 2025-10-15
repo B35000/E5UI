@@ -50,7 +50,7 @@ function makeid(length) {
 class DirectPurchasetPage extends Component {
     
     state = {
-        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[]
+        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[], pins:[]
     };
 
     get_direct_purchase_tags_object(){
@@ -176,6 +176,25 @@ class DirectPurchasetPage extends Component {
                     <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1099']/* 'Shipping Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
                     <div style={{height:10}}/>
                     {this.render_shipping_detail_suggestions()}
+
+                    <div style={{height:20}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058d']/* 'Specify On Map' */, 'details':this.props.app_state.loc['1058z']/* 'You can also specify a delivery address using a map or from you saved pins.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            <div onClick={()=> this.props.show_dialog_bottomsheet({'pins':this.state.pins}, 'pick_from_my_locations')}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{height:10}}/>
+                    {this.render_selected_pins()}
+
                     {this.render_detail_item('0')}
 
 
@@ -204,6 +223,53 @@ class DirectPurchasetPage extends Component {
                 </div>
             )
         }
+    }
+
+    render_selected_pins(){
+        var items = [].concat(this.state.pins)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    set_pins(pins){
+        this.setState({pins: pins})
     }
 
     render_price_content(){
