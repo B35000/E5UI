@@ -195,12 +195,16 @@ class ViewObjectLocations extends Component {
 
     render_pin_item(item){
         const title = item['id']
-        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : this.truncate(item['description'], 17)
         return(
             <div onClick={() => this.when_pin_item_clicked(item)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
             </div>
         )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
 
     when_pin_item_clicked(item){
@@ -247,7 +251,7 @@ class ViewObjectLocations extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)}
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width}
                 />
             </div>
         )

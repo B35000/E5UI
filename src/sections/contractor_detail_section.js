@@ -503,7 +503,7 @@ class ContractorDetailsSection extends Component {
 
     render_uploaded_file(item, index){
         var ecid_obj = this.get_cid_split(item)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null || this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         //
         var formatted_size = this.format_data_size(data['size'])
@@ -612,7 +612,7 @@ class ContractorDetailsSection extends Component {
 
     render_uploaded_zip_file(item, index){
         var ecid_obj = this.get_cid_split(item)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null || this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         //
         var formatted_size = this.format_data_size(data['size'])
@@ -947,7 +947,7 @@ class ContractorDetailsSection extends Component {
 
     render_pin_item(item){
         const title = item['id']
-        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : this.truncate(item['description'], 17)
         return(
             <div onClick={() => this.when_pin_item_clicked(item)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}

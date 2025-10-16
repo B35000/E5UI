@@ -30,6 +30,7 @@ import location_picker_pin_grey from '../assets/location_picker_pin_grey.png'
 import location_picker_pin_dark from '../assets/location_picker_pin_dark.png'
 
 import my_location_icon from '../assets/my_location_icon.png'
+import my_location_icon_dark from '../assets/my_location_icon_dark.png'
 
 function CenterMarker({ theme = 'light', size }) {
     const map = useMap();
@@ -110,10 +111,15 @@ const LocationPicker = forwardRef((props, ref) => {
         popupAnchor: [0, -icon_size] // Point from which the popup should open relative to the iconAnchor
     });
 
-    const icon_size_obj2 = { 's':24, 'm':36, 'l':48 };
+    const my_location_icons = {
+        'light': my_location_icon,
+        'black': my_location_icon_dark,
+        'dark': my_location_icon,
+    }
+    const icon_size_obj2 = { 's':10, 'm':16, 'l':24 };
     const icon_size2 = icon_size_obj2[size];
     const my_location_marker_icon = L.icon({
-        iconUrl: my_location_icon, // Path to your custom image
+        iconUrl: my_location_icons[theme], // Path to your custom image
         iconSize: [icon_size2, icon_size2], // Size of the icon [width, height]
         iconAnchor: [icon_size2/2, icon_size2], // Point of the icon which will correspond to marker's location [x, y]
         popupAnchor: [0, -icon_size2] // Point from which the popup should open relative to the iconAnchor
@@ -140,6 +146,9 @@ const LocationPicker = forwardRef((props, ref) => {
     }
     const my_location_circle_color = my_location_circle_colors[theme]
 
+    const circle_size_obj = { 's':50, 'm':80, 'l':100 };
+    const circle_size = circle_size_obj[size];
+
     return (
         <div style={{ height: height, width: '100%' }}>
             <MapContainer ref={mapRef} center={[center.lat, center.lon]} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
@@ -154,7 +163,7 @@ const LocationPicker = forwardRef((props, ref) => {
                 {my_location != null && (
                     <div>
                         <Marker position={[my_location.lat, my_location.lon]} icon={my_location_marker_icon}/>
-                        <CircleMarker center={[my_location.lat, my_location.lon]} pathOptions={{ color: my_location_circle_color, weight: 1, opacity: 0.7, fillColor: my_location_circle_color, fillOpacity: 0.5 }} radius={200}>
+                        <CircleMarker center={[my_location.lat, my_location.lon]} pathOptions={{ color: my_location_circle_color, weight: 1, opacity: 0.7, fillColor: my_location_circle_color, fillOpacity: 0.4 }} radius={circle_size}>
                             <Popup>🫵</Popup>
                         </CircleMarker>
                     </div>

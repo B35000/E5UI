@@ -733,7 +733,6 @@ class PostListSection extends Component {
 
 
     show_new_objects_message_if_any(objects){
-        return;
         const page_id = this.props.get_page_id()
 
         if(this.current_load_time[page_id] == null){
@@ -782,7 +781,6 @@ class PostListSection extends Component {
     }
 
     filter_objects_and_remove_very_new_entries(objects){
-        return objects;
         const page_id = this.props.get_page_id()
         const current_pages_load_time = this.current_load_time[page_id] || Date.now()/1000
         return objects.filter(function (object) {
@@ -3962,6 +3960,7 @@ return data['data']
     get_audio_files_view_counts(object){
         var view_count = 0
         var songs = object['ipfs'].songs
+        if(songs == null) return view_count;
         songs.forEach(song => {
             const track = song['track']
             var ecid_obj = this.get_cid_split(track)
@@ -4473,6 +4472,7 @@ return data['data']
     get_video_files_view_counts(object){
         var view_count = 0
         var videos = object['ipfs'].videos
+        if(videos == null) return view_count;
         videos.forEach(video => {
             const video_link = video['video']
             var ecid_obj = this.get_cid_split(video_link)

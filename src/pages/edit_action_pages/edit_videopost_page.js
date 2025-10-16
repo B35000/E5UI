@@ -486,7 +486,7 @@ class EditVideoPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
+            <div ref={this.screen} style={{'margin':'0px 0px 0px 10px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['301']})}
                 
                 <div style={{height:10}}/>

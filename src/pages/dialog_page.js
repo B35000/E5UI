@@ -2393,7 +2393,7 @@ return data['data']
 
     render_pin_item(item){
         const title = item['id']
-        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : this.truncate(item['description'], 17)
         return(
             <div onClick={() => this.when_pin_item_clicked(item)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
@@ -7950,7 +7950,7 @@ return data['data']
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_hide_videopost_confirmation_data()}
+                        {this.render_select_my_locations_data()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -7963,7 +7963,7 @@ return data['data']
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_hide_videopost_confirmation_data()}
+                        {this.render_select_my_locations_data()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -7974,13 +7974,12 @@ return data['data']
         }
     }
 
-
     render_select_my_locations_data(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055fz']/* 'Select From My Locations.' */, 'details':this.props.app_state.loc['3055ga']/* 'You can select the default delivery pins you set in the stack page.' */, 'size':'l'})}
-                {this.render_selected_pins()}
-                <div style={{height:10}}/>
+                {this.render_selected_pins2()}
+                {this.render_detail_item('0')}
                 <div onClick={()=> this.props.return_selected_pins(this.state.selected_pins)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
                 </div>
@@ -7988,7 +7987,7 @@ return data['data']
         )
     }
 
-    render_selected_pins(){
+    render_selected_pins2(){
         var items = [].concat(this.props.app_state.default_location_pins)
         if(items.length == 0){
             items = [1, 2, 3]
@@ -8012,7 +8011,7 @@ return data['data']
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_pin_item(item)}
+                                {this.render_pin_item2(item)}
                             </li>
                         ))}
                     </ul>
@@ -8021,15 +8020,19 @@ return data['data']
         )
     }
 
-    render_pin_item(item){
+    render_pin_item2(item){
         const title = item['id']
-        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : item['description']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : this.truncate(item['description'], 17)
         const alpha = this.does_pin_exist(item) ? 0.6 : 1.0
         return(
             <div style={{'opacity':alpha}} onClick={() => this.when_pin_item_clicked(item)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
             </div>
         )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
 
     does_pin_exist(focused_pin){

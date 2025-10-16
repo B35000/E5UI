@@ -517,7 +517,7 @@ class ProposalDetailsSection extends Component {
 
     render_uploaded_zip_file(item, index){
         var ecid_obj = this.get_cid_split(item)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null  || this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         //
         var formatted_size = this.format_data_size(data['size'])
@@ -571,7 +571,7 @@ class ProposalDetailsSection extends Component {
 
     render_uploaded_file(item, index){
         var ecid_obj = this.get_cid_split(item)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null  || this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         //
         var formatted_size = this.format_data_size(data['size'])

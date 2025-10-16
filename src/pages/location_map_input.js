@@ -50,7 +50,7 @@ class LocationMapInput extends Component {
     state = {
         selected: 0, page:null,
         device_city:'', pin_description:'',
-        pins:[], my_location: null,
+        pins:[], my_location: null, /* {lat: -1.281166, lon: 36.815252 }, */
     };
 
     set_data(current_pins){

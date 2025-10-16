@@ -1006,7 +1006,7 @@ class App extends Component {
 
     hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */ opened_bottomsheets:[], update_pinns_on_chain:false, all_my_pinns:{},
 
-    sliced_object_load_count:4, sliced_object_load_increment_count:3, can_change_theme:true, thread_pool_size: this.get_thread_pool_size(), update_search_object_load_count:4, background_alpha:0.5, default_location_pins:[], should_update_default_location_pins_in_e5:false
+    sliced_object_load_count:4, sliced_object_load_increment_count:3, can_change_theme:true, thread_pool_size: this.get_thread_pool_size(), update_search_object_load_count:4, background_alpha:0.5, default_location_pins:[], should_update_default_location_pins_in_e5:false, my_acquired_videos:[],
   };
 
   get_thread_pool_size(){
@@ -15919,7 +15919,7 @@ class App extends Component {
       'vote_wait_bottomsheet':700,
       'hide_audiopost_confirmation':550,
       'hide_videopost_confirmation':550,
-      'pick_from_my_locations':350
+      'pick_from_my_locations':250
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -21470,7 +21470,6 @@ class App extends Component {
 
   }
 
-
   update_nitro_privacy_signature = async ( get_sync_block_from_nitro = true ) => {
     const seed = process.env.REACT_APP_PRIVACY_SIGNATURE_KEY
     const web3_url = this.get_web3_url_from_e5('E25')
@@ -21567,7 +21566,9 @@ class App extends Component {
       hidden_audioposts:{},
       hidden_videoposts:{},
       all_my_pinns:{},
-      default_location_pins:[]
+      default_location_pins:[],
+      my_acquired_videos:[], 
+      my_acquired_audios:[]
     });
 
     this.get_blocked_accounts_data_e5_timestamp = 0
@@ -30766,7 +30767,7 @@ class App extends Component {
           if(i % this.state.file_load_step_count == 0 || i == created_audio_events.length -1){
             this.fetch_uploaded_data_from_ipfs(songs_to_load.slice(), false, structuredClone(all_keys))
             songs_to_load = []
-            Object.keys().forEach(entry => {
+            Object.keys(all_keys).forEach(entry => {
               delete all_keys[entry]
             });
           }
@@ -30943,7 +30944,7 @@ class App extends Component {
           if(i % this.state.file_load_step_count == 0 || i == created_video_events.length -1){
             this.fetch_uploaded_data_from_ipfs(videos_to_load.slice(), false, structuredClone(all_keys))
             videos_to_load = []
-            Object.keys().forEach(entry => {
+            Object.keys(all_keys).forEach(entry => {
               delete all_keys[entry]
             });
           }
