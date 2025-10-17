@@ -259,7 +259,9 @@ class PostListSection extends Component {
             }
             else if(selected_option_name == this.props.app_state.loc['1264i']/* 'wallet-notifications' */ ){
                 return(
-                <div>{this.render_my_notifications(this.props.app_state.loc['1264i']/* 'wallet-notifications' */)}</div>
+                    <div>
+                        {this.render_my_notifications(this.props.app_state.loc['1264i']/* 'wallet-notifications' */)}
+                    </div>
                 )
             }
             else if(selected_option_name == this.props.app_state.loc['1264j']/* 'coins 🪙' */){

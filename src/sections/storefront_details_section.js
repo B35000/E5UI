@@ -131,7 +131,7 @@ class StorefrontDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2695d']/* 'catalogue' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
           ],
           'direct-purchases':[
               ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
@@ -202,7 +202,8 @@ class StorefrontDetailsSection extends Component {
                 <div>
                     {this.render_storefront_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_storefront_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_storefront_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_storefront_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_storefront_list_detail_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}
+                        />
                     </div>
                 </div>
             )
@@ -274,6 +275,13 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     {this.render_storefront_auction_bids(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['2695j']/* 'similar 𐙚' */){
+            return(
+                <div>
+                    {this.render_similar_storefronts(object)}
                 </div>
             )
         }
@@ -2264,6 +2272,89 @@ class StorefrontDetailsSection extends Component {
         if(object['ipfs'].get_take_down_option == null) return false
         var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
         if(selected_take_down_option == 1) return true
+    }
+
+
+
+
+
+
+
+
+
+
+    render_similar_storefronts(object){
+        var he = this.props.height-45
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2695h']/* 'Similar Storefronts.' */, 'details':this.props.app_state.loc['2695i']/* 'Other stores with similar tags' */, 'size':'l'})}
+                        </div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_similar_storefront_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_similar_storefront_items(object){
+        var items = [].concat(this.get_similar_posts(object))
+
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <div>
+                                {this.render_empty_object()}
+                                <div style={{height: 4}}/>
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            return ( 
+                <div style={{overflow: 'auto'}}>
+                    <AnimatePresence initial={false}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {items.map((item, index) => (
+                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                style={{'padding': '0px'}}>
+                                    {this.render_storefront_object(item, index)}
+                                    <div style={{height: 4}}/>
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </AnimatePresence>
+                </div>
+            );
+        }
+    }
+
+    get_similar_posts(object){
+        const similar_post_ids = this.props.similar_posts[object['e5_id']] || []
+        if(similar_post_ids.length == 0){
+            return []
+        }
+        const similar_objects = this.get_items_from_array_and_pointers(this.props.get_storefront_items(''), similar_post_ids)
+        return this.filter_for_taken_down_posts(similar_objects)
+    }
+
+    get_items_from_array_and_pointers(all_objects, pointers){
+        const objMap = new Map(all_objects.map(o => [o['e5_id'], o]));
+        return pointers.map(id => objMap.get(id)).filter(Boolean);
     }
 
 

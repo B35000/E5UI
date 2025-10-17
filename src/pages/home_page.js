@@ -115,7 +115,7 @@ class home_page extends Component {
         page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[],
 
         details_container_width:0, typed_tag:{}, search_visible:true, posts_container_width:0, 
-        search_results:{}, searched_texts:{},
+        search_results:{}, searched_texts:{}, similar_posts:{},
     };
 
     constructor(props) {
@@ -399,7 +399,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, /* this.props.app_state.loc['1264i'] 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */],[1]
           ],
         }
 
@@ -4274,6 +4274,12 @@ class home_page extends Component {
                 this.update_search(selected_page, searched_page_id, this.state.searched_texts[selected_page][searched_page_id])
             });
         }
+        if(selected_page == this.props.app_state.loc['1264k']/* 'audioport' */ || selected_page == this.props.app_state.loc['1264p']/* 'videoport' */|| selected_page == this.props.app_state.loc['1215']/* 'storefront' */){
+            const viewed_page_ids = Object.keys(this.state.similar_posts[selected_page])
+            viewed_page_ids.forEach(viewed_page_id => {
+                this.update_audio_video_recommended_items(selected_page, viewed_page_id)
+            });
+        }
     }
 
     update_search = async (selected_page, id, text) => {
@@ -4284,6 +4290,15 @@ class home_page extends Component {
         }
         search_results_clone[id][text] = indexed_objects
         this.setState({search_results: search_results_clone})
+    }
+
+    update_audio_video_recommended_items = async (selected_page, id) => {
+        const focused_objects = this.get_pages_objects(selected_page)
+        const id_object = this.get_item_in_array2(id, focused_objects)
+        const indexed_objects = await this.props.get_similar_posts(focused_objects, id_object)
+        const similar_posts_clone = structuredClone(this.state.similar_posts)
+        similar_posts_clone[id] = indexed_objects
+        this.setState({similar_posts: similar_posts_clone})
     }
 
     get_pages_objects(selected_page){
@@ -4667,6 +4682,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        this.update_audio_video_recommended_items(this.props.app_state.loc['1215']/* 'storefront' */, object['e5_id'])
     }
 
     when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -4749,6 +4765,9 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
+
+        this.update_audio_video_recommended_items(this.props.app_state.loc['1264k']/* 'audioport' */, object['e5_id'])
+        
     }
 
     when_playlist_selected(song, index){
@@ -4881,6 +4900,8 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
+
+        this.update_audio_video_recommended_items(this.props.app_state.loc['1264p']/* 'videoport' */, object['e5_id'])
     }
 
     play_videopost_from_list_section = async (object) => {
@@ -5173,7 +5194,7 @@ class home_page extends Component {
 
                 get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} when_file_link_tapped={this.props.when_file_link_tapped.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)}
 
-                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)}
+                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts}
                 />
             </div>
         )

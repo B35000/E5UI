@@ -5752,7 +5752,7 @@ class App extends Component {
 
           when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)} get_default_background={this.get_default_background.bind(this)} linear_gradient_text={this.linear_gradient_text.bind(this)}
 
-          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)}
+          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -37524,6 +37524,44 @@ class App extends Component {
           this.worker_availability[available_worker_index] = true
         }
         else if (e.data.type === 'ERROR' && e.data.message == 'filter_using_searched_text' && e.data.message_id == message_id) {
+          reject(e.data.error);
+          this.worker_availability[available_worker_index] = true
+        }
+      };
+        
+      worker.onerror = (error) => {
+        reject(error);
+      };
+    });
+  }
+
+  get_similar_posts = async (focused_objects, id_object) => {
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+
+      worker.postMessage({
+        type: 'get_similar_posts',
+        payload: {
+          objects: focused_objects,
+          object: id_object,
+          message_id
+        }
+      });
+        
+      worker.onmessage = (e) => {
+        if (e.data.type === 'SUCCESS' && e.data.message == 'get_similar_posts' && e.data.message_id == message_id) {
+          resolve(e.data.data);
+          this.worker_availability[available_worker_index] = true
+        }
+        else if (e.data.type === 'ERROR' && e.data.message == 'get_similar_posts' && e.data.message_id == message_id) {
           reject(e.data.error);
           this.worker_availability[available_worker_index] = true
         }

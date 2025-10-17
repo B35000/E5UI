@@ -2085,7 +2085,17 @@ return data['data']
     }
 
     get_similar_posts(object){
-        return this.filter_for_bought_posts(this.filter_for_taken_down_posts(this.sort_feed_based_on_my_section_tags(this.props.get_audio_items('discography'), object)))
+        const similar_post_ids = this.props.similar_posts[object['e5_id']] || []
+        if(similar_post_ids.length == 0){
+            return []
+        }
+        const similar_objects = this.get_items_from_array_and_pointers(this.props.get_audio_items('discography'), similar_post_ids)
+        return this.filter_for_bought_posts(this.filter_for_taken_down_posts(similar_objects))
+    }
+
+    get_items_from_array_and_pointers(all_objects, pointers){
+        const objMap = new Map(all_objects.map(o => [o['e5_id'], o]));
+        return pointers.map(id => objMap.get(id)).filter(Boolean);
     }
 
     sort_feed_based_on_my_section_tags(objects, current_album){

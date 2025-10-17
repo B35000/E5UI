@@ -180,6 +180,25 @@ export default () => {
                 });
             }
         }
+        else if(type == 'get_similar_posts'){
+            try {
+                const processeddata = sort_feed_based_on_my_section_tags(payload.objects, payload.object);
+
+                self.postMessage({
+                    type: 'SUCCESS',
+                    message: type,
+                    message_id: payload.message_id,
+                    data: processeddata
+                });
+            } catch (error) {
+                self.postMessage({
+                    type: 'ERROR',
+                    message: type,
+                    message_id: payload.message_id,
+                    error: error.message
+                });
+            }
+        }
         
     });
 
@@ -598,6 +617,39 @@ export default () => {
           }
           return 0;
       });
+    }
+
+
+
+    function sort_feed_based_on_my_section_tags(objects, focused_object){
+        var feed_objs = []
+        var section_tags = focused_object['ipfs'].entered_indexing_tags
+
+        feed_objs = objects.filter(function (object) {
+            var object_tags = object['ipfs'].entered_indexing_tags
+            var includes = section_tags.some(r=> object_tags.includes(r))
+            return (includes && (focused_object['e5_id'] != object['e5_id']))
+        });
+
+        var selected_objects = []
+        var almost_selected_objects = []
+        feed_objs.forEach(object => {
+            var object_tags = object['ipfs'].entered_indexing_tags
+            var exact_count = 0
+            section_tags.forEach(tag => {
+                if(object_tags.includes(tag)){
+                    exact_count++
+                }
+            });
+            if(exact_count >= 2){
+                selected_objects.push(object['e5_id'])
+            }
+            else if(exact_count == 1){
+                almost_selected_objects.push(object['e5_id'])
+            }
+        });
+
+        return selected_objects.concat(almost_selected_objects)
     }
 
 };

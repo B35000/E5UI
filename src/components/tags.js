@@ -69,6 +69,7 @@ class tags extends Component {
         items[this.props.app_state.loc['1219']/* spends */] = '🫰'
         items[this.props.app_state.loc['2447u']/* 'filter-time' */] = '🕒'
         items[this.props.app_state.loc['2447v']/* 'chart-type' */] = '📉'
+        items[this.props.app_state.loc['2603']/* 'direct-purchases' */] = '📦'
       }
       
       if(items[item] != null) return items[item];
