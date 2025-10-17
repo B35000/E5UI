@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.3e0b24f8.css",
-    "main.js": "/static/js/main.1120d6bd.js",
+    "main.css": "/static/css/main.5ded3989.css",
+    "main.js": "/static/js/main.97b49eaa.js",
     "static/js/231.de23fbad.chunk.js": "/static/js/231.de23fbad.chunk.js",
     "static/js/898.ba3f9bb9.chunk.js": "/static/js/898.ba3f9bb9.chunk.js",
     "static/js/386.9d146b60.chunk.js": "/static/js/386.9d146b60.chunk.js",
@@ -468,8 +468,10 @@
     "static/media/letter.png": "/static/media/letter.0ed8625c19055ed06b21.png",
     "static/media/mind.png": "/static/media/mind.ad403c5709197756fd13.png",
     "static/media/add_text_dark.png": "/static/media/add_text_dark.7fb0adba2c554169387a.png",
+    "static/media/my_location_icon_dark.png": "/static/media/my_location_icon_dark.80290f8eb0de10c00476.png",
     "static/media/bob.png": "/static/media/bob.91c8944c2312ecf8c387.png",
     "static/media/ethereum_testnet.png": "/static/media/ethereum_testnet.9e100f6a6ed0a8baaca4.png",
+    "static/media/my_location_icon.png": "/static/media/my_location_icon.a98d5ad2109e0d3c54c9.png",
     "static/media/kaia.png": "/static/media/kaia.b618f4761a70d43f5546.png",
     "static/media/pause_icon_green.png": "/static/media/pause_icon_green.8e73e7bf88b742b8efce.png",
     "static/media/zip_file.png": "/static/media/zip_file.a80c173a20cc5e113bfc.png",
@@ -501,7 +503,7 @@
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.3e0b24f8.css",
-    "static/js/main.1120d6bd.js"
+    "static/css/main.5ded3989.css",
+    "static/js/main.97b49eaa.js"
   ]
 }
