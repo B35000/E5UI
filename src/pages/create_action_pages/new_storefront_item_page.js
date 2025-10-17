@@ -927,8 +927,8 @@ class NewStorefrontItemPage extends Component {
 
 
 
-    when_add_shipping_account_set(){
-        var account = this.get_typed_alias_id(this.state.fulfilment_account)
+    async when_add_shipping_account_set(){
+        var account = await this.get_typed_alias_id(this.state.fulfilment_account)
         if(isNaN(account) || account == '' || parseInt(account) < 1000){
             this.props.notify(this.props.app_state.loc['490']/* 'please put a valid account id' */, 2600)
         }else{
@@ -939,10 +939,11 @@ class NewStorefrontItemPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
@@ -4474,14 +4475,14 @@ return data['data']
         this.setState({viewer: text})
     }
 
-    when_add_viewer_button_tapped(){
+    async when_add_viewer_button_tapped(){
         var typed_text = this.state.viewer.trim()
         if(typed_text.includes(',')){
             this.add_multiple_viewers(typed_text)
             return;
         }
-        var participant_id = this.get_typed_alias_id(typed_text)
-        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
+        var participant_id = await this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? await this.get_alias_e5(typed_text) : this.state.e5
         var final_value = participant_e5+':'+participant_id
         var participants_clone = this.state.viewers.slice()
         if(typed_text == ''){
@@ -4499,7 +4500,8 @@ return data['data']
         }
     }
 
-    get_alias_e5(recipient){
+    async get_alias_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
         var e5s = this.props.app_state.e5s['data']
         var recipients_e5 = this.props.app_state.selected_e5
         for (let i = 0; i < e5s.length; i++) {

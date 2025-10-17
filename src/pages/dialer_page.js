@@ -1536,11 +1536,11 @@ class DialerPage extends Component {
         this.setState({selected_moderator_e5: item})
     }
 
-    add_moderator_account_to_state(){
+    async add_moderator_account_to_state(){
         const state = this.state.selected_typed_moderator_country == '' ? 'all' :this.state.selected_typed_moderator_country
         var account_or_alias = this.state.typed_moderator_account_id.trim()
-        var account_id = this.get_typed_alias_id(account_or_alias)
-        var account_e5 = isNaN(account_or_alias) ? this.get_alias_e5(account_or_alias) : this.state.selected_moderator_e5
+        var account_id = await this.get_typed_alias_id(account_or_alias)
+        var account_e5 = isNaN(account_or_alias) ? await this.get_alias_e5(account_or_alias) : this.state.selected_moderator_e5
         
         if(isNaN(account_id) || parseInt(account_id) < 0 || account_id == ''){
             this.props.notify('that account is invalid', 2700)
@@ -1556,10 +1556,11 @@ class DialerPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         const obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
         var id = obj[alias] == null ? alias : obj[alias]
 
@@ -1578,7 +1579,8 @@ class DialerPage extends Component {
         return all_objects
     }
 
-    get_alias_e5(recipient){
+    async get_alias_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
         var e5s = this.props.app_state.e5s['data']
         var recipients_e5 = this.props.app_state.selected_e5
         for (let i = 0; i < e5s.length; i++) {

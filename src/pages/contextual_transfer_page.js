@@ -600,13 +600,13 @@ class ContextualTransferPage extends Component {
     }
 
 
-    finish_create_itransfer(){
+    async finish_create_itransfer(){
         var identifier = this.state.identifier.trim()
         var recipient = this.state.recipient_id.trim()
         var price_data = this.state.price_data
 
         if(isNaN(recipient)){
-            recipient = this.get_recipient_id(recipient)
+            recipient = await this.get_recipient_id(recipient)
         }
 
         if(identifier == ''){
@@ -950,18 +950,18 @@ class ContextualTransferPage extends Component {
         this.setState({selected_e5: item})
     }
 
-    perform_verify_itransfer_search(){
+    async perform_verify_itransfer_search(){
         var identifier = this.state.search_identifier.trim()
         var account = this.state.search_identifier_account.trim()
         var recipient = this.state.search_identifier_recipient.trim()
         var e5 = this.state.selected_e5
 
         if(isNaN(recipient)){
-            recipient = this.get_recipient_id(recipient)
+            recipient = await this.get_recipient_id(recipient)
         }
 
         if(isNaN(account)){
-            account = this.get_recipient_id(account)
+            account = await this.get_recipient_id(account)
         }
 
         if(identifier == ''){
@@ -1000,7 +1000,8 @@ class ContextualTransferPage extends Component {
         }
     }
 
-    get_recipient_id(recipient){
+    async get_recipient_id(recipient){
+        await this.props.get_account_id_from_alias(recipient)
         var id = (this.props.app_state.alias_owners[this.state.e5][recipient] == null ? recipient : this.props.app_state.alias_owners[this.state.e5][recipient])
         return id
     }
@@ -1598,7 +1599,7 @@ class ContextualTransferPage extends Component {
         this.setState({price_data2: cloned_array})
     }
 
-    finish_send_bill(){
+    async finish_send_bill(){
         var identifier = this.state.identifier2.trim()
         var recipient = this.state.recipient_id2.trim()
         var transfer_recipient = this.state.transfer_recipient_id2.trim()
@@ -1607,10 +1608,10 @@ class ContextualTransferPage extends Component {
         var my_id = this.props.app_state.user_account_id[this.state.e5]
 
         if(isNaN(recipient)){
-            recipient = this.get_recipient_id(recipient)
+            recipient = await this.get_recipient_id(recipient)
         }
         if(isNaN(transfer_recipient)){
-            transfer_recipient = this.get_recipient_id(transfer_recipient)
+            transfer_recipient = await this.get_recipient_id(transfer_recipient)
         }
 
         if(identifier == ''){

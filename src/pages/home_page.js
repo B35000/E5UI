@@ -1249,10 +1249,10 @@ class home_page extends Component {
             posts_to_load = posts_to_load.concat(searched_tags)
         }
         var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
-        contained_words_in_string.forEach(word => {
+        contained_words_in_string.forEach(async word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
-                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
                     if(!searched_accounts.includes(e5_id)){
                         searched_accounts.push(e5_id)
@@ -1265,10 +1265,10 @@ class home_page extends Component {
             }
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
-        the_other_words.forEach(word => {
+        the_other_words.forEach(async word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(trimmed_word.length > 3){
-                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
                     if(!searched_accounts.includes(e5_id)){
                         searched_accounts.push(e5_id)
@@ -1309,7 +1309,8 @@ class home_page extends Component {
         return selected_page;
     }
 
-    get_alias_account_if_any(alias){
+    async get_alias_account_if_any(alias){
+        await this.props.get_account_id_from_alias(alias, true)
         var e5s = this.props.app_state.e5s['data']
         for (let i = 0; i < e5s.length; i++) {
             var e5 = e5s[i]
@@ -1538,10 +1539,10 @@ class home_page extends Component {
             posts_to_load = posts_to_load.concat(searched_tags)
         }
         var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
-        contained_words_in_string.forEach(word => {
+        contained_words_in_string.forEach(async word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
-                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
                     if(!targeted_accounts.includes(e5_id)){
                         targeted_accounts.push(e5_id)
@@ -1554,10 +1555,10 @@ class home_page extends Component {
             }
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
-        the_other_words.forEach(word => {
+        the_other_words.forEach(async word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(trimmed_word.length > 3){
-                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
                     if(!targeted_accounts.includes(e5_id)){
                         targeted_accounts.push(e5_id)
@@ -1659,10 +1660,10 @@ class home_page extends Component {
         }
         
         var contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
-        contained_words_in_string.forEach(word => {
+        contained_words_in_string.forEach(async word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
-                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
                     if(!targeted_accounts.includes(e5_id)){
                         targeted_accounts.push(e5_id)
@@ -1675,10 +1676,10 @@ class home_page extends Component {
             }
         });
         var the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
-        the_other_words.forEach(word => {
+        the_other_words.forEach(async word => {
             var trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
             if(trimmed_word.length > 3){
-                const e5_id = this.get_alias_account_if_any(trimmed_word)
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
                 if(e5_id != null){
                     if(!targeted_accounts.includes(e5_id)){
                         targeted_accounts.push(e5_id)
@@ -3707,8 +3708,9 @@ class home_page extends Component {
         return requiredWords.some(word => lowerText.includes(word.trim().toLowerCase()));
     }
 
-    get_searched_input_account_id(name){
+    async get_searched_input_account_id(name){
         if(!isNaN(name)) return name
+        await this.props.get_account_id_from_alias(name, true)
         return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[name] == null ? name : this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[name])
     }
 
@@ -5194,7 +5196,7 @@ class home_page extends Component {
 
                 get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} when_file_link_tapped={this.props.when_file_link_tapped.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)}
 
-                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts}
+                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
                 />
             </div>
         )

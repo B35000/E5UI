@@ -2370,13 +2370,15 @@ return data['data']
 
     }
 
-    get_recipient_id(recipient){
+    async get_recipient_id(recipient){
+        await this.props.get_account_id_from_alias(recipient)
         var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
         var id = (obj[recipient] == null ? recipient : obj[recipient])
         return id
     }
 
-    get_recipient_e5(recipient){
+    async get_recipient_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
         var e5s = this.props.app_state.e5s['data']
         var recipients_e5 = this.props.app_state.selected_e5
         for (let i = 0; i < e5s.length; i++) {
@@ -2392,14 +2394,14 @@ return data['data']
     }
 
 
-    finish_creating_object(){
+    async finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
         var recipient = this.state.target_recipient.trim()
 
         if(isNaN(recipient)){
-            var recipients_e5 = this.get_recipient_e5(recipient)
-            recipient = this.get_recipient_id(recipient)
+            var recipients_e5 = await this.get_recipient_e5(recipient)
+            recipient = await this.get_recipient_id(recipient)
             console.log('recipients e5', recipients_e5)
             this.setState({target_recipient: recipient, recipients_e5: recipients_e5})
         }

@@ -600,15 +600,16 @@ class NewMintActionPage extends Component {
 
 
 
-    get_typed_alias_id(alias){
-        if(!isNaN(alias)){
-            return alias
-        }
-        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+    // async get_typed_alias_id(alias){
+    //     if(!isNaN(alias)){
+    //         return alias
+    //     }
+    //     await this.props.get_account_id_from_alias(alias)
+    //     var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+    //         alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
 
-        return id
-    }
+    //     return id
+    // }
 
     check_if_sender_has_tokens_for_sell(){
         if(!bigInt(this.state.token_item['balance']).greaterOrEquals(this.state.amount)){

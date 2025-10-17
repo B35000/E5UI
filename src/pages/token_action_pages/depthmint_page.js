@@ -178,10 +178,10 @@ class DepthMintPage extends Component {
         this.setState({amount: amount})
     }
 
-    add_transaction(){
+    async add_transaction(){
         var clone = this.state.authmint_actions.slice()
         var amount = this.state.amount
-        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
+        var recipient = await this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify(this.props.app_state.loc['893']/* 'please put a valid account id' */, 600)
@@ -197,10 +197,11 @@ class DepthMintPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
 

@@ -255,9 +255,9 @@ class ModeratorPage extends Component {
         }
     }
 
-    add_remove_moderator(){
+    async add_remove_moderator(){
         var clone = this.state.all_actions.slice()
-        var recipient = this.get_typed_alias_id(this.state.entered_moderator_text.trim())
+        var recipient = await this.get_typed_alias_id(this.state.entered_moderator_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify(this.props.app_state.loc['1287']/* 'Please put a valid account ID.' */, 4600)
@@ -271,10 +271,11 @@ class ModeratorPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.state.object_item['e5']][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.state.object_item['e5']][alias])
 
@@ -372,9 +373,9 @@ class ModeratorPage extends Component {
     }
 
 
-    add_interactable_account(){
+    async add_interactable_account(){
         var clone = this.state.all_actions.slice()
-        var recipient = this.get_typed_alias_id(this.state.entered_interactable_text.trim())
+        var recipient = await this.get_typed_alias_id(this.state.entered_interactable_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify(this.props.app_state.loc['1296']/* 'Please put a valid account ID.' */, 4600)
@@ -428,9 +429,9 @@ class ModeratorPage extends Component {
         this.setState({blocked_expiry_time: timeInSeconds})
     }
 
-    add_blocked_account(){
+    async add_blocked_account(){
         var clone = this.state.all_actions.slice()
-        var recipient = this.get_typed_alias_id(this.state.entered_blocked_text.trim())
+        var recipient = await this.get_typed_alias_id(this.state.entered_blocked_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify(this.props.app_state.loc['1291e']/* 'Please put a valid account ID.' */, 4600)

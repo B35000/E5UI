@@ -212,7 +212,7 @@ class FreezeUnfreezePage extends Component {
         }
     }
 
-     get_typed_accounts_frozen_balance(){
+    get_typed_accounts_frozen_balance(){
         var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
         if(!isNaN(recipient) && parseInt(recipient) > 1000 && recipient != ''){
             var exchange_id = this.state.token_item['id']
@@ -234,10 +234,16 @@ class FreezeUnfreezePage extends Component {
     when_recipient_input_field_changed(text){
         this.setState({recipient_id: text})
 
-        var recipient = this.get_typed_alias_id(text.trim())
-        if(!isNaN(recipient) && parseInt(recipient) > 1000 && recipient != ''){
-            this.props.get_account_frozen_unfroozen_balance(this.state.token_item['id'], recipient, this.state.token_item['e5'])
-        }
+        var me = this;
+        setTimeout(async function() {
+            if(text == this.state.recipient_id){
+                var recipient = await me.get_typed_alias_id(text.trim())
+                if(!isNaN(recipient) && parseInt(recipient) > 1000 && recipient != ''){
+                    me.props.get_account_frozen_unfroozen_balance(me.state.token_item['id'], recipient, me.state.token_item['e5'])
+                }
+            }
+        }, (900));
+        
     }
 
     when_amount_set(amount){
@@ -250,10 +256,10 @@ class FreezeUnfreezePage extends Component {
         return picked_item
     }
 
-    add_transaction(){
+    async add_transaction(){
         var clone = this.state.freeze_unfreeze_actions.slice()
         var amount = this.state.freeze_unfreeze_amount
-        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
+        var recipient = await this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify(this.props.app_state.loc['942']/* 'Please put a valid account ID' */, 3600)
@@ -326,7 +332,18 @@ class FreezeUnfreezePage extends Component {
     }
 
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
+    }
+
+    get_typed_alias_id2(alias){
         if(!isNaN(alias)){
             return alias
         }

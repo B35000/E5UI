@@ -8068,8 +8068,8 @@ class StackPage extends Component {
         var int_data = 1
 
         // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
-        // var string_data = t.alias
-        var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+        var string_data = t.alias
+        // var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -8093,8 +8093,8 @@ class StackPage extends Component {
         var int_data = 1
 
         // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
-        // var string_data = t.alias
-        var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+        var string_data = t.alias
+        // var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -8118,8 +8118,8 @@ class StackPage extends Component {
         var int_data = 1
 
         // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
-        // var string_data = t.alias
-        var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+        var string_data = t.alias
+        // var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -12213,7 +12213,7 @@ class StackPage extends Component {
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1567']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
                     </div>
-                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_cotact_to_list()} >
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_contact_to_list()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
                             <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                         </div>
@@ -12228,8 +12228,8 @@ class StackPage extends Component {
         this.setState({typed_contact_word: text})
     }
 
-    add_cotact_to_list(){
-        var typed_contact = this.get_typed_alias_id(this.state.typed_contact_word.trim())
+    async add_contact_to_list(){
+        var typed_contact = await this.get_typed_alias_id(this.state.typed_contact_word.trim())
 
         if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
             this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 800)
@@ -12400,8 +12400,8 @@ class StackPage extends Component {
         this.setState({typed_blocked_account_word: text})
     }
 
-    add_blocked_account_to_list(){
-        var typed_contact = this.get_typed_alias_id(this.state.typed_blocked_account_word.trim())
+    async add_blocked_account_to_list(){
+        var typed_contact = await this.get_typed_alias_id(this.state.typed_blocked_account_word.trim())
 
         if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
             this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
@@ -12461,14 +12461,15 @@ class StackPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
-        if(!isNaN(alias)){
-            return alias
-        }
-        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+    // async get_typed_alias_id(alias){
+    //     if(!isNaN(alias)){
+    //         return alias
+    //     }
+    //     await this.props.get_account_id_from_alias(recipient)
+    //     var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
-        return id
-    }
+    //     return id
+    // }
 
 
 
@@ -12571,10 +12572,10 @@ class StackPage extends Component {
     }
 
     render_my_account_id(){
-        var display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        const display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         
-        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-        var alias = (obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
+        const obj = this.props.app_state.alias_bucket[this.props.app_state.selected_e5]
+        const alias = (obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
@@ -12585,7 +12586,6 @@ class StackPage extends Component {
                     </div>
                 </div>
             </div>
-            
         )
     }
 
@@ -12602,7 +12602,7 @@ class StackPage extends Component {
     }
 
 
-    reserve_alias(){
+    async reserve_alias(){
         var typed_word = this.state.typed_alias_word.trim()
         
         if(typed_word == ''){
@@ -12623,7 +12623,7 @@ class StackPage extends Component {
         else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] < 1000){
             this.props.notify(this.props.app_state.loc['1588']/* 'You need to make at least 1 transaction to reserve an alias.' */, 6200)
         }
-        else if(this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[typed_word] != null){
+        else if(await this.is_alias_reserved(typed_word)){
             this.props.notify(this.props.app_state.loc['1589']/* 'That alias has already been reserved.' */, 4400)
         }
         else if(this.is_word_reserved(typed_word)){
@@ -12636,6 +12636,11 @@ class StackPage extends Component {
             this.props.add_alias_transaction_to_stack(this.state.typed_alias_word)
             this.setState({typed_alias_word: ''})
         }
+    }
+
+    async is_alias_reserved(alias){
+        await this.props.get_account_id_from_alias(alias)
+        return this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[alias] != null;
     }
 
     is_word_reserved(typed_word){
@@ -12659,7 +12664,7 @@ class StackPage extends Component {
     }
 
     onlyLettersAndNumbers(str) {
-        return /^[A-Za-z0-9]*$/.test(str);
+        return !/[^\p{L}\p{N} ]/gu.test(str);
     }
 
 
@@ -13082,9 +13087,9 @@ class StackPage extends Component {
         this.setState({typed_watch_account_input: text})
     }
 
-    watch(){
+    async watch(){
         var text = this.state.typed_watch_account_input
-        var name_id = this.get_typed_alias_id(text.trim())
+        var name_id = await this.get_typed_alias_id(text.trim())
         if(!isNaN(name_id) && parseInt(name_id) > 1000 &&  name_id != ''){
             this.props.set_watched_account_id(name_id)
             this.props.notify(this.props.app_state.loc['1593z'], 2000)
@@ -16494,9 +16499,9 @@ class StackPage extends Component {
         this.setState({follow_account_text: text})
     }
 
-    add_follow_account(){
+    async add_follow_account(){
         var account = this.state.follow_account_text
-        var account_id = this.get_typed_alias_id(account)
+        var account_id = await this.get_typed_alias_id(account)
 
         if(account == ''){
             this.props.notify(this.props.app_state.loc['1593dj']/* 'You need to specify an account first.' */, 4000)
@@ -16513,10 +16518,11 @@ class StackPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 

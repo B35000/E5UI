@@ -1910,9 +1910,9 @@ class PostListSection extends Component {
         this.setState({typed_search_id: text})
     }
 
-    perform_search(){
+    async perform_search(){
         var typed_search = this.state.typed_search_id.trim()
-        var typed_account = this.get_typed_alias_id(typed_search)
+        var typed_account = await this.get_typed_alias_id(typed_search)
 
         if(typed_account == ''){
             this.props.notify(this.props.app_state.loc['1337']/* 'Type something.' */, 3800)
@@ -1931,10 +1931,11 @@ class PostListSection extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
         return id

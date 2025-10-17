@@ -163,8 +163,8 @@ class ForceExitPage extends Component {
         this.setState({force_exit_target: text})
     }
 
-    add_force_exit_item(){
-        var account = this.get_typed_alias_id(this.state.force_exit_target)
+    async add_force_exit_item(){
+        var account = await this.get_typed_alias_id(this.state.force_exit_target)
 
         if(!this.state.contract_item['participants'].includes(account)){
             this.props.notify(this.props.app_state.loc['57'], 4600)
@@ -179,10 +179,11 @@ class ForceExitPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.state.contract_item['e5']][alias] == null ? alias : this.props.app_state.alias_owners[this.state.contract_item['e5']][alias])
 
         return id
@@ -276,7 +277,7 @@ class ForceExitPage extends Component {
         var accounts = this.state.contract_item['participants']
         var obj = []
         for(var i=0; i<accounts.length; i++){
-            obj.push({'id':''+accounts[i], 'label':{'title':'Account: '+this.get_typed_alias_id(accounts[i]), 'details':this.props.app_state.loc['62'], 'size':'s'}})
+            obj.push({'id':''+accounts[i], 'label':{'title':(accounts[i]), 'details':this.props.app_state.loc['62'], 'size':'s'}})
         }
         return obj
         

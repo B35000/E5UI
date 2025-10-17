@@ -1091,8 +1091,8 @@ class NewSubscriptionPage extends Component {
         this.setState({moderator_id: text})
     }
 
-    when_add_moderator_button_tapped(){
-        var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
+    async when_add_moderator_button_tapped(){
+        var moderator_id = await this.get_typed_alias_id(this.state.moderator_id.trim())
         var moderators_clone = this.state.moderators.slice()
         if(isNaN(moderator_id)  || parseInt(moderator_id) < 0 || moderator_id == ''){
             this.props.notify(this.props.app_state.loc['729']/* 'please put a valid account id' */, 600)
@@ -1107,10 +1107,11 @@ class NewSubscriptionPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
@@ -1218,8 +1219,8 @@ class NewSubscriptionPage extends Component {
         this.setState({interactible_timestamp: timeInSeconds})
     }
 
-    when_add_interactible_button_tapped(){
-        var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
+    async when_add_interactible_button_tapped(){
+        var interactible_id = await this.get_typed_alias_id(this.state.interactible_id.trim())
         var interactibles_clone = this.state.interactibles.slice()
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
             this.props.notify(this.props.app_state.loc['583']/* 'please put a valid account id' */, 2600)

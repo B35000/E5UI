@@ -2077,8 +2077,8 @@ class SubscriptionDetailsSection extends Component {
     }
 
 
-    perform_search(object){
-        var typed_account = this.get_typed_alias_id(this.state.typed_search_id.trim())
+    async perform_search(object){
+        var typed_account = await this.get_typed_alias_id(this.state.typed_search_id.trim())
 
         if(typed_account == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'Type something.' */, 3800)
@@ -2096,10 +2096,11 @@ class SubscriptionDetailsSection extends Component {
         
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
         return id

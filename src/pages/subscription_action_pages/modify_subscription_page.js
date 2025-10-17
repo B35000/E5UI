@@ -338,7 +338,7 @@ class ModifySubscriptionPage extends Component {
         return obj[property]
     }
 
-    add_reconfiguration_item(){
+    async add_reconfiguration_item(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
         var properties = this.get_target_configuration(selected_item)
@@ -353,7 +353,7 @@ class ModifySubscriptionPage extends Component {
             this.props.notify(this.props.app_state.loc['850']/* 'reconfig action added!' */, 1600)
         }
         else if(ui == 'id'){
-            var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
+            var number = await this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
                 this.props.notify(this.props.app_state.loc['851']/* 'Please put a valid account ID.' */, 3600)
             }
@@ -365,10 +365,11 @@ class ModifySubscriptionPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.state.subscription_item['e5']][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.state.subscription_item['e5']][alias])
 

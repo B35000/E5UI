@@ -3384,7 +3384,7 @@ return data['data']
     }
 
 
-    add_reconfiguration_item(){
+    async add_reconfiguration_item(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
         var properties = this.get_target_configuration(selected_item)
@@ -3417,7 +3417,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['397']/* 'reconfig action added!' */, 1600)
         }
         else if(ui == 'id'){
-            var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
+            var number = await this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
                 this.props.notify(this.props.app_state.loc['398']/* 'please put a valid account id' */, 3600)
             }
@@ -3854,10 +3854,11 @@ return data['data']
         this.setState({token_target: text})
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
@@ -3865,10 +3866,10 @@ return data['data']
     }
 
 
-    add_exchange_transfer_item(){
+    async add_exchange_transfer_item(){
         var target_exchange = this.get_token_id_from_symbol(this.state.exchange_transfer_target.trim())
         var target_amount = this.state.exchange_transfer_amount
-        var target_receiver = this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
+        var target_receiver = await this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
         var targeted_token = this.get_token_id_from_symbol(this.state.token_target.trim())
 
         if(isNaN(target_exchange)  || parseInt(target_exchange) < 0 || target_exchange == '' || !this.does_exchange_exist(target_exchange)){

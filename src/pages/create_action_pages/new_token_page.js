@@ -3384,8 +3384,8 @@ return data['data']
         this.setState({moderator_id: text})
     }
 
-    when_add_moderator_button_tapped(){
-        var moderator_id = this.get_typed_alias_id(this.state.moderator_id.toString().trim())
+    async when_add_moderator_button_tapped(){
+        var moderator_id = await this.get_typed_alias_id(this.state.moderator_id.toString().trim())
         var moderators_clone = this.state.moderators.slice()
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0 || moderator_id == ''){
             this.props.notify(this.props.app_state.loc['729']/* 'please put a valid account id' */, 600)
@@ -3400,10 +3400,11 @@ return data['data']
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
@@ -3500,8 +3501,8 @@ return data['data']
         this.setState({interactible_timestamp: timeInSeconds})
     }
 
-    when_add_interactible_button_tapped(){
-        var interactible_id = this.get_typed_alias_id(this.state.interactible_id.toString().trim())
+    async when_add_interactible_button_tapped(){
+        var interactible_id = await this.get_typed_alias_id(this.state.interactible_id.toString().trim())
         var interactibles_clone = this.state.interactibles.slice()
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
             this.props.notify(this.props.app_state.loc['735']/* 'please put a valid account id' */, 600)
@@ -3530,15 +3531,15 @@ return data['data']
         return has_been_added
     }
 
-    get_typed_alias_id(alias){
-        if(!isNaN(alias)){
-            return alias
-        }
-        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+    // get_typed_alias_id(alias){
+    //     if(!isNaN(alias)){
+    //         return alias
+    //     }
+    //     var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+    //         alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
-        return id
-    }
+    //     return id
+    // }
 
     render_set_interactible_accounts(){
         var middle = this.props.height-500;

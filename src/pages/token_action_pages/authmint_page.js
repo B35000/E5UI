@@ -178,10 +178,10 @@ class AuthMintPage extends Component {
     }
 
 
-    add_transaction(){
+    async add_transaction(){
         var clone = this.state.authmint_actions.slice()
         var amount = this.state.amount
-        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
+        var recipient = await this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify(this.props.app_state.loc['893']/* 'Please put a valid account ID.' */, 600)
@@ -197,10 +197,11 @@ class AuthMintPage extends Component {
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
 

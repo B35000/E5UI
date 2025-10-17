@@ -2251,8 +2251,8 @@ return data['data']
         this.setState({participant_id: text})
     }
 
-    when_add_participant_tapped(){
-        var participant_data = this.get_alias_id(this.state.participant_id.trim())
+    async when_add_participant_tapped(){
+        var participant_data = await this.get_alias_id(this.state.participant_id.trim())
         var participants_clone = this.state.participants.slice()
         const includes = participants_clone.find(e => (e['id'] === participant_data['id'] && e['e5'] === participant_data['e5']))
         if(isNaN(participant_data.id) || parseInt(participant_data.id) < 0){
@@ -2271,12 +2271,12 @@ return data['data']
         }
     }
 
-    get_alias_id(alias){
+    async get_alias_id(alias){
         if(!isNaN(alias)){
             var e5 = this.props.app_state.selected_e5
             return {id: alias, e5: e5}
         }
-        
+        await this.props.get_account_id_from_alias(alias)
         for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
             const focused_e5 = this.props.app_state.e5s['data'][i]
             var id = this.props.app_state.alias_owners[focused_e5][alias]
@@ -2423,8 +2423,8 @@ return data['data']
         this.setState({blocked_participant_id: text})
     }
 
-    when_add_blocked_account_tapped(){
-        var participant_data = this.get_alias_id(this.state.participant_id.trim())
+    async when_add_blocked_account_tapped(){
+        var participant_data = await this.get_alias_id(this.state.participant_id.trim())
         var participants_clone = this.state.blocked_participants.slice()
         const includes = participants_clone.find(e => (e['id'] === participant_data['id'] && e['e5'] === participant_data['e5']))
 
@@ -2576,14 +2576,14 @@ return data['data']
         this.setState({creator_id: text})
     }
 
-    when_add_creator_button_tapped(){
+    async when_add_creator_button_tapped(){
         var typed_text = this.state.creator_id.trim()
         if(typed_text.includes(',')){
             this.add_multiple_participants(typed_text)
             return;
         }
-        var participant_id = this.get_typed_alias_id(typed_text)
-        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
+        var participant_id = await this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? await this.get_alias_e5(typed_text) : this.state.e5
         var final_value = participant_e5+':'+participant_id
         var participants_clone = this.state.creators.slice()
         if(typed_text == ''){
@@ -2641,7 +2641,8 @@ return data['data']
         }
     }
 
-    get_alias_e5(recipient){
+    async get_alias_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
         var e5s = this.props.app_state.e5s['data']
         var recipients_e5 = this.props.app_state.selected_e5
         for (let i = 0; i < e5s.length; i++) {
@@ -3507,8 +3508,8 @@ return data['data']
         this.setState({moderator_id: text})
     }
 
-    when_add_moderator_button_tapped(){
-        var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
+    async when_add_moderator_button_tapped(){
+        var moderator_id = await this.get_typed_alias_id(this.state.moderator_id.trim())
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
             this.props.notify(this.props.app_state.loc['98'], 1600)
         }
@@ -3657,8 +3658,8 @@ return data['data']
         this.setState({interactible_timestamp: timeInSeconds})
     }
 
-    when_add_interactible_button_tapped(){
-        var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
+    async when_add_interactible_button_tapped(){
+        var interactible_id = await this.get_typed_alias_id(this.state.interactible_id.trim())
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0){
             this.props.notify(this.props.app_state.loc['98'], 1600)
         }
@@ -3670,10 +3671,11 @@ return data['data']
         }
     }
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 

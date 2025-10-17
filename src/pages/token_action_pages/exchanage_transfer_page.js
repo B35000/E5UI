@@ -191,10 +191,11 @@ class ExchangeTransferPage extends Component {
     }
 
 
-    get_typed_alias_id(alias){
+    async get_typed_alias_id(alias){
         if(!isNaN(alias)){
             return alias
         }
+        await this.props.get_account_id_from_alias(alias)
         var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
             alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
 
@@ -202,10 +203,10 @@ class ExchangeTransferPage extends Component {
     }
 
 
-    add_exchange_transfer_item(){
+    async add_exchange_transfer_item(){
         var target_exchange = this.get_token_id_from_symbol(this.state.token_item['id'])
         var target_amount = this.state.exchange_transfer_amount
-        var target_receiver = this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
+        var target_receiver = await this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
         var targeted_token = this.state.token_target.trim()
 
         if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver == ''){
