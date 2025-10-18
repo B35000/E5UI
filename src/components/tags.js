@@ -149,13 +149,13 @@ class tags extends Component {
         const final_text = this.final_text(txt,index)
         if(tag_size == 's'){
             return ( 
-                <div onClick={() => this.when_tag_button_clicked(index, final_text)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
+                <div onClick={() => this.when_tag_button_clicked(index, final_text)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}}>
                     <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
                 </div>
             );
         }else{
             return (
-                <div onClick={() => this.when_tag_button_clicked(index, final_text)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
+                <div onClick={() => this.when_tag_button_clicked(index, final_text)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}}>
                     <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
                 </div>
             );

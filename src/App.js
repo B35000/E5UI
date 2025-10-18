@@ -3213,9 +3213,11 @@ class App extends Component {
     this.has_censored_keywords_by_me_loaded = {}
     this.has_promoted_posts_by_me_loaded = {}
     this.alias_data = {}
+    this.alias_worker_queue = []
 
     this.gateway_traffic_cache_pointers = {}
     this.gateway_traffic_cache_pointers_index = 0
+    this.is_resolving_alias_data = false;
   }
 
   componentDidMount() {
@@ -15851,7 +15853,7 @@ class App extends Component {
 
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
-        return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)}
+        return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)}
         />
       </div>
     )
@@ -15922,7 +15924,8 @@ class App extends Component {
       'vote_wait_bottomsheet':700,
       'hide_audiopost_confirmation':550,
       'hide_videopost_confirmation':550,
-      'pick_from_my_locations':250
+      'pick_from_my_locations':250,
+      'transfer_alias_ui':350,
     };
     var size = obj[id]
     if(id == 'song_options'){
@@ -16905,6 +16908,24 @@ class App extends Component {
     this.send_job_request_page.current?.set_pins(pins)
   }
 
+  transfer_alias_transaction_to_stack(id, recipient){
+    var stack_clone = this.state.stack_items.slice()
+    var existing_alias_transaction = false
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].type == this.getLocale()['3055gf']/* 'transfer-alias' */){
+        this.prompt_top_notification(this.getLocale()['2711']/* 'You cant do that more than once.' */, 4000)
+        existing_alias_transaction = true
+        break;
+      }
+    }
+    if(!existing_alias_transaction){
+      this.open_dialog_bottomsheet()
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:this.getLocale()['3055gf']/* 'transfer-alias' */, entered_indexing_tags:[this.getLocale()['3055gf']/* 'transfer-alias' */, this.getLocale()['2712']/* 'reserve' */, this.getLocale()['2708']/* 'identification' */], alias: id['alias'], recipient: recipient})
+      this.prompt_top_notification(this.getLocale()['3055gg']/* 'Transaction added to stack.' */, 1000)
+      this.setState({stack_items: stack_clone})
+      this.set_cookies_after_stack_action(stack_clone)
+    }
+  }
 
 
 
@@ -25329,24 +25350,31 @@ class App extends Component {
     }
   }
 
-  wait_for_alias_objects_to_resolve = async () => {
+  wait_for_alias_objects_to_resolve = async (work_identifier) => {
     while (this.is_resolving_alias_data == true) {
-      if (this.is_resolving_alias_data == false) break
-      console.log('stackdata','Waiting for file to be loaded')
-      await new Promise(resolve => setTimeout(resolve, 100))
+      if(!this.alias_worker_queue.includes(work_identifier)){
+        this.alias_worker_queue.push(work_identifier)
+      }
+      if (this.is_resolving_alias_data == false && this.alias_worker_queue[0] == work_identifier) break
+      await new Promise(resolve => setTimeout(resolve, 300))
+    }
+    const index = this.alias_worker_queue.indexOf(work_identifier)
+    if(index != -1){
+      this.alias_worker_queue.splice(index, 1)
     }
   }
 
   get_alias_data = async (E52contractInstance, e5, account, web3, pre_loaded_events) => {
-    console.log('apppage', 'begun get_alias_data work...', pre_loaded_events)
     var alias_events = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11})
 
-    await this.wait_for_alias_objects_to_resolve();
-    this.is_resolving_alias_data = true;
+    const set_id = makeid(9)
     if(alias_events.length == 0){
-      this.is_resolving_alias_data = false
       return;
     }
+
+    await this.wait_for_alias_objects_to_resolve(set_id);
+    console.log('apppage','apppage_alias', 'begun get_alias_data work...', pre_loaded_events)
+    this.is_resolving_alias_data = true;
 
     if(this.alias_data == null){
       this.alias_data = {}
@@ -25358,7 +25386,7 @@ class App extends Component {
     var alias_timestamp = this.state.alias_timestamp[e5] == null ? {} : structuredClone(this.state.alias_timestamp[e5])
     var is_first_time = this.state.my_alias_events[e5] == null
     for(var i=0; i<alias_events.length; i++){
-      var alias_string = alias_events[i].returnValues.p4
+      var alias_string = alias_events[i].returnValues.p4.slice(0, 23)
       // if(alias_events[i].returnValues.p5/* int_data */ == 1){
       //   alias_string = this.decrypt_string_using_crypto_js(alias_string, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
       // }else{
@@ -25369,13 +25397,20 @@ class App extends Component {
       
       var alias_sender = parseInt(alias_events[i].returnValues.p2)/* owner */
       var alias_time = parseInt(alias_events[i].returnValues.p6)/* timestamp */
+      var alias_target = parseInt(alias_events[i].returnValues.p5)/* int_data */
+
+      if(alias_target > 1000){
+        alias_sender = alias_target
+      }
 
       if(alias_owners[alias_string] == null){
-        alias_owners[alias_string] = alias_sender
-        alias_bucket[alias_sender] = alias_string
-        alias_timestamp[alias_string] = alias_time
+        if(alias_target < 1000){
+          alias_owners[alias_string] = alias_sender
+          alias_bucket[alias_sender] = alias_string
+          alias_timestamp[alias_string] = alias_time
+        }
 
-        if(alias_sender == account){
+        if(alias_sender.toString() == account.toString()){
           //my alias
           my_alias_events.push({'alias':alias_string, 'event':alias_events[i]})
         }
@@ -25385,6 +25420,8 @@ class App extends Component {
             //someone already initialized this alias in another e5 earler
             delete alias_owners[alias_string]
             delete alias_bucket[alias_sender]
+
+            console.log('apppage', 'deleting alias', alias_string)
 
             const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
             if(pos != -1){
@@ -25406,18 +25443,20 @@ class App extends Component {
               my_alias_events_clone[invalid_data['e5']].splice(pos, 1)
             }
 
+            console.log('apppage','apppage_alias', 'deleting alias in other e5', alias_string)
+
             var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
             delete alias_timestamp_clone[invalid_data['e5']][invalid_data['name']]
 
             this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
-            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id}
           }
         }else{
-          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id}
         }
       }
-      else if(alias_owners[alias_string] == alias_sender){
+      else if(alias_owners[alias_string] == alias_sender && this.alias_data[alias_string]['set_id'] == set_id){
         //ownership was revoked
         delete alias_owners[alias_string]
         delete alias_bucket[alias_sender]
@@ -25427,6 +25466,16 @@ class App extends Component {
           my_alias_events.splice(pos, 1)
         }
         delete this.alias_data[alias_string]
+
+        console.log('apppage','apppage_alias', 'revoking alias', alias_string)
+      }else{
+        if(alias_sender.toString() == account.toString()){
+          //my alias
+          const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
+          if(pos == -1){
+            my_alias_events.push({'alias':alias_string, 'event':alias_events[i]})
+          }
+        }
       }
       
       // if(is_first_time || true){
@@ -25460,22 +25509,27 @@ class App extends Component {
 
     this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
-    console.log('apppage', 'set alias bucket and owners:', alias_bucket, alias_owners)
+    console.log('apppage','apppage_alias', 'alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners, my_alias_events_clone)
     await this.wait(300)
     this.is_resolving_alias_data = false
   }
 
   get_alias_data_for_accounts = async (E52contractInstance, e5, specified_accounts, web3) => {
-    console.log('apppage', 'begun get_alias_data_for_accounts work...', specified_accounts)
+    console.log('apppage','alias_data', 'begun get_alias_data_for_accounts work...', specified_accounts)
     const accounts = this.filter_existing_alias_accounts(e5, specified_accounts)
-    console.log('apppage', 'filtered accounts...', accounts)
     if(accounts.length == 0){
-      console.log('apppage', 'accounts empty, ending process', accounts)
+      console.log('apppage','alias_data', 'accounts empty, ending process', accounts)
       return;
+    }else{
+      console.log('apppage', 'alias_data','accounts not empty empty, proceeding...')
     }
-    var alias_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11, p2/* sender_acc_id */: accounts})
+    var alias_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11, p2/* sender_acc_id */: this.process_array_for_indexer_query(accounts)})
 
-    await this.wait_for_alias_objects_to_resolve();
+    console.log('apppage','alias_data', 'received alias events for accounts:', alias_events)
+
+    const set_id = makeid(9)
+    await this.wait_for_alias_objects_to_resolve(set_id);
+    console.log('apppage','alias_data', 'proceeding with resolving process')
     this.is_resolving_alias_data = true
 
     if(this.alias_data == null){
@@ -25490,7 +25544,7 @@ class App extends Component {
       this.searched_accounts.push(account+e5)
     });
 
-    console.log('apppage', 'received alias events', alias_events)
+    console.log('apppage','alias_data', 'received alias events', alias_events)
 
     var my_alias_events = this.state.my_alias_events[e5] == null ? [] : this.state.my_alias_events[e5].slice()
     var alias_bucket = this.state.alias_bucket[e5] == null ? {} : structuredClone(this.state.alias_bucket[e5])
@@ -25498,7 +25552,7 @@ class App extends Component {
     var alias_timestamp = this.state.alias_timestamp[e5] == null ? {} : structuredClone(this.state.alias_timestamp[e5])
     var is_first_time = this.state.my_alias_events[e5] == null
     for(var i=0; i<alias_events.length; i++){
-      var alias_string = alias_events[i].returnValues.p4
+      var alias_string = alias_events[i].returnValues.p4.slice(0, 23)
       // if(alias_events[i].returnValues.p5/* int_data */ == 1){
       //   alias_string = this.decrypt_string_using_crypto_js(alias_string, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
       // }else{
@@ -25509,11 +25563,18 @@ class App extends Component {
       
       var alias_sender = parseInt(alias_events[i].returnValues.p2)/* owner */
       var alias_time = parseInt(alias_events[i].returnValues.p6)/* timestamp */
+      var alias_target = parseInt(alias_events[i].returnValues.p5)/* int_data */
+
+      if(alias_target > 1000){
+        alias_sender = alias_target
+      }
 
       if(alias_owners[alias_string] == null){
-        alias_owners[alias_string] = alias_sender
-        alias_bucket[alias_sender] = alias_string 
-        alias_timestamp[alias_string] = alias_time
+        if(alias_target < 1000){
+          alias_owners[alias_string] = alias_sender
+          alias_bucket[alias_sender] = alias_string
+          alias_timestamp[alias_string] = alias_time
+        }
 
         // if(alias_sender == account){
         //   //my alias
@@ -25551,13 +25612,13 @@ class App extends Component {
 
             this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
-            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id}
           }
         }else{
-          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id}
         }
       }
-      else if(alias_owners[alias_string] == alias_sender){
+      else if(alias_owners[alias_string] == alias_sender && this.alias_data[alias_string]['set_id'] == set_id){
         //ownership was revoked
         delete alias_owners[alias_string]
         delete alias_bucket[alias_sender]
@@ -25584,16 +25645,22 @@ class App extends Component {
 
     this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
-    console.log('apppage', 'set alias bucket and owners:', alias_bucket, alias_owners)
+    console.log('apppage','alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners)
     await this.wait(300)
     this.is_resolving_alias_data = false;
+  }
+
+  process_array_for_indexer_query(arr){
+    return '$$:'+arr.join("|");
   }
 
   filter_existing_alias_accounts(e5, accounts){
     const unsearched_accounts = []
     accounts.forEach(account => {
       if(this.searched_accounts == null || !this.searched_accounts.includes(account+e5)){
-        unsearched_accounts.push(account)
+        if(this.state.alias_bucket[e5] == null || this.state.alias_bucket[e5][account.toString()] == null){
+          unsearched_accounts.push(account)
+        }
       }
     });
     return unsearched_accounts
@@ -41897,10 +41964,18 @@ class App extends Component {
       return;
     }
 
+    if(this.searches == null){
+      this.searches = []
+    }
+
     if(this.searches.includes(alias)){
       return;
     }else{
       this.searches.push(alias)
+    }
+
+    if(silently != true){
+      this.prompt_top_notification(this.getLocale()['2738ar']/* 'Searching Alias...' */, 800);
     }
 
     const alias_events_from_alias_string = await this.get_account_id_from_alias_events(alias)
@@ -41909,15 +41984,8 @@ class App extends Component {
       this.alias_data = {}
     }
 
-    if(this.searches == null){
-      this.searches = []
-    }
-
-    if(silently != true){
-      this.prompt_top_notification(this.getLocale()['2738ar']/* 'Searching Alias...' */, 800);
-    }
-
-    await this.wait_for_alias_objects_to_resolve();
+    const set_id = makeid(9)
+    await this.wait_for_alias_objects_to_resolve(set_id);
     this.is_resolving_alias_data = true
 
     console.log('appage', 'get_account_id_from_alias', 'alias_events_from_alias_string', alias_events_from_alias_string)
@@ -41926,9 +41994,10 @@ class App extends Component {
     const alias_owners = structuredClone(this.state.alias_owners)
     const alias_timestamp = structuredClone(this.state.alias_timestamp)
     for(var i=0; i<alias_events_from_alias_string.length; i++){
-      const alias_string = alias_events_from_alias_string[i].returnValues.p4
+      const alias_string = alias_events_from_alias_string[i].returnValues.p4.slice(0, 23)
       const e5 = alias_events_from_alias_string[i]['e5']
-      const alias_sender = parseInt(alias_events_from_alias_string[i].returnValues.p2)/* owner */
+      const alias_target = parseInt(alias_events_from_alias_string[i].returnValues.p5)/* int_data */
+      const alias_sender = alias_target > 1000 ? alias_target: parseInt(alias_events_from_alias_string[i].returnValues.p2)/* owner */
       const alias_time = parseInt(alias_events_from_alias_string[i].returnValues.p6)/* timestamp */
       const account = this.state.user_account_id[e5]
 
@@ -41946,9 +42015,12 @@ class App extends Component {
       }
 
       if(alias_owners[e5][alias_string] == null){
-        alias_owners[e5][alias_string] = alias_sender
-        alias_bucket[e5][alias_sender] = alias_string 
-        alias_timestamp[e5][alias_string] = alias_time
+        if(alias_target < 1000){
+          alias_owners[e5][alias_string] = alias_sender
+          alias_bucket[e5][alias_sender] = alias_string 
+          alias_timestamp[e5][alias_string] = alias_time
+        }
+        
 
         if(alias_sender == account){
           //my alias
@@ -41986,13 +42058,13 @@ class App extends Component {
 
             this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
-            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+            this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id }
           }
         }else{
-          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5}
+          this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id }
         }
       }
-      else if(alias_owners[e5][alias_string] == alias_sender){
+      else if(alias_owners[e5][alias_string] == alias_sender && this.alias_data[alias_string]['set_id'] == set_id){
         //ownership was revoked
         delete alias_owners[e5][alias_string]
         delete alias_bucket[e5][alias_sender]

@@ -422,6 +422,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'transfer_alias_ui'){
+            return(
+                <div>
+                    {this.render_transfer_alias_ui()}
+                </div>
+            )
+        }
     }
 
 
@@ -8051,6 +8058,87 @@ return data['data']
         }
         this.setState({selected_pins: clone})
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_transfer_alias_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_transfer_alias_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_transfer_alias_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_transfer_alias_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_transfer_alias_data(){
+        const item = this.state.data['item']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055gb']/* 'Transfer Alias.' */, 'details':this.props.app_state.loc['3055gc']/* 'Change ownership of your alias by transferring it to another account.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':''+item['alias'], 'details':this.props.app_state.loc['1593']/* 'Reserved ' */+this.get_time_difference(item['event'].returnValues.p6)+' ago', 'size':'s'})}
+                <div style={{height: 5}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055gi']/* 'The recipient would be required to re-alias this name to activate it.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('0')}
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055gd']/* 'Recipient Account ID...' */} when_text_input_field_changed={this.when_typed_recipient_account_id_changed.bind(this)} text={this.state.typed_recipient_account_id} theme={this.props.theme}/>
+
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.props.transfer_alias_transaction_to_stack(item, this.state.typed_recipient_account_id)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ge']/* Transfer Alias */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_typed_recipient_account_id_changed(text){
+        if(isNaN(text) || text.includes('.')){
+            return;
+        }
+        this.setState({typed_recipient_account_id: text})
+    }
+
+
+
 
 
 

@@ -242,7 +242,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['2117p']/* 'creator-payout' */ &&
             item.type != this.props.app_state.loc['3055df']/* 'nitro-renewal' */ &&
             item.type != this.props.app_state.loc['3077']/* 'fulfil-bids' */ &&
-            item.type != this.props.app_state.loc['3055fg']/* 'vote_all' */
+            item.type != this.props.app_state.loc['3055fg']/* 'vote_all' */ &&
+            item.type != this.props.app_state.loc['3055gf']/* 'transfer-alias' */
         ){
             return(
                 <div>
@@ -916,6 +917,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_vote_all_proposals_info()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['3055gf']/* 'transfer-alias' */){
+                return(
+                    <div>
+                        {this.render_transfer_alias_data()}
                     </div>
                 )
             }
@@ -5901,6 +5909,23 @@ return data['data']
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':transaction_item.alias, 'details':this.props.app_state.loc['1969']/* 'Reset Alias.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+            </div>
+        )
+    }
+
+    render_transfer_alias_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':transaction_item.alias, 'details':this.props.app_state.loc['3055ge']/* 'Tansfer Alias.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':transaction_item.recipient, 'details':this.props.app_state.loc['3055gh']/* 'Transfer Recipient Account' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 
             </div>

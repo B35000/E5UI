@@ -4375,6 +4375,17 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(vote_obj)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3055gf']/* 'transfer-alias' */){
+                    var alias_obj = await this.format_transfer_alias_object(txs[i], calculate_gas)
+                    
+                    strs.push(alias_obj.str)
+                    adds.push([])
+                    ints.push(alias_obj.int2)
+
+                    strs.push(alias_obj.str)
+                    adds.push([])
+                    ints.push(alias_obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -8127,6 +8138,41 @@ class StackPage extends Component {
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
+    }
+
+    format_transfer_alias_object = async (t, calculate_gas) =>{
+        var obj2 = [ /* add data */
+            [20000, 13, 0],
+            [11], [23],/* 11(alias_obj_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [11], [23],/* 11(alias_obj_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        var int_data = t.recipient
+
+        // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
+        var string_data = t.alias
+        // var string_data = this.props.encrypt_string_using_crypto_js(t.alias, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+
+        obj2[3].push(context)
+        obj[3].push(context)
+
+        obj2[4].push(1)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj, int2: obj2}
     }
 
     format_edit_object = async (t, calculate_gas, ipfs_index) => {
@@ -12538,11 +12584,10 @@ class StackPage extends Component {
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.typed_alias_word.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_my_account_id()}
+                {this.load_preferred_e5_ui()}
                 <div style={{height:10}}/>
-
+                {this.render_my_account_id()}
                 {this.render_picked_alias_if_any()}
-                
                 <div style={{height:10}}/>
             </div>
         )
@@ -12561,6 +12606,7 @@ class StackPage extends Component {
         if(picked_alias != ''){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':picked_alias, 'details':this.props.app_state.loc['1583']/* 'Stacked Alias' */, 'size':'l'})}
                 </div>
             )
@@ -12580,13 +12626,21 @@ class StackPage extends Component {
             <div>
                 {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':this.props.app_state.font})}
-                    <div style={{'padding':'0px 0px 0px 5px'}}>
+                    <div onClick={() => this.copy_id_to_clipboard2(display)}>
+                        {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':this.props.app_state.font})}
+                    </div>
+                    <div onClick={() => this.copy_id_to_clipboard2(alias)} style={{'padding':'0px 0px 0px 5px'}}>
                         {this.render_detail_item('10', {'text':alias, 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard2(text){
+        if(text == '0000') return;
+        navigator.clipboard.writeText(text)
+        this.props.notify(this.props.app_state.loc['1593jz']/* 'Copied to clipboard.' */, 1200)
     }
 
     get_all_sorted_objects_mappings(object){
@@ -12623,6 +12677,9 @@ class StackPage extends Component {
         else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] < 1000){
             this.props.notify(this.props.app_state.loc['1588']/* 'You need to make at least 1 transaction to reserve an alias.' */, 6200)
         }
+        else if(!isNaN(typed_word)){
+            this.props.notify(this.props.app_state.loc['1593ka']/* 'Your alias cant just be a number.' */, 4400)
+        }
         else if(await this.is_alias_reserved(typed_word)){
             this.props.notify(this.props.app_state.loc['1589']/* 'That alias has already been reserved.' */, 4400)
         }
@@ -12644,7 +12701,7 @@ class StackPage extends Component {
     }
 
     is_word_reserved(typed_word){
-        var obj = [this.props.app_state.loc['1591']/* 'Unknown' */, this.props.app_state.loc['1592']/* 'Alias Unknown' */, this.props.app_state.loc['1694']/* 'You' */, this.props.app_state.loc['311m']/* 'Hidden' */]
+        var obj = [this.props.app_state.loc['1591']/* 'Unknown' */, this.props.app_state.loc['1592']/* 'Alias Unknown' */, this.props.app_state.loc['1694']/* 'You' */, this.props.app_state.loc['311m']/* 'Hidden' */, '0000']
         if(obj.includes(typed_word)){
             return true
         }
@@ -12703,7 +12760,7 @@ class StackPage extends Component {
                                     action: () =>this.unreserve_alias(item)
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
-                                        <li style={{'padding': '2px'}} onClick={()=> console.log()}>
+                                        <li style={{'padding': '2px'}} onClick={()=> this.transfer_alias(item)}>
                                             {this.render_detail_item('3', {'title':''+item['alias'], 'details':this.props.app_state.loc['1593']/* 'Reserved ' */+this.get_time_difference(item['event'].returnValues.p6)+' ago', 'size':'s'})}
                                         </li>
                                     </div>
@@ -12724,6 +12781,10 @@ class StackPage extends Component {
 
     reset_alias(item){
         this.props.reset_alias_transaction_to_stack(item)
+    }
+
+    transfer_alias(item){
+        this.props.show_dialog_bottomsheet({'item':item}, 'transfer_alias_ui')
     }
 
 
