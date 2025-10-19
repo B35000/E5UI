@@ -6653,6 +6653,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_create_edit_moderator_note_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_create_edit_moderator_note_data2()}
@@ -6666,6 +6668,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_create_edit_moderator_note_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_create_edit_moderator_note_data2()}
@@ -6742,6 +6746,8 @@ return data['data']
                 </div>
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055gj']/* Add Moderator Note.' */, 'details':this.props.app_state.loc['3055gk']/* 'Add the note to your moderator notes.' */, 'size':'l'})}
+                <div style={{height:10}}/>
                 <div onClick={() => this.add_moderator_note()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593ih']/* 'Add Note' */, 'action':''})}
                 </div>
@@ -7100,10 +7106,16 @@ return data['data']
                 'entered_video_object_dimensions':entered_video_object_dimensions,
                 'ecid_encryption_passwords':ecid_encryption_passwords,
             }
+            this.props.notify(this.props.app_state.loc['1593in']/* 'The note will be shown after your next run.' */, 5000)
             this.props.add_moderator_note(note_obj)
-            this.props.notify(this.props.app_state.loc['1593in']/* 'The note will be shown after your next run.' */, 2000)
             this.setState({moderator_note_message: '', staged_keywords_for_new_note:[], moderator_note_id:'', get_keyword_target_type_object:this.get_keyword_target_type_object(), keyword_text:'', entered_file_objects: [], entered_video_object_dimensions: {}, ecid_encryption_passwords:{},})
         }
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
     }
 
 

@@ -2421,6 +2421,9 @@ return data['data']
         else if(isNaN(recipient) || parseInt(recipient) < 1000 || recipient == '' || recipient.includes('.')){
             this.props.notify(this.props.app_state.loc['296'], 2700)
         }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
         else{ 
             // var images_to_add = this.state.entered_image_objects
             // var id = Math.round(new Date().getTime()/1000);

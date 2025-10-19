@@ -4753,6 +4753,9 @@ return data['data']
         else if(shipping_price_data.length == 0 && bags_enabled == 2){
             this.props.notify(this.props.app_state.loc['535bj']/* 'You need to set direct shipping details or enable bags.' */, 6700)
         }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
         else{
             
             var data = this.state;

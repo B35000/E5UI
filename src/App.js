@@ -699,6 +699,7 @@ import '@react-pdf-viewer/zoom/lib/styles/index.css';
 
 import io from 'socket.io-client';
 import { createHash } from 'crypto';
+import * as naughtyWords from 'naughty-words';
 // import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -928,7 +929,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -1010,6 +1011,8 @@ class App extends Component {
     hidden_audioposts:{}, hidden_videoposts:{}, update_hidden_values_in_e5:false, file_upload_status:'',/* uploading, preparing  */ opened_bottomsheets:[], update_pinns_on_chain:false, all_my_pinns:{},
 
     sliced_object_load_count:4, sliced_object_load_increment_count:3, can_change_theme:true, thread_pool_size: this.get_thread_pool_size(), update_search_object_load_count:4, background_alpha:0.5, default_location_pins:[], should_update_default_location_pins_in_e5:false, my_acquired_videos:[],
+
+    censored_keywords:[], media_activation_tx_limit:0, media_activation_age_limit:0
   };
 
   get_thread_pool_size(){
@@ -3619,7 +3622,8 @@ class App extends Component {
 
       language:this.get_language(),
       default_location_pins: this.state.default_location_pins,
-      should_update_default_location_pins_in_e5: this.state.should_update_default_location_pins_in_e5
+      should_update_default_location_pins_in_e5: this.state.should_update_default_location_pins_in_e5,
+      page_background_setting: this.state.page_background_setting,
     }
   }
 
@@ -3819,6 +3823,7 @@ class App extends Component {
       var all_my_pinns = state.all_my_pinns || this.state.all_my_pinns
       var default_location_pins = state.default_location_pins || this.state.default_location_pins
       var should_update_default_location_pins_in_e5 = state.should_update_default_location_pins_in_e5 || this.state.should_update_default_location_pins_in_e5
+      var page_background_setting = state.page_background_setting || this.state.page_background_setting
 
       this.setState({
         theme: theme,
@@ -3898,7 +3903,8 @@ class App extends Component {
         update_pinns_on_chain: update_pinns_on_chain,
         all_my_pinns: all_my_pinns,
         default_location_pins: default_location_pins,
-        should_update_default_location_pins_in_e5: should_update_default_location_pins_in_e5
+        should_update_default_location_pins_in_e5: should_update_default_location_pins_in_e5,
+        page_background_setting: page_background_setting,
       })
       var me = this;
       setTimeout(function() {
@@ -3956,6 +3962,7 @@ class App extends Component {
       me.stack_page.current?.set_selected_link_handler_setting_tag()
       me.stack_page.current?.set_floating_close_button_object()
       me.stack_page.current?.set_floating_close_button_position_object()
+      me.stack_page.current?.set_page_background_object()
     }, (1 * 1000));
   }
 
@@ -6315,6 +6322,9 @@ class App extends Component {
   }
 
   get_default_background(){
+    if(this.state.page_background_setting != 'e'){
+      return;
+    }
     if(this.is_allowed_in_e5()){
       return this.state.theme['page_background']
     }else{
@@ -7679,7 +7689,7 @@ class App extends Component {
     if(this.state.is_reloading_stack_due_to_ios_run == true){
       return(
         <div style={{height: '100%', width:'100%','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-            <img alt="" src={this.state.theme['letter']} style={{height:'auto',width:'18%'}} />
+            <img alt="" src={this.state.theme['letter']} style={{height:'auto',width:'9%'}} />
         </div>
       );
     }
@@ -7696,7 +7706,7 @@ class App extends Component {
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
-      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)}
+      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)}
       />
     )
   }
@@ -8197,8 +8207,8 @@ class App extends Component {
 
   when_graph_type_tags_changed(item){
     const object = {}
-    object[this.props.app_state.loc['2753']/* 'area' */] = 1;
-    object[this.props.app_state.loc['2752']/* 'splineArea' */] = 2;
+    object[this.getLocale()['2753']/* 'area' */] = 1;
+    object[this.getLocale()['2752']/* 'splineArea' */] = 2;
     this.setState({graph_type: object[item]})
     var me = this;
     setTimeout(function() {
@@ -8664,10 +8674,10 @@ class App extends Component {
 
   when_post_load_size_changed(item){
     var object_mapping = {}
-    object_mapping[this.props.app_state.loc['1593jf']/* 'few' */] = 35
-    object_mapping[this.props.app_state.loc['1593jg']/* 'many' */] = 53
-    object_mapping[this.props.app_state.loc['1593jh']/* 'very-many' */] = 72
-    object_mapping[this.props.app_state.loc['1593ji']/* 'as-many-as-possible' */] = 135
+    object_mapping[this.getLocale()['1593jf']/* 'few' */] = 35
+    object_mapping[this.getLocale()['1593jg']/* 'many' */] = 53
+    object_mapping[this.getLocale()['1593jh']/* 'very-many' */] = 72
+    object_mapping[this.getLocale()['1593ji']/* 'as-many-as-possible' */] = 135
     this.setState({max_post_bulk_load_count: object_mapping[item], event_load_chunk_size: object_mapping[item]})
     var me = this;
     setTimeout(function() {
@@ -8717,6 +8727,13 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  when_page_background_setting_changed(item){
+    this.setState({page_background_setting: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
 
 
 
@@ -8858,15 +8875,15 @@ class App extends Component {
     //   }
     // }
 
-    var os = getOS()
-    if(os == 'iOS'){
-      setTimeout(function() {
-        me.setState({is_reloading_stack_due_to_ios_run: true})
-        setTimeout(function() {
-          me.setState({is_reloading_stack_due_to_ios_run: false})
-        }, (1 * 500));
-      }, (1 * 1000));
-    }
+    // var os = getOS()
+    // if(os == 'iOS'){
+    //   setTimeout(function() {
+    //     me.setState({is_reloading_stack_due_to_ios_run: true})
+    //     setTimeout(function() {
+    //       me.setState({is_reloading_stack_due_to_ios_run: false})
+    //     }, (1 * 500));
+    //   }, (1 * 1000));
+    // }
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
       web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
@@ -9340,7 +9357,7 @@ class App extends Component {
       return(
         <div>
           <NewJobPage ref={this.new_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
           />
         </div>
       )
@@ -9370,61 +9387,61 @@ class App extends Component {
     else if(target == '6'/* posts */){
       return(
         <NewPostPage ref={this.new_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       )
     }
     else if(target == '7'/* channels */){
       return(
-        <NewChannelPage ref={this.new_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        <NewChannelPage ref={this.new_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       )
     }
     else if(target == '4'/* storefront */){
       return(
         <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       )
     }
     else if(target == '5'/* mail */){
       return(
         <NewMailPage ref={this.new_mail_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       );
     }
     else if(target == '9'/* contractors */){
       return(
         <NewContractorPage ref={this.new_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       );
     }
     else if(target == '10'/* audioport */){
       return(
         <NewAudioPage ref={this.new_audio_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       )
     }
     else if(target == '11'/* videoport */){
       return(
         <NewVideoPage ref={this.new_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} getLocale={this.getLocale.bind(this)} search_for_object={this.search_for_object.bind(this)} set_selected_channel_hash_id={this.set_selected_channel_hash_id.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       )
     }
     else if(target == '12'/* nitro */){
       return(
         <NewNitroPage ref={this.new_nitro_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} test_node_url_link={this.test_node_url_link.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
-        
+        can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       )
     }
     else if(target == '13'/* polls */){
       return(
-          <NewPollPage ref={this.new_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+          <NewPollPage ref={this.new_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       )
     }
@@ -9680,6 +9697,17 @@ class App extends Component {
     }
   }
 
+  can_sender_include_image_in_markdown(){
+    const users_tx_data = this.senders_transaction_count()
+    if(users_tx_data.transaction_count < this.state.media_activation_tx_limit){
+      return false
+    }
+    else if(this.state.media_activation_age_limit > (Date.now()/1000) - users_tx_data.oldest_transaction_time){
+      return false
+    }
+    return true
+  }
+
   
 
 
@@ -9784,7 +9812,7 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                           <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-                          search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+                          search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -9797,7 +9825,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_channel_bottomsheet.bind(this)} open={this.state.edit_channel_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+            <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
             
             />
           </div>
@@ -9868,7 +9896,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+                          <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
                           /> 
                         </div>
                     </Sheet.Content>
@@ -9881,7 +9909,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_contractor_bottomsheet.bind(this)} open={this.state.edit_contractor_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+            <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
             />
           </div>
       </SwipeableBottomSheet>
@@ -9949,7 +9977,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+                          <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -9962,7 +9990,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_job_bottomsheet.bind(this)} open={this.state.edit_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+            <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
             />
           </div>
       </SwipeableBottomSheet>
@@ -10030,7 +10058,7 @@ class App extends Component {
               <Sheet.Container>
                   <Sheet.Content>
                       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                        <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+                        <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
                         />
                       </div>
                   </Sheet.Content>
@@ -10043,7 +10071,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_post_bottomsheet.bind(this)} open={this.state.edit_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+            <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
             />
           </div>
       </SwipeableBottomSheet>
@@ -10111,7 +10139,7 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                           <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-                          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+                          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -10125,7 +10153,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_storefront_bottomsheet.bind(this)} open={this.state.edit_storefront_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
             <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-            get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+            get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
             />
           </div>
       </SwipeableBottomSheet>
@@ -10194,7 +10222,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+                          <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -10207,7 +10235,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_proposal_bottomsheet.bind(this)} open={this.state.edit_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+            <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
             />
           </div>
       </SwipeableBottomSheet>
@@ -10293,7 +10321,7 @@ class App extends Component {
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
         <EditAudioPage ref={this.edit_audiopost_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
-        update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       </div>
     )
@@ -10389,7 +10417,7 @@ class App extends Component {
     
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-        <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        <EditVideoPage ref={this.edit_videopost_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
         />
       </div>
     )
@@ -10475,7 +10503,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-          <EditNitroPage ref={this.edit_nitropost_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} test_node_url_link={this.test_node_url_link.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+          <EditNitroPage ref={this.edit_nitropost_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} test_node_url_link={this.test_node_url_link.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
           />
         </div>
     )
@@ -10557,7 +10585,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-          <EditPollPage ref={this.edit_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+          <EditPollPage ref={this.edit_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
           />
       </div>
     )
@@ -11155,7 +11183,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
+                          <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -11168,7 +11196,8 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_proposal_bottomsheet.bind(this)} open={this.state.new_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
+            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
+            update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
             />
           </div>
       </SwipeableBottomSheet>
@@ -16709,9 +16738,9 @@ class App extends Component {
 
   add_moderator_note(note_object){
     this.open_dialog_bottomsheet()
-    var clone = this.state.my_created_moderator_notes.slice()
+    const clone = this.state.my_created_moderator_notes.slice()
     const index = clone.findIndex(obj => obj['id'] === note_object['id'])
-    if(index != -1){
+    if(index == -1){
       clone.push(note_object)
     }
     else{
@@ -17099,6 +17128,9 @@ class App extends Component {
   }
 
   return_selected_files(picked_files, function_name){
+    if(!this.can_sender_include_file_in_media()){
+      return;
+    }
     this.open_pick_file_bottomsheet()
 
     if(function_name == 'create_image'){
@@ -17240,6 +17272,41 @@ class App extends Component {
       this.new_audio_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
       this.edit_audiopost_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
     }
+  }
+
+  can_sender_include_file_in_media(){
+    const users_tx_data = this.senders_transaction_count()
+    if(users_tx_data.transaction_count < this.state.media_activation_tx_limit){
+      this.prompt_top_notification(this.getLocale()['2738as']/* 'Make more transactions first.' */, 4000)
+      return false
+    }
+    else if(this.state.media_activation_age_limit > (Date.now()/1000) - users_tx_data.oldest_transaction_time){
+      this.prompt_top_notification(this.getLocale()['2738at']/* 'Your account is too new.' */, 4000)
+      return false
+    }
+    return true
+  }
+
+  senders_transaction_count(){
+    var transaction_count = 0
+    var oldest_transaction_time = (Date.now()/1000) - 10_000
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const e5 = this.state.e5s['data'][i]
+      if(this.state.e5s[e5].active == true && e5 == this.state.selected_e5){
+        if(this.state.E5_runs[e5] != null){
+          if(transaction_count < this.state.E5_runs[e5].length){
+            transaction_count = this.state.E5_runs[e5].length
+          }
+          if(this.state.E5_runs[e5].length > 0){
+            var last_transaction_time = this.state.E5_runs[e5][0].returnValues.p8/* timestamp */
+            if(oldest_transaction_time > last_transaction_time){
+              oldest_transaction_time = last_transaction_time
+            }
+          }
+        }
+      }
+    }
+    return { transaction_count, oldest_transaction_time }
   }
 
 
@@ -19842,7 +19909,7 @@ class App extends Component {
       'beacon_chain_url':this.state.beacon_chain_url, 
       'e5s':this.get_e5_data_for_dialer(), 
       'ether_data':this.state.ether_data, 
-      'all_locales':{}, 
+      'all_locales':{},
       'dialer_addresses':this.state.dialer_addresses, 
       'theme_images':this.state.theme_images, 
       'recommended_videopost_threshold':this.state.recommended_videopost_threshold, 
@@ -19851,6 +19918,9 @@ class App extends Component {
       'recommended_audio_threshold':this.state.recommended_audio_threshold, 
       'country_moderators':this.state.country_moderators,
       'upload_object_size_limit':this.state.upload_object_size_limit,
+      'censored_keywords':this.state.censored_keywords,
+      'media_activation_tx_limit':this.state.media_activation_tx_limit,
+      'media_activation_age_limit':this.state.media_activation_age_limit,
     }
     setTimeout(function() {
       if(me.dialer_page.current != null){
@@ -24263,6 +24333,12 @@ class App extends Component {
 
         const document_title = root_data.get_document_title_object == null ? 'e(Beta)': this.get_selected_item(root_data.get_document_title_object, 'e')
 
+        const censored_keywords = root_data.data['censored_keywords'] || []
+        const media_activation_tx_limit = root_data.data['media_activation_tx_limit'] || 0
+        const media_activation_age_limit = root_data.data['media_activation_age_limit'] || 0
+        const allWords = Object.values(naughtyWords).flat();
+        const censored_keywords_by_my_following = this.state.censored_keywords_by_my_following.slice().concat(censored_keywords, allWords)
+
         const my_language = this.get_language() == null ? 'en' : this.get_language()
         if(my_language != 'en' && all_locales[my_language] != null){
           // this.prompt_top_notification('language: '+my_language, 5000)
@@ -24312,7 +24388,11 @@ class App extends Component {
           manual_beacon_node_disabled: manual_beacon_node_disabled,
           e5_ether_override: e5_ether_override,
           upload_object_size_limit: upload_object_size_limit,
-          document_title: document_title
+          document_title: document_title,
+          censored_keywords: censored_keywords,
+          media_activation_tx_limit: media_activation_tx_limit,
+          media_activation_age_limit: media_activation_age_limit,
+          censored_keywords_by_my_following: censored_keywords_by_my_following,
         })
         primary_following = primary_following.concat(my_moderators)
 

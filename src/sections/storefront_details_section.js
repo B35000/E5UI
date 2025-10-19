@@ -29,6 +29,8 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
 import { motion, AnimatePresence } from "framer-motion";
+import words from 'profane-words'
+import * as naughtyWords from 'naughty-words';
 
 var bigInt = require("big-integer");
 
@@ -2970,7 +2972,7 @@ class StorefrontDetailsSection extends Component {
 
     split_text(text){
         if(text == null) return []
-        var split = text.split(' ')
+        var split = this.mask_profane_words(text).split(' ')
         var final_string = []
         split.forEach((word, index) => {
             final_string.push(word)
@@ -2981,6 +2983,23 @@ class StorefrontDetailsSection extends Component {
         return final_string
     }
 
+    mask_profane_words(string){
+        if(string == null) return;
+        var result_string = string
+        var all_censored_phrases = this.props.app_state.censored_keyword_phrases == null ? [] : this.props.app_state.censored_keyword_phrases
+        var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        leetspeek.forEach(phrase => {
+            if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+        });
+        all_censored_phrases.forEach(phrase_ => {
+            const phrase = phrase_
+            if(result_string.includes(phrase) && phrase.includes(' ')){
+                result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+            }
+        });
+        return result_string
+    }
+
     mask_word_if_censored(word, object){
         var all_censored_phrases = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         const sender = object['author']
@@ -2989,7 +3008,9 @@ class StorefrontDetailsSection extends Component {
             var censor_data = this.props.app_state.post_censored_data[sender+sender_e5]
             all_censored_phrases = all_censored_phrases.concat(censor_data['censored_keywords'])
         }
-        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ''))){
+        
+        const specific_word = word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
+        if(all_censored_phrases.includes(specific_word) || words.includes(specific_word)){
             if (word == null || word.length <= 1) return word; // nothing to mask
             return word[0] + '?'.repeat(word.length - 1);;
         }else{

@@ -2580,6 +2580,9 @@ return data['data']
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['272'], 3700)
         }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
         else{
             
             this.props.when_add_edit_object_to_stack(this.state)

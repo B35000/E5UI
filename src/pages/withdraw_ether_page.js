@@ -309,6 +309,7 @@ class WithdrawEtherPage extends Component {
         if(this.props.app_state.e5s[e5] == null) return;
         
         if(this.props.app_state.e5s[e5].type == '1559'){
+            return;
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'details':this.props.app_state.loc['2027a']/* 'The max priority fee per gas(miner tip) for your next wirdraw run.' */, 'size':'l'})}
@@ -346,7 +347,7 @@ class WithdrawEtherPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63} decimal_count={9}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63} decimal_count={9} pick_with_text_area={true}/>
 
                     <div style={{height:10}}/>
                     {this.render_gas_price_options()}

@@ -339,10 +339,9 @@ class FullVideoPage extends Component {
 
 
     render_player(){
-        console.log('player rerendered...')
         return(
             <div ref={this.screen} style={{}}>
-                <div style={{}}>
+                <div style={{'maxHeight':this.props.height-100}}>
                     {this.video_object()}
                 </div>
             </div>

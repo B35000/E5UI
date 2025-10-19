@@ -3258,6 +3258,9 @@ return data['data']
         else if(!isNaN(this.state.purchase_recipient) && parseInt(this.state.purchase_recipient) < 1000){
             this.props.notify(this.props.app_state.loc['b311at']/* That purchase recipient value is invalid. */, 4700)
         }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
         else{
             this.props.when_add_edit_object_to_stack(this.state)
             this.props.notify(this.props.app_state.loc['18'], 1700);

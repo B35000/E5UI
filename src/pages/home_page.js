@@ -45,6 +45,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
+import { ViewPager, Frame, Track, View } from 'react-view-pager'
+
 
 var bigInt = require("big-integer");
 
@@ -689,7 +691,7 @@ class home_page extends Component {
             return(
                 <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size, h+10)}
+                        {this.render_post_list_group(size, h+18)}
                     </div>
 
                     <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
@@ -706,7 +708,7 @@ class home_page extends Component {
                     </div>
 
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size, h+10)}
+                        {this.render_post_list_group(size, h+18)}
                     </div>
 
                 </div>
@@ -4039,7 +4041,18 @@ class home_page extends Component {
         this.setState({page: obj[value]})
     };
 
+    handleChange2 = (value) => {
+        var obj = {0:'?', 1:'e', 2:'w'}
+        var me = this;
+        setTimeout(function() {
+            me.setState({page: obj[value]})
+        }, (1 * 400));
+    };
+
     render_post_list_group(size, height){
+        if(size != 'l'){
+            return this.render_post_list_group_if_touch_screen(size, height)
+        }
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
         var subtract = size == 'm' ? 70 : 60
@@ -4062,6 +4075,44 @@ class home_page extends Component {
                         {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
                     </div>
                 </SwipeableViews>
+            </div>
+        )
+        
+    }
+
+    render_post_list_group_if_touch_screen(size, height){
+        var obj = {'?':0, 'e':1, 'w':2}
+        var pos = obj[this.state.page];
+        var subtract = size == 'm' ? 70 : 60
+        var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
+        var subtract2 = this.should_show_line() == true ? 10 : 0
+        h -= subtract2;
+        if(size == 'm') h-= 4
+        return(
+            <div>
+                {this.render_line_if_enabled()}
+                {this.render_search_tags_views()}
+                <ViewPager tag="main">
+                    <Frame className="frame">
+                        <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => this.handleChange2(e)} className="track">
+                            <View className="view">
+                                <div>
+                                    {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                                </div>
+                            </View>
+                        </Track>
+                    </Frame>
+                </ViewPager>
             </div>
         )
         

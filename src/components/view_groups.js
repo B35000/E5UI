@@ -34,6 +34,8 @@ import { FaStar } from 'react-icons/fa';
 
 import { Chart as ChartJS, CategoryScale, LogarithmicScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend, } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import words from 'profane-words'
+import * as naughtyWords from 'naughty-words';
 
 
 var bigInt = require("big-integer");
@@ -82,7 +84,7 @@ class ViewGroups extends Component {
                 if(this.props.object_data['always_update_chart_plugins'] == true){
                     this.update_chart_plugins(this.props.object_data)
                 }
-                else if(prevProps.theme['primary_text_color'] != this.props.theme['primary_text_color']){
+                else if(prevProps.theme['primary_text_color'] != this.props.theme['primary_text_color'] || this.props.graph_type != prevProps.graph_type){
                     this.update_chart_plugins(this.props.object_data)
                 }
             }
@@ -273,7 +275,7 @@ class ViewGroups extends Component {
             if(details == ''){
                 details = '...'
             }
-            const parts = details.split(' ');
+            const parts = this.mask_profane_words(details, false).split(' ');
             const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 0px 0px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
             if(item_id == '8'){
                 var img = E5EmptyIcon;
@@ -348,7 +350,7 @@ class ViewGroups extends Component {
             }
 
             text = this.format_text_if_empty_or_null(text)
-            const parts = this.split_text(text)
+            const parts = this.split_text(this.mask_profane_words(text))
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
@@ -436,7 +438,7 @@ class ViewGroups extends Component {
                     label_font_size = 0
                 }
             }
-            var line_tension = this.props.graph_type == 1 ? 0.95 : 0.4
+            const line_tension = this.props.graph_type == 1 ? 0.95 : 0.3
 
             const defaultConfig = {
                 chartColor: default_chart_color,
@@ -692,8 +694,8 @@ class ViewGroups extends Component {
             // );
         }
         else if(item_id=='7'){/* banner-icon */
-            var header = object_data != null ? object_data['header']:'E35'
-            var subtitle = object_data != null ? object_data['subtitle']:'ETC'
+            var header = object_data != null ? this.mask_profane_words(object_data['header'], false):'E35'
+            var subtitle = object_data != null ? this.mask_profane_words(object_data['subtitle'], false):'ETC'
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
             var width = '180px'
             var height = '180px'
@@ -763,7 +765,7 @@ class ViewGroups extends Component {
             if(object_data!=null){
               font = object_data['font'];
               textsize = object_data['textsize'];
-              text = object_data['text'];
+              text = this.mask_profane_words(object_data['text'], false);
               word_wrap_value = this.longest_word_length(object_data['text']) > 53 ? 'break-all' : 'normal'
             }
 
@@ -835,7 +837,7 @@ class ViewGroups extends Component {
         }
         else if(item_id=='13'){/* markdown preview */
             /* {this.render_detail_item('13', {'source':''})}  */
-            var source = object_data == null ? '' : object_data['source']
+            var source = object_data == null ? '' : this.process_markdown_source(object_data['source'])
             var padding = '10px 15px 10px 15px'
             var word_wrap_value = this.longest_word_length(source) > 53 ? 'break-word' : 'normal'
             return(
@@ -960,6 +962,16 @@ class ViewGroups extends Component {
         }
     }
 
+    process_markdown_source(markdown){
+        const regex = /\[.*?\]\((https?:\/\/[^\s)]+\.(?:mp3|wav|ogg|flac|mp4|webm|mov|avi|mkv))\)/gi;
+        const matches = [...markdown.matchAll(regex)].map(m => m[1]);
+        var return_value = markdown.slice()
+        matches.forEach(match => {
+            return_value = return_value.replace(match, '')
+        });
+        return return_value
+    }
+
     update_chart_plugins(object_data){
         var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
         var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
@@ -1059,7 +1071,7 @@ class ViewGroups extends Component {
     }
 
     process_source(source){
-        const parts = source.split(' ');
+        const parts = this.mask_profane_words(source).split(' ');
         var final_string = ''
         parts.forEach((word, index) => {
             final_string = final_string + this.mask_word_if_censored(word) + (index == parts.length-1 ? '':' ')
@@ -1067,10 +1079,29 @@ class ViewGroups extends Component {
         return final_string
     }
 
+    mask_profane_words(string, mask_leet_speek){
+        if(string == null) return;
+        var result_string = string
+        var all_censored_phrases = this.props.censored_keyword_phrases == null ? [] : this.props.censored_keyword_phrases
+        var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        leetspeek.forEach(phrase => {
+            if(mask_leet_speek != false && isNaN(phrase)){
+                result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+            }
+        });
+        all_censored_phrases.forEach(phrase_ => {
+            const phrase = phrase_
+            if(result_string.includes(phrase) && phrase.includes(' ')){
+                result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+            }
+        });
+        return result_string
+    }
+
     mask_word_if_censored(word){
         var all_censored_phrases = this.props.censored_keyword_phrases == null ? [] : this.props.censored_keyword_phrases
-        
-        if(all_censored_phrases.includes(word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ''))){
+        const specific_word = word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
+        if(all_censored_phrases.includes(specific_word) || words.includes(specific_word)){
             if (word == null || word.length <= 1) return word; // nothing to mask
             return word[0] + '?'.repeat(word.length - 1);
         }else{
@@ -1183,11 +1214,18 @@ class ViewGroups extends Component {
         const new_dps = []
         const diffMs = end_time - start_time
         const time_chunk_period = diffMs / (dps.length - 1)
-        dps.forEach(dp => {
+        dps.forEach((dp, index) => {
             const period_of_x = start_time + (dp.x * time_chunk_period)
             const final_x = this.formatTimestamp(period_of_x, diffMs)
             const new_label = dp['indexLabel'] == null ? null : dp['indexLabel'].replace('transactions', this.props.transactions_text) || 'transactions'
-            new_dps.push({x: final_x, y: dp.y, label: new_label})
+            
+            if(this.props.graph_type == 2){
+                if(index % 3 == 0 || new_label != null){
+                    new_dps.push({x: final_x, y: dp.y, label: new_label})
+                }
+            }else{
+                new_dps.push({x: final_x, y: dp.y, label: new_label})
+            }
         });
         return new_dps
     }

@@ -21,6 +21,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
+import DurationPicker from './../components/duration_picker';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
@@ -86,6 +87,8 @@ class DialerPage extends Component {
 
         get_manual_disable_beacon_node_override_object:this.get_manual_disable_beacon_node_override_object(), typed_notification_blocks_input:'',
         get_ether_e5_softwrite_object:this.get_ether_e5_softwrite_object(), get_document_title_object:this.get_document_title_object(),
+
+        keyword_text:''
     };
 
 
@@ -511,10 +514,29 @@ class DialerPage extends Component {
                 
 
 
+
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4', {'text':'Set the default document title', 'textsize':'14px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_document_title_object} tag_size={'l'} when_tags_updated={this.when_get_document_title_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Set the minimum number of transactions for enabled media activation (using files and media in posts and comments)', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'10'} when_text_input_field_changed={this.when_media_activation_tx_limit_input_field_changed.bind(this)} text={this.state.data['media_activation_tx_limit']} theme={this.props.theme}/>
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Set the minimum account age for enabled media activation (using files and media in posts and comments)', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_media_activation_age_limit.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
 
             </div>
         )
@@ -525,11 +547,35 @@ class DialerPage extends Component {
     }
 
     when_upload_object_size_limit_input_field_changed(text){
-        if(!isNaN(text)){
+        if(!isNaN(text) && text != ''){
             var clone = structuredClone(this.state.data)
             clone['upload_object_size_limit'] = parseInt(text)
             this.setState({data: clone})
         }
+        else if(text == ''){
+            var clone = structuredClone(this.state.data)
+            clone['upload_object_size_limit'] = text
+            this.setState({data: clone})
+        }
+    }
+
+    when_media_activation_tx_limit_input_field_changed(text){
+        if(!isNaN(text) && text != ''){
+            var clone = structuredClone(this.state.data)
+            clone['media_activation_tx_limit'] = parseInt(text)
+            this.setState({data: clone})
+        }
+        else if(text == ''){
+            var clone = structuredClone(this.state.data)
+            clone['media_activation_tx_limit'] = text
+            this.setState({data: clone})
+        }
+    }
+
+    when_media_activation_age_limit(number){
+        var clone = structuredClone(this.state.data)
+        clone['media_activation_age_limit'] = parseInt(number)
+        this.setState({data: clone})
     }
 
     get_current_upload_object_size(){
@@ -708,6 +754,25 @@ class DialerPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_ether_e5_softwrite_object} tag_size={'l'} when_tags_updated={this.when_get_ether_e5_softwrite_object.bind(this)} theme={this.props.theme}/>
 
 
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Default censored keywords.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={60} placeholder={'word or comma separated words...'} when_text_input_field_changed={this.when_note_keyword_input_field_changed.bind(this)} text={this.state.keyword_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_keyword_to_staged_note()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}}/>
+                        </div>
+                    </div>
+                </div>
+                {this.render_staged_keywords()}
+
+
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Current post size', 'details':'Below is the size of your dialer post with all the details youve set.', 'size':'l'})}
                 <div style={{height:10}}/>
@@ -715,6 +780,84 @@ class DialerPage extends Component {
                 {/* {this.show_all_sizes_for_all_keys()} */}
             </div>
         )
+    }
+
+    when_note_keyword_input_field_changed(text){
+        this.setState({keyword_text: text})
+    }
+
+    add_keyword_to_staged_note(){
+        const text = this.state.keyword_text.trim()
+        const keywords = this.remove_duplicates(text.split(/[,;:[\-\s]+/), this.state.data['censored_keywords'])
+
+        if(text == ''){
+            this.props.notify(this.props.app_state.loc['1593du']/* 'Type something first.' */, 4000)
+        }
+        else{
+            var clone = structuredClone(this.state.data)
+            clone['censored_keywords'] = clone['censored_keywords'].concat(keywords)
+            this.setState({data: clone, keyword_text:''})
+            this.props.notify(keywords.length + ' words added!', 1200)
+        }
+    }
+
+    remove_duplicates(words, censored_keywords){
+        const new_words = []
+        words.forEach(word => {
+            if(!censored_keywords.includes(word) && !new_words.includes(word)){
+                new_words.push(word)
+            }
+        });
+        return new_words
+    }
+
+    contains_any(words, censored_keywords){
+        var contains = false
+        words.forEach(keyword => {
+            if(censored_keywords.includes(keyword)){
+                contains = true
+            }
+        });
+        return contains;
+    }
+
+    render_staged_keywords(){
+        var items = [].concat(this.state.data['censored_keywords'])
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.remove_staged_keyword(item)}>
+                                {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})} 
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    remove_staged_keyword(item){
+        var clone = structuredClone(this.state.data)
+        const index = clone['censored_keywords'].indexOf(item)
+        if(index != -1){
+            clone['censored_keywords'].splice(index, 1)
+            this.setState({data: clone})
+        }
     }
 
     // show_all_sizes_for_all_keys(){

@@ -4242,6 +4242,9 @@ return data['data']
         else if(creators.length > 0 && selected_creator_group_subscriptions.length == 0){
             this.props.notify(this.props.app_state.loc['162ax']/* 'You need to set your creator group subscriptions for your creators to use.' */, 6700)
         }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
         else{
             var me = this;
             setTimeout(function() {

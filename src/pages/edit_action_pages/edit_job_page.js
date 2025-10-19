@@ -2679,6 +2679,9 @@ return data['data']
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['759']/* 'that title is too long' */, 2700)
         }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
         else{
             this.setState({entered_title_text: this.normalizeText(this.state.entered_title_text)});
             var me = this;

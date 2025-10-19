@@ -2499,10 +2499,11 @@ return data['data']
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['272'], 2700)
         }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
         else{
-            
             this.props.when_add_edit_object_to_stack(this.state)
-
             // this.setState({ id: makeid(8), type:'post', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
             this.props.notify(this.props.app_state.loc['18'], 1700);
         }
