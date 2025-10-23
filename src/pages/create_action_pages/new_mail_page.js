@@ -2455,13 +2455,13 @@ return data['data']
         else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
             this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
         }
-        else if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
-        else if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account()){
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account()){
             this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
         }
-        else if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){
             this.props.notify(this.props.app_state.loc['284bc']/* 'Your job post is too large.' */, 5000)
         }
         else{

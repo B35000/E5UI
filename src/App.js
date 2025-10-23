@@ -20253,7 +20253,7 @@ class App extends Component {
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
         <ContextualTransferPage ref={this.view_contextual_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_itransfer_transaction_to_stack={this.add_itransfer_transaction_to_stack.bind(this)} add_bill_transaction_to_stack={this.add_bill_transaction_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
+        set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
         />
       </div>
     )
@@ -29752,6 +29752,9 @@ class App extends Component {
 
   load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
     if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
+    if(e5 == 'E25'){
+      this.get_objects_from_socket_and_enter_chatroom('bill|'+this.state.accounts[this.state.selected_e5].address, [])
+    }
     var created_bill_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_bills[e5] == null ? this.state.saved_pre_launch_events[e5]['created_bill_events'] :  await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
 
     var my_sent_bill_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_bills[e5] == null ? this.state.saved_pre_launch_events[e5]['my_sent_bill_events'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p2/* sender_acc_id */:account})
@@ -30395,6 +30398,10 @@ class App extends Component {
 
   get_all_mail_data = async (E52contractInstance, e5, account, web3, specific_items) => {
     if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
+
+    if(e5 == 'E25'){
+      this.get_objects_from_socket_and_enter_chatroom('mail|'+this.state.accounts[this.state.selected_e5].address, [])
+    }
     
     const all_events = await this.load_mail_events(E52contractInstance, e5, account, web3)
     const my_received_mail_events = all_events.my_received_mail_events;
@@ -42599,6 +42606,9 @@ class App extends Component {
       else if(message['type'] == 'job-request-message'){
         me.process_new_job_request_message(message, object_hash, from)
       }
+      else if(message['type'] == 'bill'){
+        me.process_new_bill_message(message, object_hash, from)
+      }
     });
   }
 
@@ -42615,8 +42625,8 @@ class App extends Component {
     if(state_object.type == this.getLocale()['285']/* mail */){
       await this.emit_new_mail_confirmed(state_object, show_job_after_broadcast, 'mail');
     }
-    else if(state_object.type == 'image'){
-      await this.emit_new_mail_confirmed(state_object, show_job_after_broadcast, 'mail_message');
+    else if(state_object.type == this.getLocale()['3068af']/* 'bill' */){
+      await this.emit_new_bill_confirmed(state_object, show_job_after_broadcast);
     }
     else{
       await this.emit_new_public_object_confirmed(state_object, show_job_after_broadcast)
@@ -42705,6 +42715,21 @@ class App extends Component {
     const object_e5_id = state_object['id']+state_object['e5']
 
     this.socket.emit("chatroom_message", {roomId: object_e5_id, message: comment_message_object.message, target: object_e5_id, object_hash: comment_message_object.object_hash});
+  }
+
+  async emit_new_bill_confirmed(state_object, show_job_after_broadcast){
+    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.view_contextual_transfer_page.current?.reset_state()
+    const bill_message_object = await this.prepare_bill_object_message(state_object, show_job_after_broadcast)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(bill_message_object.object_hash)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(state_object.recipient, state_object.e5)
+    const target = 'bill|'+to
+    const secondary_target = 'bill|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: bill_message_object.message, target: target, object_hash: bill_message_object.object_hash, secondary_target: secondary_target });
   }
 
   enter_chatroom_if_socket_enabled(object_e5_id){
@@ -43106,6 +43131,66 @@ class App extends Component {
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
+  }
+
+  async prepare_bill_object_message(message_obj, show_job_after_broadcast){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = message_obj.recipient
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const encrypted_object = await this.get_encrypted_bill_object(message_obj)
+    const object_as_string = JSON.stringify(encrypted_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    var context = 13
+    const message = {
+      type: 'bill',
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      show_job_after_broadcast,
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  get_encrypted_bill_object = async (t) =>{
+    var key = makeid(35)
+    var encrypted_obj = await this.encrypt_data_object(t, key)
+    var recipent_data = {}
+    var recipient = t.recipient
+    var e5 = t.e5
+    var recipients_pub_key_hash = await this.get_accounts_public_key(recipient, e5)
+
+    if(recipients_pub_key_hash != ''){
+        var encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(recipients_pub_key_hash))
+        recipent_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+    }
+
+    var my_public_key_uint8_array = await this.get_account_raw_public_key() 
+    var my_encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(my_public_key_uint8_array))
+    recipent_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+
+    return { 'obj':encrypted_obj, 'recipient_data':recipent_data, 'encryptor_pub_key':this.uint8ToBase64(my_public_key_uint8_array) }
   }
 
 
@@ -43525,6 +43610,68 @@ class App extends Component {
     }
   }
 
+  async process_new_bill_message(message, object_hash, from){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['id'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author
+      const convo_id = id;
+      const cid = object_hash;
+
+      const event = {returnValues:{p1: message.recipient, p2:sender_acc, p3:13, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
+
+      if(ipfs_obj != null){
+        const created_bills_clone = structuredClone(this.state.created_bills)
+        if(created_bills_clone[e5] == null){
+          created_bills_clone[e5] = []
+        }
+        const bill = {
+          'id':id, 'ipfs':ipfs_obj, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6/* timestamp */), 'author':event.returnValues.p2/* sender_acc_id */ ,'e5_id':id+e5, 'target':event.returnValues.p1, 'object_type':'bill'
+        }
+        created_bills_clone[e5].push(bill)
+        
+        this.setState({created_bills: created_bills_clone});
+        if(am_I_the_author == true){
+          await this.wait(300)
+          this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264aj']/* 'bills' */})
+          this.homepage.current?.when_bill_item_clicked(bill, 'ignore')
+          this.homepage.current?.reset_post_detail_object()
+        }else{
+          if(message.time > (Date.now()/1000) - (3*60)){
+            event['e5'] = e5
+            const notifs = [event]
+            this.handle_bill_request_notifications(notifs)
+          }
+        }
+      } 
+    }
+
+
+    if(is_first_time){
+      var created_bills_clone = structuredClone(this.state.created_bills)
+      created_bills_clone[e5] = my_bills
+      
+    }
+  }
+
 
 
 
@@ -43651,6 +43798,12 @@ class App extends Component {
                 me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
               }
             }, (1 * 500));
+          }
+          else if(target == 'bill|'+this.state.accounts[this.state.selected_e5].address){
+            this.process_new_bill_message(target_data[object_hash], object_hash)
+          }
+          else if(target == 'mail|'+this.state.accounts[this.state.selected_e5].address){
+            this.process_new_mail_received(target_data[object_hash], object_hash, null)
           }
         }
         

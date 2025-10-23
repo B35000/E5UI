@@ -65,6 +65,8 @@ class ContextualTransferPage extends Component {
         search_identifier:'', search_identifier_account:'', searches:[], search_identifier_recipient:'', pos:-1, selected_e5:this.props.app_state.selected_e5,
 
         identifier2:'', exchange_id2:'', price_amount2:0, price_data2:[], recipient_id2:'', transfer_recipient_id2:'', get_reocurring_tags_object:this.get_reocurring_tags_object(), entered_pdf_objects:[],
+
+        get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
     };
 
     constructor(props) {
@@ -116,6 +118,23 @@ class ContextualTransferPage extends Component {
         };
     }
 
+    get_chain_or_indexer_job_object(){
+        const pos = this.props.do_i_have_an_account() == true ? 1 : 2
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [pos]
+            ],
+        };
+    }
+
+
+
+
+
+
     set_data(item){
         var me = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null ? '' : this.props.app_state.user_account_id[this.props.app_state.selected_e5].toString()
         if(me == '1') me = ''
@@ -126,6 +145,12 @@ class ContextualTransferPage extends Component {
             this.setState({selected:1, e5: this.props.app_state.selected_e5, search_identifier_recipient: me, transfer_recipient_id2:me, get_title_tags_object: this.get_title_tags_object()})
         }
     }
+
+
+
+
+
+
 
     render(){
         if(this.state.selected == 0){
@@ -1301,9 +1326,20 @@ class ContextualTransferPage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3068bg']/* 'Attach some pdf documents to the bill.' */, 'title':this.props.app_state.loc['3068bh']/* 'Attach PDFs.' */})}
                 {this.render_create_pdf_ui_buttons_part()}
                 {this.render_selected_files()}
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3068bj']/* 'Bill Indexing' */, 'details':this.props.app_state.loc['3068bk']/* 'If set to blockchain, the reference to your new post will be recorded on a blockchain and indexer while if left to indexer, your new post will be referenced in an indexer only.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
+
                 <div style={{height:10}}/>
             </div>
         )
+    }
+
+    when_get_chain_or_indexer_job_object_updated(tag_obj){
+        this.setState({get_chain_or_indexer_job_object: tag_obj})
     }
 
     render_create_pdf_ui_buttons_part(){
@@ -1607,6 +1643,9 @@ class ContextualTransferPage extends Component {
         var entered_pdf_objects = this.state.entered_pdf_objects
         var my_id = this.props.app_state.user_account_id[this.state.e5]
 
+        const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
+        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+
         if(isNaN(recipient)){
             recipient = await this.get_recipient_id(recipient)
         }
@@ -1632,6 +1671,15 @@ class ContextualTransferPage extends Component {
         else if(price_data.length == 0){
             this.props.notify(this.props.app_state.loc['3068z']/* You need to add some transfers first. */, 8700)
         }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account()){
+            this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
+        }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){
+            this.props.notify(this.props.app_state.loc['284bc']/* 'Your job post is too large.' */, 5000)
+        }
         else{
             var selected_obj = this.get_selected_item(this.state.get_reocurring_tags_object, 'e')
             var recurring_enabled = selected_obj == this.props.app_state.loc['3068ay']/* 'recurring-bill' */
@@ -1640,10 +1688,20 @@ class ContextualTransferPage extends Component {
                 entered_indexing_tags:[this.props.app_state.loc['3068ag']/* 'request' */, this.props.app_state.loc['3068af']/* 'bill' */, this.props.app_state.loc['3068ah']/* 'payment' */],
                 e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier, transfer_recipient: transfer_recipient, recurring_enabled: recurring_enabled, entered_pdf_objects: entered_pdf_objects, ecid_encryption_passwords: this.state.ecid_encryption_passwords
             }
-            this.props.add_bill_transaction_to_stack(obj)
-            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
-            this.setState({identifier2:'', price_data2:[]})
+
+            if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+                this.props.emit_new_object_in_socket(this.state)
+            }else{
+                this.props.add_bill_transaction_to_stack(obj)
+                this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+                this.reset_state()
+            }
+            
         }
+    }
+
+    reset_state(){
+        this.setState({identifier2:'', price_data2:[]})
     }
 
 
