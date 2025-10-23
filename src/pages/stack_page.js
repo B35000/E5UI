@@ -2935,7 +2935,7 @@ class StackPage extends Component {
         
         var newly_participated_channels = []
         var newly_participated_polls = []
-        var newly_participated_objects = []
+        var newly_participated_objects = [].concat(this.props.app_state.socket_participated_objects)
         var new_transaction_index_obj={}
 
         const creator_group_updates = [ /* set data */
@@ -5183,7 +5183,7 @@ class StackPage extends Component {
         const pushed_txs = []
         const newly_participated_channels = []
         const newly_participated_polls = []
-        const newly_participated_objects = []
+        const newly_participated_objects = [].concat(this.props.app_state.socket_participated_objects)
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 console.log('stackitem', 'pushing type', txs[i].type)
@@ -7346,7 +7346,7 @@ class StackPage extends Component {
         var string_obj = [[]]
         var string_data = ''
         if(calculate_gas) string_data = await this.get_object_ipfs_index('', calculate_gas, ipfs_index)
-        else string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t, t.target_recipient), calculate_gas, ipfs_index, t.id);
+        else string_data = await this.get_object_ipfs_index('', calculate_gas, ipfs_index, t.id);
 
         // var recipient_account = t.target_recipient
         console.log('object',t)

@@ -1473,30 +1473,9 @@ class MailDetailsSection extends Component {
 
     get_convo_messages(mail){
         var convo_id = mail['convo_id']
-        var all_messages = this.props.app_state.mail_messages[convo_id] == null ? [] : this.props.app_state.mail_messages[convo_id];
-
-        // var created_mail = this.get_combined_created_mail('created_mail')
-        // var received_mail = this.get_combined_created_mail('received_mail')
-        
-        // var created_messages = created_mail['mail_activity'][convo_id]
-        // var received_messages = received_mail['mail_activity'][convo_id]
-
-        // if(received_messages != null){
-        //     for(var i=0; i<received_messages.length; i++){
-        //         if(received_messages[i]['ipfs'].entered_title_text == null){
-        //             all_messages.push(received_messages[i])
-        //         }
-        //     }
-        // }
-        // if(created_messages != null){
-        //     for(var i=0; i<created_messages.length; i++){
-        //         if(created_messages[i]['ipfs'].entered_title_text == null){
-        //             all_messages.push(created_messages[i])
-        //         }
-        //     }
-        // }
-
-        all_messages = (this.sortByAttributeDescending(all_messages, 'time')).reverse()
+        const chain_messages = this.props.app_state.mail_messages[convo_id] == null ? [] : this.props.app_state.mail_messages[convo_id]
+        const socket_messages = this.props.app_state.socket_mail_messages[convo_id] == null ? [] : this.props.app_state.socket_mail_messages[convo_id]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time').reverse()
         return all_messages
     }
 

@@ -2292,7 +2292,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page()
-            var my_channels = this.props.app_state.my_channels
+            var my_channels = this.props.app_state.my_channels.slice().concat(this.props.app_state.my_objects)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
@@ -3467,7 +3467,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page()
-            var my_polls = this.props.app_state.my_polls
+            var my_polls = this.props.app_state.my_polls.slice().concat(this.props.app_state.my_objects)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']

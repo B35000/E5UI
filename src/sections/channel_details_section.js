@@ -2253,9 +2253,11 @@ class ChannelDetailsSection extends Component {
     }
 
     get_convo_messages(object){
-        // var object = this.get_channel_items()[this.props.selected_channel_item];
-        if(this.props.app_state.object_messages[object['id']] == null) return [];
-        return this.filter_messages_for_blocked_accounts(this.props.app_state.object_messages[object['id']])
+        const chain_messages = this.props.app_state.object_messages[object['id']] == null ? [] : this.props.app_state.object_messages[object['id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['id']] == null ? [] : this.props.app_state.socket_object_messages[object['id']]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+        
+        return this.filter_messages_for_blocked_accounts(all_messages)
     }
 
     filter_messages_for_blocked_accounts(objects){

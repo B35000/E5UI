@@ -918,9 +918,15 @@ class PostListSection extends Component {
         if(object['responses'] == 0){
             responses_text = ''
         }
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const id_to_show = is_socket_job == true ? this.format_account_balance_figure2(object['id']) : object['id']
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender+responses_text, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+id_to_show+sender+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':object['e5']+' • '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
@@ -2508,9 +2514,16 @@ class PostListSection extends Component {
         var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
         var objectid = this.is_post_anonymous(object) ? '???' : object['id']
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const id_to_show = is_socket_job == true && !this.is_post_anonymous(object) ? this.format_account_balance_figure2(objectid) : objectid
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+objectid+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':' • '+id_to_show+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
             'min':{'details':object['e5']+' • '+objectid+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
         }
@@ -5167,19 +5180,6 @@ return data['data']
         return bigInt(powered_cap)
     }
 
-    format_account_balance_figure(amount){
-        if(amount == null){
-            amount = 0;
-        }
-        if(amount < 1_000_000_000){
-            return number_with_commas(amount.toString())
-        }else{
-            var power = amount.toString().length - 9
-            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
-        }
-        
-    }
-
     render_small_empty_object_loading_card(){
         return(
             <div>
@@ -5191,7 +5191,6 @@ return data['data']
             </div>
         )
     }
-
 
 
 
@@ -5455,6 +5454,31 @@ return data['data']
 
 
 
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
+    format_account_balance_figure2(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 6
+            return number_with_commas(amount.toString().substring(0, 6)) +'e'+power
+        }
+        
+    }
 
     get_number_width(number){
         if(number == null) return '0%'

@@ -84,7 +84,8 @@ class DialogPage extends Component {
         new_vote_tags_object: this.get_new_vote_tags_object(), ignore_vote_wait_proposals:[],
         vote_tx_bundle_size:10, get_collect_bounties_tags_object: this.get_collect_bounties_tags_object(),
 
-        songs_to_hide_while_showing:[], videos_to_hide_while_showing:[], selected_pins:[]
+        songs_to_hide_while_showing:[], videos_to_hide_while_showing:[], selected_pins:[],
+        get_show_job_after_broadcasted_object:this.get_show_job_after_broadcasted_object()
     };
 
 
@@ -123,6 +124,22 @@ class DialogPage extends Component {
             ],
         };
     }
+
+    get_show_job_after_broadcasted_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['284be']/* 'show' */], [1]
+            ],
+        };
+    }
+
+
+
+
+
 
 
     set_data(data, id){
@@ -426,6 +443,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_transfer_alias_ui()}
+                </div>
+            )
+        }
+        else if(option == 'confirm_emit_new_object'){
+            return(
+                <div>
+                    {this.render_confirm_emit_new_object_ui()}
                 </div>
             )
         }
@@ -8149,6 +8173,82 @@ return data['data']
         this.setState({typed_recipient_account_id: text})
     }
 
+
+
+
+
+
+
+
+
+    render_confirm_emit_new_object_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_emit_new_object_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_emit_new_object_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_emit_new_object_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_confirm_emit_new_object_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['284y']/* 'Confirm New Object.' */, 'details':this.props.app_state.loc['284z']/* 'Are you sure you want to log the object directly in the indexer? No official reference to it will be on a blockchain.' */, 'size':'l'})}
+                <div style={{height: 20}}/>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['284bf']/* 'Show object after broadcast is successful?' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_show_job_after_broadcasted_object} tag_size={'l'} when_tags_updated={this.when_get_show_job_after_broadcasted_object_updated.bind(this)} theme={this.props.theme}/>
+
+                <div style={{height: 10}}/>
+                <div onClick={()=> this.when_confirm_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['284ba']/* 'Confirm and Proceed' */, 'action':''},)}
+                </div>
+                
+            </div>
+        )
+    }
+
+    when_get_show_job_after_broadcasted_object_updated(tag_obj){
+        this.setState({get_show_job_after_broadcasted_object: tag_obj})
+    }
+
+    when_confirm_tapped(){
+        const show_job_after_broadcast = this.get_selected_item2(this.state.get_show_job_after_broadcasted_object, 'e') == 1
+
+        this.props.emit_new_object_confirmed(this.state.data['state_object'], show_job_after_broadcast)
+    }
 
 
 

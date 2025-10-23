@@ -2762,9 +2762,10 @@ class FullVideoPage extends Component {
 
     get_convo_messages(){
         var video = this.state.videos[this.state.pos];
-        var messages = this.props.app_state.object_messages[video['video_id']]
-        if(messages == null) return [];
-        return this.filter_messages_for_blocked_accounts(messages)
+        const chain_messages = this.props.app_state.object_messages[video['video_id']] == null ? [] : this.props.app_state.object_messages[video['video_id']]
+        const socket_messages = this.props.app_state.socket_object_messages[video['video_id']+video['object']['e5_id']] == null ? [] : this.props.app_state.socket_object_messages[video['video_id']+video['object']['e5_id']]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+        return this.filter_messages_for_blocked_accounts(all_messages)
     }
 
     filter_messages_for_blocked_accounts(objects){

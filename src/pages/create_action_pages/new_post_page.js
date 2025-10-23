@@ -74,7 +74,9 @@ class NewPostPage extends Component {
         get_post_anonymously_tags_option:this.get_post_anonymously_tags_option(),
         get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[],
 
-        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
+        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+
+        get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
     };
 
     get_new_job_page_tags_object(){
@@ -229,6 +231,18 @@ class NewPostPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
+            ],
+        };
+    }
+
+    get_chain_or_indexer_job_object(){
+        const pos = this.props.do_i_have_an_account() == true ? 1 : 2
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [pos]
             ],
         };
     }
@@ -500,8 +514,20 @@ class NewPostPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_from_outsiders_option} tag_size={'l'} when_tags_updated={this.when_get_masked_from_outsiders_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['284w']/* 'Post Indexing' */, 'details':this.props.app_state.loc['284x']/* 'If set to blockchain, the reference to your new post will be recorded on a blockchain and indexer while if left to indexer, your new post will be referenced in an indexer only.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
+
             </div>
         )
+    }
+
+    when_get_chain_or_indexer_job_object_updated(tag_obj){
+        this.setState({get_chain_or_indexer_job_object: tag_obj})
     }
 
     render_title_tags_part2(){
@@ -664,8 +690,11 @@ class NewPostPage extends Component {
             const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
             const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
             
-            var existing_percentage = this.round_off((current_stack_size / this.props.app_state.upload_object_size_limit) * 100)
-            var additional_percentage = this.round_off((size / this.props.app_state.upload_object_size_limit) * 100)
+            const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
+            const upload_limit = post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ ? (1024*23) : this.props.app_state.upload_object_size_limit;
+            
+            var existing_percentage = this.round_off((current_stack_size / upload_limit) * 100)
+            var additional_percentage = this.round_off((size / upload_limit) * 100)
             
             if(existing_percentage >= 100){
                 existing_percentage = 99.99
@@ -2585,6 +2614,9 @@ return data['data']
         var texts = this.state.entered_text_objects
         var images = this.state.entered_image_objects
 
+        const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
+        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+
         if(index_tags.length < 3){
             this.props.notify(this.props.app_state.loc['270'], 2700)
         }
@@ -2596,6 +2628,15 @@ return data['data']
         }
         else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
             this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
+        else if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        else if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account()){
+            this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
+        }
+        else if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){
+            this.props.notify(this.props.app_state.loc['284bc']/* 'Your job post is too large.' */, 5000)
         }
         else{
 
@@ -2613,14 +2654,17 @@ return data['data']
             //     device_country :me.props.app_state.device_country,
             //     e5 :me.props.app_state.selected_e5,})
             setTimeout(function() {
-                me.props.when_add_new_object_to_stack(me.state)
-        
-                me.setState({ id: makeid(8), type:me.props.app_state.loc['297'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[],typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:''})
+                if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+                    me.props.emit_new_object_in_socket(me.state)
+                }else{
+                    me.props.when_add_new_object_to_stack(me.state)
+                    me.reset_state()
+                }
             }, (1 * 1000));
-
             
-            this.props.notify(this.props.app_state.loc['18'], 1700);
-            
+            if(post_indexing != me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+                this.props.notify(this.props.app_state.loc['18']/* transaction added to stack' */, 1700);
+            }
         }
     }
 
@@ -2633,6 +2677,10 @@ return data['data']
         this.setState({action: action})
     }
 
+    reset_state(){
+        const me = this;
+        me.setState({ id: makeid(8), type:me.props.app_state.loc['297'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[],typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:''})
+    }
 
 }
 

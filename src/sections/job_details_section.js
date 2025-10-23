@@ -272,11 +272,7 @@ class JobDetailsSection extends Component {
                     {this.render_price_amounts(object)}
                     <div style={{height:10}}/>
                     
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2484']/* 'Apply for the job' */, 'details':this.props.app_state.loc['2485']/* 'Respond to the ad with a contract and apply for the job' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_respond_to_job_ui(object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2486']/* 'Apply' */, 'action':''})}
-                    </div>
+                    {this.render_apply_for_job_button(object)}
 
                     {this.render_edit_object_button(object)}
 
@@ -808,7 +804,9 @@ class JobDetailsSection extends Component {
         // var object = this.get_job_items()[this.props.selected_job_post_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
-        if(object['event'].returnValues.p5 == my_account){
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        if(object['event'].returnValues.p5 == my_account && !is_socket_job){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -817,6 +815,21 @@ class JobDetailsSection extends Component {
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2492']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_apply_for_job_button(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 != my_account){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2484']/* 'Apply for the job' */, 'details':this.props.app_state.loc['2485']/* 'Respond to the ad with a contract and apply for the job' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_respond_to_job_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2486']/* 'Apply' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -1975,9 +1988,11 @@ class JobDetailsSection extends Component {
     }
 
     get_convo_messages(object){
-        // var object = this.get_job_items()[this.props.selected_job_post_item];
-        if(this.props.app_state.object_messages[object['id']] == null) return [];
-        return this.filter_messages_for_blocked_accounts(this.props.app_state.object_messages[object['id']])
+        const chain_messages = this.props.app_state.object_messages[object['id']] == null ? [] : this.props.app_state.object_messages[object['id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['id']] == null ? [] : this.props.app_state.socket_object_messages[object['id']]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+        
+        return this.filter_messages_for_blocked_accounts(all_messages)
     }
 
     filter_messages_for_blocked_accounts(objects){

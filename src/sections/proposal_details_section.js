@@ -2038,12 +2038,11 @@ class ProposalDetailsSection extends Component {
     }
 
     get_convo_messages(object){
-        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
-        var convo_messages = this.props.app_state.object_messages[object['id']]
-        if(convo_messages == null){
-            return []
-        }
-        return this.filter_messages_for_blocked_accounts(convo_messages)
+        const chain_messages = this.props.app_state.object_messages[object['id']] == null ? [] : this.props.app_state.object_messages[object['id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['id']] == null ? [] : this.props.app_state.socket_object_messages[object['id']]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+        
+        return this.filter_messages_for_blocked_accounts(all_messages)
     }
 
     filter_messages_for_blocked_accounts(objects){

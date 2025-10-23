@@ -1966,8 +1966,11 @@ class ViewJobRequestPage extends Component {
 
     get_convo_messages(){
         var object = this.state.request_item;
-        if(this.props.app_state.object_messages[object['job_request_id']] == null) return [];
-        return this.filter_messages_for_blocked_accounts(this.props.app_state.object_messages[object['job_request_id']])
+        const chain_messages = this.props.app_state.object_messages[object['job_request_id']] == null ? [] : this.props.app_state.object_messages[object['job_request_id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['job_request_id']] == null ? [] : this.props.app_state.socket_object_messages[object['job_request_id']]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+        
+        return this.filter_messages_for_blocked_accounts(all_messages)
     }
 
     filter_messages_for_blocked_accounts(objects){
