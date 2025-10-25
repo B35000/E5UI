@@ -602,17 +602,15 @@ class NewStorefrontItemPage extends Component {
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div>
-                {/* {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Sales Visibility', 'details':'If set to masked, all your direct purchase sales will be invisible to outsiders', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535bl']/* 'Orders Via Indexers.' */, 'details':this.props.app_state.loc['535bm']/* 'If set to enabled, users will be able to order your items via indexers then pay on delivery.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/> */}
-
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_direct_order_via_indexer_tags_object} tag_size={'l'} when_tags_updated={this.when_get_direct_order_via_indexer_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+                
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['473']/* 'Product Chatroom' */, 'details':this.props.app_state.loc['474']/* 'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -621,7 +619,6 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['475']/* 'Product Listing' */, 'details':this.props.app_state.loc['476']/* 'If set to delisted, the item will not be visible for purchasing' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -804,8 +801,8 @@ class NewStorefrontItemPage extends Component {
         this.setState({shipping_price_amount: amount})
     }
 
-    when_visibility_tags_object_updated(tag_obj){
-        this.setState({visibility_tags_object: tag_obj})
+    when_get_direct_order_via_indexer_tags_object_updated(tag_obj){
+        this.setState({get_direct_order_via_indexer_tags_object: tag_obj})
     }
 
     when_fulfilment_account_input_field_changed(text){

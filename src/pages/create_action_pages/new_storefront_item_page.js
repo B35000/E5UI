@@ -88,7 +88,9 @@ class NewStorefrontItemPage extends Component {
 
         option_group_title:'', option_item_text:'', exchange_id2:'', price_amount2: 0, option_price_data:[], option_group_options:[], option_groups:[], edit_option_group_item_pos:-1, get_option_group_type_object: this.get_option_group_type_object(), option_group_details:'', 
 
-        auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0, viewers:[], viewer:'', pins:[]
+        auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0, viewers:[], viewer:'', pins:[],
+
+        get_direct_order_via_indexer_tags_object:this.get_direct_order_via_indexer_tags_object(),
     };
 
     get_new_job_page_tags_object(){
@@ -300,6 +302,21 @@ class NewStorefrontItemPage extends Component {
 
 
 
+    get_direct_order_via_indexer_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['89']/* 'enabled' */, this.props.app_state.loc['90']/* 'disabled' */], [1]
+            ],
+        };
+    }
+
+
+
+
+
 
 
 
@@ -362,7 +379,7 @@ class NewStorefrontItemPage extends Component {
         if(selected_item == this.props.app_state.loc['440']/* 'configuration' */){
             return(
                 <div>
-                    {this.render_subscription_configuration_part()}
+                    {this.render_storefront_configuration_part()}
                 </div>
             )    
         }
@@ -462,7 +479,7 @@ class NewStorefrontItemPage extends Component {
 
 
 
-    render_subscription_configuration_part(){
+    render_storefront_configuration_part(){
         var size = this.props.app_state.size
 
         if(size == 's'){
@@ -618,20 +635,19 @@ class NewStorefrontItemPage extends Component {
 
 
     render_subscription_configuration_part2(){
-        var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div>
-                {/* {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Sales Visibility', 'details':'If set to masked, all your direct purchase sales will be invisible to outsiders', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535bl']/* 'Orders Via Indexers.' */, 'details':this.props.app_state.loc['535bm']/* 'If set to enabled, users will be able to order your items via indexers then pay on delivery.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/> */}
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_direct_order_via_indexer_tags_object} tag_size={'l'} when_tags_updated={this.when_get_direct_order_via_indexer_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
 
+                
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['473']/* 'Product Chatroom' */, 'details':this.props.app_state.loc['474']/* 'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -640,7 +656,6 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['475']/* 'Product Listing' */, 'details':this.props.app_state.loc['476']/* 'If set to delisted, the item will not be visible for purchasing' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
 
 
 
@@ -803,8 +818,8 @@ class NewStorefrontItemPage extends Component {
         this.setState({shipping_price_amount: amount})
     }
 
-    when_visibility_tags_object_updated(tag_obj){
-        this.setState({visibility_tags_object: tag_obj})
+    when_get_direct_order_via_indexer_tags_object_updated(tag_obj){
+        this.setState({get_direct_order_via_indexer_tags_object: tag_obj})
     }
 
     when_fulfilment_account_input_field_changed(text){

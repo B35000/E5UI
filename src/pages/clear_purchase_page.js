@@ -218,6 +218,8 @@ class ClearPurchasePage extends Component {
     render_generate_signature_data(){
         var item = this.state.order_data
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
+
+        
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1061']/* 'Generate Fulfilment Signature' */, 'details':this.props.app_state.loc['1062']/* 'Create a signature to finalize the fulfilment transaction.' */ })}
@@ -229,7 +231,6 @@ class ClearPurchasePage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account']+', '+this.get_senders_name2(item['sender_account'])})}
                 
                 {this.render_detail_item('0')}
-
 
                 <QRCode
                     size={200}
@@ -245,9 +246,36 @@ class ClearPurchasePage extends Component {
                 <div style={{'padding': '5px'}} onClick={()=>this.copy_to_clipboard(this.state.signature_data)}>
                     {this.render_detail_item('5',{'text':this.props.app_state.loc['1066']/* 'Copy to Clipboard' */, 'action':''})}
                 </div>
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
+                {this.render_signature_requests()}
+                
             </div>
         )
+    }
+
+    render_signature_requests(){
+        const purchase_signature_prompts = this.get_purchase_signature_prompts()
+        if(purchase_signature_prompts.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1078h']/* 'Fulfil Signature Requests.' */, 'details':this.props.app_state.loc['1078i']/* 'If a signature request is sent to your account, it will show here.' */ })}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1078h']/* 'Fulfil Signature Requests.' */, 'details':this.props.app_state.loc['1078j']/* 'Tap on a signature request to respond with the signature shown.' */ })}
+                    <div style={{height:10}}/>
+                    {purchase_signature_prompts.map((item, index) => (
+                        <div onClick={() => this.send_signature_to_request_origin(item)} style={{'padding': '3px 0px 3px 0px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['1078g']/* 'from account $' */.replace('$', item['sender_account']), 'details':new Date(item['time']).toLocaleString(), 'size':'l'})}
+                        </div>
+                    ))}
+                </div>
+            )
+        }
     }
 
     get_senders_name2(sender){
@@ -273,6 +301,11 @@ class ClearPurchasePage extends Component {
                 return object['ipfs'].variants[i]
             }
         }
+    }
+
+    send_signature_to_request_origin(signature_request){
+        var item = this.state.order_data
+        this.props.emit_new_signature_response(item, signature_request, this.state.signature_data, this.state.order_storefront)
     }
 
 
@@ -320,6 +353,7 @@ class ClearPurchasePage extends Component {
     verify_signature_data(){
         var item = this.state.order_data
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
+        
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1068']/* 'Receive Fulfilment Signature' */, 'details':this.props.app_state.loc['1069']/* 'receive a fulfilment signature to verify the items delivery' */ })}
@@ -336,14 +370,81 @@ class ClearPurchasePage extends Component {
                 {this.render_detail_item('0')} */}
 
                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1073']/* 'Paste Signature' */, 'details':this.props.app_state.loc['1074']/* 'Alternatively, you can paste the signature in the input field below' */ })}
-                <div style={{height:5}}/>
+                <div style={{height:10}}/>
 
                 <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1073']/* 'Paste Signature' */} when_text_input_field_changed={this.when_received_signature_changed.bind(this)} text={this.state.received_signature} theme={this.props.theme}/>
                 <div style={{height: 10}} theme={this.props.theme}/>
 
                 {this.render_detail_item('4', {'text':start_and_end(this.state.received_signature), 'textsize':'13px', 'font':this.props.app_state.font})}
+
+                {this.render_detail_item('0')}
+                {this.render_request_signature_ui()}
             </div>
         )
+    }
+
+    render_request_signature_ui(){
+        const purchase_signature_prompts = this.get_purchase_signature_responses()
+        if(purchase_signature_prompts.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1078b']/* 'Request Signature.' */, 'details':this.props.app_state.loc['1078c']/* 'You can prompt a signature on their end then add it later.' */ })}
+                    <div style={{height:10}}/>
+                    <div style={{'padding': '1px'}} onClick={() => this.prompt_signature_from_target()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1078b']/* 'Request Signature.' */, 'action':''})}
+                    </div>
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1078b']/* 'Request Signature.' */, 'details':this.props.app_state.loc['1078c']/* 'You can prompt a signature on their end then add it later.' */ })}
+                    <div style={{height:10}}/>
+                    <div style={{'padding': '1px'}} onClick={() => this.prompt_signature_from_target()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1078b']/* 'Request Signature.' */, 'action':''})}
+                    </div>
+                    <div style={{height:10}}/>
+                    {purchase_signature_prompts.map((item, index) => (
+                        <div onClick={() => this.set_signature_in(item)} style={{'padding': '3px 0px 3px 0px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['1078g']/* 'from account $' */.replace('$', item['sender_account']), 'details':new Date(item['time']).toLocaleString(), 'size':'l'})}
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    get_purchase_signature_responses(){
+        const signature_prompts = []
+        const item = this.state.order_data
+        const purchase_identifier = item['purchase_identifier']
+        const received_signature_requests = this.props.app_state.received_signature_responses
+        Object.keys(received_signature_requests).forEach(signature_request_id => {
+            if(received_signature_requests[signature_request_id]['purchase_identifier'] == purchase_identifier){
+                signature_prompts.push(received_signature_requests[signature_request_id])
+            }
+        });
+        return signature_prompts
+    }
+
+    get_purchase_signature_prompts(){
+        const signature_prompts = []
+        const item = this.state.order_data
+        const purchase_identifier = item['purchase_identifier']
+        const received_signature_requests = this.props.app_state.received_signature_requests
+        Object.keys(received_signature_requests).forEach(signature_request_id => {
+            if(received_signature_requests[signature_request_id]['purchase_identifier'] == purchase_identifier){
+                signature_prompts.push(received_signature_requests[signature_request_id])
+            }
+        });
+        return signature_prompts
+    }
+
+    set_signature_in(signature_response){
+        const signature = signature_response['signature']
+        this.setState({received_signature: signature})
     }
 
     get_all_sorted_objects_mappings(object){
@@ -382,6 +483,12 @@ class ClearPurchasePage extends Component {
         this.setState({received_signature:data})
     }
 
+    prompt_signature_from_target(){
+        var item = this.state.order_data
+        this.props.emit_new_signature_request(item, item['sender_address'], this.state.order_storefront)
+    }
+
+
 
 
     set_object(item, client_type, order_storefront){
@@ -399,8 +506,6 @@ class ClearPurchasePage extends Component {
             this.generate_signature_from_signature_data(item['signature_data'])
         }
     }
-
-
 
     finish_clearing_purchase_action = async () => {
         var scanned_signature = this.state.received_signature.trim()

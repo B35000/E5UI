@@ -243,6 +243,7 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3055df']/* 'nitro-renewal' */ &&
             item.type != this.props.app_state.loc['3077']/* 'fulfil-bids' */ &&
             item.type != this.props.app_state.loc['3055fg']/* 'vote_all' */ &&
+            item.type != this.props.app_state.loc['2642bm']/* 'order-payment' */ &&
             item.type != this.props.app_state.loc['3055gf']/* 'transfer-alias' */
         ){
             return(
@@ -927,6 +928,14 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['2642bm']/* 'order-payment' */){
+                return(
+                    <div>
+                        {this.render_order_payment_data()}
+                    </div>
+                )
+            }
+            
         }
     }
 
@@ -8058,7 +8067,6 @@ return data['data']
         }
     }
 
-
     render_final_payment_amounts(){
         const items = this.get_total_payment_amounts()
         const e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
@@ -8188,6 +8196,99 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    render_order_payment_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['1979u']/* 'Order Hash' */, 'title':''+transaction_item.direct_purchase_item['purchase_identifier'], 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3068al']/* 'Recipient Account.' */, 'title':''+transaction_item.object['ipfs'].target_receiver+','+this.get_senders_name2(transaction_item.recipient), 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_set_storefront_prices_list_part2()}
+            </div>
+        )
+    }
+
+    render_set_storefront_prices_list_part2(){
+        var middle = this.props.height-200;
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        if(transaction_item.selected_variant != null){
+            var items = [].concat(transaction_item.direct_purchase_item['price_data'])
+            var shipping_items = [].concat(transaction_item.direct_purchase_item['shipping_price_data'])
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1951']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1979v']/* 'This is the final amount for the price of the item youve ordered.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['id']], 'number':this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1953']/* 'Shipping Fee' */, 'details':this.props.app_state.loc['1979w']/* 'The charged shipping fee for delivering the items.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {shipping_items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    
+                    <div style={{height:10}}/>
+                    {this.render_purchase_option_fees2()}
+                </div>
+            )
+        }
+    }
+
+    render_purchase_option_fees2(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var object = transaction_item.object
+        var e5 = this.props.app_state.selected_e5
+        if(transaction_item.direct_purchase_item['option_fees'] != null && transaction_item.direct_purchase_item['option_fees'].length > 0){
+            var items = [].concat(transaction_item.direct_purchase_item['option_fees'])
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058m']/* 'Selected Option Fees.' */, 'details':this.props.app_state.loc['1058n']/* 'Below is the extra price for the selected options youve chosen.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':this.get_amounts_to_be_paid(item['amount']), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(item['amount'])), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(item['amount'])), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(item['amount'])), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
 
 
 

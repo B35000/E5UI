@@ -62,7 +62,7 @@ class FulfilBagPage extends Component {
     state = {
         selected: 0, bag_item:{'id':0} ,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(), estimated_delivery_time:0,
-        e5: this.props.app_state.selected_e5
+        e5: this.props.app_state.selected_e5, get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
     };
 
     get_respond_to_bag_title_tags_object(){
@@ -76,7 +76,6 @@ class FulfilBagPage extends Component {
         };
     }
 
-
     get_pre_post_paid_option_tags_object(){
         return{
             'i':{
@@ -87,6 +86,23 @@ class FulfilBagPage extends Component {
             ],
         }
     }
+
+    get_chain_or_indexer_job_object(){
+        const pos = this.props.do_i_have_an_account() == true ? 1 : 2
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [pos]
+            ],
+        };
+    }
+
+
+
+
+
 
     render(){
         return(
@@ -218,12 +234,21 @@ class FulfilBagPage extends Component {
         var items = this.get_contract_items()
         return(
             <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1332g']/* 'Application Indexing' */, 'details':this.props.app_state.loc['1332h']/* 'If set to blockchain, the reference to your new application will be recorded on a blockchain and indexer while if left to indexer, your new application will be referenced in an indexer only.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1135']/* 'Select the work contract youll be using. If you have no work contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
             </div>
         )
+    }
+
+    when_get_chain_or_indexer_job_object_updated(tag_obj){
+        this.setState({get_chain_or_indexer_job_object: tag_obj})
     }
 
     render_my_contracts(){
@@ -688,19 +713,37 @@ class FulfilBagPage extends Component {
         var selected_contract = this.state.picked_contract
         var selected_time = this.state.application_expiry_time
 
+        const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
+
         if(selected_contract == null){
             this.props.notify(this.props.app_state.loc['1153']/* 'You need to pick a contract first.' */, 3600)
         }
         else if(selected_time-Date.now()/1000 < 900){
             this.props.notify(this.props.app_state.loc['1154']/* 'You cant set an expiry time thats less than fifteen minutes from now.' */, 5600)
         }
-        else{
-            this.props.add_respond_to_bag_to_stack(this.state)
-            this.setState({selected: 0,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
-            entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
-
-            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 600)
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account()){
+            this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
+        }
+        else{
+            if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+                this.props.emit_new_object_in_socket(this.state)
+            }else{
+                this.props.add_respond_to_bag_to_stack(this.state)
+                this.reset_state()
+                this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 600)
+            }
+            
+        }
+    }
+
+    reset_state(){
+        this.setState({
+            selected: 0,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
+            entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
+        })
     }
 
 

@@ -3697,7 +3697,7 @@ class StackPage extends Component {
                     // adds.push([])
                     // ints.push(index_data.int)
 
-                    var bag_variants = []
+                    const bag_variants = []
                     
                     txs[i].items_to_deliver.forEach(item => {
                         var variant_images = []
@@ -3706,8 +3706,9 @@ class StackPage extends Component {
                         }
                         bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count, 'variant_images':variant_images })
 
-                        if(!newly_participated_objects.includes(item.storefront_item['e5_id'])){
-                            newly_participated_objects.push(item.storefront_item['e5_id'])
+                        const object_e5_id = item.storefront_item['e5']+':'+item.storefront_item['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
                         }
                     });
 
@@ -3755,8 +3756,9 @@ class StackPage extends Component {
                         ints.push(message_obj.depth)
                     }
                     
-                    if(!newly_participated_objects.includes(txs[i].storefront_item['e5_id'])){
-                        newly_participated_objects.push(txs[i].storefront_item['e5_id'])
+                    const object_e5_id = txs[i].storefront_item['e5']+':'+txs[i].storefront_item['id']
+                    if(!newly_participated_objects.includes(object_e5_id)){
+                        newly_participated_objects.push(object_e5_id)
                     }
 
                     strs.push(message_obj.str)
@@ -4422,6 +4424,30 @@ class StackPage extends Component {
                     strs.push(alias_obj.str)
                     adds.push([])
                     ints.push(alias_obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['2642bm']/* 'order-payment' */){
+                    var message_obj = await this.format_order_payment_object(txs[i], calculate_gas, ints, ipfs_index)
+                    /* depth mints */
+                    if(message_obj.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_obj.depth)
+                    }
+                    
+                    const object_e5_id = txs[i].object['e5']+':'+txs[i].object['id']
+                    if(!newly_participated_objects.includes(object_e5_id)){
+                        newly_participated_objects.push(object_e5_id)
+                    }
+
+                    /* transfers */
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+
+                    /* recordings */
+                    strs.push(message_obj.record_string_obj)
+                    adds.push([])
+                    ints.push(message_obj.record_obj)
                 }
                 
                 delete_pos_array.push(i)
@@ -5247,7 +5273,7 @@ class StackPage extends Component {
 
                     const job_response = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application', 'custom_specifications':t.custom_specifications}
 
-                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(job_response), key_data.key.toString())
+                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(job_response, (key, value) => typeof value === 'bigint' ? value.toString() : value), key_data.key.toString())
                     const encrypted_job_response_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
 
                     ipfs_index_object[t.id] = encrypted_job_response_object
@@ -5292,8 +5318,9 @@ class StackPage extends Component {
                         Object.keys(item.ecid_encryption_passwords).forEach(key => {
                             ecid_encryption_passwords[key] = item.ecid_encryption_passwords[key]
                         });
-                        if(!newly_participated_objects.includes(item.storefront_item['e5_id'])){
-                            newly_participated_objects.push(item.storefront_item['e5_id'])
+                        const object_e5_id = item.storefront_item['e5']+':'+item.storefront_item['id']
+                        if(!newly_participated_objects.includes(object_e5_id)){
+                            newly_participated_objects.push(object_e5_id)
                         }
                     });
 
@@ -5318,10 +5345,10 @@ class StackPage extends Component {
                     const job_author_e5 = t.bag_item['e5']
                     const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
 
-                    var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
+                    const application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
 
 
-                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(application_obj), key_data.key.toString())
+                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(application_obj, (key, value) => typeof value === 'bigint' ? value.toString() : value), key_data.key.toString())
                     const encrypted_bag_response_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
 
                     ipfs_index_object[t.id] = encrypted_bag_response_object 
@@ -5340,11 +5367,12 @@ class StackPage extends Component {
                     const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
 
                     var purchase_object = {
-                        'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 'pins': t.pins
+                        'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 'pins': t.pins, 'purchase_identifier': this.props.hash_data(makeid(12))
                     }
 
-                    if(!newly_participated_objects.includes(t.storefront_item['e5_id'])){
-                        newly_participated_objects.push(t.storefront_item['e5_id'])
+                    const object_e5_id = t.storefront_item['e5']+':'+t.storefront_item['id']
+                    if(!newly_participated_objects.includes(object_e5_id)){
+                        newly_participated_objects.push(object_e5_id)
                     }
 
                     const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(purchase_object), key_data.key.toString())
@@ -9702,6 +9730,131 @@ class StackPage extends Component {
         }
 
         return obj
+    }
+
+    format_order_payment_object = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        console.log('stack_page', t.id, t)
+        const storefront_item = t.object
+        console.log('stack_page', 'storefront item', storefront_item)
+        const object = storefront_item['ipfs']
+        const purchase_options_tags = t.purchase_option_tags_array
+        const t_id = t.id
+
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [object.target_receiver], [23],/* target receivers */
+            [350],/* awward contexts */
+            
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        var record_obj = [ /* add data */
+            [20000, 13, 0],
+            [46], [23],/* target */
+            [storefront_item['id']], /* contexts */
+            [Date.now()] /* int_data */
+        ]
+
+        var record_string_obj = [[t.direct_purchase_item['purchase_identifier']]]
+
+        const price_data = t.direct_purchase_item['price_data']
+        console.log('stack_page', 'selected variant', price_data)
+        for(var i=0; i<price_data.length; i++){
+            var exchange = price_data[i]['id']
+            var amount = this.get_amounts_to_be_paid(price_data[i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var f=0; f<transfer_actions.length; f++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[f]['amount'])
+                obj[7].push(transfer_actions[f]['depth'])
+            }
+        }
+
+        const shipping_price_data = t.direct_purchase_item['shipping_price_data']
+        for(var i=0; i<shipping_price_data.length; i++){
+            var exchange = shipping_price_data[i]['id']
+            var amount = (shipping_price_data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
+            }
+        }
+
+        
+        if(t.direct_purchase_item['option_fees'] != null && t.direct_purchase_item['option_fees'].length > 0){
+            var option_fees = t.direct_purchase_item['option_fees']
+            for(var i=0; i<option_fees.length; i++){
+                var exchange = option_fees[i]['id']
+                var amount = (option_fees[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+                for(var t=0; t<transfer_actions.length; t++){
+                    obj[4].push(exchange)
+                    obj[5].push(23)
+                    obj[6].push(transfer_actions[t]['amount'])
+                    obj[7].push(transfer_actions[t]['depth'])
+                }
+            }
+        }
+
+        string_obj[0].push(t.direct_purchase_item['purchase_identifier'])
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj, record_obj, record_string_obj}
     }
 
     

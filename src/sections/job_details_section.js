@@ -113,7 +113,7 @@ class JobDetailsSection extends Component {
         if(this.props.selected_job_post_item != null){
             var object = this.get_item_in_array(this.get_job_items(), this.props.selected_job_post_item)
             if(object == null) return;
-            this.props.get_job_objects_responses(object['id'], object['e5'])
+            this.props.get_job_objects_responses(object['id'], object['e5'], 'job')
             this.props.get_objects_messages(object['id'],  object['e5'])
         }
     }

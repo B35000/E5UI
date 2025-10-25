@@ -119,7 +119,7 @@ class BagDetailsSection extends Component {
         if(this.props.selected_bag_item != null){
             var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
             if(object == null) return;
-            this.props.get_job_objects_responses(object['id'], object['e5'])
+            this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
             this.props.get_objects_messages(object['id'], object['e5'])
         }
     }

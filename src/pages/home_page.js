@@ -4552,7 +4552,7 @@ class home_page extends Component {
         }
 
         this.props.fetch_uploaded_files_for_object(object)
-        this.props.get_job_objects_responses(id, e5)
+        this.props.get_job_objects_responses(id, e5, 'job')
         this.props.get_objects_messages(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
@@ -4752,7 +4752,7 @@ class home_page extends Component {
             this.update_cookies()
         }
         this.props.load_bag_storefront_items(object)
-        this.props.get_job_objects_responses(id, e5)
+        this.props.get_job_objects_responses(id, e5, 'bag')
         this.props.get_objects_messages(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){

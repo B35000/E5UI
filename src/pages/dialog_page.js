@@ -2350,6 +2350,28 @@ return data['data']
     }
 
     render_clear_purchase_button(item, object, sender_type){
+        if(item['indexer_order'] == true && sender_type == 'storefront_client'){
+            if(this.has_this_order_been_fulfilled(item, object)){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bo']/* 'Order Finalized.' */, 'details':this.props.app_state.loc['2642bp']/* 'Youve already finalized this order and a record of your payment is on E5.' */})}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bk']/* 'Finalize Order.' */, 'details':this.props.app_state.loc['2642bl']/* 'Finish the order by making the requred payment after verifying fulfilment.' */})}
+                    <div style={{height:10}}/>
+                    <div style={{'padding': '1px'}} onClick={() => this.finalize_order(item, object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2638']/* 'Clear Purchase' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+        else if(item['indexer_order'] == true && sender_type == 'storefront_owner'){
+            return;
+        }
         var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
         if(signature == null || signature[item['signature_data']] == null){
             return(
@@ -2363,6 +2385,14 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    has_this_order_been_fulfilled(item, object){
+        const direct_order_fulfilment_items = []
+        this.props.app_state.direct_order_fulfilments[object['id']].forEach(event_item => {
+            direct_order_fulfilment_items.push(event_item.returnValues.p4)
+        });
+        return direct_order_fulfilment_items.includes(item['purchase_identifier'])
     }
 
     clear_purchase(item, sender_type, object){
@@ -2435,6 +2465,34 @@ return data['data']
     when_pin_item_clicked(item){
         const location_data = { lat: item['lat'], lon: item['lng'] }
         this.locationPickerRef.current?.set_center(location_data);
+    }
+
+    finalize_order(item, object){
+        if(this.does_transaction_already_exist_in_stack(object, item)){
+            this.props.notify(this.props.app_state.loc['2642bq']/* 'Order payment already in stack.' */, 5700)
+            return;
+        }
+
+        var obj = {
+            id:makeid(8), type:this.props.app_state.loc['2642bm']/* 'order-payment' */,
+            entered_indexing_tags:[this.props.app_state.loc['2642bn']/* 'order' */, this.props.app_state.loc['3068af']/* 'bill' */, this.props.app_state.loc['3068ah']/* 'payment' */],
+            e5:object['e5'], direct_purchase_item: item, object: object
+        }
+        this.props.add_order_payment_to_stack(obj)
+        this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
+    }
+
+    does_transaction_already_exist_in_stack(object, item){
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(
+                stack_transactions[i].type == this.props.app_state.loc['2642bm']/* 'order-payment' */ && 
+                stack_transactions[i].object['e5_id'] == object['e5_id'] && 
+                stack_transactions[i].direct_purchase_item['purchase_identifier'] == item['purchase_identifier']){
+                return true
+            }
+        }
+        return false
     }
 
 

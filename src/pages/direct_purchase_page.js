@@ -47,10 +47,10 @@ function makeid(length) {
     return result;
 }
 
-class DirectPurchasetPage extends Component {
+class DirectPurchasePage extends Component {
     
     state = {
-        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[], pins:[]
+        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[], pins:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
     };
 
     get_direct_purchase_tags_object(){
@@ -63,6 +63,33 @@ class DirectPurchasetPage extends Component {
             ],
         };
     }
+
+    get_chain_or_indexer_job_object(){
+        const pos = this.props.do_i_have_an_account() == true ? 1 : 2
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [pos]
+            ],
+        };
+    }
+
+    get_locked_chain_or_indexer_job_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['284v']/* 'blockchain' */], [1]
+            ],
+        };
+    }
+
+
+
+
 
     render(){
         return(
@@ -83,7 +110,6 @@ class DirectPurchasetPage extends Component {
             </div>
         )
     }
-
 
     when_direct_purchase_tags_object_updated(tag_obj){
         this.setState({direct_purchase_tags_object: tag_obj})
@@ -194,9 +220,14 @@ class DirectPurchasetPage extends Component {
                     </div>
                     <div style={{height:10}}/>
                     {this.render_selected_pins()}
-
                     {this.render_detail_item('0')}
 
+
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1114f']/* 'Order Indexing.' */, 'details':this.props.app_state.loc['1114g']/* 'If set to blockchain, the reference to your new order will be recorded on a blockchain and indexer while if left to indexer, your new order will be referenced in an indexer only.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
 
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1114c']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1114d']/* 'You can also include custom requirements for the item variant your ordering such as color, material and such.' */, 'size':'l'})}
@@ -755,11 +786,19 @@ class DirectPurchasetPage extends Component {
         }
         this.setState({storefront_item: item, e5: item['e5']})
         this.set_up_option_groups(item)
+
+        const can_make_indexer_order = item['ipfs'].get_direct_order_via_indexer_tags_object != null ? this.get_selected_item2(item['ipfs'].get_direct_order_via_indexer_tags_object, 'e') == 1 : false;
+
+        if(can_make_indexer_order == false){
+            this.setState({get_chain_or_indexer_job_object: this.get_locked_chain_or_indexer_job_object()})
+        }
     }
 
 
 
     finish_creating_direct_purchase_item(){
+        const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
+        const can_make_indexer_order = this.state.storefront_item['ipfs'].get_direct_order_via_indexer_tags_object != null ? this.get_selected_item2(this.state.storefront_item['ipfs'].get_direct_order_via_indexer_tags_object, 'e') == 1 : false;
         if(this.state.selected_variant == null){
             this.props.notify(this.props.app_state.loc['1109']/* 'Pick one variant first.' */, 3500)
         }
@@ -775,11 +814,26 @@ class DirectPurchasetPage extends Component {
         else if(!this.can_afford_purchase()){
             this.props.notify(this.props.app_state.loc['1113']/* 'Your balance is insufficient to fulfil that direct purchase.' */, 5900)
         }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account()){
+            this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
+        }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !can_make_indexer_order){
+            this.props.notify(this.props.app_state.loc['1114h']/* 'The storefront owner disabled indexer orders.' */, 5000)
+        }
         else{
-            this.props.add_direct_purchase_to_stack(this.state)
-            this.add_fulfilment_location_to_local_storage()
-            // this.setState({purchase_unit_count:1, selected_variant:null, fulfilment_location:'', custom_specifications:''})
-            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
+
+            if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
+                this.props.emit_new_object_in_socket(this.state)
+            }else{
+                this.props.add_direct_purchase_to_stack(this.state)
+                this.add_fulfilment_location_to_local_storage()
+                // this.setState({purchase_unit_count:1, selected_variant:null, fulfilment_location:'', custom_specifications:''})
+                this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
+            }
+            
         }
     }
 
@@ -1123,4 +1177,4 @@ class DirectPurchasetPage extends Component {
 
 
 
-export default DirectPurchasetPage;
+export default DirectPurchasePage;
