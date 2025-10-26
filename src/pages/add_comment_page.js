@@ -367,6 +367,36 @@ class AddCommentPage extends Component {
 
     when_markdown_field_changed(text){
         this.setState({markdown: text})
+        if(this.state.page == 'mail'){
+            var object = this.state.object
+
+            var recipients_e5 = object['author'] == this.props.app_state.user_account_id[object['ipfs']['e5']] ? object['ipfs']['recipients_e5'] : object['ipfs']['e5']
+            this.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5)
+
+            var me = this;
+            setTimeout(function() {
+                if(me.state.entered_text == text){
+                    //done typing
+                    me.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5)
+                }
+            }, (1 * 2000));
+        }
+        else if(this.state.page == 'request'){
+            const job_request = this.state.object
+            const contractor_object = this.state.contractor_object
+            const recipient_id = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
+            const recipient_e5 = contractor_object['e5']
+
+            this.props.emit_new_chat_typing_notification(job_request['job_request_id'], recipient_id, recipient_e5)
+
+            var me = this;
+            setTimeout(function() {
+                if(me.state.entered_text == text){
+                    //done typing
+                    me.props.emit_new_chat_typing_notification(job_request['job_request_id'], recipient_id, recipient_e5)
+                }
+            }, (1 * 2000));
+        }
     }
 
     render_markdown_shortcut_list(){
@@ -578,6 +608,36 @@ class AddCommentPage extends Component {
 
     when_title_text_input_field_changed(text){
         this.setState({entered_title_text: text})
+
+        if(this.state.page == 'mail'){
+            var object = this.state.object
+            var recipients_e5 = object['author'] == this.props.app_state.user_account_id[object['ipfs']['e5']] ? object['ipfs']['recipients_e5'] : object['ipfs']['e5']
+            this.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5)
+
+            var me = this;
+            setTimeout(function() {
+                if(me.state.entered_text == text){
+                    //done typing
+                    me.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5, false)
+                }
+            }, (1 * 2000));
+        }
+        else if(this.state.page == 'request'){
+            const job_request = this.state.object
+            const contractor_object = this.state.contractor_object
+            const recipient_id = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
+            const recipient_e5 = contractor_object['e5']
+
+            this.props.emit_new_chat_typing_notification(job_request['job_request_id'], recipient_id, recipient_e5)
+
+            var me = this;
+            setTimeout(function() {
+                if(me.state.entered_text == text){
+                    //done typing
+                    me.props.emit_new_chat_typing_notification(job_request['job_request_id'], recipient_id, recipient_e5)
+                }
+            }, (1 * 2000));
+        }
     }
 
 

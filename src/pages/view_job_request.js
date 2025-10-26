@@ -144,7 +144,7 @@ class ViewJobRequestPage extends Component {
             })
         }
         this.setState({request_item: request_item, contractor_object: contractor_object, e5: request_item['e5']})
-        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'], request_item['key_data'])
+        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'], request_item['key_data'], request_item, contractor_object)
 
         if(request_item['is_response_accepted']){
             this.setState({accept_job_request_title_tags_object: this.get_accepted_job_request_title_tags_object()})
@@ -1232,11 +1232,28 @@ class ViewJobRequestPage extends Component {
     render_top_title(){
         var object = this.state.request_item;
         var contractor_post = this.state.contractor_object
+        const online_text = this.is_recipient_online() ? this.props.app_state.loc['2738bi']/* 'online' */ : this.props.app_state.loc['2738bj']/* 'offline' */
         return(
             <div style={{padding:'0px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.truncate(contractor_post['ipfs'].entered_title_text, 40), 'details':this.truncate(object['title_description'], 40), 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.truncate(contractor_post['ipfs'].entered_title_text, 40), 'details':this.truncate(object['title_description'], 40), 'size':'l', 'footer':online_text})} 
             </div>
         )
+    }
+
+    is_recipient_online(){
+        const tracked_online_accounts = this.props.app_state.tracked_online_accounts
+        const job_request = this.state.request_item
+        const contractor_object = this.state.contractor_object
+        const recipient = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
+        const recipients_e5 = contractor_object['e5']
+        const e5_id = recipient+recipients_e5
+
+        if(tracked_online_accounts[e5_id] == null){
+            return false
+        }
+        else{
+            return tracked_online_accounts[e5_id]['online']
+        }
     }
 
     constructor(props) {
@@ -1283,6 +1300,7 @@ class ViewJobRequestPage extends Component {
                                 </li>
                             ))}
                         </ul>
+                        {this.render_last_opened_time()}
                     </div>
                 </div>
             )
@@ -1294,6 +1312,8 @@ class ViewJobRequestPage extends Component {
                 <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(final_items)}
+                        {this.render_bubble_if_typing()}
+                        {this.render_last_opened_time()}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -1304,10 +1324,39 @@ class ViewJobRequestPage extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             <div ref={this.messagesEnd}/>
                             {this.render_all_comments()}
+                            {this.render_bubble_if_typing()}
+                            {this.render_last_opened_time()}
                         </ul>
                     </div>
                 )
             }
+        }
+    }
+
+    render_last_opened_time(){
+        const object = this.state.request_item
+        const convo_read_receipts_info = this.props.app_state.convo_read_receipts_info
+        const last_opened_time_object = convo_read_receipts_info[object['job_request_id']]
+        if(last_opened_time_object != null){
+            const last_opened_time = last_opened_time_object['last_read_time']
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['2738bg']/* Last opened on $ */.replace('$', new Date(last_opened_time).toLocaleString()), 'textsize':'', 'font':''})}
+                </div>
+            )
+        }
+    }
+
+    render_bubble_if_typing(){
+        const object = this.state.request_item
+        const convo_typing_info = this.props.app_state.convo_typing_info
+        const convo_typing_object = convo_typing_info[object['job_request_id']]
+        if(convo_typing_object != null && convo_typing_object['keyboard_active'] == true && convo_typing_object['time'] > Date.now() - (10*1000)){
+            return(
+                <div style={{'width':65}}>
+                    {this.render_detail_item('4', {'text':'', 'textsize':'', 'font':''})}
+                </div>
+            )
         }
     }
 
@@ -2121,6 +2170,21 @@ class ViewJobRequestPage extends Component {
             this.show_add_comment_bottomsheet()
         }else{
             this.setState({entered_text: text})
+
+            const job_request = this.state.request_item
+            const contractor_object = this.state.contractor_object
+            const recipient_id = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
+            const recipient_e5 = contractor_object['e5']
+
+            this.props.emit_new_chat_typing_notification(job_request['job_request_id'], recipient_id, recipient_e5)
+
+            var me = this;
+            setTimeout(function() {
+                if(me.state.entered_text == text){
+                    //done typing
+                    me.props.emit_new_chat_typing_notification(job_request['job_request_id'], recipient_id, recipient_e5)
+                }
+            }, (1 * 2000));
         }
     }
 

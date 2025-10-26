@@ -119,6 +119,7 @@ class ViewGroups extends Component {
     render_detail_item(item_id, object_data){
         var background_color = this.props.theme['view_group_card_item_background'];
         var border_radius = '7px';
+        var font = 'Sans-serif';
         // var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
 
         if(item_id=='0'){/* line */
@@ -277,6 +278,7 @@ class ViewGroups extends Component {
             }
             const parts = this.mask_profane_words(details, false).split(' ');
             const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 0px 0px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
+            const footer = object_data['footer']
             if(item_id == '8'){
                 var img = E5EmptyIcon;
                 if(object_data != null){
@@ -326,9 +328,13 @@ class ViewGroups extends Component {
 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{
                                     parts.map((part, index) => {
-                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
                                     })
-                                    }</p>
+                                    }
+                                </p>
+                                {footer && (
+                                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(footer)}</Linkify></p>
+                                )}
                             </div>
                         </div>
                     </div>

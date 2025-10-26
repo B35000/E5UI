@@ -930,7 +930,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -1016,7 +1016,7 @@ class App extends Component {
     censored_keywords:[], media_activation_tx_limit:0, media_activation_age_limit:0, 
 
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
-    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}
+    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{},
   };
 
   get_thread_pool_size(){
@@ -3629,7 +3629,9 @@ class App extends Component {
       default_location_pins: this.state.default_location_pins,
       should_update_default_location_pins_in_e5: this.state.should_update_default_location_pins_in_e5,
       page_background_setting: this.state.page_background_setting,
-      socket_participated_objects: this.state.socket_participated_objects
+      socket_participated_objects: this.state.socket_participated_objects,
+
+      message_comment_fulfilment: this.state.message_comment_fulfilment
     }
   }
 
@@ -3831,7 +3833,8 @@ class App extends Component {
       var should_update_default_location_pins_in_e5 = state.should_update_default_location_pins_in_e5 || this.state.should_update_default_location_pins_in_e5
       var page_background_setting = state.page_background_setting || this.state.page_background_setting
 
-      var socket_participated_objects = state.socket_participated_objects || this.state.socket_participated_objects
+      var socket_participated_objects = state.socket_participated_objects || this.state.socket_participated_objects;
+      var message_comment_fulfilment = state.message_comment_fulfilment || this.state.message_comment_fulfilment
 
       this.setState({
         theme: theme,
@@ -3913,7 +3916,8 @@ class App extends Component {
         default_location_pins: default_location_pins,
         should_update_default_location_pins_in_e5: should_update_default_location_pins_in_e5,
         page_background_setting: page_background_setting,
-        socket_participated_objects: socket_participated_objects
+        socket_participated_objects: socket_participated_objects,
+        message_comment_fulfilment: message_comment_fulfilment,
       })
       var me = this;
       setTimeout(function() {
@@ -3972,6 +3976,7 @@ class App extends Component {
       me.stack_page.current?.set_floating_close_button_object()
       me.stack_page.current?.set_floating_close_button_position_object()
       me.stack_page.current?.set_page_background_object()
+      me.stack_page.current?.set_chain_or_indexer_option()
     }, (1 * 1000));
   }
 
@@ -5773,7 +5778,7 @@ class App extends Component {
 
           when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)} get_default_background={this.get_default_background.bind(this)} linear_gradient_text={this.linear_gradient_text.bind(this)}
 
-          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)}
+          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -7753,7 +7758,7 @@ class App extends Component {
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
-      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)}
+      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)}
       />
     )
   }
@@ -8779,6 +8784,14 @@ class App extends Component {
 
   when_page_background_setting_changed(item){
     this.setState({page_background_setting: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_chain_or_indexer_setting_changed(item){
+    this.setState({message_comment_fulfilment: item})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -14769,7 +14782,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
+                          <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -14782,7 +14795,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_comment_bottomsheet.bind(this)} open={this.state.add_comment_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
+            <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
             />
           </div>
       </SwipeableBottomSheet>
@@ -39301,7 +39314,7 @@ class App extends Component {
         return all_objects
   }
 
-  load_job_request_messages = async (contractor_id, request_id, e5, key_data) => {
+  load_job_request_messages = async (contractor_id, request_id, e5, key_data, job_request, contractor_object) => {
     const convo_key = await this.get_job_request_messages_convo_id(key_data, e5)
 
     const job_request_convo_keys_clone = structuredClone(this.state.job_request_convo_keys);
@@ -39309,6 +39322,16 @@ class App extends Component {
     this.setState({job_request_convo_keys_clone})
 
     this.get_objects_messages_from_socket_and_enter_chatroom(request_id)
+
+    const target_type = 'read_receipts|'+request_id+'|'+this.state.accounts[this.state.selected_e5].address
+    this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+
+    const recipient_id = contractor_object['author'] == this.state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
+    const recipient_e5 = contractor_object['e5']
+    this.emit_new_read_receipts_notification(request_id, recipient_id, recipient_e5)
+
+    this.get_and_set_account_online_status(recipient_id, recipient_e5)
+
     var all_object_comment_events = await this.get_job_request_comment_events(contractor_id, request_id)
     var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
@@ -39540,6 +39563,15 @@ class App extends Component {
   get_mail_messages = async (mail) => {
     var convo_id = mail['convo_id']
     this.get_objects_messages_from_socket_and_enter_chatroom(convo_id)
+    
+    const target_type = 'read_receipts|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
+    this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+
+    this.get_and_set_account_online_status(mail['convo_with'], recipients_e5)
+
+    var recipients_e5 = mail['author'] == this.state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
+    this.emit_new_read_receipts_notification(convo_id, mail['convo_with'], recipients_e5)
+    
     var all_my_mail_events = await this.get_sorted_convo_message_events(convo_id)
     
     var loaded_target = 0
@@ -39547,6 +39579,7 @@ class App extends Component {
       await this.fetch_multiple_cids_from_nitro(all_my_mail_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
       loaded_target = all_my_mail_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
+    
     
     var messages = []
     var is_first_time = this.state.mail_messages[convo_id] == null ? true : false
@@ -42726,6 +42759,22 @@ class App extends Component {
       else if(message['type'] == 'signature_response'){
         me.process_new_signature_response_message(message, object_hash, from, true)
       }
+      else if(message['type'] == 'typing'){
+        me.process_new_typing_message(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'read_receipts'){
+        me.process_new_read_receipts_message(message, object_hash, from, true)
+      }
+    });
+    this.socket.on('user_joined_chatroom', ({userId, roomId}) => {
+      if(roomId == 'jobs'){
+        this.when_account_comes_online_or_offline(userId, true)
+      }
+    });
+    this.socket.on('user_left', ({userId, roomId}) => {
+      if(roomId == 'jobs'){
+        this.when_account_comes_online_or_offline(userId, false)
+      }
     });
   }
 
@@ -42798,7 +42847,7 @@ class App extends Component {
   }
 
   async emit_new_mail_confirmed(state_object, show_job_after_broadcast, type){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
     this.new_mail_page.current?.reset_state()
     const mail_message_object = type == 'mail' ? await this.prepare_mail_object_message(state_object, show_job_after_broadcast) : await this.prepare_mail_message_object_message(state_object)
 
@@ -42806,14 +42855,14 @@ class App extends Component {
     clone.push(mail_message_object.object_hash)
     this.setState({broadcast_stack: clone})
 
-    const to = await this.get_recipient_address(state_object.target_recipient, state_object.recipients_e5)
+    const to = type == 'mail' ? await this.get_recipient_address(state_object['recipient'], state_object['recipients_e5']) : await this.get_recipient_address(state_object.target_recipient, state_object.recipients_e5)
     const target = 'mail|'+to
     const secondary_target = 'mail|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_new_job_request_message(state_object){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
     const job_request_message_object = await this.prepare_job_request_message(state_object)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42827,7 +42876,7 @@ class App extends Component {
   }
 
   async emit_new_channel_message(state_object){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
     const channel_message_object = await this.prepare_channel_message(state_object)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42840,7 +42889,7 @@ class App extends Component {
   }
 
   async emit_new_object_comment_message(state_object){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
     const comment_message_object = await this.prepare_new_object_comment_message(state_object)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42853,7 +42902,7 @@ class App extends Component {
   }
 
   async emit_new_bill_confirmed(state_object, show_job_after_broadcast){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.prompt_top_notification(this.getLocale()['2738ba']/* 'Sending Bill... */, 1900)
     this.view_contextual_transfer_page.current?.reset_state()
     const bill_message_object = await this.prepare_bill_object_message(state_object, show_job_after_broadcast)
 
@@ -42868,7 +42917,7 @@ class App extends Component {
   }
 
   async emit_new_job_application(state_object, show_job_after_broadcast){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.prompt_top_notification(this.getLocale()['2738bb']/* 'Sending Application... */, 1900)
     this.respond_to_job_page.current?.reset_state()
     const message_object = await this.prepare_job_application_object_message(state_object, show_job_after_broadcast)
 
@@ -42883,7 +42932,7 @@ class App extends Component {
   }
 
   async emit_new_bag_application(state_object, show_job_after_broadcast){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    this.prompt_top_notification(this.getLocale()['2738bb']/* 'Sending Application... */, 1900)
     this.fulfil_bag_page.current?.reset_state()
     const message_object = await this.prepare_bag_application_object_message(state_object, show_job_after_broadcast)
 
@@ -42898,8 +42947,7 @@ class App extends Component {
   }
 
   async emit_new_contractor_job_request_application(state_object, show_job_after_broadcast){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
-    this.fulfil_bag_page.current?.reset_state()
+    this.prompt_top_notification(this.getLocale()['2738az']/* 'Sending Job Request... */, 1900)
     const message_object = await this.prepare_job_request_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42913,8 +42961,7 @@ class App extends Component {
   }
 
   async emit_new_contractor_accept_job_request(state_object, show_job_after_broadcast){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
-    this.fulfil_bag_page.current?.reset_state()
+    this.prompt_top_notification(this.getLocale()['2738bc']/* 'Sending Contractor Response... */, 1900)
     const message_object = await this.prepare_job_request_response_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42928,8 +42975,7 @@ class App extends Component {
   }
 
   async emit_new_storefront_order_request(state_object, show_job_after_broadcast){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
-    this.fulfil_bag_page.current?.reset_state()
+    this.prompt_top_notification(this.getLocale()['2738bd']/* 'Sending Storefront Order... */, 1900)
     const message_object = await this.prepare_storefront_order_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42943,8 +42989,7 @@ class App extends Component {
   }
 
   async emit_new_signature_request(state_object, target_recipient_address, order_storefront){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
-    this.new_mail_page.current?.reset_state()
+    this.prompt_top_notification(this.getLocale()['2738be']/* 'Sending Signature Request... */, 1900)
     const mail_message_object = await this.prepare_signature_request_message(state_object, target_recipient_address)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42958,8 +43003,7 @@ class App extends Component {
   }
 
   async emit_new_signature_response(state_object, signature_request, signature_data, order_storefront){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
-    this.new_mail_page.current?.reset_state()
+    this.prompt_top_notification(this.getLocale()['2738bf']/* 'Sending Signature Response... */, 1900)
     const mail_message_object = await this.prepare_signature_response_message(state_object, signature_request, signature_data)
 
     const clone = this.state.broadcast_stack.slice()
@@ -42969,6 +43013,50 @@ class App extends Component {
     const to = signature_request['sender_address']
     const target = 'signature_response|'+order_storefront['e5_id']+'|'+to
     const secondary_target = 'signature_response|'+order_storefront['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_new_chat_typing_notification(convo_id, recipient_id, recipient_e5, keyboard_active){
+    if(this.typing_limit_object == null){
+      this.typing_limit_object = {}
+    }
+    if(this.typing_limit_object[convo_id] != null && this.typing_limit_object[convo_id] > Date.now() - (1800)){
+      return;
+    }else{
+      this.typing_limit_object[convo_id] = Date.now()
+    }
+    const mail_message_object = await this.prepare_typing_message(convo_id, recipient_id, recipient_e5, keyboard_active)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(mail_message_object.object_hash)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(recipient_id, recipient_e5)
+    const target = 'typing|'+convo_id+'|'+to
+    const secondary_target = 'typing|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
+    
+    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_new_read_receipts_notification(convo_id, recipient_id, recipient_e5){
+    if(this.typing_limit_object == null){
+      this.typing_limit_object = {}
+    }
+    if(this.typing_limit_object[convo_id] != null && this.typing_limit_object[convo_id] > Date.now() - (60*1000)){
+      return;
+    }else{
+      this.typing_limit_object[convo_id] = Date.now()
+    }
+    const mail_message_object = await this.prepare_read_receipts_message(convo_id, recipient_id, recipient_e5)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(mail_message_object.object_hash)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(recipient_id, recipient_e5)
+    const target = 'read_receipts|'+convo_id+'|'+to
+    const secondary_target = 'read_receipts|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
+    
     this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
@@ -43519,7 +43607,7 @@ class App extends Component {
     const job_author_e5 = t.job_item['e5']
     const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
 
-    const application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
+    const application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.state.user_account_id[this.state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
 
     const encrypted_obj = await this.encrypt_data_string(JSON.stringify(application_obj, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value), key_data.key.toString())
@@ -43903,6 +43991,93 @@ class App extends Component {
     return { message, object_hash }
   }
 
+  async prepare_typing_message(convo_id, recipient_id, recipient_e5, keyboard_active){
+    const typing_object = {
+      convo_id,
+      keyboard_active,
+      author: this.state.user_account_id[this.state.selected_e5],
+      author_e5: this.state.selected_e5,
+      time: Date.now()
+    }
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(typing_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'typing',
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_read_receipts_message(convo_id, recipient_id, recipient_e5){
+    const typing_object = {
+      convo_id,
+      last_read_time: Date.now(),
+      author: this.state.user_account_id[this.state.selected_e5],
+      author_e5: this.state.selected_e5
+    }
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(typing_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'read_receipts',
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
 
 
 
@@ -44238,8 +44413,29 @@ class App extends Component {
         }
         clone[request_id] = messages
         this.setState({socket_object_messages: clone})
+
+
+        if(!am_I_the_author){
+          if(message.time > (Date.now()/1000) - (3*60)){
+            event['e5'] = e5
+            const notifs = [event]
+            this.handle_incoming_job_request_message_notifications(notifs)
+          }
+        }
       }
     }
+  }
+
+  handle_incoming_job_request_message_notifications(events){
+    var senders = []
+    events.forEach(event => {
+      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc */, event['e5'])
+      senders.push(alias)
+    });
+    var prompt = this.getLocale()['2738ax']/* 'Incoming job request message from $' */
+    prompt = prompt.replace('$', senders.toString())
+    this.load_specific_storefront_items(events, 'p3')
+    this.prompt_top_notification(prompt, 15000)
   }
 
   async process_new_channel_message(message, object_hash){
@@ -44501,7 +44697,7 @@ class App extends Component {
             clone[message.job_object_id] = messages
             this.setState({job_responses: clone})
 
-            if(message.time > (Date.now()/1000) - (3*60)){
+            if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
               event['e5'] = e5
               const notifs = [event]
               this.handle_job_application_notifications(notifs)
@@ -44602,7 +44798,7 @@ class App extends Component {
             clone[message.job_object_id] = messages
             this.setState({job_responses: clone})
 
-            if(message.time > (Date.now()/1000) - (3*60)){
+            if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
               event['e5'] = e5
               const notifs = [event]
               this.handle_incoming_bag_application_notifications(notifs)
@@ -44700,7 +44896,7 @@ class App extends Component {
         clone[message.contractor_object_id] = messages
         this.setState({contractor_applications: clone})
 
-        if(message.time > (Date.now()/1000) - (3*60)){
+        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
           event['e5'] = e5
           const notifs = [event]
           this.handle_job_request_notifications(notifs)
@@ -44752,7 +44948,7 @@ class App extends Component {
 
     const event = {returnValues:{p1: message.target, p2:sender_acc, p3:39, p4:object_hash, p5:message.int_data, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-    if(message.time > (Date.now()/1000) - (3*60)){
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
       event['e5'] = e5
       const notifs = [event]
       this.handle_job_request_response_notifications(notifs)
@@ -44824,7 +45020,7 @@ class App extends Component {
       clone[message.storefront_e5_id] = messages
       this.setState({direct_orders: clone})
 
-      if(message.time > (Date.now()/1000) - (3*60)){
+      if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
         event['e5'] = e5
         const notifs = [event]
         this.handle_incoming_storefront_direct_order_notifications(notifs)
@@ -44886,7 +45082,7 @@ class App extends Component {
     received_signature_requests_object[ipfs['signature_request_id']] = ipfs
     this.setState({received_signature_requests: received_signature_requests_object})
 
-    if(message.time > (Date.now()/1000) - (3*60)){
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
       this.handle_signature_request_notifications(ipfs)
     }
   }
@@ -44919,7 +45115,7 @@ class App extends Component {
     received_signature_requests_object[ipfs['signature_request_id']] = ipfs
     this.setState({received_signature_responses: received_signature_requests_object})
 
-    if(message.time > (Date.now()/1000) - (3*60)){
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
       this.handle_signature_request_notifications(ipfs)
     }
   }
@@ -44929,6 +45125,57 @@ class App extends Component {
     var prompt = this.getLocale()['1078k']/* 'Incoming signature response from $' */
     prompt = prompt.replace('$', sender_account)
     this.prompt_top_notification(prompt, 10000)
+  }
+
+  async process_new_typing_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['id'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    
+    if(!am_I_the_author){
+      const convo_typing_info_clone = structuredClone(this.state.convo_typing_info)
+      convo_typing_info_clone[ipfs['convo_id']] = ipfs
+      this.setState({convo_typing_info: convo_typing_info_clone})
+    }
+    
+  }
+
+  async process_new_read_receipts_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['id'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    
+    if(!am_I_the_author){
+      const convo_typing_info_clone = structuredClone(this.state.convo_read_receipts_info)
+      convo_typing_info_clone[ipfs['convo_id']] = ipfs
+      this.setState({convo_read_receipts_info: convo_typing_info_clone})
+    }
+  }
+
+  when_account_comes_online_or_offline(address, online_status){
+    const clone = structuredClone(this.state.tracked_online_accounts)
+    Object.keys(clone).forEach(e5_id => {
+      if(clone[e5_id]['address'] == address){
+        clone[e5_id]['online'] = online_status
+      }
+    });
+    this.setState({tracked_online_accounts: clone})
   }
 
 
@@ -45170,6 +45417,12 @@ class App extends Component {
           else if(target.startsWith('signature_response|')){
             this.process_new_signature_response_message(target_data[object_hash], object_hash, null, false, application_responses)
           }
+          else if(target.startsWith('typing|')){
+            this.process_new_typing_message(target_data[object_hash], object_hash, null, false, application_responses)
+          }
+          else if(target.startsWith('read_receipts|')){
+            this.process_new_read_receipts_message(target_data[object_hash], object_hash, null, false, application_responses)
+          } 
           
         }
         
@@ -45195,6 +45448,53 @@ class App extends Component {
       }
       await this.wait(2000)
     }
+  }
+
+  get_account_in_room_data = async (account_ids, room_id) => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+    
+    const arg_obj = {
+      account_ids, room_id
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object('', arg_obj))
+    }
+
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'accounts_in_room')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log('datas',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);;
+      var target_data = obj['return_object']
+      return target_data
+    }
+    catch(e){
+      console.log('apppage', 'something went wrong with get_socket_data', e)
+    }
+  }
+
+  async get_and_set_account_online_status(account, e5){
+    const clone = structuredClone(this.state.tracked_online_accounts)
+    if(clone[account+e5] != null) return;
+    const to = await this.get_recipient_address(account, e5)
+    const data = await this.get_account_in_room_data[[to], 'jobs']
+    clone[account+e5] = {'address':to, 'online':data[to], 'account':account, 'e5':e5, 'e5_id':account+e5}
+    this.setState({tracked_online_accounts: clone})
   }
 
 

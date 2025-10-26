@@ -114,6 +114,7 @@ class StackPage extends Component {
         get_link_handler_setting_object:this.get_link_handler_setting_object(),
         get_floating_close_button_object:this.get_floating_close_button_object(), get_floating_close_button_position_object:this.get_floating_close_button_position_object(),
         get_page_background_object:this.get_page_background_object(),
+        get_chain_or_indexer_option_object:this.get_chain_or_indexer_option_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
@@ -1284,6 +1285,36 @@ class StackPage extends Component {
         this.setState({get_page_background_object: this.get_page_background_object(),})
     }
 
+
+
+
+
+
+
+
+
+
+    get_chain_or_indexer_option_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [1]
+            ],
+        };
+    }
+
+    get_chain_or_indexer_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */] = 1
+        obj[this.props.app_state.loc['284v']/* 'blockchain' */] = 2
+        return obj[this.props.app_state.message_comment_fulfilment]
+    }
+
+    set_chain_or_indexer_option(){
+        this.setState({get_chain_or_indexer_option_object: this.get_chain_or_indexer_option_object(),})
+    }
 
 
 
@@ -9747,8 +9778,6 @@ class StackPage extends Component {
         const storefront_item = t.object
         console.log('stack_page', 'storefront item', storefront_item)
         const object = storefront_item['ipfs']
-        const purchase_options_tags = t.purchase_option_tags_array
-        const t_id = t.id
 
         var obj = [/* send awwards */
             [30000, 7, 0],
@@ -11261,6 +11290,21 @@ class StackPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                 )}
+
+
+
+
+
+                {this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
                 
 
             </div>
@@ -11810,6 +11854,12 @@ class StackPage extends Component {
         this.setState({get_page_background_object: tag_obj})
         var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_page_background_setting_changed(selected_item)
+    }
+
+    when_get_chain_or_indexer_option_object_updated(tag_obj){
+        this.setState({get_chain_or_indexer_option_object: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        this.props.when_chain_or_indexer_setting_changed(selected_item)
     }
     
 

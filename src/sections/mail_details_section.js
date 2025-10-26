@@ -670,6 +670,28 @@ class MailDetailsSection extends Component {
         
     }
 
+    when_entered_text_input_field_changed(text){
+        if(text.length > this.props.app_state.max_input_text_length){
+            var object =  this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+            this.show_add_comment_bottomsheet(object)
+        }else{
+            this.setState({entered_text: text})
+
+            var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+            var recipients_e5 = object['author'] == this.props.app_state.user_account_id[object['ipfs']['e5']] ? object['ipfs']['recipients_e5'] : object['ipfs']['e5']
+
+            this.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5, true)
+
+            var me = this;
+            setTimeout(function() {
+                if(me.state.entered_text == text){
+                    //done typing
+                    me.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5, false)
+                }
+            }, (1 * 2000));
+        }
+    }
+
     when_circle_clicked = (object) => {
         let me = this;
         if(Date.now() - this.last_all_click_time2 < 200){
@@ -732,11 +754,26 @@ class MailDetailsSection extends Component {
         // var mail = this.get_mail_items()[this.props.selected_mail_item];
         var sender = this.get_account_alias(mail['sender'], mail)
         var recipient = this.get_account_alias(mail['recipient'], mail)
+        const online_text = this.is_recipient_online(mail) ? this.props.app_state.loc['2738bi']/* 'online' */ : this.props.app_state.loc['2738bj']/* 'offline' */
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':sender+this.props.app_state.loc['2512']/* ' with ' */+recipient, 'details':this.props.app_state.loc['2513']/* 'conversation' */, 'size':'l'})} 
+                {this.render_detail_item('3', {'title':sender+this.props.app_state.loc['2512']/* ' with ' */+recipient, 'details':this.props.app_state.loc['2513']/* 'conversation' */, 'size':'l', 'footer':online_text})} 
             </div>
         )
+    }
+
+    is_recipient_online(object){
+        const tracked_online_accounts = this.props.app_state.tracked_online_accounts
+        var recipients_e5 = object['author'] == this.props.app_state.user_account_id[object['ipfs']['e5']] ? object['ipfs']['recipients_e5'] : object['ipfs']['e5'];
+        const recipient = object['convo_with']
+        const e5_id = recipient+recipients_e5
+
+        if(tracked_online_accounts[e5_id] == null){
+            return false
+        }
+        else{
+            return tracked_online_accounts[e5_id]['online']
+        }
     }
 
     get_account_alias(sender, object){
@@ -774,6 +811,7 @@ class MailDetailsSection extends Component {
         var final_items_without_divider = stacked_items.concat(items)
         var final_items = this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
 
+        
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
             return(
@@ -791,6 +829,8 @@ class MailDetailsSection extends Component {
                             ))}
                         </ul>
                     </div>
+                    {this.render_bubble_if_typing(object)}
+                    {this.render_last_opened_time(object)}
                 </div>
             )
         }
@@ -799,8 +839,35 @@ class MailDetailsSection extends Component {
                 <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(final_items, object)}
+                        {this.render_bubble_if_typing(object)}
+                        {this.render_last_opened_time(object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
+                </div>
+            )
+        }
+    }
+
+    render_last_opened_time(object){
+        const convo_read_receipts_info = this.props.app_state.convo_read_receipts_info
+        const last_opened_time_object = convo_read_receipts_info[object['convo_id']]
+        if(last_opened_time_object != null){
+            const last_opened_time = last_opened_time_object['last_read_time']
+            return(
+                <div>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['2738bg']/* Last opened on $ */.replace('$', new Date(last_opened_time).toLocaleString()), 'textsize':'', 'font':''})}
+                </div>
+            )
+        }
+    }
+
+    render_bubble_if_typing(object){
+        const convo_typing_info = this.props.app_state.convo_typing_info
+        const convo_typing_object = convo_typing_info[object['convo_id']]
+        if(convo_typing_object != null && convo_typing_object['keyboard_active'] == true && convo_typing_object['time'] > Date.now() - (10*1000)){
+            return(
+                <div style={{'width':65}}>
+                    {this.render_detail_item('4', {'text':'', 'textsize':'', 'font':''})}
                 </div>
             )
         }
@@ -1619,15 +1686,6 @@ class MailDetailsSection extends Component {
             }
             // var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
-        }
-    }
-
-    when_entered_text_input_field_changed(text){
-        if(text.length > this.props.app_state.max_input_text_length){
-            var object =  this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
-            this.show_add_comment_bottomsheet(object)
-        }else{
-            this.setState({entered_text: text})
         }
     }
 
