@@ -133,7 +133,7 @@ class StorefrontDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */],[1]
           ],
           'direct-purchases':[
               ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
@@ -142,6 +142,10 @@ class StorefrontDetailsSection extends Component {
 
         obj[this.props.app_state.loc['2603']] = [
             ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
+        ]
+
+        obj[this.props.app_state.loc['2642br']/* 'indexer-orders' */] = [
+            ['xor','e',1], [this.props.app_state.loc['2642br']/* 'indexer-orders' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
         ]
 
         return obj
@@ -266,10 +270,17 @@ class StorefrontDetailsSection extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['2695g']/* 'all' */ || selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */ || selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
+        else if(this.state.navigate_view_storefront_list_detail_tags_object['i'].active == this.props.app_state.loc['2603']/* 'e.direct-purchases' */){
             return(
                 <div>
                     {this.render_direct_purchases(object)}
+                </div>
+            )
+        }
+        else if(this.state.navigate_view_storefront_list_detail_tags_object['i'].active == this.props.app_state.loc['2642br']/* 'indexer-orders' */){
+            return(
+                <div>
+                    {this.render_storefront_orders(object)}
                 </div>
             )
         }
@@ -1997,6 +2008,146 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_storefront_orders(object){
+        var he = this.props.height-45
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_orders_top_title(object)}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_orders(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_orders_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2642bs']/* 'Indexer Orders.' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_orders(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.get_orders(object)
+
+        var sender_type = 'storefront_owner'
+        var fulfilment_accounts = object['ipfs'].fulfilment_accounts==null?[]:object['ipfs'].fulfilment_accounts
+        if(this.props.app_state.user_account_id[object['e5']] != object['event'].returnValues.p5 && !fulfilment_accounts.includes(this.props.app_state.user_account_id[object['e5']])){
+            //if user is not owner of storefront and wasnt included in the fulfilment account array
+            items = this.filter_for_senders_indexer_orders(object)
+            sender_type = 'storefront_client'
+        }
+        // sender_type = 'storefront_owner'
+        if(items == null) items = [];
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_full_or_compressed_object(item, sender_type, index, object)}
+                                </div>
+                            </li> 
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    filter_for_senders_indexer_orders(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        var purchases = this.props.app_state.direct_orders[object['e5_id']] == null ? [] : this.props.app_state.direct_orders[object['e5_id']]
+        var filtered_purchases = []
+        for(var i=0; i<purchases.length; i++){
+            if(purchases[i]['sender_account'] == this.props.app_state.user_account_id[object['e5']]){
+                filtered_purchases.push(purchases[i])
+            }
+        }
+        // console.log('direct_purchase', 'filtered_purchases', filtered_purchases)
+        return this.filter_using_bottom_tags(filtered_purchases, object)
+    }
+
+    get_orders(object){
+        return this.filter_orders_using_bottom_tags(this.props.app_state.direct_orders[object['e5_id']], object)
+    }
+
+    filter_orders_using_bottom_tags(filtered_purchases, object){
+        var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, this.props.app_state.loc['2642br']/* 'indexer-orders' */)
+        if(filtered_purchases == null) return []
+
+
+        if(selected_item == this.props.app_state.loc['2695g']/* 'all' */){
+            return filtered_purchases
+        }
+        else if(selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */){
+            var unfulfilled_items = []
+            filtered_purchases.forEach(item => {
+                if(!this.has_this_order_been_fulfilled(item, object)){
+                    //item is unfulfilled
+                    unfulfilled_items.push(item)
+                }
+            });
+            return unfulfilled_items
+        }
+        else if(selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
+            var fulfilled_items = []
+            filtered_purchases.forEach(item => {
+                if(this.has_this_order_been_fulfilled(item, object)){
+                    fulfilled_items.push(item)
+                }
+            });
+            return fulfilled_items
+        }
+    }
+
+    has_this_order_been_fulfilled(item, object){
+        const direct_order_fulfilment_items = []
+        this.props.app_state.direct_order_fulfilments[object['id']].forEach(event_item => {
+            direct_order_fulfilment_items.push(event_item.returnValues.p4)
+        });
+        return direct_order_fulfilment_items.includes(item['purchase_identifier'])
+    }
 
 
 

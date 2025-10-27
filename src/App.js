@@ -33747,18 +33747,20 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  handle_money_receipt_notifications(events, previous_notifs){
+  async handle_money_receipt_notifications(events, previous_notifs){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
       if(!senders.includes(alias)) senders.push(alias)
-    });
+    }
     var prompt = this.getLocale()['2738k']/* 'Incoming payments from $' */
     prompt = prompt.replace('$', senders.toString())
     this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_receipts','events':events, 'previous_events':previous_notifs})
   }
 
-  get_sender_title_text(account, e5){
+  async get_sender_title_text(account, e5){
+    await this.get_alias_from_account_id(account, e5)
     if(account == this.state.user_account_id[e5]){
         return this.getLocale()['1694']/* 'You' */
     }else{
@@ -33766,6 +33768,16 @@ class App extends Component {
         var alias = (bucket[account] == null ? account : bucket[account])
         return alias
     }
+  }
+
+  async get_alias_from_account_id(account_id, e5){
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    var contract_addresses = this.state.addresses[e5]
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    await this.get_alias_data_for_accounts(E52contractInstance, e5, [account_id], web3)
   }
 
 
@@ -33849,12 +33861,13 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  handle_mail_notifications(events){
+  async handle_mail_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738m']/* 'Incoming mail from $' */
     prompt = prompt.replace('$', senders.toString())
     this.prompt_top_notification(prompt, 15000)
@@ -33943,12 +33956,13 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  handle_messages_notifications(events){
+  async handle_messages_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738n']/* 'Incoming messages from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_incoming_message_mail_item(events)
@@ -34079,12 +34093,13 @@ class App extends Component {
     return my_contracts
   }
 
-  handle_proposal_notifications(events){
+  async handle_proposal_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p4/* proposer_account_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p4/* proposer_account_id */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738o']/* 'Incoming proposals from $' */
     prompt = prompt.replace('$', senders.toString())
     this.prompt_top_notification(prompt, 15000)
@@ -34223,12 +34238,13 @@ class App extends Component {
     return ids
   }
 
-  handle_job_application_notifications(events){
+  async handle_job_application_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738p']/* 'Incoming job applications from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_job_application_jobs(events)
@@ -34353,12 +34369,13 @@ class App extends Component {
     });
   }
 
-  handle_job_request_notifications(events){
+  async handle_job_request_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738q']/* 'Incoming job requests from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_contractor_objects(events)
@@ -34465,12 +34482,13 @@ class App extends Component {
     return my_bags
   }
 
-  handle_job_application_response_notifications(events){
+  async handle_job_application_response_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738r']/* 'Youre applications for jobs posted by $ have been accepted.' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_job_application_jobs(events)
@@ -34564,12 +34582,13 @@ class App extends Component {
     });
   }
 
-  handle_job_request_response_notifications(events){
+  async handle_job_request_response_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738t']/* 'Incoming contractor job responses from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_contractor_objects(events)
@@ -34676,12 +34695,13 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  handle_enter_contract_notifications(events){
+  async handle_enter_contract_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738u']/* '$ entered your contract' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_contract_objects(events)
@@ -34827,12 +34847,13 @@ class App extends Component {
     return my_bags
   }
 
-  handle_incoming_bag_application_notifications(events){
+  async handle_incoming_bag_application_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738w']/* 'Incoming bag applications from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_bag_items(events)
@@ -34954,12 +34975,13 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  handle_bag_application_response_notifications(events){
+  async handle_bag_application_response_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738ad']/* 'Youre applications for bags posted by $ have been accepted.' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_bag_items(events)
@@ -35112,24 +35134,26 @@ class App extends Component {
     return my_bags
   }
 
-  handle_incoming_storefront_direct_purchase_notifications(events){
+  async handle_incoming_storefront_direct_purchase_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p1/* awward_sender */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p1/* award_sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738x']/* 'Incoming storefront direct purchases from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_storefront_items(events, 'p3')
     this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'})
   }
 
-  handle_incoming_storefront_auction_bid_notifications(events){
+  async handle_incoming_storefront_auction_bid_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_account_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738ak']/* 'Incoming storefront auction bids from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_storefront_items(events, 'p1')
@@ -35243,12 +35267,13 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  handle_bill_request_notifications(events){
+  async handle_bill_request_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738ag']/* 'Incoming bills from $' */
     prompt = prompt.replace('$', senders.toString())
     this.prompt_top_notification(prompt, 15000)
@@ -35417,14 +35442,15 @@ class App extends Component {
     return {ids_data, id_types_data, id_types_data_arrays}
   }
 
-  handle_incoming_post_comment_notifications(events, id_types){
+  async handle_incoming_post_comment_notifications(events, id_types){
     var senders = []
     var and_more = false
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc_id */, event['e5'])
-      if(senders.length < 5) senders.push(alias);
-      else and_more = true
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias) && senders.length < 5) senders.push(alias);
+      else if(senders.length >= 5) and_more = true;
+    }
     var prompt = and_more == true ? this.getLocale()['2738aj']/* 'Incoming comments from $ and more.' */ : this.getLocale()['2738ai']/* 'Incoming comments from $' */;
     prompt = prompt.replace('$', senders.toString())
     this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'comment', 'p':'p3', 'time':'p6','block':'p7', 'sender':'p2', 'id_types':id_types})
@@ -44426,12 +44452,13 @@ class App extends Component {
     }
   }
 
-  handle_incoming_job_request_message_notifications(events){
+  async handle_incoming_job_request_message_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p2/* sender_acc */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738ax']/* 'Incoming job request message from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_storefront_items(events, 'p3')
@@ -45032,12 +45059,13 @@ class App extends Component {
     }
   }
 
-  handle_incoming_storefront_direct_order_notifications(events){
+  async handle_incoming_storefront_direct_order_notifications(events){
     var senders = []
-    events.forEach(event => {
-      var alias = this.get_sender_title_text(event.returnValues.p1/* awward_sender */, event['e5'])
-      senders.push(alias)
-    });
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p1/* award_sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
     var prompt = this.getLocale()['2738av']/* 'Incoming storefront orders from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_storefront_items(events, 'p3')
