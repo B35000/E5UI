@@ -700,7 +700,6 @@ import '@react-pdf-viewer/zoom/lib/styles/index.css';
 import io from 'socket.io-client';
 import { createHash } from 'crypto';
 import * as naughtyWords from 'naughty-words';
-import { time } from 'console';
 // import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -21803,6 +21802,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.set_cookies()
+      me.set_up_socket_connection_and_initialize_listeners(0)
     }, (1 * 1000));
   }
 
@@ -23696,7 +23696,6 @@ class App extends Component {
         this.setState({beacon_node_enabled: true, nitro_link_directory_data: nitro_link_directory_data_clone})
         await this.wait(700)
         await this.record_beacon_node_key_in_nitro_node(obj, beacon_node)
-        this.set_up_socket_connection_and_initialize_listeners(0)
       }
     }
     catch(e){
@@ -25872,7 +25871,7 @@ class App extends Component {
     this.setState({withdraw_balance: clone})
     // console.log('withdraw balance for e5: ',e5,' : ',withdraw_balance[0])
 
-    var basic_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['account_data']['basic_transaction_data'] : await contractInstance.methods.f287([account]).call((error, result) => {});
+    var basic_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['account_data']['basic_transaction_data'] : (this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284' ? await contractInstance.methods.f287([account]).call((error, result) => {}) : await contractInstance.methods.f287([account]).call((error, result) => {})[0])
     var clone = structuredClone(this.state.basic_transaction_data)
     clone[e5] = basic_transaction_data == null ? [0, 0, 0, 0] : (pre_launch_data[e5] != null ? basic_transaction_data : basic_transaction_data[0])
     this.setState({basic_transaction_data: clone})
@@ -32934,7 +32933,9 @@ class App extends Component {
 
         if(created_contract_data[i][1][39] != 0 && created_contract_data[i][1][40] != 0){
           const primary_acc = created_contract_data[i][1][39];
-          const primary_account_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['primary_account_transaction_data'] : await contractInstance.methods.f287([primary_acc], false).call((error, result) => {});
+          const primary_account_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['primary_account_transaction_data'] : 
+          (this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284' ? await contractInstance.methods.f287([primary_acc]).call((error, result) => {}) : await contractInstance.methods.f287([primary_acc]).call((error, result) => {})[0])
+
           const last_tx_time_data = primary_account_transaction_data[0][1]
           contract_obj['primary_account'] = primary_acc
           contract_obj['primary_account_tx_period'] = created_contract_data[i][1][40]
@@ -41292,7 +41293,7 @@ class App extends Component {
           data_found = true
           var pending_withdraw_balance = await contractInstance.methods.f167([id], [], 1).call((error, result) => {});
 
-          var run_data = await contractInstance.methods.f287([id]).call((error, result) => {});
+          var run_data = (this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284' ? await contractInstance.methods.f287([id]).call((error, result) => {}) : await contractInstance.methods.f287([id]).call((error, result) => {})[0])
 
           var make_object_event_data = null
           var withdraw_event_data = null
@@ -42677,12 +42678,12 @@ class App extends Component {
     });
     this.socket.on('register_status', ({success, time, reason, userId}) => {
       if(success == true){
-        console.log('apppage', 'set_up_socket_connection_and_initialize_listeners', 'socket registration successful!')
+        console.log('apppage','socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'socket registration successful!')
         me.setState({ socket_online: true, socket_userId: userId })
         me.register_and_fetch_all_socket_data()
       }else{
-        console.log('apppage', 'set_up_socket_connection_and_initialize_listeners', 'failed to register in socket', reason)
-        if(attempts < 4){
+        console.log('apppage', 'socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'failed to register in socket', reason)
+        if(attempts < 2){
           me.set_up_socket_connection_and_initialize_listeners(attempts+1)
         }
       }
@@ -42703,24 +42704,25 @@ class App extends Component {
     const e5 = this.state.selected_e5
     const app_signature = await this.fetch_nitro_privacy_signature(beacon_node)
     const signature_object = await this.get_signature_for_registering_in_socket(e5)
-    this.socket.emit("register", {
+    const register_object = {
       userId: signature_object.address, 
       signature: signature_object.signature, 
       signature_data: signature_object.data, 
       privacy_signature: app_signature, 
       e5: e5,
-    });
+    }
+    this.socket.emit("register", register_object);
   }
 
   async get_signature_for_registering_in_socket(e5){
     try{
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
-      var current_block_number = Date.now()
-      const account_to_use = !this.state.has_wallet_been_set ? this.state.default_socket_account : this.state.accounts[e5]
+      var current_block_number = Date.now().toString()
+      const account_to_use = this.state.accounts[e5]
       var address = account_to_use.address
       web3.eth.accounts.wallet.add(account_to_use.privateKey);
       var signature = await web3.eth.sign(current_block_number, address)
-      return {data: current_block_number, signature: signature, address}
+      return {data: current_block_number, signature, address}
     }catch(e){
       console.log(e)
       return null
@@ -43122,11 +43124,19 @@ class App extends Component {
 
 
   async get_recipient_address(their_account, their_e5){
+    if(this.searched_address_targets != null && this.searched_address_targets[their_account+their_e5] != null){
+      return this.searched_address_targets[their_account+their_e5]
+    }
     const web3 = new Web3(this.get_web3_url_from_e5(their_e5));
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_contract_from_e5(their_e5)
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
-    return await contractInstance.methods.f289(their_account).call((error, result) => {});
+    const targets_address = await contractInstance.methods.f289(their_account).call((error, result) => {});
+    if(this.searched_address_targets == null){
+      this.searched_address_targets = {}
+    }
+    this.searched_address_targets[their_account+their_e5] = targets_address
+    return targets_address
   }
 
 

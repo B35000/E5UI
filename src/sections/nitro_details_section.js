@@ -1848,6 +1848,10 @@ class NitroDetailsSection extends Component {
     render_post_responses(object){
         var he = this.props.height-100
         if(this.get_focused_message(object) != null) he = this.props.height-165
+        he = he+30-(this.state.text_input_field_height == null ? 30 : 
+            (this.state.text_input_field_height < 30 ? 30 : this.state.text_input_field_height));
+        var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
+            (this.state.text_input_field_height-35 < 0 ? 0 : this.state.text_input_field_height-35))
         var size = this.props.screensize
         var ww = '80%'
         if(size == 'l') ww = '90%'
@@ -1868,7 +1872,7 @@ class NitroDetailsSection extends Component {
                 <div style={{height:5}}/>
                 {this.render_focused_message(object)}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
-                    <div style={{'margin':'1px 0px 0px 0px'}}>
+                    <div style={{'margin':`${side_buttons_margin_top}px 0px 0px 0px`}}>
                         <div>
                             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked(object)}>
                                 <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
@@ -1878,10 +1882,10 @@ class NitroDetailsSection extends Component {
                     <div style={{width:10}}/>
                     <div className="row" style={{width:ww}}>
                         <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
-                            <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
                                 <img alt="" className="text-end" onClick={()=>this.add_message_to_stack(object)} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                             </div>
                         </div>
@@ -1889,6 +1893,10 @@ class NitroDetailsSection extends Component {
                 </div>
             </div> 
         )
+    }
+
+    when_text_input_field_height_changed(height){
+        this.setState({text_input_field_height: height})
     }
 
     when_circle_clicked = (object) => {

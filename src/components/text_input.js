@@ -92,7 +92,7 @@ class TextInput extends Component {
 
   render_textarea_or_input(f){
     var height = this.props.height
-    if(height < 53){
+    if(height < 0 || this.props.adjust_height == false){
       var text_type = this.state.input_type == null ? 'text' : this.state.input_type
       var step = text_type == 'number' ? 'any' : ''
       return(
@@ -119,7 +119,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <textarea className="form-control"  rows="1" style={{height:height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+            <textarea className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
         </div> 
       )
     }
@@ -168,6 +168,15 @@ class TextInput extends Component {
           }
         });
       }
+    }
+  }
+
+  adjustHeight(event) {
+    const textarea = event.target;
+    if(textarea.scrollHeight < 270 && this.props.adjust_height != false && textarea.scrollHeight > this.props.height){
+      textarea.style.height = 'auto'; // reset first
+      textarea.style.height = textarea.scrollHeight + 'px'; // set to scrollHeight
+      this.props.when_text_input_field_height_changed(parseInt(textarea.scrollHeight))
     }
   }
 

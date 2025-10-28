@@ -1900,7 +1900,7 @@ class PostListSection extends Component {
             <div>
                 <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3068']/* Object or Account ID, Alias, "tag" or title..' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3068']/* Object or Account ID, Alias, "tag" or title..' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} adjust_height={false} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
@@ -4637,7 +4637,7 @@ return data['data']
             return (
                 <div>
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} adjust_height={false} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
                     </div>
                     <div style={{overflow: 'auto', height: middle-x}}>
                         <ul style={{'list-style-type':'none', 'margin': '0px 0px 0px 0px'}}>
@@ -4654,7 +4654,7 @@ return data['data']
         return (
             <div>
                 <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                    <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
+                    <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} adjust_height={false} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
                 </div>
                 <div ref={this.coin_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -4768,7 +4768,7 @@ return data['data']
             return (
                 <div>
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} adjust_height={false} theme={this.props.theme}/>
                     </div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
                         <ul style={{ 'margin': '0px 0px 0px 0px'}}>
@@ -4788,7 +4788,7 @@ return data['data']
         return ( 
             <div>
                 <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                    <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme} />
+                    <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_ether_id} theme={this.props.theme} />
                 </div>
 
                 <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>

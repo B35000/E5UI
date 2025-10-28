@@ -52,7 +52,7 @@ class template extends Component {
                 <div style={{'background-color': 'transparent', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 10px 5px 10px','border-radius': '15px' }}>
                     <div className="row" style={{width:'100%'}}>
                         <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1264ad']/* 'Search by ID or Title..' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.get_typed_text()} theme={this.props.theme}/>
+                            <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1264ad']/* 'Search by ID or Title..' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.get_typed_text()} adjust_height={false} theme={this.props.theme}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_string()}>
                             <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >

@@ -1831,6 +1831,9 @@ class StackPage extends Component {
             <div>
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':number_with_commas(this.props.app_state.thread_pool_size), 'details':this.props.app_state.loc['1264bm']/* The number of logical processors available on your device. */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.socket_online == true ? this.props.app_state.loc['1593kh']/* Connected and Enabled */ : this.props.app_state.loc['1593ki']/* Disconnected and Disabled */, 'details':this.props.app_state.loc['1593kg']/* Indexer Socket Connection Status. */, 'size':'l'})}
             </div>
         )
     }
@@ -7086,7 +7089,7 @@ class StackPage extends Component {
 
     format_submit_object(t){
         var obj = [/* submit consensus request */
-            [30000, 5, 0/* payer_account_data_start */, 0/* payer_account_data_end */, 0/* vote_proposal_bounty_data_start */, 0/* vote_proposal_bounty_data_end */, 0],
+            [30000, 5, 0/* payer_account_data_start */, 0/* payer_account_data_end */, 0/* vote_proposal_bounty_data_start */, 0/* vote_proposal_bounty_data_end */, 0/* consensus_object_data_start */, 0/* consensus_object_data_end */, 0/* consensus_object_data_count */],
             [t.proposal_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* targets */
         ]
 

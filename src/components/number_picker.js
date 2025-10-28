@@ -198,7 +198,7 @@ class NumberPicker extends Component {
         return(
           <div>
             <div style={{height: 20}}/>
-            <TextInput font={this.props.font} height={20} placeholder={this.state.hint} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.entered_number} theme={this.props.theme} type={'number'}/>
+            <TextInput font={this.props.font} height={20} placeholder={this.state.hint} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.entered_number} theme={this.props.theme} adjust_height={false} type={'number'}/>
           </div>
         )
       }else{
