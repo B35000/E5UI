@@ -1015,7 +1015,7 @@ class App extends Component {
     censored_keywords:[], media_activation_tx_limit:0, media_activation_age_limit:0, 
 
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
-    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{},
+    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}
   };
 
   get_thread_pool_size(){
@@ -8575,7 +8575,10 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  do_i_have_an_account(){
+  do_i_have_an_account(preferred_e5){
+    if(preferred_e5 != null){
+      return this.state.user_account_id[preferred_e5] != null && this.state.user_account_id[preferred_e5] > 1000
+    }
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       if(this.state.e5s[e5].active == true){
@@ -30448,7 +30451,7 @@ class App extends Component {
     const my_received_message_events = all_events.my_received_message_events;
     const my_created_message_events = all_events.my_created_message_events;
 
-    console.log('apppage', 'get_all_mail_data', 'created mail', my_created_mail_events)
+    // console.log('apppage', 'get_all_mail_data', 'created mail', my_created_mail_events)
 
     const all_my_messages = my_received_message_events.concat(my_created_message_events)
     const message_event_array = {}
@@ -30530,7 +30533,7 @@ class App extends Component {
       }
     }
 
-    console.log('apppage', 'all_mail', this.state.all_mail)
+    // console.log('apppage', 'all_mail', this.state.all_mail)
   }
 
   load_mail_events = async (E52contractInstance, e5, account, web3) => {
@@ -39594,9 +39597,10 @@ class App extends Component {
     const target_type = 'read_receipts|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
     this.get_objects_from_socket_and_set_in_state(target_type, [], [])
 
-    this.get_and_set_account_online_status(mail['convo_with'], recipients_e5)
-
+    
     var recipients_e5 = mail['author'] == this.state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
+
+    this.get_and_set_account_online_status(mail['convo_with'], recipients_e5)
     this.emit_new_read_receipts_notification(convo_id, mail['convo_with'], recipients_e5)
     
     var all_my_mail_events = await this.get_sorted_convo_message_events(convo_id)
@@ -43048,7 +43052,7 @@ class App extends Component {
     if(this.typing_limit_object == null){
       this.typing_limit_object = {}
     }
-    if(this.typing_limit_object[convo_id] != null && this.typing_limit_object[convo_id] > Date.now() - (1800)){
+    if(this.typing_limit_object[convo_id] != null && this.typing_limit_object[convo_id] > Date.now() - (2800)){
       return;
     }else{
       this.typing_limit_object[convo_id] = Date.now()
@@ -43067,13 +43071,13 @@ class App extends Component {
   }
 
   async emit_new_read_receipts_notification(convo_id, recipient_id, recipient_e5){
-    if(this.typing_limit_object == null){
-      this.typing_limit_object = {}
+    if(this.read_receipts_limit_object == null){
+      this.read_receipts_limit_object = {}
     }
-    if(this.typing_limit_object[convo_id] != null && this.typing_limit_object[convo_id] > Date.now() - (60*1000)){
+    if(this.read_receipts_limit_object[convo_id] != null && this.read_receipts_limit_object[convo_id] > Date.now() - (60*1000)){
       return;
     }else{
-      this.typing_limit_object[convo_id] = Date.now()
+      this.read_receipts_limit_object[convo_id] = Date.now()
     }
     const mail_message_object = await this.prepare_read_receipts_message(convo_id, recipient_id, recipient_e5)
 
@@ -43169,7 +43173,7 @@ class App extends Component {
     const tags = all_final_elements
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
 
     const target = roomId
@@ -43224,7 +43228,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43295,7 +43299,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43339,7 +43343,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43402,7 +43406,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43470,7 +43474,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43508,7 +43512,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43583,7 +43587,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43653,7 +43657,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43707,7 +43711,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43766,7 +43770,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43837,7 +43841,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43947,7 +43951,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -43995,7 +43999,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -44039,7 +44043,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -44082,7 +44086,7 @@ class App extends Component {
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
-    const block_number = await web3.getBlockNumber()
+    const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
@@ -45207,6 +45211,8 @@ class App extends Component {
   }
 
   when_account_comes_online_or_offline(address, online_status){
+    // console.log('apppage', 'get_account_in_room_data', address, online_status)
+    // console.log('apppage', 'get_account_in_room_data', this.state.tracked_online_accounts)
     const clone = structuredClone(this.state.tracked_online_accounts)
     Object.keys(clone).forEach(e5_id => {
       if(clone[e5_id]['address'] == address){
@@ -45230,11 +45236,13 @@ class App extends Component {
 
   get_socket_data = async (target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[]) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
       beacon_node = this.state.beacon_chain_url;
     }
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
     }
     
     const arg_obj = {
@@ -45257,7 +45265,7 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(await this.encrypt_post_object('', arg_obj))
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
     }
 
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'socket_data_fetch')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
@@ -45403,6 +45411,7 @@ class App extends Component {
     while(absolute_load_limit < current_filter_end_time){
       //target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10)
       const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*10), filter_tags)
+      if(socket_data == null) continue;
       const target_data = socket_data[target]
       if(target_data != null){
         const entries = Object.keys(target_data)
@@ -45490,11 +45499,13 @@ class App extends Component {
 
   get_account_in_room_data = async (account_ids, room_id) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
       beacon_node = this.state.beacon_chain_url;
     }
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
     }
     
     const arg_obj = {
@@ -45506,19 +45517,20 @@ class App extends Component {
       headers: {
         "Content-Type": "application/json" // Set content type to JSON
       },
-      body: JSON.stringify(await this.encrypt_post_object('', arg_obj))
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
     }
 
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'accounts_in_room')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
-        console.log('datas',response)
+        console.log('datas', 'get_account_in_room_data', response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);;
       var target_data = obj['return_object']
+      console.log('apppage', 'get_account_in_room_data', target_data)
       return target_data
     }
     catch(e){
@@ -45530,7 +45542,7 @@ class App extends Component {
     const clone = structuredClone(this.state.tracked_online_accounts)
     if(clone[account+e5] != null) return;
     const to = await this.get_recipient_address(account, e5)
-    const data = await this.get_account_in_room_data[[to], 'jobs']
+    const data = await this.get_account_in_room_data([to], 'jobs')
     clone[account+e5] = {'address':to, 'online':data[to], 'account':account, 'e5':e5, 'e5_id':account+e5}
     this.setState({tracked_online_accounts: clone})
   }

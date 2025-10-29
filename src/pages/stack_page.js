@@ -12265,7 +12265,7 @@ class StackPage extends Component {
                 
                 <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} theme={this.props.theme} type={'password'}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} adjust_height={false} theme={this.props.theme} type={'password'}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >

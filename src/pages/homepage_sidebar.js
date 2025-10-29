@@ -627,7 +627,7 @@ class template extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593go']/* 'Stack Run Storage Utilization' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':this.format_account_balance_figure(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593gp']/* 'Run Storage Utilization Proportion' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':Math.floor(percentage)+'%', 'number':percentage+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */, })}
@@ -1032,6 +1032,7 @@ class template extends Component {
     load_E5_charts(){
         var e5_chart_data = this.props.app_state.all_data[this.props.app_state.selected_e5]
         if(e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[this.props.app_state.selected_e5] != null && this.props.app_state.saved_pre_launch_events[this.props.app_state.selected_e5]['e5_charts_data'] != null)){
+            if(e5_chart_data == null) e5_chart_data = {};
            return(
                <div>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_chart_item_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_chart_item_tags_object_updated.bind(this)} theme={this.props.theme}/>

@@ -1674,7 +1674,7 @@ class ContextualTransferPage extends Component {
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
-        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account()){
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account(this.props.app_state.selected_e5)){
             this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
         }
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){

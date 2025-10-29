@@ -637,7 +637,7 @@ class MailDetailsSection extends Component {
         if(object != null){
             return(
                 <div>
-                    <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                    <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                         <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                             {this.render_top_title(object)}
                             {/* {this.render_focus_list(object)} */}
@@ -762,7 +762,7 @@ class MailDetailsSection extends Component {
         // var mail = this.get_mail_items()[this.props.selected_mail_item];
         var sender = this.get_account_alias(mail['sender'], mail)
         var recipient = this.get_account_alias(mail['recipient'], mail)
-        const online_text = this.is_recipient_online(mail) ? this.props.app_state.loc['2738bi']/* 'online' */ : this.props.app_state.loc['2738bj']/* 'offline' */
+        const online_text = this.is_recipient_online(mail) ? this.props.app_state.loc['2738bi']/* 'online' */ : null/* this.props.app_state.loc['2738bj'] *//* 'offline' */
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':sender+this.props.app_state.loc['2512']/* ' with ' */+recipient, 'details':this.props.app_state.loc['2513']/* 'conversation' */, 'size':'l', 'footer':online_text})} 
@@ -862,8 +862,8 @@ class MailDetailsSection extends Component {
         if(last_opened_time_object != null){
             const last_opened_time = last_opened_time_object['last_read_time']
             return(
-                <div>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['2738bg']/* Last opened on $ */.replace('$', new Date(last_opened_time).toLocaleString()), 'textsize':'', 'font':''})}
+                <div style={{'margin':'0px 0px 0px 10px'}}>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['2738bg']/* Last opened on $ */.replace('$', new Date(last_opened_time).toLocaleString()), 'textsize':'8px', 'font':this.props.app_state.font})}
                 </div>
             )
         }
@@ -873,9 +873,10 @@ class MailDetailsSection extends Component {
         const convo_typing_info = this.props.app_state.convo_typing_info
         const convo_typing_object = convo_typing_info[object['convo_id']]
         if(convo_typing_object != null && convo_typing_object['keyboard_active'] == true && convo_typing_object['time'] > Date.now() - (10*1000)){
+            const typing_message = this.props.app_state.loc['2738bk']/* '$ is typing...' */.replace('$', convo_typing_object['author'])
             return(
-                <div style={{'width':65}}>
-                    {this.render_detail_item('4', {'text':'', 'textsize':'', 'font':''})}
+                <div style={{'width':135}}>
+                    {this.render_detail_item('4', {'text':typing_message, 'textsize':'13px', 'font':this.props.app_state.font})}
                 </div>
             )
         }

@@ -333,7 +333,7 @@ class ViewGroups extends Component {
                                     }
                                 </p>
                                 {footer && (
-                                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(footer)}</Linkify></p>
+                                    <p style={{'font-size': '9px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(footer)}</Linkify></p>
                                 )}
                             </div>
                         </div>
