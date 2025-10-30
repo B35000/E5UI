@@ -691,10 +691,10 @@ class home_page extends Component {
             return(
                 <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size, h+18)}
+                        {this.render_post_list_group(size, h+10)}
                     </div>
 
-                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
@@ -703,12 +703,12 @@ class home_page extends Component {
         }else{
             return(
                 <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', }}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size, h+18)}
+                        {this.render_post_list_group(size, h+10)}
                     </div>
 
                 </div>

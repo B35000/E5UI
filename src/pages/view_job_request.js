@@ -22,6 +22,7 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 import LocationViewer from './../components/location_viewer';
+import { motion, AnimatePresence } from "framer-motion";
 
 // import Letter from './../assets/letter.png'; 
 // import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
@@ -1414,14 +1415,16 @@ class ViewJobRequestPage extends Component {
         }else{
             return(
                 <div>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                            <div >
-                                {this.render_message_as_focused_if_so(item)}
-                                <div style={{height:3}}/>
-                            </div>
-                        </li>
-                    ))}    
+                    <AnimatePresence initial={false} mode="popLayout">
+                        {items.map((item, index) => (
+                            <motion.li key={item['message_id']} initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div>
+                                    {this.render_message_as_focused_if_so(item)}
+                                    <div style={{height:3}}/>
+                                </div>
+                            </motion.li>
+                        ))} 
+                    </AnimatePresence>    
                 </div>
             )
         }
@@ -2209,12 +2212,12 @@ class ViewJobRequestPage extends Component {
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
+            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
 
             this.props.add_job_request_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
+            // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })

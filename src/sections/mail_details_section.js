@@ -67,6 +67,10 @@ class MailDetailsSection extends Component {
         }
     }
 
+    reset_tags(){
+        this.setState({navigate_view_mail_list_detail_tags_object: this.get_navigate_view_mail_list_detail_tags_object_tags()})
+    }
+
     componentDidMount(){
         this.interval = setInterval(() => this.check_for_new_and_messages(), this.props.app_state.details_section_syncy_time);
     }
@@ -873,7 +877,7 @@ class MailDetailsSection extends Component {
         const convo_typing_info = this.props.app_state.convo_typing_info
         const convo_typing_object = convo_typing_info[object['convo_id']]
         if(convo_typing_object != null && convo_typing_object['keyboard_active'] == true && convo_typing_object['time'] > Date.now() - (10*1000)){
-            const typing_message = this.props.app_state.loc['2738bk']/* '$ is typing...' */.replace('$', convo_typing_object['author'])
+            const typing_message = this.props.app_state.loc['2738bk']/* '$ is typing...' */.replace('$', this.get_account_alias(convo_typing_object['author'], object))
             return(
                 <div style={{'width':135}}>
                     {this.render_detail_item('4', {'text':typing_message, 'textsize':'13px', 'font':this.props.app_state.font})}
@@ -895,7 +899,7 @@ class MailDetailsSection extends Component {
                 closestIndex = i;
             }
         });
-        if(closestIndex == items.length - 1){
+        if(closestIndex == 0){
             return items
         }
         const clone = items.slice()
@@ -927,10 +931,10 @@ class MailDetailsSection extends Component {
         }
         else{
             return(
-                <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    <AnimatePresence initial={false}>
-                        {items.map((item, index) => (
-                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                <div style={{}}>
+                    <AnimatePresence initial={false} mode="popLayout">
+                        {items.reverse().map((item, index) => (
+                            <motion.li key={item['message_id']} initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div>
                                     {this.render_message_as_focused_if_so(item, object)}
                                     <div style={{height:3}}/>
@@ -1719,11 +1723,11 @@ class MailDetailsSection extends Component {
             var convo_id = mail['convo_id']
             var recipients_e5 = mail['author'] == this.props.app_state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
 
-            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language}
+            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
             this.props.add_mail_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
+            
 
             // if (this.messagesEnd.current){
             //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })

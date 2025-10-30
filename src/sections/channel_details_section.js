@@ -1549,7 +1549,7 @@ class ChannelDetailsSection extends Component {
                 closestIndex = i;
             }
         });
-        if(closestIndex == items.length - 1){
+        if(closestIndex == 0){
             return items
         }
         const clone = items.slice()
@@ -1580,10 +1580,10 @@ class ChannelDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    <AnimatePresence initial={false}>
-                        {items.map((item, index) => (
-                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                <div style={{}}>
+                    <AnimatePresence initial={false} mode="popLayout">
+                        {items.reverse().map((item, index) => (
+                            <motion.li key={item['message_id']} initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div>
                                     {this.render_message_as_focused_if_so(item, object)}
                                     <div style={{height:3}}/>
@@ -2397,12 +2397,12 @@ class ChannelDetailsSection extends Component {
                 key_to_use = unencrypted_keys[unencrypted_keys.length-1]
                 key_index = unencrypted_keys.length-1
             }
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'key_to_use':key_to_use, 'key_index':key_index, 'lan':this.props.app_state.device_language}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'key_to_use':key_to_use, 'key_index':key_index, 'lan':this.props.app_state.device_language, 'markdown':''}
 
             this.props.add_channel_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify(this.props.app_state.loc['1697']/* 'message added to stack' */, 1600)
+            // this.props.notify(this.props.app_state.loc['1697']/* 'message added to stack' */, 1600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })

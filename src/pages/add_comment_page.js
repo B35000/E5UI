@@ -1382,7 +1382,7 @@ class AddCommentPage extends Component {
 
         this.props.add_comment_to_respective_forum_page(tx, page)
         this.setState({entered_title_text: '', entered_image_objects:[], get_comment_font_size_settings_object:this.get_comment_font_size_settings_object(), markdown:'', entered_pdf_objects:[], award_amount:0})
-        this.props.notify(this.props.app_state.loc['1042']/* 'Message added to stack.' */, 1600)
+        // this.props.notify(this.props.app_state.loc['1042']/* 'Message added to stack.' */, 1600)
     }
 
 

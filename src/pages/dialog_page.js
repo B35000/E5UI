@@ -131,7 +131,7 @@ class DialogPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['284be']/* 'show' */], [1]
+                ['or','',0], ['e', this.props.app_state.loc['284be']/* 'show' */], [0]
             ],
         };
     }
@@ -8283,11 +8283,11 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['284y']/* 'Confirm New Object.' */, 'details':this.props.app_state.loc['284z']/* 'Are you sure you want to log the object directly in the indexer? No official reference to it will be on a blockchain.' */, 'size':'l'})}
-                <div style={{height: 20}}/>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['284bf']/* 'Show object after broadcast is successful?' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                <div style={{height:10}}/>
+                {/* <div style={{height: 20}}/>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['284bf']'Show object after broadcast is successful?', 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/> */}
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_show_job_after_broadcasted_object} tag_size={'l'} when_tags_updated={this.when_get_show_job_after_broadcasted_object_updated.bind(this)} theme={this.props.theme}/>
+                {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_show_job_after_broadcasted_object} tag_size={'l'} when_tags_updated={this.when_get_show_job_after_broadcasted_object_updated.bind(this)} theme={this.props.theme}/> */}
 
                 <div style={{height: 10}}/>
                 <div onClick={()=> this.when_confirm_tapped()}>

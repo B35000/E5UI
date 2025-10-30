@@ -5813,7 +5813,7 @@ class App extends Component {
 
   direct_message_via_socket_enabled(message){
     const size = this.lengthInUtf8Bytes(JSON.stringify(message))
-    return this.state.has_wallet_been_set && this.do_i_have_an_account() && size < (1024*23) && message['award_amount'] == 0;
+    return this.state.has_wallet_been_set == true && this.do_i_have_an_account(this.state.selected_e5) && size < (1024*23) && (message['award_amount'] == null || message['award_amount'] == 0);
   }
 
   add_mail_to_stack_object(message){
@@ -5837,6 +5837,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_channel_message_to_stack_object(message){
@@ -5860,6 +5861,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_post_reply_to_stack(message){
@@ -5883,6 +5885,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_job_message_to_stack_object(message){
@@ -5906,6 +5909,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_proposal_message_to_stack_object(message){
@@ -5929,6 +5933,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_bag_message_to_stack_object(message){
@@ -5952,6 +5957,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_storefront_message_to_stack_object(message){
@@ -5975,6 +5981,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_audio_reply_to_stack(message){
@@ -5998,6 +6005,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_video_reply_to_stack(message){
@@ -6021,6 +6029,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_nitro_reply_to_stack(message){
@@ -6044,6 +6053,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_video_message_to_stack_object(message){
@@ -6067,6 +6077,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   block_post(object){
@@ -14397,6 +14408,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
 
@@ -23809,7 +23821,7 @@ class App extends Component {
     }
   }
 
-  pre_launch_fetch = async () => {
+  pre_launch_fetch = async (updated_signature) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
     const address = this.state.accounts['E25'].address
@@ -23840,6 +23852,11 @@ class App extends Component {
       }
       const data = await response.text();
       const obj = await this.process_nitro_api_call_result(data, beacon_node);
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.pre_launch_fetch(true)
+      }
       return obj;
     }
     catch(e){
@@ -26823,6 +26840,7 @@ class App extends Component {
     if(my_promoted_posts_event_data.length > 0){
       var latest_event = my_promoted_posts_event_data[my_promoted_posts_event_data.length - 1];
       var promoted_posts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      if(promoted_posts_data == null) return;
       var promoted_posts_by_me = promoted_posts_data['data']
 
       var clone = structuredClone(this.state.posts_reposted_by_me)
@@ -26886,6 +26904,7 @@ class App extends Component {
       for(var i=0; i<followed_accounts_promoted_posts_events_data.length; i++){
         var latest_event = followed_accounts_promoted_posts_events_data[i]
         var followed_account_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+        if(followed_account_data == null) continue;
         var promoted_posts = followed_account_data['data']
         promoted_posts['audio'].forEach(post => {
           if(!clone['audio'].includes(post)){
@@ -26921,6 +26940,7 @@ class App extends Component {
     if(channel_event_data.length > 0){
       var latest_event = channel_event_data[channel_event_data.length - 1];
       var channel_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      if(channel_data == null) return;
       var loaded_channels = channel_data['data']
       var timestamp = channel_data['time']
 
@@ -26942,6 +26962,7 @@ class App extends Component {
     if(poll_event_data.length > 0){
       var latest_event = poll_event_data[poll_event_data.length - 1];
       var poll_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      if(poll_data == null) return;
       var loaded_polls = poll_data['data']
       var timestamp = poll_data['time']
 
@@ -26963,6 +26984,7 @@ class App extends Component {
     if(object_event_data.length > 0){
       var latest_event = object_event_data[object_event_data.length - 1];
       var object_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      if(object_data == null) return;
       var loaded_objects = object_data['data']
       var timestamp = object_data['time']
 
@@ -30201,6 +30223,13 @@ class App extends Component {
   }
 
   get_job_data = async (E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items, pre_launch_data={}, extra_data={}) => {
+    // console.log('socket_stuff', 'beginning test...')
+    // await this.emit_new_read_receipts_notification('test', 1002, 'E25')
+    // await this.wait(10_000)
+    // const to = await this.get_recipient_address(1002, 'E25')
+    // const target_type = 'read_receipts|'+'test'+'|'+to
+    // this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+
     if(e5 == 'E25'){
       const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
       this.get_objects_from_socket_and_set_in_state('jobs', filter_tags)
@@ -30451,7 +30480,7 @@ class App extends Component {
     const my_received_message_events = all_events.my_received_message_events;
     const my_created_message_events = all_events.my_created_message_events;
 
-    // console.log('apppage', 'get_all_mail_data', 'created mail', my_created_mail_events)
+    console.log('apppage', 'get_all_mail_data', 'created mail', my_created_mail_events)
 
     const all_my_messages = my_received_message_events.concat(my_created_message_events)
     const message_event_array = {}
@@ -30533,7 +30562,7 @@ class App extends Component {
       }
     }
 
-    // console.log('apppage', 'all_mail', this.state.all_mail)
+    console.log('apppage', 'all_mail', this.state.all_mail)
   }
 
   load_mail_events = async (E52contractInstance, e5, account, web3) => {
@@ -38737,18 +38766,18 @@ class App extends Component {
     }
 
     try{
-      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'encrypted_ipfs_obj', encrypted_ipfs_obj)
+      // console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'encrypted_ipfs_obj', encrypted_ipfs_obj)
       var my_uniquie_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
-      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'my_uniquie_crosschain_identifier', my_uniquie_crosschain_identifier)
+      // console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'my_uniquie_crosschain_identifier', my_uniquie_crosschain_identifier)
       var encrypted_key = encrypted_ipfs_obj['recipient_data'][my_uniquie_crosschain_identifier]
-      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'encrypted_key', encrypted_key)
+      // console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'encrypted_key', encrypted_key)
       if(encrypted_key == null){
         return null;
       }
       var my_key = ''
       if(encrypted_ipfs_obj['encryptor_pub_key'] != null){
         my_key = await this.decrypt_encrypted_key_with_my_public_key(encrypted_key, e5, encrypted_ipfs_obj['encryptor_pub_key'])
-        console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'decrypted key', my_key)
+        // console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'decrypted key', my_key)
       }else{
         var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
         my_key = await ecies.decrypt(private_key_to_use, uint8array)
@@ -38759,7 +38788,7 @@ class App extends Component {
       // var originalText = bytes.toString(CryptoJS.enc.Utf8);
       // return JSON.parse(originalText);
       var originalText = await this.decrypt_data_string(encrypted_object, my_key)
-      console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'originalText', originalText)
+      // console.log('apppage', 'fetch_and_decrypt_ipfs_object', 'originalText', originalText)
       return JSON.parse(originalText);
     }catch(e){
       console.log('apppage', 'fetch_and_decrypt_ipfs_object', e)
@@ -38874,38 +38903,48 @@ class App extends Component {
   }
 
   async get_objects_messages_from_socket_and_enter_chatroom(target){
-    this.enter_chatroom_if_socket_enabled(target)
+    if(!target.startsWith('job_request_mail') && !target.startsWith('mail')) this.enter_chatroom_if_socket_enabled(target);
     const absolute_load_limit = Date.now() - (72*7*24*60*60*1000)
-    const load_step = (7*24*60*60*1000)
+    const load_step = (30*7*24*60*60*1000)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     
     while(absolute_load_limit < current_filter_end_time){
       //target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10)
-      const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*10), [])
-      const target_data = socket_data[target]
+      const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*100), [])
+      if(socket_data == null){
+        current_filter_end_time -= load_step
+        current_filter_start_time -= load_step
+        continue;
+      } 
+      const target_data = socket_data
       if(target_data != null){
         const entries = Object.keys(target_data)
-        for(var i=0; i<entries.length; i++){
-          const object_hash = entries[i]
-          this.process_new_comment_message(target_data[object_hash], object_hash)
-        }
-        
-        const [_, oldestValue] = Object.entries(target_data).reduce((oldest, [key, value]) => {
-          if (!oldest || parseInt(value.time) < parseInt(oldest[1].time)) {
-            return [key, value];
+        for(var j=0; j<entries.length; j++){
+          const time_entry = entries[j]
+          const target_entries = Object.keys(target_data[time_entry])
+          for(var k=0; k<target_entries.length; k++){
+            const target_entry = target_entries[k]
+            const object_hashes = Object.keys(target_data[time_entry][target_entry])
+            for(var i=0; i<object_hashes.length; i++){
+              const object_hash = object_hashes[i]
+              const object_data = target_data[time_entry][target_entry][object_hash]
+              if(object_data['type'] == 'mail-message'){
+                console.log('socket_stuff', 'loaded mail-message', object_data)
+                this.process_new_message_received(object_data, object_hash, null, false)
+              }
+              else if(object_data['type'] == 'job-request-message'){
+                this.process_new_job_request_message(object_data, object_hash, null)
+              }
+              else{
+                this.process_new_comment_message(object_data, object_hash)
+              }
+            }
           }
-          return oldest;
-        }, null);
-        
-        if(current_filter_end_time <= parseInt(oldestValue.time)){
-          //if all existing target items have not loaded from specified time range
-          current_filter_start_time = parseInt(oldestValue.time)
-          //set start time to the oldest entry and continue
-        }else{
-          current_filter_end_time -= load_step
-          current_filter_start_time -= load_step
         }
+        
+        current_filter_end_time -= load_step
+        current_filter_start_time -= load_step
       }
       else{
         current_filter_end_time -= load_step
@@ -39351,10 +39390,8 @@ class App extends Component {
     job_request_convo_keys_clone[request_id] = convo_key
     this.setState({job_request_convo_keys_clone})
 
-    this.get_objects_messages_from_socket_and_enter_chatroom(request_id)
-
-    const target_type = 'read_receipts|'+request_id+'|'+this.state.accounts[this.state.selected_e5].address
-    this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+    const mail_messages_target = 'job_request_mail|'+request_id+this.state.accounts[this.state.selected_e5].address
+    this.get_objects_messages_from_socket_and_enter_chatroom(mail_messages_target)
 
     const recipient_id = contractor_object['author'] == this.state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
     const recipient_e5 = contractor_object['e5']
@@ -39401,6 +39438,15 @@ class App extends Component {
     const clone = structuredClone(this.state.object_messages)
     clone[request_id] = messages
     this.setState({object_messages: clone})
+
+    const load_read_receipts_data = async () => {
+      const to = await this.get_recipient_address(recipient_id, recipient_e5)
+      const target_type = 'read_receipts|'+request_id+'|'+to
+      this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+      this.get_alias_from_account_id(recipient_id, recipient_e5)
+    }
+    
+    load_read_receipts_data();
   }
 
   async get_job_request_messages_convo_id(key_data, e5){
@@ -39592,11 +39638,9 @@ class App extends Component {
 
   get_mail_messages = async (mail) => {
     var convo_id = mail['convo_id']
-    this.get_objects_messages_from_socket_and_enter_chatroom(convo_id)
-    
-    const target_type = 'read_receipts|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
-    this.get_objects_from_socket_and_set_in_state(target_type, [], [])
 
+    const mail_messages_target = 'mail|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
+    this.get_objects_messages_from_socket_and_enter_chatroom(mail_messages_target)
     
     var recipients_e5 = mail['author'] == this.state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
 
@@ -39656,6 +39700,18 @@ class App extends Component {
     const mail_messages_clone = structuredClone(this.state.mail_messages)
     mail_messages_clone[convo_id] = messages
     this.setState({mail_messages: mail_messages_clone})
+
+
+    const load_read_receipts_data = async () => {
+      const recipient_id = mail['convo_with']
+      const recipient_e5 = mail['author'] == this.state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
+      const to = await this.get_recipient_address(recipient_id, recipient_e5)
+      const target_type = 'read_receipts|'+convo_id+'|'+to
+      this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+      this.get_alias_from_account_id(recipient_id, recipient_e5)
+    }
+    
+    load_read_receipts_data();
   }
 
   get_sorted_convo_message_events = async (convo_id) => {
@@ -42872,7 +42928,7 @@ class App extends Component {
     const job_message_object = await this.prepare_object_message(state_object, show_job_after_broadcast, roomId)
     
     const clone = this.state.broadcast_stack.slice()
-    clone.push(job_message_object.object_hash)
+    clone.push(job_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     this.socket.emit("chatroom_message", {roomId: roomId, message: job_message_object.message, target: job_message_object.target, object_hash: job_message_object.object_hash});
@@ -42884,13 +42940,19 @@ class App extends Component {
     const mail_message_object = type == 'mail' ? await this.prepare_mail_object_message(state_object, show_job_after_broadcast) : await this.prepare_mail_message_object_message(state_object)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(mail_message_object.object_hash)
+    clone.push(mail_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
-    const to = type == 'mail' ? await this.get_recipient_address(state_object['recipient'], state_object['recipients_e5']) : await this.get_recipient_address(state_object.target_recipient, state_object.recipients_e5)
-    const target = 'mail|'+to
-    const secondary_target = 'mail|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    const to = type == 'mail' ? await this.get_recipient_address(state_object.target_recipient, state_object.recipients_e5) : await this.get_recipient_address(state_object['recipient'], state_object['recipients_e5'])
+
+    const target = type == 'mail' ? 'mail|'+to : 'mail|'+state_object['convo_id']+'|'+to
+    const secondary_target = type == 'mail' ? 'mail|'+this.state.accounts[this.state.selected_e5].address : 'mail|'+state_object['convo_id']+'|'+this.state.accounts[this.state.selected_e5].address
+
+    const send_message_object = {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target }
+
+    console.log('socket_stuff', send_message_object)
+
+    this.socket.emit("send_message", send_message_object);
   }
 
   async emit_new_job_request_message(state_object){
@@ -42898,12 +42960,12 @@ class App extends Component {
     const job_request_message_object = await this.prepare_job_request_message(state_object)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(job_request_message_object.object_hash)
+    clone.push(job_request_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.target_recipient, state_object.recipients_e5)
-    const target = 'job_request_mail|'+to
-    const secondary_target = 'job_request_mail|'+this.state.accounts[this.state.selected_e5].address
+    const target = 'job_request_mail|'+state_object['id']+to
+    const secondary_target = 'job_request_mail|'+state_object['id']+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: job_request_message_object.message, target: target, object_hash: job_request_message_object.object_hash, secondary_target: secondary_target });
   }
 
@@ -42912,7 +42974,7 @@ class App extends Component {
     const channel_message_object = await this.prepare_channel_message(state_object)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(channel_message_object.object_hash)
+    clone.push(channel_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const channel_e5_id = state_object['id']+state_object['e5']
@@ -42925,7 +42987,7 @@ class App extends Component {
     const comment_message_object = await this.prepare_new_object_comment_message(state_object)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(comment_message_object.object_hash)
+    clone.push(comment_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const object_e5_id = state_object['id']+state_object['e5']
@@ -42939,7 +43001,7 @@ class App extends Component {
     const bill_message_object = await this.prepare_bill_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(bill_message_object.object_hash)
+    clone.push(bill_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.recipient, state_object.e5)
@@ -42954,7 +43016,7 @@ class App extends Component {
     const message_object = await this.prepare_job_application_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(message_object.object_hash)
+    clone.push(message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.job_item['author'], state_object.job_item['e5'])
@@ -42969,7 +43031,7 @@ class App extends Component {
     const message_object = await this.prepare_bag_application_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(message_object.object_hash)
+    clone.push(message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.job_item['author'], state_object.job_item['e5'])
@@ -42983,7 +43045,7 @@ class App extends Component {
     const message_object = await this.prepare_job_request_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(message_object.object_hash)
+    clone.push(message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.contractor_item['author'], state_object.contractor_item['e5'])
@@ -42997,7 +43059,7 @@ class App extends Component {
     const message_object = await this.prepare_job_request_response_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(message_object.object_hash)
+    clone.push(message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.contractor_object['author'], state_object.contractor_object['e5'])
@@ -43011,7 +43073,7 @@ class App extends Component {
     const message_object = await this.prepare_storefront_order_object_message(state_object, show_job_after_broadcast)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(message_object.object_hash)
+    clone.push(message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.storefront_item['author'], state_object.storefront_item['e5'])
@@ -43025,7 +43087,7 @@ class App extends Component {
     const mail_message_object = await this.prepare_signature_request_message(state_object, target_recipient_address)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(mail_message_object.object_hash)
+    clone.push(mail_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = target_recipient_address
@@ -43039,7 +43101,7 @@ class App extends Component {
     const mail_message_object = await this.prepare_signature_response_message(state_object, signature_request, signature_data)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(mail_message_object.object_hash)
+    clone.push(mail_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = signature_request['sender_address']
@@ -43060,7 +43122,7 @@ class App extends Component {
     const mail_message_object = await this.prepare_typing_message(convo_id, recipient_id, recipient_e5, keyboard_active)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(mail_message_object.object_hash)
+    clone.push(mail_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(recipient_id, recipient_e5)
@@ -43082,7 +43144,7 @@ class App extends Component {
     const mail_message_object = await this.prepare_read_receipts_message(convo_id, recipient_id, recipient_e5)
 
     const clone = this.state.broadcast_stack.slice()
-    clone.push(mail_message_object.object_hash)
+    clone.push(mail_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(recipient_id, recipient_e5)
@@ -43190,6 +43252,7 @@ class App extends Component {
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'object',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43245,6 +43308,7 @@ class App extends Component {
     var context = this.state.selected_e5 == state_object.recipients_e5 ? 30 : 31
     const message = {
       type: 'mail',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43316,6 +43380,7 @@ class App extends Component {
     var context = this.state.selected_e5 == state_object['e5'] ? 32 : 33
     const message = {
       type: 'mail-message',
+      message_identifier: this.make_number_id(12),
       author: author,
       id: state_object.convo_id,
       recipient: recipient,
@@ -43359,6 +43424,7 @@ class App extends Component {
     const context = message_obj['contractor_id']
     const message = {
       type: 'job-request-message',
+      message_identifier: this.make_number_id(12),
       author: author,
       id: message_obj['id']/* job_request_id */,
       recipient: recipient,
@@ -43422,6 +43488,7 @@ class App extends Component {
     const context = message_obj['id']
     const message = {
       type: 'channel-message',
+      message_identifier: this.make_number_id(12),
       author: author,
       id: message_obj['id']/* job_request_id */,
       recipient: recipient,
@@ -43490,6 +43557,7 @@ class App extends Component {
     const context = message_obj['contractor_id']
     const message = {
       type: 'comment_message',
+      message_identifier: this.make_number_id(12),
       author: author,
       id: message_obj['id'],
       recipient: recipient,
@@ -43529,6 +43597,7 @@ class App extends Component {
     var context = 13
     const message = {
       type: 'bill',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43603,6 +43672,7 @@ class App extends Component {
     var context = 13
     const message = {
       type: 'job_application',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43673,6 +43743,7 @@ class App extends Component {
     var context = 13
     const message = {
       type: 'bag_application',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43727,6 +43798,7 @@ class App extends Component {
     var context = 38
     const message = {
       type: 'contractor_job_request',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43784,6 +43856,7 @@ class App extends Component {
     var context = 39
     const message = {
       type: 'contractor_accept_job_request',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43857,6 +43930,7 @@ class App extends Component {
     var context = t.storefront_item['id']
     const message = {
       type: 'storefront_order',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -43966,6 +44040,7 @@ class App extends Component {
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'signature_request',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -44014,6 +44089,7 @@ class App extends Component {
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'signature_response',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -44058,6 +44134,7 @@ class App extends Component {
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'typing',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -44101,6 +44178,7 @@ class App extends Component {
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'read_receipts',
+      message_identifier: this.make_number_id(12),
       author: author,
       id:id,
       recipient: recipient,
@@ -44128,9 +44206,9 @@ class App extends Component {
   async process_new_job_received(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44179,9 +44257,9 @@ class App extends Component {
   async process_new_post_received(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44231,9 +44309,9 @@ class App extends Component {
   async process_new_mail_received(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44258,6 +44336,7 @@ class App extends Component {
 
       const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
 
+      console.log('socket_stuff', 'processed mail', ipfs_obj)
       if(ipfs_obj != null && ipfs_obj.entered_title_text != null){
         const all_mail_clone = structuredClone(this.state.all_mail)
         if(all_mail_clone[convo_id] == null){
@@ -44318,10 +44397,11 @@ class App extends Component {
 
   async process_new_message_received(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
+    console.log('socket_stuff', 'process_new_message_received', 'received message', message)
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44400,9 +44480,9 @@ class App extends Component {
   async process_new_job_request_message(message, object_hash, from){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44482,9 +44562,9 @@ class App extends Component {
   async process_new_channel_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44547,9 +44627,9 @@ class App extends Component {
   async process_new_comment_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44596,9 +44676,9 @@ class App extends Component {
   async process_new_bill_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44671,9 +44751,9 @@ class App extends Component {
   async process_new_job_application_message(message, object_hash, from, add_to_notifications, application_responses=[]){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44774,9 +44854,9 @@ class App extends Component {
   async process_new_bag_application_message(message, object_hash, from, add_to_notifications, application_responses=[]){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44875,9 +44955,9 @@ class App extends Component {
   async process_new_contractor_job_request_message(message, object_hash, from, add_to_notifications, application_responses){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -44969,9 +45049,9 @@ class App extends Component {
   async process_new_contractor_accepted_job_request_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -45019,9 +45099,9 @@ class App extends Component {
   async process_new_storefront_order_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -45106,9 +45186,9 @@ class App extends Component {
   async process_new_signature_request_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -45139,9 +45219,9 @@ class App extends Component {
   async process_new_signature_response_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -45172,9 +45252,9 @@ class App extends Component {
   async process_new_typing_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -45193,9 +45273,9 @@ class App extends Component {
   async process_new_read_receipts_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
-    if(am_I_the_author && this.state.broadcast_stack.includes(message['id'])){
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
-      const index = clone.indexOf(message['id'])
+      const index = clone.indexOf(message['message_identifier'])
       if(index != -1){
         clone.splice(index, 1)
       }
@@ -45203,9 +45283,13 @@ class App extends Component {
     }
     const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
     
+    // console.log('socket_stuff', 'ipfs', ipfs)
+
     if(!am_I_the_author){
       const convo_typing_info_clone = structuredClone(this.state.convo_read_receipts_info)
-      convo_typing_info_clone[ipfs['convo_id']] = ipfs
+      if(convo_typing_info_clone[ipfs['convo_id']] == null || convo_typing_info_clone[ipfs['convo_id']]['last_read_time'] < ipfs['last_read_time']){
+        convo_typing_info_clone[ipfs['convo_id']] = ipfs
+      }
       this.setState({convo_read_receipts_info: convo_typing_info_clone})
     }
   }
@@ -45234,7 +45318,7 @@ class App extends Component {
 
 
 
-  get_socket_data = async (target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[]) => {
+  get_socket_data = async (target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -45272,16 +45356,22 @@ class App extends Component {
     try{
       const response = await fetch(request, body);
       if (!response.ok) {
-        console.log('datas',response)
+        console.log('datas', 'socket_stuff',response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = await this.process_nitro_api_call_result(data, beacon_node);;
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('socket_stuff', target, obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.get_socket_data(target, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true)
+      }
       var target_data = obj['target_data']
       return target_data
     }
     catch(e){
-      console.log('apppage', 'something went wrong with get_socket_data', e)
+      console.log('apppage', 'socket_stuff', 'something went wrong with get_socket_data', e)
     }
   }
 
@@ -45298,33 +45388,43 @@ class App extends Component {
     const target = target_object[type]
     
     const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*100), [])
-    const target_data = socket_data[target]
+    const target_data = socket_data
     const events = []
     if(target_data != null){
       const entries = Object.keys(target_data)
-      for(var i=0; i<entries.length; i++){
-        const object_hash = entries[i]
-        if(target_data[object_hash]['type'] == type){
-          if(type == 'bag_application'){
-            events.push(this.process_new_bag_application_event(target_data[object_hash], object_hash))
-          }
-          else if(type == 'job_application'){
-            events.push(this.process_new_job_application_event(target_data[object_hash], object_hash))
-          }
-          else if(type == 'contractor_job_request'){
-            events.push(this.process_new_job_request_event(target_data[object_hash], object_hash))
-          }
-          else if(type == 'contractor_accept_job_request'){
-            events.push(this.process_new_job_request_response_event(target_data[object_hash], object_hash))
-          }
-          else if(type == 'storefront_order'){
-            events.push(this.process_new_storefront_order_event(target_data[object_hash], object_hash))
-          }
-          else{
-            events.push(this.process_new_mail_event(target_data[object_hash], object_hash))
+      for(var j=0; j<entries.length; j++){
+        const time_entry = entries[j]
+        const target_entries = Object.keys(target_data[time_entry])
+        for(var k=0; k<target_entries.length; k++){
+          const target_entry = target_entries[k]
+          const object_hashes = Object.keys(target_data[time_entry][target_entry])
+          for(var i=0; i<object_hashes.length; i++){
+            const object_hash = object_hashes[i]
+            const object_data = target_data[time_entry][target_entry][object_hash]
+            if(object_data['type'] == type){
+              if(type == 'bag_application'){
+                events.push(this.process_new_bag_application_event(object_data, object_hash))
+              }
+              else if(type == 'job_application'){
+                events.push(this.process_new_job_application_event(object_data, object_hash))
+              }
+              else if(type == 'contractor_job_request'){
+                events.push(this.process_new_job_request_event(object_data, object_hash))
+              }
+              else if(type == 'contractor_accept_job_request'){
+                events.push(this.process_new_job_request_response_event(object_data, object_hash))
+              }
+              else if(type == 'storefront_order'){
+                events.push(this.process_new_storefront_order_event(object_data, object_hash))
+              }
+              else{
+                events.push(this.process_new_mail_event(object_data, object_hash))
+              }
+            }
           }
         }
       }
+      
     }
 
     return this.sortByAttributeDescending(events, 'time')
@@ -45404,90 +45504,91 @@ class App extends Component {
 
   async get_objects_from_socket_and_set_in_state(target, filter_tags, application_responses=[]){
     const absolute_load_limit = Date.now() - (72*7*24*60*60*1000)
-    const load_step = (7*24*60*60*1000)
+    const load_step = (35*7*24*60*60*1000)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     
     while(absolute_load_limit < current_filter_end_time){
       //target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10)
-      const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*10), filter_tags)
-      if(socket_data == null) continue;
-      const target_data = socket_data[target]
+      // console.log('socket_stuff','loaded from target', target)
+      const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*100), filter_tags)
+      if(socket_data == null){
+        current_filter_end_time -= load_step
+        current_filter_start_time -= load_step
+        continue;
+      }
+      const target_data = socket_data
       if(target_data != null){
         const entries = Object.keys(target_data)
-        for(var i=0; i<entries.length; i++){
-          const object_hash = entries[i]
-          if(target == 'jobs'){
-            this.process_new_job_received(target_data[object_hash], object_hash)
+        for(var j=0; j<entries.length; j++){
+          const time_entry = entries[j]
+          const target_entries = Object.keys(target_data[time_entry])
+          for(var k=0; k<target_entries.length; k++){
+            const target_entry = target_entries[k]
+            const object_hashes = Object.keys(target_data[time_entry][target_entry])
+            for(var i=0; i<object_hashes.length; i++){
+              const object_hash = object_hashes[i]
+              const object_data = target_data[time_entry][target_entry][object_hash]
+              if(target == 'jobs'){
+                this.process_new_job_received(object_data, object_hash)
 
-            var me = this;
-            setTimeout(function() {
-              if((i%me.state.update_search_object_load_count == 0 || i == entries.length-1)){
-                me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
+                var me = this;
+                setTimeout(function() {
+                  if((i%me.state.update_search_object_load_count == 0 || i == entries.length-1)){
+                    me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
+                  }
+                }, (1 * 500));
               }
-            }, (1 * 500));
-          }
-          else if(target == 'posts'){
-            this.process_new_post_received(target_data[object_hash], object_hash)
+              else if(target == 'posts'){
+                this.process_new_post_received(object_data, object_hash)
 
-            var me = this;
-            setTimeout(function() {
-              if((i%me.state.update_search_object_load_count == 0 || i == entries.length-1)){
-                me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
+                var me = this;
+                setTimeout(function() {
+                  if((i%me.state.update_search_object_load_count == 0 || i == entries.length-1)){
+                    me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
+                  }
+                }, (1 * 500));
               }
-            }, (1 * 500));
+              else if(target == 'bill|'+this.state.accounts[this.state.selected_e5].address){
+                this.process_new_bill_message(object_data, object_hash, null, false)
+              }
+              else if(target == 'mail|'+this.state.accounts[this.state.selected_e5].address){
+                this.process_new_mail_received(object_data, object_hash, null, false)
+              }
+              else if(target == 'job_application|'+this.state.accounts[this.state.selected_e5].address){
+                this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target == 'bag_application|'+this.state.accounts[this.state.selected_e5].address){
+                this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target == 'contractor_job_request'+this.state.accounts[this.state.selected_e5].address){
+                this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
+                this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target == 'storefront_order'+this.state.accounts[this.state.selected_e5].address){
+                this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target.startsWith('signature_request|')){
+                this.process_new_signature_request_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target.startsWith('signature_response|')){
+                this.process_new_signature_response_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target.startsWith('typing|')){
+                this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(target.startsWith('read_receipts|')){
+                // console.log('socket_stuff','loaded a read receipts item', object_data)
+                this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
+              }
+            }
           }
-          else if(target == 'bill|'+this.state.accounts[this.state.selected_e5].address){
-            this.process_new_bill_message(target_data[object_hash], object_hash, null, false)
-          }
-          else if(target == 'mail|'+this.state.accounts[this.state.selected_e5].address){
-            this.process_new_mail_received(target_data[object_hash], object_hash, null, false)
-          }
-          else if(target == 'job_application|'+this.state.accounts[this.state.selected_e5].address){
-            this.process_new_job_application_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target == 'bag_application|'+this.state.accounts[this.state.selected_e5].address){
-            this.process_new_bag_application_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target == 'contractor_job_request'+this.state.accounts[this.state.selected_e5].address){
-            this.process_new_contractor_job_request_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
-            this.process_new_contractor_accepted_job_request_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target == 'storefront_order'+this.state.accounts[this.state.selected_e5].address){
-            this.process_new_storefront_order_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target.startsWith('signature_request|')){
-            this.process_new_signature_request_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target.startsWith('signature_response|')){
-            this.process_new_signature_response_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target.startsWith('typing|')){
-            this.process_new_typing_message(target_data[object_hash], object_hash, null, false, application_responses)
-          }
-          else if(target.startsWith('read_receipts|')){
-            this.process_new_read_receipts_message(target_data[object_hash], object_hash, null, false, application_responses)
-          } 
-          
         }
         
-        const [_, oldestValue] = Object.entries(target_data).reduce((oldest, [key, value]) => {
-          if (!oldest || parseInt(value.time) < parseInt(oldest[1].time)) {
-            return [key, value];
-          }
-          return oldest;
-        }, null);
-        
-        if(current_filter_end_time <= parseInt(oldestValue.time)){
-          //if all existing target items have not loaded from specified time range
-          current_filter_start_time = parseInt(oldestValue.time)
-          //set start time to the oldest entry and continue
-        }else{
-          current_filter_end_time -= load_step
-          current_filter_start_time -= load_step
-        }
+        current_filter_end_time -= load_step
+        current_filter_start_time -= load_step
       }
       else{
         current_filter_end_time -= load_step
@@ -45497,7 +45598,7 @@ class App extends Component {
     }
   }
 
-  get_account_in_room_data = async (account_ids, room_id) => {
+  get_account_in_room_data = async (account_ids, room_id, updated_signature=false) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -45528,7 +45629,12 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = await this.process_nitro_api_call_result(data, beacon_node);;
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.get_account_in_room_data(account_ids, room_id, true)
+      }
       var target_data = obj['return_object']
       console.log('apppage', 'get_account_in_room_data', target_data)
       return target_data

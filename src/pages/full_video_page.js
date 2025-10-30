@@ -27,8 +27,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
-import WorkerFactory from '../WorkerFactory';
-import myWorker from '../resources/encryptor_decryptor_worker';
+import { motion, AnimatePresence } from "framer-motion";
 
 var bigInt = require("big-integer");
 
@@ -2174,14 +2173,16 @@ class FullVideoPage extends Component {
         }else{
             return(
                 <div>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                            <div >
-                                {this.render_message_as_focused_if_so(item)}
-                                <div style={{height:3}}/>
-                            </div>
-                        </li>
-                    ))}    
+                    <AnimatePresence initial={false} mode="popLayout">
+                        {items.map((item, index) => (
+                            <motion.li key={item['message_id']} initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div>
+                                    {this.render_message_as_focused_if_so(item)}
+                                    <div style={{height:3}}/>
+                                </div>
+                            </motion.li>
+                        ))} 
+                    </AnimatePresence>     
                 </div>
             )
         }
@@ -2866,12 +2867,12 @@ class FullVideoPage extends Component {
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':video['video_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'videopost_id':object['id'], 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language}
+            var tx = {'id':video['video_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'videopost_id':object['id'], 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
 
             this.props.add_video_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
+            // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
