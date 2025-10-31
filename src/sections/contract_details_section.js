@@ -270,7 +270,9 @@ class ContractDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width: '100%', height: he, padding: '0px 10px 0px 10px' }}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
                     <div style={{ height: 10 }} />
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
@@ -355,6 +357,11 @@ class ContractDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -947,16 +954,20 @@ class ContractDetailsSection extends Component {
         var number = number_with_commas(age)
         var barwidth = this.get_number_width(age)
         var relativepower = this.get_time_difference(time)
-        var object_id = object['id']
+        var object_id = number_with_commas(object['id'])
         if(this.should_hide_contract_info_because_private(object)){
             object_id = '????'
             number = '????'
             relativepower = '????'
         }
 
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
         return {
             'tags': { 'active_tags': tags, 'index_option': 'indexed', 'selected_tags':this.props.app_state.job_section_tags,'when_tapped':'select_deselect_tag' },
-            'id': { 'title': object['e5']+' • '+object_id, 'details': title, 'size': 'l' },
+            'id': { 'title':'• '+object_id, 'details': title, 'size': 'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age': { 'style': 'l', 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle': '', 'barwidth': barwidth, 'number': `${number}`, 'barcolor': '', 'relativepower': `${relativepower} `+this.props.app_state.loc['2047']/* ago */, },
 
             'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */, 'size': 'l' },
@@ -2806,9 +2817,11 @@ class ContractDetailsSection extends Component {
     render_detail_item(item_id, object_data, contract_object) {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width / 2 : this.props.app_state.width
+        var uploaded_data = {}
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return (
             <div>
-                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} when_contract_exchange_tapped={this.when_contract_exchange_tapped.bind(this)} object={contract_object} select_deselect_tag={this.props.select_deselect_tag.bind(this)} />
+                <ViewGroups uploaded_data={uploaded_data} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} when_contract_exchange_tapped={this.when_contract_exchange_tapped.bind(this)} object={contract_object} select_deselect_tag={this.props.select_deselect_tag.bind(this)} />
             </div>
         )
 

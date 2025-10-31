@@ -151,7 +151,9 @@ class PollDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
                     <div style={{height: 10}}/>
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
@@ -212,6 +214,11 @@ class PollDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -621,9 +628,14 @@ class PollDetailsSection extends Component {
         });
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'winner_data':{'title':candidates_count, 'details':winner_count, 'size':'l'},
             'start_time':{'details':this.props.app_state.loc['3072a']/* 'Start Time' */, 'title':''+(new Date(start_time * 1000)), 'size':'l'},
             'end_time':{'details':this.props.app_state.loc['3072b']/* 'End Time.' */, 'title':''+(new Date(end_time * 1000)), 'size':'l'},
@@ -1121,7 +1133,7 @@ class PollDetailsSection extends Component {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12') uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12') uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(

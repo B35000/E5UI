@@ -335,7 +335,9 @@ class EndDetailSection extends Component {
                     </div>
                     
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['token_id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(selected_object)}>
+                        {this.render_detail_item('3', item['token_id'])}
+                    </div>
                     <div style={{height:10}}/>
                     {this.show_moderator_note_if_any(selected_object)}
                     {/* {this.render_post_state(selected_object)} */}
@@ -483,6 +485,11 @@ class EndDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -1071,10 +1078,15 @@ class EndDetailSection extends Component {
         var max_supply = this.calculate_maximum_supply(selected_object)
         var wallet_dominance = this.calculate_wallet_dominance(max_supply, selected_object)
         var total_depthminted = this.get_total_depthminted_amount(selected_object)
+
+        const is_socket_job = selected_object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(selected_object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[selected_object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[selected_object['event']['nitro_e5_id']]) : this.props.app_state.e5s[selected_object['e5']].e5_img
+
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
-            'token_id': {'title':selected_object['e5']+' • '+selected_object['id'], 'details':this.props.app_state.loc['2376']/* 'Token Identifier' */, 'size':'l'},
+            'token_id': {'title':'• '+number_with_commas(selected_object['id']), 'details':this.props.app_state.loc['2376']/* 'Token Identifier' */, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'token_type': {'title':this.props.app_state.loc['2377']/* 'Token Type' */, 'details':type, 'size':'l'},
             'age': { 'style': 'l', 'title': this.props.app_state.loc['2378']/* 'Block Number' */, 'subtitle': this.props.app_state.loc['2198']/* 'age' */, 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} ago`, },
 
@@ -3574,9 +3586,11 @@ return data['data']
     render_detail_item(item_id, object_data){
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
+        var uploaded_data = {}
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups uploaded_data={uploaded_data} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
             </div>
         )
 

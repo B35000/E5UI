@@ -235,7 +235,9 @@ class SubscriptionDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
                     <div style={{height: 10}}/>
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
@@ -304,6 +306,11 @@ class SubscriptionDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -618,9 +625,14 @@ class SubscriptionDetailsSection extends Component {
         var can_cancel_subscription = subscription_config[2] == 0 ? this.props.app_state.loc['1827']/* 'non-cancellable' */: this.props.app_state.loc['1828']/* 'cancellable' */
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         var subscription_beneficiary = subscription_config[6] == 0 ? subscription_config[0] : subscription_config[6]
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
         return{
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.jobs_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
+            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             
             'age':{ 'style':'l', 'title':this.props.app_state.loc['2206']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${this.format_account_balance_figure(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
             
@@ -2353,9 +2365,11 @@ class SubscriptionDetailsSection extends Component {
     render_detail_item(item_id, object_data){
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
+        var uploaded_data = {}
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} select_deselect_tag={this.props.select_deselect_tag.bind(this)}/>
+                <ViewGroups uploaded_data={uploaded_data} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} select_deselect_tag={this.props.select_deselect_tag.bind(this)}/>
             </div>
         )
 

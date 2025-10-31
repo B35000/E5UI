@@ -276,7 +276,9 @@ class ViewGroups extends Component {
             if(details == ''){
                 details = '...'
             }
-            const parts = this.mask_profane_words(details, false).split(' ');
+            const clean_text = this.mask_profane_words(details, false)
+            const parts = clean_text.split(' ');
+            const leading_trailing_spaces = this.extract_leading_trailing_spaces(clean_text)
             const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 0px 0px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
             const footer = object_data['footer']
             if(item_id == '8'){
@@ -323,12 +325,12 @@ class ViewGroups extends Component {
                             <div>
                                 <div style={{'display': 'flex','flex-direction': 'row'}}>
                                     {this.render_text_image(title_image, font_size, text_image_border_radius)}
-                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
                                 </div>
 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align}} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(details)}>{
                                     parts.map((part, index) => {
-                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{index == 0 ? leading_trailing_spaces[0]:'' }{this.mask_word_if_censored(part)}{index == parts.length-1 ? leading_trailing_spaces[1]:' '}</span>;
                                     })
                                     }
                                 </p>
@@ -968,6 +970,30 @@ class ViewGroups extends Component {
         }
     }
 
+    extract_leading_trailing_spaces(clean_text){
+        const letters = clean_text.split('')
+        const leading_trailing_spaces = ['', '']
+        var letter_hit = false
+        letters.forEach(letter => {
+            if(letter == ' ' && letter_hit == false){
+                leading_trailing_spaces[0] = leading_trailing_spaces[0]+' '
+            }
+            else if(letter != ' ' && letter_hit == false){
+                letter_hit = true
+            }
+        });
+        letter_hit = false;
+        letters.reverse().forEach(letter => {
+            if(letter == ' ' && letter_hit == false){
+                leading_trailing_spaces[1] = leading_trailing_spaces[1]+' '
+            }
+            else if(letter != ' ' && letter_hit == false){
+                letter_hit = true
+            }
+        });
+        return leading_trailing_spaces
+    }
+
     process_markdown_source(markdown){
         const regex = /\[.*?\]\((https?:\/\/[^\s)]+\.(?:mp3|wav|ogg|flac|mp4|webm|mov|avi|mkv))\)/gi;
         const matches = [...markdown.matchAll(regex)].map(m => m[1]);
@@ -1089,12 +1115,12 @@ class ViewGroups extends Component {
         if(string == null) return;
         var result_string = string
         var all_censored_phrases = this.props.censored_keyword_phrases == null ? [] : this.props.censored_keyword_phrases
-        var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
-        leetspeek.forEach(phrase => {
-            if(mask_leet_speek != false && isNaN(phrase)){
-                result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
-            }
-        });
+        // var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        // leetspeek.forEach(phrase => {
+        //     if(mask_leet_speek != false && isNaN(phrase)){
+        //         result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+        //     }
+        // });
         all_censored_phrases.forEach(phrase_ => {
             const phrase = phrase_
             if(result_string.includes(phrase) && phrase.includes(' ')){

@@ -229,13 +229,15 @@ class BagDetailsSection extends Component {
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         var item = this.get_bag_details_data(object)
         
+        const responses = this.props.app_state.job_responses[object['id']] == null ? 0 : this.props.app_state.job_responses[object['id']].length
+
         return(
             <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'scroll', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
 
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div onClick={() => this.copy_id_to_clipboard(object)} style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
                     <div style={{height: 10}}/>
@@ -255,6 +257,13 @@ class BagDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['delivery'])}
                     <div style={{height: 10}}/>
+
+                    {responses > 0 && (
+                        <div>
+                            {this.render_detail_item('4', {'text':number_with_commas(responses)+this.props.app_state.loc['2509c']/* ' responses' */, 'textsize':'14px', 'font':'Sans-serif'})}
+                            <div style={{height: 10}}/>
+                        </div>
+                    )}
 
                     {this.render_bag_frequency_setting_in_days(object)}
 
@@ -277,6 +286,11 @@ class BagDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -472,10 +486,14 @@ class BagDetailsSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var delivery_location = this.get_delivery_location_data_if_allowed(object)
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'sender_account':{'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
+            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':delivery_location, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
@@ -524,19 +542,19 @@ class BagDetailsSection extends Component {
             var total_amounts = this.get_total_bag_value(items_to_deliver, object)
             if(total_amounts != null){
                 return(
-                <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064a']/* 'Bag Value.' */, 'details':this.props.app_state.loc['2064b']/* 'The total amount to be paid by the bag owner in the respective denominations.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-                    {total_amounts.map((units, index) => (
-                        <div style={{'padding': '2px 0px 2px 0px'}}>
-                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+units['id']], 'subtitle':this.format_power_figure(units['amount']), 'barwidth':this.calculate_bar_width(units['amount']), 'number':this.format_account_balance_figure(units['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2064a']/* 'Bag Value.' */, 'details':this.props.app_state.loc['2064b']/* 'The total amount to be paid by the bag owner in the respective denominations.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                        {total_amounts.map((units, index) => (
+                            <div style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+units['id']], 'subtitle':this.format_power_figure(units['amount']), 'barwidth':this.calculate_bar_width(units['amount']), 'number':this.format_account_balance_figure(units['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                    {this.render_detail_item('0')}
-                </div>
-            )
+                        ))}
+                        {this.render_detail_item('0')}
+                    </div>
+                )
             }
         }
     }
@@ -781,10 +799,10 @@ class BagDetailsSection extends Component {
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                 {price_array.map((item, index) => (
-                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
-                        </div>
-                    ))}
+                    <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                    </div>
+                ))}
             </div>
         )
     }
@@ -894,6 +912,27 @@ class BagDetailsSection extends Component {
                 </div>
             )
         }
+        else if(object['ipfs'].pins != null && object['ipfs'].pins.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064k']/* 'Included Locations Pins.' */, 'details':this.props.app_state.loc['2064l']/* 'Some locations have been included in the object. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_hidden_card(this.props.app_state.loc['284bk']/* Hidden */)}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    render_hidden_card(text){
+        return(
+            <div style={{height:160, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:55 ,width:'auto'}}/>
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'font-size': '10px', 'color': this.props.theme['primary_text_color']}}></p>
+                </div>
+            </div>
+        );
     }
 
     is_delivery_location_ok_to_show(object){
@@ -1666,10 +1705,10 @@ class BagDetailsSection extends Component {
         if(string == null) return;
         var result_string = string
         var all_censored_phrases = this.props.app_state.censored_keyword_phrases == null ? [] : this.props.app_state.censored_keyword_phrases
-        var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
-        leetspeek.forEach(phrase => {
-            if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
-        });
+        // var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        // leetspeek.forEach(phrase => {
+        //     if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+        // });
         all_censored_phrases.forEach(phrase_ => {
             const phrase = phrase_
             if(result_string.includes(phrase) && phrase.includes(' ')){
@@ -1968,8 +2007,8 @@ class BagDetailsSection extends Component {
     }
 
     get_convo_messages(object){
-        const chain_messages = this.props.app_state.object_messages[object['id']] == null ? [] : this.props.app_state.object_messages[object['id']]
-        const socket_messages = this.props.app_state.socket_object_messages[object['id']] == null ? [] : this.props.app_state.socket_object_messages[object['id']]
+        const chain_messages = this.props.app_state.object_messages[object['e5_id']] == null ? [] : this.props.app_state.object_messages[object['e5_id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['e5_id']] == null ? [] : this.props.app_state.socket_object_messages[object['e5_id']]
         const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
         
         return this.filter_messages_for_blocked_accounts(all_messages)
@@ -2278,7 +2317,7 @@ class BagDetailsSection extends Component {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(

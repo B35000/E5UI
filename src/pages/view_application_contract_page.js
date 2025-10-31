@@ -415,7 +415,9 @@ class ViewApplicationContractPage extends Component {
                 <div style={{ width:'100%', padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
                     <div style={{height:10}}/>
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
@@ -491,6 +493,11 @@ class ViewApplicationContractPage extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -852,7 +859,7 @@ class ViewApplicationContractPage extends Component {
         var voter_weight_balance = this.get_voter_weight_balance(contract_config[33], object)
         return{
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{ 'style':'l', 'title':this.props.app_state.loc['1612']/* 'Block ID' */, 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['27']/* 'block' */, },
 
             'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':this.props.app_state.loc['1613']/* 'Vote Bounty Split Proportion' */, 'size':'l'},

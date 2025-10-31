@@ -751,7 +751,7 @@ class PostListSection extends Component {
                 const title = this.props.app_state.loc['2509r']/* $ new % loaded. */.replace('$', number_with_commas(new_objects.length)).replace('%', this.get_section_name())
                 return(
                     <div onClick={() => this.when_refresh_feed_tapped(page_id)}>
-                        {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['2509s']/* 'Tap this to refresh your feed and show them.' */, 'size':'l'})}
+                        {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['2509s']/* 'Tap this to refresh your feed and show them.' */, 'size':'s'})}
                         <div style={{height:10}}/>
                     </div>
                 )
@@ -922,13 +922,15 @@ class PostListSection extends Component {
 
         const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
 
-        const id_to_show = is_socket_job == true ? this.format_account_balance_figure2(object['id']) : object['id']
+        const id_to_show = is_socket_job == true ? this.format_account_balance_figure2(object['id']) : number_with_commas(object['id'])
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+id_to_show+sender+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%'},
+            'id':{'title':title_space+id_to_show+sender+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -1084,16 +1086,16 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? (object['id'] == 2 ? this.props.app_state.loc['2509v']/* 'The Main Contract for $' */.replace('$', object['e5']) :this.props.app_state.loc['2509u']/* Contract */) : object['ipfs'].entered_title_text
         var age = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['block'] : object['event'].returnValues.p5
         var time = object['event'] == null ? this.props.app_state.boot_times[object['e5']]['time'] : object['event'].returnValues.p4
-        var id_text = ' • '+object['id']
-        if(object['id'] == 2) id_text = ' • '+'Main Contract'
+        var id_text = '• '+number_with_commas(object['id'])
+        if(object['id'] == 2) id_text = '• '+'Main Contract'
         var sender = object['event'] == null ? '' : this.get_senders_name(object['event'].returnValues.p3, object);
         var number = number_with_commas(age)
         var barwidth = this.get_number_width(age)
         var relativepower = this.get_time_difference(time)
-        var object_id = object['id']
+        var object_id = number_with_commas(object['id'])
         if(this.should_hide_contract_info_because_private(object)){
             sender = '????'
-            id_text = ' • ????'
+            id_text = '• ????'
             object_id = '????'
             number = '????'
             relativepower = '????'
@@ -1102,7 +1104,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, },
-            'min':{'details':object['e5']+' • '+object_id+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+object_id+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -1252,9 +1254,9 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p4, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -1368,9 +1370,9 @@ class PostListSection extends Component {
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id']+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image}
+            'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image}
         }
     }
 
@@ -1505,9 +1507,9 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -1780,9 +1782,9 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -2519,13 +2521,15 @@ class PostListSection extends Component {
 
         const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
 
-        const id_to_show = is_socket_job == true && !this.is_post_anonymous(object) ? this.format_account_balance_figure2(objectid) : objectid
+        const id_to_show = is_socket_job == true && !this.is_post_anonymous(object) ? this.format_account_balance_figure2(objectid) : (this.is_post_anonymous(object) == true ? objectid : number_with_commas(objectid))
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+id_to_show+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%'},
+            'id':{'title':title_space+id_to_show+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
-            'min':{'details':object['e5']+' • '+objectid+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+objectid+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -2695,9 +2699,9 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -2862,9 +2866,9 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -2971,7 +2975,7 @@ class PostListSection extends Component {
                                     <img src={e5_img} alt={object['e5']} style={{height:15,width:15}}/>
                                     <div style={{width:2}}/>
                                 </div>
-                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{object['id']+sender}</p>
+                                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'normal'}}>{number_with_commas(object['id'])+sender}</p>
                             </div>
                             
                             <div style={{height: 3}}/>
@@ -3058,9 +3062,9 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id']+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -3269,10 +3273,10 @@ class PostListSection extends Component {
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
-            // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
+            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
+            // 'id_with_image':{'title':number_with_commas(object['id']), 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
-            'min':{'details':object['e5']+' • '+object['id'], 'title':title, 'size':'l', 'border_radius':'0%'}
+            'min':{'details':'• '+number_with_commas(object['id']), 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
     }
 
@@ -3925,7 +3929,7 @@ return data['data']
             var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
 
             var view_count_message = this.get_audio_files_view_counts(object)
-            var objectid = this.is_post_anonymous(object) ? '???' : object['id']
+            var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
 
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
@@ -4055,10 +4059,10 @@ return data['data']
 
         var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
-        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
+        var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object},
+            'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
             'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object}
         }
@@ -4438,7 +4442,7 @@ return data['data']
 
             var view_count_message = this.get_video_files_view_counts(object)
             var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
-            var objectid = this.is_post_anonymous(object) ? '???' : object['id']
+            var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
@@ -5523,7 +5527,7 @@ return data['data']
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' ||item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12') uploaded_data = this.props.app_state.uploaded_data
         
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(

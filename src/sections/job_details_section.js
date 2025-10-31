@@ -234,12 +234,17 @@ class JobDetailsSection extends Component {
         var item = this.get_job_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
 
+        const responses = this.props.app_state.job_responses[object['id']] == null ? object['responses'] : this.props.app_state.job_responses[object['id']].length
+
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    
                     <div style={{height: 10}}/>
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
@@ -248,8 +253,13 @@ class JobDetailsSection extends Component {
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('4', {'text':object['responses']+this.props.app_state.loc['2509c']/* ' responses' */, 'textsize':'14px', 'font':'Sans-serif'})} 
-                    <div style={{height: 10}}/>
+                    {responses > 0 && (
+                        <div>
+                            {this.render_detail_item('4', {'text':number_with_commas(responses)+this.props.app_state.loc['2509c']/* ' responses' */, 'textsize':'14px', 'font':'Sans-serif'})}
+                            <div style={{height: 10}}/>
+                        </div>
+                    )}
+                    
                     {this.render_taken_down_message_if_post_is_down(object)}
                     {this.render_message_if_blocked_by_sender(object)}
 
@@ -287,6 +297,11 @@ class JobDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -864,6 +879,27 @@ class JobDetailsSection extends Component {
                 </div>
             )
         }
+        else if(object['ipfs'].pins != null && object['ipfs'].pins.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064k']/* 'Included Locations Pins.' */, 'details':this.props.app_state.loc['2064l']/* 'Some locations have been included in the object. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_hidden_card(this.props.app_state.loc['284bk']/* Hidden */)}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    render_hidden_card(text){
+        return(
+            <div style={{height:160, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:55 ,width:'auto'}}/>
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'font-size': '8px', 'color': this.props.theme['primary_text_color']}}></p>
+                </div>
+            </div>
+        );
     }
 
     is_job_location_ok_to_show(object){
@@ -964,15 +1000,15 @@ class JobDetailsSection extends Component {
         }
         return(
             <div style={{}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                        <div style={{'padding': '3px 0px 3px 0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
                                 {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                             </div>
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         )
     }
@@ -1019,9 +1055,16 @@ class JobDetailsSection extends Component {
         var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
+            'id':{'title':title_space+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'l', 'title':this.props.app_state.loc['2493']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
         }
     }
@@ -1369,7 +1412,7 @@ class JobDetailsSection extends Component {
         var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.truncate(top_title, 40), 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+number_with_commas(object['id']), 'details':this.truncate(top_title, 40), 'size':'l'})} 
             </div>
         )
     }
@@ -1795,10 +1838,10 @@ class JobDetailsSection extends Component {
         if(string == null) return;
         var result_string = string
         var all_censored_phrases = this.props.app_state.censored_keyword_phrases == null ? [] : this.props.app_state.censored_keyword_phrases
-        var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
-        leetspeek.forEach(phrase => {
-            if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
-        });
+        // var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        // leetspeek.forEach(phrase => {
+        //     if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+        // });
         all_censored_phrases.forEach(phrase_ => {
             const phrase = phrase_
             if(result_string.includes(phrase) && phrase.includes(' ')){
@@ -1997,8 +2040,8 @@ class JobDetailsSection extends Component {
     }
 
     get_convo_messages(object){
-        const chain_messages = this.props.app_state.object_messages[object['id']] == null ? [] : this.props.app_state.object_messages[object['id']]
-        const socket_messages = this.props.app_state.socket_object_messages[object['id']] == null ? [] : this.props.app_state.socket_object_messages[object['id']]
+        const chain_messages = this.props.app_state.object_messages[object['e5_id']] == null ? [] : this.props.app_state.object_messages[object['e5_id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['e5_id']] == null ? [] : this.props.app_state.socket_object_messages[object['e5_id']]
         const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
         
         return this.filter_messages_for_blocked_accounts(all_messages)
@@ -2299,7 +2342,7 @@ class JobDetailsSection extends Component {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(

@@ -333,7 +333,9 @@ class AudioDetailSection extends Component {
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
                     <div style={{height: 10}}/>
                     {this.render_sream_and_view_count_if_any(object)}
                     {this.show_moderator_note_if_any(object)}
@@ -423,6 +425,11 @@ class AudioDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -1213,11 +1220,15 @@ return data['data']
 
         var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
-        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
+        var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
         
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed',   'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+objectid, 'details':title, 'size':'l'},
+            'id':{'title':'• '+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
             
             'reply_count':{'title':`${number_with_commas(number_of_replies)}`, 'details': this.props.app_state.loc['2815']/* 'Number of Replies.' */, 'size':'l'},
@@ -3457,8 +3468,8 @@ return data['data']
     }
 
     get_convo_messages(object){
-        const chain_messages = this.props.app_state.object_messages[object['id']] == null ? [] : this.props.app_state.object_messages[object['id']]
-        const socket_messages = this.props.app_state.socket_object_messages[object['id']] == null ? [] : this.props.app_state.socket_object_messages[object['id']]
+        const chain_messages = this.props.app_state.object_messages[object['e5_id']] == null ? [] : this.props.app_state.object_messages[object['e5_id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['e5_id']] == null ? [] : this.props.app_state.socket_object_messages[object['e5_id']]
         const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
         
         return this.filter_messages_for_blocked_accounts(all_messages)
@@ -3775,7 +3786,7 @@ return data['data']
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
 

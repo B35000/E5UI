@@ -1229,10 +1229,10 @@ class MailDetailsSection extends Component {
         if(string == null) return;
         var result_string = string
         var all_censored_phrases = this.props.app_state.censored_keyword_phrases == null ? [] : this.props.app_state.censored_keyword_phrases
-        var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
-        leetspeek.forEach(phrase => {
-            if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
-        });
+        // var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        // leetspeek.forEach(phrase => {
+        //     if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+        // });
         all_censored_phrases.forEach(phrase_ => {
             const phrase = phrase_
             if(result_string.includes(phrase) && phrase.includes(' ')){

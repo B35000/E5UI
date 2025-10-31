@@ -560,7 +560,7 @@ class NewJobPage extends Component {
     render_transaction_size_indicator(){
         var current_stack_size = this.props.app_state.stack_size_in_bytes[this.state.e5] == null ? 50 : this.props.app_state.stack_size_in_bytes[this.state.e5]
         if(current_stack_size != -1){
-            const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+            const size = this.lengthInUtf8Bytes(JSON.stringify(this.state, (key, value) => typeof value === 'bigint' ? value.toString() : value ))
             const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
 
             const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
@@ -2794,7 +2794,7 @@ return data['data']
         var title = this.state.entered_title_text
 
         const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
-        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state, (key, value) => typeof value === 'bigint' ? value.toString() : value ))
 
         if(index_tags.length == 0){
             this.props.notify(this.props.app_state.loc['757']/* 'add some tags first!' */, 2700)

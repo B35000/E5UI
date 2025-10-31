@@ -23797,6 +23797,7 @@ class App extends Component {
 
   start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
     if(is_synching == false) this.start_get_accounts_wallet_data(false);
+    if(is_synching == true) this.get_objects_from_socket_and_set_in_state('jobs', []);
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
     if(is_synching == true){
@@ -29924,10 +29925,6 @@ class App extends Component {
   }
 
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses, prioritized_accounts, specific_items, account, return_created_object_events_only=false, all_return_data={}) => {
-    if(e5 == 'E25'){
-      const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
-      this.get_objects_from_socket_and_set_in_state('posts', filter_tags)
-    }
     var created_post_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_posts[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_post_events'] :  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 18/* 18(post object) */, p1:this.get_valid_post_index(web3)})
     created_post_events = created_post_events.slice().reverse()
 
@@ -30230,7 +30227,7 @@ class App extends Component {
     // const target_type = 'read_receipts|'+'test'+'|'+to
     // this.get_objects_from_socket_and_set_in_state(target_type, [], [])
 
-    if(e5 == 'E25'){
+    if(e5 == 'E25' && this.state.created_jobs[e5] != null){
       const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
       this.get_objects_from_socket_and_set_in_state('jobs', filter_tags)
     }
@@ -32319,6 +32316,10 @@ class App extends Component {
 
   load_jobs_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    
+    const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
+    this.get_objects_from_socket_and_set_in_state('jobs', filter_tags)
+
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -32503,6 +32504,10 @@ class App extends Component {
 
   load_post_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
+    
+    const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
+    this.get_objects_from_socket_and_set_in_state('posts', filter_tags)
+
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 18/* 18(post object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -38850,8 +38855,9 @@ class App extends Component {
 
 
   get_objects_messages = async (id, e5, object) => {
+    const e5_id = id+e5
     console.log('apppage', 'get_object_messages', 'loading object comments...')
-    this.get_objects_messages_from_socket_and_enter_chatroom(object['e5_id'])
+    this.get_objects_messages_from_socket_and_enter_chatroom(id+e5)
     const all_object_comment_events = await this.get_object_comment_events(id, e5, 17)
 
     var loaded_target = 0
@@ -38860,7 +38866,7 @@ class App extends Component {
       loaded_target = all_object_comment_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var messages = []
-    var is_first_time = this.state.object_messages[id] == null ? true: false
+    var is_first_time = this.state.object_messages[e5_id] == null ? true: false
     console.log('apppage', 'get_object_messages', 'loaded', all_object_comment_events)
     for(var j=0; j<all_object_comment_events.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
@@ -38883,7 +38889,7 @@ class App extends Component {
         }
         if(is_first_time){
           const clone = structuredClone(this.state.object_messages)
-          clone[id] = messages
+          clone[e5_id] = messages
           this.setState({object_messages: clone})
           // await this.wait(150)
         }
@@ -38934,9 +38940,11 @@ class App extends Component {
                 this.process_new_message_received(object_data, object_hash, null, false)
               }
               else if(object_data['type'] == 'job-request-message'){
+                console.log('socket_stuff', 'job-request-message', object_data)
                 this.process_new_job_request_message(object_data, object_hash, null)
               }
               else{
+                console.log('socket_stuff', 'object-comment', object_data)
                 this.process_new_comment_message(object_data, object_hash)
               }
             }
@@ -42921,7 +42929,12 @@ class App extends Component {
 
 
   async emit_new_public_object_confirmed(state_object, show_job_after_broadcast){
-    this.prompt_top_notification(this.getLocale()['284bd']/* 'Broadcasting Transaction... */, 1900)
+    if(state_object.type == this.getLocale()['297']/* post */){
+      this.prompt_top_notification(this.getLocale()['284bh']/* 'Broadcasting Post... */, 1900)
+    }
+    else{
+      this.prompt_top_notification(this.getLocale()['284bi']/* 'Broadcasting Job... */, 1900)
+    }
     const roomId = state_object.type == this.getLocale()['297']/* post */ ? 'posts': 'jobs'
     this.new_job_page.current?.reset_state()
     this.new_post_page.current?.reset_state()
@@ -42931,11 +42944,26 @@ class App extends Component {
     clone.push(job_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
-    this.socket.emit("chatroom_message", {roomId: roomId, message: job_message_object.message, target: job_message_object.target, object_hash: job_message_object.object_hash});
+    const broadcasat_object = {roomId: roomId, message: job_message_object.message, target: job_message_object.target, object_hash: job_message_object.object_hash}
+
+    this.socket.emit("chatroom_message", broadcasat_object);
+
+    await this.wait(3000)
+
+    if(roomId == 'jobs'){
+      this.process_new_job_received(job_message_object.message, job_message_object.object_hash)
+    }
+    else if(roomId == 'posts'){
+      this.process_new_post_received(job_message_object.message, job_message_object.object_hash)
+    }
   }
 
   async emit_new_mail_confirmed(state_object, show_job_after_broadcast, type){
-    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
+    if(type == 'mail'){
+      this.prompt_top_notification(this.getLocale()['284bj']/* 'Sending Mail... */, 1900)
+    }else{
+      this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
+    }
     this.new_mail_page.current?.reset_state()
     const mail_message_object = type == 'mail' ? await this.prepare_mail_object_message(state_object, show_job_after_broadcast) : await this.prepare_mail_message_object_message(state_object)
 
@@ -42980,6 +43008,9 @@ class App extends Component {
     const channel_e5_id = state_object['id']+state_object['e5']
 
     this.socket.emit("chatroom_message", {roomId: channel_e5_id, message: channel_message_object.message, target: channel_e5_id, object_hash: channel_message_object.object_hash});
+
+    await this.wait(3000)
+    this.process_new_channel_message(channel_message_object.message, channel_message_object.object_hash)
   }
 
   async emit_new_object_comment_message(state_object){
@@ -42993,6 +43024,9 @@ class App extends Component {
     const object_e5_id = state_object['id']+state_object['e5']
 
     this.socket.emit("chatroom_message", {roomId: object_e5_id, message: comment_message_object.message, target: object_e5_id, object_hash: comment_message_object.object_hash});
+
+    await this.wait(3000)
+    this.process_new_comment_message(comment_message_object.message, comment_message_object.object_hash)
   }
 
   async emit_new_bill_confirmed(state_object, show_job_after_broadcast){
@@ -43242,13 +43276,11 @@ class App extends Component {
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
     const recipient = ''
-    const channeling = identifier
+    const channeling = web3.utils.keccak256(identifier)
     const lan = state_object.device_language_setting
     const state = this.hash_data_with_randomizer(this.state.device_country)
 
-    const object_as_string = JSON.stringify(state_object, (key, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    )
+    const object_as_string = JSON.stringify(state_object, (key, value) => typeof value === 'bigint' ? value.toString() : value )
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'object',
@@ -44220,6 +44252,7 @@ class App extends Component {
     }
 
     const ipfs_data = JSON.parse(await this.decrypt_storage_object(message.data))
+    console.log('socket_stuff', 'ipfs data for job', ipfs_data)
     if(ipfs_data != message.data){
       const e5 = message.e5;
       const id = message.id
@@ -44227,8 +44260,9 @@ class App extends Component {
       const sender_acc = message.author
       const event = {returnValues:{p1:channeling, p2:id, p3: 17, p4:channeling, p5:sender_acc, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
+      const hash = web3.utils.keccak256('en')
 
-      if(this.is_post_index_valid(event.returnValues.p1.toString(), web3)){
+      if(event.returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(event.returnValues.p1.toString(), web3)){
         const job = {'id':id, 'ipfs':ipfs_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5 ,'e5_id':id+e5, 'responses':0, 
         'object_type':'job'}
 
@@ -44243,13 +44277,21 @@ class App extends Component {
         }
         created_job_mappings[id] = job
 
-        this.setState({created_jobs: created_job, created_job_mappings: created_job_mappings })
+        const created_jobs_clone = structuredClone(this.state.created_jobs)
+        const created_jobs_mapping_clone = structuredClone(this.state.created_job_mappings)
+        created_jobs_clone[e5] = created_job
+        created_jobs_mapping_clone[e5] = created_job_mappings
+
+        this.setState({created_jobs: created_jobs_clone, created_job_mappings: created_jobs_mapping_clone })
         if(am_I_the_author == true){
           await this.wait(300)
           this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
           this.homepage.current?.when_job_post_item_clicked(index, id, e5, job, 'ignore')
           this.homepage.current?.reset_post_detail_object()
         }
+      }
+      else{
+        console.log('socket_stuff', 'channeling invalid', event.returnValues.p1, event.returnValues.p1.toString())
       }
     }
   }
@@ -44279,7 +44321,8 @@ class App extends Component {
       const event = {returnValues:{p1:channeling, p2:id, p3: 17, p4:channeling, p5:sender_acc, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
 
-      if(this.is_post_index_valid(event.returnValues.p1.toString(), web3)){
+      var hash = web3.utils.keccak256('en')
+      if(event.returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(event.returnValues.p1.toString(), web3)){
         const post_data = {'id':id, 'ipfs':ipfs_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5 ,'e5_id':id+e5, 'responses':0, 
         'object_type':'job'}
 
@@ -44294,7 +44337,9 @@ class App extends Component {
           created_posts.push(obj)
         }
 
-        this.setState({created_posts: created_posts });
+        const created_posts_clone = structuredClone(this.state.created_posts)
+        created_posts_clone[e5] = created_posts
+        this.setState({created_posts: created_posts_clone });
 
         if(am_I_the_author == true){
           await this.wait(300)
@@ -44641,36 +44686,35 @@ class App extends Component {
       }, (2 * 1000));
     }
 
-    if(am_I_the_author){
-      const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
 
-      if(ipfs != message.data){
-        const e5 = message.e5;
-        const id = message.id;
-        const sender_acc = message.author;
-        const convo_id = id;
-        const cid = object_hash;
-        const request_id = message.id
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author;
+      const convo_id = id;
+      const cid = object_hash;
+      const request_id = message.id+e5
 
-        const event = {returnValues:{p1:17, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+      const event = {returnValues:{p1:17, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-        var ipfs_obj = ipfs
-        if(ipfs_obj != null){
-          const clone = structuredClone(this.state.socket_object_messages)
-          const messages = clone[request_id] == null ? [] : clone[request_id].slice()
-          const ipfs_message = JSON.parse(ipfs_obj);
-          ipfs_message['time'] = event.returnValues.p6
-          this.fetch_uploaded_files_for_object(ipfs_message)
-          const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
-          if(includes == null){
-            messages.push(ipfs_message)
-          }
-          clone[request_id] = messages
-          this.setState({socket_object_messages: clone})
-          this.fetch_uploaded_files_for_object(ipfs_message)
+      var ipfs_obj = ipfs
+      if(ipfs_obj != null){
+        const clone = structuredClone(this.state.socket_object_messages)
+        const messages = clone[request_id] == null ? [] : clone[request_id].slice()
+        const ipfs_message = ipfs_obj;
+        ipfs_message['time'] = event.returnValues.p6
+        this.fetch_uploaded_files_for_object(ipfs_message)
+        const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
+        if(includes == null){
+          messages.push(ipfs_message)
         }
+        clone[request_id] = messages
+        this.setState({socket_object_messages: clone})
       }
     }
+    
   }
 
   async process_new_bill_message(message, object_hash, from, add_to_notifications){
@@ -45318,7 +45362,7 @@ class App extends Component {
 
 
 
-  get_socket_data = async (target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false) => {
+  get_socket_data = async (target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -45372,6 +45416,9 @@ class App extends Component {
     }
     catch(e){
       console.log('apppage', 'socket_stuff', 'something went wrong with get_socket_data', e)
+      if(tries < 2){
+        return this.get_socket_data(target, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true, tries+1)
+      }
     }
   }
 
@@ -45530,59 +45577,60 @@ class App extends Component {
               const object_hash = object_hashes[i]
               const object_data = target_data[time_entry][target_entry][object_hash]
               if(target == 'jobs'){
-                this.process_new_job_received(object_data, object_hash)
+                await this.process_new_job_received(object_data, object_hash)
 
                 var me = this;
                 setTimeout(function() {
-                  if((i%me.state.update_search_object_load_count == 0 || i == entries.length-1)){
+                  if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
                     me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
                   }
                 }, (1 * 500));
               }
               else if(target == 'posts'){
-                this.process_new_post_received(object_data, object_hash)
+                await this.process_new_post_received(object_data, object_hash)
 
                 var me = this;
                 setTimeout(function() {
-                  if((i%me.state.update_search_object_load_count == 0 || i == entries.length-1)){
+                  if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
                     me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
                   }
                 }, (1 * 500));
               }
               else if(target == 'bill|'+this.state.accounts[this.state.selected_e5].address){
-                this.process_new_bill_message(object_data, object_hash, null, false)
+                await this.process_new_bill_message(object_data, object_hash, null, false)
               }
               else if(target == 'mail|'+this.state.accounts[this.state.selected_e5].address){
-                this.process_new_mail_received(object_data, object_hash, null, false)
+                await this.process_new_mail_received(object_data, object_hash, null, false)
               }
               else if(target == 'job_application|'+this.state.accounts[this.state.selected_e5].address){
-                this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target == 'bag_application|'+this.state.accounts[this.state.selected_e5].address){
-                this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target == 'contractor_job_request'+this.state.accounts[this.state.selected_e5].address){
-                this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
-                this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target == 'storefront_order'+this.state.accounts[this.state.selected_e5].address){
-                this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target.startsWith('signature_request|')){
-                this.process_new_signature_request_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_signature_request_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target.startsWith('signature_response|')){
-                this.process_new_signature_response_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_signature_response_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target.startsWith('typing|')){
-                this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target.startsWith('read_receipts|')){
                 // console.log('socket_stuff','loaded a read receipts item', object_data)
-                this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
+                await this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
               }
+              await this.wait(200)
             }
           }
         }

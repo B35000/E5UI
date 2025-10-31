@@ -225,7 +225,9 @@ class PostsDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.copy_id_to_clipboard(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
                     <div style={{height: 10}}/>
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
@@ -273,6 +275,11 @@ class PostsDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    copy_id_to_clipboard(object){
+        navigator.clipboard.writeText(object['id'])
+        this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
     show_moderator_note_if_any(object){
@@ -858,10 +865,17 @@ class PostsDetailsSection extends Component {
 
         var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
-        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
+        var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['e5']+' • '+objectid, 'details':title, 'size':'l'},
+            'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
             
             'reply_count':{'title':`${number_with_commas(number_of_replies)}`, 'details': this.props.app_state.loc['2815']/* 'Number of Replies.' */, 'size':'l'},
@@ -1144,7 +1158,7 @@ class PostsDetailsSection extends Component {
     render_top_title(object){
         // var object = this.get_post_items()[this.props.selected_post_item];
         var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
-        var objectid = this.is_post_anonymous(object) ? '???' : object['id']
+        var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+objectid, 'details':this.truncate(top_title, 40), 'size':'l'})} 
@@ -1521,10 +1535,10 @@ class PostsDetailsSection extends Component {
         if(string == null) return;
         var result_string = string
         var all_censored_phrases = this.props.app_state.censored_keyword_phrases == null ? [] : this.props.app_state.censored_keyword_phrases
-        var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
-        leetspeek.forEach(phrase => {
-            if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
-        });
+        // var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        // leetspeek.forEach(phrase => {
+        //     if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+        // });
         all_censored_phrases.forEach(phrase_ => {
             const phrase = phrase_
             if(result_string.includes(phrase) && phrase.includes(' ')){
@@ -1862,8 +1876,8 @@ class PostsDetailsSection extends Component {
     }
 
     get_convo_messages(object){
-        const chain_messages = this.props.app_state.object_messages[object['id']] == null ? [] : this.props.app_state.object_messages[object['id']]
-        const socket_messages = this.props.app_state.socket_object_messages[object['id']] == null ? [] : this.props.app_state.socket_object_messages[object['id']]
+        const chain_messages = this.props.app_state.object_messages[object['e5_id']] == null ? [] : this.props.app_state.object_messages[object['e5_id']]
+        const socket_messages = this.props.app_state.socket_object_messages[object['e5_id']] == null ? [] : this.props.app_state.socket_object_messages[object['e5_id']]
         const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
         
         return this.filter_messages_for_blocked_accounts(all_messages)
@@ -2195,7 +2209,7 @@ class PostsDetailsSection extends Component {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(

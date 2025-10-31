@@ -1342,7 +1342,7 @@ class NewStorefrontItemPage extends Component {
     render_transaction_size_indicator(){
         var current_stack_size = this.props.app_state.stack_size_in_bytes[this.state.e5] == null ? 50 : this.props.app_state.stack_size_in_bytes[this.state.e5]
         if(current_stack_size != -1){
-            const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+            const size = this.lengthInUtf8Bytes(JSON.stringify(this.state, (key, value) => typeof value === 'bigint' ? value.toString() : value ))
             const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
             
             var existing_percentage = this.round_off((current_stack_size / this.props.app_state.upload_object_size_limit) * 100)
