@@ -859,7 +859,7 @@ return data['data']
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });
@@ -907,7 +907,7 @@ return data['data']
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });
@@ -955,7 +955,7 @@ return data['data']
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });
@@ -997,7 +997,7 @@ return data['data']
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });
@@ -1043,7 +1043,7 @@ return data['data']
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });

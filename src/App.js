@@ -983,7 +983,7 @@ class App extends Component {
     web3_account_email:'', uploaded_data:{}, uploaded_data_cids:[], update_data_in_E5:false,
     my_tracks:[], my_albums:[], audio_timestamp_data:{}, my_playlists:[], should_update_playlists_in_E5: false, song_plays:{}, should_update_song_plays:false,
 
-    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:50000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
+    run_gas_price:0, all_cities:[], cached_tracks:[], custom_gateway:'', pdf_bookmarks:{}, details_section_syncy_time:60_000, created_videos: {}, created_video_mappings:{}, my_videos:[], my_videoposts:[], video_timestamp_data:{},
 
     nitro_node_details:{}, nitro_links:{}, nitro_node_storage_payment_info:{}, created_nitros:{}, created_nitro_mappings:{}, bought_nitro_arrays:{}, my_preferred_nitro:'', my_preferred_nitro_link:'', followed_accounts:primary_following, should_update_followed_accounts:false, posts_blocked_by_me:[], should_update_posts_blocked_by_me:false, posts_blocked_by_my_following:[], my_subscription_payment_mappings:{},
 
@@ -3476,7 +3476,7 @@ class App extends Component {
       if(me.state.auto_run != 'e'){
         me.interval5 = setInterval(() => me.background_run(), obj2[me.state.auto_run]);
       }
-      me.interval6 = setInterval(() => me.update_nitro_privacy_signature(), 100_000)
+      me.interval6 = setInterval(() => me.update_nitro_privacy_signature(), 200_000)
       me.interval7 = setInterval(() => me.load_and_notify_flash2(), 720_000)
       me.interval8 = setInterval(() => me.load_and_notify_flash3(), 270_000)
     }, (1 * 100));
@@ -6231,6 +6231,7 @@ class App extends Component {
     await this.wait(300)
     this.set_cookies_after_stack_action()
   }
+
 
 
 
@@ -14364,10 +14365,9 @@ class App extends Component {
         if(item['contract'] != null){
           me.load_contract_item(object['e5'], item['contract'])
         }
-        me.load_my_contracts()
       }
-    }, (1 * 500));
-    
+    }, (1 * 1500));
+    this.load_my_contracts()
   }
 
   add_response_action_to_stack(state_obj){
@@ -15972,7 +15972,8 @@ class App extends Component {
 
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
-        return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)}
+        return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
+
         />
       </div>
     )
@@ -16013,7 +16014,7 @@ class App extends Component {
       'confirm_clear_stack_dialog':200, 
       'confirm_send_ether_dialog': 450, 
       'confirm_delete_dialog_box':200, 
-      'confirm_withdraw_ether':430, 
+      'confirm_withdraw_ether':430,
       'confirm_send_coin_dialog':600, 
       'song_options':700, 
       'confirm_upload_file_to_arweave':700, 
@@ -16045,9 +16046,11 @@ class App extends Component {
       'hide_videopost_confirmation':550,
       'pick_from_my_locations':250,
       'transfer_alias_ui':350,
-      'confirm_emit_new_object':250,
+      'confirm_emit_new_object':220,
+      'view_job_application_details':350,
+      'view_bag_application_details':350,
     };
-    var size = obj[id]
+    var size = obj[id] || 650
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
       if(data['from'] == 'audio_details_section3') size = 350
@@ -21684,7 +21687,7 @@ class App extends Component {
       block_number = await web3.eth.getBlockNumber()
     }
     var current_block_number = parseInt(block_number)
-    var signature_data = Math.floor(current_block_number/10)
+    var signature_data = Math.floor(current_block_number/40)
     var signature = await web3.eth.sign(signature_data.toString(), address)
     console.log('update_nitro_privacy_signature','nitro privacy address', address)
     this.setState({nitro_privacy_signature: signature})
@@ -24021,8 +24024,12 @@ class App extends Component {
       {'identifier':'pined_objects','fetch_last_data':'last', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: '%%account%%', p3/* context */: 19}, 'from_filter':{}}},/* pined_objects  */
       
       {'identifier':'location_objects','fetch_last_data':'last', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: '%%account%%', p3/* context */: 20}, 'from_filter':{}}},/* location_objects  */
-    ]
 
+      {'identifier':'my_created_contract_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e1', 'filter':{p3/* sender_acc_id */: '%%account%%', p2/* object_type */: 30}, 'from_filter':{}}},/* my_created_contract_events  */
+
+      {'identifier':'my_created_subscription_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e1', 'filter':{p3/* sender_acc_id */: '%%account%%', p2/* object_type */: 33}, 'from_filter':{}}},/* my_created_subscription_events  */
+    ]
+    
   }
 
   start_get_accounts_for_specific_e5 = async (is_syncing, e5, should_skip_account_data, pre_launch_data) =>{
@@ -25354,6 +25361,11 @@ class App extends Component {
     // }
 
 
+
+    
+    
+    this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
+    this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
 
 
 
@@ -28880,8 +28892,8 @@ class App extends Component {
 
     var my_blocked_time_value =/*  await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_contracts
 
-    object['end_balance'] = end_balance
-    object['spend_balance'] = spend_balance
+    object['end_balance'] = end_balance.toString().toLocaleString('fullwide', {useGrouping:false})
+    object['spend_balance'] = spend_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['participants'] = contract_entered_accounts
     object['participant_times'] = entered_account_times_data
     object['archive_accounts'] = archive_accounts
@@ -32805,9 +32817,10 @@ class App extends Component {
       }
     }
   }
+  
 
-  load_my_contracts = async () => {
-    var e5 = this.state.selected_e5
+  load_my_contracts = async (focused_e5, already_loaded_created_contract_events) => {
+    var e5 = focused_e5 != null ? focused_e5 : this.state.selected_e5
     var e5_address = this.state.e5s[e5].e5_address;
 
     var web3_url = this.get_web3_url_from_e5(e5)
@@ -32832,7 +32845,7 @@ class App extends Component {
     const G52_address = contract_addresses[4];
     const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
-    var created_contract_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */, p3/* sender_account_id */:account })
+    var created_contract_events = already_loaded_created_contract_events != null ? already_loaded_created_contract_events : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:30/* contract_obj_id */, p3/* sender_account_id */:account })
 
     var created_contracts = []
     var accounts_for_expiry_time = [[account]]
@@ -32842,20 +32855,20 @@ class App extends Component {
       accounts_for_expiry_time.push([account])
     }
 
-    var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
-    var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
+    // var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
+    // var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
     var created_contract_object_data = []
     var created_contract_mapping = {}
     var all_data = await this.fetch_multiple_objects_data(created_contracts, web3, e5, contract_addresses)
     for(var i=0; i<created_contracts.length; i++){
       var contracts_data = all_data[created_contracts[i]] != null ? all_data[created_contracts[i]] : await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
       var event = created_contract_events[i]
-      var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
-      var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
+      // var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
+      // var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
 
       var timestamp = event == null ? 0 : event.returnValues.p4
       var author = event == null ? 0 : event.returnValues.p3
-      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 , 'object_type':'contract'}
+      var contract_obj = {'id':created_contracts[i], 'data':[]/* created_contract_data[i] */, 'ipfs':contracts_data, 'event':event, 'entry_expiry':[], 'end_balance':0, 'spend_balance':0, 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 , 'object_type':'contract'}
 
       created_contract_object_data.push(contract_obj)
       created_contract_mapping[created_contracts[i]] = contract_obj
@@ -32870,8 +32883,8 @@ class App extends Component {
     this.setState({my_created_contracts: created_contract_object_data_clone, my_created_contract_mapping: created_contract_mapping_clone})
   }
 
-  load_my_subscriptions = async () => {
-    var e5 = this.state.selected_e5
+  load_my_subscriptions = async (focused_e5, already_loaded_created_subscription_events) => {
+    var e5 = focused_e5 != null ? focused_e5 : this.state.selected_e5
     var web3_url = this.get_web3_url_from_e5(e5)
     var e5_address = this.state.e5s[e5].e5_address;
 
@@ -32887,14 +32900,14 @@ class App extends Component {
     const F5_address = contract_addresses[2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
-    var created_subscription_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */, p3/* sender_account_id */:account })
+    var created_subscription_events = already_loaded_created_subscription_events != null ? already_loaded_created_subscription_events : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:33/* subscription_object */, p3/* sender_account_id */:account })
 
     var created_subscriptions = []
     for(var i=0; i<created_subscription_events.length; i++){
       var id = created_subscription_events[i].returnValues.p1
       created_subscriptions.push(id)
     }
-    var created_subscription_data = await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
+    // var created_subscription_data = await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
     var created_subscription_object_data = []
     var created_subscription_object_mapping = {}
 
@@ -32907,7 +32920,7 @@ class App extends Component {
     for(var i=0; i<created_subscriptions.length; i++){
       var subscription_data = all_data[created_subscriptions[i]] != null ? all_data[created_subscriptions[i]] : await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses);
 
-      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i],  'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3, 'object_type':'subscription'}
+      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':[]/* created_subscription_data[i] */, 'ipfs':subscription_data, 'event':created_subscription_events[i],  'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3, 'object_type':'subscription'}
 
       created_subscription_object_data.push(subscription_object)
       created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
@@ -34711,8 +34724,8 @@ class App extends Component {
           }
           event['e5'] = e5
           event['p'] = event.returnValues.p1
-          event['time'] = event.returnValues.p6
-          event['block'] = event.returnValues.p7
+          event['time'] = event.returnValues.p7
+          event['block'] = event.returnValues.p6
           event['sender'] = event.returnValues.p2
           event['type'] = 'contract'
           event['event_type'] = 'contract'
@@ -38911,7 +38924,7 @@ class App extends Component {
   async get_objects_messages_from_socket_and_enter_chatroom(target){
     if(!target.startsWith('job_request_mail') && !target.startsWith('mail')) this.enter_chatroom_if_socket_enabled(target);
     const absolute_load_limit = Date.now() - (72*7*24*60*60*1000)
-    const load_step = (30*7*24*60*60*1000)
+    const load_step = target.startsWith('job_request_mail') ? (71*7*24*60*60*1000) : (30*7*24*60*60*1000)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     
@@ -39068,8 +39081,8 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_job_respnse_data = null
-    var application_responses = null
+    var created_job_respnse_data;
+    var application_responses;
 
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       const event_params2 = [
@@ -39085,7 +39098,8 @@ class App extends Component {
       application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37})
     }
 
-    const target_type = type == 'bag' ? 'bag_application|'+this.state.accounts[this.state.selected_e5].address : 'job_application|'+this.state.accounts[this.state.selected_e5].address
+    const e5_id = id+e5
+    const target_type = type == 'bag' ? 'bag_application|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address : 'job_application|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
     this.get_objects_from_socket_and_set_in_state(target_type, [], application_responses)
     
 
@@ -39105,7 +39119,7 @@ class App extends Component {
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
         var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
         ipfs_message = JSON.parse(JSON.parse(originalText));
       }
@@ -39230,7 +39244,7 @@ class App extends Component {
         if(ipfs_message['encrypted_data'] != null){
           var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
           var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-          var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
           var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
           ipfs_message = JSON.parse(JSON.parse(originalText));
         }
@@ -39330,7 +39344,7 @@ class App extends Component {
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, E5, encryptor_pub_key)
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, E5, encryptor_pub_key)
         var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
         ipfs_message = JSON.parse(JSON.parse(originalText));
       }
@@ -39465,7 +39479,7 @@ class App extends Component {
       var focused_encrypted_key = key_data[my_unique_crosschain_identifier]
       if(focused_encrypted_key != null){
         if(key_data['encryptor_pub_key'] != null){
-          convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, key_data['encryptor_pub_key'])
+          convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, key_data['encryptor_pub_key'])
         }else{
           var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
           convo_key = await ecies.decrypt(private_key_to_use, uint8array)
@@ -43054,8 +43068,8 @@ class App extends Component {
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.job_item['author'], state_object.job_item['e5'])
-    const target = 'job_application|'+to
-    const secondary_target = 'job_application|'+this.state.accounts[this.state.selected_e5].address
+    const target = 'job_application|'+state_object.job_item['e5_id']+'|'+to
+    const secondary_target = 'job_application|'+state_object.job_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
   }
 
@@ -43069,8 +43083,8 @@ class App extends Component {
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.job_item['author'], state_object.job_item['e5'])
-    const target = 'bag_application|'+to
-    const secondary_target = 'bag_application|'+this.state.accounts[this.state.selected_e5].address
+    const target = 'bag_application|'+state_object.job_item['e5_id']+'|'+to
+    const secondary_target = 'bag_application|'+state_object.job_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
   }
 
@@ -43485,7 +43499,7 @@ class App extends Component {
         var encryptor_pub_key = message_obj['key_data']['encryptor_pub_key']
         var my_key = null;
         if(encryptor_pub_key != null){
-          my_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, message_obj['e5'], encryptor_pub_key)
+          my_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, message_obj['e5'], encryptor_pub_key)
         }else{
           var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
           my_key = await ecies.decrypt(private_key_to_use, uint8array)
@@ -43551,7 +43565,7 @@ class App extends Component {
     if(message_obj['key_to_use'] != ''){
       const key = message_obj['key_to_use']
       const key_index = message_obj['key_index']
-      const encrypted_obj = await this.props.encrypt_data_string(JSON.stringify(message_obj), key)
+      const encrypted_obj = await this.encrypt_data_string(JSON.stringify(message_obj), key)
       const my_eth_private_key = this.state.accounts['E25'].privateKey.toString()
       const auth_decryption_key_cypher = await this.encrypt_data_string(key, my_eth_private_key)
       final_message_obj = {'encrypted_data':encrypted_obj, 'key_index':key_index, 'auth_decryption_key_cypher':auth_decryption_key_cypher}
@@ -43674,6 +43688,7 @@ class App extends Component {
 
   async prepare_job_application_object_message(message_obj){
     const t = message_obj
+    // console.log('socket_stuff', 'prepare_job_application_object_message', t.job_item)
     const job_author = t.job_item['author']
     const job_author_e5 = t.job_item['e5']
     const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
@@ -43736,7 +43751,7 @@ class App extends Component {
         key_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
     }
     var uint8array = await this.get_account_raw_public_key() 
-    var my_encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(uint8array))
+    var my_encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(uint8array))
     key_data[await this.get_my_unique_crosschain_identifier_number2()] = my_encrypted_key
     key_data['encryptor_pub_key'] = this.uint8ToBase64(uint8array)
 
@@ -44351,6 +44366,7 @@ class App extends Component {
     }
   }
 
+  /* mail messages */
   async process_new_mail_received(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
@@ -44440,6 +44456,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
+  /* messages */
   async process_new_message_received(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
     console.log('socket_stuff', 'process_new_message_received', 'received message', message)
@@ -44522,6 +44539,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
+  /* messages */
   async process_new_job_request_message(message, object_hash, from){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
@@ -44566,6 +44584,7 @@ class App extends Component {
         }  
       }
       
+      
       if(ipfs_obj != null){
         const clone = structuredClone(this.state.socket_object_messages)
         const messages = clone[request_id] == null ? [] : clone[request_id].slice()
@@ -44604,6 +44623,7 @@ class App extends Component {
     this.prompt_top_notification(prompt, 15000)
   }
 
+  /* channel messages */
   async process_new_channel_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
@@ -44669,6 +44689,7 @@ class App extends Component {
     
   }
 
+  /* comment messages */
   async process_new_comment_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
@@ -44818,21 +44839,23 @@ class App extends Component {
 
       const event = {returnValues:{p1: message.job_object_id, p2:sender_acc, p3:36, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
 
-      if(ipfs_obj != null){
-        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+      if(ipfs != null){
+        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
         const messages = this.state.job_responses[message.job_object_id] == null ? [] : this.state.job_responses[message.job_object_id].slice()
 
-        var ipfs_message = ipfs_obj;
+        var ipfs_message = ipfs;
         if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
           var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
           var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-          var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          // console.log('socket_decryptor', 'job application convo_key', convo_key.toString())
           var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          // console.log('socket_decryptor', 'job application originalText', originalText)
           ipfs_message = JSON.parse(originalText);
         }
 
+        // console.log('socket_decryptor', 'job application ipfs_message', ipfs_message)
         if(ipfs_message != null && ipfs_message['picked_contract_id'] != null){
           // var data = await this.load_contract_item(e5, ipfs_message['picked_contract_id'])
           // console.log('foundd', 'contract', data)
@@ -44857,7 +44880,12 @@ class App extends Component {
               ipfs_message['is_response_accepted'] = false
             }
             
-            messages.push(ipfs_message)
+            const index = messages.findIndex(item => item['id'] === ipfs_message['id']);
+            if(index != -1){
+              messages[index] = ipfs_message
+            }else{
+              messages.push(ipfs_message)
+            }
             var clone = JSON.parse(JSON.stringify(this.state.job_responses))
             clone[message.job_object_id] = messages
             this.setState({job_responses: clone})
@@ -44921,17 +44949,15 @@ class App extends Component {
 
       const event = {returnValues:{p1: message.job_object_id, p2:sender_acc, p3:36, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
-
-      if(ipfs_obj != null){
-        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+      if(ipfs != null){
+        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
         const messages = this.state.job_responses[message.job_object_id] == null ? [] : this.state.job_responses[message.job_object_id].slice()
 
-        var ipfs_message = ipfs_obj;
+        var ipfs_message = ipfs;
         if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
           var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
           var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-          var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
           var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
           ipfs_message = JSON.parse(originalText);
         }
@@ -44958,7 +44984,12 @@ class App extends Component {
               ipfs_message['is_response_accepted'] = false
             }
             
-            messages.push(ipfs_message)
+            const index = messages.findIndex(item => item['id'] === ipfs_message['id']);
+            if(index != -1){
+              messages[index] = ipfs_message
+            }else{
+              messages.push(ipfs_message)
+            }
             var clone = JSON.parse(JSON.stringify(this.state.job_responses))
             clone[message.job_object_id] = messages
             this.setState({job_responses: clone})
@@ -45030,7 +45061,7 @@ class App extends Component {
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
         var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
         ipfs_message = JSON.parse(originalText);
       }
@@ -45173,7 +45204,7 @@ class App extends Component {
       if(ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
         var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
         ipfs_message = JSON.parse(originalText);
       }
@@ -45602,10 +45633,11 @@ class App extends Component {
               else if(target == 'mail|'+this.state.accounts[this.state.selected_e5].address){
                 await this.process_new_mail_received(object_data, object_hash, null, false)
               }
-              else if(target == 'job_application|'+this.state.accounts[this.state.selected_e5].address){
+              else if(target.startsWith('job_application|')){
+                console.log('socket_stuff','loaded a job application item', object_data)
                 await this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target == 'bag_application|'+this.state.accounts[this.state.selected_e5].address){
+              else if(target.startsWith('bag_application|')){
                 await this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target == 'contractor_job_request'+this.state.accounts[this.state.selected_e5].address){

@@ -426,7 +426,7 @@ class BagDetailsSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -1021,7 +1021,7 @@ class BagDetailsSection extends Component {
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2053']/* 'Bag Responses' */, 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+number_with_commas(object['id']), 'details':this.props.app_state.loc['2053']/* 'Bag Responses' */, 'size':'l'})} 
             </div>
         )
     }
@@ -1088,53 +1088,25 @@ class BagDetailsSection extends Component {
 
     render_bag_response_item(item, object){
         if(item == null) return;
-        var is_application_accepted = item['is_response_accepted'];
-
+        
         if(this.is_applicant_in_blocked_accounts(item)){
             return(
                 <div>
                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                         </div>
                     </div>
                 </div>
             )
         }
 
-        if(is_application_accepted == true){
-            return(
-                <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                    <div style={{height:3}}/>
-
-                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                    <div style={{height:3}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2055']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2056']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'l'})}
-                    <div style={{height:3}}/>
-                    
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2057']/* 'Accepted' */, 'details':this.props.app_state.loc['2058']/* 'The bag owner picked this fulfilment application' */, 'size':'l'})}
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                    {/* <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/> */}
-                </div>
-            )
-        }else{
-            return(
-                <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2059']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                    <div style={{height:3}}/>
-
-                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                    <div style={{height:3}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2060']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2061']/* 'Sender ID: ' */+item['applicant_id']+', '+ this.get_senders_name2(item['applicant_id'], object), 'size':'l'})}
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                </div>
-            )
-        }
-        
+        const accepted_title = item['is_response_accepted'] == true ? '🤝 ':''
+        return(
+            <div onClick={() => this.view_contract(item, object)}>
+                {this.render_detail_item('3', {'details':item['applicant_id']+' • '+item['custom_specifications']+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'title':accepted_title+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
+            </div>
+        )
     }
 
     get_expiry_time(item){
@@ -1152,7 +1124,7 @@ class BagDetailsSection extends Component {
     get_senders_name2(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -1177,7 +1149,7 @@ class BagDetailsSection extends Component {
     get_applicant_alias_if_any(account, object){
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         if(account == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account] == null ? account : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account])
             return alias
@@ -1185,10 +1157,7 @@ class BagDetailsSection extends Component {
     }
 
     view_contract(item, object){
-        // var object = this.get_bag_items()[this.props.selected_bag_item];
-        if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
-            this.props.view_bag_application_contract(item)
-        }
+        this.props.show_dialog_bottomsheet({item, object}, 'view_bag_application_details')
     }
 
 
@@ -1989,7 +1958,7 @@ class BagDetailsSection extends Component {
     get_sender_title_text(item, object){
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         if(item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             if(object['event'].returnValues.p3 == item['sender']){

@@ -550,7 +550,7 @@ class NewContractPage extends Component {
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });
@@ -595,7 +595,7 @@ class NewContractPage extends Component {
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });
@@ -650,20 +650,25 @@ class NewContractPage extends Component {
                 if(setting == 'price_data'){
                     this.state[setting].forEach(price_target => {
                         if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
+                            // console.log('new_contract_page', 'found unmatching end price setting', price_target['amount'], end_price)
                             is_matching = false
                         }
                         else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
+                            // console.log('new_contract_page', 'found unmatching spend price setting', price_target['amount'], spend_price)
                             is_matching = false
                         }
                     });
                 }else
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
+                    // console.log('new_contract_page', 'found unmatching setting', setting, this.state[setting], set_object[setting])
                     is_matching = false
                 }
             });
             return is_matching
         }
         else{
+            // console.log('new_contract_page', 'setting the default config for work contracts', set_object)
+
             this.setState(set_object);
             this.props.notify(this.props.app_state.loc['183'], 2500)
         }
@@ -710,7 +715,7 @@ class NewContractPage extends Component {
             var keys = Object.keys(set_object)
             var is_matching = true;
             keys.forEach(setting => {
-                if(this.state[setting] != set_object[setting]){
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
                     is_matching = false
                 }
             });

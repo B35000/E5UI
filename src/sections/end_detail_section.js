@@ -329,15 +329,26 @@ class EndDetailSection extends Component {
                     
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
+
+                    <div style={{height: 10}}/>
+                    <div onClick={() => this.copy_id_to_clipboard(selected_object)}>
+                        {this.render_detail_item('3', item['token_id'])}
+                    </div>
+
                     <div style={{height:10}}/>
                     <div onClick={() => this.add_to_contacts2(selected_object)}>
                         {this.render_detail_item('3', {'title':''+author, 'details':this.props.app_state.loc['2070']/* 'Author */, 'size':'l'})}
                     </div>
                     
-                    <div style={{height: 10}}/>
-                    <div onClick={() => this.copy_id_to_clipboard(selected_object)}>
-                        {this.render_detail_item('3', item['token_id'])}
-                    </div>
+
+                    {selected_object['hidden'] == true && (
+                        <div>
+                            <div style={{ height: 10 }} />
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g']/* 'Loading the exchanges metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
+
+
                     <div style={{height:10}}/>
                     {this.show_moderator_note_if_any(selected_object)}
                     {/* {this.render_post_state(selected_object)} */}
@@ -694,7 +705,7 @@ class EndDetailSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -1348,13 +1359,13 @@ class EndDetailSection extends Component {
         var buy_amounts = [].concat(selected_object['exchanges_balances'])
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
-                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                             {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
             
         )
@@ -2360,7 +2371,7 @@ return data['data']
 
     get_sender_title_text(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         } else {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias

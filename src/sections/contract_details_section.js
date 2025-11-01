@@ -280,6 +280,13 @@ class ContractDetailsSection extends Component {
                     <div onClick={() => this.add_to_contacts2(object)}>
                         {this.render_detail_item('3', { 'title': '' + author, 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' })}
                     </div>
+
+                    {object['hidden'] == true && (
+                        <div>
+                            <div style={{ height: 10 }} />
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2214i']/* 'Loading the contracts metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
                     
                     <div style={{ height: 10 }} />
                     {this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
@@ -332,7 +339,6 @@ class ContractDetailsSection extends Component {
                     {this.render_revoke_author_privelages_event(object)}
                     
                     {this.render_participants(object)}
-                      
 
                     {this.show_contract_balance(item, object)}
 
@@ -594,7 +600,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', item['entry_fees'])}
                     <div style={{ height: 10 }} />
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4], object)}
-                    {this.render_detail_item('0')}
+                    
                 </div>
             )
         }
@@ -634,9 +640,11 @@ class ContractDetailsSection extends Component {
         if (object['id'] != 2 && object['hidden'] == false) {
             return (
                 <div>
+                    {this.render_detail_item('0')}
+
                     {this.show_enter_contract_button(object)}
 
-                    <div style={{ height: 10 }} />
+                    {/* <div style={{ height: 10 }} /> */}
 
                     {this.show_extend_stay_in_contract_button(object)}
 
@@ -914,6 +922,7 @@ class ContractDetailsSection extends Component {
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
+        const contract_age = (Date.now()/1000) - parseInt(object['event'].returnValues.p4)
         if (time_to_expiry > 0 || object['id'] == 2){
             return (
                 <div>
@@ -927,7 +936,11 @@ class ContractDetailsSection extends Component {
                         {this.render_detail_item('2', item['spend_balance'])}
                     </div>
 
-                    {this.show_contract_token_balances_data_chart(object)}
+                    {contract_age > (60*60*24) && (
+                        <div>
+                            {this.show_contract_token_balances_data_chart(object)}
+                        </div>
+                    )}
                 </div>
             )
         }
@@ -1057,13 +1070,13 @@ class ContractDetailsSection extends Component {
         var bt = [].concat(buy_tokens)
         return (
             <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
+                <div style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
                     {bt.map((item, index) => (
-                        <li style={{ 'padding': '1px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                        <div style={{ 'padding': '1px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                             {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle': this.format_power_figure(buy_amounts[index]), 'barwidth': this.calculate_bar_width(buy_amounts[index]), 'number': this.format_account_balance_figure(buy_amounts[index]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
 
         )

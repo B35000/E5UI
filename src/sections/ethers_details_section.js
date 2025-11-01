@@ -835,7 +835,7 @@ class EthersDetailsSection extends Component {
     format_address(address, e5){
         var my_address = this.format_address_if_harmony(this.props.app_state.accounts[e5].address, e5)
         if(my_address.toString().toLowerCase() == address.toString().toLowerCase()){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }
         return start_and_end(address)
     }

@@ -737,7 +737,7 @@ class JobDetailsSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -1147,7 +1147,7 @@ class JobDetailsSection extends Component {
         // var object = this.get_job_items()[this.props.selected_job_post_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2497']/* 'Job Responses' */, 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+number_with_commas(object['id']), 'details':this.props.app_state.loc['2497']/* 'Job Responses' */, 'size':'l'})} 
             </div>
         )
     }
@@ -1214,48 +1214,18 @@ class JobDetailsSection extends Component {
     }
 
     render_job_response_item(item, object){
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        var is_application_accepted = item['is_response_accepted'];
-
-        if(is_application_accepted){
-            return(
-                <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2498']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                    <div style={{height:3}}/>
-
-                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                    <div style={{height:3}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2499']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2500']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'l'})}
-                    <div style={{height:3}}/>
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2501']/* 'Accepted' */, 'details':this.props.app_state.loc['2502']/* 'The job owner picked this application' */, 'size':'l'})}
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                    {/* <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/> */}
-                </div>
-            )
-        }else{
-            return(
-                <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2503']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                    <div style={{height:3}}/>
-
-                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                    <div style={{height:3}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2504']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2505']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'l'})}
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                </div>
-            )
-        }
-        
+        const accepted_title = item['is_response_accepted'] == true ? '🤝 ':''
+        return(
+            <div onClick={() => this.view_contract(item, object)}>
+                {this.render_detail_item('3', {'details':item['applicant_id']+' • '+item['custom_specifications']+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'title':accepted_title+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
+            </div>
+        )
     }
 
     get_senders_name2(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -1275,10 +1245,7 @@ class JobDetailsSection extends Component {
     }
 
     view_contract(item, object){
-        // var object = this.get_job_items()[this.props.selected_job_post_item];
-        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
-            this.props.view_application_contract(item)
-        }
+        this.props.show_dialog_bottomsheet({item, object}, 'view_job_application_details')
     }
 
 

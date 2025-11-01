@@ -730,7 +730,7 @@ class ChannelDetailsSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -2214,7 +2214,7 @@ class ChannelDetailsSection extends Component {
     get_sender_title_text2(item, object){
         // var object = this.get_channel_items()[this.props.selected_channel_item];
         if(item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             if(object['event'].returnValues.p5 == item['sender']){
@@ -2735,7 +2735,7 @@ class ChannelDetailsSection extends Component {
 
     get_sender_title_text(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         } else {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias

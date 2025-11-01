@@ -1850,7 +1850,7 @@ return data['data']
     get_sender_title_text2(item){
         var e5 = this.state.searched_account['e5']
         if(item['sender'] == this.props.app_state.user_account_id[e5]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias

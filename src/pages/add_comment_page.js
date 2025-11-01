@@ -1088,7 +1088,7 @@ class AddCommentPage extends Component {
 
     get_sender_title_text(item){
         if(item['sender'] == this.props.app_state.user_account_id[this.state.object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
