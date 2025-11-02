@@ -1015,7 +1015,7 @@ class App extends Component {
     censored_keywords:[], media_activation_tx_limit:0, media_activation_age_limit:0, 
 
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
-    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}
+    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}
   };
 
   get_thread_pool_size(){
@@ -14308,7 +14308,7 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                           <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}
-                          when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+                          when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -14321,7 +14321,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
             
             />
           </div>
@@ -21739,6 +21739,8 @@ class App extends Component {
     var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
     this.generate_one_account_for_all_e5s(seed)
     
+    this.did_just_set_wallet = true;
+
     this.setState({
       account_balance: {}, 
       account_seed: seed, 
@@ -23803,6 +23805,10 @@ class App extends Component {
     if(is_synching == true) this.get_objects_from_socket_and_set_in_state('jobs', []);
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
+    if(this.did_just_set_wallet == true && should_skip_pre_launch == false && is_synching == false){
+      this.did_just_set_wallet = false;
+      this.prompt_top_notification(this.getLocale()['2738bl']/* Setting sync data in state... */, 1800)
+    }
     if(is_synching == true){
       this.inc_synch_progress()
     }
@@ -39314,7 +39320,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38}],/* created_job_respnse_data */
         [web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39}],/* application_responses */
       ]
-      const all_events = await this.load_multiple_events_from_nitro(event_params2)
+      const all_events = (await this.load_multiple_events_from_nitro(event_params2)).all_events
       created_job_respnse_data = all_events[0]
       application_responses = all_events[1]
     }else{
@@ -39325,9 +39331,11 @@ class App extends Component {
 
     const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (120*24*60*60*1000), 'contractor_accept_job_request')
 
-    application_responses = application_responses.concat(socket_notifications)
+    console.log('socket_stuff', 'socket_notifications', socket_notifications)
 
-    this.get_objects_from_socket_and_set_in_state('contractor_job_request|'+this.state.accounts[this.state.selected_e5].address, [], application_responses)
+    application_responses = application_responses.concat(socket_notifications)
+    const e5_id = id+E5
+    this.get_objects_from_socket_and_set_in_state('contractor_job_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address, [], application_responses)
 
     created_job_respnse_data = created_job_respnse_data.reverse()
 
@@ -39410,7 +39418,7 @@ class App extends Component {
 
     const job_request_convo_keys_clone = structuredClone(this.state.job_request_convo_keys);
     job_request_convo_keys_clone[request_id] = convo_key
-    this.setState({job_request_convo_keys_clone})
+    this.setState({job_request_convo_keys: job_request_convo_keys_clone})
 
     const mail_messages_target = 'job_request_mail|'+request_id+this.state.accounts[this.state.selected_e5].address
     this.get_objects_messages_from_socket_and_enter_chatroom(mail_messages_target)
@@ -43005,7 +43013,7 @@ class App extends Component {
     clone.push(job_request_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
-    const to = await this.get_recipient_address(state_object.target_recipient, state_object.recipients_e5)
+    const to = await this.get_recipient_address(state_object['target_recipient'], state_object['sender_e5'])
     const target = 'job_request_mail|'+state_object['id']+to
     const secondary_target = 'job_request_mail|'+state_object['id']+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: job_request_message_object.message, target: target, object_hash: job_request_message_object.object_hash, secondary_target: secondary_target });
@@ -43071,6 +43079,11 @@ class App extends Component {
     const target = 'job_application|'+state_object.job_item['e5_id']+'|'+to
     const secondary_target = 'job_application|'+state_object.job_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+
+    await this.wait(10000)
+    const target2 = 'job_application|'+to
+    const secondary_target2 = 'job_application|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_bag_application(state_object, show_job_after_broadcast){
@@ -43082,10 +43095,16 @@ class App extends Component {
     clone.push(message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
-    const to = await this.get_recipient_address(state_object.job_item['author'], state_object.job_item['e5'])
-    const target = 'bag_application|'+state_object.job_item['e5_id']+'|'+to
-    const secondary_target = 'bag_application|'+state_object.job_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+    const to = await this.get_recipient_address(state_object.bag_item['author'], state_object.bag_item['e5'])
+    const target = 'bag_application|'+state_object.bag_item['e5_id']+'|'+to
+    const secondary_target = 'bag_application|'+state_object.bag_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
+    const emit_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
+    this.socket.emit("send_message", emit_object);
+
+    await this.wait(10000)
+    const target2 = 'bag_application|'+to
+    const secondary_target2 = 'bag_application|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_contractor_job_request_application(state_object, show_job_after_broadcast){
@@ -43097,9 +43116,18 @@ class App extends Component {
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.contractor_item['author'], state_object.contractor_item['e5'])
-    const target = 'contractor_job_request|'+to
-    const secondary_target = 'contractor_job_request|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+
+
+    const target = 'contractor_job_request|'+state_object.contractor_item['e5_id']+'|'+to
+    const secondary_target = 'contractor_job_request|'+state_object.contractor_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
+    const emit_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
+    this.socket.emit("send_message", emit_object);
+
+
+    await this.wait(10000)
+    const target2 = 'contractor_job_request|'+to
+    const secondary_target2 = 'contractor_job_request|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_contractor_accept_job_request(state_object, show_job_after_broadcast){
@@ -43110,10 +43138,12 @@ class App extends Component {
     clone.push(message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
-    const to = await this.get_recipient_address(state_object.contractor_object['author'], state_object.contractor_object['e5'])
+    const to = await this.get_recipient_address(state_object.request_item['applicant_id'], state_object.contractor_object['e5'])
+
     const target = 'contractor_accept_job_request|'+to
     const secondary_target = 'contractor_accept_job_request|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+
   }
 
   async emit_new_storefront_order_request(state_object, show_job_after_broadcast){
@@ -43760,8 +43790,8 @@ class App extends Component {
 
   async prepare_bag_application_object_message(message_obj){
     const t = message_obj
-    const job_author = t.job_item['author']
-    const job_author_e5 = t.job_item['e5']
+    const job_author = t.bag_item['author']
+    const job_author_e5 = t.bag_item['e5']
     const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
 
     const application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.state.user_account_id[this.state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
@@ -43817,17 +43847,17 @@ class App extends Component {
 
   async prepare_job_request_object_message(message_obj){
     const t = message_obj
-    var now = parseInt(Date.now().toString())
+    var now = Date.now()
     const key_data = await this.get_encrypted_job_request_key(t)
     var application_obj = {
-      'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.state.user_account_id[this.state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data.key_data, 'pins': t.pins
+      'price_data':t.price_data,'application_expiry_time':t.application_expiry_time, 'applicant_id':this.state.user_account_id[this.state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now, 'entered_pdfs':t.entered_pdf_objects, 'key_data':key_data.key_data, 'pins': t.pins
     }
 
     const encrypted_obj = await this.encrypt_data_string(JSON.stringify(application_obj), key_data.key.toString())
     const encrypted_job_request_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
 
     const tags = []
-    const id = this.make_number_id(12)
+    const id = now;
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
     const block_number = await web3.eth.getBlockNumber()
 
@@ -43913,7 +43943,7 @@ class App extends Component {
       lan: lan,
       state: state,
       data: data,
-      contractor_object_id: t.contractor_item['id'],
+      contractor_object_id: t.contractor_object['id'],
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
@@ -44298,12 +44328,12 @@ class App extends Component {
         created_jobs_mapping_clone[e5] = created_job_mappings
 
         this.setState({created_jobs: created_jobs_clone, created_job_mappings: created_jobs_mapping_clone })
-        if(am_I_the_author == true){
-          await this.wait(300)
-          this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
-          this.homepage.current?.when_job_post_item_clicked(index, id, e5, job, 'ignore')
-          this.homepage.current?.reset_post_detail_object()
-        }
+        // if(am_I_the_author == true){
+        //   await this.wait(300)
+        //   this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
+        //   this.homepage.current?.when_job_post_item_clicked(index, id, e5, job, 'ignore')
+        //   this.homepage.current?.reset_post_detail_object()
+        // }
       }
       else{
         console.log('socket_stuff', 'channeling invalid', event.returnValues.p1, event.returnValues.p1.toString())
@@ -44356,12 +44386,12 @@ class App extends Component {
         created_posts_clone[e5] = created_posts
         this.setState({created_posts: created_posts_clone });
 
-        if(am_I_the_author == true){
-          await this.wait(300)
-          this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1213']/* 'posts' */})
-          this.homepage.current?.when_post_item_clicked(index, id, e5, false, obj, 'ignore')
-          this.homepage.current?.reset_post_detail_object()
-        }
+        // if(am_I_the_author == true){
+        //   await this.wait(300)
+        //   this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1213']/* 'posts' */})
+        //   this.homepage.current?.when_post_item_clicked(index, id, e5, false, obj, 'ignore')
+        //   this.homepage.current?.reset_post_detail_object()
+        // }
       }
     }
   }
@@ -44581,14 +44611,14 @@ class App extends Component {
           const convo_key = this.state.job_request_convo_keys[convo_id]
           const originalText = await this.decrypt_data_string(ipfs_obj['encrypted_data'], convo_key.toString())
           ipfs_obj = JSON.parse(originalText);
-        }  
+        }
       }
       
       
       if(ipfs_obj != null){
         const clone = structuredClone(this.state.socket_object_messages)
         const messages = clone[request_id] == null ? [] : clone[request_id].slice()
-        const ipfs_message = JSON.parse(ipfs_obj);
+        const ipfs_message = ipfs_obj;
         ipfs_message['time'] = event.returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
         const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
@@ -44674,7 +44704,7 @@ class App extends Component {
       if(ipfs_obj != null){
         const clone = structuredClone(this.state.socket_object_messages)
         const messages = clone[request_id] == null ? [] : clone[request_id].slice()
-        const ipfs_message = JSON.parse(ipfs_obj);
+        const ipfs_message = ipfs_obj;
         ipfs_message['time'] = event.returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
         const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
@@ -44842,7 +44872,7 @@ class App extends Component {
 
       if(ipfs != null){
         const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
-        const messages = this.state.job_responses[message.job_object_id] == null ? [] : this.state.job_responses[message.job_object_id].slice()
+        const messages = this.state.socket_job_responses[message.job_object_id] == null ? [] : this.state.socket_job_responses[message.job_object_id].slice()
 
         var ipfs_message = ipfs;
         if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
@@ -44886,9 +44916,9 @@ class App extends Component {
             }else{
               messages.push(ipfs_message)
             }
-            var clone = JSON.parse(JSON.stringify(this.state.job_responses))
+            const clone = JSON.parse(JSON.stringify(this.state.socket_job_responses))
             clone[message.job_object_id] = messages
-            this.setState({job_responses: clone})
+            this.setState({socket_job_responses: clone})
 
             if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
               event['e5'] = e5
@@ -44951,7 +44981,7 @@ class App extends Component {
 
       if(ipfs != null){
         const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
-        const messages = this.state.job_responses[message.job_object_id] == null ? [] : this.state.job_responses[message.job_object_id].slice()
+        const messages = this.state.socket_job_responses[message.job_object_id] == null ? [] : this.state.socket_job_responses[message.job_object_id].slice()
 
         var ipfs_message = ipfs;
         if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
@@ -44990,9 +45020,9 @@ class App extends Component {
             }else{
               messages.push(ipfs_message)
             }
-            var clone = JSON.parse(JSON.stringify(this.state.job_responses))
+            const clone = JSON.parse(JSON.stringify(this.state.socket_job_responses))
             clone[message.job_object_id] = messages
-            this.setState({job_responses: clone})
+            this.setState({socket_job_responses: clone})
 
             if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
               event['e5'] = e5
@@ -45053,10 +45083,9 @@ class App extends Component {
 
       const event = {returnValues:{p1: message.contractor_object_id, p2:sender_acc, p3:38, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
-      const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
-      const messages = this.state.contractor_applications[message.contractor_object_id] == null ? [] : this.state.contractor_applications[message.contractor_object_id].slice()
-      var ipfs_message = ipfs_obj;
+      const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+      const messages = this.state.socket_contractor_applications[message.contractor_object_id] == null ? [] : this.state.socket_contractor_applications[message.contractor_object_id].slice()
+      var ipfs_message = ipfs;
 
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
@@ -45073,7 +45102,7 @@ class App extends Component {
 
         var filtered_events = []
         for(var i=0; i<application_responses.length; i++){
-          if(application_responses[i].returnValues.p5 == event.returnValues.p5){
+          if(application_responses[i].returnValues.p5 == ipfs_message['job_request_id']){
             filtered_events.push(application_responses[i])
           }
         }
@@ -45087,10 +45116,15 @@ class App extends Component {
         }else{
           ipfs_message['is_response_accepted'] = false
         }
-        messages.push(ipfs_message)
-        var clone = JSON.parse(JSON.stringify(this.state.contractor_applications))
+        const index = messages.findIndex(item => item['request_id'] === ipfs_message['request_id']);
+        if(index != -1){
+          messages[index] = ipfs_message
+        }else{
+          messages.push(ipfs_message)
+        }
+        const clone = JSON.parse(JSON.stringify(this.state.socket_contractor_applications))
         clone[message.contractor_object_id] = messages
-        this.setState({contractor_applications: clone})
+        this.setState({socket_contractor_applications: clone})
 
         if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
           event['e5'] = e5
@@ -45131,6 +45165,7 @@ class App extends Component {
         clone.splice(index, 1)
       }
       this.setState({broadcast_stack: clone})
+      this.load_contract_item(message.e5, message.data)
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
@@ -45142,7 +45177,23 @@ class App extends Component {
     const sender_acc = message.author
     const convo_id = id;
 
-    const event = {returnValues:{p1: message.target, p2:sender_acc, p3:39, p4:object_hash, p5:message.int_data, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+    const event = {returnValues:{p1: message.target, p2:sender_acc, p3:39, p4:message.data, p5:message.int_data, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    const socket_contractor_applications_clone = structuredClone(this.state.socket_contractor_applications)
+    const messages = socket_contractor_applications_clone[message.contractor_object_id]
+    console.log('socket_stuff2', 'socket_contractor_applications_clone_messages', message.contractor_object_id, messages)
+    if(messages != null){
+      const index = messages.findIndex(item => item['job_request_id'] == message.int_data);
+      console.log('socket_stuff2', 'index', index, message.int_data)
+      if(index != -1){
+        messages[index]['is_response_accepted'] = true
+        messages[index]['contract'] = event.returnValues.p4
+        messages[index]['proposals'] = []
+
+        this.setState({socket_contractor_applications: socket_contractor_applications_clone})
+        this.view_job_request_page.current?.set_request_item_accepted_value(message.int_data, event.returnValues.p4)
+      }
+    }
 
     if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
       event['e5'] = e5
@@ -45563,7 +45614,7 @@ class App extends Component {
     const sender_acc = message.author
     const convo_id = id;
 
-    const event = {returnValues:{p1: message.target, p2:sender_acc, p3:39, p4:object_hash, p5:message.int_data, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+    const event = {returnValues:{p1: message.target, p2:sender_acc, p3:39, p4:message.data, p5:message.int_data, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
     
     return event
   }
@@ -45640,7 +45691,7 @@ class App extends Component {
               else if(target.startsWith('bag_application|')){
                 await this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target == 'contractor_job_request'+this.state.accounts[this.state.selected_e5].address){
+              else if(target.startsWith('contractor_job_request|')){
                 await this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){

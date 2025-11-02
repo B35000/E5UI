@@ -374,14 +374,15 @@ class ViewJobRequestPage extends Component {
 
     render_job_response_item(item){
         var is_application_accepted = item['is_response_accepted'];
+        const maxheight = this.props.height-145
         if(is_application_accepted == true){
             return(
-                <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.show_moderator_note_if_any(item)}
 
-                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1679']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
@@ -398,14 +399,8 @@ class ViewJobRequestPage extends Component {
                     {this.render_pdf_files_if_any(item)}
                     <div style={{height:10}}/>
                     {this.render_image_part([].concat(item['entered_images']))}
-
                     
                     {this.render_job_request_location_pins(item['pins'])}
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1368c']/* 'Request Indexing' */, 'details':this.props.app_state.loc['1368d']/* 'If set to blockchain, the reference to your new request will be recorded on a blockchain and indexer while if left to indexer, your new request will be referenced in an indexer only..' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
-
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1682']/* 'Accepted' */, 'details':this.props.app_state.loc['1698']/* 'The contractor Accepted the job request.' */, 'size':'l'})}
@@ -417,12 +412,12 @@ class ViewJobRequestPage extends Component {
             )
         }else{
             return(
-                <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.show_moderator_note_if_any(item)}
 
-                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1686']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
@@ -441,12 +436,6 @@ class ViewJobRequestPage extends Component {
 
 
                     {this.render_job_request_location_pins(item['pins'])}
-
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1368c']/* 'Request Indexing' */, 'details':this.props.app_state.loc['1368d']/* 'If set to blockchain, the reference to your new request will be recorded on a blockchain and indexer while if left to indexer, your new request will be referenced in an indexer only..' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
-
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1689']/* 'Set Pay' */, 'details':this.props.app_state.loc['1690']/* 'The amounts youll be receiving for the job.' */, 'size':'l'})}
@@ -552,7 +541,7 @@ class ViewJobRequestPage extends Component {
                 var title = this.props.app_state.loc['1698f']/* '$ is not part of your selected contract' */.replace('$', alias)
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':title, 'details':'...', 'size':'l'})}
+                        {this.render_detail_item('4', {'text':title, 'textsize':'13px', 'font':this.props.app_state.font})}
                         <div style={{height:10}}/>
                     </div>
                 )
@@ -562,8 +551,17 @@ class ViewJobRequestPage extends Component {
 
     render_view_contract_button(item){
         if(item['contract'] == null) return;
+        const object = this.state.contractor_object
+        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]) return;
         var contract_and_proposals = this.props.app_state.loaded_contract_and_proposal_data[item['contract']]
-        if(contract_and_proposals == null) return;
+        if(contract_and_proposals == null){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1698g']/* 'Loading the sent contract...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
         var contract = contract_and_proposals['contract']
         var proposals = contract_and_proposals['proposals']
         return(
@@ -909,7 +907,7 @@ class ViewJobRequestPage extends Component {
 
     check_for_new_responses_and_messages() {
         if(this.state.request_item['job_request_id'] != 0){
-            this.props.load_job_request_messages(this.state.contractor_object['id'], this.state.request_item['job_request_id'], this.state.request_item['e5'], this.state.request_item['key_data'])
+            this.props.load_job_request_messages(this.state.contractor_object['id'], this.state.request_item['job_request_id'], this.state.request_item['e5'], this.state.request_item['key_data'], this.state.request_item, this.state.contractor_object)
         }
     }
 
@@ -946,8 +944,14 @@ class ViewJobRequestPage extends Component {
                 </div>
             );
         }
+        const maxheight = this.props.height-145
         return(
-            <div>
+            <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1368c']/* 'Request Indexing' */, 'details':this.props.app_state.loc['1368d']/* 'If set to blockchain, the reference to your new request will be recorded on a blockchain and indexer while if left to indexer, your new request will be referenced in an indexer only..' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1691']/* 'Select the work contract youll be using. If you have no work contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
@@ -967,20 +971,20 @@ class ViewJobRequestPage extends Component {
 
         if(items.length == 0){
             items = ['0','1'];
-            return ( 
+            return (
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <div style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             );
         }else{
@@ -988,13 +992,13 @@ class ViewJobRequestPage extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px 2px 5px 2px'}}>
+                            <div style={{'padding': '5px 2px 5px 2px'}}>
                                 {this.render_contract_item(item, index)}
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             );
         }
@@ -1004,7 +1008,7 @@ class ViewJobRequestPage extends Component {
     get_contract_items(){
         var my_contracts = []
         var myid = this.props.app_state.user_account_id[this.state.e5]
-        var created_contracts = this.props.app_state.created_contracts[this.state.e5]
+        var created_contracts = this.props.app_state.my_created_contracts[this.state.e5]
         
         for(var i = 0; i < created_contracts.length; i++){
             var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
@@ -1120,6 +1124,20 @@ class ViewJobRequestPage extends Component {
         });
     }
 
+    set_request_item_accepted_value(request_id, contract_id){
+        if(this.state.request_item['job_request_id'] != request_id){
+            console.log('socket_stuff2', 'request_id not current request item', this.state.request_item['job_request_id'],request_id)
+            return;
+        }
+        var request_item_clone = structuredClone(this.state.request_item)
+        request_item_clone['is_response_accepted'] = true;
+        request_item_clone['contract'] = contract_id;
+        request_item_clone['proposals'] = [];
+        this.setState({request_item: request_item_clone})
+    }
+
+
+
 
 
 
@@ -1129,8 +1147,8 @@ class ViewJobRequestPage extends Component {
 
 
     render_messages_parts(){
-        var he = this.props.height-180
-        if(this.get_focused_message() != null) he = this.props.height-250
+        var he = this.props.height-190
+        if(this.get_focused_message() != null) he = this.props.height-260
         he = he+30-(this.state.text_input_field_height == null ? 30 : 
             (this.state.text_input_field_height < 30 ? 30 : this.state.text_input_field_height));
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
@@ -1241,12 +1259,22 @@ class ViewJobRequestPage extends Component {
     render_top_title(){
         var object = this.state.request_item;
         var contractor_post = this.state.contractor_object
-        const online_text = this.is_recipient_online() ? this.props.app_state.loc['2738bi']/* 'online' */ : null/* this.props.app_state.loc['2738bj'] *//* 'offline' */
+        const online_text = this.is_recipient_online() ? (' • '+this.props.app_state.loc['2738bi']/* 'online' */) : ''/* this.props.app_state.loc['2738bj'] *//* 'offline' */
         return(
             <div style={{padding:'0px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':this.truncate(contractor_post['ipfs'].entered_title_text, 40), 'details':this.truncate(object['title_description'], 40), 'size':'l', 'footer':online_text})} 
+                {this.render_detail_item('3', {'title':this.truncate(contractor_post['ipfs'].entered_title_text, 40), 'details':this.props.app_state.loc['1698h']/* 'With $' */.replace('$',(this.get_senders_name2(object['applicant_id'], contractor_post)+online_text)), 'size':'l'})}
             </div>
         )
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['2785']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     is_recipient_online(){
@@ -2212,7 +2240,7 @@ class ViewJobRequestPage extends Component {
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
+            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'target_recipient':this.state.contractor_object['author'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
 
             this.props.add_job_request_message_to_stack_object(tx)
 

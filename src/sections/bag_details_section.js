@@ -301,14 +301,8 @@ class BagDetailsSection extends Component {
             var hit_count = 0
             for(var k=0; k<focused_note['keywords'].length; k++){
                 const keyword_target = focused_note['keywords'][k]
-                if(object['ipfs'].entered_title_text.includes(keyword_target)){
-                    hit_count ++
-                }
-                else if(this.get_senders_name(object['author'], object) == keyword_target || object['author'] == keyword_target){
+                if(this.get_senders_name(object['author'], object) == keyword_target || object['author'] == keyword_target){
                     hit_count++
-                }
-                else if(object['ipfs'].entered_indexing_tags.includes(keyword_target)){
-                    hit_count ++
                 }
             }
 
@@ -1073,10 +1067,15 @@ class BagDetailsSection extends Component {
     get_bag_details_responses(object){
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
-            return this.props.app_state.job_responses[object['id']]
+            const chain_messages = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
+            const socket_messages = this.props.app_state.socket_job_responses[object['id']] == null ? [] : this.props.app_state.socket_job_responses[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+            return all_responses
         }else{
             var filtered_responses = []
-            var all_responses = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
+            const chain_messages = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
+            const socket_messages = this.props.app_state.socket_job_responses[object['id']] == null ? [] : this.props.app_state.socket_job_responses[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
@@ -1101,10 +1100,10 @@ class BagDetailsSection extends Component {
             )
         }
 
-        const accepted_title = item['is_response_accepted'] == true ? '🤝 ':''
+        const accepted_title = item['is_response_accepted'] == true ? '🤝 • ':''
         return(
             <div onClick={() => this.view_contract(item, object)}>
-                {this.render_detail_item('3', {'details':item['applicant_id']+' • '+item['custom_specifications']+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'title':accepted_title+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
+                {this.render_detail_item('3', {'details':this.get_senders_name2(item['applicant_id'], object)+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'title':accepted_title+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
             </div>
         )
     }
@@ -1126,7 +1125,7 @@ class BagDetailsSection extends Component {
         if(sender == this.props.app_state.user_account_id[object['e5']]){
             return this.props.app_state.loc['2785']/* 'You' */
         }else{
-            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
         }
     }

@@ -811,6 +811,10 @@ class NewNitroPage extends Component {
         )
     }
 
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
     when_previous_edit_tapped(data){
         this.setState(data)
     }

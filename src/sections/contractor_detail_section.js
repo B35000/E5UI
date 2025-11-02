@@ -175,6 +175,7 @@ class ContractorDetailsSection extends Component {
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         var item = this.get_contractor_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        const client_datapoints = this.get_clientel_datapoints(object)
 
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
@@ -190,35 +191,33 @@ class ContractorDetailsSection extends Component {
                     <div onClick={() => this.add_to_contacts2(object)}>
                         {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' }, )}
                     </div>
-                    
+
+                    {client_datapoints.jobs_received > 0 && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2231a']/* ' requests received.' */.replace('$', number_with_commas(client_datapoints.jobs_received)), 'textsize':'14px', 'font':'Sans-serif'})}
+                            <div style={{height: 5}}/>
+
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2231b']/* ' requests processed.' */.replace('$', number_with_commas(client_datapoints.accepted_requests)), 'textsize':'14px', 'font':'Sans-serif'})} 
+                            <div style={{height: 5}}/>
+
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2231c']/* ' clients handled.' */.replace('$', number_with_commas(client_datapoints.clients_handled)), 'textsize':'14px', 'font':'Sans-serif'})}
+                        </div>
+                    )}
+
                     <div style={{height: 10}}/>
-
-                    {this.render_detail_item('4', {'text':number_with_commas(object['requests'])+this.props.app_state.loc['2231a']/* ' requests received.' */, 'textsize':'14px', 'font':'Sans-serif'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('4', {'text':number_with_commas(object['responses'])+this.props.app_state.loc['2231b']/* ' requests processed.' */, 'textsize':'14px', 'font':'Sans-serif'})} 
-                    <div style={{height: 10}}/>
-
-
-                    {this.render_detail_item('4', {'text':number_with_commas(object['clients'])+this.props.app_state.loc['2231c']/* ' clients handled.' */, 'textsize':'14px', 'font':'Sans-serif'})} 
-                    <div style={{height: 10}}/>
-                    
-
-                    {this.render_taken_down_message_if_post_is_down(object)}
-                    <div style={{height: 10}}/>
-                    {this.render_message_if_blocked_by_sender(object)}
-
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
-                    {this.render_item_data(items, object)}
 
+                    {this.render_taken_down_message_if_post_is_down(object)}
+                    {this.render_message_if_blocked_by_sender(object)}
+
+                    {this.render_item_data(items, object)}
                     {this.render_item_images(object)}
                     {this.render_pdf_files_if_any(object)}
                     {this.render_zip_files_if_any(object)}
-
-                    <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
 
                     {this.render_detail_item('0')}
@@ -226,7 +225,6 @@ class ContractorDetailsSection extends Component {
                     {this.fee_per_hour_or_per_job(object)}
                     <div style={{height:10}}/>
                     {this.render_price_amounts(object)}
-
                     {this.render_detail_item('0')}
 
                     {this.render_edit_object_button(object)}
@@ -242,6 +240,23 @@ class ContractorDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    get_clientel_datapoints(object){
+        const jobs_received = (this.props.app_state.contractor_applications[object['id']] || []).concat((this.props.app_state.socket_contractor_applications[object['id']] || []))
+        const accepted_requests = []
+        const clients_handled = []
+
+        jobs_received.forEach(job_request => {
+            if(job_request['is_response_accepted'] == true){
+                accepted_requests.push(job_request['request_id'])
+                if(!clients_handled.includes(job_request['applicant_id'])){
+                    clients_handled.push(job_request['applicant_id'])
+                }
+            }
+        });
+
+        return {jobs_received: jobs_received.length, accepted_requests: accepted_requests.length, clients_handled: clients_handled.length }
     }
 
     copy_id_to_clipboard(object){
@@ -392,7 +407,6 @@ class ContractorDetailsSection extends Component {
         if(object['event'].returnValues.p5 != my_account){
             return(
                 <div>
-                    <div style={{height: 20}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2219']/* 'Send Job Request' */, 'details':this.props.app_state.loc['2220']/* 'Send a job request to the contractor to do a job for you' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_job_request_ui(object)}>
@@ -471,6 +485,7 @@ class ContractorDetailsSection extends Component {
         if(state.markdown != null && state.markdown != ''){
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('13', {'source':state.markdown})}
                 </div>
             )
@@ -650,6 +665,7 @@ class ContractorDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2526b']/* The object has been taken down.' */, 'title':this.props.app_state.loc['2526a']/* '🔒 Taken Down' */})}
+                    <div style={{height: 10}}/>
                 </div>
             )
         }
@@ -992,7 +1008,6 @@ class ContractorDetailsSection extends Component {
         )
     }
 
-
     render_job_post_top_title(object){
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         return(
@@ -1069,15 +1084,16 @@ class ContractorDetailsSection extends Component {
     }
 
     get_job_details_responses(object){
-        // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
-            // console.log('contractor job requests',this.props.app_state.contractor_applications)
-            if(this.props.app_state.contractor_applications[object['id']] == null) return [];
-            return this.props.app_state.contractor_applications[object['id']]
+            const chain_messages = this.props.app_state.contractor_applications[object['id']] == null ? [] : this.props.app_state.contractor_applications[object['id']]
+            const socket_messages = this.props.app_state.socket_contractor_applications[object['id']] == null ? [] : this.props.app_state.socket_contractor_applications[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+            return all_responses
         }else{
             var filtered_responses = []
-            var all_responses = this.props.app_state.contractor_applications[object['id']] == null ? [] : this.props.app_state.contractor_applications[object['id']]
-            // console.log('contractor job requests',this.props.app_state.contractor_applications)
+            const chain_messages = this.props.app_state.contractor_applications[object['id']] == null ? [] : this.props.app_state.contractor_applications[object['id']]
+            const socket_messages = this.props.app_state.socket_contractor_applications[object['id']] == null ? [] : this.props.app_state.socket_contractor_applications[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
@@ -1085,6 +1101,18 @@ class ContractorDetailsSection extends Component {
             }
             return filtered_responses
         }
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
     }
 
 
@@ -1096,42 +1124,60 @@ class ContractorDetailsSection extends Component {
                 </div>
             )
         }
-        var is_application_accepted = item['is_response_accepted'];
-
-        if(is_application_accepted){
-            return(
-                <div>
-                    <div onClick={() => this.view_contract(item, object)}>
-                        {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                        <div style={{height:3}}/>
-
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
-                        <div style={{height:3}}/>
-
-                        {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                        <div style={{height:3}}/>
-
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2230']/* 'Accepted' */, 'details':this.props.app_state.loc['2231d']/* 'The contractor Accepted the job request' */, 'size':'l'})}
-                    </div>
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                </div>
-            )
-        }else{
-            return(
-                <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2231']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                    <div style={{height:3}}/>
-
-                    {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                    <div style={{height:3}}/>
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
-                    <div style={{height:3}}/>
-                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                </div>
-            )
-        }
         
+        const accepted_title = item['is_response_accepted'] == true ? '🤝 • ':''
+        const sender_id = this.get_senders_name2(item['applicant_id'], object)
+        return(
+            <div onClick={() => this.view_contract(item, object)}>
+                {this.render_detail_item('3', {'title':accepted_title+sender_id+' • '+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'details':item['title_description']+' • '+(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+            </div>
+        );
+
+        // var is_application_accepted = item['is_response_accepted'];
+        // if(is_application_accepted){
+        //     return(
+        //         <div>
+        //             <div onClick={() => this.view_contract(item, object)}>
+        //                 {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+        //                 <div style={{height:3}}/>
+
+        //                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
+        //                 <div style={{height:3}}/>
+
+        //                 {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+        //                 <div style={{height:3}}/>
+
+        //                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2230']/* 'Accepted' */, 'details':this.props.app_state.loc['2231d']/* 'The contractor Accepted the job request' */, 'size':'l'})}
+        //             </div>
+        //             <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+        //         </div>
+        //     )
+        // }else{
+        //     return(
+        //         <div onClick={() => this.view_contract(item, object)}>
+        //             {this.render_detail_item('3', {'title':this.props.app_state.loc['2231']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+        //             <div style={{height:3}}/>
+
+        //             {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+        //             <div style={{height:3}}/>
+
+        //             {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
+        //             <div style={{height:3}}/>
+        //             <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+        //         </div>
+        //     )
+        // }
+        
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['2785']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     get_expiry_time(item){

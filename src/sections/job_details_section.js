@@ -1198,12 +1198,15 @@ class JobDetailsSection extends Component {
 
     get_job_details_responses(object){
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
-            if(this.props.app_state.job_responses[object['id']] == null) return []
-            return this.props.app_state.job_responses[object['id']]
+            const chain_messages = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
+            const socket_messages = this.props.app_state.socket_job_responses[object['id']] == null ? [] : this.props.app_state.socket_job_responses[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+            return all_responses
         }else{
             var filtered_responses = []
-            if(this.props.app_state.job_responses[object['id']] == null) return []
-            var all_responses = this.props.app_state.job_responses[object['id']]
+            const chain_messages = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
+            const socket_messages = this.props.app_state.socket_job_responses[object['id']] == null ? [] : this.props.app_state.socket_job_responses[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
@@ -1214,12 +1217,19 @@ class JobDetailsSection extends Component {
     }
 
     render_job_response_item(item, object){
-        const accepted_title = item['is_response_accepted'] == true ? '🤝 ':''
+        const accepted_title = item['is_response_accepted'] == true ? '🤝 • ':''
         return(
             <div onClick={() => this.view_contract(item, object)}>
-                {this.render_detail_item('3', {'details':item['applicant_id']+' • '+item['custom_specifications']+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'title':accepted_title+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
+                {this.render_detail_item('3', {'details':this.get_senders_name2(item['applicant_id'], object)+' • '+this.format_custom_specifications(item['custom_specifications'])+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'title':accepted_title+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
             </div>
         )
+    }
+
+    format_custom_specifications(supplied_spec){
+        if(supplied_spec == ''){
+            return this.props.app_state.loc['2507b']/* ready when you are! */
+        }
+        return supplied_spec
     }
 
     get_senders_name2(sender, object){
@@ -1227,7 +1237,7 @@ class JobDetailsSection extends Component {
         if(sender == this.props.app_state.user_account_id[object['e5']]){
             return this.props.app_state.loc['2785']/* 'You' */
         }else{
-            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
         }
     }

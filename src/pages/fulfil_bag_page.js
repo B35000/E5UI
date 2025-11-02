@@ -259,18 +259,18 @@ class FulfilBagPage extends Component {
             items = ['0','1'];
             return ( 
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <div style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             );
         }else{
@@ -278,13 +278,13 @@ class FulfilBagPage extends Component {
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <div style={{'padding': '5px'}}>
                                 {this.render_contract_item(item, index)}
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             );
         }
@@ -294,7 +294,7 @@ class FulfilBagPage extends Component {
     get_contract_items(){
         var my_contracts = []
         // var myid = this.props.app_state.user_account_id
-        var created_cons = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+        var created_cons = this.get_all_sorted_objects(this.props.app_state.my_created_contracts)
         for(var i = 0; i < created_cons.length; i++){
             var post_author = created_cons[i]['event'] == null ? 0 : created_cons[i]['event'].returnValues.p3
             var myid = this.props.app_state.user_account_id[created_cons[i]['e5']]
@@ -353,7 +353,7 @@ class FulfilBagPage extends Component {
 
         if(this.state.picked_contract == object){
             return(
-                <div onClick={() => this.when_contract_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div onClick={() => this.when_contract_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'opacity':0.6}}>
                     <div style={{'padding': '5px 0px 5px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
@@ -363,8 +363,6 @@ class FulfilBagPage extends Component {
                         <div style={{'padding': '20px 0px 0px 0px'}}>
                             {this.render_detail_item('2', item['age'])}
                         </div>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
-                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 10px 15px 10px'}}/>
                     </div>         
                 </div>
             )
