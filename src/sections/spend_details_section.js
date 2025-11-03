@@ -1070,7 +1070,7 @@ class SpendDetailSection extends Component {
 
         var circulating_supply = this.get_circulating_supply(selected_object)
 
-        const is_socket_job = selected_object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(selected_object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+        const is_socket_job = selected_object['ipfs'] != null && selected_object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(selected_object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
 
         const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[selected_object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[selected_object['event']['nitro_e5_id']]) : this.props.app_state.e5s[selected_object['e5']].e5_img
 

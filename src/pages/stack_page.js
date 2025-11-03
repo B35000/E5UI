@@ -7907,11 +7907,11 @@ class StackPage extends Component {
                 }
 
                 var transfer_actions = this.get_exchange_transfer_actions(amount)
-                for(var t=0; t<transfer_actions.length; t++){
+                for(var u=0; u<transfer_actions.length; u++){
                     obj[4].push(exchange)
                     obj[5].push(23)
-                    obj[6].push(transfer_actions[t]['amount'])
-                    obj[7].push(transfer_actions[t]['depth'])
+                    obj[6].push(transfer_actions[u]['amount'])
+                    obj[7].push(transfer_actions[u]['depth'])
                 }
             }
         }
@@ -9708,11 +9708,11 @@ class StackPage extends Component {
                 }
     
                 var transfer_actions = this.get_exchange_transfer_actions(amount)
-                for(var t=0; t<transfer_actions.length; t++){
+                for(var u=0; u<transfer_actions.length; u++){
                     obj[p].push(exchange)
                     obj[p+1].push(23)
-                    obj[p+2].push(transfer_actions[t]['amount'])
-                    obj[p+3].push(transfer_actions[t]['depth'])
+                    obj[p+2].push(transfer_actions[u]['amount'])
+                    obj[p+3].push(transfer_actions[u]['depth'])
                 }
             }
 
@@ -9802,7 +9802,7 @@ class StackPage extends Component {
 
         var record_string_obj = [[t.direct_purchase_item['purchase_identifier']]]
 
-        const price_data = t.direct_purchase_item['price_data']
+        const price_data = t.direct_purchase_item['price_data'] || []
         console.log('stack_page', 'selected variant', price_data)
         for(var i=0; i<price_data.length; i++){
             var exchange = price_data[i]['id']
@@ -9829,7 +9829,7 @@ class StackPage extends Component {
             }
         }
 
-        const shipping_price_data = t.direct_purchase_item['shipping_price_data']
+        const shipping_price_data = t.direct_purchase_item['shipping_price_data'] || []
         for(var i=0; i<shipping_price_data.length; i++){
             var exchange = shipping_price_data[i]['id']
             var amount = (shipping_price_data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
@@ -9847,11 +9847,11 @@ class StackPage extends Component {
             }
 
             var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
+            for(var u=0; u<transfer_actions.length; u++){
                 obj[4].push(exchange)
                 obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
+                obj[6].push(transfer_actions[u]['amount'])
+                obj[7].push(transfer_actions[u]['depth'])
             }
         }
 

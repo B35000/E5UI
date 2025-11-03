@@ -1617,7 +1617,7 @@ class BagDetailsSection extends Component {
                 if(item['message'].includes(keyword_target)){
                     hit_count ++
                 }
-                else if(item['markdown'].includes(keyword_target)){
+                else if(item['markdown'] != null && item['markdown'].includes(keyword_target)){
                     hit_count++
                 }
             }

@@ -2296,7 +2296,7 @@ return data['data']
             <div>
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1979a']/* Order Details. */}</h4>
-                    {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff(item['time'] - Date.now()/1000)})}
+                    {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - item['time']), 'details':this.props.app_state.loc['2642ca']/* Order Time. */})}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':item['shipping_detail']})}
                     <div style={{height:10}}/>
@@ -2369,6 +2369,8 @@ return data['data']
                 return(
                     <div>
                         {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bo']/* 'Order Finalized.' */, 'details':this.props.app_state.loc['2642bp']/* 'Youve already finalized this order and a record of your payment is on E5.' */})}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                 )
             }
@@ -2380,11 +2382,29 @@ return data['data']
                     <div style={{'padding': '1px'}} onClick={() => this.finalize_order(item, object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2638']/* 'Clear Purchase' */, 'action':''})}
                     </div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
         else if(item['indexer_order'] == true && sender_type == 'storefront_owner'){
-            return;
+            if(this.has_this_order_been_fulfilled(item, object)){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bo']/* 'Order Finalized.' */, 'details':this.props.app_state.loc['2642bt']/* 'Youre client finalized this order and a record of their payment is on E5.' */})}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bu']/* 'Order Pending.' */, 'details':this.props.app_state.loc['2642bv']/* 'No record exists on E5 for the payment of the order made by your client.' */})}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                )
+            }
         }
         var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
         if(signature == null || signature[item['signature_data']] == null){
@@ -2403,7 +2423,8 @@ return data['data']
 
     has_this_order_been_fulfilled(item, object){
         const direct_order_fulfilment_items = []
-        this.props.app_state.direct_order_fulfilments[object['id']].forEach(event_item => {
+        const fulfilments = this.props.app_state.direct_order_fulfilments[object['id']] || []
+        fulfilments.forEach(event_item => {
             direct_order_fulfilment_items.push(event_item.returnValues.p4)
         });
         return direct_order_fulfilment_items.includes(item['purchase_identifier'])
@@ -2490,7 +2511,7 @@ return data['data']
         var obj = {
             id:makeid(8), type:this.props.app_state.loc['2642bm']/* 'order-payment' */,
             entered_indexing_tags:[this.props.app_state.loc['2642bn']/* 'order' */, this.props.app_state.loc['3068af']/* 'bill' */, this.props.app_state.loc['3068ah']/* 'payment' */],
-            e5:object['e5'], direct_purchase_item: item, object: object
+            e5:object['e5'], direct_purchase_item: item, object: object, purchase_unit_count: item['purchase_unit_count']
         }
         this.props.add_order_payment_to_stack(obj)
         this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)

@@ -1015,7 +1015,7 @@ class App extends Component {
     censored_keywords:[], media_activation_tx_limit:0, media_activation_age_limit:0, 
 
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
-    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}
+    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}
   };
 
   get_thread_pool_size(){
@@ -22170,6 +22170,7 @@ class App extends Component {
   }
 
   get_bitcoin_fees = async () => {
+    return 10;
     var request = `https://api.blockcypher.com/v1/btc/main`
     try{
       const response = await fetch(request);
@@ -22321,6 +22322,7 @@ class App extends Component {
   }
 
   get_litecoin_fees = async () => {
+    return 10;
     var request = `https://api.blockcypher.com/v1/ltc/main`
     try{
       const response = await fetch(request);
@@ -22429,6 +22431,7 @@ class App extends Component {
   }
 
   get_dogecoin_fees = async () => {
+    return 10;
     var request = `https://api.blockcypher.com/v1/doge/main`
     try{
       const response = await fetch(request);
@@ -22528,6 +22531,7 @@ class App extends Component {
   }
 
   get_dash_fees = async () => {
+    return 10;
     var request = `https://api.blockcypher.com/v1/dash/main`
     try{
       const response = await fetch(request);
@@ -23802,7 +23806,7 @@ class App extends Component {
 
   start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
     if(is_synching == false) this.start_get_accounts_wallet_data(false);
-    if(is_synching == true) this.get_objects_from_socket_and_set_in_state('jobs', []);
+    if(is_synching == true) this.get_objects_from_socket_and_set_in_state(['jobs'], []);
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
     if(this.did_just_set_wallet == true && should_skip_pre_launch == false && is_synching == false){
@@ -24169,7 +24173,7 @@ class App extends Component {
     return filtered_events
   }
 
-  load_events_from_nitro = async (_web3, contract_instance, event_id, e5, filter, load_limit) => {
+  load_events_from_nitro = async (_web3, contract_instance, event_id, e5, filter, load_limit, updated_signature=false) => {
     var requested_contract = this.get_contract_id_from_contract(e5, contract_instance)
     var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':event_id, 'filter':filter}
     
@@ -24192,6 +24196,11 @@ class App extends Component {
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
       // console.log('apppage', 'load_events_from_nitro result', obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.load_events_from_nitro(_web3, contract_instance, event_id, e5, filter, load_limit, true)
+      }
       return obj['data'][0]
     }
     catch(e){
@@ -24981,7 +24990,14 @@ class App extends Component {
         const cid_data = hash_data[hash_entries[h]]
         try{
           const decrypted_data = object_type.startsWith('ni') ? await this.decrypt_storage_object(cid_data) : await this.decrypt_storage_object2(cid_data);
-          this.store_in_local_storage(hash, JSON.parse(decrypted_data))
+          const isString = (value) => {
+            return typeof value === 'string' || value instanceof String;
+          }
+          if(isString(decrypted_data) == true){
+            this.store_in_local_storage(hash, JSON.parse(decrypted_data))
+          }else{
+            this.store_in_local_storage(hash, decrypted_data)
+          }
         }catch(e){
           console.log('apppage', 'get_post_data', e)
         }
@@ -25370,8 +25386,13 @@ class App extends Component {
 
     
     
-    this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
-    this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
+    if(pre_launch_data[e5] != null){
+      this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
+      this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
+    }else{
+      this.load_my_contracts(e5)
+      this.load_my_subscriptions(e5)
+    }
 
 
 
@@ -29836,7 +29857,7 @@ class App extends Component {
   load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
     if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
     if(e5 == 'E25'){
-      this.get_objects_from_socket_and_set_in_state('bill|'+this.state.accounts[this.state.selected_e5].address, [])
+      this.get_objects_from_socket_and_set_in_state(['bill|'+this.state.accounts[this.state.selected_e5].address], [])
     }
     var created_bill_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_bills[e5] == null ? this.state.saved_pre_launch_events[e5]['created_bill_events'] :  await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
 
@@ -30243,11 +30264,11 @@ class App extends Component {
     // await this.wait(10_000)
     // const to = await this.get_recipient_address(1002, 'E25')
     // const target_type = 'read_receipts|'+'test'+'|'+to
-    // this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+    // this.get_objects_from_socket_and_set_in_state([target_type], [], [])
 
     if(e5 == 'E25' && this.state.created_jobs[e5] != null){
       const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
-      this.get_objects_from_socket_and_set_in_state('jobs', filter_tags)
+      this.get_objects_from_socket_and_set_in_state(['jobs'], filter_tags)
     }
     var created_job_events = extra_data['created_object_events_mapping'] != null ? extra_data['created_object_events_mapping'][e5] : (pre_launch_data[e5] != null ? pre_launch_data[e5]['job_objects_data']['created_object_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */, p1:this.get_valid_post_index(web3)}))
     created_job_events = created_job_events.slice().reverse()
@@ -30486,7 +30507,7 @@ class App extends Component {
     if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
 
     if(e5 == 'E25'){
-      this.get_objects_from_socket_and_set_in_state('mail|'+this.state.accounts[this.state.selected_e5].address, [])
+      this.get_objects_from_socket_and_set_in_state(['mail|'+this.state.accounts[this.state.selected_e5].address], [])
     }
     
     const all_events = await this.load_mail_events(E52contractInstance, e5, account, web3)
@@ -30737,7 +30758,7 @@ class App extends Component {
     var is_first_time = this.state.created_stores[e5] == null
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_store_events).slice(0, this.state.max_post_bulk_load_count).length
-    const all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
+    var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
     var load_pos = this.state.sliced_object_load_count
 
     for(var i=0; i<created_store_events.length; i++){
@@ -32132,10 +32153,14 @@ class App extends Component {
       load_limit = this.state.nitro_node_details[this.state.my_preferred_nitro]['event_data_request_limit']
     }
 
+    // console.log('load_multiple_events_from_nitro', 'get_direct_purchase_events', 'load_limit', load_limit)
+
     var event_request_batches = this.splitIntoChunks(event_requests, load_limit)
+    // console.log('load_multiple_events_from_nitro', 'get_direct_purchase_events', 'event_request_batches', event_request_batches)
     var return_array = []
     var return_obj = {}
     for(var i=0; i<event_request_batches.length; i++){
+      // console.log('load_multiple_events_from_nitro', 'get_direct_purchase_events', 'loading event batch...')
       const { events, event_data } = await this.load_muliple_batch_events_from_nitro(event_request_batches[i], beacon_node, p)
       return_array = return_array.concat(events)
       Object.assign(return_obj, event_data);
@@ -32144,7 +32169,7 @@ class App extends Component {
     return { all_events: return_array, all_events_data: return_obj };
   }
 
-  load_muliple_batch_events_from_nitro = async (event_requests, beacon_node, p) => {
+  load_muliple_batch_events_from_nitro = async (event_requests, beacon_node, p, updated_signature=false) => {
     console.log('apppage', 'get_object_messages', 'making event call to nitro: ', event_requests)
     const params = new URLSearchParams({
       arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify({requests: event_requests, p: p, known: this.get_my_recorded_hashes(p)})),
@@ -32160,6 +32185,11 @@ class App extends Component {
       // console.log('apppage', 'get_object_messages', 'gotten unencrypted return data:', data)
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
       console.log('apppage', 'get_object_messages', 'gotten return data from nitro: ', obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.load_muliple_batch_events_from_nitro(event_requests, beacon_node, p, true)
+      }
       return { events: obj['data'], event_data: obj['hash_data'] }
     }
     catch(e){
@@ -32336,7 +32366,7 @@ class App extends Component {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     
     const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
-    this.get_objects_from_socket_and_set_in_state('jobs', filter_tags)
+    this.get_objects_from_socket_and_set_in_state(['jobs'], filter_tags)
 
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -32524,7 +32554,7 @@ class App extends Component {
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     
     const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
-    this.get_objects_from_socket_and_set_in_state('posts', filter_tags)
+    this.get_objects_from_socket_and_set_in_state(['posts'], filter_tags)
 
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 18/* 18(post object) */) : {}
     for(var i=0; i<this.state.e5s['data'].length; i++){
@@ -33438,7 +33468,7 @@ class App extends Component {
           created_object_events_mapping[e5] = await this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, [], true) || []
         }
         else if(item_type == 27/* 27(storefront-item)  */){
-          created_object_events_mapping[e5] = await this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false, [], true) || []
+          created_object_events_mapping[e5] = await this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false, [], true, {}) || []
         }
         else if(item_type == 25/* 25(storefront_bag_object)  */){
           created_object_events_mapping[e5] = await this.get_bag_data(contractInstance, web3, e5, contract_addresses, E52contractInstance, account, filter_data_accounts, [], true) || []
@@ -33457,7 +33487,7 @@ class App extends Component {
     return await this.pre_object_fetch_call(created_object_events_mapping, item_type)
   }
 
-  pre_object_fetch_call = async (created_object_events_mapping, item_type) => {
+  pre_object_fetch_call = async (created_object_events_mapping, item_type, updated_signature=false) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url;
     if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null){
@@ -33491,6 +33521,12 @@ class App extends Component {
       const data = await response.text();
       const obj = await this.process_nitro_api_call_result(data, beacon_node);
       console.log('created_object_events_mapping', obj)
+
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.pre_object_fetch_call(created_object_events_mapping, item_type, true)
+      }
 
       return obj.all_return_data || {};
     }
@@ -36142,7 +36178,10 @@ class App extends Component {
       //   return null
       // }
       var decrypted_data = await this.decrypt_storage_object(cid_data)
-      var return_data = JSON.parse(decrypted_data)
+      const isString = (value) => {
+        return typeof value === 'string' || value instanceof String;
+      }
+      var return_data = isString(decrypted_data) ? JSON.parse(decrypted_data) : decrypted_data;
       // console.log('datas', 'hash object return_data', return_data)
       return return_data
     }
@@ -38936,7 +38975,7 @@ class App extends Component {
     
     while(absolute_load_limit < current_filter_end_time){
       //target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10)
-      const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*100), [])
+      const socket_data = await this.get_socket_data([target], current_filter_end_time, current_filter_start_time, (1024*100), [])
       if(socket_data == null){
         current_filter_end_time -= load_step
         current_filter_start_time -= load_step
@@ -38955,16 +38994,16 @@ class App extends Component {
               const object_hash = object_hashes[i]
               const object_data = target_data[time_entry][target_entry][object_hash]
               if(object_data['type'] == 'mail-message'){
-                console.log('socket_stuff', 'loaded mail-message', object_data)
-                this.process_new_message_received(object_data, object_hash, null, false)
+                await this.process_new_message_received(object_data, object_hash, null, false)
               }
               else if(object_data['type'] == 'job-request-message'){
-                console.log('socket_stuff', 'job-request-message', object_data)
-                this.process_new_job_request_message(object_data, object_hash, null)
+                await this.process_new_job_request_message(object_data, object_hash, null)
+              }
+              else if(object_data['type'] == 'channel-message'){
+                await this.process_new_channel_message(object_data, object_hash)
               }
               else{
-                console.log('socket_stuff', 'object-comment', object_data)
-                this.process_new_comment_message(object_data, object_hash)
+                await this.process_new_comment_message(object_data, object_hash)
               }
             }
           }
@@ -39106,7 +39145,7 @@ class App extends Component {
 
     const e5_id = id+e5
     const target_type = type == 'bag' ? 'bag_application|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address : 'job_application|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
-    this.get_objects_from_socket_and_set_in_state(target_type, [], application_responses)
+    this.get_objects_from_socket_and_set_in_state([target_type], [], application_responses)
     
 
     var loaded_target = 0
@@ -39184,6 +39223,7 @@ class App extends Component {
   }
 
   get_direct_purchase_events = async (id, e5) => {
+    console.log('get_direct_purchase_events', 'beginning work...')
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
     const H52_address = this.state.addresses[e5][6];
@@ -39193,9 +39233,10 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_awward_data;
-    var created_fulfilment_data;
-    var order_payment_events;
+    var created_awward_data = [];
+    var created_fulfilment_data = [];
+    var order_payment_events = [];
+    console.log('get_direct_purchase_events', 'initialized values')
 
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       const event_params2 = [
@@ -39203,11 +39244,14 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id}],/* created_fulfilment_data */
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 46, p3/* context */:id}],/* order_payment_events */
       ]
+      console.log('get_direct_purchase_events', 'making multiple event calls to nitro...')
       const all_events = (await this.load_multiple_events_from_nitro(event_params2)).all_events
-      created_awward_data = all_events[0]
-      created_fulfilment_data = all_events[1]
-      order_payment_events = all_events[2]
+      created_awward_data = all_events[0] || []
+      created_fulfilment_data = all_events[1] || []
+      order_payment_events = all_events[2] || []
+      console.log('get_direct_purchase_events', 'calls complete, continuing...')
     }else{
+      console.log('get_direct_purchase_events', 'beacon node offline, making calls individually...')
       created_awward_data = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})
 
       created_fulfilment_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id})
@@ -39215,28 +39259,37 @@ class App extends Component {
       order_payment_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 46, p3/* context */:id})
     }
 
-    created_awward_data = created_awward_data.reverse()
+    if(created_awward_data != null){
+      console.log('get_direct_purchase_events', 'reversing created award data...')
+      created_awward_data = created_awward_data.reverse()
+
+      if(this.direct_purchase_last_purchase_time == null){
+        this.direct_purchase_last_purchase_time = {}
+      }
+
+      if(created_awward_data.length > 0){
+        console.log('get_direct_purchase_events', 'setting last purchase time...')
+        this.direct_purchase_last_purchase_time[id] = created_awward_data[created_awward_data.length -1].returnValues.p6/* timestamp */
+      }else{
+        console.log('get_direct_purchase_events', 'no award data exists...')
+      }
+    }else{
+      console.warn('get_direct_purchase_events', 'award data is null...')
+    }
+
+    const e5_id = id+e5
+    const target_type = 'storefront_order|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
+    const target_type2 = 'signature_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
+    const target_type3 = 'signature_response|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
+    console.log('get_direct_purchase_events', 'loading signature request, response and orders')
+    await this.get_objects_from_socket_and_set_in_state([target_type, target_type2, target_type3], [], [])
+    console.warn('get_direct_purchase_events', 'socket objects set in state, proceeding...')
 
     var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
       loaded_target = created_awward_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
-
-    if(this.direct_purchase_last_purchase_time == null){
-      this.direct_purchase_last_purchase_time = {}
-    }
-
-    this.direct_purchase_last_purchase_time[id] = created_awward_data[created_awward_data.length -1].returnValues.p6/* timestamp */
-
-    const target_type = 'storefront_order|'+this.state.accounts[this.state.selected_e5].address
-    this.get_objects_from_socket_and_set_in_state(target_type, [], [])
-
-    const e5_id = id+e5
-    const target_type2 = 'signature_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
-    const target_type3 = 'signature_response|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
-    this.get_objects_from_socket_and_set_in_state(target_type2, [], [])
-    this.get_objects_from_socket_and_set_in_state(target_type3, [], [])
 
     var clone = structuredClone(this.state.direct_order_fulfilments);
     clone[id] = order_payment_events
@@ -39271,7 +39324,6 @@ class App extends Component {
         loaded_target = j+this.state.max_post_bulk_load_count
       }
     }
-
 
     var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
@@ -39321,8 +39373,8 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39}],/* application_responses */
       ]
       const all_events = (await this.load_multiple_events_from_nitro(event_params2)).all_events
-      created_job_respnse_data = all_events[0]
-      application_responses = all_events[1]
+      created_job_respnse_data = all_events[0] || []
+      application_responses = all_events[1] || []
     }else{
       created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38})
 
@@ -39335,7 +39387,7 @@ class App extends Component {
 
     application_responses = application_responses.concat(socket_notifications)
     const e5_id = id+E5
-    this.get_objects_from_socket_and_set_in_state('contractor_job_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address, [], application_responses)
+    this.get_objects_from_socket_and_set_in_state(['contractor_job_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address], [], application_responses)
 
     created_job_respnse_data = created_job_respnse_data.reverse()
 
@@ -39472,7 +39524,7 @@ class App extends Component {
     const load_read_receipts_data = async () => {
       const to = await this.get_recipient_address(recipient_id, recipient_e5)
       const target_type = 'read_receipts|'+request_id+'|'+to
-      this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+      this.get_objects_from_socket_and_set_in_state([target_type], [], [])
       this.get_alias_from_account_id(recipient_id, recipient_e5)
     }
     
@@ -39737,7 +39789,7 @@ class App extends Component {
       const recipient_e5 = mail['author'] == this.state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
       const to = await this.get_recipient_address(recipient_id, recipient_e5)
       const target_type = 'read_receipts|'+convo_id+'|'+to
-      this.get_objects_from_socket_and_set_in_state(target_type, [], [])
+      this.get_objects_from_socket_and_set_in_state([target_type], [], [])
       this.get_alias_from_account_id(recipient_id, recipient_e5)
     }
     
@@ -42758,7 +42810,10 @@ class App extends Component {
     this.disconnect_socket_if_connected()
     await this.wait(200)
     this.socket = io(beacon_node, {
-      transports: ['websocket']
+      transports: ['websocket'],
+      reconnection: true, 
+      reconnectionAttempts: 10000000, 
+      reconnectionDelay: 30_000
     });
 
     const me = this;
@@ -43155,9 +43210,17 @@ class App extends Component {
     this.setState({broadcast_stack: clone})
 
     const to = await this.get_recipient_address(state_object.storefront_item['author'], state_object.storefront_item['e5'])
-    const target = 'storefront_order|'+to
-    const secondary_target = 'storefront_order|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+
+
+    const target = 'storefront_order|'+state_object.storefront_item['e5_id']+'|'+to
+    const secondary_target = 'storefront_order|'+state_object.storefront_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
+    const emit_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
+    this.socket.emit("send_message", emit_object);
+
+
+    const target2 = 'storefront_order|'+to
+    const secondary_target2 = 'storefront_order|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_signature_request(state_object, target_recipient_address, order_storefront){
@@ -44703,7 +44766,7 @@ class App extends Component {
       
       if(ipfs_obj != null){
         const clone = structuredClone(this.state.socket_object_messages)
-        const messages = clone[request_id] == null ? [] : clone[request_id].slice()
+        const messages = clone[channel_e5_id] == null ? [] : clone[channel_e5_id].slice()
         const ipfs_message = ipfs_obj;
         ipfs_message['time'] = event.returnValues.p6
         this.fetch_uploaded_files_for_object(ipfs_message)
@@ -44711,9 +44774,8 @@ class App extends Component {
         if(includes == null){
           messages.push(ipfs_message)
         }
-        clone[request_id] = messages
+        clone[channel_e5_id] = messages
         this.setState({socket_object_messages: clone})
-        this.fetch_uploaded_files_for_object(ipfs_message)
       }
     }
     
@@ -45248,10 +45310,9 @@ class App extends Component {
 
       const event = {returnValues:{p1: sender_acc, p2:message.target, p3:message.context, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
       const messages = this.state.direct_purchases[message.storefront_e5_id] == null ? [] : this.state.direct_purchases[message.storefront_e5_id].slice()
       const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
-      var ipfs_message = ipfs_obj;
+      var ipfs_message = ipfs;
       if(ipfs_message['encrypted_data'] != null){
         var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
         var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
@@ -45444,7 +45505,7 @@ class App extends Component {
 
 
 
-  get_socket_data = async (target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0) => {
+  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -45456,7 +45517,7 @@ class App extends Component {
     }
     
     const arg_obj = {
-      targets: [target],
+      targets: targets,
       filter_end_time,/* the oldest entry to include */
       filter_start_time,/* the newest entry to include */
       filter_tags,
@@ -45470,28 +45531,33 @@ class App extends Component {
       size_limit_in_kbs,
     }
 
-    const body = {
-      method: "POST", // Specify the HTTP method
-      headers: {
-        "Content-Type": "application/json" // Set content type to JSON
-      },
-      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
-    }
+    // const body = {
+    //   method: "POST", // Specify the HTTP method
+    //   headers: {
+    //     "Content-Type": "application/json" // Set content type to JSON
+    //   },
+    //   body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    // }
 
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'socket_data_fetch')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    // var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'socket_data_fetch')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+
+    const params = new URLSearchParams({
+      arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify(arg_obj)),
+    });
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'socket_data_fetch')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
-      const response = await fetch(request, body);
+      const response = await fetch(request);
       if (!response.ok) {
         console.log('datas', 'socket_stuff',response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, beacon_node);
-      console.log('socket_stuff', target, obj)
+      console.log('socket_stuff', targets, obj)
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.get_socket_data(target, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true)
+        return this.get_socket_data(targets, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true)
       }
       var target_data = obj['target_data']
       return target_data
@@ -45499,7 +45565,7 @@ class App extends Component {
     catch(e){
       console.log('apppage', 'socket_stuff', 'something went wrong with get_socket_data', e)
       if(tries < 2){
-        return this.get_socket_data(target, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true, tries+1)
+        return this.get_socket_data(targets, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true, tries+1)
       }
     }
   }
@@ -45516,7 +45582,7 @@ class App extends Component {
     }
     const target = target_object[type]
     
-    const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*100), [])
+    const socket_data = await this.get_socket_data([target], current_filter_end_time, current_filter_start_time, (1024*100), [])
     const target_data = socket_data
     const events = []
     if(target_data != null){
@@ -45631,16 +45697,14 @@ class App extends Component {
     return event
   }
 
-  async get_objects_from_socket_and_set_in_state(target, filter_tags, application_responses=[]){
+  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[]){
     const absolute_load_limit = Date.now() - (72*7*24*60*60*1000)
     const load_step = (35*7*24*60*60*1000)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     
     while(absolute_load_limit < current_filter_end_time){
-      //target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10)
-      // console.log('socket_stuff','loaded from target', target)
-      const socket_data = await this.get_socket_data(target, current_filter_end_time, current_filter_start_time, (1024*100), filter_tags)
+      const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), filter_tags)
       if(socket_data == null){
         current_filter_end_time -= load_step
         current_filter_start_time -= load_step
@@ -45658,7 +45722,7 @@ class App extends Component {
             for(var i=0; i<object_hashes.length; i++){
               const object_hash = object_hashes[i]
               const object_data = target_data[time_entry][target_entry][object_hash]
-              if(target == 'jobs'){
+              if(target_entry == 'jobs'){
                 await this.process_new_job_received(object_data, object_hash)
 
                 var me = this;
@@ -45668,7 +45732,7 @@ class App extends Component {
                   }
                 }, (1 * 500));
               }
-              else if(target == 'posts'){
+              else if(target_entry == 'posts'){
                 await this.process_new_post_received(object_data, object_hash)
 
                 var me = this;
@@ -45678,38 +45742,38 @@ class App extends Component {
                   }
                 }, (1 * 500));
               }
-              else if(target == 'bill|'+this.state.accounts[this.state.selected_e5].address){
+              else if(target_entry == 'bill|'+this.state.accounts[this.state.selected_e5].address){
                 await this.process_new_bill_message(object_data, object_hash, null, false)
               }
-              else if(target == 'mail|'+this.state.accounts[this.state.selected_e5].address){
+              else if(target_entry == 'mail|'+this.state.accounts[this.state.selected_e5].address){
                 await this.process_new_mail_received(object_data, object_hash, null, false)
               }
-              else if(target.startsWith('job_application|')){
+              else if(target_entry.startsWith('job_application|')){
                 console.log('socket_stuff','loaded a job application item', object_data)
                 await this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target.startsWith('bag_application|')){
+              else if(target_entry.startsWith('bag_application|')){
                 await this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target.startsWith('contractor_job_request|')){
+              else if(target_entry.startsWith('contractor_job_request|')){
                 await this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
+              else if(target_entry == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
                 await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target == 'storefront_order'+this.state.accounts[this.state.selected_e5].address){
+              else if(target_entry.startsWith('storefront_order')){
                 await this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target.startsWith('signature_request|')){
+              else if(target_entry.startsWith('signature_request|')){
                 await this.process_new_signature_request_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target.startsWith('signature_response|')){
+              else if(target_entry.startsWith('signature_response|')){
                 await this.process_new_signature_response_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target.startsWith('typing|')){
+              else if(target_entry.startsWith('typing|')){
                 await this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target.startsWith('read_receipts|')){
+              else if(target_entry.startsWith('read_receipts|')){
                 // console.log('socket_stuff','loaded a read receipts item', object_data)
                 await this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
               }
@@ -45744,17 +45808,22 @@ class App extends Component {
       account_ids, room_id
     }
 
-    const body = {
-      method: "POST", // Specify the HTTP method
-      headers: {
-        "Content-Type": "application/json" // Set content type to JSON
-      },
-      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
-    }
+    // const body = {
+    //   method: "POST", // Specify the HTTP method
+    //   headers: {
+    //     "Content-Type": "application/json" // Set content type to JSON
+    //   },
+    //   body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    // }
 
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'accounts_in_room')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    // var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'accounts_in_room')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+
+    const params = new URLSearchParams({
+      arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify(arg_obj)),
+    });
+    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'accounts_in_room')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
-      const response = await fetch(request, body);
+      const response = await fetch(request);
       if (!response.ok) {
         console.log('datas', 'get_account_in_room_data', response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);

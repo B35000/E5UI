@@ -1632,7 +1632,7 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }
-        var size = item['size'] == null ? '11px' : item['size'];
+        var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
         var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
         var e5 = item['sender_e5'] == null ? item['e5'] : item['sender_e5']
@@ -1716,7 +1716,7 @@ class ViewJobRequestPage extends Component {
                 if(item['message'].includes(keyword_target)){
                     hit_count ++
                 }
-                else if(item['markdown'].includes(keyword_target)){
+                else if(item['markdown'] != null && item['markdown'].includes(keyword_target)){
                     hit_count++
                 }
             }

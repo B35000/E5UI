@@ -4662,8 +4662,8 @@ class home_page extends Component {
 
         this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5, object)
-        this.props.get_channel_event_data(id, e5)
-        this.props.get_moderator_event_data(id, e5)
+        // this.props.get_channel_event_data(id, e5)
+        // this.props.get_moderator_event_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
         this.props.get_channel_creator_file_records(object)
         this.props.get_channel_creator_payout_stagings(object)

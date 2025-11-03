@@ -2688,9 +2688,9 @@ class PostListSection extends Component {
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
-            extra = extra+'🔏'
-        }
+        // if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
+        //     extra = extra+'🔏'
+        // }
         if(extra != ''){
             extra = extra+' '
         }

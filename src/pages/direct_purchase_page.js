@@ -256,6 +256,10 @@ class DirectPurchasePage extends Component {
         }
     }
 
+    when_get_chain_or_indexer_job_object_updated(tag_obj){
+        this.setState({get_chain_or_indexer_job_object: tag_obj})
+    }
+
     render_selected_pins(){
         var items = [].concat(this.state.pins)
         if(items.length == 0){
