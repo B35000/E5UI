@@ -260,6 +260,12 @@ class ClearPurchasePage extends Component {
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1078h']/* 'Fulfil Signature Requests.' */, 'details':this.props.app_state.loc['1078i']/* 'If a signature request is sent to your account, it will show here.' */ })}
                     <div style={{height:10}}/>
+                    {this.props.app_state.loading_socket_signature_request_response_data == true && (
+                        <div>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2642cb']/* 'Loading signature requests...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
+                    <div style={{height:10}}/>
                     {this.render_empty_views(3)}
                 </div>
             )
@@ -393,6 +399,12 @@ class ClearPurchasePage extends Component {
                     <div style={{'padding': '1px'}} onClick={() => this.prompt_signature_from_target()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1078b']/* 'Request Signature.' */, 'action':''})}
                     </div>
+                    <div style={{height:10}}/>
+                    {this.props.app_state.loading_socket_signature_request_response_data == true && (
+                        <div>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2642cc']/* 'Loading signature responses...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
                     <div style={{height:10}}/>
                     {this.render_empty_views(3)}
                 </div>

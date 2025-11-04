@@ -168,7 +168,7 @@ class PostDetailSection extends Component {
                     open_participate_in_auction={this.props.open_participate_in_auction.bind(this)}
                     get_direct_purchase_events={this.props.get_direct_purchase_events.bind(this)}
                     get_storefront_auction_bids={this.props.get_storefront_auction_bids.bind(this)}
-                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)}
                     />
                 )
             }

@@ -125,7 +125,7 @@ const currencies = [
     "name": "Cronos"
   },
   {
-    "id": "dash-2",
+    "id": "dash",
     "symbol": "dash",
     "name": "DASH"
   },

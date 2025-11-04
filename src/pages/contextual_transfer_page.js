@@ -76,7 +76,6 @@ class ContextualTransferPage extends Component {
     }
 
     componentDidMount() {
-        this.get_fulfilment_location_from_local_storage()
         this.interval = setInterval(() => this.check_for_new_payments(), this.props.app_state.details_section_syncy_time);
     }
 
@@ -1636,15 +1635,25 @@ class ContextualTransferPage extends Component {
     }
 
     async finish_send_bill(){
-        var identifier = this.state.identifier2.trim()
-        var recipient = this.state.recipient_id2.trim()
-        var transfer_recipient = this.state.transfer_recipient_id2.trim()
-        var price_data = this.state.price_data2
-        var entered_pdf_objects = this.state.entered_pdf_objects
-        var my_id = this.props.app_state.user_account_id[this.state.e5]
+        const identifier = this.state.identifier2.trim()
+        const recipient = this.state.recipient_id2.trim()
+        const transfer_recipient = this.state.transfer_recipient_id2.trim()
+        const price_data = this.state.price_data2
+        const entered_pdf_objects = this.state.entered_pdf_objects
+        const my_id = this.props.app_state.user_account_id[this.state.e5]
+
+        const selected_obj = this.get_selected_item(this.state.get_reocurring_tags_object, 'e')
+        const recurring_enabled = selected_obj == this.props.app_state.loc['3068ay']/* 'recurring-bill' */
+        const obj = {
+            id:makeid(8), type:this.props.app_state.loc['3068af']/* 'bill' */,
+            entered_indexing_tags:[this.props.app_state.loc['3068ag']/* 'request' */, this.props.app_state.loc['3068af']/* 'bill' */, this.props.app_state.loc['3068ah']/* 'payment' */],
+            e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier, transfer_recipient: transfer_recipient, recurring_enabled: recurring_enabled, entered_pdf_objects: entered_pdf_objects, ecid_encryption_passwords: this.state.ecid_encryption_passwords
+        }
 
         const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
-        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+        const size = this.lengthInUtf8Bytes(JSON.stringify(obj, (key, value) =>
+            typeof value === 'bigint' ? value.toString() : value)
+        )
 
         if(isNaN(recipient)){
             recipient = await this.get_recipient_id(recipient)
@@ -1681,16 +1690,8 @@ class ContextualTransferPage extends Component {
             this.props.notify(this.props.app_state.loc['284bc']/* 'Your job post is too large.' */, 5000)
         }
         else{
-            var selected_obj = this.get_selected_item(this.state.get_reocurring_tags_object, 'e')
-            var recurring_enabled = selected_obj == this.props.app_state.loc['3068ay']/* 'recurring-bill' */
-            var obj = {
-                id:makeid(8), type:this.props.app_state.loc['3068af']/* 'bill' */,
-                entered_indexing_tags:[this.props.app_state.loc['3068ag']/* 'request' */, this.props.app_state.loc['3068af']/* 'bill' */, this.props.app_state.loc['3068ah']/* 'payment' */],
-                e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier, transfer_recipient: transfer_recipient, recurring_enabled: recurring_enabled, entered_pdf_objects: entered_pdf_objects, ecid_encryption_passwords: this.state.ecid_encryption_passwords
-            }
-
             if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
-                this.props.emit_new_object_in_socket(this.state)
+                this.props.emit_new_object_in_socket(obj)
             }else{
                 this.props.add_bill_transaction_to_stack(obj)
                 this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
@@ -1698,6 +1699,12 @@ class ContextualTransferPage extends Component {
             }
             
         }
+    }
+
+    lengthInUtf8Bytes(str) {
+        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+        var m = encodeURIComponent(str).match(/%[89ABab]/g);
+        return str.length + (m ? m.length : 0);
     }
 
     reset_state(){

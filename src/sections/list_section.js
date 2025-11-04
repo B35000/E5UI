@@ -915,7 +915,7 @@ class PostListSection extends Component {
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         var responses_text = ' • '+object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
-        if(object['responses'] == 0){
+        if(object['responses'] == 0 || true){
             responses_text = ''
         }
         const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false

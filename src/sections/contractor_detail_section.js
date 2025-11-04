@@ -64,6 +64,15 @@ class ContractorDetailsSection extends Component {
         if(this.props.selected_contractor_item != null){
             var object = this.get_item_in_array(this.get_contractor_items(), this.props.selected_contractor_item);
             if(object == null) return;
+            this.perform_fetch_work(object)
+        }
+    }
+
+    perform_fetch_work(object){
+        const active = this.state.navigate_view_contractors_list_detail_tags_object['i'].active
+        const selected_item = this.get_selected_item(this.state.navigate_view_contractors_list_detail_tags_object, active)
+
+        if(selected_item == this.props.app_state.loc['2216']/* 'job-requests' */){
             this.props.get_contractor_applications(object['id'], object['e5'])
         }
     }
@@ -107,6 +116,10 @@ class ContractorDetailsSection extends Component {
 
     when_navigate_view_contractors_list_detail_tags_object_updated(tag_group){
         this.setState({navigate_view_contractors_list_detail_tags_object: tag_group})
+        var me = this;
+        setTimeout(function() {
+            me.check_for_new_responses_and_messages()
+        }, (1 * 300));
     }
 
     render_empty_detail_object(){

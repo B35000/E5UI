@@ -2562,7 +2562,10 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1196']/* 'jobs' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var chain_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var socket_jobs = this.get_all_sorted_objects(this.props.app_state.socket_created_jobs)
+            const all_jobs = this.sortByAttributeDescending(chain_jobs.concat(socket_jobs), 'timestamp')
+            return all_jobs
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -2675,6 +2678,7 @@ class home_page extends Component {
     get_all_mail(){
         var mail_objects = []
         var all_messages = this.props.app_state.all_mail
+        var all_messages2 = this.props.app_state.socket_all_mail
         for(const convo_id in all_messages){
             if(all_messages.hasOwnProperty(convo_id)){
                 var convo_messages = all_messages[convo_id]
@@ -2685,7 +2689,17 @@ class home_page extends Component {
                 });
             }
         }
-        return mail_objects.reverse()
+        for(const convo_id in all_messages2){
+            if(all_messages.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages[convo_id]
+                convo_messages.forEach(message => {
+                    if(message['ipfs'] != null && message['ipfs'].entered_title_text != null){
+                        mail_objects.push(message)
+                    }
+                });
+            }
+        }
+        return this.sortByAttributeDescending(mail_objects, 'timestamp')
     }
 
     get_convo_messages(convo_id){
@@ -2720,6 +2734,7 @@ class home_page extends Component {
     get_combined_created_mail(created_or_received){
         var mail_objects = []
         var all_messages = this.props.app_state.all_mail
+        var all_messages2 = this.props.app_state.socket_all_mail
         var created_mail_obj = created_or_received == 'created_mail' ? 'sent' : 'received'
         for(const convo_id in all_messages){
             if(all_messages.hasOwnProperty(convo_id)){
@@ -2731,29 +2746,17 @@ class home_page extends Component {
                 });
             }
         }
-        return mail_objects.reverse()
-
-        // var created_mail = []
-        // var mail_activity = {}
-        // var created_mail_obj = created_or_received == 'created_mail' ? this.props.app_state.created_mail : this.props.app_state.received_mail
-        // for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-        //     var e5 = this.props.app_state.e5s['data'][i]
-        //     var e5_data = created_mail_obj[e5]
-
-        //     if(e5_data != null){
-        //         if(e5_data[created_or_received] != null){
-        //             created_mail = created_mail.concat(e5_data[created_or_received])
-        //         }
-        //         var mail_activity_clone = structuredClone(mail_activity)
-        //         mail_activity = { ...mail_activity_clone, ...e5_data['mail_activity']}
-        //     } 
-        // }
-
-        // if(created_or_received == 'created_mail'){
-        //     return {'created_mail':created_mail, 'mail_activity':mail_activity}
-        // }else{
-        //     return {'received_mail':created_mail, 'mail_activity':mail_activity}
-        // }
+        for(const convo_id in all_messages2){
+            if(all_messages.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages[convo_id]
+                convo_messages.forEach(message => {
+                    if(message['type'] == created_mail_obj && message['ipfs'] != null &&  message['ipfs'].entered_title_text != null){
+                        mail_objects.push(message)
+                    }
+                });
+            }
+        }
+        return this.sortByAttributeDescending(mail_objects, 'timestamp')
     }
     
 
@@ -2761,7 +2764,10 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1213']/* 'posts' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_posts)
+            const all_posts = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
+            return all_posts;
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -3362,12 +3368,16 @@ class home_page extends Component {
     get_bill_items(all){
         var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
 
+        var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_bills)
+        var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
+        const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
+
         if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1264aj']/* 'bills' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_bills)
+            return all_bills
         }
         else if(selected_option_name == this.props.app_state.loc['1264ak']/* 'received' */){
             var my_received_bills = []
-            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var created_bills = all_bills
             for(var i=0; i<created_bills.length; i++){
                 var target = created_bills[i]['target']
                 var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
@@ -3380,7 +3390,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264am']/* 'sent' */){
             var my_sent_bills = []
-            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var created_bills = all_bills
             for(var i=0; i<created_bills.length; i++){
                 var post_author = created_bills[i]['author']
                 var myid = this.props.app_state.user_account_id[created_bills[i]['e5']]
@@ -3393,7 +3403,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_pinned_bills = []
-            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var created_bills = all_bills
             for(var i=0; i<this.state.pinned_bills.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_bills[i], created_bills)
                 if(obj != null) my_pinned_bills.push(obj)
@@ -3403,7 +3413,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264an']/* 'reucrring' */){
             var my_recurring_bills = []
-            var created_bills = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var created_bills = all_bills
             for(var i=0; i<created_bills.length; i++){
                 var recurring_enabled = created_bills[i]['ipfs'].recurring_enabled
                 var target = created_bills[i]['target']
@@ -4055,11 +4065,11 @@ class home_page extends Component {
         }
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
-        var subtract = size == 'm' ? 70 : 60
+        var subtract = 60
         var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
         var subtract2 = this.should_show_line() == true ? 10 : 0
         h -= subtract2;
-        if(size == 'm') h-= 4
+        if(size == 'm') h-= 4;
         return(
             <div>
                 {this.render_line_if_enabled()}
@@ -4083,8 +4093,8 @@ class home_page extends Component {
     render_post_list_group_if_touch_screen(size, height){
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
-        var subtract = size == 'm' ? 70 : 60
-        var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
+        var subtract = size == 'm' ? 60 : 60
+        var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height+2
         var subtract2 = this.should_show_line() == true ? 10 : 0
         h -= subtract2;
         if(size == 'm') h-= 4
@@ -4356,7 +4366,10 @@ class home_page extends Component {
 
     get_pages_objects(selected_page){
         if(selected_page == this.props.app_state.loc['1196']/* 'jobs' */){
-            return this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var chain_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var socket_jobs = this.get_all_sorted_objects(this.props.app_state.socket_created_jobs)
+            const all_jobs = this.sortByAttributeDescending(chain_jobs.concat(socket_jobs), 'timestamp')
+            return all_jobs
         }
         else if(selected_page == this.props.app_state.loc['1197']/* 'contracts' */){
             return this.get_all_sorted_objects(this.props.app_state.created_contracts)
@@ -4371,7 +4384,10 @@ class home_page extends Component {
             return this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
         }
         else if(selected_page == this.props.app_state.loc['1213']/* 'posts' */){
-            return this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_posts)
+            const all_posts = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
+            return all_posts
         }
         else if(selected_page == this.props.app_state.loc['1214']/* 'channels' */){
             return this.get_all_sorted_objects(this.props.app_state.created_channels)
@@ -4398,7 +4414,10 @@ class home_page extends Component {
             return this.get_all_sorted_objects(this.props.app_state.created_nitros)
         }
         else if(selected_page == this.props.app_state.loc['1264aj']/* 'bills' */){
-            return this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
+            const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
+            return all_bills
         }
         else if(selected_page == this.props.app_state.loc['1201']/* 'mail' */){
             return this.get_all_mail()
@@ -4537,7 +4556,7 @@ class home_page extends Component {
         }, (1 * 1000));
     }
 
-    when_job_post_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_job_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_job_post_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
@@ -4551,10 +4570,10 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.fetch_uploaded_files_for_object(object)
-        this.props.get_job_objects_responses(id, e5, 'job')
-        this.props.get_objects_messages(id, e5)
-        this.props.get_object_censored_keywords_and_accounts(object)
+        await this.props.fetch_uploaded_files_for_object(object)
+        // await this.props.get_job_objects_responses(id, e5, 'job')
+        // await this.props.get_objects_messages(id, e5)
+        await this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -4712,7 +4731,7 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
-    when_storefront_post_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_storefront_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_storefront_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
@@ -4726,11 +4745,11 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.fetch_uploaded_files_for_object(object)
-        this.props.get_direct_purchase_events(id, e5)
-        this.props.get_storefront_auction_bids(object)
-        this.props.get_objects_messages(id, e5)
-        this.props.get_object_censored_keywords_and_accounts(object)
+        await this.props.fetch_uploaded_files_for_object(object)
+        // await this.props.get_direct_purchase_events(id, e5)
+        // await this.props.get_storefront_auction_bids(object)
+        // await this.props.get_objects_messages(id, e5)
+        await this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -4752,8 +4771,8 @@ class home_page extends Component {
             this.update_cookies()
         }
         this.props.load_bag_storefront_items(object)
-        this.props.get_job_objects_responses(id, e5, 'bag')
-        this.props.get_objects_messages(id, e5)
+        // this.props.get_job_objects_responses(id, e5, 'bag')
+        // this.props.get_objects_messages(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -4771,7 +4790,7 @@ class home_page extends Component {
         return stores
     }
 
-    when_contractor_post_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_contractor_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_contractor_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
@@ -4785,9 +4804,9 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.fetch_uploaded_files_for_object(object)
-        this.props.get_contractor_applications(id, e5)
-        this.props.get_object_censored_keywords_and_accounts(object)
+        await this.props.fetch_uploaded_files_for_object(object)
+        // await this.props.get_contractor_applications(id, e5)
+        await this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -5247,7 +5266,7 @@ class home_page extends Component {
 
                 get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} when_file_link_tapped={this.props.when_file_link_tapped.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)}
 
-                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_new_chat_typing_notification={this.props.emit_new_chat_typing_notification.bind(this)}
+                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_new_chat_typing_notification={this.props.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)}
                 />
             </div>
         )
@@ -5293,7 +5312,7 @@ class home_page extends Component {
         }
         return (
             <div>
-                <div style={{'background-color':this.props.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40, backgroundImage: `${this.props.linear_gradient_text(this.props.theme['toast_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
+                <div style={{'background-color':this.props.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40, backgroundImage: `${this.props.linear_gradient_text(this.props.theme['toast_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat'}}>
                     <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
                         <img src={this.props.theme['alert_icon']} style={{height:25,width:'auto','scale': '0.9'}} />
                     </div>
@@ -6057,7 +6076,10 @@ class home_page extends Component {
 
     get_object_details(tem){
         if(tem['selected_tag'] == this.props.app_state.loc['1196']/* 'jobs' */){
-            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_jobs))
+            var chain_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var socket_jobs = this.get_all_sorted_objects(this.props.app_state.socket_created_jobs)
+            const all_jobs = this.sortByAttributeDescending(chain_jobs.concat(socket_jobs), 'timestamp')
+            var object = this.get_item_in_array2(tem['e5_id'], all_jobs)
             if(object != null){
                 return object['ipfs'].entered_title_text
             }
@@ -6089,7 +6111,10 @@ class home_page extends Component {
             }
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1213']/* 'posts' */){
-            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_posts))
+            var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_posts)
+            const all_posts = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
+            var object = this.get_item_in_array2(tem['e5_id'], all_posts)
             if(object != null){
                 return object['ipfs'].entered_title_text
             }
@@ -6149,7 +6174,10 @@ class home_page extends Component {
             }
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
-            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_bills))
+            var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
+            const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
+            var object = this.get_item_in_array2(tem['e5_id'], all_bills)
             if(object != null){
                 return object['ipfs'].identifier
             }
@@ -6444,7 +6472,11 @@ class home_page extends Component {
            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_nitro_item: tem['e5_id']})
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
-            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_bills))
+            var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_bills)
+            var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
+            const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
+
+            var object = this.get_item_in_array2(tem['e5_id'], all_bills)
             if(object != null) this.props.perform_bill_object_payment_search(object);
 
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_bill_item: tem['e5_id']})

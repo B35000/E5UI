@@ -119,8 +119,19 @@ class BagDetailsSection extends Component {
         if(this.props.selected_bag_item != null){
             var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
             if(object == null) return;
-            this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
+            this.perform_fetch_work(object)
+        }
+    }
+
+    perform_fetch_work(object){
+        const active = this.state.navigate_view_bag_list_detail_tags_object['i'].active
+        const selected_item = this.get_selected_item(this.state.navigate_view_bag_list_detail_tags_object, active)
+
+        if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
             this.props.get_objects_messages(object['id'], object['e5'])
+        }
+        else if(selected_item == this.props.app_state.loc['1693']/* 'responses' */){
+            this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
         }
     }
 
@@ -176,6 +187,10 @@ class BagDetailsSection extends Component {
 
     when_navigate_view_bag_list_detail_tags_object_updated(tag_obj){
         this.setState({navigate_view_bag_list_detail_tags_object: tag_obj})
+        var me = this;
+        setTimeout(function() {
+            me.check_for_new_responses_and_messages()
+        }, (1 * 300));
     }
 
     get_item_in_array(object_array, id){

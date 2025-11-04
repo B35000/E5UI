@@ -179,10 +179,25 @@ class StorefrontDetailsSection extends Component {
         if(this.props.selected_storefront_item != null){
             var object = this.get_item_in_array(this.get_storefront_items(), this.props.selected_storefront_item);
             if(object == null) return;
-            
-            this.props.get_direct_purchase_events(object['id'], object['e5'])
-            this.props.get_storefront_auction_bids(object)
+            this.perform_fetch_work(object)
+        }
+    }
+
+    perform_fetch_work(object){
+        const active = this.state.navigate_view_storefront_list_detail_tags_object['i'].active
+        const selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, active)
+
+        if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
             this.props.get_objects_messages(object['id'], object['e5'])
+        }
+        else if(selected_item == this.props.app_state.loc['2642d']/* 'bids 🙋‍♂️' */){
+            this.props.get_storefront_auction_bids(object)
+        }
+        else if(active == this.props.app_state.loc['2603']/* 'direct-purchases' */){
+            this.props.get_direct_purchase_events(object['id'], object['e5'])
+        }
+        else if(active == this.props.app_state.loc['2642br']/* 'indexer-orders' */){
+            this.props.get_direct_purchase_orders(object['id'], object['e5'])
         }
     }
 
@@ -230,6 +245,11 @@ class StorefrontDetailsSection extends Component {
 
     when_navigate_view_storefront_list_detail_tags_object_updated(tag_obj){
         this.setState({navigate_view_storefront_list_detail_tags_object: tag_obj})
+        var me = this;
+        setTimeout(function() {
+            me.check_for_new_responses_and_messages()
+        }, (1 * 300));
+        
     }
 
     get_item_in_array(object_array, id){
@@ -1897,8 +1917,13 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_compressed_purchase_item(item, sender_type, index, object){
-        var emoji = this.has_this_order_been_fulfilled(item, object) == true ? '🏁 ' :'⏳ '
-        if(item['indexer_order'] != true) emoji = ''
+        var emoji = ''
+        if(item['indexer_order'] != true){
+            var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
+            emoji = (signature == null || signature[item['signature_data']] == null) ? '⏳ ' : '🏁 '
+        } else {
+            emoji = this.has_this_order_been_fulfilled(item, object) == true ? '🏁 ' :'⏳ '
+        }
         return(
             <div onClick={()=> this.when_item_clicked_2(item, sender_type, object)}>
                 {this.render_detail_item('3', {'size':'l', 'title':emoji+this.get_senders_name(item['sender_account'], object)+' • '+(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - item['time']), 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description']+' • '+number_with_commas(item['purchase_unit_count'])+' '+this.get_composition_type(object)+' • '+item['custom_specifications'] })}

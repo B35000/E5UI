@@ -2306,7 +2306,7 @@ return data['data']
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1114c']/* 'custom_specifications ' */, 'details':item['custom_specifications']})}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'details':this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account'] })}
-                    <div style={{height:10}}/>
+                    
                     {this.render_purchase_options_if_any(item)}
                     {this.render_fulfilment_signature_if_any(item, object)}
                 </div>
@@ -2330,6 +2330,7 @@ return data['data']
         if(storefront_options == null || storefront_options.length == 0) return;
         return(
             <div>
+                <div style={{height:10}}/>
                 {items.map((item, index) => (
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {/* {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
@@ -2368,6 +2369,7 @@ return data['data']
             if(this.has_this_order_been_fulfilled(item, object)){
                 return(
                     <div>
+                        <div style={{height:10}}/>
                         {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bo']/* 'Order Finalized.' */, 'details':this.props.app_state.loc['2642bp']/* 'Youve already finalized this order and a record of your payment is on E5.' */})}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -2391,6 +2393,7 @@ return data['data']
             if(this.has_this_order_been_fulfilled(item, object)){
                 return(
                     <div>
+                        <div style={{height:10}}/>
                         {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bo']/* 'Order Finalized.' */, 'details':this.props.app_state.loc['2642bt']/* 'Youre client finalized this order and a record of their payment is on E5.' */})}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -2399,6 +2402,7 @@ return data['data']
             }else{
                 return(
                     <div>
+                        <div style={{height:10}}/>
                         {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2642bu']/* 'Order Pending.' */, 'details':this.props.app_state.loc['2642bv']/* 'No record exists on E5 for the payment of the order made by your client.' */})}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -2416,6 +2420,8 @@ return data['data']
                     <div style={{'padding': '1px'}} onClick={() => this.clear_purchase(item, sender_type, object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2638']/* 'Clear Purchase' */, 'action':''})}
                     </div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2808,7 +2814,18 @@ return data['data']
     get_all_mail(){
         var mail_objects = []
         var all_messages = this.props.app_state.all_mail
+        var all_messages2 = this.props.app_state.socket_all_mail
         for(const convo_id in all_messages){
+            if(all_messages.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages[convo_id]
+                convo_messages.forEach(message => {
+                    if(message['ipfs'] != null && message['ipfs'].entered_title_text != null){
+                        mail_objects.push(message)
+                    }
+                });
+            }
+        }
+        for(const convo_id in all_messages2){
             if(all_messages.hasOwnProperty(convo_id)){
                 var convo_messages = all_messages[convo_id]
                 convo_messages.forEach(message => {

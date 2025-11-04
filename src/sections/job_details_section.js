@@ -113,14 +113,26 @@ class JobDetailsSection extends Component {
         if(this.props.selected_job_post_item != null){
             var object = this.get_item_in_array(this.get_job_items(), this.props.selected_job_post_item)
             if(object == null) return;
+            this.perform_fetch_work(object)
+        }
+    }
+
+    perform_fetch_work(object){
+        const active = this.state.navigate_view_jobs_list_detail_tags_object['i'].active
+        const selected_item = this.get_selected_item(this.state.navigate_view_jobs_list_detail_tags_object, active)
+
+        if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
+            this.props.get_objects_messages(object['id'], object['e5'])
+        }
+        else if(selected_item == this.props.app_state.loc['1693']/* 'responses' */){
             this.props.get_job_objects_responses(object['id'], object['e5'], 'job')
-            this.props.get_objects_messages(object['id'],  object['e5'])
         }
     }
 
     reset_tags(){
         this.setState({navigate_view_jobs_list_detail_tags_object: this.get_navigate_view_jobs_list_detail_tags()})
     }
+    
 
     get_navigate_view_jobs_list_detail_tags(){
         return{
@@ -161,6 +173,10 @@ class JobDetailsSection extends Component {
 
     when_navigate_view_jobs_list_detail_tags_object_updated(tag_group){
         this.setState({navigate_view_jobs_list_detail_tags_object: tag_group})
+        var me = this;
+        setTimeout(function() {
+            me.check_for_new_responses_and_messages()
+        }, (1 * 300));
     }
 
 

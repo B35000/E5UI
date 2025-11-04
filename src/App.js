@@ -1015,7 +1015,7 @@ class App extends Component {
     censored_keywords:[], media_activation_tx_limit:0, media_activation_age_limit:0, 
 
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
-    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}
+    socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
   };
 
   get_thread_pool_size(){
@@ -5777,7 +5777,7 @@ class App extends Component {
 
           when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)} get_default_background={this.get_default_background.bind(this)} linear_gradient_text={this.linear_gradient_text.bind(this)}
 
-          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
+          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -8048,8 +8048,9 @@ class App extends Component {
       if(!this.worker_queue.includes(work_identifier)){
         this.worker_queue.push(work_identifier)
       }
+      await this.wait(50)
       if (this.are_all_workers_unavailable() == false && this.worker_queue[0] == work_identifier) break
-      await new Promise(resolve => setTimeout(resolve, 400))
+      await this.wait(400)
     }
     const index = this.worker_queue.indexOf(work_identifier)
     if(index != -1){
@@ -14132,7 +14133,7 @@ class App extends Component {
     }
   }
 
-  show_clear_purchase_bottomsheet(item, client_type, storefront){
+  async show_clear_purchase_bottomsheet(item, client_type, storefront){
     this.open_clear_purchase_bottomsheet()
     var me = this;
     setTimeout(function() {
@@ -14141,6 +14142,16 @@ class App extends Component {
       }
     }, (1 * 500));
 
+    await this.fetch_signature_requests_from_socket_storage(storefront)
+  }
+
+  async fetch_signature_requests_from_socket_storage(storefront){
+    const target = 'signature_request|'+storefront['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
+    const target2 = 'signature_response|'+storefront['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
+
+    this.setState({loading_socket_signature_request_response_data: true})
+    await this.get_objects_from_socket_and_set_in_state([target, target2], [], [])
+    this.setState({loading_socket_signature_request_response_data: false})
   }
 
   generate_signature = async (data) => {
@@ -21539,7 +21550,7 @@ class App extends Component {
     }
     return (
       <div style={{'display': 'flex', 'align-items':'center','justify-content':'center',}} onClick={() => this.handle_onclick_data_if_any(onClickData)}>
-          <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40, backgroundImage: `${this.linear_gradient_text(this.state.theme['toast_background_color'])}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+          <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40, backgroundImage: `${this.linear_gradient_text(this.state.theme['toast_background_color'])}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat',}}>
               <div style={{'padding': '6px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}>
                   <img src={this.state.theme['alert_icon']} style={{height:25,width:'auto','scale': '0.9'}} />
               </div>
@@ -30683,6 +30694,16 @@ class App extends Component {
   }
 
   get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, prioritized_accounts, load_prioritized_accounts_exclusively, specific_items, return_created_object_events_only=false, all_return_data={}) => {
+
+    // const event_params2 = [
+    //   [web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: '1787'}],/* created_awward_data */
+    //   [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: '1787'}],/* created_fulfilment_data */
+    //   [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 46, p3/* context */:'1787'}],/* order_payment_events */
+    // ]
+    // console.log('get_direct_purchase_events', 'making multiple event calls to nitro...')
+    // const all_events = (await this.load_multiple_events_from_nitro(event_params2, null, 'get_direct_purchase_events')).all_events
+    // console.log('get_direct_purchase_events', 'return data array', all_events)
+
     var created_store_events = (this.state.saved_pre_launch_events[e5] != null && this.state.created_stores[e5] == null) || return_created_object_events_only == true ? this.state.saved_pre_launch_events[e5]['created_store_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 27/* 27(storefront-item) */, p1:this.get_valid_post_index(web3)})
     created_store_events = created_store_events.slice().reverse()
 
@@ -32129,7 +32150,7 @@ class App extends Component {
     }
   }
 
-  load_multiple_events_from_nitro = async (event_params, p) => {
+  load_multiple_events_from_nitro = async (event_params, p, tag='') => {
     var event_requests = []
     for(var i=0; i<event_params.length; i++){
       const _web3 = event_params[i][0]
@@ -32153,15 +32174,13 @@ class App extends Component {
       load_limit = this.state.nitro_node_details[this.state.my_preferred_nitro]['event_data_request_limit']
     }
 
-    // console.log('load_multiple_events_from_nitro', 'get_direct_purchase_events', 'load_limit', load_limit)
-
     var event_request_batches = this.splitIntoChunks(event_requests, load_limit)
-    // console.log('load_multiple_events_from_nitro', 'get_direct_purchase_events', 'event_request_batches', event_request_batches)
+    console.log('load_multiple_events_from_nitro', tag, 'event_request_batches', event_request_batches)
     var return_array = []
     var return_obj = {}
     for(var i=0; i<event_request_batches.length; i++){
-      // console.log('load_multiple_events_from_nitro', 'get_direct_purchase_events', 'loading event batch...')
-      const { events, event_data } = await this.load_muliple_batch_events_from_nitro(event_request_batches[i], beacon_node, p)
+      console.log('load_multiple_events_from_nitro', tag, 'loading event batch...')
+      const { events, event_data } = await this.load_muliple_batch_events_from_nitro(event_request_batches[i], beacon_node, p, false, tag)
       return_array = return_array.concat(events)
       Object.assign(return_obj, event_data);
     }
@@ -32169,39 +32188,47 @@ class App extends Component {
     return { all_events: return_array, all_events_data: return_obj };
   }
 
-  load_muliple_batch_events_from_nitro = async (event_requests, beacon_node, p, updated_signature=false) => {
-    console.log('apppage', 'get_object_messages', 'making event call to nitro: ', event_requests)
-    const params = new URLSearchParams({
-      arg_string: await this.encrypt_arg_string(beacon_node, JSON.stringify({requests: event_requests, p: p, known: this.get_my_recorded_hashes(p)})),
-    });
-    var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
+  load_muliple_batch_events_from_nitro = async (event_requests, beacon_node, p, updated_signature=false, tag) => {
+    // console.log('apppage', 'get_object_messages', tag, 'making event call to nitro: ', event_requests)
+    var arg_obj = {requests: event_requests}
+    if(p != null){
+      arg_obj = {requests: event_requests, p: p, known: this.get_my_recorded_hashes(p)}
+    }
+    // console.log('apppage', 'get_object_messages', tag, 'arg obj:', arg_obj)
+    const encrypted_arg_string = await this.encrypt_arg_string(beacon_node, JSON.stringify(arg_obj), tag)
+    const params = new URLSearchParams({ arg_string: encrypted_arg_string, });
+
+    // console.log('apppage', 'get_object_messages', tag, 'params: ', params)
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'events')}/${await this.fetch_nitro_privacy_signature(beacon_node)}?${params.toString()}`
     try{
+      // console.log('apppage', 'get_object_messages', tag, 'starting fetch...', request)
       const response = await fetch(request);
       if (!response.ok) {
-        console.log('all_data', response)
+        console.log('all_data', tag, response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
-      var data = await response.text();
+      const data = await response.text();
       // console.log('apppage', 'get_object_messages', 'gotten unencrypted return data:', data)
-      var obj = await this.process_nitro_api_call_result(data, beacon_node);
-      console.log('apppage', 'get_object_messages', 'gotten return data from nitro: ', obj)
+      const obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('apppage', 'get_object_messages', tag, 'gotten return data from nitro: ', obj)
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.load_muliple_batch_events_from_nitro(event_requests, beacon_node, p, true)
+        return this.load_muliple_batch_events_from_nitro(event_requests, beacon_node, p, true, tag)
       }
       return { events: obj['data'], event_data: obj['hash_data'] }
     }
     catch(e){
-      console.log('apppage', 'get_object_messages', 'load_muliple_batch_events_from_nitro', e)
+      console.log('apppage', 'get_object_messages', tag, 'load_muliple_batch_events_from_nitro', e)
       return { events: [], event_data: {} }
     }
   }
 
-  encrypt_arg_string = async (node_url, target_data_to_encrypt) => {
+  encrypt_arg_string = async (node_url, target_data_to_encrypt, tag='') => {
     const data = this.state.nitro_url_temp_hash_data[node_url]
     const user_temp_encryption_key = data['user_temp_encryption_key']
-    return await this.encrypt_data_string(target_data_to_encrypt, user_temp_encryption_key)
+    const encrypted_data = await this.encrypt_data_string(target_data_to_encrypt, user_temp_encryption_key);
+    return encrypted_data;
   }
 
   get_ids_from_events(events){
@@ -36154,6 +36181,7 @@ class App extends Component {
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
     if(nitro_url == null) return;
 
+    console.log('apppage', 'loading cid', nitro_cid)
     const arg_string_data = await this.encrypt_arg_string(nitro_url, JSON.stringify({hashes:[nitro_cid]}))
     const params = new URLSearchParams({
       arg_string: arg_string_data,
@@ -36167,7 +36195,7 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, nitro_url);
-      // console.log('datas', 'hash object', obj)
+      console.log('apppage', 'nitro fetched data', obj)
       var object_data = obj['data']
       var cid_data = object_data[nitro_cid]
       // var confirmation_hash = await this.generate_hash(JSON.stringify(cid_data))
@@ -36177,7 +36205,10 @@ class App extends Component {
       //   console.log('apppage', confirmation_hash)
       //   return null
       // }
-      var decrypted_data = await this.decrypt_storage_object(cid_data)
+
+      if(cid_data == null) return;
+      
+      var decrypted_data = await this.decrypt_storage_object2(cid_data)
       const isString = (value) => {
         return typeof value === 'string' || value instanceof String;
       }
@@ -36187,9 +36218,9 @@ class App extends Component {
     }
     catch(e){
       console.log('apppage', 'get_object_messages', e)
-      if(depth < 3){
-        return await this.fetch_data_from_nitro(cid, depth+1)
-      }
+      // if(depth < 3){
+      //   return await this.fetch_data_from_nitro(cid, depth+1)
+      // }
     }
   }
 
@@ -39222,6 +39253,26 @@ class App extends Component {
 
   }
 
+  get_direct_purchase_orders = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const order_payment_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 46, p3/* context */:id})
+
+    var clone = structuredClone(this.state.direct_order_fulfilments);
+    clone[id] = order_payment_events
+    this.setState({direct_order_fulfilments: clone})
+
+    const e5_id = id+e5
+    const target_type = 'storefront_order|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
+    const target_type2 = 'signature_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
+    const target_type3 = 'signature_response|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
+    console.log('get_direct_purchase_events', 'loading signature request, response and orders')
+    await this.get_objects_from_socket_and_set_in_state([target_type, target_type2, target_type3], [], [])
+  }
+
   get_direct_purchase_events = async (id, e5) => {
     console.log('get_direct_purchase_events', 'beginning work...')
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -39235,28 +39286,26 @@ class App extends Component {
 
     var created_awward_data = [];
     var created_fulfilment_data = [];
-    var order_payment_events = [];
     console.log('get_direct_purchase_events', 'initialized values')
 
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       const event_params2 = [
         [web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id}],/* created_awward_data */
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id}],/* created_fulfilment_data */
-        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 46, p3/* context */:id}],/* order_payment_events */
       ]
       console.log('get_direct_purchase_events', 'making multiple event calls to nitro...')
-      const all_events = (await this.load_multiple_events_from_nitro(event_params2)).all_events
+      const all_events = (await this.load_multiple_events_from_nitro(event_params2, null, 'get_direct_purchase_events')).all_events
       created_awward_data = all_events[0] || []
       created_fulfilment_data = all_events[1] || []
-      order_payment_events = all_events[2] || []
       console.log('get_direct_purchase_events', 'calls complete, continuing...')
     }else{
       console.log('get_direct_purchase_events', 'beacon node offline, making calls individually...')
       created_awward_data = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})
+      console.log('get_direct_purchase_events', 'loaded created award data...')
 
       created_fulfilment_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id})
-
-      order_payment_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 46, p3/* context */:id})
+      console.log('get_direct_purchase_events', 'loaded created fulfilment data...')
+      
     }
 
     if(created_awward_data != null){
@@ -39277,23 +39326,13 @@ class App extends Component {
       console.warn('get_direct_purchase_events', 'award data is null...')
     }
 
-    const e5_id = id+e5
-    const target_type = 'storefront_order|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
-    const target_type2 = 'signature_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
-    const target_type3 = 'signature_response|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
-    console.log('get_direct_purchase_events', 'loading signature request, response and orders')
-    await this.get_objects_from_socket_and_set_in_state([target_type, target_type2, target_type3], [], [])
-    console.warn('get_direct_purchase_events', 'socket objects set in state, proceeding...')
-
     var loaded_target = 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
       loaded_target = created_awward_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
 
-    var clone = structuredClone(this.state.direct_order_fulfilments);
-    clone[id] = order_payment_events
-    this.setState({direct_order_fulfilments: clone})
+    console.warn('get_direct_purchase_events', 'award data events loaded: ', created_awward_data)
 
     var direct_purchases = structuredClone(this.state.direct_purchases)
     const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
@@ -39308,7 +39347,7 @@ class App extends Component {
           ipfs_message = JSON.parse(JSON.parse(originalText));
         }
         ipfs_message['purchase_id'] = created_awward_data[j].returnValues.p4
-        ipfs_message['time'] = created_awward_data[j].returnValues.p6
+        ipfs_message['time'] = created_awward_data[j].returnValues.p5
         if(direct_purchases[id] == null){
           direct_purchases[id] = []
         }
@@ -39387,7 +39426,7 @@ class App extends Component {
 
     application_responses = application_responses.concat(socket_notifications)
     const e5_id = id+E5
-    this.get_objects_from_socket_and_set_in_state(['contractor_job_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address], [], application_responses)
+    await this.get_objects_from_socket_and_set_in_state(['contractor_job_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address], [], application_responses)
 
     created_job_respnse_data = created_job_respnse_data.reverse()
 
@@ -39473,13 +39512,13 @@ class App extends Component {
     this.setState({job_request_convo_keys: job_request_convo_keys_clone})
 
     const mail_messages_target = 'job_request_mail|'+request_id+this.state.accounts[this.state.selected_e5].address
-    this.get_objects_messages_from_socket_and_enter_chatroom(mail_messages_target)
+    await this.get_objects_messages_from_socket_and_enter_chatroom(mail_messages_target)
 
     const recipient_id = contractor_object['author'] == this.state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
     const recipient_e5 = contractor_object['e5']
     this.emit_new_read_receipts_notification(request_id, recipient_id, recipient_e5)
 
-    this.get_and_set_account_online_status(recipient_id, recipient_e5)
+    await this.get_and_set_account_online_status(recipient_id, recipient_e5)
 
     var all_object_comment_events = await this.get_job_request_comment_events(contractor_id, request_id)
     var loaded_target = 0
@@ -39524,11 +39563,11 @@ class App extends Component {
     const load_read_receipts_data = async () => {
       const to = await this.get_recipient_address(recipient_id, recipient_e5)
       const target_type = 'read_receipts|'+request_id+'|'+to
-      this.get_objects_from_socket_and_set_in_state([target_type], [], [])
-      this.get_alias_from_account_id(recipient_id, recipient_e5)
+      await this.get_objects_from_socket_and_set_in_state([target_type], [], [])
+      await this.get_alias_from_account_id(recipient_id, recipient_e5)
     }
     
-    load_read_receipts_data();
+    await load_read_receipts_data();
   }
 
   async get_job_request_messages_convo_id(key_data, e5){
@@ -43771,7 +43810,7 @@ class App extends Component {
 
     var my_public_key_uint8_array = await this.get_account_raw_public_key() 
     var my_encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(my_public_key_uint8_array))
-    recipent_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+    recipent_data[await this.get_my_unique_crosschain_identifier_number2()] = my_encrypted_key
 
     return { 'obj':encrypted_obj, 'recipient_data':recipent_data, 'encryptor_pub_key':this.uint8ToBase64(my_public_key_uint8_array) }
   }
@@ -44374,7 +44413,7 @@ class App extends Component {
         const job = {'id':id, 'ipfs':ipfs_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5 ,'e5_id':id+e5, 'responses':0, 
         'object_type':'job'}
 
-        var created_job = this.state.created_jobs[e5] == null ? [] : this.state.created_jobs[e5].slice()
+        var created_job = this.state.socket_created_jobs[e5] == null ? [] : this.state.socket_created_jobs[e5].slice()
         var created_job_mappings = this.state.created_job_mappings[e5] == null ? {} : structuredClone(this.state.created_job_mappings[e5])
 
         const index = created_job.findIndex(item => item['e5_id'] === job['e5_id']);
@@ -44385,12 +44424,12 @@ class App extends Component {
         }
         created_job_mappings[id] = job
 
-        const created_jobs_clone = structuredClone(this.state.created_jobs)
+        const created_jobs_clone = structuredClone(this.state.socket_created_jobs)
         const created_jobs_mapping_clone = structuredClone(this.state.created_job_mappings)
         created_jobs_clone[e5] = created_job
         created_jobs_mapping_clone[e5] = created_job_mappings
 
-        this.setState({created_jobs: created_jobs_clone, created_job_mappings: created_jobs_mapping_clone })
+        this.setState({socket_created_jobs: created_jobs_clone, created_job_mappings: created_jobs_mapping_clone })
         // if(am_I_the_author == true){
         //   await this.wait(300)
         //   this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
@@ -44434,7 +44473,7 @@ class App extends Component {
         const post_data = {'id':id, 'ipfs':ipfs_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5 ,'e5_id':id+e5, 'responses':0, 
         'object_type':'job'}
 
-        var created_posts = this.state.created_posts[e5] == null ? [] : this.state.created_posts[e5].slice()
+        var created_posts = this.state.socket_created_posts[e5] == null ? [] : this.state.socket_created_posts[e5].slice()
 
         const obj = {'id':id, 'ipfs':post_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5, 'e5_id':id+e5, 'object_type':'post'}
 
@@ -44445,9 +44484,9 @@ class App extends Component {
           created_posts.push(obj)
         }
 
-        const created_posts_clone = structuredClone(this.state.created_posts)
+        const created_posts_clone = structuredClone(this.state.socket_created_posts)
         created_posts_clone[e5] = created_posts
-        this.setState({created_posts: created_posts_clone });
+        this.setState({socket_created_posts: created_posts_clone });
 
         // if(am_I_the_author == true){
         //   await this.wait(300)
@@ -44492,7 +44531,7 @@ class App extends Component {
 
       console.log('socket_stuff', 'processed mail', ipfs_obj)
       if(ipfs_obj != null && ipfs_obj.entered_title_text != null){
-        const all_mail_clone = structuredClone(this.state.all_mail)
+        const all_mail_clone = structuredClone(this.state.socket_all_mail)
         if(all_mail_clone[convo_id] == null){
           all_mail_clone[convo_id] = []
         }
@@ -44511,14 +44550,14 @@ class App extends Component {
         const includes = all_mail_clone[convo_id].find(e => e['id'] === obj['id'])
         if(includes == null){
           all_mail_clone[convo_id].push(obj);
-          this.setState({all_mail: all_mail_clone})
+          this.setState({socket_all_mail: all_mail_clone})
           this.fetch_uploaded_files_for_object(ipfs_obj)
 
           if(am_I_the_author == true){
-            await this.wait(300)
-            this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1201']/* 'mail' */})
-            this.homepage.current?.when_mail_item_clicked(0, id, obj, 'ignore')
-            this.homepage.current?.reset_post_detail_object()
+            // await this.wait(300)
+            // this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1201']/* 'mail' */})
+            // this.homepage.current?.when_mail_item_clicked(0, id, obj, 'ignore')
+            // this.homepage.current?.reset_post_detail_object()
           }else{
             if(message.time > (Date.now()/1000) - (3*60)){
               event['e5'] = e5
@@ -44859,21 +44898,27 @@ class App extends Component {
       const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
 
       if(ipfs_obj != null){
-        const created_bills_clone = structuredClone(this.state.created_bills)
+        const created_bills_clone = structuredClone(this.state.socket_created_bills)
         if(created_bills_clone[e5] == null){
           created_bills_clone[e5] = []
         }
+        console.log('socket_stuff', 'my_bills', ipfs_obj)
         const bill = {
           'id':id, 'ipfs':ipfs_obj, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6/* timestamp */), 'author':event.returnValues.p2/* sender_acc_id */ ,'e5_id':id+e5, 'target':event.returnValues.p1, 'object_type':'bill'
         }
-        created_bills_clone[e5].push(bill)
+        const index = created_bills_clone[e5].findIndex(item => item['e5_id'] === bill['e5_id']);
+        if(index != -1){
+          created_bills_clone[e5][index] = bill
+        }else{
+          created_bills_clone[e5].push(bill)
+        }
         
-        this.setState({created_bills: created_bills_clone});
+        this.setState({socket_created_bills: created_bills_clone});
         if(am_I_the_author == true){
-          await this.wait(300)
-          this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264aj']/* 'bills' */})
-          this.homepage.current?.when_bill_item_clicked(bill, 'ignore')
-          this.homepage.current?.reset_post_detail_object()
+          // await this.wait(300)
+          // this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264aj']/* 'bills' */})
+          // this.homepage.current?.when_bill_item_clicked(bill, 'ignore')
+          // this.homepage.current?.reset_post_detail_object()
         }else{
           if(message.time > (Date.now()/1000) - (3*60)){
             event['e5'] = e5
@@ -45355,13 +45400,13 @@ class App extends Component {
 
   set_storefront_order_event_in_notifications(event, e5){
     event['e5'] = e5
-    event['p'] = event.returnValues.p3
-    event['time'] = event.returnValues.p5
-    event['block'] = event.returnValues.p6
+    event['p'] = event.returnValues.p2
+    event['time'] = event.returnValues.p6
+    event['block'] = event.returnValues.p7
     event['sender'] = event.returnValues.p1
     event['type'] = 'storefront'
     event['event_type'] = 'storefront'
-    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'}
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1'}
 
     var clone = structuredClone(this.state.notification_object)
     const request_clone_array = clone['storefront'] == null ? [] : clone['storefront'].slice()
