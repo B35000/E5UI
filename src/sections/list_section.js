@@ -28,6 +28,9 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { motion, AnimatePresence } from "framer-motion";
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 
 var bigInt = require("big-integer");
 
@@ -99,7 +102,7 @@ class PostListSection extends Component {
             </div>
         )
     }
-
+    
     render_post_list_group(){
         var selected_page = this.props.page;
         if(selected_page == '?'){
@@ -189,12 +192,12 @@ class PostListSection extends Component {
                     )
                 }
             }
-            else if(selected_tag == this.props.app_state.loc['1213']/* 'posts' */ ){
+            else if(selected_tag == this.props.app_state.loc['1213']/* 'posts' */){
                 return(
                     <div>{this.render_posts_list_group()}</div>
                 )
             }
-            else if(selected_tag == this.props.app_state.loc['1214']/* 'channels' */ ){
+            else if(selected_tag == this.props.app_state.loc['1214']/* 'channels' */){
                 return(
                 <div>{this.render_channels_list_group()}</div>
                 )
@@ -223,12 +226,12 @@ class PostListSection extends Component {
                 <div>{this.render_bag_item_list_group()}</div>
                 )
             }
-            else if(selected_tag == this.props.app_state.loc['1264k']/* 'audioport' */ ){
+            else if(selected_tag == this.props.app_state.loc['1264k']/* 'audioport' */){
                 return(
                     <div>{this.render_audio_list_group(selected_item)}</div>
                 )
             }
-            else if(selected_tag == this.props.app_state.loc['1264p']/* 'videoport' */ ){
+            else if(selected_tag == this.props.app_state.loc['1264p']/* 'videoport' */){
                 return(
                     <div>{this.render_video_list_group(selected_item)}</div>
                 )
@@ -798,7 +801,54 @@ class PostListSection extends Component {
 
 
 
+    is_loading_object_data(reload){
+        const active_page = this.get_section_name()
+        const object = {}
+        object[this.props.app_state.loc['1196']/* 'jobs' */] = this.props.app_state.created_jobs
+        object[this.props.app_state.loc['1197']/* 'contracts' */] = this.props.app_state.created_contracts
+        object[this.props.app_state.loc['1199']/* 'proposals' */] = this.props.app_state.my_proposals
+        object[this.props.app_state.loc['1200']/* 'subscriptions' */] = this.props.app_state.created_subscriptions
+        object[this.props.app_state.loc['1201']/* 'mail' */] = this.props.app_state.all_mail
+        object[this.props.app_state.loc['1198']/* 'contractors' */] = this.props.app_state.created_contractors
+        object[this.props.app_state.loc['1264s']/* 'nitro' */] = this.props.app_state.created_nitros
+       
+        object[this.props.app_state.loc['1213']/* 'posts' */] = this.props.app_state.created_posts
+        object[this.props.app_state.loc['1214']/* 'channels' */] = this.props.app_state.created_channels
+        object[this.props.app_state.loc['1215']/* 'storefront' */] = this.props.app_state.created_stores
+        object[this.props.app_state.loc['1216']/* 'bags' */] = this.props.app_state.created_bags
+        object[this.props.app_state.loc['1264k']/* 'audioport' */] = this.props.app_state.created_audios
+        object[this.props.app_state.loc['1264p']/* 'videoport' */] = this.props.app_state.created_videos
+        object[this.props.app_state.loc['1264ao']/* 'polls' */] = this.props.app_state.created_polls
 
+        object[this.props.app_state.loc['1218']/* 'ends' */] = this.props.app_state.created_tokens
+        object[this.props.app_state.loc['1219']/* 'spends' */] = this.props.app_state.created_tokens
+        object[this.props.app_state.loc['1264aj']/* 'bills' */] = this.props.app_state.created_bills
+
+        if(reload != null) return this.props.app_state.is_fetching_objects[active_page] == true;
+
+        return Object.keys(object[active_page]).length == 0 || this.props.app_state.is_fetching_objects[active_page] == true;
+    }
+
+    render_line_loader_if_reloading(){
+        if(this.is_loading_object_data('reload') == false) return;
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <div style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden'}}>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <Skeleton style={styles.skeletonBox}/>
+                </SkeletonTheme>
+            </div>
+        )
+    }
 
 
     render_jobs_list_group(){
@@ -813,14 +863,15 @@ class PostListSection extends Component {
 
         if(items.length == 0){
             items = ['0','1'];
-            return ( 
+            return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'jobs')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -832,12 +883,13 @@ class PostListSection extends Component {
             return (
                 <div>
                     <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        <AnimatePresence initial={false}>
+                        <AnimatePresence initial={true}>
                             <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                                {this.render_line_loader_if_reloading()}
                                 {this.show_load_metrics(items, 'jobs')}
                                 {this.show_new_objects_message_if_any(all_items)}
                                 {items.map((item, index) => (
-                                    <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                    <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                     style={{'padding': padding}}>
                                         {this.render_job_object(item, index)}
                                     </motion.li>
@@ -1006,11 +1058,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'contracts')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -1021,12 +1074,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'contracts')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_contract_item(item, index)}
                                 </motion.li>
@@ -1149,11 +1203,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'proposals')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -1164,13 +1219,14 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'proposals')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_proposal_object(item, index)}
                                 </motion.li>
@@ -1286,11 +1342,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'nitro')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -1302,12 +1359,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.nitro_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics([], 'nitro')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_nitro_object_if_locked(item, index)}
                                 </motion.li>
@@ -1400,11 +1458,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'subscriptions')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -1415,13 +1474,14 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'subscriptions')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_pay_all_upcoming_subscriptions_button(items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_subscription_object(item, index)}
                                 </motion.li>
@@ -1539,12 +1599,13 @@ class PostListSection extends Component {
             return( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_mail_message_if_wallet_not_set()}
                         {this.show_load_metrics([], object_type)}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -1555,12 +1616,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, object_type)}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_mail_object_or_null(item, index)}
                                 </motion.li>
@@ -1699,11 +1761,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'contractor')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -1715,12 +1778,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'contractor')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_contractor_object(item, index)}
                                 </motion.li>
@@ -2300,11 +2364,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'posts')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -2315,12 +2380,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'posts')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_post_object_if_locked(item, index)}
                                 </motion.li>
@@ -2592,11 +2658,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'channels')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -2607,12 +2674,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'channels')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_channel_object(item, index)}
                                 </motion.li>
@@ -2763,11 +2831,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'polls')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -2778,12 +2847,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.poll_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'polls')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_poll_object(item, index)}
                                 </motion.li>
@@ -2896,11 +2966,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'storefront')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -2911,12 +2982,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'storefront')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_storefront_object(item, index)}
                                 </motion.li>
@@ -3127,11 +3199,12 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'bags')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -3142,12 +3215,13 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return( 
                 <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'bags')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding':padding}}>
                                     {this.render_bag_object(item, index)}
                                 </motion.li>
@@ -3344,11 +3418,12 @@ class PostListSection extends Component {
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'audioport')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -3360,13 +3435,14 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.audio_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'audioport')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_search_songs(items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_audio_object_if_locked(item, index)}
                                 </motion.li>
@@ -4130,11 +4206,12 @@ return data['data']
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'videoport')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -4146,13 +4223,14 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.video_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'videoport')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_search_videos(items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_video_object_if_locked(item, index)}
                                 </motion.li>
@@ -4983,11 +5061,12 @@ return data['data']
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'tokens')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -4998,12 +5077,13 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return (
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <AnimatePresence initial={false}>
+                <AnimatePresence initial={true}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics(items, 'tokens')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
-                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                            <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                             style={{'padding': padding}}>
                                 {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                             </motion.li>
@@ -5216,11 +5296,12 @@ return data['data']
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics(items, 'tokens')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -5231,12 +5312,13 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <AnimatePresence initial={false}>
+                <AnimatePresence initial={true}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics(items, 'tokens')}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
-                            <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                            <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                             style={{'padding': padding}}>
                                 {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                             </motion.li>
@@ -5323,11 +5405,12 @@ return data['data']
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
                         {this.show_bills_message_if_wallet_not_set()}
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.render_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 4}}/>
                             </div>
                         ))}
@@ -5338,12 +5421,13 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.bill_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={false}>
+                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.render_line_loader_if_reloading()}
                             {this.render_pay_all_bills_button(items)}
                             {this.show_new_objects_message_if_any(all_items)}
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': padding}}>
                                     {this.render_bill_object(item, index)}
                                 </motion.li>
@@ -5522,6 +5606,43 @@ return data['data']
                 </div>
             </div>
         );
+    }
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     /* renders the specific element in the post or detail object */

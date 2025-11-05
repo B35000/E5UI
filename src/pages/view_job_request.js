@@ -34,6 +34,9 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -1329,11 +1332,7 @@ class ViewJobRequestPage extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
+                                    {this.props.app_state.object_messages[this.state.request_item['job_request_id']] == null || this.props.app_state.socket_object_messages[this.state.request_item['job_request_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>
@@ -1429,11 +1428,7 @@ class ViewJobRequestPage extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
+                                    {this.props.app_state.object_messages[this.state.request_item['job_request_id']] == null || this.props.app_state.socket_object_messages[this.state.request_item['job_request_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>
@@ -1443,9 +1438,9 @@ class ViewJobRequestPage extends Component {
         }else{
             return(
                 <div>
-                    <AnimatePresence initial={false} mode="popLayout">
+                    <AnimatePresence initial={true} mode="popLayout">
                         {items.map((item, index) => (
-                            <motion.li key={item['message_id']} initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                            <motion.li key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div>
                                     {this.render_message_as_focused_if_so(item)}
                                     <div style={{height:3}}/>
@@ -1457,6 +1452,53 @@ class ViewJobRequestPage extends Component {
             )
         }
         
+    }
+
+    render_small_empty_object(){
+        return(
+            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 10px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                </div>
+            </div>
+        );
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     focus_message(item){
@@ -2096,7 +2138,7 @@ class ViewJobRequestPage extends Component {
         }
         return message
     }
-
+    
     get_convo_messages(){
         var object = this.state.request_item;
         const chain_messages = this.props.app_state.object_messages[object['job_request_id']] == null ? [] : this.props.app_state.object_messages[object['job_request_id']]

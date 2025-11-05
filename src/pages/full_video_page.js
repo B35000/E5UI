@@ -2173,9 +2173,9 @@ class FullVideoPage extends Component {
         }else{
             return(
                 <div>
-                    <AnimatePresence initial={false} mode="popLayout">
+                    <AnimatePresence initial={true} mode="popLayout">
                         {items.map((item, index) => (
-                            <motion.li key={item['message_id']} initial={{ opacity: 0, }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                            <motion.li key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div>
                                     {this.render_message_as_focused_if_so(item)}
                                     <div style={{height:3}}/>

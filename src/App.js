@@ -1016,6 +1016,8 @@ class App extends Component {
 
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
     socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
+
+    is_fetching_objects:{}
   };
 
   get_thread_pool_size(){
@@ -4924,6 +4926,7 @@ class App extends Component {
         'primary_text_color':'#393e46','secondary_text_color':'grey',
         
         'navbar_button_selected_color':'#f2f2f2','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
+        'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white',
         
@@ -4965,6 +4968,7 @@ class App extends Component {
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         
         'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
+        'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'#424242',
 
         'view_group_card_item_background':'#292929','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white',
 
@@ -5008,6 +5012,7 @@ class App extends Component {
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         
         'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
+        'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(42, 41, 41)',
 
         'view_group_card_item_background':'#1a1a1a','tag_background_color':'#303030', 'indexed_tag_background':'#242424', 'tag_shadow':'#303030', 'tag_text_color':'white',
 
@@ -5050,8 +5055,8 @@ class App extends Component {
 
         'primary_text_color':'#04e504', 'secondary_text_color':'#02f902',
         
-        'navbar_button_selected_color':'#203f00','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'#013f01',
-        'navbar_text_shadow_color':'#5bc15b',
+        'navbar_button_selected_color':'#203f00','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'#013f01', 'navbar_text_shadow_color':'#5bc15b',
+        'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
 
         'view_group_card_item_background':'#13190c','tag_background_color':'#203f00', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2',
 
@@ -5092,7 +5097,7 @@ class App extends Component {
         
         'primary_text_color':'#029302','secondary_text_color':'#03a003',
         
-        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#c5e8d6',
+        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#c5e8d6', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
         'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white',
         
@@ -5134,7 +5139,7 @@ class App extends Component {
         'primary_text_color':'#f70404', 'secondary_text_color':'#f43535',
         
         'navbar_button_selected_color':'#332020','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'#3f0101',
-        'navbar_text_shadow_color':'#511616',
+        'navbar_text_shadow_color':'#511616', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
 
         'view_group_card_item_background':'#190c0c','tag_background_color':'#3f0600', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a',
 
@@ -5175,7 +5180,7 @@ class App extends Component {
         
         'primary_text_color':'#930101','secondary_text_color':'#a00803',
         
-        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9d1d1',
+        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9d1d1', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
         'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white',
         
@@ -5217,7 +5222,7 @@ class App extends Component {
         'primary_text_color':'#0079ff', 'secondary_text_color':'#2587f7',
         
         'navbar_button_selected_color':'#202c33','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'#183651',
-        'navbar_text_shadow_color':'#171651',
+        'navbar_text_shadow_color':'#171651', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
 
         'view_group_card_item_background':'#0d0c19','tag_background_color':'#13293d', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7',
 
@@ -5258,7 +5263,7 @@ class App extends Component {
         
         'primary_text_color':'#017493','secondary_text_color':'#0374a0',
         
-        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#d1ebf9',
+        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#d1ebf9', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
         'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white',
         
@@ -5300,7 +5305,7 @@ class App extends Component {
         'primary_text_color':'#efec4c', 'secondary_text_color':'#efea58',
         
         'navbar_button_selected_color':'#333220','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'#505118',
-        'navbar_text_shadow_color':'#505116',
+        'navbar_text_shadow_color':'#505116', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
 
         'view_group_card_item_background':'#19190c','tag_background_color':'#7c7a26', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a',
 
@@ -5341,7 +5346,7 @@ class App extends Component {
         
         'primary_text_color':'#757701','secondary_text_color':'#9ba003',
         
-        'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
+        'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
         'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'transparent','tag_text_color':'white',
         
@@ -5383,7 +5388,7 @@ class App extends Component {
         'primary_text_color':'#c94cef', 'secondary_text_color':'#e058ef',
         
         'navbar_button_selected_color':'#312033','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#e058ef','secondary_navbar_text_color':'#c94cef','card_shadow_color':'#491851',
-        'navbar_text_shadow_color':'#481651',
+        'navbar_text_shadow_color':'#481651', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
 
         'view_group_card_item_background':'#160c19','tag_background_color':'#6a267c', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7',
 
@@ -5424,7 +5429,7 @@ class App extends Component {
         
         'primary_text_color':'#930191','secondary_text_color':'#8e03a0',
         
-        'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f2d1f9',
+        'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f2d1f9', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
         'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'transparent','tag_text_color':'white',
         
@@ -5466,7 +5471,7 @@ class App extends Component {
         'primary_text_color':'#efa04c', 'secondary_text_color':'#efb358',
         
         'navbar_button_selected_color':'#332c20','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efb358','secondary_navbar_text_color':'#efa04c','card_shadow_color':'#513a18',
-        'navbar_text_shadow_color':'#513d16',
+        'navbar_text_shadow_color':'#513d16', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
 
         'view_group_card_item_background':'#19130c','tag_background_color':'#7c5326', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a',
 
@@ -5507,7 +5512,7 @@ class App extends Component {
         
         'primary_text_color':'#935b01','secondary_text_color':'#a05403',
         
-        'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9ebd1',
+        'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9ebd1', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
         'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'transparent','tag_text_color':'white',
         
@@ -33580,6 +33585,10 @@ class App extends Component {
     var target_type = this.get_target_type_from_page(page)
     if(target_type == 0) return;
 
+    var is_fetching_objects_clone = structuredClone(this.state.is_fetching_objects)
+    is_fetching_objects_clone[page] = true;
+    this.setState({is_fetching_objects: is_fetching_objects_clone})
+
     // if(this.fetch_object_history == null){
     //   this.fetch_object_history = {}
     // }
@@ -33596,13 +33605,6 @@ class App extends Component {
 
     // var searched_tags_including_prioritized_tags = (this.load_selected_tags(page)).concat(searched_tags)
     var searched_tags_including_prioritized_tags = [].concat(searched_tags)
-
-    // if((page == this.getLocale()['1197']/* 'contracts' */ || page == this.getLocale()['1200']/* 'subscriptions' */ || page == this.getLocale()['1198']/* 'contractors' */) && searched_tags.length == 0 && this.state.user_account_id[this.state.selected_e5] != 1){
-    //   //prioritize my accounts data first
-    //   searched_tags_including_prioritized_tags = [this.state.user_account_id[this.state.selected_e5]].concat(searched_tags_including_prioritized_tags)
-    // }
-
-    // if(searched_tags.length != 0) searched_tags_including_prioritized_tags = searched_tags
 
     var all_unhashed_tags = []
     if(search != null && search != ''){
@@ -33671,6 +33673,10 @@ class App extends Component {
     }
     this.last_searched_tags = all_final_elements
     this.load_data_from_page_in_focus(page, extra_data)
+
+    var is_fetching_objects_clone = structuredClone(this.state.is_fetching_objects)
+    is_fetching_objects_clone[page] = false;
+    this.setState({is_fetching_objects: is_fetching_objects_clone})
   }
 
   fetch_all_followed_accounts(){
