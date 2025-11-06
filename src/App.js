@@ -1017,7 +1017,7 @@ class App extends Component {
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
     socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
 
-    is_fetching_objects:{}
+    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}
   };
 
   get_thread_pool_size(){
@@ -5782,7 +5782,7 @@ class App extends Component {
 
           when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)} get_default_background={this.get_default_background.bind(this)} linear_gradient_text={this.linear_gradient_text.bind(this)}
 
-          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)}
+          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -8922,6 +8922,7 @@ class App extends Component {
   }
 
   run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, e5) => {
+    this.lock_delete_pos_array(delete_pos_array, e5)
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
@@ -8988,6 +8989,7 @@ class App extends Component {
           update_pinns_on_chain:false,
           should_update_default_location_pins_in_e5:false
         })
+        me.unlock_delete_pos_array(e5)
         me.delete_stack_items(delete_pos_array)
         me.reset_gas_calculation_figure(me)
         me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
@@ -9009,50 +9011,10 @@ class App extends Component {
         var clone = structuredClone(this.state.is_running)
         clone[e5] = false
         me.setState({is_running: clone})
+        me.unlock_delete_pos_array(e5)
         me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
       });
     })
-
-    // this.prompt_top_notification('running your transactions...', 600)
-    // web3.eth.accounts.wallet.add(me.state.account.privateKey);
-    // contractInstance.methods.e(v5/* t_limits */, adds, ints, strs)
-    //     .send({
-    //       from: me.state.account.address, 
-    //       value: wei,
-    //       gasPrice, 
-    //       gasLimit 
-    //     })
-    //     .on('transactionHash', (hash) => {
-    //       console.log('e Transaction hash:', hash);
-    //     })
-    //     .on('receipt', (receipt) => {
-    //       console.log('e Transaction receipt:', receipt);
-    //       me.setState({stack_items: []})
-    //       me.get_accounts_data(me.state.account)
-    //       this.prompt_top_notification('run complete!', 600)
-    //     }).on('error', (error) => {
-    //       console.error('Transaction error:', error);
-    //       this.prompt_top_notification('run failed. Check your stacks transactions and try again', 1500)
-    //     });
-
-
-    // this.prompt_top_notification('running your transactions...', 600)
-    // const provider = new ethers.providers.JsonRpcProvider(this.state.web3);
-    // const wallet = new ethers.Wallet(me.state.account.privateKey, provider);
-    // const signer = provider.getSigner();
-    // const contract = new ethers.Contract(contractAddress, contractArtifact.abi, signer);
-    // const tx = await contract.connect(wallet).e(v5/* t_limits */, adds, ints, strs, { gasLimit: gasLimit, value: wei })
-    // const receipt = await tx.wait();
-
-    // if (receipt.status === 1) {
-    //   console.log('Transaction successful. Transaction hash:', receipt.transactionHash);
-    //   me.setState({stack_items: []})
-    //   me.get_accounts_data(me.state.account)
-    //   this.prompt_top_notification('run complete!', 600)
-    // } else {
-    //   console.log('Transaction failed. Transaction hash:', receipt.transactionHash);
-    //   this.prompt_top_notification('run failed. Check your stacks transactions and try again', 1500)
-    // }
   }
 
   reset_gas_calculation_figure(me){
@@ -9061,6 +9023,18 @@ class App extends Component {
     clone[me.state.selected_e5] = 0
     clone2[me.state.selected_e5] = 0
     me.setState({calculated_gas_figures: clone, calculated_arewave_storage_fees_figures: clone2})
+  }
+
+  lock_delete_pos_array(delete_pos_array, e5){
+    const clone = structuredClone(this.state.delete_pos_array_data)
+    clone[e5] = delete_pos_array
+    this.setState({delete_pos_array_data: clone})
+  }
+
+  unlock_delete_pos_array(e5){
+    const clone = structuredClone(this.state.delete_pos_array_data)
+    clone[e5] = []
+    this.setState({delete_pos_array_data: clone})
   }
 
   delete_stack_items(delete_pos_array){
@@ -21605,6 +21579,8 @@ class App extends Component {
     await this.wait(500)
     await this.load_root_config()
     await this.wait(500)
+    await this.load_coin_and_externals_data()
+    await this.wait(500)
     if(this.is_allowed_in_e5()){
       this.enableConsole()
       if(this.state.os == 'iOS'){
@@ -21675,6 +21651,32 @@ class App extends Component {
       }
     }else{
       return;
+    }
+  }
+
+  load_coin_and_externals_data = async () => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
+    
+    const request = `${beacon_node}/coin_and_externals_data`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      const data = await response.text();
+      const parsed_data = JSON.parse(data)
+      const fees_object = parsed_data['fees_object']
+      const exchange_rates = parsed_data['exchange_rates']
+      this.setState({fees_object: fees_object, exchange_rates: exchange_rates})
+    }
+    catch(e){
+      console.log('apppage', 'something went wrong with get_socket_data', e)
     }
   }
 
@@ -22186,7 +22188,7 @@ class App extends Component {
   }
 
   get_bitcoin_fees = async () => {
-    return 10;
+    if(this.state.fees_object != null && this.state.fees_object['bitcoin'] != null) return this.state.fees_object['bitcoin'];
     var request = `https://api.blockcypher.com/v1/btc/main`
     try{
       const response = await fetch(request);
@@ -22338,7 +22340,7 @@ class App extends Component {
   }
 
   get_litecoin_fees = async () => {
-    return 10;
+    if(this.state.fees_object != null && this.state.fees_object['litecoin'] != null) return this.state.fees_object['litecoin'];
     var request = `https://api.blockcypher.com/v1/ltc/main`
     try{
       const response = await fetch(request);
@@ -22447,7 +22449,7 @@ class App extends Component {
   }
 
   get_dogecoin_fees = async () => {
-    return 10;
+    if(this.state.fees_object != null && this.state.fees_object['dogecoin'] != null) return this.state.fees_object['dogecoin'];
     var request = `https://api.blockcypher.com/v1/doge/main`
     try{
       const response = await fetch(request);
@@ -22547,7 +22549,7 @@ class App extends Component {
   }
 
   get_dash_fees = async () => {
-    return 10;
+    if(this.state.fees_object != null && this.state.fees_object['dash'] != null) return this.state.fees_object['dash'];
     var request = `https://api.blockcypher.com/v1/dash/main`
     try{
       const response = await fetch(request);
@@ -23642,8 +23644,6 @@ class App extends Component {
     //   },
     // }
 
-    https://api.coingecko.com/api/v3/simple/price?ids=&vs_currencies=usd&include_market_cap=true
-
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -23655,10 +23655,18 @@ class App extends Component {
       // console.log('apppage', 'load_coin_and_ether_coin_prices', 'return data', json_data)
       var price_data = {}
       var asset_ids = Object.keys(json_data)
+      const exchange_rates = this.state.exchange_rates || {}
+      var my_currency = await this.get_country_currency()
+      var my_currency_exchange_rate = parseFloat(exchange_rates[my_currency])
+      if(my_currency_exchange_rate == null){
+        my_currency_exchange_rate = 1.0;
+        my_currency = 'USD';
+      } 
+      this.set_currency_name_in_locale(my_currency)
       for(var i=0; i<asset_ids.length; i++){
         const asset_id_in_focus = asset_ids[i]
-        const price_usd = json_data[asset_id_in_focus]['usd']
-        const market_cap = json_data[asset_id_in_focus]['usd_market_cap']
+        const price_usd = json_data[asset_id_in_focus]['usd'] * my_currency_exchange_rate
+        const market_cap = json_data[asset_id_in_focus]['usd_market_cap'] * my_currency_exchange_rate
         var asset_id = symbol_mappings[asset_id_in_focus].symbol
         var asset_name = symbol_mappings[asset_id_in_focus].name
         if(price_usd != null){
@@ -23683,6 +23691,30 @@ class App extends Component {
     catch(e){
       console.log('apppage', 'load_coin_and_ether_coin_prices', e)
     }
+  }
+
+  get_country_currency = async () => {
+    const request = `https://ipapi.co/json/`;
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('coin',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var parsed_obj = JSON.parse(data);
+      return parsed_obj['currency']
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  set_currency_name_in_locale(currency_id){
+    const clone = structuredClone(this.state.loc)
+    clone['1593ef'] = currency_id
+    clone['1593eh'] = clone['1593eh'].replace('$', currency_id)
+    this.setState({loc: clone})
   }
 
   get_all_coin_and_ether_symbols(){
@@ -39259,6 +39291,28 @@ class App extends Component {
 
   }
 
+  get_storefront_traffic_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const event_params2 = [
+      [web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id}],/* created_awward_data */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 46, p3/* context */:id}],/* order_payment_data */
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:45}]/* bids */
+    ]
+    const all_events = (await this.load_multiple_events_from_nitro(event_params2, null, 'get_storefront_traffic_data')).all_events
+
+    var clone = structuredClone(this.state.storefront_traffic_data);
+    clone[id] = {'direct_purchases':all_events[0], 'orders':all_events[1], 'bids':all_events[2]}
+    this.setState({storefront_traffic_data: clone})
+  }
+
   get_direct_purchase_orders = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -39354,6 +39408,7 @@ class App extends Component {
         }
         ipfs_message['purchase_id'] = created_awward_data[j].returnValues.p4
         ipfs_message['time'] = created_awward_data[j].returnValues.p5
+        ipfs_message['event'] = created_awward_data[j]
         if(direct_purchases[id] == null){
           direct_purchases[id] = []
         }
@@ -45373,6 +45428,7 @@ class App extends Component {
       }
       ipfs_message['purchase_id'] = event.returnValues.p4
       ipfs_message['time'] = event.returnValues.p6
+      ipfs_message['event'] = event
 
       messages.push(ipfs_message)
       var clone = JSON.parse(JSON.stringify(this.state.direct_orders))

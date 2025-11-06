@@ -400,7 +400,9 @@ class StorefrontDetailsSection extends Component {
                     {this.render_item_variants(object, composition_type)} 
                     <div style={{height: 10}}/>
                     {this.render_chatroom_enabled_message(object)}
-                    {this.render_out_of_stock_message_if_any(object)}                
+                    {this.render_out_of_stock_message_if_any(object)}   
+
+                    {this.render_storefront_traffic_metrics(object)}             
 
                     {this.render_add_to_bag_button(object)}
                     {this.render_direct_purchase_button(object)}
@@ -1624,6 +1626,157 @@ class StorefrontDetailsSection extends Component {
             'age':{'style':'l', 'title':this.props.app_state.loc['2633']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
         }
     }
+
+
+
+
+    render_storefront_traffic_metrics(object){
+        if(this.props.app_state.storefront_traffic_data[object['id']] == null) return;
+        const direct_purchases = this.props.app_state.storefront_traffic_data[object['id']]['direct_purchases'] || []
+        const graphs_data = this.get_transaction_data_points_as_average(direct_purchases, 'p5')
+        const dataPoints1 = graphs_data.dps
+        const start_time1 = graphs_data.starting_time
+
+        const orders = this.props.app_state.storefront_traffic_data[object['id']]['orders'] || []
+        const graphs_data2 = this.get_transaction_data_points_as_average(orders, 'p6')
+        const dataPoints2 = graphs_data2.dps
+        const start_time2 = graphs_data2.starting_time
+
+        const bids = this.props.app_state.storefront_traffic_data[object['id']]['bids'] || []
+        const graphs_data3 = this.get_transaction_data_points_as_average(bids, 'p6')
+        const dataPoints3 = graphs_data3.dps
+        const start_time3 = graphs_data3.starting_time
+
+        if(bids.length == 0 && orders.length == 0 && direct_purchases.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cd']/* 'Storefront Traffic.' */, 'details':this.props.app_state.loc['2642ce']/* `The amount of direct purchases, orders and bids the storefront receives overtime.` */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {direct_purchases.length > 0 && (
+                    <div>
+                        {this.render_detail_item('4', {'text':this.props.app_state.loc['2642ch']/* 'Direct Purchases.'  */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('6', {'dataPoints':dataPoints1, 'start_time':start_time1})}
+                        <div style={{height: 15}}/>
+                    </div>
+                )}
+
+                {orders.length > 0 && (
+                    <div>
+                        {this.render_detail_item('4', {'text':this.props.app_state.loc['2642ci']/* 'Completed Indexer Orders Events.'  */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('6', {'dataPoints':dataPoints2, 'start_time':start_time2})}
+                        <div style={{height: 15}}/>
+                    </div>
+                )}
+
+                {bids.length > 0 && (
+                    <div>
+                        {this.render_detail_item('4', {'text':this.props.app_state.loc['2642cj']/* 'Bidding Events.'  */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('6', {'dataPoints':dataPoints3, 'start_time':start_time3})}
+                        <div style={{height: 15}}/>
+                    </div>
+                )}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cg']/* 'Y-Axis: ' */+this.props.app_state.loc['2642cf']/* Events Registered. */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+            </div>
+        )
+    }
+
+    get_object_events(ipfs_objects){
+        const events = []
+        ipfs_objects.forEach(object => {
+            events.push(object['event'])
+        });
+        return events
+    }
+
+    get_transaction_data_points_as_average(events, time_p){
+        const return_data_object = {}
+
+        events.forEach(event_item => {
+            const event_time = event_item.returnValues[time_p]
+            const pos = (Math.floor(event_time/(60*60*3)))*(60*60*3)
+            if(return_data_object[pos] == null){
+                return_data_object[pos] = []
+            }
+            return_data_object[pos].push(event_item)
+        });
+
+        return this.get_steaming_stats_data_points(return_data_object)
+    }
+
+    get_steaming_stats_data_points(memory_stats_data){
+        var data = []
+        var timestamp_datapoints = Object.keys(memory_stats_data)
+        for(var i=0; i<timestamp_datapoints.length; i++){
+            const focused_item = memory_stats_data[timestamp_datapoints[i]].length
+            data.push(focused_item)
+
+            if(i==timestamp_datapoints.length-1){
+                var diff = Date.now()/1000 - timestamp_datapoints[i]
+                for(var t=0; t<diff; t+=60*60*3){
+                    if(data[data.length-1] == 0){
+                        data.push(0)
+                    }else{
+                        data.push(data[data.length-1]*0.999)    
+                    }
+                }
+            }
+            else{
+                var diff = timestamp_datapoints[i+1] - timestamp_datapoints[i]
+                for(var t=0; t<diff; t+=60*60*3){
+                    if(data[data.length-1] == 0){
+                        data.push(0)
+                    }else{
+                        data.push(data[data.length-1]*0.999)    
+                    }
+                }
+            }
+        }
+
+        const starting_time = timestamp_datapoints.length == 0 ? (1000*60*60*24) : timestamp_datapoints[0]*1000
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var largest = 0;
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200 && xVal < 100 && (factor * (xVal+1)) < data.length){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = sum / (slice.length)
+                original_y_val = result;
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if((largest) < (yVal)){
+                largest = (yVal)
+            }
+            var indicator = Math.round(yVal) +' '+ this.props.app_state.loc['665']/* 'transactions' */
+            if(yVal != null && !isNaN(yVal)){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time }
+    }
+
+
 
 
 

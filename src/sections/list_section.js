@@ -3729,12 +3729,7 @@ class PostListSection extends Component {
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={index}>
-                                <div style={{height:w, width:w, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:50 ,width:'auto'}} />
-                                    </div>
-                                    
-                                </div>
+                                {this.is_loading_object_data() == true ? this.render_discography_skeleton_object(w) : this.render_discography_empty_item(w)}
                             </ImageListItem>
                         ))}
                     </ImageList>
@@ -3755,6 +3750,54 @@ class PostListSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_discography_empty_item(w){
+        var background_color = this.props.theme['card_background_color']
+        return(
+            <div style={{height:w, width:w, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:50 ,width:'auto'}} />
+                </div>
+            </div>
+        )
+    }
+
+    render_discography_skeleton_object(w){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: w,
+                height: w,
+                borderRadius: '5px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '5px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 50,
+                objectFit: 'contain',
+                opacity: 1,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     render_bought_audio_item_plus_buttons(object, index, w, my_stacked_albums){
@@ -4389,12 +4432,7 @@ return data['data']
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={index}>
-                                <div style={{height:w, width:w, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:50 ,width:'auto'}} />
-                                    </div>
-                                    
-                                </div>
+                                {this.is_loading_object_data() == true ? this.render_discography_skeleton_object(w) : this.render_discography_empty_item(w)}
                             </ImageListItem>
                         ))}
                     </ImageList>

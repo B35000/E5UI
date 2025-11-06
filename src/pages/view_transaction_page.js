@@ -182,6 +182,11 @@ class ViewTransactionPage extends Component {
 
 
     open_dialog_ui(){
+        const e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
+        if(this.props.app_state.is_running[e5] == true){
+            this.props.notify(this.props.app_state.loc['1593kk']/* Wait for its E5 to finish running. */, 4500)
+            return;
+        }
         // this.setState({confirm_delete_dialog_box: true})
         this.props.show_dialog_bottomsheet({},'confirm_delete_dialog_box')
     }

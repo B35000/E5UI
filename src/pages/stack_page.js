@@ -1926,6 +1926,16 @@ class StackPage extends Component {
     }
 
     open_confirm_clear_stack_dialog(){
+        var is_running = false
+        Object.keys(this.props.app_state.is_running).forEach(e5 => {
+            if(this.props.app_state.is_running == true){
+                is_running = true
+            }
+        });
+        if(is_running == true){
+            this.props.notify(this.props.app_state.loc['1593kl']/* Wait for E5 to finish running first. */, 4500)
+            return;
+        }
         this.props.show_dialog_bottomsheet({}, 'confirm_clear_stack_dialog')
         // this.setState({confirm_clear_stack_dialog: true})
     }
@@ -1986,6 +1996,9 @@ class StackPage extends Component {
     render_stack_item(item, index){
         var op = this.props.app_state.hidden.includes(item) ? 0.5 : 1.0
         var e5_img = this.props.app_state.e5s[item.e5].e5_img
+        if(this.props.app_state.delete_pos_array_data[item.e5] != null && this.props.app_state.delete_pos_array_data[item.e5].includes(index)){
+            op = 0.5
+        }
         return(
             <div style={{'margin': '2px 0px 2px 0px', opacity: op}} onClick={() => this.open_view_transaction(item, index)}>
                 {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1446']/* 'Stack ID: ' */+item.id,'size':'l', 'title_image':e5_img})}
@@ -1995,7 +2008,10 @@ class StackPage extends Component {
 
     open_view_transaction(item, index){
         if(this.props.app_state.stacked_ids != null && this.props.app_state.has_wallet_been_set == false && this.props.app_state.stacked_ids.includes(item.id)){
-            this.props.notify(this.props.app_state.loc['1593hu']/* First set your wallet to view that transaction. */, 3500)
+            this.props.notify(this.props.app_state.loc['1593hu']/* First set your wallet to view that transaction. */, 5500)
+        }
+        else if(this.props.app_state.delete_pos_array_data[item.e5] != null && this.props.app_state.delete_pos_array_data[item.e5].includes(index)){
+            this.props.notify(this.props.app_state.loc['1593kj']/* That transaction is being run. */, 4500)
         }
         else{
             this.props.view_transaction(item, index)
@@ -2260,7 +2276,7 @@ class StackPage extends Component {
         return(
             <div>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593eh']/* 'Wallet Value in USD.' */, 'subtitle':this.format_power_figure(total_wallet_value_in_usd), 'barwidth':this.calculate_bar_width(total_wallet_value_in_usd), 'number':this.format_account_balance_figure(total_wallet_value_in_usd), 'barcolor':'#606060', 'relativepower':'USD', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593eh']/* 'Wallet Value in USD.' */, 'subtitle':this.format_power_figure(total_wallet_value_in_usd), 'barwidth':this.calculate_bar_width(total_wallet_value_in_usd), 'number':this.format_account_balance_figure(total_wallet_value_in_usd), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ei']/* 'Wallet Value in SATs' */, 'subtitle':this.format_power_figure(balance_value_in_sat), 'barwidth':this.calculate_bar_width(balance_value_in_sat), 'number':this.format_account_balance_figure(balance_value_in_sat), 'barcolor':'#606060', 'relativepower':'SATs', })}
                 </div>

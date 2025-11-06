@@ -4746,8 +4746,10 @@ class home_page extends Component {
         }
 
         await this.props.fetch_uploaded_files_for_object(object)
+        await this.props.get_storefront_traffic_data(id, e5)
         // await this.props.get_direct_purchase_events(id, e5)
         // await this.props.get_storefront_auction_bids(object)
+        // await this.props.get_direct_purchase_orders(id, e5)
         // await this.props.get_objects_messages(id, e5)
         await this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
@@ -7131,7 +7133,7 @@ class home_page extends Component {
     //     return(
     //         <div>
     //             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-    //                 {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593eh']/* 'Wallet Value in USD.' */, 'subtitle':this.format_power_figure(total_wallet_value_in_usd), 'barwidth':this.calculate_bar_width(total_wallet_value_in_usd), 'number':this.format_account_balance_figure(total_wallet_value_in_usd), 'barcolor':'#606060', 'relativepower':'USD', })}
+    //                 {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593eh']/* 'Wallet Value in USD.' */, 'subtitle':this.format_power_figure(total_wallet_value_in_usd), 'barwidth':this.calculate_bar_width(total_wallet_value_in_usd), 'number':this.format_account_balance_figure(total_wallet_value_in_usd), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
 
     //                 {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ei']/* 'Wallet Value in SATs' */, 'subtitle':this.format_power_figure(balance_value_in_sat), 'barwidth':this.calculate_bar_width(balance_value_in_sat), 'number':this.format_account_balance_figure(balance_value_in_sat), 'barcolor':'#606060', 'relativepower':'SATs', })}
     //             </div>

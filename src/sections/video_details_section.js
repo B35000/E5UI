@@ -2202,11 +2202,7 @@ class VideoDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
+                                    {this.props.app_state.award_data[object['id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>

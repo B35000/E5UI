@@ -793,6 +793,9 @@ class NewAudioPage extends Component {
             return;
         }
         const items = this.sort_items(unfiltered_items, previous_edits)
+        if(items.length == 0){
+            return;
+        }
         return(
             <div>
                 {this.render_detail_item('0')}
