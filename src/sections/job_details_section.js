@@ -127,7 +127,7 @@ class JobDetailsSection extends Component {
         if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
             this.props.get_objects_messages(object['id'], object['e5'])
         }
-        else if(selected_item == this.props.app_state.loc['1693']/* 'responses' */){
+        else if(active == this.props.app_state.loc['1693']/* 'responses' */){
             this.props.get_job_objects_responses(object['id'], object['e5'], 'job')
         }
     }
@@ -138,14 +138,20 @@ class JobDetailsSection extends Component {
     
 
     get_navigate_view_jobs_list_detail_tags(){
-        return{
+        var obj = {
           'i':{
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,this.props.app_state.loc['1693']/* 'responses' */, this.props.app_state.loc['2030']/* 'activity' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['1693']/* 'responses' */, this.props.app_state.loc['2030']/* 'activity' */],[1]
           ],
         }
+
+        obj[this.props.app_state.loc['1693']/* 'responses' */] = [
+            ['xor','e',1], [this.props.app_state.loc['1693']/* 'responses' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2507c']/* 'unaccepted' */,this.props.app_state.loc['2507d']/* 'accepted' */], [1],[1]
+        ]
+
+        return obj
     }
 
     render(){
@@ -167,7 +173,7 @@ class JobDetailsSection extends Component {
                 <div style={{}}>
                     {this.render_jobs_details_section()}
                     <div style={{'height':'50px', width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_jobs_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_jobs_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.navigate_view_jobs_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_jobs_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -208,7 +214,8 @@ class JobDetailsSection extends Component {
     }
 
     render_jobs_details_section(){
-        var selected_item = this.get_selected_item(this.state.navigate_view_jobs_list_detail_tags_object, this.state.navigate_view_jobs_list_detail_tags_object['i'].active)
+        const active = this.state.navigate_view_jobs_list_detail_tags_object['i'].active
+        var selected_item = this.get_selected_item(this.state.navigate_view_jobs_list_detail_tags_object, active)
         var object = this.get_item_in_array(this.get_job_items(), this.props.selected_job_post_item)
 
         if(object == null){
@@ -227,7 +234,7 @@ class JobDetailsSection extends Component {
                     </div>
                 )
             }
-            else if(selected_item == this.props.app_state.loc['1693']/* 'responses' */){
+            else if(active == this.props.app_state.loc['1693']/* 'responses' */){
                 return(
                     <div key={selected_item}>
                         {this.render_job_post_responses(object)}
@@ -1263,7 +1270,7 @@ class JobDetailsSection extends Component {
             const chain_messages = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
             const socket_messages = this.props.app_state.socket_job_responses[object['id']] == null ? [] : this.props.app_state.socket_job_responses[object['id']]
             const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
-            return all_responses
+            return this.filter_using_bottom_tags(all_responses)
         }else{
             var filtered_responses = []
             const chain_messages = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
@@ -1274,7 +1281,35 @@ class JobDetailsSection extends Component {
                     filtered_responses.push(all_responses[i])
                 }
             }
+            return this.filter_using_bottom_tags(filtered_responses)
+        }
+    }
+
+    filter_using_bottom_tags(filtered_responses){
+        var selected_item = this.get_selected_item(this.state.navigate_view_jobs_list_detail_tags_object, this.props.app_state.loc['1693']/* 'responses' */)
+
+        if(selected_item == this.props.app_state.loc['2695g']/* 'all' */){
             return filtered_responses
+        }
+        else if(selected_item == this.props.app_state.loc['2507c']/* 'unaccepted' */){
+            var unfulfilled_items = []
+            filtered_responses.forEach(item => {
+                if(item['is_response_accepted'] == false){
+                    //item is unfulfilled
+                    unfulfilled_items.push(item)
+                }
+            });
+            return unfulfilled_items
+        }
+        else if(selected_item == this.props.app_state.loc['2507d']/* 'accepted' */){
+            var fulfilled_items = []
+            filtered_responses.forEach(item => {
+                if(item['is_response_accepted'] == true){
+                    //item is unfulfilled
+                    fulfilled_items.push(item)
+                }
+            });
+            return fulfilled_items
         }
     }
 

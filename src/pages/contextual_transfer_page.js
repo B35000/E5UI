@@ -67,6 +67,7 @@ class ContextualTransferPage extends Component {
         identifier2:'', exchange_id2:'', price_amount2:0, price_data2:[], recipient_id2:'', transfer_recipient_id2:'', get_reocurring_tags_object:this.get_reocurring_tags_object(), entered_pdf_objects:[],
 
         get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
+        itransfer_objects:[]
     };
 
     constructor(props) {
@@ -77,6 +78,36 @@ class ContextualTransferPage extends Component {
 
     componentDidMount() {
         this.interval = setInterval(() => this.check_for_new_payments(), this.props.app_state.details_section_syncy_time);
+        this.set_previous_itransfers_in_state()
+    }
+
+    async set_previous_itransfers_in_state(){
+        var string_data = await this.props.get_local_storage_data_if_enabled("itransfer");
+        if(string_data != null){
+            const itransfer_objects = JSON.parse(string_data)['transfers']
+            this.setState({itransfer_objects: itransfer_objects})
+        }
+    }
+
+    add_itransfer_in_local_storage(itransfer_object){
+        const clone = this.state.itransfer_objects.slice()
+        if(!this.does_object_exist(clone, itransfer_object)) clone.push(itransfer_object)
+        const storage_object = {'transfers': clone}
+        this.props.set_local_storage_data_if_enabled("itransfer", JSON.stringify(storage_object, (key, value) =>
+            typeof value === 'bigint' ? value.toString() : value)
+        );
+        this.setState({itransfer_objects: clone})
+    }
+
+    does_object_exist(list, object){
+        var exists = false;
+        list.forEach(element => {
+            //{recipient, price_data, identifier}
+            if(element['recipient'] == object['recipient'] && element['identifier'] == object['identifier']){
+                exists = true;
+            }
+        });
+        return exists
     }
 
     componentWillUnmount() {
@@ -278,6 +309,8 @@ class ContextualTransferPage extends Component {
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_identifier_input_field_changed.bind(this)} text={this.state.identifier} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                {this.render_previous_itransfer_objects()}
                 {/* {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.iTransfer_identifier_size - this.state.identifier.length)})} */}
 
                 {this.render_detail_item('0')}
@@ -290,6 +323,69 @@ class ContextualTransferPage extends Component {
                 
             </div>
         )
+    }
+
+    render_previous_itransfer_objects(){
+        var items = [].concat(this.state.itransfer_objects)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_previous_itransfer_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_previous_itransfer_item(item){
+        //{recipient, price_data, identifier}
+        const title = this.truncate(item['identifier'], 23)
+        const details = item['recipient']
+        return(
+            <div onClick={() => this.when_previous_itransfer_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    when_previous_itransfer_item_clicked(item){
+        this.setState({identifier: item['identifier'], recipient_id: item['recipient'], price_data: item['price_data']})
+        this.props.notify(this.props.app_state.loc['3068bl']/* 'Previous preset set in state.' */, 4700)
     }
 
     render_create_itransfer_data2(){
@@ -657,6 +753,7 @@ class ContextualTransferPage extends Component {
                 entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
                 e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier
             }
+            this.add_itransfer_in_local_storage({recipient, price_data, identifier})
             this.props.add_itransfer_transaction_to_stack(obj)
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
             this.setState({identifier:'', price_data:[], recipient_id:''})
@@ -936,19 +1033,6 @@ class ContextualTransferPage extends Component {
             }
         }
         return active_e5s
-    }
-
-    render_empty_horizontal_list_item2(){
-        var background_color = this.props.theme['view_group_card_item_background']
-        return(
-            <div>
-                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'0px 0px 0px 0px'}}>
-                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
-                    </div>
-                </div>
-            </div>
-        )
     }
 
     render_e5_item(item){

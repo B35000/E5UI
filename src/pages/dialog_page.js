@@ -36,6 +36,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
+const { getDomain } = require("tldjs");
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
@@ -464,6 +465,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_view_bag_application_ui()}
+                </div>
+            )
+        }
+        else if(option == 'confirm_respond_to_signature_request'){
+            return(
+                <div>
+                    {this.render_signature_request_ui()}
                 </div>
             )
         }
@@ -8628,6 +8636,86 @@ return data['data']
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+    render_signature_request_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_signature_request_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_signature_request_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_signature_request_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_signature_request_data(){
+        const item = this.state.data['item']
+        const base_domain = getDomain(item['target_webhook_url']);
+        var image = this.props.app_state.e5s[item['sender_account_e5']].e5_img
+        return(
+            <div>
+                {this.render_detail_item('8', {'size':'l', 'title':item['sender_account'], 'image':image, 'details':this.props.app_state.loc['3055gm']/* 'Sender Account.' */ })}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'size':'l', 'title':item['sender_address'], 'details':this.props.app_state.loc['3055gn']/* 'Senders Address.' */ })}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'size':'l', 'title':base_domain, 'details':this.props.app_state.loc['3055gp']/* 'Webhook Url.' */ })}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div onClick={() => this.send_signature_reply(item)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055go']/* 'Send Signature Response.' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    send_signature_reply(item){
+        this.props.send_signature_response(item)
+    }
 
 
 

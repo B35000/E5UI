@@ -284,6 +284,19 @@ class ClearPurchasePage extends Component {
         }
     }
 
+    get_purchase_signature_prompts(){
+        const signature_prompts = []
+        const item = this.state.order_data
+        const purchase_identifier = item['purchase_identifier']
+        const received_signature_requests = this.props.app_state.received_signature_requests
+        Object.keys(received_signature_requests).forEach(signature_request_id => {
+            if(received_signature_requests[signature_request_id]['purchase_identifier'] == purchase_identifier){
+                signature_prompts.push(received_signature_requests[signature_request_id])
+            }
+        });
+        return signature_prompts
+    }
+
     get_senders_name2(sender){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[this.state.e5]){
@@ -433,19 +446,6 @@ class ClearPurchasePage extends Component {
         const item = this.state.order_data
         const purchase_identifier = item['purchase_identifier']
         const received_signature_requests = this.props.app_state.received_signature_responses
-        Object.keys(received_signature_requests).forEach(signature_request_id => {
-            if(received_signature_requests[signature_request_id]['purchase_identifier'] == purchase_identifier){
-                signature_prompts.push(received_signature_requests[signature_request_id])
-            }
-        });
-        return signature_prompts
-    }
-
-    get_purchase_signature_prompts(){
-        const signature_prompts = []
-        const item = this.state.order_data
-        const purchase_identifier = item['purchase_identifier']
-        const received_signature_requests = this.props.app_state.received_signature_requests
         Object.keys(received_signature_requests).forEach(signature_request_id => {
             if(received_signature_requests[signature_request_id]['purchase_identifier'] == purchase_identifier){
                 signature_prompts.push(received_signature_requests[signature_request_id])

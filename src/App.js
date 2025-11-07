@@ -1017,7 +1017,7 @@ class App extends Component {
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
     socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
 
-    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}
+    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}
   };
 
   get_thread_pool_size(){
@@ -5554,7 +5554,18 @@ class App extends Component {
 
   get_time_of_day_theme(){
     var hour = new Date().getHours()
-    if(hour >= 18 || hour < 7){
+    var minute = new Date().getMinutes()
+    var sunset_hour = 18;
+    var sunset_minute = 0;
+    var sunrise_hour = 7;
+    var sunrise_minute = 0
+    if(this.state != null && this.state.sunrise != null && this.state.sunset != null){
+      sunset_hour = this.state.sunset.getHours()
+      sunset_minute = this.state.sunset.getMinutes()
+      sunrise_hour = this.state.sunrise.getHours()
+      var sunrise_minute = this.state.sunset.getMinutes()
+    }
+    if((hour >= sunset_hour && minute >= sunset_minute) || (hour < sunrise_hour && minute < sunrise_minute)){
       if(hour >= 23 || hour < 4){
         return this.getLocale()['2740']/* midnight */
       }
@@ -15963,7 +15974,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-
+        send_signature_response={this.send_signature_response.bind(this)}
         />
       </div>
     )
@@ -16039,6 +16050,7 @@ class App extends Component {
       'confirm_emit_new_object':220,
       'view_job_application_details':350,
       'view_bag_application_details':350,
+      'confirm_respond_to_signature_request':300,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17055,6 +17067,12 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  async send_signature_response(item){
+    this.open_dialog_bottomsheet()
+    var signature_data = await this.generate_signature(item['signature_data'])
+    this.emit_new_open_signature_response(item, signature_data)
   }
 
 
@@ -21616,6 +21634,21 @@ class App extends Component {
     }
   }
 
+  async set_sunrise_sunset_times(){
+    try{
+      const ipRes = await fetch('https://ipapi.co/json/');
+      const loc = await ipRes.json();
+      const res = await fetch(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&formatted=0`);
+      const data = await res.json();
+      const sunrise = new Date(data.results.sunrise);
+      const sunset = new Date(data.results.sunset);
+
+      this.setstate({sunrise: sunrise, sunset: sunset})
+    }catch(e){
+      console.log('apppage', e)
+    }
+  }
+
   set_document_title(document_title){
     const document_title_data = {'e(Beta)':this.getLocale()['3085']/* 'e(Beta)' */, 'E5(Beta)':this.getLocale()['3086']/* 'E5(Beta)' */, 'E5':this.getLocale()['3087']/* 'E5' */, '??(Beta)':this.getLocale()['3088']/* '??(Beta)' */}
     document.title = document_title_data[document_title]
@@ -25434,12 +25467,23 @@ class App extends Component {
 
     
     
-    if(pre_launch_data[e5] != null){
-      this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
-      this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
-    }else{
-      this.load_my_contracts(e5)
-      this.load_my_subscriptions(e5)
+    if(account != null && account > 1000){
+      if(pre_launch_data[e5] != null){
+        this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
+        this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
+      }else{
+        this.load_my_contracts(e5)
+        this.load_my_subscriptions(e5)
+      }
+
+      const load_signature_data = async () => {
+        this.setState({loading_open_socket_signature_request_response_data: true})
+        const signature_request_target = 'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
+        const signature_response_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
+        await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target],[],[])
+        this.setState({loading_open_socket_signature_request_response_data: false})
+      }
+      load_signature_data()
     }
 
 
@@ -43038,6 +43082,12 @@ class App extends Component {
       else if(message['type'] == 'read_receipts'){
         me.process_new_read_receipts_message(message, object_hash, from, true)
       }
+      else if(message['type'] == 'open_signature_request'){
+        me.process_new_open_signature_request_message(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'open_signature_response'){
+        me.process_new_open_signature_response_message(message, object_hash, from, true)
+      }
     });
     this.socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -43393,6 +43443,40 @@ class App extends Component {
     const secondary_target = 'read_receipts|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
     
     this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_new_open_signature_response(signature_request, signature_data){
+    this.prompt_top_notification(this.getLocale()['2738bf']/* 'Sending Signature Response... */, 1900)
+    const message_object = await this.prepare_open_signature_response_message(signature_request, signature_data)
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(message_object)
+    }
+    const request = signature_request['target_webhook_url']
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+    }
+    catch(e){
+      console.log('apppage', 'something went wrong',e)
+    }
+
+    // const clone = this.state.broadcast_stack.slice()
+    // clone.push(mail_message_object.message.message_identifier)
+    // this.setState({broadcast_stack: clone})
+
+    // const to = signature_request['sender_address']
+    // const target = 'open_signature_response|'+to
+    // const secondary_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
+    // this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+
   }
 
 
@@ -44434,6 +44518,55 @@ class App extends Component {
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
+  }
+
+  async prepare_open_signature_response_message(signature_request, signature_data){
+    const signature_response = {
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'sender_address': this.state.accounts[this.state.selected_e5].address,
+      'signature': signature_data,
+      'target_address': signature_request['sender_address'],
+      'signature_request_id': signature_request['signature_request_id'],
+      'signature_response_id': this.make_number_id(12),
+      'time': Date.now(),
+    }
+
+    return signature_response;
+
+    // const tags = []
+    // const id = this.make_number_id(12)
+    // const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    // const block_number = await web3.eth.getBlockNumber()
+
+    // const author = this.state.user_account_id[this.state.selected_e5]
+    // const e5 = this.state.selected_e5
+    // const recipient = ''
+    // const channeling = ''
+    // const lan = ''
+    // const state = ''
+
+    // const object_as_string = JSON.stringify(signature_response, (key, value) =>
+    //   typeof value === 'bigint' ? value.toString() : value
+    // )
+    // const message = {
+    //   type: 'open_signature_response',
+    //   message_identifier: this.make_number_id(12),
+    //   author: author,
+    //   id:id,
+    //   recipient: recipient,
+    //   tags: tags,
+    //   channeling: channeling,
+    //   e5: e5,
+    //   lan: lan,
+    //   state: state,
+    //   data: object_as_string,
+    //   nitro_id: this.get_my_nitro_id(),
+    //   time: Math.round(Date.now()/1000),
+    //   block: parseInt(block_number),
+    // }
+    // const object_hash = this.hash_message_for_id(message);
+    // return { message, object_hash }
   }
 
 
@@ -45600,6 +45733,41 @@ class App extends Component {
     this.setState({tracked_online_accounts: clone})
   }
 
+  async process_new_open_signature_request_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const ipfs = JSON.parse(message.data)
+
+    /*
+      const signature_request = {
+        'sender_account': this.state.user_account_id[this.state.selected_e5],
+        'sender_account_e5': this.state.selected_e5,
+        'sender_address': this.state.accounts[this.state.selected_e5].address,
+        'signature_data': 'data to use in signature',
+        'target_address': 'target_recipient_address',
+        'signature_request_id': this.make_number_id(12),
+        'target_webhook_url':'link_to_target',
+        'time': Date.now(),
+      }
+    */
+
+    const received_signature_requests_object = structuredClone(this.state.received_open_signature_requests)
+    received_signature_requests_object[ipfs['signature_request_id']] = ipfs
+    this.setState({received_open_signature_requests: received_signature_requests_object})
+
+    if(message.time > (Date.now()/1000) - (3*60)){
+      this.handle_signature_request_notifications(ipfs)
+    }
+  }
+
+  async process_new_open_signature_response_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const ipfs = JSON.parse(message.data)
+
+    const received_signature_requests_object = structuredClone(this.state.received_open_signature_responses)
+    received_signature_requests_object[ipfs['signature_request_id']] = ipfs
+    this.setState({received_open_signature_responses: received_signature_requests_object})
+  }
+
 
 
 
@@ -45883,6 +46051,12 @@ class App extends Component {
               else if(target_entry.startsWith('read_receipts|')){
                 // console.log('socket_stuff','loaded a read receipts item', object_data)
                 await this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
+              }
+              else if(object_data['type'] == 'open_signature_request'){
+                await this.process_new_open_signature_request_message(object_data, object_hash, null, true)
+              }
+              else if(object_data['type'] == 'open_signature_response'){
+                await this.process_new_open_signature_response_message(object_data, object_hash, null, true)
               }
               await this.wait(200)
             }

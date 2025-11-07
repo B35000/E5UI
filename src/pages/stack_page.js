@@ -154,7 +154,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'Censor 🚫' */], [1],[1]
             ],
             'signatures':[
-              ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */, this.props.app_state.loc['1593km']/* 'requests 📩' */], [1],[1]
             ],
         };
 
@@ -168,7 +168,7 @@ class StackPage extends Component {
               ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */, this.props.app_state.loc['1593df']/* 'following 👥' */, this.props.app_state.loc['1593dq']/* 'censor 🚫' */, this.props.app_state.loc['1593ir']/* 'notes ℹ️' */], [1],[1]
             ]
         obj[this.props.app_state.loc['1593aj']/* 'signatures' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1593aj']/* 'signatures' */,this.props.app_state.loc['1593ak']/* 'sign' */,this.props.app_state.loc['1593al']/* 'verify' */, this.props.app_state.loc['1593km']/* 'requests 📩' */], [1],[1]
             ]
 
         return obj
@@ -1470,6 +1470,13 @@ class StackPage extends Component {
             return(
                 <div key={selected_item}>
                     {this.render_locations_ui()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593km']/* 'requests 📩' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_signature_requests_ui()}
                 </div>
             )
         }
@@ -12385,18 +12392,30 @@ class StackPage extends Component {
     when_add_word_button_tapped(){
         var typed_word = this.state.typed_word.trim();
 
+        if(typed_word.includes(' ')){
+            this.add_multiple_words(typed_word)
+            return;
+        }
+
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['1562']/* 'Type something.' */, 1400)
         }
-        else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify(this.props.app_state.loc['1563']/* 'Enter one word.' */, 1400)
-        }
+        // else if(this.hasWhiteSpace(typed_word)){
+        //     this.props.notify(this.props.app_state.loc['1563']/* 'Enter one word.' */, 1400)
+        // }
         else{
             var cloned_seed_array = this.state.added_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({added_tags: cloned_seed_array, typed_word:''})
             // this.props.notify('word added', 800)
         }
+    }
+
+    add_multiple_words(data){
+        var entities = data.split(' ')
+        var cloned_seed_array = this.state.added_tags.slice()
+        cloned_seed_array = cloned_seed_array.concat(entities)
+        this.setState({added_tags: cloned_seed_array, typed_word:''})
     }
 
     delete_entered_seed_word(word, pos){
@@ -13752,7 +13771,6 @@ class StackPage extends Component {
         }
     }
 
-
     render_verify_data_ui_data(){
         return(
             <div>
@@ -13785,7 +13803,6 @@ class StackPage extends Component {
         this.setState({signed_data_input: text})
     }
 
-
     verify_signature(){
         var e5 = this.state.selected_signature_e5
         var data = this.state.verify_signed_data_input.trim()
@@ -13808,7 +13825,6 @@ class StackPage extends Component {
         }
     }
 
-
     show_verified_signature_data(){
         if(this.props.app_state.verified_account_data_from_signature != null){
             var signer_address = this.props.app_state.verified_account_data_from_signature['address']
@@ -13830,6 +13846,100 @@ class StackPage extends Component {
          var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? 'Alias Unknown' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
     }
+
+
+
+
+
+
+
+
+
+    render_signature_requests_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div style={{'width':'99%'}}>
+                    {this.render_signature_requests_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_signature_requests_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_signature_requests_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_signature_requests_ui_data(){
+        const purchase_signature_prompts = this.get_purchase_signature_prompts()
+        if(purchase_signature_prompts.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1078h']/* 'Fulfil Signature Requests.' */, 'details':this.props.app_state.loc['1078i']/* 'If a signature request is sent to your account, it will show here.' */ })}
+                    {this.props.app_state.loading_open_socket_signature_request_response_data == true && (
+                        <div>
+                            <div style={{height:10}}/>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2642cb']/* 'Loading signature requests...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1078h']/* 'Fulfil Signature Requests.' */, 'details':this.props.app_state.loc['1078j']/* 'Tap on a signature request to respond with the signature shown.' */ })}
+                    <div style={{height:10}}/>
+                    {purchase_signature_prompts.map((item, index) => (
+                        <div onClick={() => this.open_confirm_send_signature_response(item)} style={{'padding': '3px 0px 3px 0px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['1078g']/* 'from account $' */.replace('$', item['sender_account']), 'details':new Date(item['time']).toLocaleString(), 'size':'l'})}
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    get_purchase_signature_prompts(){
+        const signature_prompts = []
+        const received_signature_requests = this.props.app_state.received_open_signature_requests
+        Object.keys(received_signature_requests).forEach(signature_request_id => {
+            signature_prompts.push(received_signature_requests[signature_request_id])
+        });
+        return signature_prompts
+    }
+
+    open_confirm_send_signature_response(item){
+        this.show_dialog_bottomsheet({'item':item}, 'confirm_respond_to_signature_request')
+    }
+
+
+
+
+
+
 
     
 

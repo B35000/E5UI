@@ -1630,6 +1630,9 @@ class StorefrontDetailsSection extends Component {
 
 
 
+
+    
+
     render_storefront_traffic_metrics(object){
         if(this.props.app_state.storefront_traffic_data[object['id']] == null) return;
         const direct_purchases = this.props.app_state.storefront_traffic_data[object['id']]['direct_purchases'] || []
