@@ -20271,6 +20271,9 @@ class App extends Component {
       id_types_array_object[id_type] = [event_object_id]
       this.start_loading_objects_in_background(id_types_array_object)
     }
+    else if(event_type == 'signature'){
+      this.load_specific_storefront_items(events, 'p2')
+    }
     
 
     var id = obj['notification_id']
@@ -35317,6 +35320,22 @@ class App extends Component {
     socket_notifications.forEach(event => {
       this.set_storefront_order_event_in_notifications(event, event['e5'])
     });
+    this.load_specific_storefront_items(socket_notifications, 'p3')
+
+    const socket_notifications2 = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'signature_request')
+
+    socket_notifications2.forEach(event => {
+      this.set_signature_request_event_in_notifications2(event)
+    });
+    this.load_specific_storefront_items(socket_notifications2, 'p2')
+  }
+
+  set_signature_request_event_in_notifications2(event){
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['signature'] == null ? [] : clone['signature'].slice()
+    request_clone_array.push(event)
+    clone['signature'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
   }
 
   load_my_storefront_ids = async (e5, account) => {
@@ -43375,7 +43394,7 @@ class App extends Component {
 
   async emit_new_signature_request(state_object, target_recipient_address, order_storefront){
     this.prompt_top_notification(this.getLocale()['2738be']/* 'Sending Signature Request... */, 1900)
-    const mail_message_object = await this.prepare_signature_request_message(state_object, target_recipient_address)
+    const mail_message_object = await this.prepare_signature_request_message(state_object, target_recipient_address, order_storefront)
 
     const clone = this.state.broadcast_stack.slice()
     clone.push(mail_message_object.message.message_identifier)
@@ -43385,6 +43404,10 @@ class App extends Component {
     const target = 'signature_request|'+order_storefront['e5_id']+'|'+to
     const secondary_target = 'signature_request|'+order_storefront['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+
+    const target2 = 'signature_request|'+to
+    const secondary_target2 = 'signature_request|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target2, object_hash: mail_message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_signature_response(state_object, signature_request, signature_data, order_storefront){
@@ -44334,7 +44357,8 @@ class App extends Component {
 
 
 
-  async prepare_signature_request_message(message_obj, target_recipient_address){
+  async prepare_signature_request_message(message_obj, target_recipient_address, order_storefront){
+    const id = this.make_number_id(12)
     const signature_request = {
       'purchase_identifier': message_obj['purchase_identifier'],
       'sender_account': this.state.user_account_id[this.state.selected_e5],
@@ -44342,15 +44366,16 @@ class App extends Component {
       'sender_address': this.state.accounts[this.state.selected_e5].address,
       'signature_data': message_obj['signature_data'],
       'target_address': target_recipient_address,
-      'signature_request_id': this.make_number_id(12),
+      'signature_request_id': id,
+      'storefront_id':order_storefront['id'],
+      'storefront_e5':order_storefront['e5'],
       'time': Date.now(),
     }
 
     const tags = []
-    const id = this.make_number_id(12)
+    
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
     const block_number = await web3.eth.getBlockNumber()
-
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
     const recipient = ''
@@ -44364,7 +44389,7 @@ class App extends Component {
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'signature_request',
-      message_identifier: this.make_number_id(12),
+      message_identifier: id,
       author: author,
       id:id,
       recipient: recipient,
@@ -44377,6 +44402,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      storefront_id: order_storefront['id'],
+      storefront_e5: order_storefront['e5'],
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -45634,6 +45661,9 @@ class App extends Component {
     if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
       this.handle_signature_request_notifications(ipfs)
     }
+    if(add_to_notifications == true){
+      this.set_signature_request_event_in_notifications(ipfs, message, object_hash)
+    }
   }
 
   handle_signature_request_notifications(ipfs){
@@ -45641,6 +45671,25 @@ class App extends Component {
     var prompt = this.getLocale()['2738aw']/* 'Incoming signature request from $' */
     prompt = prompt.replace('$', sender_account)
     this.prompt_top_notification(prompt, 10000)
+  }
+
+  set_signature_request_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: message.author, p2:message.storefront_id, p3:message.context, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['e5']
+    event['p'] = message.storefront_id
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = ipfs['sender_account']
+    event['type'] = 'signature'
+    event['event_type'] = 'signature'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'signature', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1'}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['signature'] == null ? [] : clone['signature'].slice()
+    request_clone_array.push(event)
+    clone['signature'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
   }
 
   async process_new_signature_response_message(message, object_hash, from, add_to_notifications){
@@ -45665,11 +45714,11 @@ class App extends Component {
     this.setState({received_signature_responses: received_signature_requests_object})
 
     if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
-      this.handle_signature_request_notifications(ipfs)
+      this.handle_signature_response_notifications(ipfs)
     }
   }
 
-  handle_signature_request_notifications(ipfs){
+  handle_signature_response_notifications(ipfs){
     var sender_account = ipfs['sender_account']
     var prompt = this.getLocale()['1078k']/* 'Incoming signature response from $' */
     prompt = prompt.replace('$', sender_account)
@@ -45853,7 +45902,9 @@ class App extends Component {
       'contractor_accept_job_request': 'contractor_accept_job_request|'+this.state.accounts[this.state.selected_e5].address,
       'mail': 'mail|'+this.state.accounts[this.state.selected_e5].address,
       'mail-message': 'mail|'+this.state.accounts[this.state.selected_e5].address,
-      'storefront_order':'storefront_order|'+this.state.accounts[this.state.selected_e5].address
+      'storefront_order':'storefront_order|'+this.state.accounts[this.state.selected_e5].address,
+      'signature_request':'signature_request|'+this.state.accounts[this.state.selected_e5].address,
+      'open_signature_request':'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
     }
     const target = target_object[type]
     
@@ -45886,6 +45937,9 @@ class App extends Component {
               }
               else if(type == 'storefront_order'){
                 events.push(this.process_new_storefront_order_event(object_data, object_hash))
+              }
+              else if(type == 'signature_request' || type == 'open_signature_request'){
+                events.push(this.process_new_signature_request_event(object_data, object_hash))
               }
               else{
                 events.push(this.process_new_mail_event(object_data, object_hash))
@@ -45968,6 +46022,21 @@ class App extends Component {
     const cid = object_hash;
 
     const event = {returnValues:{p1: sender_acc, p2:message.target, p3:message.context, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    return event
+  }
+
+  process_new_signature_request_event(message, object_hash){
+    const event = {returnValues:{p1: message.author, p2:message.storefront_id, p3:message.context, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['e5']
+    event['p'] = message.storefront_id
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = message['author']
+    event['type'] = 'signature'
+    event['event_type'] = 'signature'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'signature', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1'}
 
     return event
   }

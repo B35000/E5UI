@@ -244,9 +244,9 @@ class tags extends Component {
 
 
     /* called when a tag button is tapped */
-    when_tag_button_clicked(passed_pos, final_text){
+    when_tag_button_clicked(passed_pos, final_text, compute_object_only=false, compute_object){
         if(this.props.locked != null && this.props.locked == true) return;
-        var page_data = this.props.page_tags_object;
+        var page_data = compute_object_only == false ? this.props.page_tags_object : compute_object;
         var active = page_data['i'].active;
         const currently_selected_tag_pos = this.get_selected_item2(page_data, active)
         var pos = (final_text == 'e' && active == 'e' && page_data[active][0/* config */][0/* type */] == 'or' && currently_selected_tag_pos != 0) ? currently_selected_tag_pos : passed_pos;
@@ -352,19 +352,24 @@ class tags extends Component {
             } 
         }
       
-        this.props.when_tags_updated(clone, clicked_tag_name, is_selecting_same_tag);
-
-        var me = this;
-        setTimeout(function() {
-            var active = clone['i'].active;
-            var position = me.state.scroll_pos[active];
-            if(is_moving_down_option){ 
-                position = 0;
-            }
-            if(position != null){
-                me.myRef.current?.scrollTo(position, 0);
-            }
-        }, (1 * 10));
+        if(compute_object_only == false){
+            this.props.when_tags_updated(clone, clicked_tag_name, is_selecting_same_tag);
+            var me = this;
+            setTimeout(function() {
+                var active = clone['i'].active;
+                var position = me.state.scroll_pos[active];
+                if(is_moving_down_option){ 
+                    position = 0;
+                }
+                if(position != null){
+                    me.myRef.current?.scrollTo(position, 0);
+                }
+            }, (1 * 10));
+        }
+        else{
+            return clone
+        }
+        
     }
 
     get_selected_item(object, option){

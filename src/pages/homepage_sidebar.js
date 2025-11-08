@@ -227,9 +227,10 @@ class template extends Component {
         const notification_object = this.props.app_state.notification_object
         const token = notification_object['token'] == null ? [] : notification_object['token']
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
+        const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         
         
-        const all_events = token.concat(bill_request)
+        const all_events = token.concat(bill_request, signature)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

@@ -34,6 +34,7 @@ import * as naughtyWords from 'naughty-words';
 
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
 var bigInt = require("big-integer");
 
@@ -170,7 +171,7 @@ class ChannelDetailsSection extends Component {
                 <div style={{}}>
                     {this.render_channel_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', }}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_channel_list_detail_tags} tag_size={'l'} when_tags_updated={this.when_navigate_view_channel_list_detail_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags ref={c => this.bottom_tags = c} font={this.props.app_state.font} page_tags_object={this.state.navigate_view_channel_list_detail_tags} tag_size={'l'} when_tags_updated={this.when_navigate_view_channel_list_detail_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -210,6 +211,9 @@ class ChannelDetailsSection extends Component {
         }
 
         if(object != null){
+            if(this.props.screensize != 'l'){
+                return this.render_post_list_group_if_touch_screen(object)
+            }
             if(selected_item == this.props.app_state.loc['2028']/* 'metadata' */){
                 return(
                     <div>
@@ -260,6 +264,44 @@ class ChannelDetailsSection extends Component {
                 )
             }
         }
+    }
+
+    render_post_list_group_if_touch_screen(object){
+        var pos = this.state.navigate_view_channel_list_detail_tags['e'][2][0] - 1
+        const handle_change = (value) => {
+            const tag_name = this.state.navigate_view_channel_list_detail_tags['e'][1][value+1]
+            const current_tag_group = this.state.navigate_view_channel_list_detail_tags['i'].active 
+            const first_tag = this.state.navigate_view_channel_list_detail_tags[current_tag_group][1][0]
+            
+            const clone = structuredClone(this.state.navigate_view_channel_list_detail_tags)
+            const tag_object_clone = this.bottom_tags.when_tag_button_clicked(0, first_tag, true, clone)
+            const tag_object_clone2 = this.bottom_tags.when_tag_button_clicked(value+1, tag_name, true, tag_object_clone)
+            var me = this;
+            setTimeout(function() {
+                me.setState({navigate_view_channel_list_detail_tags: tag_object_clone2})
+            }, (1 * 200));
+        }
+        return(
+            <div>
+                <ViewPager tag="main">
+                    <Frame className="frame">
+                        <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => handle_change(parseInt(e))} className="track">
+                            <View className="view">
+                                <div>
+                                    {this.render_channel_main_details_section(object)}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_channel_activity(object)}
+                                </div>
+                            </View>
+                        </Track>
+                    </Frame>
+                </ViewPager>
+            </div>
+        )
+        
     }
 
 

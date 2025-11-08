@@ -78,7 +78,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */, this.props.app_state.loc['1264aj']/* 'bills' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */, this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['3067ac']/* 'signatures' */], [0]
                 ],
             };
         }
@@ -249,6 +249,13 @@ class ViewNotificationLogPage extends Component {
             return(
                 <div>
                     {this.render_wallet_data(['bill_request'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3067ac']/* 'signatures' */){
+            return(
+                <div>
+                    {this.render_wallet_data(['signature'])}
                 </div>
             )
         }
@@ -482,7 +489,8 @@ class ViewNotificationLogPage extends Component {
             )
         }else{
             const obj = {
-                'bill_request':this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
+                'bill_request': this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
+                'signature': this.props.app_state.loc['3067ad'],/* '✍️ $ sent you a singature request.' */
             }
             const event_type = item['event_type']
             const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -503,9 +511,9 @@ class ViewNotificationLogPage extends Component {
         const notification_object = this.props.app_state.notification_object
         const token = notification_object['token'] == null ? [] : notification_object['token']
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
+        const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         
-        
-        const all_events = token.concat(bill_request)
+        const all_events = token.concat(bill_request, signature)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

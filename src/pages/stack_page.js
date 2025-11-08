@@ -13187,8 +13187,9 @@ class StackPage extends Component {
 
         const token = notification_object['token'] == null ? [] : notification_object['token']
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
+        const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, bag_application_response, storefront, auctionbids, bill_request, token, bag)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, bag_application_response, storefront, auctionbids, bill_request, token, bag, signature)
 
         return this.sortByAttributeDescending(all_events, 'time')
     }
@@ -13238,6 +13239,7 @@ class StackPage extends Component {
         }else{
             const obj = {
                 'bill_request':this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
+                'signature': this.props.app_state.loc['3067ad'],/* '✍️ $ sent you a singature request.' */
             }
             const event_type = item['event_type']
             const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
