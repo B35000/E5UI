@@ -58,6 +58,13 @@ function makeid(length) {
     return result;
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class NewStorefrontItemPage extends Component {
     
     state = {
@@ -90,27 +97,32 @@ class NewStorefrontItemPage extends Component {
 
         auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0, viewers:[], viewer:'', pins:[],
 
-        get_direct_order_via_indexer_tags_object:this.get_direct_order_via_indexer_tags_object(),
+        get_direct_order_via_indexer_tags_object:this.get_direct_order_via_indexer_tags_object(), entered_purchase_accessible_objects:[]
     };
 
-    get_new_job_page_tags_object(){
-        var obj = {
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */, 'e.'+this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['c311cf']/* access */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */, this.props.app_state.loc['535am']/* 'expiry-time' */, this.props.app_state.loc['535aw']/* 'registration-deposit' */], [0]
-            ],
-            'text':[
-                ['or','',0], [this.props.app_state.loc['115']/* 'text' */, 'e.'+this.props.app_state.loc['120']/* 'e.font' */, 'e.'+this.props.app_state.loc['121']/* 'e.size' */], [0]
-            ],
-            'font':[
-                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
-            ],
-            'size':[
-                ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
-            ],
-        };
+    get_new_job_page_tags_object(is_auction){
+        var obj;
+        if(is_auction == true){
+            //is auction
+            obj = {
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */, 'e.'+this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['c311cf']/* access */, this.props.app_state.loc['441']/* 'variants' *//* , this.props.app_state.loc['535h'] *//* 'purchase-options' */, this.props.app_state.loc['535am']/* 'expiry-time' */, this.props.app_state.loc['535aw']/* 'registration-deposit' */], [0]
+                ],
+            };
+        }else{
+            //normal storefront
+            obj = {
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */, 'e.'+this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' *//* , this.props.app_state.loc['c311cf'] *//* access */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' *//* , this.props.app_state.loc['535am'] *//* 'expiry-time' *//* , this.props.app_state.loc['535aw'] *//* 'registration-deposit' */], [0]
+                ],
+            };
+        }
 
         obj[this.props.app_state.loc['115']] = [
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */, 'e.'+this.props.app_state.loc['120']/* 'e.font' */, 'e.'+this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -1293,7 +1305,9 @@ class NewStorefrontItemPage extends Component {
     }
 
     when_get_option_storefront_type_object_updated(tag_obj){
-        this.setState({get_option_storefront_type_object: tag_obj})
+        const is_auction = this.get_selected_item(tag_obj, 'e') == this.props.app_state.loc['535aj']/* 'auction' */
+        const updated_tags = this.get_new_job_page_tags_object(is_auction)
+        this.setState({get_option_storefront_type_object: tag_obj, get_new_job_page_tags_object: updated_tags})
     }
 
     when_get_purchase_through_bags_tags_object_updated(tag_obj){
@@ -3561,7 +3575,6 @@ return data['data']
         }
     }
 
-
     render_enter_item_price_part(){
         return(
             <div style={{}}>
@@ -3579,7 +3592,6 @@ return data['data']
             </div>
         )
     }
-
 
     render_set_token_and_amount_part(){
         var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
@@ -3765,8 +3777,15 @@ return data['data']
                 <div style={{height:10}}/>
                 {this.render_variant_images()}
 
-                {this.render_detail_item('0')}
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535bo']/* 'Purchase Accessibles.' */, 'details':this.props.app_state.loc['535bp']/* 'You can include some files that will be accessible once a direct purchase is made for this new item variant.' */, 'size':'l'})}
+                {this.render_create_purchase_accessibles()}
+                <div style={{height:10}}/>
+                {this.render_entered_purchase_accessibles()}
+
+
+                {this.render_detail_item('0')}
                 {this.render_available_unit_count(selected_composition)}
             </div>
         )
@@ -3785,7 +3804,8 @@ return data['data']
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                     </div>
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={true}
+                    />
                 </div>
             )
         }
@@ -3826,7 +3846,6 @@ return data['data']
         this.setState({variant_description: text})
     }
 
-
     when_image_variant_gif_picked = (e) => {
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){ 
@@ -3864,7 +3883,6 @@ return data['data']
         this.setState({variant_images: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
         
     }
-
 
     render_variant_images(){
         var col = Math.round(this.props.app_state.width / 100)
@@ -3908,7 +3926,6 @@ return data['data']
         }
     }
 
-
     when_variant_image_clicked(index){
         var cloned_array = this.state.variant_images.slice()
         if (index > -1) { // only splice array when item is found
@@ -3916,7 +3933,6 @@ return data['data']
         }
         this.setState({variant_images: cloned_array})
     }
-
 
     when_add_variant_tapped(){
         var images_to_add = this.state.variant_images
@@ -3926,6 +3942,7 @@ return data['data']
         var variant_description = this.state.variant_description.trim()
         var price_data = this.state.price_data
         var available_unit_count = this.state.available_unit_count
+        var entered_purchase_accessible_objects = this.state.entered_purchase_accessible_objects
 
         var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
 
@@ -3943,7 +3960,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['523']/* 'You need to specify how many units are available first' */, 5900)
         }
         else{
-            var variant = {'variant_id':makeid(3),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
+            var variant = {'variant_id':makeid(3),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count, 'purchase_accessible_objects': entered_purchase_accessible_objects}
 
             var clone = this.state.variants.slice()
             if(this.state.edit_variant_item_pos != -1){
@@ -3952,11 +3969,10 @@ return data['data']
             }else{
                 clone.push(variant)
             }
-            this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0, edit_variant_item_pos: -1})
+            this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0, edit_variant_item_pos: -1, entered_purchase_accessible_objects:[]})
             this.props.notify(this.props.app_state.loc['524']/* 'added the variant to the item' */, 2600)
         }
     }
-
 
     render_variants(){
         var middle = this.props.height-100;
@@ -4033,6 +4049,227 @@ return data['data']
 
 
 
+    render_create_purchase_accessibles(){
+        //csv_file_button, json_file_button, lrc_file_button, pdf_file_button, vtt_file_button, image_file_button, zip_file_button, music_file_button, video_file_button
+        return(
+            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['pdf_file_button']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_purchase_accessible_file', 10**16)}/>
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.static_assets['zip_file_button']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('zip', 'create_purchase_accessible_file', 10**16)}/>
+                </div>
+
+            </div>
+        )
+    }
+
+    when_purchase_accessible_objects_files_picked = async (files) => {
+        var clonedArray = this.state.entered_purchase_accessible_objects == null ? [] : this.state.entered_purchase_accessible_objects.slice();
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        files.forEach(file => {
+            if(!clonedArray.includes(file)){
+                clonedArray.push(file);
+            }
+        });
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+        }
+        this.setState({entered_purchase_accessible_objects: clonedArray, ecid_encryption_passwords: cloned_ecid_encryption_passwords});
+    }
+
+    render_entered_purchase_accessibles(){
+        var items = [].concat(this.state.entered_purchase_accessible_objects)
+        if(items.length == 0){
+            items = [1, 2, 3]
+                return(
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_purchase_accessible_item_clicked(item, index)}>
+                            {this.render_uploaded_file2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_purchase_accessible_item_clicked(item, index){
+        var cloned_array = this.state.entered_purchase_accessible_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+
+        this.setState({entered_purchase_accessible_objects: cloned_array})
+    }
+
+    render_uploaded_file2(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        const minified = false;
+        
+        if(data != null){
+            if(data['type'] == 'image'){
+                var img = data['data']
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var size = 'l'
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':img, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'audio'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = data['data']
+                var font_size = ['15px', '12px', 19];
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var video_height = "50"
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    font_size = ['12px', '10px', 16];
+                    video_height = "40"
+                }
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['zip_file']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'lyric'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['lyric_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['subtitle_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+        }
+    }
+    
+
+
+
 
 
     render_variant_tabs(){
@@ -4092,7 +4329,6 @@ return data['data']
         }
     }
 
-
     is_tab_active(index){
         return this.state.edit_variant_item_pos == index
     }
@@ -4129,7 +4365,7 @@ return data['data']
 
     focus_tab(item_pos){
         if(this.is_tab_active(item_pos)){
-            this.setState({edit_variant_item_pos: -1, variant_images:[], variant_description:'', price_data:[], available_unit_count:0})
+            this.setState({edit_variant_item_pos: -1, variant_images:[], variant_description:'', price_data:[], available_unit_count:0, entered_purchase_accessible_objects:[]})
         }else{
             this.props.notify(this.props.app_state.loc['535d']/* 'Editing that variant' */, 2000)
             this.set_focused_variant_data(item_pos)
@@ -4139,7 +4375,7 @@ return data['data']
 
     set_focused_variant_data(item_pos){
         var variant = this.state.variants[item_pos]
-        this.setState({variant_images: variant['image_data']['data']['images'], variant_description: variant['variant_description'], price_data: variant['price_data'], available_unit_count: variant['available_unit_count'], edit_variant_item_pos: item_pos});
+        this.setState({variant_images: variant['image_data']['data']['images'], variant_description: variant['variant_description'], price_data: variant['price_data'], available_unit_count: variant['available_unit_count'], edit_variant_item_pos: item_pos, entered_purchase_accessible_objects: variant['purchase_accessible_objects']});
     }
 
 

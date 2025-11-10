@@ -47,6 +47,15 @@ import default_page_background_dark_grey from './assets/default_page_background_
 import masked_e5_icon from './assets/masked_e5_icon.png'
 import masked_spend_icon from './assets/masked_spend_icon.png'
 import masked_end_icon from './assets/masked_end_icon.png'
+import csv_file_button from './assets/pick_csv_file_button.png'
+import json_file_button from './assets/pick_json_file_button.png'
+import lrc_file_button from './assets/pick_lrc_file_button.png'
+import pdf_file_button from './assets/pick_pdf_file_button.png'
+import vtt_file_button from './assets/pick_vtt_file_buttonpng.png'
+import image_file_button from './assets/pick_image_file_button.png'
+import music_file_button from './assets/pick_music_file_button.png'
+import video_file_button from './assets/pick_video_file_button.png'
+import zip_file_button from './assets/pick_zip_file_button.png'
 
 import alert_icon from './assets/alert_icon.png'
 import add_icon from './assets/add_icon.png'
@@ -1017,7 +1026,7 @@ class App extends Component {
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
     socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
 
-    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}
+    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{},
   };
 
   get_thread_pool_size(){
@@ -1051,7 +1060,17 @@ class App extends Component {
       'lyric_icon':lyric_icon,
       'subtitle_icon': subtitle_icon,
       'pdf_icon':pdf_icon,
+      'csv_file_button':csv_file_button,
+      'json_file_button':json_file_button,
+      'lrc_file_button':lrc_file_button,
+      'pdf_file_button':pdf_file_button,
+      'vtt_file_button':vtt_file_button,
+      'image_file_button':image_file_button,
+      'zip_file_button':zip_file_button,
+      'music_file_button':music_file_button,
+      'video_file_button':video_file_button,
     }
+    //csv_file_button, json_file_button, lrc_file_button, pdf_file_button, vtt_file_button, image_file_button, zip_file_button, music_file_button, video_file_button
   }
 
   get_e5s(){
@@ -5793,7 +5812,7 @@ class App extends Component {
 
           when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)} get_default_background={this.get_default_background.bind(this)} linear_gradient_text={this.linear_gradient_text.bind(this)}
 
-          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)}
+          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -17391,6 +17410,10 @@ class App extends Component {
       this.new_audio_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
       this.edit_audiopost_page.current?.when_lyric_file_selected_from_bottomsheet(picked_files)
     }
+    else if(function_name == 'create_purchase_accessible_file'){
+      this.new_storefront_item_page.current?.when_purchase_accessible_objects_files_picked(picked_files)
+      this.edit_storefront_page.current?.when_purchase_accessible_objects_files_picked(picked_files)
+    }
   }
 
   can_sender_include_file_in_media(){
@@ -21621,6 +21644,7 @@ class App extends Component {
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
+      this.set_up_connection_listeners()
       if(this.state.accounts[this.state.selected_e5] != null){
         var me = this
         setTimeout(function() {
@@ -26493,6 +26517,10 @@ class App extends Component {
               if(this.is_ecid(image)) ecids.push(image)
             });
           }
+          var variant_purchase_accessibles = variant['purchase_accessible_objects'] || []
+          variant_purchase_accessibles.forEach(file_link => {
+            if(this.is_ecid(file_link)) ecids.push(file_link)
+          });
         });
       }
       var songs = object['ipfs'].songs == null ? [] : object['ipfs'].songs
@@ -28327,9 +28355,9 @@ class App extends Component {
     }
 
     this.record_number_of_items(e5, 'subscriptions', created_subscriptions.length)
-    var sort_objects_into_3d_array = (created_subscriptions, all_return_data) => {
+    var sort_objects_into_3d_array = async (created_subscriptions, all_return_data) => {
       const object_array = []
-      console.log('get_subscription_data', 'calling sort_objects_into_3d_array')
+      const unloaded_items = {}
       created_subscriptions.forEach(id => {
         if(all_return_data[e5]['objects_data']['object_data'][id] != null){
           object_array.push(all_return_data[e5]['objects_data']['object_data'][id])
@@ -28344,11 +28372,18 @@ class App extends Component {
             my_default_object.push(arr)
           });
           object_array.push(my_default_object)
+          unloaded_items[id] = object_array.length-1
         }
       });
+      if(Object.keys(unloaded_items).length > 0){
+        const unloaded_objects = await F5contractInstance.methods.f74(Object.keys(unloaded_items)).call((error, result) => {});
+        Object.keys(unloaded_items).forEach((object_id, index)=> {
+          object_array[unloaded_items[object_id]] = unloaded_objects[index]
+        });
+      }
       return object_array
     }
-    var created_subscription_data = all_return_data[e5] != null ? sort_objects_into_3d_array(created_subscriptions, all_return_data) : await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
+    var created_subscription_data = all_return_data[e5] != null ? await sort_objects_into_3d_array(created_subscriptions, all_return_data) : await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
     var created_subscription_object_data = this.state.created_subscriptions[e5] == null ? [] : this.state.created_subscriptions[e5].slice()
     var created_subscription_object_mapping = this.state.created_subscription_object_mapping[e5] == null ? {} : structuredClone(this.state.created_subscription_object_mapping[e5])
     var is_first_time = this.state.created_subscriptions[e5] == null
@@ -28804,8 +28839,9 @@ class App extends Component {
     }
 
     this.record_number_of_items(e5, 'contracts',created_contracts.length)
-    var sort_objects_into_3d_array = (created_contracts, all_return_data) => {
+    var sort_objects_into_3d_array = async (created_contracts, all_return_data) => {
       const object_array = []
+      const unloaded_items = {}
       created_contracts.forEach(id => {
         if(all_return_data[e5]['objects_data']['object_data'][id] != null){
           object_array.push(all_return_data[e5]['objects_data']['object_data'][id])
@@ -28820,11 +28856,18 @@ class App extends Component {
             my_default_object.push(arr)
           });
           object_array.push(my_default_object)
+          unloaded_items[id] = object_array.length-1
         }
       });
+      if(Object.keys(unloaded_items).length > 0){
+        const unloaded_objects = await G5contractInstance.methods.f78(Object.keys(unloaded_items), false).call((error, result) => {});
+        Object.keys(unloaded_items).forEach((object_id, index)=> {
+          object_array[unloaded_items[object_id]] = unloaded_objects[index]
+        });
+      }
       return object_array
     }
-    var created_contract_data = all_return_data[e5] != null ? sort_objects_into_3d_array(created_contracts, all_return_data) : await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
+    var created_contract_data = all_return_data[e5] != null ? await sort_objects_into_3d_array(created_contracts, all_return_data) : await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
 
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
     
@@ -29150,8 +29193,9 @@ class App extends Component {
     
 
     var created_proposal_object_data = this.state.my_proposals[e5] == null ? [] : this.state.my_proposals[e5].slice()
-    var sort_objects_into_3d_array = (my_proposal_ids, all_return_data) => {
+    var sort_objects_into_3d_array = async (my_proposal_ids, all_return_data) => {
       const object_array = []
+      const unloaded_items = {}
       my_proposal_ids.forEach(id => {
         if(all_return_data[e5]['objects_data']['object_data'][id] != null){
           object_array.push(all_return_data[e5]['objects_data']['object_data'][id])
@@ -29166,11 +29210,18 @@ class App extends Component {
             my_default_object.push(arr)
           });
           object_array.push(my_default_object)
+          unloaded_items[id] = object_array.length-1
         }
       });
+      if(Object.keys(unloaded_items).length > 0){
+        const unloaded_objects = await G5contractInstance.methods.f78(Object.keys(unloaded_items), false).call((error, result) => {});
+        Object.keys(unloaded_items).forEach((object_id, index)=> {
+          object_array[unloaded_items[object_id]] = unloaded_objects[index]
+        });
+      }
       return object_array
     }
-    var created_proposal_data = all_return_data[e5] != null ? sort_objects_into_3d_array(created_contracts, all_return_data) : await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
+    var created_proposal_data = all_return_data[e5] != null ? await sort_objects_into_3d_array(created_contracts, all_return_data) : await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
     // var consensus_data = await G52contractInstance.methods.f266(my_proposal_ids, [], 0).call((error, result) => {});
     var is_first_time = this.state.my_proposals[e5] == null
 
@@ -29452,8 +29503,9 @@ class App extends Component {
 
     this.record_number_of_items(e5, 'tokens', created_tokens.length)
     this.load_received_tokens_events(web3, H52contractInstance, e5, account)
-    var sort_tokens_into_3d_array = (token_ids, pre_launch_data) => {
+    var sort_tokens_into_3d_array = async (token_ids, pre_launch_data) => {
       const object_array = []
+      const unloaded_items = {}
       token_ids.forEach(id => {
         if(pre_launch_data[e5]['created_token_data'][id] != null){
           object_array.push(pre_launch_data[e5]['created_token_data'][id])
@@ -29468,11 +29520,18 @@ class App extends Component {
             my_default_object.push(arr)
           });
           object_array.push(my_default_object)
+          unloaded_items[id] = object_array.length-1
         }
       });
+      if(Object.keys(unloaded_items).length > 0){
+        const unloaded_objects = await H5contractInstance.methods.f86(Object.keys(unloaded_items)).call((error, result) => {});
+        Object.keys(unloaded_items).forEach((object_id, index)=> {
+          object_array[unloaded_items[object_id]] = unloaded_objects[index]
+        });
+      }
       return object_array
     }
-    var created_token_data = pre_launch_data[e5] != null ? sort_tokens_into_3d_array(created_tokens, pre_launch_data) : await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
+    var created_token_data = pre_launch_data[e5] != null ? await sort_tokens_into_3d_array(created_tokens, pre_launch_data) : await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
 
 
     var token_balances_and_data = await this.get_balance_from_multiple_exchanges(focused_exchanges, account, H52contractInstance, depths, e5)
@@ -39094,7 +39153,7 @@ class App extends Component {
     }
 
     const clone = structuredClone(this.state.object_messages)
-    clone[id] = messages
+    clone[e5_id] = messages
     this.setState({object_messages: clone})
   }
 
@@ -39289,6 +39348,11 @@ class App extends Component {
 
     const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     var messages = []
+    if(created_job_respnse_data.length == 0){
+      const clone = structuredClone(this.state.job_responses)
+      clone[id] = messages
+      this.setState({job_responses: clone})
+    }
     var is_first_time = this.state.job_responses[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
@@ -39431,6 +39495,12 @@ class App extends Component {
       
     }
 
+    if(created_awward_data.length == 0){
+      var direct_purchases = structuredClone(this.state.direct_purchases)
+      direct_purchases[id] = []
+      this.setState({direct_purchases: direct_purchases})
+    }
+
     if(created_awward_data != null){
       console.log('get_direct_purchase_events', 'reversing created award data...')
       created_awward_data = created_awward_data.reverse()
@@ -39521,6 +39591,70 @@ class App extends Component {
     this.setState({direct_purchase_fulfilments: fulfilment_clone})
   }
 
+  async get_direct_purchase_files(object){
+    const id = object['id']
+    const e5 = object['e5']
+    const account = this.state.user_account_id[e5]
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const created_awward_data = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id, p1/* awward_sender */: account})
+
+    if(created_awward_data.length == 0){
+      const clone = structuredClone(this.state.purchase_accessible_objects)
+      clone[id] = []
+      this.setState({purchase_accessible_objects: clone})
+    }
+
+    var loaded_target = 0
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_awward_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+
+    const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+    for(var j=0; j<created_awward_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_awward_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        if(ipfs_message['encrypted_data'] != null){
+          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          ipfs_message = JSON.parse(JSON.parse(originalText));
+        }
+
+        const variant_id = ipfs_message['variant_id']
+        const get_variant_from_id = (variant_id) => {
+          for(var i=0; i<object['ipfs'].variants.length; i++){
+            if(object['ipfs'].variants[i]['variant_id'] == variant_id){
+              return object['ipfs'].variants[i]
+            }
+          }
+        }
+        const variant = get_variant_from_id(variant_id);
+        const purchase_accessibles = variant['purchase_accessible_objects'] || []
+        const purchase_accessible_objects_clone = this.state.purchase_accessible_objects[id] == null ? [] : this.state.purchase_accessible_objects[id].slice()
+        purchase_accessibles.forEach(file_item => {
+          if(!purchase_accessible_objects_clone.includes(file_item)){
+            purchase_accessible_objects_clone.push(file_item)
+          }
+        });
+
+        const clone = structuredClone(this.state.purchase_accessible_objects)
+        clone[id] = purchase_accessible_objects_clone
+        this.setState({purchase_accessible_objects: clone})
+      }
+      if(j == loaded_target && j+1 >= created_awward_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_awward_data.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
+      }
+    }
+  }
+
   get_contractor_applications = async (id, E5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(E5));
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -39561,6 +39695,11 @@ class App extends Component {
     }
     const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     var messages = []
+    if(created_job_respnse_data.length == 0){
+      var clone = JSON.parse(JSON.stringify(this.state.contractor_applications))
+      clone[id] = messages
+      this.setState({contractor_applications: clone})
+    }
     var is_first_time = this.state.contractor_applications[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
@@ -42272,7 +42411,8 @@ class App extends Component {
 
   load_nitro_directory_details = async (link) => {
     if(this.state.nitro_privacy_signature == null){
-      await this.update_nitro_privacy_signature()
+      const get_sync_block_from_nitro = link != this.state.beacon_chain_url
+      await this.update_nitro_privacy_signature(get_sync_block_from_nitro)
       await this.wait(350)
     }
     var request = `${link}/${this.state.nitro_privacy_signature}`
@@ -42958,7 +43098,38 @@ class App extends Component {
 
 
 
+  set_up_connection_listeners(){
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    }
 
+    if (this.socket2) {
+      this.socket2.disconnect();
+    }
+
+    this.socket2 = io(beacon_node, {
+      transports: ['websocket'],
+      reconnection: true, 
+      reconnectionAttempts: 10000000, 
+      reconnectionDelay: 10_000
+    });
+
+    this.socket2.on('connect', () => {
+      if(this.is_device_online != null){
+        this.prompt_top_notification(this.getLocale()['2738bh']/* Youre back online.' */, 3000)
+      }
+      this.is_device_online = true;
+    });
+
+    this.socket2.on('disconnect', () => {
+      this.prompt_top_notification(this.getLocale()['2738bm']/* Youve gone offline.' */, 3000)
+      this.is_device_online = false;
+    });
+  }
 
 
   async set_up_socket_connection_and_initialize_listeners(attempts){

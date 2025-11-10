@@ -37,10 +37,8 @@ import { from } from "@iotexproject/iotex-address-ts";
 import imageCompression from 'browser-image-compression';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-import { constants } from 'buffer';
 import media_processors from '../resources/media_processors';
-import WorkerFactory from '../WorkerFactory';
-import myWorker from '../resources/encryptor_decryptor_worker';
+import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -1330,7 +1328,7 @@ class StackPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                <Tags ref={c => this.top_tags = c} font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
                 <div style={{'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 5px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.props.os == 'iOS' ? 85 : 120), maxWidth: this.props.app_state.width}}>
                     {this.render_everything()}
@@ -1344,15 +1342,19 @@ class StackPage extends Component {
     }
 
 
-    render_everything(){
-        var selected_item = this.get_selected_item(this.state.get_stack_page_tags_object, this.state.get_stack_page_tags_object['i'].active)
+    render_everything(show_viewpager=true, stack_page_tags_object_to_use=this.state.get_stack_page_tags_object){
+        var selected_item = this.get_selected_item(stack_page_tags_object_to_use, stack_page_tags_object_to_use['i'].active)
+
+        if(this.props.size != 'l' && show_viewpager == true){
+            return this.render_post_list_group_if_touch_screen()
+        }
 
         if(selected_item == 'e'){
             return(
                 <div key={selected_item}>
                     {this.render_stack_run_section()}
                 </div>
-            )    
+            )
         }
         else if(selected_item == this.props.app_state.loc['1408']/* 'stack 📥' */){
             return(
@@ -1480,6 +1482,98 @@ class StackPage extends Component {
                 </div>
             )
         }
+    }
+
+    render_post_list_group_if_touch_screen(){
+        var pos = this.state.get_stack_page_tags_object['e'][2][0]
+        if(this.state.get_stack_page_tags_object['i'].active == this.props.app_state.loc['1260']/* 'e.stack-data' */){
+            pos = 1
+        }
+        else if(this.state.get_stack_page_tags_object['i'].active == this.props.app_state.loc['1261']/* 'e.settings-data' */){
+            pos = 2
+        }
+        else if(this.state.get_stack_page_tags_object['i'].active == this.props.app_state.loc['1262']/* 'e.account-data' */){
+            pos = 3
+        }
+        else if(this.state.get_stack_page_tags_object['i'].active == this.props.app_state.loc['1593aj']/* 'e.signatures' */){
+            pos = 4
+        }
+        const handle_change = (value, return_tag_object=false) => {
+            if(return_tag_object == true && this.top_tags == null){
+                return structuredClone(this.state.get_stack_page_tags_object);
+            }
+            const tag_name = this.state.get_stack_page_tags_object['e'][1][value]
+            const current_tag_group = this.state.get_stack_page_tags_object['i'].active 
+            const first_tag = this.state.get_stack_page_tags_object[current_tag_group][1][0]
+            
+            const clone = structuredClone(this.state.get_stack_page_tags_object)
+            const tag_object_clone = this.top_tags.when_tag_button_clicked(0, first_tag, true, clone)
+            const tag_object_clone2 = this.top_tags.when_tag_button_clicked(value, tag_name, true, tag_object_clone)
+            if(return_tag_object == true){
+                return tag_object_clone2;
+            }
+            var me = this;
+            setTimeout(function() {
+                me.setState({get_stack_page_tags_object: tag_object_clone2})
+            }, (1 * 200));
+        }
+
+        return(
+            <div>
+                <ViewPager tag="main">
+                    <Frame className="frame">
+                        <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => handle_change(parseInt(e))} className="track">
+                            <View className="view">
+                                <div>
+                                    {this.render_stack_run_section()}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_everything(false, handle_change(1, true))}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_everything(false, handle_change(2, true))}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_everything(false, handle_change(3, true))}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_everything(false, handle_change(4, true))}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_storage_settings_ui()}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_watched_account_ui()}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_contextual_transfers_ui()}
+                                </div>
+                            </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_notifications()}
+                                </div>
+                            </View>
+                        </Track>
+                    </Frame>
+                </ViewPager>
+            </div>
+        )
+        
     }
 
     get_selected_item(object, option){
@@ -11054,18 +11148,19 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_search_bar_input()}
-                        {this.render_settings_details()}
-                        {this.render_empty_views(2)}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_settings_details2()}
-                        {this.render_empty_views(2)}
+                <div style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="row">
+                        <div className="col-6" style={{}}>
+                            {this.render_search_bar_input()}
+                            {this.render_settings_details()}
+                            {this.render_empty_views(2)}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_settings_details2()}
+                            {this.render_empty_views(2)}
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -12517,16 +12612,17 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_new_contact_ui()}
-                        {this.render_users_contacts()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                <div style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="row" style={{}}>
+                        <div className="col-6" style={{}}>
+                            {this.render_new_contact_ui()}
+                            {this.render_users_contacts()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_empty_views(3)}
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -12540,7 +12636,6 @@ class StackPage extends Component {
                         {this.render_empty_views(3)}
                     </div>
                 </div>
-                
             )
         }
     }
@@ -12689,16 +12784,17 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_blacklisted_picker_ui()}
-                        {this.render_users_blocked_accounts()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                <div style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="row" style={{}}>
+                        <div className="col-6" style={{}}>
+                            {this.render_blacklisted_picker_ui()}
+                            {this.render_users_blocked_accounts()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_empty_views(3)}
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -12831,16 +12927,17 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_alias_picker_ui()}
-                        {this.render_users_aliases()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                <div style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="row" style={{}}>
+                        <div className="col-6" style={{}}>
+                            {this.render_alias_picker_ui()}
+                            {this.render_users_aliases()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_empty_views(3)}
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -12916,7 +13013,7 @@ class StackPage extends Component {
     render_my_account_id(){
         const display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         
-        const obj = this.props.app_state.alias_bucket[this.props.app_state.selected_e5]
+        const obj = this.props.app_state.alias_bucket[this.props.app_state.selected_e5] || {}
         const alias = (obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
         return(
             <div>
@@ -13580,15 +13677,16 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_sign_data_ui_data()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                <div style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="row" style={{}}>
+                        <div className="col-6" style={{}}>
+                            {this.render_sign_data_ui_data()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_empty_views(3)}
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -13747,15 +13845,16 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_verify_data_ui_data()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                <div style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="row" style={{}}>
+                        <div className="col-6" style={{}}>
+                            {this.render_verify_data_ui_data()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_empty_views(3)}
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
@@ -13868,12 +13967,14 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_signature_requests_ui_data()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                <div style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="row" style={{}}>
+                        <div className="col-6" style={{}}>
+                            {this.render_signature_requests_ui_data()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_empty_views(3)}
+                        </div>
                     </div>
                 </div>
             )

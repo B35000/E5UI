@@ -1326,7 +1326,7 @@ class VideoDetailsSection extends Component {
         if(!this.has_file_loaded(video_file)){
             return(
                 <div>
-                    {this.render_empty_views(1)}
+                    {this.render_small_skeleton_object()}
                 </div>
             )
         }

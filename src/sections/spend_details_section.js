@@ -180,14 +180,14 @@ class SpendDetailSection extends Component {
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
-                    <img src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
         )
     }
 
-    render_spend_details_section(show_viewpager=true){
-        var selected_item = this.get_selected_item(this.state.navigate_view_spend_list_detail_tags_object, this.state.navigate_view_spend_list_detail_tags_object['i'].active)
+    render_spend_details_section(show_viewpager=true, stack_page_tags_object_to_use=this.state.navigate_view_spend_list_detail_tags_object){
+        var selected_item = this.get_selected_item(stack_page_tags_object_to_use, stack_page_tags_object_to_use['i'].active)
         var selected_object = this.get_item_in_array(this.get_exchange_tokens(5), this.props.selected_spend_item)
         if(selected_object == null){
             return(
@@ -281,11 +281,18 @@ class SpendDetailSection extends Component {
     }
 
     render_post_list_group_if_touch_screen(object){
+        //['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
         var pos = this.state.navigate_view_spend_list_detail_tags_object['e'][2][0] - 1
-        if(this.state.navigate_view_spend_list_detail_tags_object['i'].active == this.props.app_state.loc['1693']/* 'responses' */){
+        if(this.state.navigate_view_spend_list_detail_tags_object['i'].active == this.props.app_state.loc['2119']/* 'e.events' */){
             pos = 1
         }
-        const handle_change = (value) => {
+        else if(this.state.navigate_view_spend_list_detail_tags_object['i'].active == this.props.app_state.loc['2120']/* 'e.moderator-events' */){
+            pos = 2
+        }
+        const handle_change = (value, return_tag_object=false) => {
+            if(return_tag_object == true && this.bottom_tags == null){
+                return structuredClone(this.state.navigate_view_spend_list_detail_tags_object);
+            }
             const tag_name = this.state.navigate_view_spend_list_detail_tags_object['e'][1][value+1]
             const current_tag_group = this.state.navigate_view_spend_list_detail_tags_object['i'].active 
             const first_tag = this.state.navigate_view_spend_list_detail_tags_object[current_tag_group][1][0]
@@ -293,7 +300,9 @@ class SpendDetailSection extends Component {
             const clone = structuredClone(this.state.navigate_view_spend_list_detail_tags_object)
             const tag_object_clone = this.bottom_tags.when_tag_button_clicked(0, first_tag, true, clone)
             const tag_object_clone2 = this.bottom_tags.when_tag_button_clicked(value+1, tag_name, true, tag_object_clone)
-            console.log('handle_change', 'tag_object_clone2', tag_object_clone2)
+            if(return_tag_object == true){
+                return tag_object_clone2;
+            }
             var me = this;
             setTimeout(function() {
                 me.setState({navigate_view_spend_list_detail_tags_object: tag_object_clone2})
@@ -311,12 +320,12 @@ class SpendDetailSection extends Component {
                             </View>
                             <View className="view">
                                 <div>
-                                    {this.render_spend_details_section(false)}
+                                    {this.render_spend_details_section(false, handle_change(1, true))}
                                 </div>
                             </View>
                             <View className="view">
                                 <div>
-                                    {this.render_spend_details_section(false)}
+                                    {this.render_spend_details_section(false, handle_change(2, true))}
                                 </div>
                             </View>
                             

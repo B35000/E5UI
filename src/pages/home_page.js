@@ -4338,10 +4338,12 @@ class home_page extends Component {
             });
         }
         if(selected_page == this.props.app_state.loc['1264k']/* 'audioport' */ || selected_page == this.props.app_state.loc['1264p']/* 'videoport' */|| selected_page == this.props.app_state.loc['1215']/* 'storefront' */){
-            const viewed_page_ids = Object.keys(this.state.similar_posts[selected_page])
-            viewed_page_ids.forEach(viewed_page_id => {
-                this.update_audio_video_recommended_items(selected_page, viewed_page_id)
-            });
+            if(this.state.similar_posts[selected_page] != null){
+                const viewed_page_ids = Object.keys(this.state.similar_posts[selected_page])
+                viewed_page_ids.forEach(viewed_page_id => {
+                    this.update_audio_video_recommended_items(selected_page, viewed_page_id)
+                });
+            }
         }
     }
 
@@ -5268,7 +5270,7 @@ class home_page extends Component {
 
                 get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} when_file_link_tapped={this.props.when_file_link_tapped.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)}
 
-                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_new_chat_typing_notification={this.props.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)}
+                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_new_chat_typing_notification={this.props.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)}
                 />
             </div>
         )
