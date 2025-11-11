@@ -1345,9 +1345,9 @@ class StackPage extends Component {
     render_everything(show_viewpager=true, stack_page_tags_object_to_use=this.state.get_stack_page_tags_object){
         var selected_item = this.get_selected_item(stack_page_tags_object_to_use, stack_page_tags_object_to_use['i'].active)
 
-        if(this.props.size != 'l' && show_viewpager == true){
-            return this.render_post_list_group_if_touch_screen()
-        }
+        // if(this.props.size != 'l' && show_viewpager == true /*  && this.props.app_state.os != 'iOS' */){
+        //     return this.render_post_list_group_if_touch_screen()
+        // }
 
         if(selected_item == 'e'){
             return(

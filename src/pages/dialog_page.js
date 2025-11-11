@@ -475,6 +475,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'request_cookies_permission'){
+            return(
+                <div>
+                    {this.render_cookies_permission_request_ui()}
+                </div>
+            )
+        }
     }
 
 
@@ -8715,6 +8722,83 @@ return data['data']
 
     send_signature_reply(item){
         this.props.send_signature_response(item)
+    }
+
+
+
+
+
+
+
+    render_cookies_permission_request_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_cookies_permission_request_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_cookies_permission_request_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_cookies_permission_request_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_cookies_permission_request_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055gq']/* 'Enable Cookies and Local Storage?' */, 'details':this.props.app_state.loc['3055gr']/* 'E uses your device\'s storage and cookies to cache some of your data to help make the user experience better. To enable this, tap the button below and if you dont want this setting turned on, just close this page.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={()=> this.accept_cookies()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055gs']/* 'Accept Cookies' */, 'action':''},)}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={()=> this.reject_cookies()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055gt']/* 'Reject Cookies.' */, 'action':''},)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    accept_cookies(){
+        this.props.accept_cookies()
+    }
+
+    reject_cookies(){
+        this.props.reject_cookies()
     }
 
 

@@ -842,8 +842,8 @@ class PostListSection extends Component {
             },
         };
         return(
-            <div style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden'}}>
-                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+            <div style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
                     <Skeleton style={styles.skeletonBox}/>
                 </SkeletonTheme>
             </div>

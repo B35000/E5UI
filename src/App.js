@@ -1026,7 +1026,7 @@ class App extends Component {
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
     socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
 
-    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{},
+    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{},
   };
 
   get_thread_pool_size(){
@@ -4987,7 +4987,7 @@ class App extends Component {
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         
         'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
-        'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'#424242',
+        'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'rgb(69, 68, 68)',
 
         'view_group_card_item_background':'#292929','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white',
 
@@ -5812,7 +5812,9 @@ class App extends Component {
 
           when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)} get_default_background={this.get_default_background.bind(this)} linear_gradient_text={this.linear_gradient_text.bind(this)}
 
-          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
+          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)} 
+
+          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -6465,6 +6467,12 @@ class App extends Component {
   close_syncronizing_page_after_single_tap(){
     if(this.state.syncronizing_progress >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == false){
       this.open_syncronizing_page_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.state.storage_permissions == 'e'){
+          me.show_dialog_bottomsheet({}, 'request_cookies_permission')
+        }
+      }, (1 * 800));
     }
   }
 
@@ -15993,7 +16001,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)}
         />
       </div>
     )
@@ -16070,6 +16078,7 @@ class App extends Component {
       'view_job_application_details':350,
       'view_bag_application_details':350,
       'confirm_respond_to_signature_request':300,
+      'request_cookies_permission':220,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17092,6 +17101,24 @@ class App extends Component {
     this.open_dialog_bottomsheet()
     var signature_data = await this.generate_signature(item['signature_data'])
     this.emit_new_open_signature_response(item, signature_data)
+  }
+
+  accept_cookies(){
+    this.open_dialog_bottomsheet()
+    this.setState({storage_permissions: this.getLocale()['1428']/* 'enabled' */})
+    var me = this;
+    setTimeout(function() {
+      me.prompt_top_notification(me.getLocale()['3055gu']/* Cookies Accepted. */, 1200)
+    }, (1 * 700))
+  }
+
+  reject_cookies(){
+    this.open_dialog_bottomsheet()
+    this.setState({storage_permissions: 'e'})
+    var me = this;
+    setTimeout(function() {
+      me.prompt_top_notification(me.getLocale()['3055gv']/* Cookies Rejected. */, 1200)
+    }, (1 * 700))
   }
 
 
@@ -23832,6 +23859,9 @@ class App extends Component {
     }
     catch(e){
       console.log(e)
+      setTimeout(function() {
+        window.location.reload();
+      }, (1 * 4000));
     }
   }
 
@@ -39655,6 +39685,21 @@ class App extends Component {
     }
   }
 
+  async get_contractor_availability_status(object){
+    const target = 'contractor_availability|'+object['e5_id']
+    await this.get_objects_from_socket_and_set_in_state([target], [], [])
+
+    const recipient_id = object['author']
+    const recipient_e5 = object['e5']
+    await this.get_and_set_account_online_status(recipient_id, recipient_e5)
+
+    if(this.state.contractor_availability_info[object['e5_id']] == null){
+      const clone = structuredClone(this.state.contractor_availability_info)
+      clone[object['e5_id']] = 'unavailable'
+      this.setState({contractor_availability_info: clone})
+    }
+  }
+
   get_contractor_applications = async (id, E5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(E5));
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -43215,11 +43260,14 @@ class App extends Component {
     //listen for new jobs
     const me = this;
     this.socket.on('chatroom_message', ({userId, message, roomId, target, object_hash}) => {
-      if(roomId == 'jobs'){
+      if(roomId == 'jobs' && message.type == 'object'){
         me.process_new_job_received(message, object_hash)
       }
-      else if(roomId == 'posts'){
+      else if(roomId == 'posts' && message.type == 'object'){
         me.process_new_post_received(message, object_hash)
+      }
+      else if(roomId == 'jobs' && message.type == 'contractor_availability'){
+        me.process_new_contractor_availability_update(message, object_hash)
       }
       else{
         if(this.state.active_rooms.includes(roomId)){
@@ -43672,6 +43720,25 @@ class App extends Component {
     // this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
 
   }
+
+  async emit_contractor_availability_notification(object, availability_status){
+    this.prompt_top_notification(this.getLocale()['2231i']/* 'Updating Preference... */, 1900)
+    const availability_object = await this.prepare_contractor_availability_message(object, availability_status)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(availability_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const target = 'contractor_availability|'+object['e5_id']
+    const broadcasat_object = {roomId: 'jobs', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
+
+    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(3000)
+
+    await this.process_new_contractor_availability_update(availability_object.message, availability_object.object_hash)
+  }
+
+  
 
 
 
@@ -44765,6 +44832,50 @@ class App extends Component {
     // }
     // const object_hash = this.hash_message_for_id(message);
     // return { message, object_hash }
+  }
+
+  async prepare_contractor_availability_message(object, availability_status){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+
+    const object_as_string = availability_status
+    const signature_data = Date.now()
+    const target = 'contractor_availability|'+object['e5_id']
+    const signature = await this.generate_signature(signature_data+target+object_as_string)
+
+    
+    const message = {
+      type: 'contractor_availability',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: object_as_string,
+      contractor_object_id: object['e5_id'],
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      mutable:true,
+      signature_data,
+      signature
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
   }
 
 
@@ -45988,6 +46099,28 @@ class App extends Component {
     this.setState({received_open_signature_responses: received_signature_requests_object})
   }
 
+  async process_new_contractor_availability_update(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = message.data
+    
+    const contractor_availability_info_clone = structuredClone(this.state.contractor_availability_info)
+    contractor_availability_info_clone[message.contractor_object_id] = ipfs
+    this.setState({contractor_availability_info: contractor_availability_info_clone})
+  }
+
 
 
 
@@ -46237,7 +46370,7 @@ class App extends Component {
             for(var i=0; i<object_hashes.length; i++){
               const object_hash = object_hashes[i]
               const object_data = target_data[time_entry][target_entry][object_hash]
-              if(target_entry == 'jobs'){
+              if(target_entry == 'jobs' && object_data.type == 'object'){
                 await this.process_new_job_received(object_data, object_hash)
 
                 var me = this;
@@ -46247,7 +46380,7 @@ class App extends Component {
                   }
                 }, (1 * 500));
               }
-              else if(target_entry == 'posts'){
+              else if(target_entry == 'posts' && object_data.type == 'object'){
                 await this.process_new_post_received(object_data, object_hash)
 
                 var me = this;
@@ -46297,6 +46430,9 @@ class App extends Component {
               }
               else if(object_data['type'] == 'open_signature_response'){
                 await this.process_new_open_signature_response_message(object_data, object_hash, null, true)
+              }
+              else if(object_data['type'] == 'contractor_availability'){
+                await this.process_new_contractor_availability_update(object_data, object_hash)
               }
               await this.wait(200)
             }

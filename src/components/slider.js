@@ -100,9 +100,11 @@ class Slider extends React.Component {
     }
 
     handleTouchStart = (event) => {
+        event.stopPropagation();
         if(getOS() != 'iOS') return;
         const container = this.sliderContainerRef.current;
         if (!container) return;
+
 
         const touch = event.touches[0];
         const rect = container.getBoundingClientRect();
@@ -145,7 +147,7 @@ class Slider extends React.Component {
     render(){
         const value_to_use = this.props.value
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px'}}>
+            <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px', cursor: 'pointer'}}>
                 <style>{`
                     .button-click {
                         animation: clickAnim 0.2s ease;
@@ -156,15 +158,15 @@ class Slider extends React.Component {
                         100% { transform: scale(1); background-color: ${this.props.theme['bar_background_color']}; }
                     }
                 `}</style>
-                <div ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
+                <div ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px', cursor: 'pointer' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
 
-                <div ref={this.sliderContainerRef} onClick={this.handleSliderClick} onTouchStart={this.handleTouchStart} style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
+                <div ref={this.sliderContainerRef} onClick={this.handleSliderClick} onTouchStart={this.handleTouchStart} style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative', cursor: 'pointer'}}>
 
                     <div className="progress" style={{ height: 30, width: '100%', 'background-color': this.props.theme['bar_background_color'] , 'z-index':'1' , 'border-radius': '17px', 'position': 'absolute'}}>
                         <div className="progress-bar" role="progressbar" style={{ width: (value_to_use/10)+"%", 'background-image': 'none','background-color': this.props.theme['slider_color'] }} aria-valuenow="5" aria-valuemin="0" aria-valuemax="10"></div>
                     </div>
 
-                    <input type="range" value={value_to_use} min="0" max="999" className="form-range" onChange={this.handleNumber} style={{opacity: 0, width: '100%', height: 40, 'position': 'absolute', 'z-index':'10'}}/>
+                    <input type="range" /* onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onTouchEnd={(e) => e.stopPropagation()}  */value={value_to_use} min="0" max="999" className="form-range" onChange={this.handleNumber} style={{opacity: 0, width: '100%', height: 40, 'position': 'absolute', 'z-index':'10'}}/>
 
                 </div>
 

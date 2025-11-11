@@ -48,7 +48,8 @@ function start_and_end(str) {
 class ContractorDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_contractors_list_detail_tags_object: this.get_navigate_view_contracts_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}
+        selected: 0, navigate_view_contractors_list_detail_tags_object: this.get_navigate_view_contracts_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}, 
+        get_contractor_availability_tags: this.get_contractor_availability_tags()
     };
 
     constructor(props) {
@@ -88,6 +89,17 @@ class ContractorDetailsSection extends Component {
           },
           'e':[
               ['xor','',0], ['e',this.props.app_state.loc['2215']/* 'details' */,this.props.app_state.loc['2216']/* 'job-requests' */],[1]
+          ],
+        }
+    }
+
+    get_contractor_availability_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['or','',0], ['e',this.props.app_state.loc['2231g']/* 'available 🙋‍♂️' */,this.props.app_state.loc['2231h']/* 'unavailable 😵' */],[0]
           ],
         }
     }
@@ -180,7 +192,6 @@ class ContractorDetailsSection extends Component {
                         {this.render_contractor_job_responses(object)}
                     </div>
                 )
-                
             }
         }
     }
@@ -235,6 +246,7 @@ class ContractorDetailsSection extends Component {
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         const client_datapoints = this.get_clientel_datapoints(object)
 
+        const online_text = this.is_recipient_online(object) ? this.props.app_state.loc['2738bi']/* 'online' */ : null/* this.props.app_state.loc['2738bj'] *//* 'offline' */
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -247,7 +259,7 @@ class ContractorDetailsSection extends Component {
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
                     <div onClick={() => this.add_to_contacts2(object)}>
-                        {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' }, )}
+                        {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l', 'footer':online_text}, )}
                     </div>
 
                     {client_datapoints.jobs_received > 0 && (
@@ -267,6 +279,8 @@ class ContractorDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
+                    {this.render_online_switch(object)}
+                    {this.render_availability(object)}
                     {this.render_detail_item('0')}
 
                     {this.render_taken_down_message_if_post_is_down(object)}
@@ -657,6 +671,100 @@ class ContractorDetailsSection extends Component {
         return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
+    render_online_switch(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 != my_account) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2231e']/* 'Switch Availability Status */, 'details':this.props.app_state.loc['2231f']/* 'You can specify if youre available or not using the tags below.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_contractor_availability_tags} tag_size={'l'} when_tags_updated={this.when_get_contractor_availability_tags_updated.bind(this)} theme={this.props.theme}/>
+            </div>
+        )
+    }
+
+    render_availability(object){
+        return(
+            <div>
+                {this.props.app_state.contractor_availability_info[object['e5_id']] == null && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_small_skeleton_object2()}
+                    </div>
+                )}
+                {this.props.app_state.contractor_availability_info[object['e5_id']] != null && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'title':(this.props.app_state.contractor_availability_info[object['e5_id']] == 'available' ? this.props.app_state.loc['2231g']/* available 🙋‍♂️' */: this.props.app_state.loc['2231h']/* 'unavailable 😵' */), 'details':this.props.app_state.loc['2231j']/* 'Availability Status.' */, 'size':'l'})}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_small_skeleton_object2(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['view_group_card_item_background']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
+
+    when_get_contractor_availability_tags_updated(tags){
+        this.setState({get_contractor_availability_tags: tags})
+        const selected_item = this.get_selected_item2(tags, 'e')
+        const obj = {0:'e', 1:'available', 2:'unavailable'}
+        
+        const object = this.get_item_in_array(this.get_contractor_items(), this.props.selected_contractor_item);
+        if(selected_item != 0){
+            this.props.emit_contractor_availability_notification(object, obj[selected_item])
+        }
+    }
+
+    is_recipient_online(object){
+        const tracked_online_accounts = this.props.app_state.tracked_online_accounts
+        var recipients_e5 = object['e5']
+        const recipient = object['author']
+        const e5_id = recipient+recipients_e5
+
+        if(tracked_online_accounts[e5_id] == null){
+            return false
+        }
+        else{
+            return tracked_online_accounts[e5_id]['online']
+        }
+    }
+
 
 
 
@@ -885,12 +993,10 @@ class ContractorDetailsSection extends Component {
         return this.props.get_contractor_items('')
     }
 
-
     open_send_job_request_ui(object){
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         this.props.open_send_job_request_ui(object)
     }
-
 
     render_edit_object_button(object){
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
@@ -909,12 +1015,10 @@ class ContractorDetailsSection extends Component {
         }
     }
 
-
     open_edit_contractor_ui(object){
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         this.props.open_edit_object('9', object)
     }
-
 
     render_price_amounts(object){
         var middle = this.props.height-500;
@@ -958,7 +1062,6 @@ class ContractorDetailsSection extends Component {
             </div>
         )
     }
-
 
     get_all_sorted_objects_mappings(object){
         var all_objects = {}

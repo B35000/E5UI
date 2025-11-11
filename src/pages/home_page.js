@@ -4809,7 +4809,9 @@ class home_page extends Component {
         }
 
         await this.props.fetch_uploaded_files_for_object(object)
+        await this.props.get_contractor_availability_status(object)
         // await this.props.get_contractor_applications(id, e5)
+        //get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)}
         await this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -5271,6 +5273,8 @@ class home_page extends Component {
                 get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} when_file_link_tapped={this.props.when_file_link_tapped.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)}
 
                 show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_new_chat_typing_notification={this.props.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)}
+
+                emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)}
                 />
             </div>
         )

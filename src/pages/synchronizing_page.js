@@ -19,6 +19,9 @@
 import React, { Component } from 'react';
 import syncrhonizing_image from './../assets/synchronizing_icon.png';
 import ViewGroups from './../components/view_groups'
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 import p2p_trust from './../assets/p2p_trust_image.png';
 import unanimous_consensus from './../assets/unanimous_consensus_image.png';
 import letter_crack1 from './../assets/letter_crack1.png'
@@ -154,6 +157,25 @@ class synchronizing_page extends Component {
         var progress = this.props.sync_progress+'%'
         if(this.props.sync_progress >100){
             progress = '100%'
+        }
+        if(this.props.sync_progress == 0){
+            const styles = {
+                skeletonBox: {
+                    display: 'block',
+                    width: '100%',
+                    height: height,
+                    borderRadius: '5px',
+                    lineHeight: '0',
+                    margin: 0,
+                },
+            };
+            return(
+                <div style={{height: height, width: "100%", 'margin':'0px 0px 4px 0px', overflow: 'hidden', 'box-shadow': '0px 0px 2px 1px '+bar_shadow, borderRadius: '5px',}}>
+                    <SkeletonTheme borderRadius={'5px'} baseColor={bar_background} highlightColor={'rgb(236, 236, 236)'}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </div>
+            )
         }
         return(
             <div style={{ height: height, width: "100%", 'background-color': bar_background, 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+bar_shadow, 'margin': '0px 0px 4px 0px' }}>
