@@ -158,7 +158,7 @@ class synchronizing_page extends Component {
         if(this.props.sync_progress >100){
             progress = '100%'
         }
-        if(this.props.sync_progress == 0){
+        if(this.props.sync_progress == 0 && this.is_allowed_in_e5() == true){
             const styles = {
                 skeletonBox: {
                     display: 'block',
@@ -171,7 +171,7 @@ class synchronizing_page extends Component {
             };
             return(
                 <div style={{height: height, width: "100%", 'margin':'0px 0px 4px 0px', overflow: 'hidden', 'box-shadow': '0px 0px 2px 1px '+bar_shadow, borderRadius: '5px',}}>
-                    <SkeletonTheme borderRadius={'5px'} baseColor={bar_background} highlightColor={'rgb(236, 236, 236)'}>
+                    <SkeletonTheme borderRadius={'5px'} baseColor={bar_background} highlightColor={'rgb(184, 183, 183)'}>
                         <Skeleton style={styles.skeletonBox}/>
                     </SkeletonTheme>
                 </div>

@@ -5827,6 +5827,12 @@ class StackPage extends Component {
                         extra_tags.push(data.audio_type.toLowerCase())
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
+
+                    if(data.creator_group_subscriptions != null){
+                        data.creator_group_subscriptions.forEach(subscription_e5_id => {
+                            all_elements.push(subscription_e5_id)
+                        });
+                    }
                     
                     // const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
                     const all_final_elements = []

@@ -2278,6 +2278,7 @@ class StorefrontDetailsSection extends Component {
 
     when_item_clicked_2(item, sender_type, object){
         this.props.show_dialog_bottomsheet({'item':item, 'sender_type':sender_type, 'object':object}, 'view_item_purchase')
+        this.props.get_storefront_order_status(item, object)
     }
 
 

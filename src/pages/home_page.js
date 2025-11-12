@@ -1596,7 +1596,7 @@ class home_page extends Component {
             }
         }
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ag']/* 'following' */)){
-            const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags()
+            const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags().concat(this.props.app_state.my_paid_subscription_e5_ids)
             posts_to_load = posts_to_load.concat(following_tags.current_tags, following_tags.extra_tags)
             targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts)
         }
@@ -1717,7 +1717,7 @@ class home_page extends Component {
             }
         }
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ag']/* 'following' */)){
-            const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags()
+            const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags().concat(this.props.app_state.my_paid_subscription_e5_ids)
             posts_to_load = posts_to_load.concat(following_tags.current_tags, following_tags.extra_tags)
             targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts)
         }
@@ -5274,7 +5274,7 @@ class home_page extends Component {
 
                 show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_new_chat_typing_notification={this.props.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)}
 
-                emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)}
+                emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)}
                 />
             </div>
         )

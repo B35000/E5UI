@@ -34,6 +34,9 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { getDomain } = require("tldjs");
@@ -2276,7 +2279,7 @@ return data['data']
                         {this.render_view_purchase_data()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_empty_views(6)}
                     </div>
                 </div>
                 
@@ -2289,7 +2292,7 @@ return data['data']
                         {this.render_view_purchase_data()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_empty_views(6)}
                     </div>
                 </div>
                 
@@ -2324,6 +2327,9 @@ return data['data']
                     
                     {this.render_purchase_options_if_any(item)}
                     {this.render_fulfilment_signature_if_any(item, object)}
+
+                    {this.render_purchase_order_status_if_any(item, object)}
+                    {this.render_purchase_order_status_options_if_storefront_owner(item, object, sender_type)}
                 </div>
                 {this.render_clear_purchase_button(item, object, sender_type)}
             </div>
@@ -2551,6 +2557,154 @@ return data['data']
         return false
     }
 
+    render_purchase_order_status_options_if_storefront_owner(item, object, sender_type){
+        if(sender_type != 'storefront_owner') return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055gw']/* 'Order Status Settings' */, 'details':this.props.app_state.loc['3055gx']/* 'You can specify the status of this order or direct purchase.' */})}
+                <div style={{height:10}}/>
+                {this.render_status_options()}
+                <div style={{height:10}}/>
+                {this.state.status_option_selected != null && (
+                    <div>
+                        {this.render_detail_item('3', {'title':this.state.status_option_selected['title'], 'details':this.state.status_option_selected['details'], 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div style={{'padding': '1px'}} onClick={() => this.set_order_status(item, object, this.state.status_option_selected)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055hm']/* 'Set Status' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_status_options(){
+        const items = this.get_status_options()
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_status_option_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_status_options(){
+        return[
+            {'title':this.props.app_state.loc['3055gy']/* 'acknowledged' */, 'details':this.props.app_state.loc['3055gz']/* 'The order has been recognised by the storefront owner.' */, 'id':'acknowledged'},
+            {'title':this.props.app_state.loc['3055ha']/* 'rejected' */, 'details':this.props.app_state.loc['3055hb']/* 'The order has been rejected by the storefront owner.' */, 'id':'rejected'},
+            {'title':this.props.app_state.loc['3055hc']/* 'processing' */, 'details':this.props.app_state.loc['3055hd']/* 'The order is being processed by the storefront owner.' */, 'id':'processing'},
+            {'title':this.props.app_state.loc['3055he']/* 'delayed' */, 'details':this.props.app_state.loc['3055hf']/* 'The order has been delayed due to unspecified reasons.' */, 'id':'delayed'},
+            {'title':this.props.app_state.loc['3055hg']/* 'shipping' */, 'details':this.props.app_state.loc['3055hh']/* 'The order is being shipped to your specified address.' */, 'id':'shipping'},
+            {'title':this.props.app_state.loc['3055hi']/* 'finalized' */, 'details':this.props.app_state.loc['3055hj']/* 'The order is being finalized after being fulfilled by the storefront owner.' */, 'id':'finalized'},
+            {'title':this.props.app_state.loc['3055hk']/* 'complete' */, 'details':this.props.app_state.loc['3055hl']/* 'The order has been fulfilled and completed.' */, 'id':'complete'},
+        ]
+    }
+
+    render_status_option_item(item){
+        const title = item['title']
+        const details = this.truncate(item['details'], 25)
+        if(this.state.status_option_item == item['id']){
+            return(
+                <div onClick={() => this.when_status_option_tapped(item)}>
+                    {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.when_status_option_tapped(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_status_option_tapped(item){
+        if(this.state.status_option_item == item['id']){
+            this.setState({status_option_item: null, status_option_selected:null})
+        }else{
+            this.setState({status_option_item: item['id'], status_option_selected: item})
+        }
+    }
+
+    set_order_status(item, object, status_option_selected){
+        this.props.emit_storefront_order_status_notification(item, object, status_option_selected['id'])
+    }
+
+    render_purchase_order_status_if_any(item, object){
+        const purchase_identifier = item['purchase_identifier']
+        // console.log('render_purchase_order_status_if_any', this.props.app_state.storefront_order_status_info)
+        return(
+            <div>
+                {this.props.app_state.storefront_order_status_info[purchase_identifier] == null && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_small_skeleton_object2()}
+                    </div>
+                )}
+                {this.props.app_state.storefront_order_status_info[purchase_identifier] != null && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'title':(this.get_purchase_order_status_details(this.props.app_state.storefront_order_status_info[purchase_identifier])), 'details':this.props.app_state.loc['3055hn']/* 'Current Status Of The Order.' */, 'size':'l'})}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    get_purchase_order_status_details(supplied_status){
+        const all = this.get_status_options()
+        var details = null
+        all.forEach(element => {
+            if(element['id'] == supplied_status){
+                details = element['details']
+            }
+        });
+        if(details != null) return details;
+        return this.props.app_state.loc['3055ho']/* Status Unset.' */
+    }
+
+    render_small_skeleton_object2(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['view_group_card_item_background']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
 
 
 

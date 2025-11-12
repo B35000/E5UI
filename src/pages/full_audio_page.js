@@ -20,6 +20,9 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -278,6 +281,25 @@ class FullAudioPage extends Component {
         var value = this.get_bar_length()
         var buffer = this.state.buffer
         var height = 4
+        if(buffer - value == 0){
+            const styles = {
+                skeletonBox: {
+                    display: 'block',
+                    width: '100%',
+                    height: height,
+                    borderRadius: '5px',
+                    lineHeight: '0',
+                    margin: 0,
+                },
+            };
+            return(
+                <div style={{height: height, width: "100%", 'margin':'0px 0px 0px 0px', overflow: 'hidden', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], borderRadius: '5px',}}>
+                    <SkeletonTheme borderRadius={'5px'} baseColor={this.props.theme['bar_background_color']} highlightColor={'rgb(184, 183, 183)'}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </div>
+            )
+        }
         return(
             <div style={{ height: height, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 0px 0px' , 'position': 'relative'}}>
                 

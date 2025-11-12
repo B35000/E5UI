@@ -65,14 +65,57 @@ function start_and_end(str) {
 class PostDetailSection extends Component {
     
     state = {
-        selected: 0,
+        selected: 0, animate: false
     };
+
+    componentDidUpdate(prevProps){
+        if(
+            prevProps.selected_ether_item != this.props.selected_ether_item || 
+            prevProps.selected_end_item != this.props.selected_end_item || 
+            prevProps.selected_spend_item != this.props.selected_spend_item || 
+            prevProps.selected_e5_item != this.props.selected_e5_item || 
+            prevProps.selected_job_post_item != this.props.selected_job_post_item || 
+            prevProps.selected_contract_item != this.props.selected_contract_item || 
+            prevProps.selected_subscription_item != this.props.selected_subscription_item || 
+            prevProps.selected_post_item != this.props.selected_post_item || 
+            prevProps.selected_channel_item != this.props.selected_channel_item || 
+            prevProps.selected_proposal_item != this.props.selected_proposal_item || 
+            prevProps.selected_mail_item != this.props.selected_mail_item || 
+            prevProps.selected_storefront_item != this.props.selected_storefront_item || 
+            prevProps.selected_bag_item != this.props.selected_bag_item || 
+            prevProps.selected_contractor_item != this.props.selected_contractor_item || 
+            prevProps.selected_coin_item != this.props.selected_coin_item || 
+            prevProps.selected_audio_item != this.props.selected_audio_item || 
+            prevProps.selected_video_item != this.props.selected_video_item || 
+            prevProps.selected_nitro_item != this.props.selected_nitro_item || 
+            prevProps.selected_bill_item != this.props.selected_bill_item ||
+            prevProps.selected_poll_item != this.props.selected_poll_item
+        ){
+            if(this.props.screensize != 's' || true){
+                this.setState({ animate: true }, () => {
+                    setTimeout(() => this.setState({ animate: false }), 500); // match animation duration
+                });
+            }
+        }
+    }
 
     render(){
 
         return(
             <div style={{}}>
-                {this.render_post_detail_object()}
+                <style>{`
+                    .view-animate {
+                        animation: fadeIn 0.5s ease forwards;
+                    }
+                    @keyframes fadeIn {
+                        0%   { opacity: 0; }
+                        100% { opacity: 1; }
+                    }
+                `}</style>
+                <div className={this.state.animate ? 'view-animate' : ''}>
+                    {this.render_post_detail_object()}
+                </div>
+                
             </div>
         )
     }
@@ -168,7 +211,7 @@ class PostDetailSection extends Component {
                     open_participate_in_auction={this.props.open_participate_in_auction.bind(this)}
                     get_direct_purchase_events={this.props.get_direct_purchase_events.bind(this)}
                     get_storefront_auction_bids={this.props.get_storefront_auction_bids.bind(this)}
-                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)}
+                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)}
                     />
                 )
             }

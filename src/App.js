@@ -56,6 +56,8 @@ import image_file_button from './assets/pick_image_file_button.png'
 import music_file_button from './assets/pick_music_file_button.png'
 import video_file_button from './assets/pick_video_file_button.png'
 import zip_file_button from './assets/pick_zip_file_button.png'
+import collapse_bottomsheet_button from './assets/collapse_bottomsheet_button.png'
+import collapse_bottomsheet_button_light from './assets/collapse_bottomsheet_button_light.png'
 
 import alert_icon from './assets/alert_icon.png'
 import add_icon from './assets/add_icon.png'
@@ -1026,7 +1028,7 @@ class App extends Component {
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
     socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
 
-    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{},
+    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[]
   };
 
   get_thread_pool_size(){
@@ -1069,6 +1071,8 @@ class App extends Component {
       'zip_file_button':zip_file_button,
       'music_file_button':music_file_button,
       'video_file_button':video_file_button,
+      'collapse_bottomsheet_button': collapse_bottomsheet_button,
+      'collapse_bottomsheet_button_light': collapse_bottomsheet_button
     }
     //csv_file_button, json_file_button, lrc_file_button, pdf_file_button, vtt_file_button, image_file_button, zip_file_button, music_file_button, video_file_button
   }
@@ -5605,7 +5609,6 @@ class App extends Component {
 
 
 
-
   render(){
     if(this.getScreenSize() == 'e'){
       return(
@@ -5812,9 +5815,9 @@ class App extends Component {
 
           when_update_pinns_tapped={this.when_update_pinns_tapped.bind(this)} load_data_from_indexdb={this.load_data_from_indexdb.bind(this)} update_data_in_db={this.update_data_in_db.bind(this)} filter_using_searched_text={this.filter_using_searched_text.bind(this)} get_default_background={this.get_default_background.bind(this)} linear_gradient_text={this.linear_gradient_text.bind(this)}
 
-          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)} 
+          show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
 
-          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)}
+          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -6375,7 +6378,7 @@ class App extends Component {
     //     )
     // }
     return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'3'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
+      <SwipeableBottomSheet /* marginBottom={50} */ overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'30'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
           <div style={{ height: this.state.height-50, 'background-color': background_color, 'margin': '0px 0px 0px 0px', 'padding':'10px 10px 0px 10px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text2(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
             <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
             />
@@ -7760,7 +7763,7 @@ class App extends Component {
 
 
   render_stack_bottomsheet(){
-    // if(this.state.stack_bottomsheet2 != true) return;
+    if(this.state.stack_bottomsheet2 != true) return;
     // if(!this.state.show_stack) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
@@ -7782,8 +7785,8 @@ class App extends Component {
       )
     }
     return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <SwipeableBottomSheet /* overflowHeight={0} */ marginBottom={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: (this.state.stack_bottomsheet == false ? 0 : this.state.height-60), 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
               {this.render_stack_item(size)}
           </div>
       </SwipeableBottomSheet>
@@ -7901,7 +7904,7 @@ class App extends Component {
       for(var i=0; i<e5s.length; i++){
         var e5 = e5s[i]
         this.image_transformation_counter[transformation_id]++;
-        this.update_ether_image(e5, original_ether_settings, theme, transformation_id)
+        await this.update_ether_image(e5, original_ether_settings, theme, transformation_id)
         // const updated_image = this.existing_image_data[theme][e5] == null ? await this.transform_image_by_theme(original_ether_settings[e5].ether_image, theme) : this.existing_image_data[theme][e5]
 
         // if(this.existing_image_data[theme][e5] == null){
@@ -7923,7 +7926,7 @@ class App extends Component {
       for(var j=0; j<coin_keys.length; j++){
         var coin = coin_keys[j]
         this.image_transformation_counter[transformation_id]++;
-        this.update_coin_image(coin, original_coin_settings, theme, transformation_id)
+        await this.update_coin_image(coin, original_coin_settings, theme, transformation_id)
         // var image_to_use = original_coin_settings[coin]['label']['image']
         // if(coin == 'ALGO'){
         //   image_to_use = algorand2_logo
@@ -16001,7 +16004,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)}
         />
       </div>
     )
@@ -21293,21 +21296,21 @@ class App extends Component {
     }
 
     const resource_object = {}
-    resource_object[this.getLocale()['1417']/* 'light' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['1418']/* 'dark' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['2740']/* midnight */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['2741']/* green */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3056']/* 'light-green' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3057']/* 'red' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3058']/* 'light-red' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3059']/* 'blue' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3060']/* 'light-blue' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3061']/* 'yellow' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3062']/* 'light-yellow' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3063']/* 'pink' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3064']/* 'light-pink' */] = 'e5_empty_icon'
-    resource_object[this.getLocale()['3065']/* 'orange' */] = 'e5_empty_icon3'
-    resource_object[this.getLocale()['3066']/* 'light-orange' */] = 'e5_empty_icon'
+    resource_object[this.getLocale()['1417']/* 'light' */] = 'collapse_bottomsheet_button'
+    resource_object[this.getLocale()['1418']/* 'dark' */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['2740']/* midnight */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['2741']/* green */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['3056']/* 'light-green' */] = 'collapse_bottomsheet_button'
+    resource_object[this.getLocale()['3057']/* 'red' */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['3058']/* 'light-red' */] = 'collapse_bottomsheet_button'
+    resource_object[this.getLocale()['3059']/* 'blue' */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['3060']/* 'light-blue' */] = 'collapse_bottomsheet_button'
+    resource_object[this.getLocale()['3061']/* 'yellow' */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['3062']/* 'light-yellow' */] = 'collapse_bottomsheet_button'
+    resource_object[this.getLocale()['3063']/* 'pink' */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['3064']/* 'light-pink' */] = 'collapse_bottomsheet_button'
+    resource_object[this.getLocale()['3065']/* 'orange' */] = 'collapse_bottomsheet_button_light'
+    resource_object[this.getLocale()['3066']/* 'light-orange' */] = 'collapse_bottomsheet_button'
     resource_object[this.getLocale()['1593a']/* 'auto' */] = resource_object[this.get_time_of_day_theme()]
     const resource_name = resource_object[this.state.theme['name']]
 
@@ -28330,11 +28333,17 @@ class App extends Component {
     })
 
     var my_paid_subs = []
+    var my_paid_subscription_e5_ids = []
     my_paid_subscription_events.forEach(event => {
       if(!my_paid_subs.includes(event.returnValues.p1)){
         my_paid_subs.push(event.returnValues.p1)
+        my_paid_subscription_e5_ids.push(event.returnValues.p1+e5)
       }
     });
+
+    var my_paid_subscription_e5_ids_clone = this.state.my_paid_subscription_e5_ids.slice()
+    my_paid_subscription_e5_ids_clone = my_paid_subscription_e5_ids_clone.concat(my_paid_subscription_e5_ids)
+    this.setState({my_paid_subscription_e5_ids: my_paid_subscription_e5_ids_clone})
 
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var my_posted_events = created_subscription_events.filter(function (event) {
@@ -39700,6 +39709,18 @@ class App extends Component {
     }
   }
 
+  async get_storefront_order_status(item, object){
+    const target = 'storefront_order_status|'+object['e5_id']+'|'+item['purchase_identifier']
+    await this.get_objects_from_socket_and_set_in_state([target], [], [])
+
+    await this.wait(500)
+    if(this.state.storefront_order_status_info[item['purchase_identifier']] == null){
+      const clone = structuredClone(this.state.storefront_order_status_info)
+      clone[item['purchase_identifier']] = 'e'
+      this.setState({storefront_order_status_info: clone})
+    }
+  }
+
   get_contractor_applications = async (id, E5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(E5));
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -43269,6 +43290,9 @@ class App extends Component {
       else if(roomId == 'jobs' && message.type == 'contractor_availability'){
         me.process_new_contractor_availability_update(message, object_hash)
       }
+      else if(roomId == 'posts' && message.type == 'storefront_order_status'){
+        me.process_new_storefront_order_status_update(message, object_hash)
+      }
       else{
         if(this.state.active_rooms.includes(roomId)){
           if(message.type == 'channel-message'){
@@ -43736,6 +43760,23 @@ class App extends Component {
     await this.wait(3000)
 
     await this.process_new_contractor_availability_update(availability_object.message, availability_object.object_hash)
+  }
+
+  async emit_storefront_order_status_notification(item, object, status_option_selected){
+    this.prompt_top_notification(this.getLocale()['2231i']/* 'Updating Preference... */, 1900)
+    const availability_object = await this.prepare_storefront_order_status_message(item, object, status_option_selected)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(availability_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const target = 'storefront_order_status|'+object['e5_id']+'|'+item['purchase_identifier']
+    const broadcasat_object = {roomId: 'posts', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
+
+    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(3000)
+
+    await this.process_new_storefront_order_status_update(availability_object.message, availability_object.object_hash)
   }
 
   
@@ -44696,6 +44737,9 @@ class App extends Component {
     return { message, object_hash }
   }
 
+
+
+
   async prepare_typing_message(convo_id, recipient_id, recipient_e5, keyboard_active){
     const typing_object = {
       convo_id,
@@ -44784,6 +44828,10 @@ class App extends Component {
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
   }
+
+
+
+
 
   async prepare_open_signature_response_message(signature_request, signature_data){
     const signature_response = {
@@ -44874,11 +44922,56 @@ class App extends Component {
       signature_data,
       signature
     }
-    const object_hash = this.hash_message_for_id(message);
+    const object_hash = this.hash_message_for_id(target);
     return { message, object_hash }
   }
 
+  async prepare_storefront_order_status_message(item, object, status_option_selected){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
 
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = item['sender_address']
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+
+    const object_as_string = status_option_selected
+    const signature_data = Date.now()
+    const target = 'storefront_order_status|'+object['e5_id']+'|'+item['purchase_identifier']
+    const signature = await this.generate_signature(signature_data+target+object_as_string)
+
+    
+    const message = {
+      type: 'storefront_order_status',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: object_as_string,
+      storefront_object_id: object['e5_id'],
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      mutable:true,
+      signature_data,
+      signature,
+      purchase_identifier: item['purchase_identifier'],
+    }
+    const object_hash = this.hash_message_for_id(target);
+    return { message, object_hash }
+  }
+
+  
 
 
 
@@ -46100,7 +46193,7 @@ class App extends Component {
   }
 
   async process_new_contractor_availability_update(message, object_hash){
-    if(this.hash_message_for_id(message) != object_hash) return;
+    // if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
@@ -46116,9 +46209,58 @@ class App extends Component {
     }
     const ipfs = message.data
     
-    const contractor_availability_info_clone = structuredClone(this.state.contractor_availability_info)
-    contractor_availability_info_clone[message.contractor_object_id] = ipfs
-    this.setState({contractor_availability_info: contractor_availability_info_clone})
+    
+
+    if(this.storefront_contract_availability_info_time_history == null){
+      this.storefront_contract_availability_info_time_history = {}
+    }
+
+    if(this.storefront_contract_availability_info_time_history[message.contractor_object_id] == null){
+      this.storefront_contract_availability_info_time_history[message.contractor_object_id] = 0
+    }
+
+    if(this.storefront_contract_availability_info_time_history[message.contractor_object_id] < message.time){
+      this.storefront_contract_availability_info_time_history[message.contractor_object_id] = message.time
+
+      const contractor_availability_info_clone = structuredClone(this.state.contractor_availability_info)
+      contractor_availability_info_clone[message.contractor_object_id] = ipfs
+      this.setState({contractor_availability_info: contractor_availability_info_clone})
+    }
+  }
+
+  async process_new_storefront_order_status_update(message, object_hash){
+    // if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = message.data
+
+    if(this.storefront_order_status_info_time_history == null){
+      this.storefront_order_status_info_time_history = {}
+    }
+
+    if(am_I_the_author == true || message['recipient'] == this.state.accounts[this.state.selected_e5].address){
+      if(this.storefront_order_status_info_time_history[message.purchase_identifier] == null){
+        this.storefront_order_status_info_time_history[message.purchase_identifier] = 0
+      }
+      if(this.storefront_order_status_info_time_history[message.purchase_identifier] < message.time){
+        this.storefront_order_status_info_time_history[message.purchase_identifier] = message.time
+
+        const storefront_order_status_info_clone = structuredClone(this.state.storefront_order_status_info)
+        storefront_order_status_info_clone[message.purchase_identifier] = ipfs
+        this.setState({storefront_order_status_info: storefront_order_status_info_clone})
+      }
+    }
   }
 
 
@@ -46409,7 +46551,7 @@ class App extends Component {
               else if(target_entry == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
                 await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
               }
-              else if(target_entry.startsWith('storefront_order')){
+              else if(target_entry.startsWith('storefront_order|')){
                 await this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target_entry.startsWith('signature_request|')){
@@ -46433,6 +46575,9 @@ class App extends Component {
               }
               else if(object_data['type'] == 'contractor_availability'){
                 await this.process_new_contractor_availability_update(object_data, object_hash)
+              }
+              else if(object_data['type'] == 'storefront_order_status'){
+                await this.process_new_storefront_order_status_update(object_data, object_hash)
               }
               await this.wait(200)
             }
