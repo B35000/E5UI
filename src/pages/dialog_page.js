@@ -69,6 +69,18 @@ function makeid(length) {
     return result;
 }
 
+function make_number_id(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return parseInt(result);
+}
+
 class DialogPage extends Component {
     
     state = {
@@ -89,7 +101,9 @@ class DialogPage extends Component {
         vote_tx_bundle_size:10, get_collect_bounties_tags_object: this.get_collect_bounties_tags_object(),
 
         songs_to_hide_while_showing:[], videos_to_hide_while_showing:[], selected_pins:[],
-        get_show_job_after_broadcasted_object:this.get_show_job_after_broadcasted_object()
+        get_show_job_after_broadcasted_object:this.get_show_job_after_broadcasted_object(),
+
+        new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:''
     };
 
 
@@ -177,6 +191,9 @@ class DialogPage extends Component {
             }
             else if(id == 'pick_from_my_locations'){
                 this.setState({selected_pins: data['pins']})
+            }
+            else if(id == 'start_voice_call'){
+                this.setState({new_voice_call_number_id: make_number_id(10)})
             }
         }
     }
@@ -482,6 +499,20 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_cookies_permission_request_ui()}
+                </div>
+            )
+        }
+        else if(option == 'start_voice_call'){
+            return(
+                <div>
+                    {this.render_start_voice_call_ui()}
+                </div>
+            )
+        }
+        else if(option == 'recipient_obj'){
+            return(
+                <div>
+                    {this.render_enter_voice_call_ui()}
                 </div>
             )
         }
@@ -8954,6 +8985,448 @@ return data['data']
     reject_cookies(){
         this.props.reject_cookies()
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_start_voice_call_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_start_voice_call_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_start_voice_call_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(4)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_start_voice_call_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(4)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_start_voice_call_data(){
+        const call_id = this.state.call_password != '' ? 'e'+this.state.new_voice_call_number_id : this.state.new_voice_call_number_id
+        
+        const formatted_call_id = this.state.call_password != '' ? 'e'+this.format_voice_call_id(this.state.new_voice_call_number_id) : this.format_voice_call_id(this.state.new_voice_call_number_id)
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055hp']/* 'Start An Indexer Call' */, 'details':this.props.app_state.loc['3055hq']/* 'Specify the accounts you wish to start a voice call with. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055hr']/* 'Account ID or Alias...' */} when_text_input_field_changed={this.when_call_receiver_account_id_input_field_changed.bind(this)} text={this.state.call_receiver_account_id} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.perform_account_search_and_add()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_added_accounts()}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055hu']/* 'Encrypt Voice Call.' */, 'details':this.props.app_state.loc['3055hv']/* 'You can optionally encrypt your new voice call with a password. */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055hw']/* This encryption feature is only supported in Chromium based browsers (Chrome, Edge and Brave browsers). */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.isEncryptionSupported == false ? this.props.app_state.loc['3055ig']/* 'Encryption Disabled ❌' */ : this.props.app_state.loc['3055hx']/* 'Password...' */} when_text_input_field_changed={this.when_call_password_input_field_changed.bind(this)} text={this.state.call_password} theme={this.props.theme}/>
+                {this.props.app_state.isEncryptionSupported == true && (
+                    <div>
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['3055id']/* Encryption supported on your device ✔ */, 'textsize':'9px', 'font':this.props.app_state.font})}
+                    </div>
+                )}
+                {this.props.app_state.isEncryptionSupported == false && (
+                    <div>
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ie']/* Encryption NOT supported on your device ❌ */, 'textsize':'9px', 'font':this.props.app_state.font})}
+                    </div>
+                )}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div onClick={() => this.copy_call_id_to_clipboard(call_id)}>
+                        {this.render_detail_item('10', {'text':formatted_call_id, 'textsize':'25px', 'font':this.props.app_state.font})}
+                    </div>
+                    <div style={{'padding':'0px 0px 0px 5px'}}>
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ib']/* Call Identifier. */, 'textsize':'12px', 'font':this.props.app_state.font})} 
+                    </div>
+                </div>
+
+                <div style={{height:10}}/>
+                <div onClick={() => this.enter_new_call()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ic']/* 'Enter Call.' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    format_voice_call_id(str){
+        return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7);
+    }
+
+    copy_call_id_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify(this.props.app_state.loc['3055ia']/* 'Call ID copied to clipboard.' */, 1600)
+    }
+
+    when_call_receiver_account_id_input_field_changed(text){
+        this.setState({call_receiver_account_id: text})
+    }
+
+    async perform_account_search_and_add(){
+        const recipient = await this.get_typed_alias_id(this.state.call_receiver_account_id.toString().trim())
+        const recipient_e5 = this.get_recipient_e5(recipient)
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
+            this.props.notify(this.props.app_state.loc['1030']/* 'Please put a valid account ID.' */, 1600)
+        }
+        else if(this.is_recipient_already_included(recipient, recipient_e5) == true){
+            this.props.notify(this.props.app_state.loc['3055hs']/* 'Youve already included that account.' */, 3600)
+        }
+        else if(recipient == this.props.app_state.user_account_id[recipient_e5]){
+            this.props.notify(this.props.app_state.loc['3055hy']/* 'Your account will be included automatically.' */, 4600)
+        }
+        else{
+            this.props.get_and_set_account_online_status(recipient, recipient_e5)
+            this.props.get_alias_from_account_id(recipient, recipient_e5)
+            const clone = this.state.new_call_recepients.slice()
+            clone.push({'id':recipient, 'e5':recipient_e5})
+            this.setState({new_call_recepients: clone, call_receiver_account_id:''})
+        }
+    }
+
+    is_recipient_already_included(recipient, recipient_e5){
+        var is_included = false;
+        this.state.new_call_recepients.forEach(element => {
+            if(element['id'] == recipient && element['e5'] == recipient_e5){
+                is_included = true
+            }
+        });
+        return is_included
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
+    }
+
+    get_recipient_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    render_added_accounts(){
+        var items = [].concat(this.state.new_call_recepients)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            var items2 = [0, 1]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_included_account_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_included_account_item(item){
+        const title = item['id']
+        const details = this.get_sender_title_text(item['id'], item['e5']) || this.props.app_state.loc['3055ht']/* Unknown */
+        const online_text = this.is_recipient_online(item) ? this.props.app_state.loc['2738bi']/* 'online' */ : null
+        return(
+            <div onClick={() => this.when_new_call_account_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l','footer':online_text})}
+            </div>
+        )
+    }
+
+    get_sender_title_text(account, e5){
+        if(account == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (bucket[account] == null ? null : bucket[account])
+            return alias
+        }
+    }
+
+    is_recipient_online(item){
+        const tracked_online_accounts = this.props.app_state.tracked_online_accounts
+        var recipients_e5 = item['e5']
+        const recipient = item['id']
+        const e5_id = recipient+recipients_e5
+
+        if(tracked_online_accounts[e5_id] == null){
+            return false
+        }
+        else{
+            return tracked_online_accounts[e5_id]['online']
+        }
+    }
+
+    when_new_call_account_clicked(item_to_remove){
+        const clone = this.state.new_call_recepients.slice()
+        const index = clone.findIndex(item => (item['id'] == item_to_remove['id'] && item['e5'] == item_to_remove['e5']));
+        if(index != -1){
+            clone.splice(index, 1)
+            this.setState({new_call_recepients: clone})
+        }
+    }
+
+    when_call_password_input_field_changed(text){
+        if(this.props.app_state.isEncryptionSupported == false) return;
+        this.setState({call_password: text})
+    }
+
+    enter_new_call(){
+        const call_id = this.state.call_password != '' ? 'e'+this.state.new_voice_call_number_id : this.state.new_voice_call_number_id
+        const recipients = this.state.new_call_recepients
+        const call_password = this.state.call_password
+
+        if(recipients.length == 0){
+            this.props.notify(this.props.app_state.loc['3055if']/* You need to specify some recipients. */, 3000)
+        }
+        else{
+            this.props.enter_new_call(call_id, recipients, call_password)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    render_enter_voice_call_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_enter_voice_call_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_voice_call_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_voice_call_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_enter_voice_call_data(){
+        const call_invite_obj = this.state.data['message']
+        if(call_invite_obj == null){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593kr']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593ks']/* 'Enter an online voice call with someone or some people on E5. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055im']/* 'Call Identifier...' */} when_text_input_field_changed={this.when_call_identifier_input_field_changed.bind(this)} text={this.state.call_identifier} theme={this.props.theme}/>
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055in']/* 'Call Password.' */, 'details':this.props.app_state.loc['3055io']/* 'Set the password used if one was set during the creation of the call. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055hx']/* 'Password...' */} when_text_input_field_changed={this.when_enter_call_password_input_field_changed.bind(this)} text={this.state.enter_call_password} theme={this.props.theme}/>
+                    {this.props.app_state.isEncryptionSupported == false && (
+                        <div>
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ie']/* Encryption NOT supported on your device ❌ */, 'textsize':'9px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
+                    {this.props.app_state.isEncryptionSupported == true && (
+                        <div>
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['3055id']/* Encryption supported on your device ✔ */, 'textsize':'9px', 'font':this.props.app_state.font})}
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.enter_existing_call_with_specified_details()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ic']/* 'Enter Call.' */, 'action':''},)}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }else{
+            const formatted_call_id = (str) => {
+                if(str.startsWith('e')){
+                    return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8);
+                }else{
+                    return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7);
+                }
+            }
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ij']/* 'Call Invite.' */, 'details':this.props.app_state.loc['3055ik']/* 'Youve been invited to join a call. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':call_invite_obj['sender_account']+','+(this.get_sender_title_text(call_invite_obj['sender_account'], call_invite_obj['sender_account_e5']) || ''), 'details':this.props.app_state.loc['3055il']/* 'Sender Account. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':''+(new Date(call_invite_obj['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(call_invite_obj['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        <div onClick={() => this.copy_call_id_to_clipboard(call_invite_obj['call_id'])}>
+                            {this.render_detail_item('10', {'text':formatted_call_id(call_invite_obj['call_id']), 'textsize':'25px', 'font':this.props.app_state.font})}
+                        </div>
+                        <div style={{'padding':'0px 0px 0px 5px'}}>
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ib']/* Call Identifier. */, 'textsize':'12px', 'font':this.props.app_state.font})} 
+                        </div>
+                    </div>
+                    {call_invite_obj['password'] != '' && (
+                        <div>
+                            {this.props.app_state.isEncryptionSupported == true && (
+                                <div>
+                                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3055id']/* Encryption supported on your device ✔ */, 'textsize':'9px', 'font':this.props.app_state.font})}
+                                </div>
+                            )}
+                            {this.props.app_state.isEncryptionSupported == false && (
+                                <div>
+                                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ie']/* Encryption NOT supported on your device ❌ */, 'textsize':'9px', 'font':this.props.app_state.font})}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {((call_invite_obj['password'] != '' && this.props.app_state.isEncryptionSupported == true) || (call_invite_obj['password'] == '' && this.props.app_state.isEncryptionSupported == false)) && (
+                        <div>
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.enter_invited_call()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ic']/* 'Enter Call.' */, 'action':''},)}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+    }
+
+    when_call_identifier_input_field_changed(text){
+        this.setState({call_identifier: text})
+    }
+
+    when_enter_call_password_input_field_changed(text){
+        this.setState({enter_call_password: text})
+    }
+
+    enter_existing_call_with_specified_details(){
+        const call_identifier = this.state.call_identifier.trim()
+        const enter_call_password = this.state.enter_call_password.trim()
+
+        if(call_identifier == ''){
+            this.props.notify(this.props.app_state.loc['3055ip']/* A call identifier is required. */, 4000)
+        }
+        else if(call_identifier.length != 10 && call_identifier.length != 11){
+            this.props.notify(this.props.app_state.loc['3055iq']/* The length of the identifier is invalid. */, 4000)
+        }
+        else if((call_identifier.startsWith('e') && isNaN(call_identifier.replace('e', ''))) || isNaN(call_identifier)){
+            this.props.notify(this.props.app_state.loc['3055ir']/* That call identifier is invalid. */, 4000)
+        }
+        else if(call_identifier.startsWith('e') && enter_call_password == ''){
+            this.props.notify(this.props.app_state.loc['3055is']/* That call requires a password. */, 4000)
+        }
+        else{
+            this.props.enter_call_with_specified_details(call_identifier, enter_call_password)
+        }
+    }
+
+    enter_invited_call(){
+        const call_invite_obj = this.state.data['message']
+        this.props.enter_call_with_specified_details(call_invite_obj['call_id'], call_invite_obj['password'])
+    }
+    
 
 
 

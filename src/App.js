@@ -683,6 +683,7 @@ import FulfilAuctionBidPage from './pages/fulfil_auction_bid_page'
 import OpenedIframeLinkPage from './pages/view_opened_iframe_link_page'
 import LocationMapInput from './pages/location_map_input'
 import ViewObjectLocations from './pages/view_object_location_pins'
+import CallPage from './pages/call_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -934,7 +935,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1028,7 +1029,9 @@ class App extends Component {
     socket_online:false, my_socket_id:null, socket_userId:null, quick_jobs:[], broadcast_stack:[], 
     socket_participated_objects: [], active_rooms:[], job_request_convo_keys:{}, socket_mail_messages:{}, socket_object_messages:{}, nitro_album_art:{}, received_signature_requests:{}, direct_orders:{}, received_signature_responses:{}, convo_typing_info:{}, convo_read_receipts_info:{}, tracked_online_accounts:{}, socket_job_responses:{}, socket_contractor_applications:{}, direct_order_fulfilments:{}, loading_socket_signature_request_response_data:false, socket_created_jobs:{}, socket_created_posts:{}, socket_all_mail:{}, socket_created_bills:{},
 
-    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[]
+    is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[],
+
+    call_invites:{}, call_metadata_object:{},
   };
 
   get_thread_pool_size(){
@@ -3235,6 +3238,7 @@ class App extends Component {
     this.view_iframe_link_page = React.createRef();
     this.set_map_location_page = React.createRef();
     this.view_map_location_pins_page = React.createRef();
+    this.view_call_interface_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -5699,6 +5703,7 @@ class App extends Component {
           {this.render_view_stage_creator_payout_result_bottomsheet()}
           {this.render_view_bid_in_auction_bottomsheet()}
           {this.render_fulfil_auction_bid_bottomsheet()}
+          {this.render_view_call_interface_bottomsheet()}
 
           {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -16004,7 +16009,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)}
         />
       </div>
     )
@@ -16082,6 +16087,8 @@ class App extends Component {
       'view_bag_application_details':350,
       'confirm_respond_to_signature_request':300,
       'request_cookies_permission':220,
+      'start_voice_call':450,
+      'enter_voice_call':400,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17122,6 +17129,17 @@ class App extends Component {
     setTimeout(function() {
       me.prompt_top_notification(me.getLocale()['3055gv']/* Cookies Rejected. */, 1200)
     }, (1 * 700))
+  }
+
+  enter_new_call(call_id, recipients, call_password){
+    this.open_dialog_bottomsheet()
+    this.send_invites_and_enter_chatroom(call_id, recipients, call_password)
+    this.setState({current_call_recipients: recipients, call_moderator: true})
+    this.begin_enter_call_process(call_id, call_password)
+  }
+
+  enter_call_with_specified_details(call_id, call_password){
+    this.enter_call(call_id, call_password)
   }
 
 
@@ -21544,6 +21562,91 @@ class App extends Component {
 
 
 
+  render_view_call_interface_bottomsheet(){
+    if(this.state.view_call_interface_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_call_interface_bottomsheet} onClose={this.open_view_call_interface_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_view_call_interface_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_call_interface_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_call_interface_bottomsheet.bind(this)} open={this.state.view_call_interface_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_view_call_interface_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_call_interface_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    const minus = this.state.os == 'iOS' ? 90 : 120;
+    return(
+      <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_view_call_interface_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_call_interface_bottomsheet')
+    if(this.state.view_call_interface_bottomsheet == true){
+      //closing
+      this.view_call_interface_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_call_interface_bottomsheet: !this.state.view_call_interface_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_call_interface_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_call_interface_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_call_interface_bottomsheet: !me.state.view_call_interface_bottomsheet});
+
+          if(me.view_call_interface_bottomsheet != null){
+            // me.view_transaction_page.current?.setState(me.view_call_interface_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_call_interface(){
+    this.open_view_call_interface_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_call_interface_page.current != null){
+        me.view_call_interface_page.current.set_data()
+      }
+    }, (1 * 500));
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -25540,7 +25643,8 @@ class App extends Component {
         this.setState({loading_open_socket_signature_request_response_data: true})
         const signature_request_target = 'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
         const signature_response_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
-        await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target],[],[])
+        const call_invites_target = 'call_invites|'+this.state.accounts[this.state.selected_e5].address
+        await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target, call_invites_target],[],[])
         this.setState({loading_open_socket_signature_request_response_data: false})
       }
       load_signature_data()
@@ -34065,11 +34169,11 @@ class App extends Component {
   async get_sender_title_text(account, e5){
     await this.get_alias_from_account_id(account, e5)
     if(account == this.state.user_account_id[e5]){
-        return this.getLocale()['1694']/* 'You' */
+      return this.getLocale()['1694']/* 'You' */
     }else{
-        const bucket = this.get_all_sorted_objects_mappings(this.state.alias_bucket)
-        var alias = (bucket[account] == null ? account : bucket[account])
-        return alias
+      const bucket = this.get_all_sorted_objects_mappings(this.state.alias_bucket)
+      var alias = (bucket[account] == null ? account : bucket[account])
+      return alias
     }
   }
 
@@ -43195,8 +43299,11 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2738bm']/* Youve gone offline.' */, 3000)
       this.is_device_online = false;
     });
-  }
 
+    const isSupported = typeof RTCRtpSender !== 'undefined' && 'createEncodedStreams' in RTCRtpSender.prototype;
+    
+    this.setState({ isEncryptionSupported: isSupported });
+  }
 
   async set_up_socket_connection_and_initialize_listeners(attempts){
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
@@ -43349,6 +43456,9 @@ class App extends Component {
       }
       else if(message['type'] == 'open_signature_response'){
         me.process_new_open_signature_response_message(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'call_invite'){
+        me.process_new_call_invite_message(message, object_hash, from, true)
       }
     });
     this.socket.on('user_joined_chatroom', ({userId, roomId}) => {
@@ -43777,6 +43887,33 @@ class App extends Component {
     await this.wait(3000)
 
     await this.process_new_storefront_order_status_update(availability_object.message, availability_object.object_hash)
+  }
+
+  async send_invites_and_enter_chatroom(call_id, recipients, call_password){
+    this.prompt_top_notification(this.getLocale()['3055ih']/* 'Sending Call Invites...' */, 1900)
+    this.enter_chatroom_if_socket_enabled(call_id)
+    await this.wait(1900)
+
+    //send_invites
+    for(var i=0; i<recipients.length; i++){
+      const recipient = recipients[i]
+      const invite_object = await this.get_invite_object_message(call_id, recipient, call_password)
+
+      const to = await this.get_recipient_address(recipient['id'], recipient['e5'])
+      const target = 'call_invites|'+to
+      const secondary_target = 'call_invites|'+this.state.accounts[this.state.selected_e5].address
+      this.socket.emit("send_message", {to: to, message: invite_object.message, target: target, object_hash: invite_object.object_hash, secondary_target: secondary_target });
+
+      await this.wait(1900)
+    }
+
+    const hash_message = await this.get_password_hash_message(call_id, call_password)
+    const target = 'call_metadata|'+call_id
+    const broadcasat_object = {roomId: call_id, message: hash_message.message, target: target, object_hash: hash_message.object_hash}
+    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(1900)
+
+    this.prompt_top_notification(this.getLocale()['3055ii']/* 'Invites sent.' */, 1900)
   }
 
   
@@ -44897,9 +45034,9 @@ class App extends Component {
 
 
     const object_as_string = availability_status
-    const signature_data = Date.now()
-    const target = 'contractor_availability|'+object['e5_id']
-    const signature = await this.generate_signature(signature_data+target+object_as_string)
+    // const signature_data = Date.now()
+    // const target = 'contractor_availability|'+object['e5_id']
+    // const signature = await this.generate_signature(signature_data+target+object_as_string)
 
     
     const message = {
@@ -44918,11 +45055,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
-      mutable:true,
-      signature_data,
-      signature
     }
-    const object_hash = this.hash_message_for_id(target);
+    const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
   }
 
@@ -44941,9 +45075,9 @@ class App extends Component {
 
 
     const object_as_string = status_option_selected
-    const signature_data = Date.now()
-    const target = 'storefront_order_status|'+object['e5_id']+'|'+item['purchase_identifier']
-    const signature = await this.generate_signature(signature_data+target+object_as_string)
+    // const signature_data = Date.now()
+    // const target = 'storefront_order_status|'+object['e5_id']+'|'+item['purchase_identifier']
+    // const signature = await this.generate_signature(signature_data+target+object_as_string)
 
     
     const message = {
@@ -44962,14 +45096,123 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
-      mutable:true,
-      signature_data,
-      signature,
       purchase_identifier: item['purchase_identifier'],
     }
-    const object_hash = this.hash_message_for_id(target);
+    const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
   }
+
+
+
+
+  async get_invite_object_message(call_id, recipient_obj, call_password){
+    var now = Date.now()
+    const key_data = await this.get_encrypted_call_invite_request_key(recipient_obj)
+    var call_invite_obj = {
+      'call_id': call_id,
+      'password': call_password,
+      'time': now,
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'address': this.state.accounts[this.state.selected_e5].address,
+      'invite_id': makeid(12)
+    }
+
+    const encrypted_obj = await this.encrypt_data_string(JSON.stringify(call_invite_obj), key_data.key.toString())
+    const encrypted_job_request_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+    const tags = []
+    const id = now;
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(encrypted_job_request_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'call_invite',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async get_encrypted_call_invite_request_key(recipient_obj){
+    var key = makeid(35)
+    var recipient = recipient_obj['id']
+    var author_e5 = recipient_obj['e5']
+    var key_data = {}
+    var recipients_pub_key_hash = await this.get_accounts_public_key(recipient, author_e5)
+    if(recipients_pub_key_hash != ''){
+      var encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(recipients_pub_key_hash))
+
+      key_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+    }
+    var uint8array = await this.get_account_raw_public_key() 
+    var my_encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(uint8array))
+    key_data[await this.get_my_unique_crosschain_identifier_number2()] = my_encrypted_key
+    key_data['encryptor_pub_key'] = this.uint8ToBase64(uint8array)
+
+    return { key_data, key }
+  }
+
+  async get_password_hash_message(call_id, call_password){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    
+    const message = {
+      type: 'call_metadata',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: this.hash_message_for_id(call_password),
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      call_id
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+
+
 
   
 
@@ -46193,7 +46436,7 @@ class App extends Component {
   }
 
   async process_new_contractor_availability_update(message, object_hash){
-    // if(this.hash_message_for_id(message) != object_hash) return;
+    if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
@@ -46229,7 +46472,7 @@ class App extends Component {
   }
 
   async process_new_storefront_order_status_update(message, object_hash){
-    // if(this.hash_message_for_id(message) != object_hash) return;
+    if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
@@ -46262,6 +46505,65 @@ class App extends Component {
       }
     }
   }
+
+  async process_new_call_invite_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+
+      const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+      const messages = this.state.socket_contractor_applications[message.contractor_object_id] == null ? [] : this.state.socket_contractor_applications[message.contractor_object_id].slice()
+      var ipfs_message = ipfs;
+
+      if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
+        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+        ipfs_message = JSON.parse(originalText);
+      }
+      if(ipfs_message != null){
+        const clone = structuredClone(this.state.call_invites)
+        clone[message.invite_id] = ipfs_message
+        this.setState({call_invites: clone})
+
+        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+          this.handle_call_invite_notifications(ipfs_message)
+        }
+      }
+    }
+  }
+
+  handle_call_invite_notifications(message){
+    var sender_account = message['sender_account']
+    var prompt = this.getLocale()['2738bn']/* 'Incoming call request from $' */
+    prompt = prompt.replace('$', sender_account)
+    this.prompt_top_notification(prompt, 10000, {'notification_id':'enter_voice_call', 'message':message})
+  }
+
+  async process_new_call_metadata_for_entering_call(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const ipfs = message.data
+
+    if(this.storefront_new_call_metadata_time_history == null){
+      this.storefront_new_call_metadata_time_history = {}
+    }
+
+    if(this.storefront_new_call_metadata_time_history[message.call_id] == null){
+      this.storefront_new_call_metadata_time_history[message.call_id] = 0
+    }
+    if(this.storefront_new_call_metadata_time_history[message.call_id] < message.time){
+      this.storefront_new_call_metadata_time_history[message.call_id] = message.time
+
+      const clone = structuredClone(this.state.call_metadata_object)
+      clone[message.call_id] = ipfs
+      this.setState({call_metadata_object: clone})
+    }
+  }
+  
 
 
 
@@ -46579,6 +46881,12 @@ class App extends Component {
               else if(object_data['type'] == 'storefront_order_status'){
                 await this.process_new_storefront_order_status_update(object_data, object_hash)
               }
+              else if(object_data['type'] == 'call_invite'){
+                await this.process_new_call_invite_message(object_data, object_hash, null, true)
+              }
+              else if(object_data['type'] == 'call_metadata'){
+                await this.process_new_call_metadata_for_entering_call(object_data, object_hash)
+              }
               await this.wait(200)
             }
           }
@@ -46653,6 +46961,51 @@ class App extends Component {
     const data = await this.get_account_in_room_data([to], 'jobs')
     clone[account+e5] = {'address':to, 'online':data[to], 'account':account, 'e5':e5, 'e5_id':account+e5}
     this.setState({tracked_online_accounts: clone})
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  async enter_call(call_id, call_password){
+    if(call_password != ''){
+      const is_password_valid = await this.verify_password_used(call_id, call_password);
+      if(is_password_valid == false){
+        return;
+      }else{
+        await this.begin_enter_call_process(call_id, call_password)
+      }
+    }else{
+      await this.begin_enter_call_process(call_id, call_password)
+    }
+  }
+
+  async verify_password_used(call_id, call_password){
+    this.prompt_top_notification(this.getLocale()['2738bp']/* Checking that password... */, 1600)
+    const target = 'call_metadata|'+call_id
+    await this.get_objects_from_socket_and_set_in_state([target], [], [])
+    const call_metadata_hash = this.state.call_metadata_object[call_id]
+    if(call_metadata_hash != this.hash_data(call_password)){
+      this.prompt_top_notification(this.getLocale()['2738bo']/* That password is not valid. */, 4000)
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  async begin_enter_call_process(call_id, call_password){
+    this.open_dialog_bottomsheet()
+    this.show_view_call_interface()
+    this.setState({current_call_id: call_id, current_call_password: call_password})
   }
 
 

@@ -140,7 +140,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */, this.props.app_state.loc['1593d']/* 'notifications 🔔' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593kn']/* 'calls ☎️' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */, this.props.app_state.loc['1593d']/* 'notifications 🔔' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -1479,6 +1479,13 @@ class StackPage extends Component {
             return(
                 <div key={selected_item}>
                     {this.render_signature_requests_ui()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593kn']/* 'calls ☎️' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_group_calls_ui()}
                 </div>
             )
         }
@@ -17761,6 +17768,92 @@ class StackPage extends Component {
         const location_data = { lat: item['lat'], lon: item['lng'] }
         this.locationPickerRef.current?.set_center(location_data);
     }
+
+
+
+
+
+
+
+
+
+    render_group_calls_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div style={{'width':'99%'}}>
+                    {this.render_group_calls_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_group_calls_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_group_calls_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_group_calls_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ko']/* 'Start Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593kp']/* 'Start an online voice call with someone or some people on E5. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={() => this.start_voice_call()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
+                </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593kr']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593ks']/* 'Enter an online voice call with someone or some people on E5. */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <div onClick={() => this.enter_voice_call()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    start_voice_call(){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({}, 'start_voice_call')
+    }
+
+    enter_voice_call(){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({}, 'enter_voice_call')
+    }
+
+
+
+
 
 
 
