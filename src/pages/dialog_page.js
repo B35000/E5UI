@@ -103,7 +103,7 @@ class DialogPage extends Component {
         songs_to_hide_while_showing:[], videos_to_hide_while_showing:[], selected_pins:[],
         get_show_job_after_broadcasted_object:this.get_show_job_after_broadcasted_object(),
 
-        new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:''
+        new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(),
     };
 
 
@@ -150,6 +150,17 @@ class DialogPage extends Component {
             },
             'e':[
                 ['or','',0], ['e', this.props.app_state.loc['284be']/* 'show' */], [0]
+            ],
+        };
+    }
+
+    get_record_call_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['3091bn']/* 'record' */], [0]
             ],
         };
     }
@@ -9087,11 +9098,19 @@ return data['data']
                 </div>
 
                 <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bl']/* 'Record Call.' */, 'details':this.props.app_state.loc['3091bm']/* 'You can record the call for future reference. */, 'size':'l'})}
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                <div style={{height:10}}/>
                 <div onClick={() => this.enter_new_call()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ic']/* 'Enter Call.' */, 'action':''},)}
                 </div>
             </div>
         )
+    }
+
+    when_get_record_call_tags_object_updated(tags_obj){
+        this.setState({get_record_call_tags_object: tags_obj})
     }
 
     format_voice_call_id(str){
@@ -9249,11 +9268,13 @@ return data['data']
         const recipients = this.state.new_call_recepients
         const call_password = this.state.call_password
 
+        const record_call = this.get_selected_item2(this.state.get_record_call_tags_object, 'e') == 1
+
         if(recipients.length == 0){
             this.props.notify(this.props.app_state.loc['3055if']/* You need to specify some recipients. */, 3000)
         }
         else{
-            this.props.enter_new_call(call_id, recipients, call_password)
+            this.props.enter_new_call(call_id, recipients, call_password, record_call)
         }
     }
 
@@ -9319,6 +9340,11 @@ return data['data']
                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055im']/* 'Call Identifier...' */} when_text_input_field_changed={this.when_call_identifier_input_field_changed.bind(this)} text={this.state.call_identifier} theme={this.props.theme}/>
                     <div style={{height:10}}/>
 
+                    
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bl']/* 'Record Call.' */, 'details':this.props.app_state.loc['3091bm']/* 'You can record the call for future reference. */, 'size':'l'})}
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height:10}}/>
+                    
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055in']/* 'Call Password.' */, 'details':this.props.app_state.loc['3055io']/* 'Set the password used if one was set during the creation of the call. */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055hx']/* 'Password...' */} when_text_input_field_changed={this.when_enter_call_password_input_field_changed.bind(this)} text={this.state.enter_call_password} theme={this.props.theme}/>
@@ -9357,6 +9383,11 @@ return data['data']
                     {this.render_detail_item('3', {'title':''+(new Date(call_invite_obj['time']).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(call_invite_obj['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
+                    
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bl']/* 'Record Call.' */, 'details':this.props.app_state.loc['3091bm']/* 'You can record the call for future reference. */, 'size':'l'})}
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         <div onClick={() => this.copy_call_id_to_clipboard(call_invite_obj['call_id'])}>
                             {this.render_detail_item('10', {'text':formatted_call_id(call_invite_obj['call_id']), 'textsize':'25px', 'font':this.props.app_state.font})}
@@ -9423,8 +9454,9 @@ return data['data']
     }
 
     enter_invited_call(){
+        const record_call = this.get_selected_item2(this.state.get_record_call_tags_object, 'e') == 1
         const call_invite_obj = this.state.data['message']
-        this.props.enter_call_with_specified_details(call_invite_obj['call_id'], call_invite_obj['password'])
+        this.props.enter_call_with_specified_details(call_invite_obj['call_id'], call_invite_obj['password'], record_call)
     }
     
 

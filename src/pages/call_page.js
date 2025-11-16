@@ -418,6 +418,13 @@ class CallPage extends Component {
                 
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.current_call_password == '' ? this.props.app_state.loc['3091e']/* 'Disabled */ : this.props.app_state.loc['3091d']/* 'Enabled */, 'details':this.props.app_state.loc['3091c']/* 'Encrypted */, 'size':'l'})}
+                
+                {this.props.app_state.isRecording == true && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'details': this.props.app_state.loc['3091bo']/* 'You\'re recording this call. */, 'title':this.props.app_state.loc['3091bp']/* '🔴 Call Record. */, 'size':'l'})}
+                    </div>
+                )}
 
                 <div style={{height:10}}/>
                 {this.render_socket()}

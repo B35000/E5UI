@@ -17445,14 +17445,14 @@ class App extends Component {
     }, (1 * 700))
   }
 
-  enter_new_call(call_id, recipients, call_password){
+  enter_new_call(call_id, recipients, call_password, record_call){
     this.send_invites_and_enter_chatroom(call_id, recipients, call_password)
     this.setState({current_call_recipients: recipients, call_moderator: true})
-    this.begin_enter_call_process(call_id, call_password)
+    this.begin_enter_call_process(call_id, call_password, record_call)
   }
 
-  enter_call_with_specified_details(call_id, call_password){
-    this.enter_call(call_id, call_password)
+  enter_call_with_specified_details(call_id, call_password, record_call){
+    this.enter_call(call_id, call_password, record_call)
   }
 
 
@@ -47433,16 +47433,16 @@ class App extends Component {
 
 
 
-  async enter_call(call_id, call_password){
+  async enter_call(call_id, call_password, record_call){
     if(call_password != ''){
       const is_password_valid = await this.verify_password_used(call_id, call_password);
       if(is_password_valid == false){
         return;
       }else{
-        await this.begin_enter_call_process(call_id, call_password)
+        await this.begin_enter_call_process(call_id, call_password, record_call)
       }
     }else{
-      await this.begin_enter_call_process(call_id, call_password)
+      await this.begin_enter_call_process(call_id, call_password, record_call)
     }
   }
 
@@ -47459,7 +47459,7 @@ class App extends Component {
     }
   }
 
-  async begin_enter_call_process(call_id, call_password){
+  async begin_enter_call_process(call_id, call_password, record_call){
     const successful_microphone_access = await this.initializeMedia()
     if(!successful_microphone_access){
       this.prompt_top_notification(this.getLocale()['2738bq']/* e needs access to your microphone for the call. */, 10000)
@@ -47487,7 +47487,7 @@ class App extends Component {
     this.open_dialog_bottomsheet()
     this.show_view_call_interface()
     this.pause_media_if_any()
-    this.startRecording()
+    if(record_call == true) this.startRecording()
 
     this.count_up_interval = setInterval(() => {
       this.setState({call_duration: (Date.now() - call_start_time)});
