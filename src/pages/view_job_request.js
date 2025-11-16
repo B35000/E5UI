@@ -2336,7 +2336,6 @@ class ViewJobRequestPage extends Component {
         }
     }
 
-
     shorten_message_item(message){
         var return_val = message
         if(message.length > 10){
@@ -2344,7 +2343,6 @@ class ViewJobRequestPage extends Component {
         }
         return return_val
     }
-
 
     when_focus_chain_item_clicked(item, pos){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
@@ -2459,7 +2457,6 @@ class ViewJobRequestPage extends Component {
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
-
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

@@ -193,7 +193,7 @@ class DialogPage extends Component {
                 this.setState({selected_pins: data['pins']})
             }
             else if(id == 'start_voice_call'){
-                this.setState({new_voice_call_number_id: make_number_id(10)})
+                this.setState({new_voice_call_number_id: make_number_id(15)})
             }
         }
     }
@@ -9095,7 +9095,7 @@ return data['data']
     }
 
     format_voice_call_id(str){
-        return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7);
+        return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
     }
 
     copy_call_id_to_clipboard(text){
@@ -9341,9 +9341,9 @@ return data['data']
         }else{
             const formatted_call_id = (str) => {
                 if(str.startsWith('e')){
-                    return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8);
+                    return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8, 12)+ " " + str.slice(12);
                 }else{
-                    return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7);
+                    return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
                 }
             }
             return(
@@ -9354,7 +9354,7 @@ return data['data']
                     {this.render_detail_item('3', {'title':call_invite_obj['sender_account']+','+(this.get_sender_title_text(call_invite_obj['sender_account'], call_invite_obj['sender_account_e5']) || ''), 'details':this.props.app_state.loc['3055il']/* 'Sender Account. */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'title':''+(new Date(call_invite_obj['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(call_invite_obj['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(call_invite_obj['time']).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(call_invite_obj['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>

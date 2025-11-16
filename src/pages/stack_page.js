@@ -2188,6 +2188,8 @@ class StackPage extends Component {
         estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion
         return(
             <div>
+                {this.render_now_calling_message_if_any()}
+
                 {this.render_now_playing_media_if_any()}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[this.props.app_state.selected_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':'wei'})}>
@@ -2239,6 +2241,17 @@ class StackPage extends Component {
                 {this.show_e5_locked_message_if_locked()}
             </div>
         )
+    }
+
+    render_now_calling_message_if_any(){
+        if(this.props.app_state.current_call_password != null){
+            return(
+                <div onClick={() => this.props.show_view_call_interface()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bi']/* '📞 Youre on a call. */, 'details':this.props.app_state.loc['3091bj']/* 'Tap this to resume it in its page. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     show_e5_locked_message_if_locked(){
@@ -17840,12 +17853,20 @@ class StackPage extends Component {
             this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
             return;
         }
+        else if(this.props.app_state.current_call_password != null){
+            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+            return;
+        }
         this.props.show_dialog_bottomsheet({}, 'start_voice_call')
     }
 
     enter_voice_call(){
         if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
             this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        else if(this.props.app_state.current_call_password != null){
+            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
             return;
         }
         this.props.show_dialog_bottomsheet({}, 'enter_voice_call')

@@ -591,6 +591,10 @@ class FullVideoPage extends Component {
         }, (1 * 300));
     }
 
+    pause_if_playing(){
+        this.video_player.current?.pause();
+    }
+
 
 
 

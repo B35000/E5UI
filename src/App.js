@@ -713,6 +713,8 @@ import io from 'socket.io-client';
 import { createHash } from 'crypto';
 import * as naughtyWords from 'naughty-words';
 // import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
+import SimplePeer from "simple-peer";
+import * as Tone from 'tone';
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -919,6 +921,314 @@ const PDFViewerWrapper = forwardRef(({ fileUrl, theme /* , record_page, current_
   );
 });
 
+// Encryption/Decryption utilities
+class AudioEncryption {
+  constructor() {
+    this.key = null;
+    this.ivCounter = 0;
+  }
+
+  // Derive a key from a password
+  async deriveKey(password) {
+    const encoder = new TextEncoder();
+    const passwordBuffer = encoder.encode(password);
+    
+    // Import password as key material
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw',
+      passwordBuffer,
+      { name: 'PBKDF2' },
+      false,
+      ['deriveBits', 'deriveKey']
+    );
+
+    // Derive actual encryption key
+    this.key = await crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        salt: encoder.encode('simple-peer-salt'), // Use same salt for all peers
+        iterations: 100000,
+        hash: 'SHA-256'
+      },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt']
+    );
+
+    console.log('Encryption key derived successfully');
+    return this.key;
+  }
+
+  // Generate a unique IV for each frame
+  generateIV() {
+    const iv = new Uint8Array(12);
+    const view = new DataView(iv.buffer);
+    view.setUint32(0, this.ivCounter++, false);
+    return iv;
+  }
+
+  // Encrypt frame data
+  async encryptFrame(data) {
+    if (!this.key) {
+      throw new Error('Key not initialized');
+    }
+
+    const iv = this.generateIV();
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: iv },
+      this.key,
+      data
+    );
+
+    // Prepend IV to encrypted data
+    const result = new Uint8Array(iv.length + encrypted.byteLength);
+    result.set(iv, 0);
+    result.set(new Uint8Array(encrypted), iv.length);
+
+    return result;
+  }
+
+  // Decrypt frame data
+  async decryptFrame(data) {
+    if (!this.key) {
+      throw new Error('Key not initialized');
+    }
+
+    // Extract IV from beginning of data
+    const iv = data.slice(0, 12);
+    const encryptedData = data.slice(12);
+
+    try {
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        this.key,
+        encryptedData
+      );
+      return new Uint8Array(decrypted);
+    } catch (error) {
+      console.error('Decryption failed:', error);
+      return data; // Return original if decryption fails
+    }
+  }
+}
+
+// Transform stream to encrypt outgoing audio
+class EncryptTransform {
+  constructor(encryptor) {
+    this.encryptor = encryptor;
+  }
+
+  async transform(chunk, controller) {
+    if (chunk.type !== 'empty' && chunk.data) {
+      try {
+        const encrypted = await this.encryptor.encryptFrame(chunk.data);
+        const arrayBuffer = encrypted.buffer;
+        chunk.data = arrayBuffer;
+      } catch (error) {
+        // console.error('Encryption error:', error);
+      }
+    }
+    controller.enqueue(chunk);
+  }
+}
+
+// Transform stream to decrypt incoming audio
+class DecryptTransform {
+  constructor(encryptor) {
+    this.encryptor = encryptor;
+  }
+
+  async transform(chunk, controller) {
+    if (chunk.type !== 'empty' && chunk.data) {
+      try {
+        const decrypted = await this.encryptor.decryptFrame(chunk.data);
+        const arrayBuffer = decrypted.buffer;
+        chunk.data = arrayBuffer;
+      } catch (error) {
+        // console.error('Decryption error:', error);
+      }
+    }
+    controller.enqueue(chunk);
+  }
+}
+
+// Pitch Shifter Processor using Tone.js
+class PitchShifterProcessor {
+  constructor() {
+    this.pitchShift = 0;
+    this.enabled = false;
+    this.pitchShifter = null;
+    this.source = null;
+    this.destination = null;
+    this.destinationStream = null;
+  }
+
+  async initialize(inputStream) {
+    try {
+      // Start Tone.js context — must be inside a user gesture
+      await Tone.start();
+      console.log('Tone.js audio context started');
+
+      // Create MediaStream source node from existing mic stream
+      this.source = Tone.context.createMediaStreamSource(inputStream);
+
+      // Create pitch shifter effect
+      this.pitchShifter = new Tone.PitchShift({pitch: 3, windowSize: 0.2, delayTime: 0.05, feedback: 0.1 });
+
+      Tone.connect(this.source, this.pitchShifter);
+
+      // Create a MediaStreamDestination to pipe processed audio to
+      this.destination = Tone.context.createMediaStreamDestination();
+      this.destinationStream = this.destination.stream;
+      // // Connect source → effect → destination
+      // const toneInput = this.pitchShifter.input ? this.pitchShifter.input : this.pitchShifter;
+      // this.source.connect(toneInput);
+      // this.pitchShifter.connect(this.destination);
+
+      this.pitchShifter.connect(this.destination);
+
+      console.log('Pitch shifter initialized with Tone.js');
+      return this.destinationStream;
+    } catch (error) {
+      console.error('Error initializing pitch shifter:', error);
+      throw error;
+    }
+  }
+
+  setPitch(semitones) {
+    this.pitchShift = semitones;
+    if (this.pitchShifter) {
+      this.pitchShifter.pitch = semitones;
+      console.log(`Pitch shift: ${semitones} semitones`);
+    }
+  }
+
+  setEnabled(enabled) {
+    this.enabled = enabled;
+    if (this.pitchShifter) {
+      if (enabled) {
+        this.pitchShifter.wet.value = 1; // 100% wet (processed signal)
+      } else {
+        this.pitchShifter.wet.value = 0; // 100% dry (original signal)
+      }
+      console.log(`Pitch shifter ${enabled ? 'enabled' : 'disabled'}`);
+    }
+  }
+
+  cleanup() {
+    if (this.source) this.source.disconnect();
+    if (this.pitchShifter) this.pitchShifter.dispose();
+    this.source = null;
+    this.pitchShifter = null;
+    this.destination = null;
+    this.destinationStream = null;
+  }
+}
+
+class CallRecorder {
+  constructor() {
+    this.mediaRecorder = null;
+    this.recordedChunks = [];
+    this.isRecording = false;
+    this.mixedStream = null;
+    this.audioContext = null;
+    this.destination = null;
+    this.sources = [];
+  }
+
+  async startRecording(localStream, remoteStreams = []) {
+    try {
+      // Create an AudioContext for mixing streams
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.destination = this.audioContext.createMediaStreamDestination();
+
+      // Add local stream
+      if (localStream) {
+        const localSource = this.audioContext.createMediaStreamSource(localStream);
+        localSource.connect(this.destination);
+        this.sources.push(localSource);
+      }
+
+      // Add all remote streams
+      remoteStreams.forEach(stream => {
+        if (stream) {
+          const remoteSource = this.audioContext.createMediaStreamSource(stream);
+          remoteSource.connect(this.destination);
+          this.sources.push(remoteSource);
+        }
+      });
+
+      this.mixedStream = this.destination.stream;
+
+      // Create MediaRecorder with mixed stream
+      this.mediaRecorder = new MediaRecorder(this.mixedStream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+
+      this.recordedChunks = [];
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunks.push(event.data);
+        }
+      };
+
+      this.mediaRecorder.onstop = () => {
+        console.log('Recording stopped, total chunks:', this.recordedChunks.length);
+      };
+
+      this.mediaRecorder.start(1000); // Collect data every second
+      this.isRecording = true;
+      console.log('Recording started');
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      throw error;
+    }
+  }
+
+  addRemoteStream(stream) {
+    if (this.audioContext && this.destination && stream) {
+      const remoteSource = this.audioContext.createMediaStreamSource(stream);
+      remoteSource.connect(this.destination);
+      this.sources.push(remoteSource);
+      console.log('Added remote stream to recording');
+    }
+  }
+
+  stopRecording() {
+    return new Promise((resolve) => {
+      if (!this.mediaRecorder || !this.isRecording) {
+        resolve(null);
+        return;
+      }
+
+      this.mediaRecorder.onstop = () => {
+        const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+        this.isRecording = false;
+        
+        // Cleanup
+        this.sources.forEach(source => {
+          try {
+            source.disconnect();
+          } catch (e) {}
+        });
+        this.sources = [];
+        
+        if (this.audioContext) {
+          this.audioContext.close();
+          this.audioContext = null;
+        }
+
+        console.log('Recording stopped, blob size:', blob.size);
+        resolve(blob);
+      };
+
+      this.mediaRecorder.stop();
+    });
+  }
+}
+
 class App extends Component {
 
   // render(){
@@ -1031,7 +1341,7 @@ class App extends Component {
 
     is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[],
 
-    call_invites:{}, call_metadata_object:{},
+    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false,
   };
 
   get_thread_pool_size(){
@@ -5822,7 +6132,7 @@ class App extends Component {
 
           show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
 
-          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)}
+          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -7820,7 +8130,7 @@ class App extends Component {
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
-      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)}
+      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)}
       />
     )
   }
@@ -14365,6 +14675,8 @@ class App extends Component {
     )
   }
 
+  
+
   open_view_job_request_bottomsheet(){
     this.when_bottomsheet_opened_or_closed('open_view_job_request_bottomsheet')
     if(this.state.view_job_request_bottomsheet == true){
@@ -14961,7 +15273,9 @@ class App extends Component {
     else if(page == 'video-comment'){
       this.add_video_message_to_stack_object(tx)
     }
-    this.open_add_comment_bottomsheet()
+    else if(page == 'call'){
+      this.open_add_comment_bottomsheet(tx)
+    }
 
     const clone = this.state.stacked_message_ids.slice()
     clone.push({'e5':tx['sender_e5'], 'id':tx['message_id']})
@@ -17132,7 +17446,6 @@ class App extends Component {
   }
 
   enter_new_call(call_id, recipients, call_password){
-    this.open_dialog_bottomsheet()
     this.send_invites_and_enter_chatroom(call_id, recipients, call_password)
     this.setState({current_call_recipients: recipients, call_moderator: true})
     this.begin_enter_call_process(call_id, call_password)
@@ -21591,7 +21904,7 @@ class App extends Component {
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
       <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call={this.leave_call.bind(this)} stream={this.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)}
         />
       </div>
     )
@@ -21632,6 +21945,10 @@ class App extends Component {
         me.view_call_interface_page.current.set_data()
       }
     }, (1 * 500));
+  }
+
+  add_call_page_message_to_stack_object(message){
+    this.emit_new_call_message(message, 'call')
   }
 
 
@@ -43346,10 +43663,25 @@ class App extends Component {
     if (this.socket) {
       this.socket.disconnect();
     }
-    if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
+
+    if (this.pitchProcessor) {
+      this.pitchProcessor.cleanup();
+      this.pitchProcessor = null;
     }
-    this.stream = null;
+
+    if (this.processedStream) {
+      this.processedStream.getTracks().forEach(track => track.stop());
+    }
+
+    this.processedStream = null;
+
+    if(this.count_up_interval){
+      clearInterval(this.count_up_interval)
+    }
+    
+    if (this.recordingTimer) {
+      clearInterval(this.recordingTimer);
+    }
   }
 
   async register_account_in_socket(beacon_node){
@@ -43407,6 +43739,9 @@ class App extends Component {
           }
           else if(message.type == 'comment_message'){
             me.process_new_comment_message(message, object_hash)
+          }
+          else if(message.type == 'call-message'){
+            me.process_new_call_message(message, object_hash)
           }
         }
       }
@@ -43914,6 +44249,22 @@ class App extends Component {
     await this.wait(1900)
 
     this.prompt_top_notification(this.getLocale()['3055ii']/* 'Invites sent.' */, 1900)
+  }
+
+  async emit_new_call_message(message){
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
+    const call_message_object = await this.prepare_call_message(message)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(call_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const room_id = this.state.current_call_id
+
+    this.socket.emit("chatroom_message", {roomId: room_id, message: call_message_object.message, target: room_id, object_hash: call_message_object.object_hash});
+
+    await this.wait(3000)
+    this.process_new_call_message(call_message_object.message, call_message_object.object_hash)
   }
 
   
@@ -45209,6 +45560,58 @@ class App extends Component {
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
+  }
+
+
+
+
+  async prepare_call_message(message_obj){
+    const state_object = await this.encrypt_call_message(message_obj)
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(state_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = message_obj['id']
+    const message = {
+      type: 'call-message',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      id: message_obj['id'],
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      object_e5: message_obj['e5'],
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async encrypt_call_message(message_obj){
+    var final_message_obj = structuredClone(message_obj)
+    const encrypted_obj = await this.encrypt_data_string(JSON.stringify(message_obj), this.state.current_call_password)
+    final_message_obj = {'encrypted_data':encrypted_obj}
+
+    return final_message_obj
   }
 
 
@@ -46563,6 +46966,58 @@ class App extends Component {
       this.setState({call_metadata_object: clone})
     }
   }
+
+  async process_new_call_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author;
+      const convo_id = id;
+      const cid = object_hash;
+      const request_id = message.id
+      const channel_e5_id = id+message.object_e5
+
+      var ipfs_obj = ipfs
+      if(ipfs['encrypted_data'] != null){
+        const key_used = this.state.current_call_password
+        const originalText = await this.decrypt_data_string(ipfs_obj['encrypted_data'], key_used.toString())
+        ipfs_obj = JSON.parse(originalText);
+        
+      }
+      
+      if(ipfs_obj != null && Date.now() - message.time < (1000*60*60*24)){
+        const clone = structuredClone(this.state.socket_object_messages)
+        const messages = clone[this.state.current_call_id] == null ? [] : clone[this.state.current_call_id].slice()
+        const ipfs_message = ipfs_obj;
+        ipfs_message['time'] = message.time
+        this.fetch_uploaded_files_for_object(ipfs_message)
+        const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
+        if(includes == null){
+          messages.push(ipfs_message)
+        }
+        clone[this.state.current_call_id] = this.sortByAttributeDescending(messages, 'time')
+        this.setState({socket_object_messages: clone})
+      }
+    }
+  }
   
 
 
@@ -46866,7 +47321,6 @@ class App extends Component {
                 await this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
               }
               else if(target_entry.startsWith('read_receipts|')){
-                // console.log('socket_stuff','loaded a read receipts item', object_data)
                 await this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
               }
               else if(object_data['type'] == 'open_signature_request'){
@@ -46886,6 +47340,9 @@ class App extends Component {
               }
               else if(object_data['type'] == 'call_metadata'){
                 await this.process_new_call_metadata_for_entering_call(object_data, object_hash)
+              }
+              else if(object_data['type'] == 'call-message'){
+                await this.process_new_call_message(object_data, object_hash)
               }
               await this.wait(200)
             }
@@ -47003,9 +47460,462 @@ class App extends Component {
   }
 
   async begin_enter_call_process(call_id, call_password){
+    const successful_microphone_access = await this.initializeMedia()
+    if(!successful_microphone_access){
+      this.prompt_top_notification(this.getLocale()['2738bq']/* e needs access to your microphone for the call. */, 10000)
+      this.leave_call2()
+      return;
+    }
+    const call_start_time = Date.now()
+    this.setState({current_call_id: call_id, current_call_password: call_password, call_join_time: call_start_time})
+    await this.wait(200)
+    this.initialize_peers_datapoints()
+
+    const successful_setting_of_password = await this.enableEncryption()
+    if(!successful_setting_of_password){
+      this.prompt_top_notification(this.getLocale()['2738br']/* Something went wrong. */, 10000)
+      this.leave_call2()
+      return;
+    }
+
+    this.prompt_top_notification(this.getLocale()['2738bs']/* Joining the call... */, 1200)
+    const signature_object = await this.get_signature_for_registering_in_socket(this.state.selected_e5)
+    const join_room_obj = { roomId: call_id, signature: signature_object.signature, signature_data: signature_object.data ,e5: this.state.selected_e5 }
+    
+    this.socket.emit("join_room", join_room_obj);
+
     this.open_dialog_bottomsheet()
     this.show_view_call_interface()
-    this.setState({current_call_id: call_id, current_call_password: call_password})
+    this.pause_media_if_any()
+    this.startRecording()
+
+    this.count_up_interval = setInterval(() => {
+      this.setState({call_duration: (Date.now() - call_start_time)});
+    }, 1000);
+
+    await this.get_objects_from_socket_and_set_in_state(call_id, [], []);
+    if(this.state.socket_object_messages[call_id] == null){
+      const message_clone = structuredClone(this.state.socket_object_messages)
+      message_clone[call_id] = []
+      this.setState({socket_object_messages: message_clone})
+    }
+  }
+
+  pause_media_if_any(){
+    this.audio_pip_page.current?.pause_if_playing()
+    this.full_video_page.current?.pause_if_playing()
+  }
+
+  initialize_peers_datapoints(){
+    this.peersRef = [];
+    this.processedStream = null;
+    this.pitchProcessor = null;
+    this.encryptor = new AudioEncryption();
+
+    this.callRecorder = new CallRecorder();
+    this.recordingTimer = null;
+    this.remoteStreams = new Map();
+    delete this.recordedBlob
+
+    this.socket.on("signal", ({ from, data }) => {
+      console.log('Received signal from:', from, 'Signal type:', data.type);
+      const peerObj = this.peersRef.find((p) => p.peerId === from);
+      if (peerObj) {
+        peerObj.peer.signal(data);
+      } else {
+        console.warn('Received signal from unknown peer:', from);
+      }
+    });
+
+    this.socket.on("user_joined", async ({userId, roomId}) => {
+      console.log(`User ${userId} joined - creating initiator peer`);
+      if (!this.processedStream) {
+        console.warn('user joined but we have no processed stream yet, delaying peer creation');
+        // wait until processedStream exists
+        const waitForStream = () => new Promise(resolve => {
+          const i = setInterval(() => {
+            if (this.processedStream) { clearInterval(i); resolve(); }
+          }, 50);
+        });
+        await waitForStream();
+      }
+      const peer = this.createPeer(userId, true);
+      const peer_obj = { peerId: userId, peer: peer };
+      this.peersRef.push(peer_obj);
+      
+      const clone = this.state.peers.slice();
+      clone.push(peer_obj);
+      this.setState({ peers: clone });
+    });
+
+    this.socket.on("user_in_room", ({userId, roomId}) => {
+      console.log(`User ${userId} already in room - waiting for their offer`);
+    });
+
+    this.socket.on("offer_received", ({ from, signal }) => {
+      console.log(`Received offer from ${from} - creating receiver peer`);
+      const peer = this.createPeer(from, false);
+      const peer_obj = { peerId: from, peer: peer };
+      this.peersRef.push(peer_obj);
+      
+      const clone = this.state.peers.slice();
+      clone.push(peer_obj);
+      this.setState({ peers: clone });
+      
+      peer.signal(signal);
+    });
+
+    this.socket.on("user_left", ({userId, roomId}) => {
+      console.log(`User ${userId} left`);
+      this.peersRef = this.peersRef.filter((p) => p.peerId !== userId);
+      const clone = this.state.peers.filter((p) => p.peerId !== userId);
+      this.setState({ peers: clone });
+    });
+  }
+
+  setPitchShift = (value) => {
+    const pitch = parseFloat(value);
+    this.setState({ pitchShift: pitch });
+    
+    if (this.pitchProcessor) {
+      this.pitchProcessor.setPitch(pitch);
+    }
+  }
+
+  initializeMedia = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+      // Initialize pitch processor
+      this.pitchProcessor = new PitchShifterProcessor();
+      this.processedStream = await this.pitchProcessor.initialize(stream);
+      
+      // Set initial pitch
+      this.pitchProcessor.setPitch(this.state.pitchShift);
+      this.pitchProcessor.setEnabled(true);
+      
+      this.setState({ microphoneInitialized: true });
+      return true;
+    }
+    catch (error) {
+      console.error('socket_call_stuff', 'Error accessing microphone:', error);
+      return false;
+    }
+  }
+
+  enableEncryption = async (current_call_password) => {
+    if(current_call_password == '') return;
+    try {
+      await this.encryptor.deriveKey(current_call_password);
+      return true;
+    } 
+    catch (error) {
+      console.error('Error enabling encryption:', error);
+      return false;
+    }
+  }
+
+  setupEncryption = (peer) => {
+    if (!this.state.isEncryptionSupported) {
+      return;
+    }
+
+    peer._pc.getSenders().forEach(sender => {
+      if (sender.track && sender.track.kind === 'audio') {
+        try {
+          const streams = sender.createEncodedStreams();
+          const encryptTransform = new TransformStream(new EncryptTransform(this.encryptor));
+          
+          streams.readable
+            .pipeThrough(encryptTransform)
+            .pipeTo(streams.writable)
+            .catch(err => console.error('socket_call_stuff','Encryption transform error:', err));
+          
+          console.log('socket_call_stuff','Encryption enabled for outgoing audio');
+        } catch (error) {
+          console.error('socket_call_stuff','Failed to setup encryption:', error);
+        }
+      }
+    });
+
+    peer._pc.getReceivers().forEach(receiver => {
+      if (receiver.track && receiver.track.kind === 'audio') {
+        try {
+          const streams = receiver.createEncodedStreams();
+          const decryptTransform = new TransformStream(new DecryptTransform(this.encryptor));
+          
+          streams.readable
+            .pipeThrough(decryptTransform)
+            .pipeTo(streams.writable)
+            .catch(err => console.error('socket_call_stuff','Decryption transform error:', err));
+          
+          console.log('socket_call_stuff','Decryption enabled for incoming audio');
+        } catch (error) {
+          console.error('socket_call_stuff','Failed to setup decryption:', error);
+        }
+      }
+    });
+  }
+
+  createPeer = (userToSignal, isInitiator) => {
+    console.log(`Creating peer for ${userToSignal}, initiator: ${isInitiator}`);
+    const peer = new SimplePeer({
+      initiator: isInitiator,
+      trickle: false,
+      stream: this.processedStream,
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+
+          { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:stun3.l.google.com:19302' },
+          { urls: 'stun:stun4.l.google.com:19302' },
+          { urls: 'stun:stunserver.stunprotocol.org:3478' },
+          { urls: 'stun:stun.voipawesome.com:3478' },
+          { urls: 'stun:stun.nextcloud.com:3478' },
+          { urls: 'stun:stun.f.haeder.net:3478' },
+        ]
+      }
+    });
+
+    if(this.state.current_call_password != '') this.setupEncryption(peer);
+
+    peer.on('error', (err) => {
+      console.error(`Peer error with ${userToSignal}:`, err);
+    });
+
+    peer.on("signal", async (signal) => {
+      console.log(`Sending ${signal.type} signal to ${userToSignal}`);
+      const signature_object = await this.get_signature_for_registering_in_socket(this.state.selected_e5)
+      this.socket.emit("signal", {
+        to: userToSignal,
+        data: signal,
+        isInitiator: isInitiator,
+        signature: signature_object.signature,
+        signature_data: signature_object.data,
+        e5: this.state.selected_e5
+      });
+    });
+
+    peer.on('connect', () => {
+      console.log('Peer connected:', userToSignal);      
+    });
+
+    peer.on('stream', (remoteStream) => {
+      console.log('Received remote stream from:', userToSignal, remoteStream);
+    });
+
+    this.set_caller_details_in_state(userToSignal, this.state.current_call_id)
+
+    return peer;
+  }
+
+  toggleMute = () => {
+    const newMutedState = !this.state.isMuted;
+    this.setState({ isMuted: newMutedState });
+
+    // Mute/unmute the audio tracks in the processed stream
+    if (this.processedStream) {
+      this.processedStream.getAudioTracks().forEach(track => {
+        track.enabled = !newMutedState;
+      });
+      console.log(newMutedState ? 'Microphone muted' : 'Microphone unmuted');
+      this.prompt_top_notification(newMutedState? this.getLocale()['3091o']/* Microphone muted */ : this.getLocale()['3091p']/* Microphone unmuted */, 1400)
+    }
+  }
+
+  leave_call(){
+    this.stopRecording();
+    this.socket.on("signal", ({ from, data }) => {});
+    this.socket.on("user_joined", async ({userId, roomId}) => {});
+    this.socket.on("user_in_room", ({userId, roomId}) => {});
+    this.socket.on("offer_received", ({ from, signal }) => {});
+    this.socket.on("user_left", ({userId, roomId}) => {});
+
+    if (this.pitchProcessor) {
+      this.pitchProcessor.cleanup();
+      this.pitchProcessor = null;
+    }
+
+    if (this.processedStream) {
+      this.processedStream.getTracks().forEach(track => track.stop());
+    }
+
+    this.peersRef = null;
+    this.processedStream = null;
+    this.encryptor = null;
+
+    this.socket.emit("leave_room", this.state.current_call_id);
+    clearInterval(this.count_up_interval)
+    
+    if (this.recordingTimer) {
+      clearInterval(this.recordingTimer);
+    }
+
+    const clone = structuredClone(this.state.my_active_call_room_participants)
+    clone[this.state.current_call_id] = []
+    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone})
+    this.show_view_call_interface()
+
+    var me = this;
+    setTimeout(function() {
+      me.prompt_top_notification(me.getLocale()['3091n']/* Call left. */, 3000)
+    }, (1 * 500));
+  }
+
+  leave_call2(){
+    this.socket.on("signal", ({ from, data }) => {});
+    this.socket.on("user_joined", async ({userId, roomId}) => {});
+    this.socket.on("user_in_room", ({userId, roomId}) => {});
+    this.socket.on("offer_received", ({ from, signal }) => {});
+    this.socket.on("user_left", ({userId, roomId}) => {});
+
+    if (this.pitchProcessor) {
+      this.pitchProcessor.cleanup();
+      this.pitchProcessor = null;
+    }
+
+    if (this.processedStream) {
+      this.processedStream.getTracks().forEach(track => track.stop());
+    }
+
+    this.peersRef = null;
+    this.processedStream = null;
+    this.encryptor = null;
+
+    const clone = structuredClone(this.state.my_active_call_room_participants)
+    clone[this.state.current_call_id] = []
+    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone})
+  }
+
+  async set_caller_details_in_state(address, room_id){
+    const addresses_account_ids = await this.get_addresses_accounts(address)
+    for(var i=0; i<addresses_account_ids; i++){
+      const account = addresses_account_ids['id']
+      const e5 = addresses_account_ids['e5']
+      await this.get_alias_from_account_id(account, e5)
+    }
+    const clone = structuredClone(this.state.my_active_call_room_participants)
+    const room_participants = clone[room_id] == null ? {} : structuredClone(clone[room_id])
+    if(room_participants[address] == null){
+      room_participants[address] = addresses_account_ids
+    }
+    clone[room_id] = room_participants
+    this.setState({my_active_call_room_participants: clone})
+  }
+
+  async get_addresses_accounts(address){
+    const event_params = []
+    const used_e5s = []
+    const account_ids = []
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      if(this.state.addresses[focused_e5] != null){
+        used_e5s.push(focused_e5)
+        const account_id = this.state.user_account_id[focused_e5]
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const E5contractArtifact = require('./contract_abis/E5.json');
+        const E5_address = this.state.addresses[focused_e5][0];
+        const E5contractInstance = new web3.eth.Contract(E5contractArtifact.abi, E5_address);
+        event_params.push([web3, E5contractInstance, 'e4', focused_e5, {p2/* sender_address */: address}])
+      }
+    }
+    const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+    all_events.forEach((event_array, index)=> { 
+      const used_e5 = used_e5s[index]
+      if(event_array.length > 0){
+        const account_id = event_array[0].returnValues.p1/* sender_account_id */
+        account_ids.push({'id':account_id, 'e5':used_e5})
+      }
+    });
+
+    return account_ids
+  }
+
+  startRecording = async () => {
+    try {
+      const remoteStreams = Array.from(this.remoteStreams.values());
+      await this.callRecorder.startRecording(this.processedStream, remoteStreams);
+      
+      this.setState({ 
+        isRecording: true, 
+        recordingDuration: 0,
+        hasRecording: false 
+      });
+
+      // Start timer
+      this.recordingTimer = setInterval(() => {
+        this.setState(prev => ({ recordingDuration: prev.recordingDuration + 1 }));
+      }, 1000);
+
+      console.log('Call recording started');
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+      alert('Failed to start recording');
+    }
+  }
+
+  stopRecording = async () => {
+    if (!this.state.isRecording) return;
+
+    try {
+      const blob = await this.callRecorder.stopRecording();
+      
+      if (this.recordingTimer) {
+        clearInterval(this.recordingTimer);
+        this.recordingTimer = null;
+      }
+
+      this.setState({ 
+        isRecording: false,
+        hasRecording: blob && blob.size > 0
+      });
+
+      if (blob && blob.size > 0) {
+        // Store the blob for download
+        this.recordedBlob = blob;
+        console.log('Recording saved, size:', blob.size);
+      } else {
+        console.warn('Recording is empty');
+      }
+    } catch (error) {
+      console.error('Failed to stop recording:', error);
+    }
+  }
+
+  downloadRecording = () => {
+    if (!this.recordedBlob) {
+      return;
+    }
+    const url = URL.createObjectURL(this.recordedBlob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = this.getLocale()['3091bk']/* 'e-call-recording-$.webm' */.replace('$', (new Date().toISOString()));
+    document.body.appendChild(a);
+    a.click();
+    
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+
+    console.log('Recording downloaded');
+  }
+
+  handleRemoteStreamReceived = (peerId, stream) => {
+    this.remoteStreams.set(peerId, stream);
+    
+    // If already recording, add this stream to the mix
+    if (this.state.isRecording) {
+      this.callRecorder.addRemoteStream(stream);
+    }
   }
 
 

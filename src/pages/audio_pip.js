@@ -594,6 +594,12 @@ class AudioPip extends Component {
         this.props.schedule_audio_pip_visibility_because_of_inactivity()
     }
 
+    pause_if_playing(){
+        if(this.state.play_pause_state == 1/* playing */){
+            this.play_pause()
+        }
+    }
+
     handleNumber = (number) => {
         if(this.props.app_state.hide_audio_pip_due_to_inactivity == true){
             this.props.restore_audio_pip_visibility_because_of_touch()

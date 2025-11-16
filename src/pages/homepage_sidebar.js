@@ -93,6 +93,8 @@ class template extends Component {
             <div>
                 <div style={{'padding':'10px 10px 10px 10px', 'margin':'0px 0px 0px 5px', 'background-color':this.props.theme['card_background_color'],'border-radius': '15px', height:h, 'overflow-y': 'auto',}}>
 
+                    {this.render_now_calling_message_if_any()}
+                    
                     {this.render_now_playing_media_if_any()}
 
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2817']/* 'Available E5s.' */, 'details':this.props.app_state.loc['2818']/* 'The E5s that are currently in use.' */, 'size':'l'})}
@@ -139,6 +141,17 @@ class template extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_now_calling_message_if_any(){
+        if(this.props.app_state.current_call_password != null){
+            return(
+                <div onClick={() => this.props.show_view_call_interface()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bi']/* '📞 Youre on a call. */, 'details':this.props.app_state.loc['3091bj']/* 'Tap this to resume it in its page. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_notifications_if_any(){
