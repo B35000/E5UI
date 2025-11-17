@@ -1081,10 +1081,7 @@ class PitchShifterProcessor {
       // Create a MediaStreamDestination to pipe processed audio to
       this.destination = Tone.context.createMediaStreamDestination();
       this.destinationStream = this.destination.stream;
-      // // Connect source → effect → destination
-      // const toneInput = this.pitchShifter.input ? this.pitchShifter.input : this.pitchShifter;
-      // this.source.connect(toneInput);
-      // this.pitchShifter.connect(this.destination);
+      // Connect source → effect → destination
 
       this.pitchShifter.connect(this.destination);
 
@@ -1114,6 +1111,30 @@ class PitchShifterProcessor {
       }
       console.log(`Pitch shifter ${enabled ? 'enabled' : 'disabled'}`);
     }
+  }
+
+  mute() {
+    if (!this.source || !this.pitchShifter) return;
+
+    // Disconnect source → pitchShifter
+    this.source.disconnect();
+
+    // Disconnect pitchShifter → destination
+    this.pitchShifter.disconnect();
+
+    this.enabled = false;
+    console.log("Pitch shifter muted (audio pipeline disconnected)");
+  }
+
+  unmute() {
+    if (!this.source || !this.pitchShifter || !this.destination) return;
+
+    // Reconnect graph: source → pitchShifter → destination
+    Tone.connect(this.source, this.pitchShifter);
+    this.pitchShifter.connect(this.destination);
+
+    this.enabled = true;
+    console.log("Pitch shifter unmuted (audio pipeline restored)");
   }
 
   cleanup() {
@@ -16401,8 +16422,8 @@ class App extends Component {
       'view_bag_application_details':350,
       'confirm_respond_to_signature_request':300,
       'request_cookies_permission':220,
-      'start_voice_call':450,
-      'enter_voice_call':400,
+      'start_voice_call':650,
+      'enter_voice_call':530,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -21904,7 +21925,7 @@ class App extends Component {
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
       <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call={this.leave_call.bind(this)} stream={this.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)}
+        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call={this.leave_call.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)}
         />
       </div>
     )
@@ -24275,7 +24296,7 @@ class App extends Component {
         console.log('apppage', 'beacon node online!')
         const nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
         nitro_link_directory_data_clone[beacon_node] = nitro_link_directory
-        this.setState({beacon_node_enabled: true, nitro_link_directory_data: nitro_link_directory_data_clone})
+        this.setState({beacon_node_enabled: true, nitro_link_directory_data: nitro_link_directory_data_clone, default_nitro_e5_id: default_nitro_option})
         await this.wait(700)
         await this.record_beacon_node_key_in_nitro_node(obj, beacon_node)
       }
@@ -43669,11 +43690,9 @@ class App extends Component {
       this.pitchProcessor = null;
     }
 
-    if (this.processedStream) {
-      this.processedStream.getTracks().forEach(track => track.stop());
+    if (this.state.processedStream) {
+      this.state.processedStream.getTracks().forEach(track => track.stop());
     }
-
-    this.processedStream = null;
 
     if(this.count_up_interval){
       clearInterval(this.count_up_interval)
@@ -47485,6 +47504,7 @@ class App extends Component {
     this.socket.emit("join_room", join_room_obj);
 
     this.open_dialog_bottomsheet()
+    await this.wait(200)
     this.show_view_call_interface()
     this.pause_media_if_any()
     if(record_call == true) this.startRecording()
@@ -47493,7 +47513,7 @@ class App extends Component {
       this.setState({call_duration: (Date.now() - call_start_time)});
     }, 1000);
 
-    await this.get_objects_from_socket_and_set_in_state(call_id, [], []);
+    await this.get_objects_from_socket_and_set_in_state([call_id], [], []);
     if(this.state.socket_object_messages[call_id] == null){
       const message_clone = structuredClone(this.state.socket_object_messages)
       message_clone[call_id] = []
@@ -47508,7 +47528,6 @@ class App extends Component {
 
   initialize_peers_datapoints(){
     this.peersRef = [];
-    this.processedStream = null;
     this.pitchProcessor = null;
     this.encryptor = new AudioEncryption();
 
@@ -47529,12 +47548,12 @@ class App extends Component {
 
     this.socket.on("user_joined", async ({userId, roomId}) => {
       console.log(`User ${userId} joined - creating initiator peer`);
-      if (!this.processedStream) {
+      if (!this.state.processedStream) {
         console.warn('user joined but we have no processed stream yet, delaying peer creation');
         // wait until processedStream exists
         const waitForStream = () => new Promise(resolve => {
           const i = setInterval(() => {
-            if (this.processedStream) { clearInterval(i); resolve(); }
+            if (this.state.processedStream) { clearInterval(i); resolve(); }
           }, 50);
         });
         await waitForStream();
@@ -47591,15 +47610,18 @@ class App extends Component {
           autoGainControl: true
         }
       });
+      console.log('socket_call_stuff', 'obtained stream', stream);
+
       // Initialize pitch processor
       this.pitchProcessor = new PitchShifterProcessor();
-      this.processedStream = await this.pitchProcessor.initialize(stream);
+      const processedStream = await this.pitchProcessor.initialize(stream);
       
+      console.log('socket_call_stuff', 'initialised pitchprocessor', processedStream);
       // Set initial pitch
       this.pitchProcessor.setPitch(this.state.pitchShift);
       this.pitchProcessor.setEnabled(true);
       
-      this.setState({ microphoneInitialized: true });
+      this.setState({ microphoneInitialized: true, stream: stream, processedStream: processedStream });
       return true;
     }
     catch (error) {
@@ -47667,7 +47689,7 @@ class App extends Component {
     const peer = new SimplePeer({
       initiator: isInitiator,
       trickle: false,
-      stream: this.processedStream,
+      stream: this.state.processedStream,
       config: {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
@@ -47720,17 +47742,28 @@ class App extends Component {
     const newMutedState = !this.state.isMuted;
     this.setState({ isMuted: newMutedState });
 
-    // Mute/unmute the audio tracks in the processed stream
-    if (this.processedStream) {
-      this.processedStream.getAudioTracks().forEach(track => {
+    this.state.stream.getTracks().forEach(track => {
+      track.enabled = !newMutedState;
+    });
+
+    if(this.state.processedStream){
+      this.state.processedStream.getTracks().forEach(track => {
         track.enabled = !newMutedState;
       });
-      console.log(newMutedState ? 'Microphone muted' : 'Microphone unmuted');
-      this.prompt_top_notification(newMutedState? this.getLocale()['3091o']/* Microphone muted */ : this.getLocale()['3091p']/* Microphone unmuted */, 1400)
+
+      if(newMutedState == true) this.state.processedStream.mute();
+      else this.state.processedStream.unmute();
     }
+
+    
+
+    console.log('socket_call_stuff', (newMutedState ? 'Microphone muted' : 'Microphone unmuted'));
+    this.prompt_top_notification(newMutedState? this.getLocale()['3091o']/* Microphone muted */ : this.getLocale()['3091p']/* Microphone unmuted */, 1400)
   }
 
-  leave_call(){
+  async leave_call(){
+    this.open_view_call_interface_bottomsheet()
+    await this.wait(1000)
     this.stopRecording();
     this.socket.on("signal", ({ from, data }) => {});
     this.socket.on("user_joined", async ({userId, roomId}) => {});
@@ -47743,12 +47776,15 @@ class App extends Component {
       this.pitchProcessor = null;
     }
 
-    if (this.processedStream) {
-      this.processedStream.getTracks().forEach(track => track.stop());
+    this.state.stream.getTracks().forEach(track => track.stop());
+
+    if(this.state.processedStream){
+      this.state.processedStream.getTracks().forEach(track => {
+        track.stop();
+      });
     }
 
     this.peersRef = null;
-    this.processedStream = null;
     this.encryptor = null;
 
     this.socket.emit("leave_room", this.state.current_call_id);
@@ -47760,13 +47796,13 @@ class App extends Component {
 
     const clone = structuredClone(this.state.my_active_call_room_participants)
     clone[this.state.current_call_id] = []
-    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone})
-    this.show_view_call_interface()
+    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null})
+    
 
     var me = this;
     setTimeout(function() {
       me.prompt_top_notification(me.getLocale()['3091n']/* Call left. */, 3000)
-    }, (1 * 500));
+    }, (1 * 100));
   }
 
   leave_call2(){
@@ -47781,17 +47817,16 @@ class App extends Component {
       this.pitchProcessor = null;
     }
 
-    if (this.processedStream) {
-      this.processedStream.getTracks().forEach(track => track.stop());
+    if (this.state.processedStream) {
+      this.state.processedStream.getTracks().forEach(track => track.stop());
     }
 
     this.peersRef = null;
-    this.processedStream = null;
     this.encryptor = null;
 
     const clone = structuredClone(this.state.my_active_call_room_participants)
     clone[this.state.current_call_id] = []
-    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone})
+    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null})
   }
 
   async set_caller_details_in_state(address, room_id){
@@ -47841,7 +47876,7 @@ class App extends Component {
   startRecording = async () => {
     try {
       const remoteStreams = Array.from(this.remoteStreams.values());
-      await this.callRecorder.startRecording(this.processedStream, remoteStreams);
+      await this.callRecorder.startRecording(this.state.processedStream, remoteStreams);
       
       this.setState({ 
         isRecording: true, 
@@ -47881,6 +47916,7 @@ class App extends Component {
         // Store the blob for download
         this.recordedBlob = blob;
         console.log('Recording saved, size:', blob.size);
+        this.downloadRecording(blob)
       } else {
         console.warn('Recording is empty');
       }
@@ -47889,11 +47925,11 @@ class App extends Component {
     }
   }
 
-  downloadRecording = () => {
-    if (!this.recordedBlob) {
+  downloadRecording = (blob) => {
+    if (!blob) {
       return;
     }
-    const url = URL.createObjectURL(this.recordedBlob);
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.display = 'none';
     a.href = url;

@@ -81,6 +81,18 @@ function make_number_id(length) {
     return parseInt(result);
 }
 
+function make_number_id_str(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return (result);
+}
+
 class DialogPage extends Component {
     
     state = {
@@ -103,7 +115,7 @@ class DialogPage extends Component {
         songs_to_hide_while_showing:[], videos_to_hide_while_showing:[], selected_pins:[],
         get_show_job_after_broadcasted_object:this.get_show_job_after_broadcasted_object(),
 
-        new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(),
+        new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(), new_voice_call_number_id: make_number_id_str(15),
     };
 
 
@@ -204,7 +216,7 @@ class DialogPage extends Component {
                 this.setState({selected_pins: data['pins']})
             }
             else if(id == 'start_voice_call'){
-                this.setState({new_voice_call_number_id: make_number_id(15)})
+                this.setState({new_voice_call_number_id: make_number_id_str(15)})
             }
         }
     }
@@ -520,7 +532,7 @@ class DialogPage extends Component {
                 </div>
             )
         }
-        else if(option == 'recipient_obj'){
+        else if(option == 'enter_voice_call'){
             return(
                 <div>
                     {this.render_enter_voice_call_ui()}
@@ -9010,6 +9022,7 @@ return data['data']
 
     render_start_voice_call_ui(){
         var size = this.props.size
+        if(this.state.new_voice_call_number_id == null) return;
         if(size == 's'){
             return(
                 <div>
@@ -9087,18 +9100,19 @@ return data['data']
                         {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ie']/* Encryption NOT supported on your device ❌ */, 'textsize':'9px', 'font':this.props.app_state.font})}
                     </div>
                 )}
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     <div onClick={() => this.copy_call_id_to_clipboard(call_id)}>
                         {this.render_detail_item('10', {'text':formatted_call_id, 'textsize':'25px', 'font':this.props.app_state.font})}
                     </div>
-                    <div style={{'padding':'0px 0px 0px 5px'}}>
+                    <div style={{'padding':'0px 0px 0px 0px'}}>
                         {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ib']/* Call Identifier. */, 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
                 </div>
 
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bl']/* 'Record Call.' */, 'details':this.props.app_state.loc['3091bm']/* 'You can record the call for future reference. */, 'size':'l'})}
+                <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
@@ -9130,7 +9144,7 @@ return data['data']
         const recipient = await this.get_typed_alias_id(this.state.call_receiver_account_id.toString().trim())
         const recipient_e5 = this.get_recipient_e5(recipient)
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify(this.props.app_state.loc['1030']/* 'Please put a valid account ID.' */, 1600)
+            this.props.notify(this.props.app_state.loc['3091bq']/* 'Please put a valid account ID.' */, 1600)
         }
         else if(this.is_recipient_already_included(recipient, recipient_e5) == true){
             this.props.notify(this.props.app_state.loc['3055hs']/* 'Youve already included that account.' */, 3600)
@@ -9162,8 +9176,8 @@ return data['data']
             return alias
         }
         await this.props.get_account_id_from_alias(alias)
-        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+        const alias_owners_data = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = (alias_owners_data[alias] == null ? alias : alias_owners_data[alias])
 
         return id
     }
@@ -9220,7 +9234,7 @@ return data['data']
         const online_text = this.is_recipient_online(item) ? this.props.app_state.loc['2738bi']/* 'online' */ : null
         return(
             <div onClick={() => this.when_new_call_account_clicked(item)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l','footer':online_text})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s','footer':online_text})}
             </div>
         )
     }
@@ -9344,7 +9358,7 @@ return data['data']
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bl']/* 'Record Call.' */, 'details':this.props.app_state.loc['3091bm']/* 'You can record the call for future reference. */, 'size':'l'})}
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height:10}}/>
-                    
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055in']/* 'Call Password.' */, 'details':this.props.app_state.loc['3055io']/* 'Set the password used if one was set during the creation of the call. */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055hx']/* 'Password...' */} when_text_input_field_changed={this.when_enter_call_password_input_field_changed.bind(this)} text={this.state.enter_call_password} theme={this.props.theme}/>
@@ -9392,7 +9406,7 @@ return data['data']
                         <div onClick={() => this.copy_call_id_to_clipboard(call_invite_obj['call_id'])}>
                             {this.render_detail_item('10', {'text':formatted_call_id(call_invite_obj['call_id']), 'textsize':'25px', 'font':this.props.app_state.font})}
                         </div>
-                        <div style={{'padding':'0px 0px 0px 5px'}}>
+                        <div style={{'padding':'0px 0px 0px 0px'}}>
                             {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ib']/* Call Identifier. */, 'textsize':'12px', 'font':this.props.app_state.font})} 
                         </div>
                     </div>

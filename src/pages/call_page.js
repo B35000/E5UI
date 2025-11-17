@@ -19,7 +19,7 @@
 import React, { Component, useEffect, useRef, useState } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
-import Slider from './../slider'
+import Slider from './../components/slider'
 import { LiveAudioVisualizer } from "react-audio-visualize";
 import TextInput from './../components/text_input';
 import { motion, AnimatePresence } from "framer-motion";
@@ -95,12 +95,16 @@ function toTree(data) {
 }
 
 // Component for visualizing local microphone audio
-const LocalAudioVisualizer = ({ stream, theme }) => {
+const LocalAudioVisualizer = ({ stream, theme, width }) => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
 
   useEffect(() => {
-    if (!stream) return;
+    if (!stream){
+        console.error('socket_call_stuff','LocalAudioVisualizer', 'stream is null.');
+        return;
+    } 
 
+    console.log('socket_call_stuff','LocalAudioVisualizer', stream.getAudioTracks());
     try {
       // Create MediaRecorder from the stream
       const recorder = new MediaRecorder(stream);
@@ -117,15 +121,25 @@ const LocalAudioVisualizer = ({ stream, theme }) => {
     }
   }, [stream]);
 
+  if (!mediaRecorder || !stream) {
+    return (
+      <div style={{ padding: '1px' }}>
+        <p style={{ margin: 0, color: theme['primary_text_color'] }}>
+          {stream ? '...' : 'xxxxxxxxxxxxxxxxxxxxx'}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={'100%'} height={75} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
+      <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={width-15} height={45} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
     </div>
   );
 };
 
 // Component for visualizing remote peer audio
-const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStreamReceived }) => {
+const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStreamReceived, width }) => {
   const audioRef = useRef();
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const audioContextRef = useRef(null);
@@ -211,11 +225,19 @@ const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStr
     };
   }, [peer, peerId, onVolumeChange, onStreamReceived]);
 
+  if(mediaRecorder == null){
+    return(
+        <div style={{ padding: '10px', borderRadius: '5px' }}>
+            <p style={{ margin: 0, color: theme['primary_text_color'] }}> ....... </p>
+        </div>
+    )
+  }
+
   return (
     <div style={{}}>
         <audio ref={audioRef} autoPlay controls playsInline style={{ display: 'none' }} />
         <div style={{}}>
-            <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={'100%'} height={75} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
+            <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={width-15} height={27} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
         </div>
     </div>
   );
@@ -226,7 +248,7 @@ class CallPage extends Component {
     state = {
         selected: 0, get_call_page_tags_object: this.get_call_page_tags_object(), 
         localVolume: 0, peerVolumes: {}, loudestSpeaker: null, volumeThreshold: 20,
-        get_pitch_shift_tags_object: this.get_pitch_shift_tags_object()
+        get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(this.props.app_state.pitchShift), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), screen_width:0
     };
 
 
@@ -241,15 +263,26 @@ class CallPage extends Component {
         };
     }
 
-    get_pitch_shift_tags_object(){
+    get_pitch_shift_tags_object(shift){
         var pitch_obj = { '-12': 1,'-6': 2,'-3': 3, '0': 4, '3': 5,'6': 6,'12': 7 }
-        const p = pitch_obj[this.props.app_state.pitchShift.toString()] || 0
+        const p = pitch_obj[shift.toString()] || 0
         return{
             'i':{
                 active:'e', 
             },
             'e':[
                 ['or','',0], [ 'e', this.props.app_state.loc['3091y']/* 'very-low' */, this.props.app_state.loc['3091z']/* 'low' */, this.props.app_state.loc['3091ba']/* 'slightly-low' */, this.props.app_state.loc['3091bb']/* 'normal' */, this.props.app_state.loc['3091bc']/* 'slightly-high' */, this.props.app_state.loc['3091bd']/* 'high' */, this.props.app_state.loc['3091be']/* 'very-high' */, ], [p]
+            ],
+        };
+    }
+
+    get_comment_structure_tags(){
+        return{
+            'i':{
+                active:'e',
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
             ],
         };
     }
@@ -290,12 +323,10 @@ class CallPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_metadata_stuff()}
-                        {this.render_detail_item('0')}
-                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_medium_selector()}
                     </div>
                 </div>
@@ -305,15 +336,13 @@ class CallPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-4" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_metadata_stuff()}
-                        {this.render_detail_item('0')}
-                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-4" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_participants_stuff()}
                     </div>
-                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-4" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_chat_stuff()}
                     </div>
                 </div>
@@ -373,7 +402,15 @@ class CallPage extends Component {
 
 
 
-
+    get_max_height(){
+        const index = this.props.app_state.opened_bottomsheets.indexOf('open_view_call_interface_bottomsheet')
+        if(index > 0){
+            return this.props.height-190
+        }
+        else{
+            return this.props.height-145
+        }
+    }
 
     render_metadata_stuff(){
         const formatted_call_id = (str) => {
@@ -391,32 +428,32 @@ class CallPage extends Component {
 
             return `${hours<10 ? (hours<1 ? '00': '0'):''}${hours} : ${minutes<10 ? (minutes<1 ? '00': '0'):''}${minutes} : ${seconds<10 ? (seconds<1 ? '00': '0'):''}${seconds}`
         }
-        const maxheight = this.props.height-145
+        const maxheight = this.get_max_height()
         return(
             <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     <div onClick={() => this.copy_call_id_to_clipboard(this.props.app_state.current_call_id)}>
                         {this.render_detail_item('10', {'text':formatted_call_id(this.props.app_state.current_call_id), 'textsize':'25px', 'font':this.props.app_state.font})}
                     </div>
-                    <div style={{'padding':'0px 0px 0px 5px'}}>
+                    <div style={{'padding':'0px 0px 0px 0px'}}>
                         {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ib']/* Call Identifier. */, 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
                 </div>
                 
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':''+(new Date(this.props.app_state.call_join_time).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(this.props.app_state.call_join_time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+(new Date(this.props.app_state.call_join_time).toLocaleString()), 'details':this.get_time_diff(Math.round(Date.now()/1000) - (parseInt(this.props.app_state.call_join_time/1000)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     <div>
                         {this.render_detail_item('10', {'text':format_call_duration(), 'textsize':'20px', 'font':this.props.app_state.font})}
                     </div>
-                    <div style={{'padding':'0px 0px 0px 5px'}}>
+                    <div style={{'padding':'0px 0px 0px 0px'}}>
                         {this.render_detail_item('10', {'text':this.props.app_state.loc['3091r']/* Call Duration. */, 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
                 </div>
                 
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.current_call_password == '' ? this.props.app_state.loc['3091e']/* 'Disabled */ : this.props.app_state.loc['3091d']/* 'Enabled */, 'details':this.props.app_state.loc['3091c']/* 'Encrypted */, 'size':'l'})}
                 
                 {this.props.app_state.isRecording == true && (
@@ -426,10 +463,17 @@ class CallPage extends Component {
                     </div>
                 )}
 
+                {this.props.app_state.isMuted == true && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'details': this.props.app_state.loc['3091bs']/* 'Youre muted and the others cant hear you. */, 'title':this.props.app_state.loc['3091br']/* 'You\'re Muted. */, 'size':'l'})}
+                    </div>
+                )}
+
                 <div style={{height:10}}/>
                 {this.render_socket()}
 
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3091v']/* 'Pitch Shift. */, 'details':this.props.app_state.loc['3091w']/* 'You can shift the pitch of your voice to be high or low. */, 'size':'l'})}
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3091x']/* This does NOT anonymise you. */, 'textsize':'9px', 'font':this.props.app_state.font})}
 
@@ -453,6 +497,12 @@ class CallPage extends Component {
                 <div onClick={() => this.props.leave_call()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3091m']/* 'Leave Call' */, 'action':''},)}
                 </div>
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -465,6 +515,9 @@ class CallPage extends Component {
         const new_number = parseInt(e.target.value)
         const new_pitch = ((new_number / 999) * 24) - 12
         this.props.setPitchShift(new_pitch)
+        if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
+            this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
+        }
     }
 
     when_number_slider_button_tapped(){
@@ -472,6 +525,9 @@ class CallPage extends Component {
         const new_number = (current_pitch_shift + 1) > 999 ? current_pitch_shift : current_pitch_shift + 1;
         const new_pitch = ((new_number / 999) * 24) - 12
         this.props.setPitchShift(new_pitch)
+        if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
+            this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
+        }
     }
 
     when_number_slider_button_double_tapped(){
@@ -479,6 +535,9 @@ class CallPage extends Component {
         const new_number = (current_pitch_shift - 1) < 0 ? current_pitch_shift : current_pitch_shift - 1;
         const new_pitch = ((new_number / 999) * 24) - 12
         this.props.setPitchShift(new_pitch)
+        if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
+            this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
+        }
     }
 
     copy_call_id_to_clipboard(text){
@@ -501,8 +560,9 @@ class CallPage extends Component {
     }
 
     load_my_socket_nitro_object(){
+        const preferred_nitro = this.props.app_state.my_preferred_nitro == '' ? this.props.app_state.default_nitro_e5_id : this.props.app_state.my_preferred_nitro
         var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
-        const index = all_nitros.findIndex(item => item['e5_id'] == this.props.app_state.my_preferred_nitro);
+        const index = all_nitros.findIndex(item => item['e5_id'] == preferred_nitro);
         return all_nitros[index]
     }
 
@@ -529,18 +589,20 @@ class CallPage extends Component {
 
 
 
-
+    componentDidMount(){
+        this.setState({screen_width: this.screen.current.offsetWidth})
+    }
 
 
     render_participants_stuff(){
         const my_account = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
-        const maxheight = this.props.height-145
+        const maxheight = this.get_max_height()
         return(
-            <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
+            <div ref={this.screen} style={{maxHeight: maxheight, 'overflow':'auto'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3091s']/* 'Call Participants.' */, 'details':this.props.app_state.loc['3091t']/* 'The call participants are shown below. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    <LocalAudioVisualizer stream={this.props.processedStream} theme={this.props.theme}/>
+                    <LocalAudioVisualizer stream={this.props.app_state.processedStream} theme={this.props.theme} width={this.state.screen_width}/>
                     <div style={{'padding':'5px 0px 0px 0px'}}>
                         {this.render_detail_item('10', {'text':this.props.app_state.loc['3091u']/* $ • you */.replace('$', my_account), 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
@@ -552,11 +614,18 @@ class CallPage extends Component {
     }
 
     render_other_connected_peers(){
+        if(this.props.app_state.peers.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
         return(
             <div>
                 {this.props.app_state.peers.map((peerObj) => (
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '5px 3px 5px 3px','padding': '10px 5px 5px 5px','border-radius': '8px', border: this.state.loudestSpeaker === peerObj.userId ? `3px solid ${this.props.theme['slider_color']}` : '3px solid transparent', borderRadius: '8px', transition: 'border 0.2s ease'}}>
-                        <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.userId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.userId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)}
+                        <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.userId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.userId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)} width={this.state.screen_width}
                         />
                         <div style={{'padding':'5px 0px 0px 0px'}}>
                             {this.render_added_accounts(peerObj.userId)}
@@ -668,9 +737,15 @@ class CallPage extends Component {
 
 
 
+
+
+
+
+
+
     render_chat_stuff(){
-        var he = this.props.height-190
-        if(this.get_focused_message() != null) he = this.props.height-260
+        var he = this.get_max_height()-55
+        if(this.get_focused_message() != null) he = this.get_max_height()-125
         he = he+30-(this.state.text_input_field_height == null ? 30 : 
             (this.state.text_input_field_height < 30 ? 30 : this.state.text_input_field_height));
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
@@ -790,6 +865,7 @@ class CallPage extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
+        this.screen = React.createRef()
         this.has_user_scrolled = false
     }
 
@@ -814,11 +890,10 @@ class CallPage extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    {this.props.app_state.object_messages[this.state.request_item['job_request_id']] == null || this.props.app_state.socket_object_messages[this.state.request_item['job_request_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                    {this.props.app_state.socket_object_messages[this.props.app_state.current_call_id] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>
-                        {this.render_last_opened_time()}
                     </div>
                 </div>
             )
@@ -830,8 +905,6 @@ class CallPage extends Component {
                 <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(final_items)}
-                        {this.render_bubble_if_typing()}
-                        {this.render_last_opened_time()}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -842,8 +915,6 @@ class CallPage extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             <div ref={this.messagesEnd}/>
                             {this.render_all_comments()}
-                            {this.render_bubble_if_typing()}
-                            {this.render_last_opened_time()}
                         </ul>
                     </div>
                 )
@@ -957,14 +1028,13 @@ class CallPage extends Component {
 
     focus_message(item){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.state.request_item;
 
-        if(this.state.focused_message[object['id']] != item){
-            clone[object['job_request_id']] = item
-            if(clone['tree'][object['job_request_id']] == null) {
-                clone['tree'][object['job_request_id']] = []
+        if(this.state.focused_message[this.props.app_state.current_call_id] != item){
+            clone[this.props.app_state.current_call_id] = item
+            if(clone['tree'][this.props.app_state.current_call_id] == null) {
+                clone['tree'][this.props.app_state.current_call_id] = []
             }
-            clone['tree'][object['job_request_id']].push(item)
+            clone['tree'][this.props.app_state.current_call_id].push(item)
         }
         this.setState({focused_message: clone})
     }
@@ -1571,8 +1641,7 @@ class CallPage extends Component {
     }
 
     get_focused_message(){
-        var object = this.state.request_item;
-        return this.state.focused_message[object['job_request_id']]
+        return this.state.focused_message[this.props.app_state.current_call_id]
     }
 
     when_entered_text_input_field_changed(text){

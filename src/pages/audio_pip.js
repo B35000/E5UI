@@ -935,9 +935,9 @@ class AudioPip extends Component {
     get_image_from_file(ecid){
         if(!ecid.startsWith('image')) return ecid
         var ecid_obj = this.get_cid_split(ecid)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return this.props.app_state.static_assets['music_label']
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        if(data == null) return
+        if(data == null) return this.props.app_state.static_assets['music_label']
         return data['data']
     }
 

@@ -17830,20 +17830,25 @@ class StackPage extends Component {
     render_group_calls_parts(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ko']/* 'Start Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593kp']/* 'Start an online voice call with someone or some people on E5. */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ko']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593kp']/* 'Start or enter an online voice call with someone or some people on E5. */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <div onClick={() => this.start_voice_call()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
+                {this.render_now_calling_message_if_any()}
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={() => this.start_voice_call()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={() => this.enter_voice_call()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
+                        </div>
+                    </div>
                 </div>
 
                 {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593kr']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593ks']/* 'Enter an online voice call with someone or some people on E5. */, 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <div onClick={() => this.enter_voice_call()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
-                </div>
+                {this.render_call_history()}
+                
             </div>
         )
     }
@@ -17870,6 +17875,69 @@ class StackPage extends Component {
             return;
         }
         this.props.show_dialog_bottomsheet({}, 'enter_voice_call')
+    }
+
+    render_call_history(){
+        const items = this.get_call_invites()
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kw']/* 'When someone invites you to a call, it will show here. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kv']/* 'Youre call invites are shown below. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <div>
+                                {this.render_invite_item(item)}
+                                <div style={{height:4}}/>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_call_invites(){
+        return Object.keys(this.props.app_state.call_invites)
+    }
+
+    render_invite_item(item){
+        const formatted_call_id = (str) => {
+            if(str.startsWith('e')){
+                return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8, 12)+ " " + str.slice(12);
+            }else{
+                return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
+            }
+        }
+        const data = this.props.app_state.call_invites[item]
+        const footer = formatted_call_id(data['call_id'])
+        const title = data['sender_account_e5'] + ' • ' + data['sender_account']
+        const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time'])))+this.props.app_state.loc['1698a']/* ' ago' */
+        return(
+            <div onClick={() => this.enter_voice_call_from_list(data)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer})}
+            </div>
+        )
+    }
+
+    enter_voice_call_from_list(data){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        else if(this.props.app_state.current_call_password != null){
+            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
     }
 
 
