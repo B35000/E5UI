@@ -17834,12 +17834,12 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_now_calling_message_if_any()}
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                    <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
                         <div onClick={() => this.start_voice_call()}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
                         </div>
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                    <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
                         <div onClick={() => this.enter_voice_call()}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
                         </div>
@@ -17906,7 +17906,12 @@ class StackPage extends Component {
     }
 
     get_call_invites(){
-        return Object.keys(this.props.app_state.call_invites)
+        const invites = Object.keys(this.props.app_state.call_invites)
+        const invite_objects = []
+        invites.forEach(item => {
+            invite_objects.push(this.props.app_state.call_invites[item])
+        });
+        return this.sortByAttributeDescending(invite_objects, 'time')
     }
 
     render_invite_item(item){
@@ -17917,13 +17922,14 @@ class StackPage extends Component {
                 return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
             }
         }
-        const data = this.props.app_state.call_invites[item]
+        const data = item;
         const footer = formatted_call_id(data['call_id'])
-        const title = data['sender_account_e5'] + ' • ' + data['sender_account']
-        const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time'])))+this.props.app_state.loc['1698a']/* ' ago' */
+        const title_image = this.props.app_state.e5s[data['sender_account_e5']].e5_img
+        const title = data['sender_account']
+        const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */
         return(
             <div onClick={() => this.enter_voice_call_from_list(data)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer, 'title_image':title_image})}
             </div>
         )
     }

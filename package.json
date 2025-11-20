@@ -119,6 +119,7 @@
     "url": "^0.11.4",
     "web-vitals": "^2.1.4",
     "web3": "^1.10.3",
+    "webpack-dev-server": "^5.2.2",
     "xrpl": "^4.0.0"
   },
   "scripts": {

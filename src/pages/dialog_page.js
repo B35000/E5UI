@@ -539,6 +539,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'confirm_leave_call'){
+            return(
+                <div>
+                    {this.render_confirm_leave_call_ui()}
+                </div>
+            )
+        }
     }
 
 
@@ -9067,6 +9074,8 @@ return data['data']
         const call_id = this.state.call_password != '' ? 'e'+this.state.new_voice_call_number_id : this.state.new_voice_call_number_id
         
         const formatted_call_id = this.state.call_password != '' ? 'e'+this.format_voice_call_id(this.state.new_voice_call_number_id) : this.format_voice_call_id(this.state.new_voice_call_number_id)
+
+        const button_message = this.props.app_state.stream == null ? this.props.app_state.loc['3055it']/* Turn On Mic */ : this.props.app_state.loc['3055ic']/* 'Enter Call.' */
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055hp']/* 'Start An Indexer Call' */, 'details':this.props.app_state.loc['3055hq']/* 'Specify the accounts you wish to start a voice call with. */, 'size':'l'})}
@@ -9117,7 +9126,7 @@ return data['data']
 
                 <div style={{height:10}}/>
                 <div onClick={() => this.enter_new_call()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ic']/* 'Enter Call.' */, 'action':''},)}
+                    {this.render_detail_item('5', {'text':button_message, 'action':''},)}
                 </div>
             </div>
         )
@@ -9278,9 +9287,9 @@ return data['data']
     }
 
     enter_new_call(){
-        const call_id = this.state.call_password != '' ? 'e'+this.state.new_voice_call_number_id : this.state.new_voice_call_number_id
+        const call_id = this.state.call_password.trim() != '' ? 'e'+this.state.new_voice_call_number_id : this.state.new_voice_call_number_id
         const recipients = this.state.new_call_recepients
-        const call_password = this.state.call_password
+        const call_password = this.state.call_password.trim()
 
         const record_call = this.get_selected_item2(this.state.get_record_call_tags_object, 'e') == 1
 
@@ -9288,7 +9297,11 @@ return data['data']
             this.props.notify(this.props.app_state.loc['3055if']/* You need to specify some recipients. */, 3000)
         }
         else{
-            this.props.enter_new_call(call_id, recipients, call_password, record_call)
+            if(this.props.app_state.stream == null){
+                this.props.initialize_microphone(call_password, call_id)
+            }else{
+                this.props.enter_new_call(call_id, recipients, call_password, record_call)
+            }
         }
     }
 
@@ -9345,6 +9358,7 @@ return data['data']
 
     render_enter_voice_call_data(){
         const call_invite_obj = this.state.data['message']
+        const button_message = this.props.app_state.stream == null ? this.props.app_state.loc['3055it']/* Turn On Mic */ : this.props.app_state.loc['3055ic']/* 'Enter Call.' */
         if(call_invite_obj == null){
             return(
                 <div>
@@ -9356,6 +9370,7 @@ return data['data']
 
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bl']/* 'Record Call.' */, 'details':this.props.app_state.loc['3091bm']/* 'You can record the call for future reference. */, 'size':'l'})}
+                    <div style={{height:10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height:10}}/>
 
@@ -9372,7 +9387,7 @@ return data['data']
                             {this.render_detail_item('10', {'text':this.props.app_state.loc['3055id']/* Encryption supported on your device ✔ */, 'textsize':'9px', 'font':this.props.app_state.font})}
                             <div style={{height:10}}/>
                             <div onClick={() => this.enter_existing_call_with_specified_details()}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ic']/* 'Enter Call.' */, 'action':''},)}
+                                {this.render_detail_item('5', {'text':button_message, 'action':''},)}
                             </div>
                         </div>
                     )}
@@ -9391,7 +9406,7 @@ return data['data']
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ij']/* 'Call Invite.' */, 'details':this.props.app_state.loc['3055ik']/* 'Youve been invited to join a call. */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'title':call_invite_obj['sender_account']+','+(this.get_sender_title_text(call_invite_obj['sender_account'], call_invite_obj['sender_account_e5']) || ''), 'details':this.props.app_state.loc['3055il']/* 'Sender Account. */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':call_invite_obj['sender_account']+', '+(this.get_sender_title_text(call_invite_obj['sender_account'], call_invite_obj['sender_account_e5']) || ''), 'details':this.props.app_state.loc['3055il']/* 'Sender Account. */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':''+(new Date(call_invite_obj['time']).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(call_invite_obj['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
@@ -9399,6 +9414,7 @@ return data['data']
 
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bl']/* 'Record Call.' */, 'details':this.props.app_state.loc['3091bm']/* 'You can record the call for future reference. */, 'size':'l'})}
+                    <div style={{height:10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:10}}/>
@@ -9425,11 +9441,20 @@ return data['data']
                         </div>
                     )}
 
-                    {((call_invite_obj['password'] != '' && this.props.app_state.isEncryptionSupported == true) || (call_invite_obj['password'] == '' && this.props.app_state.isEncryptionSupported == false)) && (
+                    {call_invite_obj['password'] != '' && this.props.app_state.isEncryptionSupported == true && (
                         <div>
                             <div style={{height:10}}/>
                             <div onClick={() => this.enter_invited_call()}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ic']/* 'Enter Call.' */, 'action':''},)}
+                                {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                            </div>
+                        </div>
+                    )}
+
+                    {call_invite_obj['password'] == '' && (
+                        <div>
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.enter_invited_call()}>
+                                {this.render_detail_item('5', {'text':button_message, 'action':''},)}
                             </div>
                         </div>
                     )}
@@ -9463,16 +9488,106 @@ return data['data']
             this.props.notify(this.props.app_state.loc['3055is']/* That call requires a password. */, 4000)
         }
         else{
-            this.props.enter_call_with_specified_details(call_identifier, enter_call_password)
+            if(this.props.app_state.stream == null){
+                this.props.initialize_microphone(enter_call_password, call_identifier)
+            }else{
+                this.props.enter_call_with_specified_details(call_identifier, enter_call_password)
+            }
         }
     }
 
     enter_invited_call(){
         const record_call = this.get_selected_item2(this.state.get_record_call_tags_object, 'e') == 1
         const call_invite_obj = this.state.data['message']
-        this.props.enter_call_with_specified_details(call_invite_obj['call_id'], call_invite_obj['password'], record_call)
+        
+        if(this.props.app_state.stream == null){
+            this.props.initialize_microphone(call_invite_obj['password'], call_invite_obj['call_id'])
+        }else{
+            this.props.enter_call_with_specified_details(call_invite_obj['call_id'], call_invite_obj['password'], record_call)
+        }
     }
     
+
+
+
+
+
+
+
+
+
+
+
+    render_confirm_leave_call_ui(){
+      var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_leave_call_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_leave_call_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_leave_call_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_confirm_leave_call_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ix']/* 'Confirm Exit.' */, 'details':this.props.app_state.loc['3055iy']/* 'Are you sure you wish to exit the call?' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={()=> this.leave_call_confirmed()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055iz']/* 'Exit Call' */, 'action':''},)}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={()=> this.stay_in_call()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ja']/* 'Stay In Call' */, 'action':''},)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    leave_call_confirmed(){
+        this.props.leave_call_confirmed()
+    }
+
+    stay_in_call(){
+        this.props.stay_in_call()
+    }
 
 
 

@@ -1071,7 +1071,7 @@ class PitchShifterProcessor {
       console.log('Tone.js audio context started');
 
       // Create MediaStream source node from existing mic stream
-      this.source = Tone.context.createMediaStreamSource(inputStream);
+      this.source = Tone.getContext().createMediaStreamSource(inputStream);
 
       // Create pitch shifter effect
       this.pitchShifter = new Tone.PitchShift({pitch: 3, windowSize: 0.2, delayTime: 0.05, feedback: 0.1 });
@@ -1079,7 +1079,7 @@ class PitchShifterProcessor {
       Tone.connect(this.source, this.pitchShifter);
 
       // Create a MediaStreamDestination to pipe processed audio to
-      this.destination = Tone.context.createMediaStreamDestination();
+      this.destination = Tone.getContext().createMediaStreamDestination();
       this.destinationStream = this.destination.stream;
       // Connect source → effect → destination
 
@@ -1111,30 +1111,6 @@ class PitchShifterProcessor {
       }
       console.log(`Pitch shifter ${enabled ? 'enabled' : 'disabled'}`);
     }
-  }
-
-  mute() {
-    if (!this.source || !this.pitchShifter) return;
-
-    // Disconnect source → pitchShifter
-    this.source.disconnect();
-
-    // Disconnect pitchShifter → destination
-    this.pitchShifter.disconnect();
-
-    this.enabled = false;
-    console.log("Pitch shifter muted (audio pipeline disconnected)");
-  }
-
-  unmute() {
-    if (!this.source || !this.pitchShifter || !this.destination) return;
-
-    // Reconnect graph: source → pitchShifter → destination
-    Tone.connect(this.source, this.pitchShifter);
-    this.pitchShifter.connect(this.destination);
-
-    this.enabled = true;
-    console.log("Pitch shifter unmuted (audio pipeline restored)");
   }
 
   cleanup() {
@@ -2455,27 +2431,28 @@ class App extends Component {
 
   get_default_addresses(){
     var default_addresses = [
-        '5VH6APQQOWDXWHQGYH3UJHX4MFTL6IGJHMHXS5LIZPO4DG5UVTRKE63PNQ',
-        '1GNvmBVCFhQasLkfM6BsFtgxPuUpECvUBa',
-        '1M1X8gy9n1z3n22Ddksgn1kM6JAuz65L5x',
-        'cosmos18tux8kpx82v6z0p9mgc6s6kym352486lyd7av9',
-        'XsRwNDdfTMiYM6A7HbSLMujZbSPh3xkhy2',
-        'DA88P2NRpG4rLsJ1knGVaunFGsDC92oPAe',
-        'f1jv3rl3ogw3tvb67wzvqvrott6icfhavh6uopeca',
-        'FMXGHcdqYH9NnJcPWgZAh8rHWLEu3xozJqjFypvWQDquLAE',
-        'LXeHJfiDG39XPaK8eT3WGvQetehnmg4Hfn',
-        '13nCkJXq4xXh4fVgaSvWQtbzzY3enghmcRjU2cYKah2sLn2k',
-        'GDWU7YB6CB2YO6Y6A3A7ORE67RQWNPZAZE5Q66LVNDF53QM3WSWOFXLF',
-        'tz1UF8y8MmpLbsTKwMZUaoHqvjrjaT4p4d92',
-        'TEGgcyRe4GfyRRS73adfVVtTDBpUuSPXGY',
-        'rpTTrdJSFrqhKuwv87MJj8egULabstELn9',
-        '7KjURTEzcC96eWQDcLsZxRqo1gM3SA7dkHxFsrAYsspe',
-        '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d',
-        'SPDDSC21KS91Y9FANB2X4T6NDRX0HRPD401EDRV2',
-        'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U',
-        '0x9abd642fd75a4dfd26bbc3c3d39d38776336df5adb204355864caebd17e169d3',
-        'celestia18tux8kpx82v6z0p9mgc6s6kym352486l480dkg',
-        'addr1qxxwkgscq7dlcg4pukrc4wavwdkrwux5mjuc7axsx9q83qlephez0vmahssvewkj7gt20y4240a3s2e8ech92whq2j3sw22rsy'
+      '0xB5195BA86F7a2D6AE1bFE15129Dbc9202f04B4c1',
+      '5VH6APQQOWDXWHQGYH3UJHX4MFTL6IGJHMHXS5LIZPO4DG5UVTRKE63PNQ',
+      '1GNvmBVCFhQasLkfM6BsFtgxPuUpECvUBa',
+      '1M1X8gy9n1z3n22Ddksgn1kM6JAuz65L5x',
+      'cosmos18tux8kpx82v6z0p9mgc6s6kym352486lyd7av9',
+      'XsRwNDdfTMiYM6A7HbSLMujZbSPh3xkhy2',
+      'DA88P2NRpG4rLsJ1knGVaunFGsDC92oPAe',
+      'f1jv3rl3ogw3tvb67wzvqvrott6icfhavh6uopeca',
+      'FMXGHcdqYH9NnJcPWgZAh8rHWLEu3xozJqjFypvWQDquLAE',
+      'LXeHJfiDG39XPaK8eT3WGvQetehnmg4Hfn',
+      '13nCkJXq4xXh4fVgaSvWQtbzzY3enghmcRjU2cYKah2sLn2k',
+      'GDWU7YB6CB2YO6Y6A3A7ORE67RQWNPZAZE5Q66LVNDF53QM3WSWOFXLF',
+      'tz1UF8y8MmpLbsTKwMZUaoHqvjrjaT4p4d92',
+      'TEGgcyRe4GfyRRS73adfVVtTDBpUuSPXGY',
+      'rpTTrdJSFrqhKuwv87MJj8egULabstELn9',
+      '7KjURTEzcC96eWQDcLsZxRqo1gM3SA7dkHxFsrAYsspe',
+      '0x8d8de185540f8d946b7999535d18e06c80e53ca4e47d43a852df57f2ef4f0c5d',
+      'SPDDSC21KS91Y9FANB2X4T6NDRX0HRPD401EDRV2',
+      'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U',
+      '0x9abd642fd75a4dfd26bbc3c3d39d38776336df5adb204355864caebd17e169d3',
+      'celestia18tux8kpx82v6z0p9mgc6s6kym352486l480dkg',
+      'addr1qxxwkgscq7dlcg4pukrc4wavwdkrwux5mjuc7axsx9q83qlephez0vmahssvewkj7gt20y4240a3s2e8ech92whq2j3sw22rsy'
     ]
     return default_addresses
   }
@@ -3570,6 +3547,7 @@ class App extends Component {
     this.set_map_location_page = React.createRef();
     this.view_map_location_pins_page = React.createRef();
     this.view_call_interface_page = React.createRef();
+    this.localStream = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -3822,10 +3800,10 @@ class App extends Component {
     obj2[this.getLocale()['1593fv']/* '10min' */] = 10*60*1000
 
     var obj3 = {}
-    obj3[this.getLocale()['1421']/* sluggish */] = 210_000
-    obj3[this.getLocale()['1422']/* slow */] = 150_000
-    obj3[this.getLocale()['1423']/* average */] = 95_000
-    obj3[this.getLocale()['1424']/* fast */] = 60_000
+    obj3[this.getLocale()['1421']/* sluggish */] = 510_000
+    obj3[this.getLocale()['1422']/* slow */] = 350_000
+    obj3[this.getLocale()['1423']/* average */] = 195_000
+    obj3[this.getLocale()['1424']/* fast */] = 100_000
 
     var me = this;
     setTimeout(function() {
@@ -4158,9 +4136,9 @@ class App extends Component {
       var should_update_posts_reposted_by_me = state.should_update_posts_reposted_by_me
 
       var deleted_files = state.deleted_files
-      var loc = (all_locales[my_language] == null ? this.state.loc : all_locales[my_language])
+      var loc = (all_locales[my_language] == null ? this.getLocale() : all_locales[my_language])
       if(my_language == 'en'){
-        loc = this.state.loc
+        loc = this.getLocale()
       }
       var auto_run = state.auto_run == null ? 'e' : state.auto_run
       var explore_display_type = state.explore_display_type == null ? this.state.explore_display_type: state.explore_display_type
@@ -4243,7 +4221,7 @@ class App extends Component {
         hide_pip: hide_pip,
         preferred_currency: preferred_currency,
         all_locales: all_locales, 
-        loc: loc,
+        // loc: loc,
         theme_image: theme_image,
         subscribed_nitros: subscribed_nitros,
         uncommitted_upload_cids: uncommitted_upload_cids,
@@ -6049,7 +6027,7 @@ class App extends Component {
           
           
           {this.render_toast_container()}
-          <audio ref={this.remoteStream} autoPlay />
+          <audio ref={this.localStream} autoPlay muted />
         </div>
       );
     }
@@ -16344,7 +16322,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)}
         />
       </div>
     )
@@ -16387,7 +16365,7 @@ class App extends Component {
       'confirm_delete_dialog_box':200, 
       'confirm_withdraw_ether':430,
       'confirm_send_coin_dialog':600, 
-      'song_options':700, 
+      'song_options':700,
       'confirm_upload_file_to_arweave':700, 
       'view_uploaded_file':400, 
       'view_item_purchase':550, 
@@ -16424,6 +16402,7 @@ class App extends Component {
       'request_cookies_permission':220,
       'start_voice_call':650,
       'enter_voice_call':530,
+      'confirm_leave_call':220,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17467,6 +17446,7 @@ class App extends Component {
   }
 
   enter_new_call(call_id, recipients, call_password, record_call){
+    this.send_invites = false;
     this.send_invites_and_enter_chatroom(call_id, recipients, call_password)
     this.setState({current_call_recipients: recipients, call_moderator: true})
     this.begin_enter_call_process(call_id, call_password, record_call)
@@ -17474,6 +17454,17 @@ class App extends Component {
 
   enter_call_with_specified_details(call_id, call_password, record_call){
     this.enter_call(call_id, call_password, record_call)
+  }
+
+  leave_call_confirmed(){
+    this.prompt_top_notification(this.getLocale()['3055jb']/* Leaving Call... */)
+    this.open_dialog_bottomsheet()
+    this.leave_call()
+  }
+
+  stay_in_call(){
+    this.prompt_top_notification(this.getLocale()['3055jc']/* Staying. */)
+    this.open_dialog_bottomsheet()
   }
 
 
@@ -21925,7 +21916,7 @@ class App extends Component {
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
       <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call={this.leave_call.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)}
+        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call_confirmation={this.leave_call_confirmation.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)}
         />
       </div>
     )
@@ -25967,26 +25958,6 @@ class App extends Component {
 
 
     
-    
-    if(account != null && account > 1000){
-      if(pre_launch_data[e5] != null){
-        this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
-        this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
-      }else{
-        this.load_my_contracts(e5)
-        this.load_my_subscriptions(e5)
-      }
-
-      const load_signature_data = async () => {
-        this.setState({loading_open_socket_signature_request_response_data: true})
-        const signature_request_target = 'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
-        const signature_response_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
-        const call_invites_target = 'call_invites|'+this.state.accounts[this.state.selected_e5].address
-        await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target, call_invites_target],[],[])
-        this.setState({loading_open_socket_signature_request_response_data: false})
-      }
-      load_signature_data()
-    }
 
 
 
@@ -26085,6 +26056,27 @@ class App extends Component {
       this.setState({refreshing_content_after_channeling_change: false})
       const page = this.homepage.current?.get_selected_page()
       this.load_data_from_page_in_focus(page)
+    }
+
+
+    if(account != null && account > 1000){
+      if(pre_launch_data[e5] != null){
+        this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
+        this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
+      }else{
+        this.load_my_contracts(e5)
+        this.load_my_subscriptions(e5)
+      }
+
+      const load_signature_data = async () => {
+        this.setState({loading_open_socket_signature_request_response_data: true})
+        const signature_request_target = 'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
+        const signature_response_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
+        const call_invites_target = 'call_invites|'+this.state.accounts[this.state.selected_e5].address
+        await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target, call_invites_target],[],[])
+        this.setState({loading_open_socket_signature_request_response_data: false})
+      }
+      await load_signature_data()
     }
 
     // this.get_total_supply_of_ether(e5)
@@ -34382,15 +34374,20 @@ class App extends Component {
 
 
   load_and_notify_flash = async () => {
-    if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account()) return;
+    if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account() || this.load_and_notify_flash_running == true) return;
+    this.load_and_notify_flash_running = true;
     await this.load_and_notify_user_of_incoming_payments()
     await this.load_and_notify_user_of_incoming_mail()
     await this.load_and_notify_user_of_incoming_messages()
+
+    await this.wait(3000)
+    this.load_and_notify_flash_running = false;
   }
 
   load_and_notify_flash2 = async () => {
-    if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account()) return;
+    if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account() || this.load_and_notify_flash2_running == true) return;
   
+    this.load_and_notify_flash2_running = true;
     await this.load_and_notify_user_of_incoming_proposals()
     await this.load_and_notify_user_of_incoming_job_applications()
     await this.load_and_notify_user_of_incoming_job_requests()
@@ -34402,12 +34399,19 @@ class App extends Component {
     await this.load_and_notify_user_of_incoming_storefront_direct_order()
     await this.load_and_notify_user_of_incoming_bills()
 
-    
+    await this.wait(3000)
+    this.load_and_notify_flash2_running = false;
   }
 
   load_and_notify_flash3 = async () => {
+    if(this.load_and_notify_flash3_running == true) return;
+
+    this.load_and_notify_flash3_running = true;
     await this.update_watched_account_data()
     await this.update_contextual_transfer_account_data()
+
+    await this.wait(3000)
+    this.load_and_notify_flash3_running = false;
   }
 
 
@@ -44244,8 +44248,11 @@ class App extends Component {
   }
 
   async send_invites_and_enter_chatroom(call_id, recipients, call_password){
+    while(this.send_invites == null || this.send_invites == false){
+      await this.wait(500)
+    }
+    this.send_invites = false;
     this.prompt_top_notification(this.getLocale()['3055ih']/* 'Sending Call Invites...' */, 1900)
-    this.enter_chatroom_if_socket_enabled(call_id)
     await this.wait(1900)
 
     //send_invites
@@ -44254,9 +44261,13 @@ class App extends Component {
       const invite_object = await this.get_invite_object_message(call_id, recipient, call_password)
 
       const to = await this.get_recipient_address(recipient['id'], recipient['e5'])
+      console.log('socket_stuff', 'send_invites_and_enter_chatroom', to, invite_object)
       const target = 'call_invites|'+to
       const secondary_target = 'call_invites|'+this.state.accounts[this.state.selected_e5].address
-      this.socket.emit("send_message", {to: to, message: invite_object.message, target: target, object_hash: invite_object.object_hash, secondary_target: secondary_target });
+      
+      const message_object = {to: to, message: invite_object.message, target: target, object_hash: invite_object.object_hash, secondary_target: secondary_target }
+      console.log('socket_stuff', message_object)
+      this.socket.emit("send_message", message_object);
 
       await this.wait(1900)
     }
@@ -44302,6 +44313,16 @@ class App extends Component {
         clone.push(object_e5_id)
         this.setState({active_rooms: clone})
         this.socket.emit("join_chatroom", object_e5_id);
+      }
+    }
+  }
+
+  enter_chatroom_if_socket_enabled_without_emitting(object_e5_id){
+    if(this.socket){
+      const clone = this.state.active_rooms.slice()
+      if(!clone.includes(object_e5_id)){
+        clone.push(object_e5_id)
+        this.setState({active_rooms: clone})
       }
     }
   }
@@ -45635,7 +45656,6 @@ class App extends Component {
 
 
 
-
   
 
 
@@ -46937,7 +46957,6 @@ class App extends Component {
       const e5 = message.e5;
 
       const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
-      const messages = this.state.socket_contractor_applications[message.contractor_object_id] == null ? [] : this.state.socket_contractor_applications[message.contractor_object_id].slice()
       var ipfs_message = ipfs;
 
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
@@ -47453,20 +47472,11 @@ class App extends Component {
 
 
   async enter_call(call_id, call_password, record_call){
-    if(call_password != ''){
-      const is_password_valid = await this.verify_password_used(call_id, call_password);
-      if(is_password_valid == false){
-        return;
-      }else{
-        await this.begin_enter_call_process(call_id, call_password, record_call)
-      }
-    }else{
-      await this.begin_enter_call_process(call_id, call_password, record_call)
-    }
+    await this.begin_enter_call_process(call_id, call_password, record_call)
   }
 
   async verify_password_used(call_id, call_password){
-    this.prompt_top_notification(this.getLocale()['2738bp']/* Checking that password... */, 1600)
+    // this.prompt_top_notification(this.getLocale()['2738bp']/* Checking that password... */, 1600)
     const target = 'call_metadata|'+call_id
     await this.get_objects_from_socket_and_set_in_state([target], [], [])
     const call_metadata_hash = this.state.call_metadata_object[call_id]
@@ -47478,29 +47488,75 @@ class App extends Component {
     }
   }
 
-  async begin_enter_call_process(call_id, call_password, record_call){
-    const successful_microphone_access = await this.initializeMedia()
-    if(!successful_microphone_access){
-      this.prompt_top_notification(this.getLocale()['2738bq']/* e needs access to your microphone for the call. */, 10000)
-      this.leave_call2()
+  initialize_microphone = async (call_password, call_id) => {
+    if(this.is_initializing_microphone == true){
       return;
     }
-    const call_start_time = Date.now()
-    this.setState({current_call_id: call_id, current_call_password: call_password, call_join_time: call_start_time})
-    await this.wait(200)
-    this.initialize_peers_datapoints()
+    try {
+      this.is_initializing_microphone = true;
+      this.initialize_peers_datapoints()
 
-    const successful_setting_of_password = await this.enableEncryption()
-    if(!successful_setting_of_password){
-      this.prompt_top_notification(this.getLocale()['2738br']/* Something went wrong. */, 10000)
-      this.leave_call2()
-      return;
+      if(call_password != ''){
+        const is_password_valid = await this.verify_password_used(call_id, call_password);
+        if(is_password_valid == false){
+          this.is_initializing_microphone = false;
+          return;
+        }
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+      console.log('socket_stuff', 'obtained stream', stream);
+
+      // Initialize pitch processor
+      this.pitchProcessor = new PitchShifterProcessor();
+      this.processedStream = await this.pitchProcessor.initialize(stream);
+      
+      console.log('socket_stuff', 'initialised pitchprocessor', this.processedStream);
+      // Set initial pitch
+      this.pitchProcessor.setPitch(this.state.pitchShift);
+      this.pitchProcessor.setEnabled(true);
+
+      this.processedStream.getTracks().forEach(track => {
+        track.enabled = true;
+        console.log('socket_stuff','Track after initialization:', {
+          enabled: track.enabled,
+          muted: track.muted,
+          readyState: track.readyState
+        });
+      });
+      
+      this.setState({ microphoneInitialized: true, stream: stream, processedStream: this.processedStream });
+
+      const successful_setting_of_password = await this.enableEncryption(call_password)
+      if(!successful_setting_of_password){
+        this.prompt_top_notification(this.getLocale()['2738br']/* Something went wrong. */, 10000)
+        this.is_initializing_microphone = false;
+        return;
+      }
+      this.localStream.current.srcObject = this.processedStream;
+      this.prompt_top_notification(this.getLocale()['3055iu']/* Microphone Active. */, 1200)
+      this.is_initializing_microphone = false;
+    }catch(error){
+      console.error('socket_stuff', 'Error accessing microphone:', error);
+      this.prompt_top_notification(this.getLocale()['2738bq']/* e needs access to your microphone for the call. */, 10000);
+      this.is_initializing_microphone = false;
     }
-
-    this.prompt_top_notification(this.getLocale()['2738bs']/* Joining the call... */, 1200)
-    const signature_object = await this.get_signature_for_registering_in_socket(this.state.selected_e5)
-    const join_room_obj = { roomId: call_id, signature: signature_object.signature, signature_data: signature_object.data ,e5: this.state.selected_e5 }
     
+  }
+
+  async begin_enter_call_process(call_id, call_password, record_call){
+    this.prompt_top_notification(this.getLocale()['2738bs']/* Joining the call... */, 1200)
+    // this.prompt_top_notification(this.getLocale()['3091bt']/* initializing... */, 1200)
+    this.enter_chatroom_if_socket_enabled_without_emitting()
+    const call_start_time = Date.now()
+    this.setState({current_call_id: call_id, current_call_password: call_password, call_join_time: call_start_time})   
+    
+    const join_room_obj = { roomId: call_id }
     this.socket.emit("join_room", join_room_obj);
 
     this.open_dialog_bottomsheet()
@@ -47519,6 +47575,7 @@ class App extends Component {
       message_clone[call_id] = []
       this.setState({socket_object_messages: message_clone})
     }
+    this.send_invites = true;
   }
 
   pause_media_if_any(){
@@ -47527,18 +47584,16 @@ class App extends Component {
   }
 
   initialize_peers_datapoints(){
-    this.peersRef = [];
     this.pitchProcessor = null;
     this.encryptor = new AudioEncryption();
-
     this.callRecorder = new CallRecorder();
     this.recordingTimer = null;
     this.remoteStreams = new Map();
     delete this.recordedBlob
 
     this.socket.on("signal", ({ from, data }) => {
-      console.log('Received signal from:', from, 'Signal type:', data.type);
-      const peerObj = this.peersRef.find((p) => p.peerId === from);
+      console.log('socket_stuff','Received signal from:', from, 'Signal type:', data.type);
+      const peerObj = this.state.peers.find((p) => p.peerId === from);
       if (peerObj) {
         peerObj.peer.signal(data);
       } else {
@@ -47549,7 +47604,7 @@ class App extends Component {
     this.socket.on("user_joined", async ({userId, roomId}) => {
       console.log(`User ${userId} joined - creating initiator peer`);
       if (!this.state.processedStream) {
-        console.warn('user joined but we have no processed stream yet, delaying peer creation');
+        console.warn('socket_stuff','user joined but we have no processed stream yet, delaying peer creation');
         // wait until processedStream exists
         const waitForStream = () => new Promise(resolve => {
           const i = setInterval(() => {
@@ -47560,35 +47615,57 @@ class App extends Component {
       }
       const peer = this.createPeer(userId, true);
       const peer_obj = { peerId: userId, peer: peer };
-      this.peersRef.push(peer_obj);
       
       const clone = this.state.peers.slice();
       clone.push(peer_obj);
       this.setState({ peers: clone });
+
+      await this.set_caller_details_in_state(userId, this.state.current_call_id, true)
     });
 
     this.socket.on("user_in_room", ({userId, roomId}) => {
-      console.log(`User ${userId} already in room - waiting for their offer`);
+      console.log('socket_stuff',`User ${userId} already in room - waiting for their offer`);
     });
 
-    this.socket.on("offer_received", ({ from, signal }) => {
-      console.log(`Received offer from ${from} - creating receiver peer`);
+    this.socket.on("offer_received", async ({ from, signal }) => {
+      console.log('socket_stuff',`Received offer from ${from} - creating receiver peer`);
+
+      if (!this.state.processedStream) {
+        console.warn('socket_stuff','user joined but we have no processed stream yet, delaying peer creation');
+        // wait until processedStream exists
+        const waitForStream = () => new Promise(resolve => {
+          const i = setInterval(() => {
+            if (this.state.processedStream) { clearInterval(i); resolve(); }
+          }, 50);
+        });
+        await waitForStream();
+      }
+
       const peer = this.createPeer(from, false);
       const peer_obj = { peerId: from, peer: peer };
-      this.peersRef.push(peer_obj);
       
       const clone = this.state.peers.slice();
       clone.push(peer_obj);
       this.setState({ peers: clone });
       
+      await this.wait(400)
       peer.signal(signal);
+      await this.set_caller_details_in_state(from, this.state.current_call_id, false)
     });
 
     this.socket.on("user_left", ({userId, roomId}) => {
-      console.log(`User ${userId} left`);
-      this.peersRef = this.peersRef.filter((p) => p.peerId !== userId);
+      console.log('socket_stuff',`User ${userId} left`);
       const clone = this.state.peers.filter((p) => p.peerId !== userId);
       this.setState({ peers: clone });
+
+      const room_participants = this.state.my_active_call_room_participants[this.state.current_call_id] || {}
+      const address_accounts = room_participants[userId] || []
+      if(address_accounts.length > 0){
+        const account = address_accounts[0]['id']
+        const e5 = address_accounts[0]['e5'];
+        const alias = this.get_sender_title_text(account, e5)
+        this.prompt_top_notification(this.getLocale()['3055iv']/* $ left the call. */.replace('$', alias), 2300)
+      }
     });
   }
 
@@ -47601,37 +47678,10 @@ class App extends Component {
     }
   }
 
-  initializeMedia = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
-      });
-      console.log('socket_call_stuff', 'obtained stream', stream);
-
-      // Initialize pitch processor
-      this.pitchProcessor = new PitchShifterProcessor();
-      const processedStream = await this.pitchProcessor.initialize(stream);
-      
-      console.log('socket_call_stuff', 'initialised pitchprocessor', processedStream);
-      // Set initial pitch
-      this.pitchProcessor.setPitch(this.state.pitchShift);
-      this.pitchProcessor.setEnabled(true);
-      
-      this.setState({ microphoneInitialized: true, stream: stream, processedStream: processedStream });
-      return true;
-    }
-    catch (error) {
-      console.error('socket_call_stuff', 'Error accessing microphone:', error);
-      return false;
-    }
-  }
+  
 
   enableEncryption = async (current_call_password) => {
-    if(current_call_password == '') return;
+    if(current_call_password == '') return true;
     try {
       await this.encryptor.deriveKey(current_call_password);
       return true;
@@ -47646,6 +47696,8 @@ class App extends Component {
     if (!this.state.isEncryptionSupported) {
       return;
     }
+
+    console.log('socket_stuff', 'setting up encryption...')
 
     peer._pc.getSenders().forEach(sender => {
       if (sender.track && sender.track.kind === 'audio') {
@@ -47685,55 +47737,58 @@ class App extends Component {
   }
 
   createPeer = (userToSignal, isInitiator) => {
-    console.log(`Creating peer for ${userToSignal}, initiator: ${isInitiator}`);
+    console.log('socket_stuff',`Creating peer for ${userToSignal}, initiator: ${isInitiator}, processedstream: ${this.state.processedStream}`);
+    this.state.processedStream.getTracks().forEach((track, i) => {
+      console.log('socket_stuff',`Sending track ${i}:`, {
+        kind: track.kind,
+        enabled: track.enabled,
+        muted: track.muted,
+        readyState: track.readyState
+      });
+    });
+
     const peer = new SimplePeer({
       initiator: isInitiator,
       trickle: false,
-      stream: this.state.processedStream,
+      stream: this.processedStream,
       config: {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
 
-          { urls: 'stun:stun2.l.google.com:19302' },
-          { urls: 'stun:stun3.l.google.com:19302' },
-          { urls: 'stun:stun4.l.google.com:19302' },
-          { urls: 'stun:stunserver.stunprotocol.org:3478' },
-          { urls: 'stun:stun.voipawesome.com:3478' },
-          { urls: 'stun:stun.nextcloud.com:3478' },
-          { urls: 'stun:stun.f.haeder.net:3478' },
+          // { urls: 'stun:stun2.l.google.com:19302' },
+          // { urls: 'stun:stun3.l.google.com:19302' },
+          // { urls: 'stun:stun4.l.google.com:19302' },
+          // { urls: 'stun:stunserver.stunprotocol.org:3478' },
+          // { urls: 'stun:stun.voipawesome.com:3478' },
+          // { urls: 'stun:stun.nextcloud.com:3478' },
+          // { urls: 'stun:stun.f.haeder.net:3478' },
         ]
       }
     });
 
-    if(this.state.current_call_password != '') this.setupEncryption(peer);
+    // if(this.state.current_call_password != '') this.setupEncryption(peer);
 
     peer.on('error', (err) => {
-      console.error(`Peer error with ${userToSignal}:`, err);
+      console.error('socket_stuff',`Peer error with ${userToSignal}:`, err);
     });
 
-    peer.on("signal", async (signal) => {
-      console.log(`Sending ${signal.type} signal to ${userToSignal}`);
-      const signature_object = await this.get_signature_for_registering_in_socket(this.state.selected_e5)
+    peer.on("signal", (signal) => {
+      console.log('socket_stuff',`Sending ${signal.type} signal to ${userToSignal}`);
       this.socket.emit("signal", {
         to: userToSignal,
         data: signal,
         isInitiator: isInitiator,
-        signature: signature_object.signature,
-        signature_data: signature_object.data,
-        e5: this.state.selected_e5
       });
     });
 
     peer.on('connect', () => {
-      console.log('Peer connected:', userToSignal);      
+      console.log('socket_stuff','Peer connected:', userToSignal);      
     });
 
-    peer.on('stream', (remoteStream) => {
-      console.log('Received remote stream from:', userToSignal, remoteStream);
+    peer.on('stream', (stream) => {
+      peer.stream = stream
     });
-
-    this.set_caller_details_in_state(userToSignal, this.state.current_call_id)
 
     return peer;
   }
@@ -47750,15 +47805,14 @@ class App extends Component {
       this.state.processedStream.getTracks().forEach(track => {
         track.enabled = !newMutedState;
       });
-
-      if(newMutedState == true) this.state.processedStream.mute();
-      else this.state.processedStream.unmute();
     }
-
-    
 
     console.log('socket_call_stuff', (newMutedState ? 'Microphone muted' : 'Microphone unmuted'));
     this.prompt_top_notification(newMutedState? this.getLocale()['3091o']/* Microphone muted */ : this.getLocale()['3091p']/* Microphone unmuted */, 1400)
+  }
+
+  leave_call_confirmation(){
+    this.show_dialog_bottomsheet({}, 'confirm_leave_call')
   }
 
   async leave_call(){
@@ -47782,21 +47836,29 @@ class App extends Component {
       this.state.processedStream.getTracks().forEach(track => {
         track.stop();
       });
+      this.processedStream.getTracks().forEach(track => {
+        track.stop();
+      });
     }
 
-    this.peersRef = null;
     this.encryptor = null;
 
-    this.socket.emit("leave_room", this.state.current_call_id);
-    clearInterval(this.count_up_interval)
-    
+    const current_room = this.state.current_call_id+''
+    this.socket.emit("leave_room", current_room);
+
+    if(this.count_up_interval){
+      clearInterval(this.count_up_interval)
+    }
     if (this.recordingTimer) {
       clearInterval(this.recordingTimer);
     }
 
+    this.exit_chatroom_if_socket_enabled(this.state.current_call_id)
+
     const clone = structuredClone(this.state.my_active_call_room_participants)
     clone[this.state.current_call_id] = []
-    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null})
+    
+    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null, stream:null, peers: [], microphoneInitialized: false, pitchShift:0, isMuted:false})
     
 
     var me = this;
@@ -47821,20 +47883,19 @@ class App extends Component {
       this.state.processedStream.getTracks().forEach(track => track.stop());
     }
 
-    this.peersRef = null;
     this.encryptor = null;
 
     const clone = structuredClone(this.state.my_active_call_room_participants)
     clone[this.state.current_call_id] = []
-    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null})
+    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null, stream: null})
   }
 
-  async set_caller_details_in_state(address, room_id){
+  async set_caller_details_in_state(address, room_id, announce_join){
     const addresses_account_ids = await this.get_addresses_accounts(address)
     for(var i=0; i<addresses_account_ids; i++){
       const account = addresses_account_ids['id']
       const e5 = addresses_account_ids['e5']
-      await this.get_alias_from_account_id(account, e5)
+      this.get_alias_from_account_id(account, e5)
     }
     const clone = structuredClone(this.state.my_active_call_room_participants)
     const room_participants = clone[room_id] == null ? {} : structuredClone(clone[room_id])
@@ -47843,6 +47904,23 @@ class App extends Component {
     }
     clone[room_id] = room_participants
     this.setState({my_active_call_room_participants: clone})
+
+    if(announce_join == true){
+      const account = addresses_account_ids[0]['id'];
+      const e5 = addresses_account_ids[0]['e5'];
+      const alias = this.get_sender_title_text(account, e5)
+      this.prompt_top_notification(this.getLocale()['3055jd']/* $ entered the call. */.replace('$', alias), 2300)
+    }
+  }
+
+  get_sender_title_text(account, e5){
+    if(account == this.state.user_account_id[e5]){
+      return this.state.loc['1694']/* 'You' */
+    }else{
+      const bucket = this.get_all_sorted_objects_mappings(this.state.alias_bucket)
+      var alias = (bucket[account] == null ? null : bucket[account])
+      return alias
+    }
   }
 
   async get_addresses_accounts(address){
@@ -48018,7 +48096,6 @@ class App extends Component {
   process_encrypted_chunks(encryptedChunks){
     return Buffer.concat(encryptedChunks.map(chunk => Buffer.from(chunk)));
   }
-
 
   process_encrypted_file(encryptedChunks){
     // return encryptedChunks;

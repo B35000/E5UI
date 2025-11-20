@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 module.exports = {
   babel: {
@@ -97,5 +98,16 @@ module.exports = {
 
       return webpackConfig;
     },
+  },
+  devServer: {
+    server: {
+      type: 'http',
+      // options: {
+      //   key: fs.readFileSync(path.resolve(__dirname, './localhost+3-key.pem')),
+      //   cert: fs.readFileSync(path.resolve(__dirname, './localhost+3.pem')),
+      // },
+    },
+    host: '0.0.0.0',
+    port: 3000,
   },
 };

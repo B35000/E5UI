@@ -902,7 +902,7 @@ class PostListSection extends Component {
                                 {this.show_load_metrics(items, 'jobs')}
                                 {this.show_new_objects_message_if_any(all_items)}
                                 {items.map((item, index) => (
-                                    <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                    <motion.li key={item['e5_id']} className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                     style={{'padding': padding}}>
                                         {this.render_job_object(item, index)}
                                     </motion.li>
@@ -1926,7 +1926,7 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     <style>{animate_style}</style>
                     {items.map((item, index) => (
-                        <li className={this.state.animate_click == item['id'] ? 'button-click' : ''} style={{'padding': '1px 5px 1px 5px'}}>
+                        <li key={item['id']} className={this.state.animate_click == item['id'] ? 'button-click' : ''} style={{'padding': '1px 5px 1px 5px'}}>
                             {this.render_E5s_object(item['data'], index, item['id'])}
                         </li>
                     ))}
@@ -4889,7 +4889,7 @@ return data['data']
                     <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         <style>{animate_style}</style>
                         {items.map((item, index) => (
-                            <div className={this.state.animate_click == item['id'] ? 'button-click' : ''} style={{'padding': '1px 5px 1px 5px'}}>
+                            <div key={item['id']} className={this.state.animate_click == item['id'] ? 'button-click' : ''} style={{'padding': '1px 5px 1px 5px'}}>
                                 {this.render_coin_item(item, index)}
                             </div>
                         ))}

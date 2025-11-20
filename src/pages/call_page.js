@@ -16,7 +16,7 @@
 // OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-import React, { Component, useEffect, useRef, useState } from 'react';
+import React, { Component, useEffect, useRef, useState, useCallback } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import Slider from './../components/slider'
@@ -104,7 +104,6 @@ const LocalAudioVisualizer = ({ stream, theme, width }) => {
         return;
     } 
 
-    console.log('socket_call_stuff','LocalAudioVisualizer', stream.getAudioTracks());
     try {
       // Create MediaRecorder from the stream
       const recorder = new MediaRecorder(stream);
@@ -133,114 +132,162 @@ const LocalAudioVisualizer = ({ stream, theme, width }) => {
 
   return (
     <div>
-      <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={width-15} height={45} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
+      <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={width-35} height={67} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
     </div>
   );
 };
 
 // Component for visualizing remote peer audio
 const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStreamReceived, width }) => {
-  const audioRef = useRef();
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const audioContextRef = useRef(null);
-  const analyserRef = useRef(null);
-  const animationFrameRef = useRef(null);
+    const audioRef = useRef();
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const audioContextRef = useRef(null);
+    const analyserRef = useRef(null);
+    const animationFrameRef = useRef(null);
+    const [has_set_streams, set_has_set_streams] = useState(false);
 
-  useEffect(() => {
-    if (!peer) return;
+    const handleStream = useCallback(async (stream) => {
+        // console.log('socket_stuff2', 'Received remote stream from:', peerId, stream);
+        const audioTracks = stream.getAudioTracks();
+        // console.log('socket_stuff2', 'Audio tracks:', audioTracks);
+        if (audioTracks.length === 0) {
+            // console.error('socket_stuff2', 'No audio tracks in remote stream!');
+        }
+        audioTracks.forEach((track, i) => {
+            if (!track.enabled) {
+                track.enabled = true;
+                console.log('socket_stuff2','Enabled disabled track');
+            }
+        });
 
-    const handleStream = (stream) => {      
-      if (audioRef.current) {
-        audioRef.current.srcObject = stream;
-        audioRef.current.volume = 1.0;
-        
-        audioRef.current.play()
-          .then(() => console.log('Audio playing successfully'))
-          .catch(err => {
-            console.error('Error playing audio:', err);
-            setTimeout(() => {
-              audioRef.current.play().catch(e => console.error('Retry failed:', e));
-            }, 100);
-          });
-      }
+        if (audioRef.current) {
+            // console.log('socket_stuff2', 'audioRef is not null', audioRef.current)
+            audioRef.current.srcObject = stream;
+            audioRef.current.volume = 1.0;
 
-      if (onStreamReceived) {
-        onStreamReceived(stream);
-      }
+            audioRef.current.load();
 
-      // Create MediaRecorder for visualization
-      try {
-        const recorder = new MediaRecorder(stream);
-        recorder.start(100);
-        setMediaRecorder(recorder);
+            // Add loadedmetadata event listener
+            audioRef.current.addEventListener('loadedmetadata', () => {
+                // console.log('socket_stuff2', 'Audio metadata loaded for', peerId);
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('socket_stuff2','✅ Audio playing successfully for', peerId);
+                        })
+                        .catch(err => {
+                            console.error('socket_stuff2','❌ Error playing audio:', err);
+                            // Try again on next user interaction
+                            document.addEventListener('click', () => {
+                                audioRef.current?.play();
+                            }, { once: true });
+                        });
+                }else{
+                    console.error('socket_stuff2','Audio playPromise is undefined');
+                }
+            });
+        }else{
+            console.log('socket_stuff2', 'audioRef.current is null', audioRef.current)
+        }
 
-        // Create audio context for volume analysis
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const analyser = audioContext.createAnalyser();
-        const source = audioContext.createMediaStreamSource(stream);
-        
-        analyser.fftSize = 256;
-        source.connect(analyser);
-        
-        audioContextRef.current = audioContext;
-        analyserRef.current = analyser;
+        // Create MediaRecorder for visualization
+        try {
+            const recorder = new MediaRecorder(stream);
+            recorder.start(250);
+            setMediaRecorder(recorder);
+            console.log('socket_stuff2','set media recorder', recorder, stream);
 
-        // Start volume monitoring
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        
-        const checkVolume = () => {
-          analyser.getByteFrequencyData(dataArray);
-          
-          // Calculate average volume
-          const sum = dataArray.reduce((a, b) => a + b, 0);
-          const average = sum / dataArray.length;
-          
-          if (onVolumeChange) {
-            onVolumeChange(peerId, average);
-          }
-          
-          animationFrameRef.current = requestAnimationFrame(checkVolume);
+            // Create audio context for volume analysis
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('socket_stuff2','AudioContext resumed');
+                });
+            }
+            const analyser = audioContext.createAnalyser();
+            const source = audioContext.createMediaStreamSource(stream);
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            audioContextRef.current = audioContext;
+            analyserRef.current = analyser;
+
+            // Start volume monitoring
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            const checkVolume = () => {
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Calculate average volume
+                const sum = dataArray.reduce((a, b) => a + b, 0);
+                const average = sum / dataArray.length;
+                
+                if (onVolumeChange) {
+                    onVolumeChange(peerId, average);
+                }
+                
+                animationFrameRef.current = requestAnimationFrame(checkVolume);
+            };
+            checkVolume();
+
+            if (onStreamReceived) {
+                onStreamReceived(stream);
+            }
+        } catch (error) {
+            console.error('socket_stuff2','Error creating MediaRecorder for remote stream:', error);
+        }
+
+        if(has_set_streams != true){
+            set_has_set_streams(true)
+        }
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+            if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+                audioContextRef.current.close();
+            }
         };
+    }, [peerId, onVolumeChange, onStreamReceived, set_has_set_streams, has_set_streams]);
 
-        checkVolume();
-      } catch (error) {
-        console.error('Error creating MediaRecorder for remote stream:', error);
-      }
-    };
+    useEffect(() => {
+        if (!peer) return;
 
-    peer.on("track", (track, stream) => {
-      if (track.kind === "audio") {
-        handleStream(stream);
-      }
-    });
+        peer.off("stream", handleStream);
+        peer.on("stream", handleStream);
 
-    return () => {
-        if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
+        const onClick = () => audioRef.current?.play().catch(()=>{});
+        document.body.addEventListener('click', onClick);
+
+        if(peer.stream != null && has_set_streams != true){
+            handleStream(peer.stream)
+            set_has_set_streams(true)
         }
-        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-            audioContextRef.current.close();
-        }
-        peer.off("track", handleStream);
-    };
-  }, [peer, peerId, onVolumeChange, onStreamReceived]);
 
-  if(mediaRecorder == null){
-    return(
-        <div style={{ padding: '10px', borderRadius: '5px' }}>
-            <p style={{ margin: 0, color: theme['primary_text_color'] }}> ....... </p>
-        </div>
-    )
-  }
+        return () => {
+            peer.off("stream", handleStream);
+            document.body.removeEventListener('click', onClick);
+        };
+    }, [peer, handleStream, set_has_set_streams, has_set_streams]);
 
-  return (
-    <div style={{}}>
-        <audio ref={audioRef} autoPlay controls playsInline style={{ display: 'none' }} />
+    return (
         <div style={{}}>
-            <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={width-15} height={27} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
+            {mediaRecorder == null ? (
+                <div>
+                    <div style={{ padding: '10px', borderRadius: '5px' }}>
+                        <p style={{ margin: 0, color: theme['primary_text_color'] }}> ....... </p>
+                    </div>
+                </div>
+            ) : (
+                <div>
+                    <div style={{}}>
+                        <LiveAudioVisualizer mediaRecorder={mediaRecorder} width={width-35} height={44} barWidth={3} gap={2} barColor={theme['slider_color']} backgroundColor="transparent" />
+                    </div>
+                </div>
+            )}
+            <audio ref={audioRef} autoPlay controls playsInline style={{ width: 0, height: 0, opacity: 0, display: 'none' }}/>
         </div>
-    </div>
-  );
+    );
 };
 
 class CallPage extends Component {
@@ -315,7 +362,7 @@ class CallPage extends Component {
         var size = this.props.app_state.size
         if(size == 's'){
             return(
-                <div>
+                <div ref={this.screen}>
                     {this.render_small_selector()}
                 </div>
             )
@@ -326,7 +373,7 @@ class CallPage extends Component {
                     <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_metadata_stuff()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                    <div ref={this.screen} className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_medium_selector()}
                     </div>
                 </div>
@@ -339,7 +386,7 @@ class CallPage extends Component {
                     <div className="col-4" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_metadata_stuff()}
                     </div>
-                    <div className="col-4" style={{'padding': '10px 10px 0px 10px'}}>
+                    <div ref={this.screen} className="col-4" style={{'padding': '10px 10px 0px 10px'}}>
                         {this.render_participants_stuff()}
                     </div>
                     <div className="col-4" style={{'padding': '10px 10px 0px 10px'}}>
@@ -421,12 +468,15 @@ class CallPage extends Component {
             }
         }
         const format_call_duration = () => {
+            if(this.props.app_state.call_duration == null){
+                return '00:00:00'
+            }
             const totalSeconds = Math.floor(this.props.app_state.call_duration / 1000);
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
 
-            return `${hours<10 ? (hours<1 ? '00': '0'):''}${hours} : ${minutes<10 ? (minutes<1 ? '00': '0'):''}${minutes} : ${seconds<10 ? (seconds<1 ? '00': '0'):''}${seconds}`
+            return `${hours<10 ? (hours<1 ? '0': '0'):''}${hours} : ${minutes<10 ? (minutes<1 ? '0': '0'):''}${minutes} : ${seconds<10 ? (seconds<1 ? '0': '0'):''}${seconds}`
         }
         const maxheight = this.get_max_height()
         return(
@@ -494,7 +544,7 @@ class CallPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3091k']/* 'Leave Call. */, 'details':this.props.app_state.loc['3091l']/* 'Leave the call and close your connection with your peers. */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <div onClick={() => this.props.leave_call()}>
+                <div onClick={() => this.props.leave_call_confirmation()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3091m']/* 'Leave Call' */, 'action':''},)}
                 </div>
 
@@ -598,12 +648,12 @@ class CallPage extends Component {
         const my_account = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         const maxheight = this.get_max_height()
         return(
-            <div ref={this.screen} style={{maxHeight: maxheight, 'overflow':'auto'}}>
+            <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3091s']/* 'Call Participants.' */, 'details':this.props.app_state.loc['3091t']/* 'The call participants are shown below. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     <LocalAudioVisualizer stream={this.props.app_state.processedStream} theme={this.props.theme} width={this.state.screen_width}/>
-                    <div style={{'padding':'5px 0px 0px 0px'}}>
+                    <div style={{'padding':'0px 0px 0px 0px'}}>
                         {this.render_detail_item('10', {'text':this.props.app_state.loc['3091u']/* $ • you */.replace('$', my_account), 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
                 </div>
@@ -624,12 +674,10 @@ class CallPage extends Component {
         return(
             <div>
                 {this.props.app_state.peers.map((peerObj) => (
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '5px 3px 5px 3px','padding': '10px 5px 5px 5px','border-radius': '8px', border: this.state.loudestSpeaker === peerObj.userId ? `3px solid ${this.props.theme['slider_color']}` : '3px solid transparent', borderRadius: '8px', transition: 'border 0.2s ease'}}>
-                        <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.userId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.userId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)} width={this.state.screen_width}
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '5px 3px 5px 3px','padding': '10px 5px 5px 5px','border-radius': '8px', border: this.state.loudestSpeaker === peerObj.peerId ? `3px solid ${this.props.theme['slider_color']}` : '3px solid transparent', borderRadius: '8px', transition: 'border 0.2s ease'}}>
+                        <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.peerId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.peerId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)} width={this.state.screen_width}
                         />
-                        <div style={{'padding':'5px 0px 0px 0px'}}>
-                            {this.render_added_accounts(peerObj.userId)}
-                        </div>
+                        {this.render_added_accounts(peerObj.peerId)}
                     </div>
                 ))}
             </div>
@@ -637,11 +685,13 @@ class CallPage extends Component {
     }
 
     render_added_accounts(address){
-        var items = [].concat(this.props.app_state.my_active_call_room_participants[this.props.app_state.current_call_id][address] || [])
+        const room_participants = this.props.app_state.my_active_call_room_participants[this.props.app_state.current_call_id] || {}
+        const address_accounts = room_participants[address] || []
+        var items = [].concat(address_accounts)
         if(items.length == 0){
-            items = [1, 2, 3]
+            items = [1, 2]
             return(
-                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
@@ -654,7 +704,7 @@ class CallPage extends Component {
         }else{
             var items2 = [0, 1]
             return(
-                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
