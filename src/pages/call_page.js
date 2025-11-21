@@ -311,7 +311,7 @@ class CallPage extends Component {
     }
 
     get_pitch_shift_tags_object(shift){
-        var pitch_obj = { '-12': 1,'-6': 2,'-3': 3, '0': 4, '3': 5,'6': 6,'12': 7 }
+        var pitch_obj = { '-6': 1,'-3': 2,'-1': 3, '0': 4, '1': 5,'3': 6,'6': 7 }
         const p = pitch_obj[shift.toString()] || 0
         return{
             'i':{
@@ -548,9 +548,6 @@ class CallPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3091m']/* 'Leave Call' */, 'action':''},)}
                 </div>
 
-
-
-
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -558,12 +555,12 @@ class CallPage extends Component {
     }
 
     get_pitch_shift(){
-        return ((this.props.app_state.pitchShift + 12) / 24) * 999
+        return ((this.props.app_state.pitchShift + 6) / 12) * 999
     }
 
     when_number_input_slider_changed(e){
         const new_number = parseInt(e.target.value)
-        const new_pitch = ((new_number / 999) * 24) - 12
+        const new_pitch = ((new_number / 999) * 12) - 6
         this.props.setPitchShift(new_pitch)
         if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
             this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
@@ -573,7 +570,7 @@ class CallPage extends Component {
     when_number_slider_button_tapped(){
         const current_pitch_shift = this.get_pitch_shift()
         const new_number = (current_pitch_shift + 1) > 999 ? current_pitch_shift : current_pitch_shift + 1;
-        const new_pitch = ((new_number / 999) * 24) - 12
+        const new_pitch = ((new_number / 999) * 12) - 6
         this.props.setPitchShift(new_pitch)
         if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
             this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
@@ -583,7 +580,7 @@ class CallPage extends Component {
     when_number_slider_button_double_tapped(){
         const current_pitch_shift = this.get_pitch_shift()
         const new_number = (current_pitch_shift - 1) < 0 ? current_pitch_shift : current_pitch_shift - 1;
-        const new_pitch = ((new_number / 999) * 24) - 12
+        const new_pitch = ((new_number / 999) * 12) - 6
         this.props.setPitchShift(new_pitch)
         if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
             this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
@@ -621,13 +618,13 @@ class CallPage extends Component {
         const selected_item = this.get_selected_item(tag_obj, 'e')
         
         const pitch_obj = {}
-        pitch_obj[this.props.app_state.loc['3091y']/* 'very-low' */] = -12
-        pitch_obj[this.props.app_state.loc['3091z']/* 'low' */] = -6
-        pitch_obj[this.props.app_state.loc['3091ba']/* 'slightly-low' */] = -3
+        pitch_obj[this.props.app_state.loc['3091y']/* 'very-low' */] = -6
+        pitch_obj[this.props.app_state.loc['3091z']/* 'low' */] = -3
+        pitch_obj[this.props.app_state.loc['3091ba']/* 'slightly-low' */] = -1
         pitch_obj[this.props.app_state.loc['3091bb']/* 'normal' */] = 0
-        pitch_obj[this.props.app_state.loc['3091bc']/* 'slightly-high' */] = 3
-        pitch_obj[this.props.app_state.loc['3091bd']/* 'high' */] = 6
-        pitch_obj[this.props.app_state.loc['3091be']/* 'very-high' */] = 12
+        pitch_obj[this.props.app_state.loc['3091bc']/* 'slightly-high' */] = 1
+        pitch_obj[this.props.app_state.loc['3091bd']/* 'high' */] = 3
+        pitch_obj[this.props.app_state.loc['3091be']/* 'very-high' */] = 6
         pitch_obj['e'] = 0
 
         const new_pitch = pitch_obj[selected_item]
@@ -719,7 +716,7 @@ class CallPage extends Component {
 
     render_included_account_item(item){
         const title = item['e5']+' • '+ item['id']
-        const details = this.get_sender_title_text(item['id'], item['e5']) || this.props.app_state.loc['3055ht']/* Unknown */
+        const details = this.get_sender_title_text2(item['id'], item['e5']) || this.props.app_state.loc['3055ht']/* Unknown */
         return(
             <div>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
@@ -727,12 +724,24 @@ class CallPage extends Component {
         )
     }
 
-    get_sender_title_text(account, e5){
+    get_sender_title_text2(account, e5){
         if(account == this.props.app_state.user_account_id[e5]){
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
             const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
             var alias = (bucket[account] == null ? null : bucket[account])
+            return alias
+        }
+    }
+
+    get_sender_title_text(item){
+        const account = item['sender']
+        const e5 = item['e5']
+        if(account == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (bucket[account] == null ? account : bucket[account])
             return alias
         }
     }
@@ -801,17 +810,17 @@ class CallPage extends Component {
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
             (this.state.text_input_field_height-35 < 0 ? 0 : this.state.text_input_field_height-35))
         var size = this.props.screensize
-        var ww = '80%'
-        if(size == 'l') ww = '90%'
-        if(this.props.app_state.width > 1100){
-            ww = '80%'
+        var ww = this.state.screen_width - 60
+        if(size == 's'){
+            he+=10
         }
 
         return(
             <div>
-                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                     <div onScroll={event => this.handleScroll(event)} style={{ 'overflow-y': 'auto', height: he, padding:'0px 0px 5px 0px'}}>
                         {this.render_top_title()}
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages()}
                     </div>
                 </div>
@@ -928,11 +937,9 @@ class CallPage extends Component {
 
     render_sent_received_messages(){
         var items = [].concat(this.get_convo_messages())
-        var stacked_items = [].concat(this.get_stacked_items()).reverse()
-        var final_items_without_divider = stacked_items.concat(items)
-        var final_items = this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
+        var final_items = this.append_divider_between_old_messages_and_new_ones(items)
 
-        if(items.length == 0 && stacked_items.length == 0){
+        if(items.length == 0){
             items = [0,1]
             return(
                 <div>
@@ -1637,7 +1644,7 @@ class CallPage extends Component {
 
     get_convo_messages(){
         const socket_messages = this.props.app_state.socket_object_messages[this.props.app_state.current_call_id] == null ? [] : this.props.app_state.socket_object_messages[this.props.app_state.current_call_id]
-        const all_messages = this.sortByAttributeDescending([].concat(socket_messages), 'time')
+        const all_messages = this.sortByAttributeDescending(socket_messages, 'time').reverse()
         
         return this.filter_messages_for_blocked_accounts(all_messages)
     }
@@ -1709,11 +1716,11 @@ class CallPage extends Component {
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 1600)
         }
-        else if(this.props.app_state.user_account_id[this.state.e5] == 1){
+        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':this.props.app_state.current_call_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'target_recipient':this.state.contractor_object['author'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
+            var tx = {'id':this.props.app_state.current_call_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':this.props.app_state.selected_e5, 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
 
             this.props.add_call_page_message_to_stack_object(tx)
 

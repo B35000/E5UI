@@ -2189,6 +2189,7 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:manta_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
       },
+      
     }
   }
 
@@ -4126,7 +4127,7 @@ class App extends Component {
 
       var hide_pip = state.hide_pip
       var preferred_currency = state.preferred_currency
-      var all_locales = state.all_locales
+      // var all_locales = state.all_locales
       var theme_image = state.theme_image
       var subscribed_nitros = state.subscribed_nitros
       var uncommitted_upload_cids = state.uncommitted_upload_cids
@@ -4136,10 +4137,10 @@ class App extends Component {
       var should_update_posts_reposted_by_me = state.should_update_posts_reposted_by_me
 
       var deleted_files = state.deleted_files
-      var loc = (all_locales[my_language] == null ? this.getLocale() : all_locales[my_language])
-      if(my_language == 'en'){
-        loc = this.getLocale()
-      }
+      // var loc = (all_locales[my_language] == null ? this.getLocale() : all_locales[my_language])
+      // if(my_language == 'en'){
+      //   loc = this.getLocale()
+      // }
       var auto_run = state.auto_run == null ? 'e' : state.auto_run
       var explore_display_type = state.explore_display_type == null ? this.state.explore_display_type: state.explore_display_type
       var audiplayer_position = state.audiplayer_position == null ? this.state.audiplayer_position: state.audiplayer_position
@@ -4220,7 +4221,7 @@ class App extends Component {
         should_update_censored_keyword_phrases: should_update_censored_keyword_phrases,
         hide_pip: hide_pip,
         preferred_currency: preferred_currency,
-        all_locales: all_locales, 
+        // all_locales: all_locales, 
         // loc: loc,
         theme_image: theme_image,
         subscribed_nitros: subscribed_nitros,
@@ -43633,6 +43634,7 @@ class App extends Component {
     this.socket2.on('connect', () => {
       if(this.is_device_online != null){
         this.prompt_top_notification(this.getLocale()['2738bh']/* Youre back online.' */, 3000)
+        this.resume_call()
       }
       this.is_device_online = true;
     });
@@ -43763,9 +43765,9 @@ class App extends Component {
           else if(message.type == 'comment_message'){
             me.process_new_comment_message(message, object_hash)
           }
-          else if(message.type == 'call-message'){
-            me.process_new_call_message(message, object_hash)
-          }
+        }
+        if(message.type == 'call-message'){
+          me.process_new_call_message(message, object_hash)
         }
       }
     });
@@ -45647,8 +45649,9 @@ class App extends Component {
   }
 
   async encrypt_call_message(message_obj){
+    const key_to_use = this.state.current_call_password == '' ? 'e' : this.state.current_call_password
     var final_message_obj = structuredClone(message_obj)
-    const encrypted_obj = await this.encrypt_data_string(JSON.stringify(message_obj), this.state.current_call_password)
+    const encrypted_obj = await this.encrypt_data_string(JSON.stringify(message_obj), key_to_use)
     final_message_obj = {'encrypted_data':encrypted_obj}
 
     return final_message_obj
@@ -47035,13 +47038,16 @@ class App extends Component {
 
       var ipfs_obj = ipfs
       if(ipfs['encrypted_data'] != null){
-        const key_used = this.state.current_call_password
-        const originalText = await this.decrypt_data_string(ipfs_obj['encrypted_data'], key_used.toString())
-        ipfs_obj = JSON.parse(originalText);
-        
+        try{
+          const key_used = this.state.current_call_password == '' ? 'e' : this.state.current_call_password
+          const originalText = await this.decrypt_data_string(ipfs_obj['encrypted_data'], key_used.toString())
+          ipfs_obj = JSON.parse(originalText);
+        }catch(e){
+          ipfs_obj = null;
+        }
       }
       
-      if(ipfs_obj != null && Date.now() - message.time < (1000*60*60*24)){
+      if(ipfs_obj != null && (Date.now() - parseInt(message.time*1000)) < (1000*60*60*24)){
         const clone = structuredClone(this.state.socket_object_messages)
         const messages = clone[this.state.current_call_id] == null ? [] : clone[this.state.current_call_id].slice()
         const ipfs_message = ipfs_obj;
@@ -47053,6 +47059,7 @@ class App extends Component {
         }
         clone[this.state.current_call_id] = this.sortByAttributeDescending(messages, 'time')
         this.setState({socket_object_messages: clone})
+
       }
     }
   }
@@ -47554,7 +47561,7 @@ class App extends Component {
     // this.prompt_top_notification(this.getLocale()['3091bt']/* initializing... */, 1200)
     this.enter_chatroom_if_socket_enabled_without_emitting()
     const call_start_time = Date.now()
-    this.setState({current_call_id: call_id, current_call_password: call_password, call_join_time: call_start_time})   
+    this.setState({current_call_id: call_id, current_call_password: call_password, call_join_time: call_start_time})
     
     const join_room_obj = { roomId: call_id }
     this.socket.emit("join_room", join_room_obj);
@@ -47576,6 +47583,15 @@ class App extends Component {
       this.setState({socket_object_messages: message_clone})
     }
     this.send_invites = true;
+  }
+
+  async resume_call(){
+    if(this.state.current_call_id != null){
+      this.setState({peers: []})
+      await this.wait(200)
+      const join_room_obj = { roomId: this.state.current_call_id }
+      this.socket.emit("join_room", join_room_obj);
+    }
   }
 
   pause_media_if_any(){
@@ -47737,15 +47753,15 @@ class App extends Component {
   }
 
   createPeer = (userToSignal, isInitiator) => {
-    console.log('socket_stuff',`Creating peer for ${userToSignal}, initiator: ${isInitiator}, processedstream: ${this.state.processedStream}`);
-    this.state.processedStream.getTracks().forEach((track, i) => {
-      console.log('socket_stuff',`Sending track ${i}:`, {
-        kind: track.kind,
-        enabled: track.enabled,
-        muted: track.muted,
-        readyState: track.readyState
-      });
-    });
+    // console.log('socket_stuff',`Creating peer for ${userToSignal}, initiator: ${isInitiator}, processedstream: ${this.state.processedStream}`);
+    // this.state.processedStream.getTracks().forEach((track, i) => {
+    //   console.log('socket_stuff',`Sending track ${i}:`, {
+    //     kind: track.kind,
+    //     enabled: track.enabled,
+    //     muted: track.muted,
+    //     readyState: track.readyState
+    //   });
+    // });
 
     const peer = new SimplePeer({
       initiator: isInitiator,
@@ -47767,7 +47783,7 @@ class App extends Component {
       }
     });
 
-    // if(this.state.current_call_password != '') this.setupEncryption(peer);
+    if(this.state.current_call_password != '') this.setupEncryption(peer);
 
     peer.on('error', (err) => {
       console.error('socket_stuff',`Peer error with ${userToSignal}:`, err);

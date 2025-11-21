@@ -1768,7 +1768,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_my_transaction_history()}
                 </div>
             )
@@ -1858,7 +1858,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px',  'overflow-x':'none', 'width':'99%'}}>
+                <div style={{'padding': '0px 0px 0px 0px',  'overflow-x':'none', 'width':'97%'}}>
                     {this.render_stack_gas_part()}
                     {this.render_simplified_stack_history()}
                     {this.render_detail_item('0')}
@@ -11164,7 +11164,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_search_bar_input()}
                     {this.render_settings_details()}
                     {this.render_settings_details2()}
@@ -12109,7 +12109,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'overflow-x':'none', 'width':'99%'}}>
+                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'overflow-x':'none', 'width':'97%'}}>
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
@@ -12630,7 +12630,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_new_contact_ui()}
                     {this.render_users_contacts()}
                 </div>
@@ -12802,7 +12802,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_blacklisted_picker_ui()}
                     {this.render_users_blocked_accounts()}
                 </div>
@@ -12945,7 +12945,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_alias_picker_ui()}
                     {this.render_users_aliases()}
                 </div>
@@ -13220,7 +13220,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_my_notifications()}
                 </div>
             )
@@ -13465,7 +13465,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_watched_account_ui_data()}
                 </div>
             )
@@ -13696,7 +13696,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_sign_data_ui_data()}
                 </div>
             )
@@ -13864,7 +13864,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_verify_data_ui_data()}
                 </div>
             )
@@ -13986,7 +13986,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_signature_requests_ui_data()}
                 </div>
             )
@@ -14081,7 +14081,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_storage_settings_data()}
                     {this.render_detail_item('0')}
                     {this.render_upload_files_ui()}
@@ -17017,7 +17017,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_set_following_moderator_data()}
                 </div>
             )
@@ -17183,7 +17183,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_censor_keywords_data()}
                 </div>
             )
@@ -17311,7 +17311,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_contextual_transfers_data()}
                     {this.load_itransfer_search_results()}
                 </div>
@@ -17513,7 +17513,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_moderator_notes_data()}
                 </div>
             )
@@ -17645,7 +17645,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_pick_location_parts()}
                 </div>
             )
@@ -17794,7 +17794,7 @@ class StackPage extends Component {
         var size = this.props.size
         if(size == 's'){
             return(
-                <div style={{'width':'99%'}}>
+                <div style={{'width':'97%'}}>
                     {this.render_group_calls_parts()}
                 </div>
             )
