@@ -6345,6 +6345,7 @@ return data['data']
         var my_files = this.props.app_state.uploaded_data_cids
         var files_to_renew = {}
         const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+        const startOfLastYear = new Date(new Date().getFullYear()-1, 0, 1).getTime()
         var has_files_all_loaded = true
         var has_all_nitro_metadata_loaded = true;
         var total_files_to_renew = 0
@@ -6368,7 +6369,13 @@ return data['data']
                                         }
                                         const files_years_stream_count = this.fetch_file_streaming_count(file_hash, startOfYear-1)
 
-                                        const file_data_item = {'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size}
+                                        const file_data_item = {'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size, 'time_multiplier':1}
+
+                                        if(time > startOfLastYear){
+                                            //it was uploaded last year
+                                            const difference = time - startOfLastYear
+                                            file_data_item['time_multiplier'] = 1 - (difference / 31556952000)
+                                        }
 
                                         if(nitro_node_data['target_storage_streaming_multiplier'] != 0 && !bigInt(files_years_stream_count).isZero()){
                                             file_data_item['streaming_multiplier'] = (bigInt(files_years_stream_count).divide(binary_size)).divide(nitro_node_data['target_storage_streaming_multiplier'])
@@ -6571,7 +6578,7 @@ return data['data']
             var nitro_node_data = this.props.app_state.nitro_node_details[nitro_e5_id]
             var total_storage_consumed_in_mbs = 0.0
             files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
-                total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
+                total_storage_consumed_in_mbs += (file_object['binary_size'] / (1024 * 1024)) * (file_object['time_multiplier'])
                 if(file_object['streaming_multiplier'] != null){
                     total_storage_consumed_in_mbs += file_object['streaming_multiplier']
                 }
@@ -6676,7 +6683,7 @@ return data['data']
             var nitro_node_data = this.props.app_state.nitro_node_details[nitro_e5_id]
             var total_storage_consumed_in_mbs = 0.0
             files_to_be_renewed_data[nitro_e5_id].forEach(file_object => {
-                total_storage_consumed_in_mbs += file_object['binary_size'] / (1024 * 1024)
+                total_storage_consumed_in_mbs += (file_object['binary_size'] / (1024 * 1024)) * (file_object['time_multiplier'])
                 if(file_object['streaming_multiplier'] != null){
                     total_storage_consumed_in_mbs += file_object['streaming_multiplier']
                 }

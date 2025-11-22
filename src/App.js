@@ -739,8 +739,6 @@ const default_nitro_option = '1479E25'
 // const originalConsole = { ...console };
 
 
-console.log('App.js rendering');
-
 function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -1338,7 +1336,7 @@ class App extends Component {
 
     is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[],
 
-    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false,
+    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{},
   };
 
   get_thread_pool_size(){
@@ -5900,9 +5898,9 @@ class App extends Component {
       sunset_hour = this.state.sunset.getHours()
       sunset_minute = this.state.sunset.getMinutes()
       sunrise_hour = this.state.sunrise.getHours()
-      var sunrise_minute = this.state.sunset.getMinutes()
+      sunrise_minute = this.state.sunset.getMinutes()
     }
-    if((hour >= sunset_hour && minute >= sunset_minute) || (hour < sunrise_hour && minute < sunrise_minute)){
+    if((hour >= sunset_hour /* && minute >= sunset_minute */) || (hour < sunrise_hour /* && minute < sunrise_minute */)){
       if(hour >= 23 || hour < 4){
         return this.getLocale()['2740']/* midnight */
       }
@@ -16403,7 +16401,7 @@ class App extends Component {
       'request_cookies_permission':220,
       'start_voice_call':650,
       'enter_voice_call':530,
-      'confirm_leave_call':220,
+      'confirm_leave_call':200,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -24380,7 +24378,10 @@ class App extends Component {
 
   start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
     if(is_synching == false) this.start_get_accounts_wallet_data(false);
-    if(is_synching == true) this.get_objects_from_socket_and_set_in_state(['jobs'], []);
+    // if(is_synching == true) this.get_objects_from_socket_and_set_in_state(['jobs'], []);
+    if(is_synching == false){
+      this.setState({pre_launch_fetch_loading: true})
+    }
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
     if(this.did_just_set_wallet == true && should_skip_pre_launch == false && is_synching == false){
@@ -24390,6 +24391,7 @@ class App extends Component {
     if(is_synching == true){
       this.inc_synch_progress()
     }
+    this.setState({pre_launch_fetch_loading: false})
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       await this.start_get_accounts_for_specific_e5(is_synching, e5, should_skip_account_data, pre_launch_data)
@@ -24444,6 +24446,9 @@ class App extends Component {
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
         return this.pre_launch_fetch(true)
+      }
+      if(obj.all_return_data != null){
+        this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [])
       }
       return obj;
     }
@@ -26077,7 +26082,7 @@ class App extends Component {
         await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target, call_invites_target],[],[])
         this.setState({loading_open_socket_signature_request_response_data: false})
       }
-      await load_signature_data()
+      // await load_signature_data()
     }
 
     // this.get_total_supply_of_ether(e5)
@@ -34172,6 +34177,9 @@ class App extends Component {
         return this.pre_object_fetch_call(created_object_events_mapping, item_type, true)
       }
 
+      if(item_type == 18/* post_object */){
+        this.set_socket_entries_in_memory(obj.all_return_data['socket_post_objects_data'], [])
+      }
       return obj.all_return_data || {};
     }
     catch(e){
@@ -45725,6 +45733,10 @@ class App extends Component {
         console.log('socket_stuff', 'channeling invalid', event.returnValues.p1, event.returnValues.p1.toString())
       }
     }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   async process_new_post_received(message, object_hash){
@@ -45780,6 +45792,10 @@ class App extends Component {
         // }
       }
     }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   /* mail messages */
@@ -45853,6 +45869,10 @@ class App extends Component {
         }
       } 
     }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   set_mail_event_in_notifications(event, e5){
@@ -45936,6 +45956,10 @@ class App extends Component {
         }
       }
     }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   set_mail_message_event_in_notifications(event, e5){
@@ -45972,8 +45996,6 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-
-    
     const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
@@ -46024,6 +46046,10 @@ class App extends Component {
         }
       }
     }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   async handle_incoming_job_request_message_notifications(events){
@@ -46101,7 +46127,9 @@ class App extends Component {
         this.setState({socket_object_messages: clone})
       }
     }
-    
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   /* comment messages */
@@ -46150,7 +46178,9 @@ class App extends Component {
         this.setState({socket_object_messages: clone})
       }
     }
-    
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   async process_new_bill_message(message, object_hash, from, add_to_notifications){
@@ -46215,6 +46245,9 @@ class App extends Component {
         }
       } 
     }
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   set_bill_event_in_notifications(event, e5){
@@ -46325,6 +46358,9 @@ class App extends Component {
         }
       }
     }
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   set_job_application_event_in_notifications(event, e5){
@@ -46429,6 +46465,9 @@ class App extends Component {
         }
       }
     }
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   set_bag_application_event_in_notifications(event, e5){
@@ -46527,6 +46566,9 @@ class App extends Component {
         }
       }
     }
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
   }
 
   set_job_request_event_in_notifications(event, e5){
@@ -46666,7 +46708,10 @@ class App extends Component {
           this.set_storefront_order_event_in_notifications(event, e5)
         }
       }
-      
+
+      const message_account = message['author']
+      const message_e5 = message['e5']
+      this.get_alias_from_account_id(message_account, message_e5)
     }
   }
 
@@ -46977,6 +47022,12 @@ class App extends Component {
         if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
           this.handle_call_invite_notifications(ipfs_message)
         }
+
+        this.get_room_participant_count(ipfs_message['call_id'])
+
+        const message_account = message['author']
+        const message_e5 = message['e5']
+        this.get_alias_from_account_id(message_account, message_e5)
       }
     }
   }
@@ -47304,96 +47355,7 @@ class App extends Component {
       }
       const target_data = socket_data
       if(target_data != null){
-        const entries = Object.keys(target_data)
-        for(var j=0; j<entries.length; j++){
-          const time_entry = entries[j]
-          const target_entries = Object.keys(target_data[time_entry])
-          for(var k=0; k<target_entries.length; k++){
-            const target_entry = target_entries[k]
-            const object_hashes = Object.keys(target_data[time_entry][target_entry])
-            for(var i=0; i<object_hashes.length; i++){
-              const object_hash = object_hashes[i]
-              const object_data = target_data[time_entry][target_entry][object_hash]
-              if(target_entry == 'jobs' && object_data.type == 'object'){
-                await this.process_new_job_received(object_data, object_hash)
-
-                var me = this;
-                setTimeout(function() {
-                  if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
-                    me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
-                  }
-                }, (1 * 500));
-              }
-              else if(target_entry == 'posts' && object_data.type == 'object'){
-                await this.process_new_post_received(object_data, object_hash)
-
-                var me = this;
-                setTimeout(function() {
-                  if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
-                    me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
-                  }
-                }, (1 * 500));
-              }
-              else if(target_entry == 'bill|'+this.state.accounts[this.state.selected_e5].address){
-                await this.process_new_bill_message(object_data, object_hash, null, false)
-              }
-              else if(target_entry == 'mail|'+this.state.accounts[this.state.selected_e5].address){
-                await this.process_new_mail_received(object_data, object_hash, null, false)
-              }
-              else if(target_entry.startsWith('job_application|')){
-                console.log('socket_stuff','loaded a job application item', object_data)
-                await this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry.startsWith('bag_application|')){
-                await this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry.startsWith('contractor_job_request|')){
-                await this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
-                await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry.startsWith('storefront_order|')){
-                await this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry.startsWith('signature_request|')){
-                await this.process_new_signature_request_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry.startsWith('signature_response|')){
-                await this.process_new_signature_response_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry.startsWith('typing|')){
-                await this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(target_entry.startsWith('read_receipts|')){
-                await this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
-              }
-              else if(object_data['type'] == 'open_signature_request'){
-                await this.process_new_open_signature_request_message(object_data, object_hash, null, true)
-              }
-              else if(object_data['type'] == 'open_signature_response'){
-                await this.process_new_open_signature_response_message(object_data, object_hash, null, true)
-              }
-              else if(object_data['type'] == 'contractor_availability'){
-                await this.process_new_contractor_availability_update(object_data, object_hash)
-              }
-              else if(object_data['type'] == 'storefront_order_status'){
-                await this.process_new_storefront_order_status_update(object_data, object_hash)
-              }
-              else if(object_data['type'] == 'call_invite'){
-                await this.process_new_call_invite_message(object_data, object_hash, null, true)
-              }
-              else if(object_data['type'] == 'call_metadata'){
-                await this.process_new_call_metadata_for_entering_call(object_data, object_hash)
-              }
-              else if(object_data['type'] == 'call-message'){
-                await this.process_new_call_message(object_data, object_hash)
-              }
-              await this.wait(200)
-            }
-          }
-        }
-        
+        await this.set_socket_entries_in_memory(target_data, application_responses)
         current_filter_end_time -= load_step
         current_filter_start_time -= load_step
       }
@@ -47402,6 +47364,98 @@ class App extends Component {
         current_filter_start_time -= load_step
       }
       await this.wait(2000)
+    }
+  }
+
+  async set_socket_entries_in_memory(target_data, application_responses){
+    const entries = Object.keys(target_data)
+    for(var j=0; j<entries.length; j++){
+      const time_entry = entries[j]
+      const target_entries = Object.keys(target_data[time_entry])
+      for(var k=0; k<target_entries.length; k++){
+        const target_entry = target_entries[k]
+        const object_hashes = Object.keys(target_data[time_entry][target_entry])
+        for(var i=0; i<object_hashes.length; i++){
+          const object_hash = object_hashes[i]
+          const object_data = target_data[time_entry][target_entry][object_hash]
+          if(target_entry == 'jobs' && object_data.type == 'object'){
+            await this.process_new_job_received(object_data, object_hash)
+
+            var me = this;
+            setTimeout(function() {
+              if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
+                me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
+              }
+            }, (1 * 500));
+          }
+          else if(target_entry == 'posts' && object_data.type == 'object'){
+            await this.process_new_post_received(object_data, object_hash)
+
+            var me = this;
+            setTimeout(function() {
+              if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
+                me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
+              }
+            }, (1 * 500));
+          }
+          else if(target_entry == 'bill|'+this.state.accounts[this.state.selected_e5].address){
+            await this.process_new_bill_message(object_data, object_hash, null, false)
+          }
+          else if(target_entry == 'mail|'+this.state.accounts[this.state.selected_e5].address){
+            await this.process_new_mail_received(object_data, object_hash, null, false)
+          }
+          else if(target_entry.startsWith('job_application|')){
+            console.log('socket_stuff','loaded a job application item', object_data)
+            await this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry.startsWith('bag_application|')){
+            await this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry.startsWith('contractor_job_request|')){
+            await this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
+            await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry.startsWith('storefront_order|')){
+            await this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry.startsWith('signature_request|')){
+            await this.process_new_signature_request_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry.startsWith('signature_response|')){
+            await this.process_new_signature_response_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry.startsWith('typing|')){
+            await this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(target_entry.startsWith('read_receipts|')){
+            await this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
+          }
+          else if(object_data['type'] == 'open_signature_request'){
+            await this.process_new_open_signature_request_message(object_data, object_hash, null, true)
+          }
+          else if(object_data['type'] == 'open_signature_response'){
+            await this.process_new_open_signature_response_message(object_data, object_hash, null, true)
+          }
+          else if(object_data['type'] == 'contractor_availability'){
+            await this.process_new_contractor_availability_update(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'storefront_order_status'){
+            await this.process_new_storefront_order_status_update(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'call_invite'){
+            await this.process_new_call_invite_message(object_data, object_hash, null, true)
+          }
+          else if(object_data['type'] == 'call_metadata'){
+            await this.process_new_call_metadata_for_entering_call(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'call-message'){
+            await this.process_new_call_message(object_data, object_hash)
+          }
+          await this.wait(200)
+        }
+      }
     }
   }
 
@@ -47463,6 +47517,15 @@ class App extends Component {
     const data = await this.get_account_in_room_data([to], 'jobs')
     clone[account+e5] = {'address':to, 'online':data[to], 'account':account, 'e5':e5, 'e5_id':account+e5}
     this.setState({tracked_online_accounts: clone})
+  }
+
+  async get_room_participant_count(room_id){
+    const clone = structuredClone(this.state.room_participants_count)
+    if(clone[room_id] != null) return;
+    const to = this.state.accounts[this.state.selected_e5].address;
+    const data = await this.get_account_in_room_data([to], room_id)
+    clone[room_id] = data['participant_count']
+    this.setState({room_participants_count: clone})
   }
 
 

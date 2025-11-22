@@ -1,6 +1,8 @@
 const path = require("path");
 const fs = require("fs");
 
+const isProd = process.env.NODE_ENV === "production";
+
 module.exports = {
   babel: {
     loaderOptions: (options) => {
@@ -21,7 +23,8 @@ module.exports = {
         ["@babel/plugin-transform-class-properties", { loose: false }],
         ["@babel/plugin-transform-private-methods", { loose: false }],
         ["@babel/plugin-transform-private-property-in-object", { loose: false }],
-        ["@babel/plugin-transform-named-capturing-groups-regex", { runtime: true }]
+        ["@babel/plugin-transform-named-capturing-groups-regex", { runtime: true }],
+        // (isProd ? ["transform-remove-console", { exclude: [] }] : [])
       ];
 
       return options;

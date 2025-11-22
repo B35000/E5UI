@@ -31,6 +31,8 @@ import LocationViewer from './../components/location_viewer';
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 import { from } from "@iotexproject/iotex-address-ts";
@@ -17878,13 +17880,18 @@ class StackPage extends Component {
     }
 
     render_call_history(){
-        const items = this.get_call_invites()
+        var items = this.get_call_invites()
         if(items.length == 0){
+            items = [0,1,2]
             return(
                 <div style={{}}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kw']/* 'When someone invites you to a call, it will show here. */, 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_empty_views(3)}
+                    {items.map((item, index) => (
+                        <div style={{'padding': '2px 5px 2px 5px'}}>
+                            {this.props.app_state.pre_launch_fetch_loading == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                        </div>
+                    ))}
                 </div>
             )
         }else{
@@ -17923,15 +17930,26 @@ class StackPage extends Component {
             }
         }
         const data = item;
-        const footer = formatted_call_id(data['call_id'])
+        const participants_count = this.props.app_state.room_participants_count[data['call_id']] || 0
+        const footer = formatted_call_id(data['call_id']) + ' • ' + this.props.app_state.loc['1593kx']/* '$ participants' */.replace('$', number_with_commas(participants_count))
         const title_image = this.props.app_state.e5s[data['sender_account_e5']].e5_img
-        const title = data['sender_account']
+        const title = data['sender_account'] + this.get_sender_title_text2(data['sender_account'], data['sender_account_e5'])
         const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */
         return(
             <div onClick={() => this.enter_voice_call_from_list(data)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer, 'title_image':title_image})}
             </div>
         )
+    }
+
+    get_sender_title_text2(account, e5){
+        if(account == this.props.app_state.user_account_id[e5]){
+            return ' • ' +this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (bucket[account] == null ? ' • '+this.props.app_state.loc['2871']/* Alias Unknown. */ : ' • ' +bucket[account])
+            return alias
+        }
     }
 
     enter_voice_call_from_list(data){
@@ -17944,6 +17962,53 @@ class StackPage extends Component {
             return;
         }
         this.props.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
+    }
+
+    render_small_empty_object(){
+        return(
+            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 10px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                </div>
+            </div>
+        );
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
 

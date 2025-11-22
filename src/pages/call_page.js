@@ -30,6 +30,9 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import Linkify from "linkify-react";
 
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -476,7 +479,7 @@ class CallPage extends Component {
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
 
-            return `${hours<10 ? (hours<1 ? '0': '0'):''}${hours} : ${minutes<10 ? (minutes<1 ? '0': '0'):''}${minutes} : ${seconds<10 ? (seconds<1 ? '0': '0'):''}${seconds}`
+            return `${hours<10 ? (hours<1 ? '0': '0'):''}${hours}:${minutes<10 ? (minutes<1 ? '0': '0'):''}${minutes}:${seconds<10 ? (seconds<1 ? '0': '0'):''}${seconds}`
         }
         const maxheight = this.get_max_height()
         return(
@@ -640,16 +643,16 @@ class CallPage extends Component {
         this.setState({screen_width: this.screen.current.offsetWidth})
     }
 
-
     render_participants_stuff(){
         const my_account = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         const maxheight = this.get_max_height()
+        const width = this.props.screensize == 'm' ? this.state.screen_width - 20 : this.state.screen_width
         return(
             <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3091s']/* 'Call Participants.' */, 'details':this.props.app_state.loc['3091t']/* 'The call participants are shown below. */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    <LocalAudioVisualizer stream={this.props.app_state.processedStream} theme={this.props.theme} width={this.state.screen_width}/>
+                    <LocalAudioVisualizer stream={this.props.app_state.processedStream} theme={this.props.theme} width={width}/>
                     <div style={{'padding':'0px 0px 0px 0px'}}>
                         {this.render_detail_item('10', {'text':this.props.app_state.loc['3091u']/* $ • you */.replace('$', my_account), 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
@@ -661,22 +664,63 @@ class CallPage extends Component {
     }
 
     render_other_connected_peers(){
+        const width = this.props.screensize == 'm' ? this.state.screen_width - 20 : this.state.screen_width
+        var w = (width / 2) - 5
+        var col = 2
+        var rowHeight = 130
         if(this.props.app_state.peers.length == 0){
+            var items = ['1','1']
             return(
                 <div>
-                    {this.render_empty_views(3)}
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={index}>
+                                {this.render_peer_empty_item(w)}
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
                 </div>
             )
         }
+
+        var items = []
         return(
             <div>
-                {this.props.app_state.peers.map((peerObj) => (
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '5px 3px 5px 3px','padding': '10px 5px 5px 5px','border-radius': '8px', border: this.state.loudestSpeaker === peerObj.peerId ? `3px solid ${this.props.theme['slider_color']}` : '3px solid transparent', borderRadius: '8px', transition: 'border 0.2s ease'}}>
-                        <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.peerId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.peerId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)} width={this.state.screen_width}
-                        />
-                        {this.render_added_accounts(peerObj.peerId)}
-                    </div>
-                ))}
+                <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    {this.props.app_state.peers.map((peerObj, index) => (
+                        <ImageListItem key={index}>
+                            <div>
+                                {this.render_peer_item(peerObj, w)}
+                            </div>
+                        </ImageListItem>
+                    ))}
+                    {items.map((item, index) => (
+                        <ImageListItem key={index}>
+                            {this.render_peer_empty_item(w)}
+                        </ImageListItem>
+                    ))}
+                </ImageList>
+            </div>
+        )
+    }
+
+    render_peer_empty_item(w){
+        var background_color = this.props.theme['card_background_color']
+        return(
+            <div style={{height:130, width:w, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
+                </div>
+            </div>
+        )
+    }
+
+    render_peer_item(peerObj, width){
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '5px 3px 5px 3px','padding': '10px 5px 5px 5px','border-radius': '8px', border: this.state.loudestSpeaker === peerObj.peerId ? `3px solid ${this.props.theme['slider_color']}` : '3px solid transparent', borderRadius: '8px', transition: 'border 0.2s ease'}}>
+                <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.peerId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.peerId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)} width={width}
+                />
+                {this.render_added_accounts(peerObj.peerId)}
             </div>
         )
     }
@@ -809,10 +853,13 @@ class CallPage extends Component {
             (this.state.text_input_field_height < 30 ? 30 : this.state.text_input_field_height));
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
             (this.state.text_input_field_height-35 < 0 ? 0 : this.state.text_input_field_height-35))
-        var size = this.props.screensize
-        var ww = this.state.screen_width - 60
+        var size = this.props.size
+        var ww = this.state.screen_width-50
         if(size == 's'){
             he+=10
+        }
+        if(size == 'm' || size == 'l'){
+            ww = this.state.screen_width - 80
         }
 
         return(
@@ -928,10 +975,13 @@ class CallPage extends Component {
         this.has_user_scrolled = false
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(prevProps){
         var has_scrolled = this.has_user_scrolled;
         if(has_scrolled == null){
             this.scroll_to_bottom()
+        }
+        if(prevProps.width != this.props.width){
+            this.setState({screen_width: this.screen.current.offsetWidth})
         }
     }
 
