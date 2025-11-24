@@ -940,6 +940,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['3092']/* 'purchase-credits' */){
+                return(
+                    <div>
+                        {this.render_purchase_credits_data()}
+                    </div>
+                )
+            }
             
         }
     }
@@ -8296,9 +8303,48 @@ return data['data']
         }
     }
 
-    // get_amounts_to_be_paid(amount, purchase_unit_count){
-    //     return bigInt(amount).multiply(bigInt(purchase_unit_count))
-    // }
+
+
+
+
+
+
+
+
+
+
+    render_purchase_credits_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const buy_amount = transaction_item.amoun
+        const e5 = transaction_item.e5
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3092c']/* 'Set Purchase Amount' */, 'details': this.props.app_state.loc['3092m']/* 'The amount of credits you intend to purchase in this transaction.' */, 'size': 'l' })}
+                <div style={{ height: 10 }}/>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3092c']/* 'Set Purchase Amount' */, 'subtitle':this.format_power_figure(transaction_item.amount), 'barwidth':this.get_number_width(transaction_item.amount), 'number':`${this.format_account_balance_figure(transaction_item.amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', { 'details': this.props.app_state.loc['3092e']/* 'Purchase Target' */, 'title': transaction_item.recipient, 'size': 'l' })}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3092h']/* 'Total Payment Amount.' */, 'details':this.props.app_state.loc['3092i']/* 'Below is the amount of Spend youll be paying to obtain the credits you want.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'number':buy_amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}>
+                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(buy_amount), 'barwidth':this.calculate_bar_width(buy_amount), 'number':this.format_account_balance_figure(buy_amount), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                </div>
+            </div>
+        )
+    }
+
+
+
 
 
 

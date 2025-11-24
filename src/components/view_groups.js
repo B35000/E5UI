@@ -124,14 +124,6 @@ class ViewGroups extends Component {
 
         if(item_id=='0'){/* line */
             /* {this.render_detail_item('0')} */
-            
-            // return(
-            //     <div style={{ display: 'flex', alignItems: 'center', 'margin': '20px 20px 20px 20px' }}>
-            //         <div style={{ flex: 1, height: '1px', backgroundColor: this.props.theme['line_color'] }} />
-            //         <span style={{ margin: '0 1px', color:this.props.theme['primary_text_color'], 'font-size':'10px', 'translate': '0px -1px' }}>e</span>
-            //         <div style={{ flex: 1, height: '1px', backgroundColor: this.props.theme['line_color'] }} />
-            //     </div>
-            // )
             return(
                 <div style={{height:'1px', 'background-color':this.props.theme['line_color'], 'margin': '20px 20px 20px 20px', 'border-radius': '1px'}}/>
             );

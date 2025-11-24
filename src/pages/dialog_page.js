@@ -116,6 +116,8 @@ class DialogPage extends Component {
         get_show_job_after_broadcasted_object:this.get_show_job_after_broadcasted_object(),
 
         new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(), new_voice_call_number_id: make_number_id_str(15),
+
+        credit_spend_amount:0,
     };
 
 
@@ -543,6 +545,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_confirm_leave_call_ui()}
+                </div>
+            )
+        }
+        else if(option == 'spend_prepurchase_credits'){
+            return(
+                <div>
+                    {this.render_spend_prepurchase_credits_ui()}
                 </div>
             )
         }
@@ -9526,7 +9535,7 @@ return data['data']
 
 
     render_confirm_leave_call_ui(){
-      var size = this.props.size
+        var size = this.props.size
         if(size == 's'){
             return(
                 <div>
@@ -9597,6 +9606,112 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+    render_spend_prepurchase_credits_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_spend_prepurchase_credits_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_spend_prepurchase_credits_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_spend_prepurchase_credits_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_spend_prepurchase_credits_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055je']/* 'Credits Amount.' */, 'details': this.props.app_state.loc['3055jf']/* 'Set the number of credits your spening at the contracts vendor.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3055jg']/* 'Set Amount.' */, 'subtitle':this.format_power_figure(this.state.credit_spend_amount), 'barwidth':this.get_number_width(this.state.credit_spend_amount), 'number':`${this.format_account_balance_figure(this.state.credit_spend_amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_credit_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={54} pick_with_text_area={true} text_area_hint={'1000'}/>
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055jl']/* 'Transaction Note.' */, 'details': this.props.app_state.loc['3055jm']/* 'You can also attach a note to help identify the transaction.' */, 'size': 'l' })}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3055jn']/* 'Note...' */} when_text_input_field_changed={this.when_typed_transaction_note_text_input_field_changed.bind(this)} text={this.state.typed_transaction_note} theme={this.props.theme} adjust_height={false}/>
+                
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.transaction_note_length - this.state.typed_transaction_note.length)})}
+
+                <div style={{height:10}}/>
+                <div onClick={()=> this.make_pre_purchase()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055jh']/* 'Make Purchase.l' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_credit_spend_amount_set(amount){
+        this.setState({credit_spend_amount: amount})
+    }
+
+    make_pre_purchase(){
+        const amount = this.state.credit_spend_amount
+        const transaction_note = this.state.typed_transaction_note.trim();
+        const contract = this.state.data['contract']
+
+        if(amount == 0){
+            this.props.notify(this.props.app_state.loc['3055ji']/* You need to specify an amount. */, 4000)
+        }
+        else if(!this.does_account_have_enough_credits_for_transaction(amount, contract)){
+            this.props.notify(this.props.app_state.loc['3055jk']/* You dont have enough credits to make that transaction. */, 6000)
+        }
+        else if(transaction_note.length > this.props.app_state.transaction_note_length){
+            this.props.notify(this.props.app_state.loc['3055jo']/* That note is too long. */, 4000)
+        }
+        else{
+            this.props.emit_pre_purchase_transaction(amount, contract, transaction_note)
+        }
+    }
+
+    does_account_have_enough_credits_for_transaction(amount, contract_object){
+        return this.props.calculate_credit_balance(contract_object) >= amount;
+    }
+
+    when_typed_transaction_note_text_input_field_changed(text){
+        this.setState({typed_transaction_note: text})
+    }
 
 
 

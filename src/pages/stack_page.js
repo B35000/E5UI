@@ -4622,6 +4622,17 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.record_obj)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3092']/* 'purchase-credits' */){
+                    var buy_album_obj = this.format_buy_credits_object(txs[i])
+                    
+                    strs.push(buy_album_obj.awards_string_obj)
+                    adds.push([])
+                    ints.push(buy_album_obj.awards_obj)
+                    
+                    strs.push(buy_album_obj.string_obj)
+                    adds.push([])
+                    ints.push(buy_album_obj.obj)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -10032,6 +10043,49 @@ class StackPage extends Component {
         string_obj[0].push(t.direct_purchase_item['purchase_identifier'])
 
         return {int: obj, str: string_obj, depth: depth_swap_obj, record_obj, record_string_obj}
+    }
+
+    format_buy_credits_object = async (t) => {
+        var object = t.contract_object
+        var purchase_recipient = object['id']
+
+        // var transfers_obj = [/* send tokens to another account */
+        //     [30000, 1, 0],
+        //     [5], [23],/* exchanges */
+        //     [purchase_recipient], [23],/* receivers */
+        //     [t.amount.toString()],/* amounts */
+        //     [0]/* depths */
+        // ]
+
+        var awards_obj = [/* send awwards */
+            [30000, 7, 0],
+            [purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
+            [t.amount.toString()],/* awward contexts */
+            
+            [5], [23],/* exchange ids for first target receiver */
+            [t.amount.toString()],/* amounts for first target receiver */
+            [0],/* depths for the first targeted receiver*/
+        ]
+
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [30], [23],/* 30(contract_prepurchase_credits_sale) */
+            [object['id']], /* contexts */
+            [t.amount.toString()] /* int_data */
+        ]
+
+        var string_obj = [[]]
+        var awards_string_obj = [[]]
+        const isEthereumAddress = (input) => /^0x[a-fA-F0-9]{40}$/.test(input);
+        const recipient = t.recipient
+        const recipients_e5 = t.recipients_e5
+        var string_data = isEthereumAddress(recipient) == true ? recipient : await this.props.get_recipient_address(recipient, recipients_e5)
+
+        string_obj[0].push(string_data)
+        awards_string_obj[0].push(string_data)
+
+
+        return {awards_obj: awards_obj, awards_string_obj: awards_string_obj,   obj: obj, string_obj: string_obj}
     }
 
     

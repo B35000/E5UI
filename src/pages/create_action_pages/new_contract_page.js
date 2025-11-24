@@ -77,7 +77,7 @@ class NewContractPage extends Component {
 
         content_channeling_setting: this.props.app_state.content_channeling, device_language_setting: this.props.app_state.device_language, device_country: this.props.app_state.device_country,
 
-        default_consensus_majority_limit:0, voter_weight_exchange_id:''
+        default_consensus_majority_limit:0, voter_weight_exchange_id:'', get_contract_credits_purchase_enabled_tags_object: this.get_contract_credits_purchase_enabled_tags_object(),
     };
 
     constructor(props) {
@@ -191,6 +191,17 @@ class NewContractPage extends Component {
             },
             'e':[
                 ['or','',0], ['e',this.props.app_state.loc['1']], [0]
+            ],
+        };
+    }
+
+    get_contract_credits_purchase_enabled_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['85']], [0]
             ],
         };
     }
@@ -391,7 +402,7 @@ class NewContractPage extends Component {
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['170'], 'details':this.props.app_state.loc['171'], 'size':'l'})}
-                <div style={{height:20}}/>
+                <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
 
 
@@ -497,9 +508,21 @@ class NewContractPage extends Component {
                 <div onClick={()=>this.preset_life_contract()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['179'], 'details':this.props.app_state.loc['180'], 'size':'l'})}
                 </div>
-                <div style={{height:3}}/>
+                
+                {this.get_contract_type() == 'workgroup' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['252b']/* Pre-purchases Enabled? */, 'details':this.props.app_state.loc['252c']/* If se to enabled, users will be able to make pre-purchases and acquire spend credits. */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_contract_credits_purchase_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_contract_credits_purchase_enabled_tags_object.bind(this)} theme={this.props.theme}/>
+                    </div>
+                )}
             </div>
         )
+    }
+
+    when_get_contract_credits_purchase_enabled_tags_object(tags_obj){
+        this.setState({get_contract_credits_purchase_enabled_tags_object: tags_obj})
     }
 
     get_mint_limit(token_id){

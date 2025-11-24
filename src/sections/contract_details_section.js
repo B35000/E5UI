@@ -39,7 +39,7 @@ function number_with_commas(x) {
 class ContractDetailsSection extends Component {
 
     state = {
-        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:'', selected_exchange:{}, typed_search_participant_id:''
+        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:'', selected_exchange:{}, typed_search_participant_id:'', typed_search_id:''
     };
 
     componentDidMount() {
@@ -65,7 +65,7 @@ class ContractDetailsSection extends Component {
                 active: 'e',
             },
             'e': [
-                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */], [1]
+                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */], [1]
             ],
             'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
@@ -77,10 +77,10 @@ class ContractDetailsSection extends Component {
         
         obj[this.props.app_state.loc['2119']/* events */] = [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
-            ]
+        ]
         obj[this.props.app_state.loc['2120']/* moderator-events */] = [
                 ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
-            ]
+        ]
 
         return obj
     }
@@ -239,6 +239,13 @@ class ContractDetailsSection extends Component {
                     </div>
                 )
             }
+            else if(selected_item == this.props.app_state.loc['2214n']/* 'pre-purchases' */){
+                return(
+                    <div key={selected_item}>
+                        {this.render_pre_purchase_transactions(object)}
+                    </div>
+                )
+            }
         }
     }
 
@@ -295,6 +302,12 @@ class ContractDetailsSection extends Component {
                                     {this.render_contract_details_section(false, handle_change(3, true))}
                                 </div>
                             </View>
+                            <View className="view">
+                                <div>
+                                    {this.render_pre_purchase_transactions(object)}
+                                </div>
+                            </View>
+                            
                         </Track>
                     </Frame>
                 </ViewPager>
@@ -414,6 +427,10 @@ class ContractDetailsSection extends Component {
                     {this.show_send_proposal_button(object)}
 
                     {this.show_send_main_contract_proposal(object)}
+
+                    {this.show_make_pre_purchase_button(object)}
+
+                    {this.show_spend_pre_purchase_credits_button(object)}
 
                     {this.render_auth_modify_button(object)}
 
@@ -943,6 +960,61 @@ class ContractDetailsSection extends Component {
         }
     }
 
+    show_make_pre_purchase_button(object){
+        if(object['ipfs'] != null && object['ipfs'].contract_type == 'workgroup' && object['ipfs'].get_contract_credits_purchase_enabled_tags_object != null){
+            const selected_item = this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e')
+            
+            if(selected_item == 1){
+                return(
+                    <div>
+                        {this.render_detail_item('0')}
+
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214j']/* 'Purchase Pre-purchase Credits.' */, 'details': this.props.app_state.loc['2214k']/* 'Purchase spend credits for use in pre-purchase transactions in indexers.' */, 'size': 'l' })}
+                        <div style={{ height: 10 }} />
+                        <div onClick={() => this.open_purchase_credits(object)}>
+                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2174']/* 'Perform Action' */, 'action': '' })}
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+
+    show_spend_pre_purchase_credits_button(object){
+        if(object['ipfs'] != null && object['ipfs'].contract_type == 'workgroup' && object['ipfs'].get_contract_credits_purchase_enabled_tags_object != null && object['hidden'] == false){
+            const selected_item = this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e')
+            
+            if(selected_item == 1){
+                return(
+                    <div>
+                        {this.render_detail_item('0')}
+
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214l']/* 'Spend Pre-purchase Credits' */, 'details': this.props.app_state.loc['2214m']/* 'Spend purchased credits at a vendor belonging to this pre-purchase contract owner.' */, 'size': 'l' })}
+                        <div style={{ height: 10 }} />
+                        <div onClick={() => this.open_spend_purchase_credits(object)}>
+                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2174']/* 'Perform Action' */, 'action': '' })}
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+
+
+
+
+    open_spend_purchase_credits(object){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({'contract':object}, 'spend_prepurchase_credits')
+    }
+
+    open_purchase_credits(object){
+        this.props.show_view_purchase_credits(object)
+    }
+
     open_enter_contract_ui(object) {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_enter_contract_ui(object)
@@ -1010,6 +1082,10 @@ class ContractDetailsSection extends Component {
             )
         }
     }
+
+    
+
+
 
 
     get_contract_details_data(object) {
@@ -1523,6 +1599,173 @@ class ContractDetailsSection extends Component {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    render_pre_purchase_transactions(object){
+        var he = this.props.height - 45
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2214o']/* 'Pre-purchase Transactions.' */, 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
+                        <div className="row" style={{width:'100%'}}>
+                            <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2682']/* 'Enter ID or Alias...' */} when_text_input_field_changed={this.when_typed_search_id_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme} adjust_height={false}/>
+                            </div>
+                            <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                                <div onClick={()=>this.perform_search()}>
+                                    <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                        <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {this.render_pre_purchase_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    when_typed_search_id_text_input_field_changed(text){
+        this.setState({typed_search_id: text})
+    }
+
+    async perform_search(){
+        var typed_account_object = await this.get_typed_alias_id2(this.state.typed_search_id.trim())
+        const typed_account = typed_account_object.id
+        const typed_account_e5 = typed_account_object.e5
+
+        if(typed_account == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'Type something.' */, 3800)
+        }
+        else if(isNaN(typed_account)){
+            this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
+        }
+        else if(parseInt(typed_account) < 1001){
+            this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
+        }
+        else{
+            const address = await this.props.get_recipient_address(typed_account, typed_account_e5)
+            this.setState({searched_account: address})
+        }
+        
+    }
+
+    get_recipient_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    async get_typed_alias_id2(alias){
+        if(!isNaN(alias)){
+            return {id: alias, e5: this.props.app_state.selected_e5}
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+        var e5 = this.get_recipient_e5(id)
+
+        return {id, e5}
+    }
+
+    render_pre_purchase_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = [].concat(this.get_pre_purchase_spend_logs(object))
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{  }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index}>
+                                    {this.render_pre_purchase_spend_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_pre_purchase_spend_logs(contract_object){
+        const searched_address = this.state.searched_account
+        if(searched_address == null) return []
+        
+        const contract_prepurchase_data = this.props.app_state.contract_prepurchase_data;
+        const my_emitted_transactions = contract_prepurchase_data[contract_object] == null ? [] : (contract_prepurchase_data[contract_object][searched_address] == null ? [] : contract_prepurchase_data[contract_object][searched_address]);
+
+        const all_transfers = []
+        my_emitted_transactions.forEach(message => {
+            all_transfers.push({'action':'out', 'time':message['time'], 'amount':message['amount']})
+        });
+
+        return this.sortByAttributeDescending(all_transfers, 'time')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
+    }
+
+    render_pre_purchase_spend_event_item(item, object, index){
+        const amount = item['amount']
+        const time = item['time']
+        const footer = item['note'] == '' ? null : item['note']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214p']/* '$ Spend' */.replace('$', number_with_commas(amount)), 'details':(new Date(time*1000).toLocaleString())+', '+this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l', 'footer':footer})}
+            </div>
+        )
+    }
 
 
 

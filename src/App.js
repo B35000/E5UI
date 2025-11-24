@@ -684,6 +684,7 @@ import OpenedIframeLinkPage from './pages/view_opened_iframe_link_page'
 import LocationMapInput from './pages/location_map_input'
 import ViewObjectLocations from './pages/view_object_location_pins'
 import CallPage from './pages/call_page'
+import PurchaseCreditsPage from './pages/purchase_credits_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -1240,7 +1241,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1263,7 +1264,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72,
+    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -1336,7 +1337,7 @@ class App extends Component {
 
     is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[],
 
-    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{},
+    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, contract_prepurchase_data:{}, 
   };
 
   get_thread_pool_size(){
@@ -1380,7 +1381,7 @@ class App extends Component {
       'music_file_button':music_file_button,
       'video_file_button':video_file_button,
       'collapse_bottomsheet_button': collapse_bottomsheet_button,
-      'collapse_bottomsheet_button_light': collapse_bottomsheet_button
+      'collapse_bottomsheet_button_light': collapse_bottomsheet_button_light
     }
     //csv_file_button, json_file_button, lrc_file_button, pdf_file_button, vtt_file_button, image_file_button, zip_file_button, music_file_button, video_file_button
   }
@@ -3547,6 +3548,7 @@ class App extends Component {
     this.view_map_location_pins_page = React.createRef();
     this.view_call_interface_page = React.createRef();
     this.localStream = React.createRef();
+    this.view_purchase_credits_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6011,6 +6013,7 @@ class App extends Component {
           {this.render_view_stage_creator_payout_result_bottomsheet()}
           {this.render_view_bid_in_auction_bottomsheet()}
           {this.render_fulfil_auction_bid_bottomsheet()}
+          {this.render_view_purchase_credits_bottomsheet()}
           {this.render_view_call_interface_bottomsheet()}
 
           {this.render_set_map_location_bottomsheet()}
@@ -6130,7 +6133,7 @@ class App extends Component {
 
           show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
 
-          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)}
+          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -8128,7 +8131,7 @@ class App extends Component {
       set_can_switch_e5_value={this.set_can_switch_e5_value.bind(this)} when_audiplayer_position_changed={this.when_audiplayer_position_changed.bind(this)} channel_id_to_hashed_id={this.channel_id_to_hashed_id.bind(this)} when_rating_denomination_changed={this.when_rating_denomination_changed.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} when_disable_moderation_changed={this.when_disable_moderation_changed.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} get_encrypted_file_size={this.get_encrypted_file_size.bind(this)} get_file_extension={this.get_file_extension.bind(this)} process_encrypted_chunks={this.process_encrypted_chunks.bind(this)} 
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
-      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)}
+      encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       />
     )
   }
@@ -13839,6 +13842,15 @@ class App extends Component {
         }
       }, (1 * 500)); 
     }
+    else if(tx.type == this.getLocale()['3092']/* 'purchase-credits' */){
+      this.open_view_purchase_credits_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.view_purchase_credits_page.current != null){
+          me.view_purchase_credits_page.current?.setState(tx)
+        }
+      }, (1 * 500));
+    }
   }
 
   delete_message_item(item, transaction_item){
@@ -16321,7 +16333,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)}
         />
       </div>
     )
@@ -21962,6 +21974,111 @@ class App extends Component {
     this.emit_new_call_message(message, 'call')
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_view_purchase_credits_bottomsheet(){
+    if(this.state.view_purchase_credits_bottomsheet2 != true) return;
+    var os = getOS()
+    if(os == 'iOS'){
+        return(
+            <Sheet isOpen={this.state.view_purchase_credits_bottomsheet} onClose={this.open_view_purchase_credits_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+                <Sheet.Container>
+                    <Sheet.Content>
+                      {this.render_view_purchase_credits_element()}
+                    </Sheet.Content>
+                    <ToastContainer limit={3} containerId="id2"/>
+                </Sheet.Container>
+                <Sheet.Backdrop onTap={()=> this.open_view_purchase_credits_bottomsheet()}/>
+            </Sheet>
+        )
+    }
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_purchase_credits_bottomsheet.bind(this)} open={this.state.view_purchase_credits_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          {this.render_view_purchase_credits_element()}
+      </SwipeableBottomSheet>
+    )
+  }
+
+  render_view_purchase_credits_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    const minus = this.state.os == 'iOS' ? 90 : 120;
+    return(
+      <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+        <PurchaseCreditsPage ref={this.view_purchase_credits_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_purchase_credits_transaction_to_stack={this.add_purchase_credits_transaction_to_stack.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_view_purchase_credits_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_purchase_credits_bottomsheet')
+    if(this.state.view_purchase_credits_bottomsheet == true){
+      //closing
+      this.view_purchase_credits_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_purchase_credits_bottomsheet: !this.state.view_purchase_credits_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_purchase_credits_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_purchase_credits_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_purchase_credits_bottomsheet: !me.state.view_purchase_credits_bottomsheet});
+
+          if(me.view_purchase_credits_bottomsheet != null){
+            // me.view_transaction_page.current?.setState(me.view_purchase_credits_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_purchase_credits(object){
+    this.open_view_purchase_credits_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_purchase_credits_page.current != null){
+        me.view_purchase_credits_page.current.set_data(object)
+      }
+    }, (1 * 500));
+  }
+
+  add_purchase_credits_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
 
 
 
@@ -29478,6 +29595,10 @@ class App extends Component {
     const G52_address = contract_addresses[4];
     const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
     var created_contracts = [id]
     var i = 0
     var account_as_list = [[account]]
@@ -29491,7 +29612,18 @@ class App extends Component {
     var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
     var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
 
-    var entered_accounts = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]})
+    const my_account_id = this.state.user_account_id[e5]
+    const my_address = this.state.accounts[this.state.selected_e5].address;
+    var event_params = [
+      [web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]}],
+      [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */}],
+
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:30/* 30(contract_prepurchase_credits_sale) */, p3/* context */:id, p4/* string_data */:my_address}],
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */:5, p3/* receiver */:id}],
+      [web3, H52contractInstance, 'e5', e5, {p2/* awward_receiver */:id, p4/* metadata */:my_address}],
+    ]
+    var all_events = (await this.load_multiple_events_from_nitro(event_params)).all_events
+    var entered_accounts = all_events[0]
 
     var contract_entered_accounts = []
     var archive_accounts = []
@@ -29512,7 +29644,7 @@ class App extends Component {
       entered_account_times_data[account] = time
     }
 
-    var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
+    var moderator_data = all_events[1]
     var old_moderators = []
 
     for(var e=0; e<moderator_data.length; e++){
@@ -29536,6 +29668,7 @@ class App extends Component {
 
     var my_blocked_time_value =/*  await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_contracts
 
+
     object['end_balance'] = end_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['spend_balance'] = spend_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['participants'] = contract_entered_accounts
@@ -29546,6 +29679,19 @@ class App extends Component {
     object['my_interactable_time_value'] = my_interactable_time_value[i][0] 
     object['my_blocked_time_value'] = my_blocked_time_value[i][0]
     object['hidden'] = false
+
+    if(object['ipfs'] != null && object['ipfs'].contract_type == 'workgroup' && object['ipfs'].get_contract_credits_purchase_enabled_tags_object != null && this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e') == 1){
+      var pre_purchase_record_events = all_events[2]
+      var pre_purchase_transfer_events = all_events[3]
+      var prepurchase_awards_events = all_events[4]
+
+      const target = 'pre_purchase|'+object['e5_id']
+      await this.get_objects_from_socket_and_set_in_state([target], [my_address], [], 0)
+      object['pre_purchase_record_events'] = pre_purchase_record_events
+      object['pre_purchase_transfer_events'] = pre_purchase_transfer_events
+      object['prepurchase_awards_events'] = prepurchase_awards_events
+      object['prepurchase_credit_balance'] = this.calculate_credit_balance(object)
+    }
 
     if(interactible_checker_status_values[0] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
       object['hidden'] = true
@@ -29579,6 +29725,54 @@ class App extends Component {
     });
     this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
 
+  }
+
+  calculate_credit_balance(contract_object){
+    const my_address = this.state.accounts[this.state.selected_e5].address;
+    const pre_purchase_record_events = contract_object['pre_purchase_record_events']
+    const pre_purchase_transfer_events = contract_object['pre_purchase_transfer_events']
+    const prepurchase_awards_events = contract_object['prepurchase_awards_events']
+
+    const contract_prepurchase_data = this.state.contract_prepurchase_data
+    const my_emitted_transactions = contract_prepurchase_data[contract_object] == null ? [] : (contract_prepurchase_data[contract_object][my_address] == null ? [] : contract_prepurchase_data[contract_object][my_address]);
+
+    const all_transfers = [];
+    const used_blocks = []
+    pre_purchase_record_events.forEach(event_item => {
+      const block = event_item.returnValues.p7/* block_number */
+      const time = event_item.returnValues.p6/* timestamp */
+      const transfer_amount = event_item.returnValues.p5/* int_data */
+
+      const award_events = prepurchase_awards_events.filter(item => item.returnValues.p6/* block_number */ == block && item.returnValues.p3/* awward_context */ == transfer_amount && item.returnValues.p4/* metadata */ == my_address);
+
+      if(award_events.length != 0){
+        const award_sender = award_events[0].returnValues.p1/* awward_sender */
+
+        const transfer_events = pre_purchase_transfer_events.filter(item => item.returnValues.p6/* block_number */ == block && item.returnValues.p4/* amount */ == transfer_amount && item.returnValues.p2/* sender */ == award_sender && !used_blocks.includes(block));
+
+        if(transfer_events.length > 0){
+          all_transfers.push({'action':'in', 'time':time, 'amount':transfer_amount})
+          used_blocks.push(block)
+        }
+      }
+    });
+
+    my_emitted_transactions.forEach(message => {
+      all_transfers.push({'action':'out', 'time':message['time'], 'amount':message['amount']})
+    });
+
+    const sorted_transactions = this.sortByAttributeDescending(all_transfers, 'time').reverse()
+    
+    var balance = 0;
+    sorted_transactions.forEach(tx => {
+      if(tx['action'] == 'in'){
+        balance += tx['amount']
+      }else{
+        balance -= tx['amount']
+      }
+    });
+
+    return balance;
   }
 
   get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, accounts_to_load, return_created_object_events_only=false, all_return_data={}) => {
@@ -30333,7 +30527,14 @@ class App extends Component {
     }
     var exchanges_balances = await H52contractInstance.methods.f140e(object['data'][3], created_tokens[i], depth_values).call((error, result) => {});
 
-    var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
+    var event_params = [
+      [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */}],
+      [web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i]}],
+      [web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i]}],
+    ]
+    var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+
+    var moderator_data = all_events[0]
     var old_moderators = []
 
     for(var e=0; e<moderator_data.length; e++){
@@ -30359,10 +30560,9 @@ class App extends Component {
 
     var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_tokens
 
+    var update_exchange_ratio_event_data = all_events[1]
 
-    var update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i]})
-
-    var update_proportion_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i]})
+    var update_proportion_ratio_event_data = all_events[2]
 
     console.log('load_extra_token_data', 'loaded update_proportion_ratio_event_data...')
 
@@ -43750,6 +43950,7 @@ class App extends Component {
     //register myself in jobs group
     this.socket.emit("join_chatroom", 'jobs');
     this.socket.emit("join_chatroom", 'posts');
+    this.socket.emit('join_chatroom', 'contracts')
     //listen for new jobs
     const me = this;
     this.socket.on('chatroom_message', ({userId, message, roomId, target, object_hash}) => {
@@ -43764,6 +43965,9 @@ class App extends Component {
       }
       else if(roomId == 'posts' && message.type == 'storefront_order_status'){
         me.process_new_storefront_order_status_update(message, object_hash)
+      }
+      else if(roomId == 'contracts' && message.type == 'pre_purchase_transaction'){
+        me.process_prepurchase_message(message, object_hash)
       }
       else{
         if(this.state.active_rooms.includes(roomId)){
@@ -44305,6 +44509,22 @@ class App extends Component {
 
     await this.wait(3000)
     this.process_new_call_message(call_message_object.message, call_message_object.object_hash)
+  }
+
+  async emit_pre_purchase_transaction(amount, contract_object, note){
+    this.prompt_top_notification(this.getLocale()['3055jj']/* 'Broadcasting Prepurchase */, 1900)
+    const message_object = await this.prepare_prepurchase_message(amount, contract_object, note)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const room_id = 'contracts';
+    const target = 'pre_purchase|'+contract_object['e5_id'];
+    this.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: target, object_hash: message_object.object_hash});
+
+    await this.wait(3000)
+    this.process_prepurchase_message(message_object.message, message_object.object_hash)
   }
 
   
@@ -45665,6 +45885,53 @@ class App extends Component {
     return final_message_obj
   }
 
+  async prepare_prepurchase_message(amount, contract, note){
+    const id = this.make_number_id(12)
+    const data = {
+      'amount': amount,
+      'contract_id':contract['id'],
+      'contract_e5':contract['e5'],
+      'note':note,
+      'sender_address': this.state.accounts[this.state.selected_e5].address,
+      'transaction_id': id,
+    }
+
+    const tags = [this.state.accounts[this.state.selected_e5].address, note]
+    
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = contract['e5_id']
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const data_to_sign = JSON.stringify(data, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    var signature = await this.generate_signature(data_to_sign)
+
+    const message = {
+      type: 'pre_purchase_transaction',
+      message_identifier: id,
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data_to_sign,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      signature: signature
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
 
 
   
@@ -47114,6 +47381,45 @@ class App extends Component {
       }
     }
   }
+
+  async process_prepurchase_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const ipfs = JSON.parse(message.data)
+    const signature_confirmation = await this.confirm_signature(message.signature, message.data, ipfs['sender_address'])
+
+    if(signature_confirmation == true){
+      const clone = structuredClone(this.state.contract_prepurchase_data)
+      const contract = ipfs['contract_id'] + ipfs['contract_e5']
+      ipfs['contract'] = contract
+      if(clone[ipfs['contract']] == null){
+        clone[ipfs['contract']] = {}
+      }
+      if(clone[ipfs['contract']][ipfs['sender_address']] == null){
+        clone[ipfs['contract']][ipfs['sender_address']] = []
+      }
+      const index = clone[ipfs['contract']][ipfs['sender_address']].findIndex(item => item['transaction_id'] === ipfs['transaction_id']);
+      if(index == -1){
+        ipfs['time'] = message.time
+        clone[ipfs['contract']][ipfs['sender_address']].push(ipfs)
+      }
+      this.setState({contract_prepurchase_data: clone})
+    }
+  }
   
 
 
@@ -47340,8 +47646,7 @@ class App extends Component {
     return event
   }
 
-  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[]){
-    const absolute_load_limit = Date.now() - (72*7*24*60*60*1000)
+  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000))){
     const load_step = (35*7*24*60*60*1000)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
@@ -47452,6 +47757,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'call-message'){
             await this.process_new_call_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'pre_purchase_transaction'){
+            await this.process_prepurchase_message(object_data, object_hash)
           }
           await this.wait(200)
         }
