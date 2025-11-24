@@ -178,6 +178,7 @@ class PurchaseCreditsPage extends Component {
         const buy_amount = this.state.amount
         const e5 = this.state.e5
         const spend_balance = this.props.calculate_actual_balance(e5, 5)
+        const credits_balance = this.props.calculate_credit_balance(this.state.contract_object)
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3092h']/* 'Total Payment Amount.' */, 'details':this.props.app_state.loc['3092i']/* 'Below is the amount of Spend youll be paying to obtain the credits you want.' */, 'size':'l'})}
@@ -195,6 +196,12 @@ class PurchaseCreditsPage extends Component {
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'number':spend_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}>
                     {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(spend_balance), 'barwidth':this.calculate_bar_width(spend_balance), 'number':this.format_account_balance_figure(spend_balance), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
                 </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['2214q']/* 'Pre-purchase Credits Balance' */, 'subtitle':this.format_power_figure(credits_balance), 'barwidth':this.get_number_width(credits_balance), 'number':`${this.format_account_balance_figure(credits_balance)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
+                </div>
+                <div style={{height:10}}/>
             </div>
         )
     }

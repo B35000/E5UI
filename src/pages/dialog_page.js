@@ -9654,6 +9654,7 @@ return data['data']
     }
 
     render_spend_prepurchase_credits_data(){
+        const credits_balance = this.props.calculate_credit_balance(this.state.data['contract'])
         return(
             <div>
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055je']/* 'Credits Amount.' */, 'details': this.props.app_state.loc['3055jf']/* 'Set the number of credits your spening at the contracts vendor.' */, 'size': 'l' })}
@@ -9664,8 +9665,13 @@ return data['data']
                 </div>
                 <div style={{height:10}}/>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_credit_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={54} pick_with_text_area={true} text_area_hint={'1000'}/>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['2214q']/* 'Pre-purchase Credits Balance' */, 'subtitle':this.format_power_figure(credits_balance), 'barwidth':this.get_number_width(credits_balance), 'number':`${this.format_account_balance_figure(credits_balance)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
+                </div>
+                <div style={{height:10}}/>
 
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_credit_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={54} pick_with_text_area={true} text_area_hint={'1000'}/>
+                <div style={{height:10}}/>
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055jl']/* 'Transaction Note.' */, 'details': this.props.app_state.loc['3055jm']/* 'You can also attach a note to help identify the transaction.' */, 'size': 'l' })}
 
