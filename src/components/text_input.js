@@ -105,7 +105,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <input ref={this.inputRef} className="form-control" step={step}  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
+            <input ref={this.inputRef} className="form-control" step={step}  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
         </div> 
       )
     }else{
@@ -119,7 +119,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <textarea className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+            <textarea className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
         </div> 
       )
     }

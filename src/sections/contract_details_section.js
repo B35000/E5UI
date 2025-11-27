@@ -22,6 +22,8 @@ import Tags from './../components/tags';
 // import Letter from './../assets/letter.png';
 import TextInput from './../components/text_input';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 var bigInt = require("big-integer");
 
@@ -39,7 +41,7 @@ function number_with_commas(x) {
 class ContractDetailsSection extends Component {
 
     state = {
-        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:'', selected_exchange:{}, typed_search_participant_id:'', typed_search_id:''
+        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:'', selected_exchange:{}, typed_search_participant_id:'', typed_search_id:'', searched_account:'', is_loading_prepurchase_balance:{}
     };
 
     componentDidMount() {
@@ -110,8 +112,29 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    when_navigate_view_contract_list_detail_tags_object_updated(tag_obj) {
+    async when_navigate_view_contract_list_detail_tags_object_updated(tag_obj) {
         this.setState({ navigate_view_contract_list_detail_tags_object: tag_obj })
+        var selected_item = this.get_selected_item(tag_obj, 'e');
+        if(selected_item == this.props.app_state.loc['2214n']/* 'pre-purchases' */){
+            var contract_object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
+            if(contract_object != null){
+                const loading_prepurchase_balance = async (contract_obj) => {
+                    var is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+                    is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = true
+                    this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
+
+                    const target = 'pre_purchase|'+contract_obj['e5_id']
+                    const start_time = Date.now() - (1000*60*60*6)
+                    const load_step = (1000*60*60*6) - 1000
+                    await this.props.get_objects_from_socket_and_set_in_state([target], [], [], start_time, load_step)
+
+                    is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+                    is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = false
+                    this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
+                }
+                await loading_prepurchase_balance(contract_object)
+            }
+        }
     }
 
     get_selected_item(object, option) {
@@ -431,6 +454,8 @@ class ContractDetailsSection extends Component {
                     {this.show_make_pre_purchase_button(object)}
 
                     {this.show_spend_pre_purchase_credits_button(object)}
+
+                    {this.show_export_pre_purchase_credit_transactions_button(object)}
 
                     {this.render_auth_modify_button(object)}
 
@@ -965,24 +990,57 @@ class ContractDetailsSection extends Component {
             const selected_item = this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e')
             
             if(selected_item == 1){
-                const credits_balance = this.props.calculate_credit_balance(object)
                 return(
                     <div>
                         {this.render_detail_item('0')}
 
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214j']/* 'Purchase Pre-purchase Credits.' */, 'details': this.props.app_state.loc['2214k']/* 'Purchase spend credits for use in pre-purchase transactions in indexers.' */, 'size': 'l' })}
-                        <div style={{ height: 10 }} />
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                            {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['2214q']/* 'Pre-purchase Credits Balance' */, 'subtitle':this.format_power_figure(credits_balance), 'barwidth':this.get_number_width(credits_balance), 'number':`${this.format_account_balance_figure(credits_balance)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
-                        </div>
+                        
                         <div style={{ height: 10 }} />
                         <div onClick={() => this.open_purchase_credits(object)}>
-                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2174']/* 'Perform Action' */, 'action': '' })}
+                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2231k']/* 'Purchase Credits' */, 'action': '' })}
                         </div>
                     </div>
                 )
             }
         }
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['view_group_card_item_background']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     show_spend_pre_purchase_credits_button(object){
@@ -990,14 +1048,53 @@ class ContractDetailsSection extends Component {
             const selected_item = this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e')
             
             if(selected_item == 1){
+                const credits_balance = this.props.calculate_credit_balance(object)
                 return(
                     <div>
                         {this.render_detail_item('0')}
 
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214l']/* 'Spend Pre-purchase Credits' */, 'details': this.props.app_state.loc['2214m']/* 'Spend purchased credits at a vendor belonging to this pre-purchase contract owner.' */, 'size': 'l' })}
                         <div style={{ height: 10 }} />
-                        <div onClick={() => this.open_spend_purchase_credits(object)}>
-                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2174']/* 'Perform Action' */, 'action': '' })}
+
+                        {this.props.app_state.is_loading_prepurchase_balance[object['e5_id']] == true && (
+                            <div>
+                                {this.render_small_skeleton_object()}
+                            </div>
+                        )}
+                        {this.props.app_state.is_loading_prepurchase_balance[object['e5_id']] != true && (
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['2214q']/* 'Pre-purchase Credits Balance' */, 'subtitle':this.format_power_figure(credits_balance), 'barwidth':this.get_number_width(credits_balance), 'number':`${this.format_account_balance_figure(credits_balance)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
+                            </div>
+                        )}
+
+                        {this.props.app_state.is_loading_prepurchase_balance[object['e5_id']] != true && (
+                            <div>
+                                <div style={{ height: 10 }} />
+                                <div onClick={() => this.open_spend_purchase_credits(object)}>
+                                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['2231l']/* 'Spend Credits' */, 'action': '' })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+        }
+    }
+
+    show_export_pre_purchase_credit_transactions_button(object){
+        if(object['ipfs'] != null && object['ipfs'].contract_type == 'workgroup' && object['ipfs'].get_contract_credits_purchase_enabled_tags_object != null && object['hidden'] == false){
+            const selected_item = this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e')
+            const my_account = this.props.app_state.user_account_id[object['e5']]
+            if(selected_item == 1 && object['event'].returnValues.p3 == my_account){
+                return(
+                    <div>
+                        {this.render_detail_item('0')}
+
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214s']/* 'Export Pre-purchase Transactions.' */, 'details': this.props.app_state.loc['2214t']/* 'Export all the pre-purchase transactions into a local file on your device.' */, 'size': 'l' })}
+                        
+                        <div style={{ height: 10 }} />
+                        <div onClick={() => this.open_export_transactions(object)}>
+                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214u']/* 'Export Transactions' */, 'action': '' })}
                         </div>
                     </div>
                 )
@@ -1005,8 +1102,17 @@ class ContractDetailsSection extends Component {
         }
     }
 
+    
 
 
+
+    open_export_transactions(object){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({'contract':object}, 'export_prepurchase_transactions')
+    }
 
     open_spend_purchase_credits(object){
         if(!this.props.app_state.has_wallet_been_set){
@@ -1251,6 +1357,7 @@ class ContractDetailsSection extends Component {
         if(interacted_exchange_data.length == 0) return;
         var selected_exchange = this.get_selected_interacted_exchange(object, data)[0]
         var event_data = this.get_selected_exchange_data(data, selected_exchange)
+        if(event_data.length < 5) return;
         const datapoints = this.get_deposit_amount_data_points(event_data)
         return(
             <div>
@@ -1624,13 +1731,13 @@ class ContractDetailsSection extends Component {
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2214o']/* 'Pre-purchase Transactions.' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
-                    <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
-                        <div className="row" style={{width:'100%'}}>
+                    <div className="row" style={{ padding: '5px 10px 5px 10px' }}>
+                        <div className="row" style={{}}>
                             <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2682']/* 'Enter ID or Alias...' */} when_text_input_field_changed={this.when_typed_search_id_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme} adjust_height={false}/>
+                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2214r']/* 'Account ID or Alias..' */} when_text_input_field_changed={this.when_typed_search_id_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme} adjust_height={false}/>
                             </div>
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
-                                <div onClick={()=>this.perform_search()}>
+                                <div onClick={()=>this.perform_search(object)}>
                                     <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
                                         <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                                     </div>
@@ -1646,9 +1753,12 @@ class ContractDetailsSection extends Component {
 
     when_typed_search_id_text_input_field_changed(text){
         this.setState({typed_search_id: text})
+        if(text == ''){
+            this.setState({searched_account: ''})
+        }
     }
 
-    async perform_search(){
+    async perform_search(contract_obj){
         var typed_account_object = await this.get_typed_alias_id2(this.state.typed_search_id.trim())
         const typed_account = typed_account_object.id
         const typed_account_e5 = typed_account_object.e5
@@ -1663,8 +1773,21 @@ class ContractDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
         }
         else{
+            this.props.notify(this.props.app_state.loc['2231m']/* 'Searching Account Data...' */, 3800)
+
+            var is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+            is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = true
+            this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
+
             const address = await this.props.get_recipient_address(typed_account, typed_account_e5)
             this.setState({searched_account: address})
+            const target = 'pre_purchase|'+contract_obj['e5_id']
+            await this.props.get_objects_from_socket_and_set_in_state([target], [address], [], 0)
+
+
+            is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+            is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = false
+            this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
         }
         
     }
@@ -1703,15 +1826,11 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        <ul style={{ 'padding': '0px 3px 0px 3px' }}>
                             {items.map((item, index) => (
-                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
-                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
-                                        </div>
-                                    </div>
-                                </li>
+                                <div style={{ 'padding': '3px 7px 3px 7px' }}>
+                                    {this.state.is_loading_prepurchase_balance[object['e5_id']] == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                </div>
                             ))}
                         </ul>
                     </div>
@@ -1738,13 +1857,27 @@ class ContractDetailsSection extends Component {
         const searched_address = this.state.searched_account
         if(searched_address == null) return []
         
+        const contract_e5_id = contract_object['e5_id']
         const contract_prepurchase_data = this.props.app_state.contract_prepurchase_data;
-        const my_emitted_transactions = contract_prepurchase_data[contract_object] == null ? [] : (contract_prepurchase_data[contract_object][searched_address] == null ? [] : contract_prepurchase_data[contract_object][searched_address]);
+        const my_emitted_transactions = contract_prepurchase_data[contract_e5_id] == null ? [] : (contract_prepurchase_data[contract_e5_id][searched_address] == null ? [] : contract_prepurchase_data[contract_e5_id][searched_address]);
+
+        const all_emitted_transactions = contract_prepurchase_data[contract_e5_id] == null ? {} : (contract_prepurchase_data[contract_e5_id] == null ? {} : contract_prepurchase_data[contract_e5_id]);
 
         const all_transfers = []
-        my_emitted_transactions.forEach(message => {
-            all_transfers.push({'action':'out', 'time':message['time'], 'amount':message['amount']})
-        });
+        if(searched_address == ''){
+            const addresses = Object.keys(all_emitted_transactions);
+            addresses.forEach(address => {
+                const transactions = all_emitted_transactions[address] || []
+                transactions.forEach(message => {
+                    all_transfers.push({'action':'out', 'time':message['time'], 'amount':message['amount'], 'note':message['note'], 'author':message['author'], 'e5':message['e5']})
+                });
+            });
+        }
+        else{
+            my_emitted_transactions.forEach(message => {
+                all_transfers.push({'action':'out', 'time':message['time'], 'amount':message['amount'], 'note':message['note'], 'author':message['author'], 'e5':message['e5']})
+            });
+        }
 
         return this.sortByAttributeDescending(all_transfers, 'time')
     }
@@ -1765,11 +1898,27 @@ class ContractDetailsSection extends Component {
         const amount = item['amount']
         const time = item['time']
         const footer = item['note'] == '' ? null : item['note']
+        const name = this.get_authors_name(item['author'], item['e5'])
+        const final_name = name.toString().length > 23 ? this.truncate(name.toString(), 23) : name
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2214p']/* '$ Spend' */.replace('$', number_with_commas(amount)), 'details':(new Date(time*1000).toLocaleString())+', '+this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l', 'footer':footer})}
+                {this.render_detail_item('3', {'title':final_name+' • '+this.props.app_state.loc['2214p']/* '$ Spend' */.replace('$', number_with_commas(amount)), 'details':(new Date(time*1000).toLocaleString())+', '+this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l', 'footer':footer})}
             </div>
         )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_authors_name(account_id, e5){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(account_id == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id] == null ? account_id : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id])
+            return alias
+        }
     }
 
 

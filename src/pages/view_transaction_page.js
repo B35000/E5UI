@@ -8315,7 +8315,7 @@ return data['data']
 
     render_purchase_credits_data(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        const buy_amount = transaction_item.amoun
+        const buy_amount = transaction_item.amount
         const e5 = transaction_item.e5
         return(
             <div>

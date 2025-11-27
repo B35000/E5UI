@@ -17,6 +17,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { Component } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 
 class tags extends Component {
     
@@ -120,11 +121,13 @@ class tags extends Component {
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': '8px', height:'40px'}}>
                     <ul ref={this.myRef} onScroll={event => this.handleScroll(event)} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none', '-webkit-overflow-scrolling': 'touch'}}>
-                      {active_tags.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
-                              {this.render_tag_button(index,selected,item,tag_size)}
-                          </li>
-                      ))}
+                        <AnimatePresence initial={true}>
+                            {active_tags.map((item, index) => (
+                                <motion.li key={'tag'+item+index} initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
+                                    {this.render_tag_button(index,selected,item,tag_size)}
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
                   </ul>
             </div>
         );
@@ -163,7 +166,7 @@ class tags extends Component {
                             100% { transform: scale(1); }
                         }
                     `}</style>
-                    <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ className={this.state.animate == index ? 'button-click' : ''} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
+                    <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
                         <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
                 </div>
@@ -181,7 +184,7 @@ class tags extends Component {
                             100% { transform: scale(1); }
                         }
                     `}</style>
-                    <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ className={this.state.animate == index ? 'button-click' : ''} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
+                    <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
                         <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
                 </div>
@@ -235,9 +238,9 @@ class tags extends Component {
 
 
     when_any_button_tapped(index, final_text){
-        this.setState({ animate: index }, () => {
-            setTimeout(() => this.setState({ animate: -1 }), 300); // match animation duration
-        });
+        // this.setState({ animate: index }, () => {
+        //     setTimeout(() => this.setState({ animate: -1 }), 300); // match animation duration
+        // });
         setTimeout(() => this.when_tag_button_clicked(index, final_text), 350)
         
     }

@@ -1337,7 +1337,9 @@ class App extends Component {
 
     is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[],
 
-    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, contract_prepurchase_data:{}, 
+    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
+    
+    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{},
   };
 
   get_thread_pool_size(){
@@ -3563,6 +3565,8 @@ class App extends Component {
     this.gateway_traffic_cache_pointers = {}
     this.gateway_traffic_cache_pointers_index = 0
     this.is_resolving_alias_data = false;
+
+    this.instantiate_webworkers()
   }
 
   componentDidMount() {
@@ -3599,9 +3603,6 @@ class App extends Component {
     // this.test_key_hasher()
     // this.fetch_filter_and_export_my_coins()
     this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
-
-    this.instantiate_webworkers()
-    await this.wait(3000)
 
     await this.load_cookies();
     this.load_cookies2()
@@ -6133,7 +6134,7 @@ class App extends Component {
 
           show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
 
-          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)}
+          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -16333,7 +16334,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)}
         />
       </div>
     )
@@ -16397,7 +16398,7 @@ class App extends Component {
       'manual_transaction_broadcast':570,
       'confirm_new_wallet': 200,
       'create_moderator_note':700,
-      'export_direct_purchases':500,
+      'export_direct_purchases':700,
       'view_access_logs':550,
       'view_error_logs':650,
       'view_link_option':350,
@@ -16414,7 +16415,8 @@ class App extends Component {
       'start_voice_call':650,
       'enter_voice_call':530,
       'confirm_leave_call':200,
-      'spend_prepurchase_credits':400,
+      'spend_prepurchase_credits':700,
+      'export_prepurchase_transactions':700,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17233,17 +17235,17 @@ class App extends Component {
         else{
           //proceed with export
           const filtered_purchases = direct_purchases.filter(obj => obj['time'] >= start_time);
-          this.start_export_of_purchase_data(filtered_purchases, storefront_object)
+          this.start_export_of_purchase_data(filtered_purchases, storefront_object, start_time)
         }
       }else{
         //proceed with export
         const filtered_purchases = direct_purchases.filter(obj => obj['time'] >= start_time);
-        this.start_export_of_purchase_data(filtered_purchases, storefront_object)
+        this.start_export_of_purchase_data(filtered_purchases, storefront_object, start_time)
       }
     }
   }
 
-  start_export_of_purchase_data(direct_purchases, object){
+  start_export_of_purchase_data(direct_purchases, object, start_time){
     if(direct_purchases.length == 0){
       this.prompt_top_notification(this.getLocale()['2642bd']/* Your selected filter left nothing to export.. */, 3000)
       return;
@@ -17283,8 +17285,8 @@ class App extends Component {
       export_obj.push(obj)
     });
 
-    const file_name = new Date()+'.json'
-    this.download_file(export_obj, file_name)
+    const file_name = this.getLocale()['2214bc']/* e-directpurchase-export: */+new Date(start_time*1000)+'-'+new Date()+'.json'
+    this.download_file({'e':export_obj}, file_name)
   }
 
   get_variant_from_id(variant_id, object){
@@ -17477,6 +17479,43 @@ class App extends Component {
   stay_in_call(){
     this.prompt_top_notification(this.getLocale()['3055jc']/* Staying. */)
     this.open_dialog_bottomsheet()
+  }
+
+  async export_prepurchases(contract_item, export_start_time){
+    this.open_dialog_bottomsheet()
+    this.prompt_top_notification(this.getLocale()['2642bc']/* The export should begin shortly.. */, 3000)
+    const target = 'pre_purchase|'+contract_item['e5_id']
+    const start_time = export_start_time
+    const load_step = Math.floor((Date.now() - export_start_time) / 2) - 1000
+    await this.get_objects_from_socket_and_set_in_state([target], [], [], start_time, load_step)
+    await this.wait(3000)
+
+    const contract_e5_id = contract_item['e5_id']
+    const contract_prepurchase_data = this.state.contract_prepurchase_data;
+    const all_emitted_transactions = contract_prepurchase_data[contract_e5_id] == null ? {} : (contract_prepurchase_data[contract_e5_id] == null ? {} : contract_prepurchase_data[contract_e5_id]);
+
+    const all_transfers = []
+    const addresses = Object.keys(all_emitted_transactions);
+    addresses.forEach(address => {
+      const transactions = all_emitted_transactions[address] || []
+      transactions.forEach(message => {
+        const obj = {}
+        obj[this.getLocale()['2214w']/* time */] = message['time'];
+        obj[this.getLocale()['2214x']/* amount */] = message['amount'];
+        obj[this.getLocale()['2214y']/* note */] = message['note'];
+        obj[this.getLocale()['2214z']/* author */] = message['author'];
+        obj[this.getLocale()['2214ba']/* E5 */] = message['e5'];
+        all_transfers.push(obj)
+      });
+    });
+
+    if(all_transfers.length == 0){
+      this.prompt_top_notification(this.getLocale()['2642bd']/* Your selected filter left nothing to export.. */, 3000)
+      return;
+    }
+
+    const file_name = this.getLocale()['2214bb']/* e-prepurchase-export: */+new Date(export_start_time)+'-'+new Date()+'.json'
+    this.download_file({'e':all_transfers}, file_name)
   }
 
 
@@ -22017,9 +22056,9 @@ class App extends Component {
   render_view_purchase_credits_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
-    const minus = this.state.os == 'iOS' ? 90 : 120;
+    // const minus = this.state.os == 'iOS' ? 90 : 90;
     return(
-      <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
         <PurchaseCreditsPage ref={this.view_purchase_credits_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_purchase_credits_transaction_to_stack={this.add_purchase_credits_transaction_to_stack.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)}
         />
       </div>
@@ -24498,18 +24537,18 @@ class App extends Component {
     if(is_synching == false) this.start_get_accounts_wallet_data(false);
     // if(is_synching == true) this.get_objects_from_socket_and_set_in_state(['jobs'], []);
     if(is_synching == false){
-      this.setState({pre_launch_fetch_loading: true})
+      this.setState({pre_launch_fetch_loading: true, did_just_set_wallet: this.did_just_set_wallet})
     }
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
     if(this.did_just_set_wallet == true && should_skip_pre_launch == false && is_synching == false){
       this.did_just_set_wallet = false;
-      this.prompt_top_notification(this.getLocale()['2738bl']/* Setting sync data in state... */, 1800)
+      // this.prompt_top_notification(this.getLocale()['2738bl']/* Setting sync data in state... */, 1800)
     }
     if(is_synching == true){
       this.inc_synch_progress()
     }
-    this.setState({pre_launch_fetch_loading: false})
+    this.setState({pre_launch_fetch_loading: false, did_just_set_wallet: this.did_just_set_wallet})
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       await this.start_get_accounts_for_specific_e5(is_synching, e5, should_skip_account_data, pre_launch_data)
@@ -29265,7 +29304,8 @@ class App extends Component {
     }
 
     var created_subscription_object_data_clone = structuredClone(this.state.created_subscriptions)
-    created_subscription_object_data_clone[e5][object['pos']] = object
+    const index = created_subscription_object_data_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+    created_subscription_object_data_clone[e5][index] = object
     
     var created_subscription_object_mapping_clone = structuredClone(this.state.created_subscription_object_mapping)
     created_subscription_object_mapping_clone[e5][created_subscriptions[i]+e5] = object
@@ -29513,6 +29553,9 @@ class App extends Component {
           contract_obj['my_interactable_time_value'] = previous_obj['my_interactable_time_value'] 
           contract_obj['my_blocked_time_value'] = previous_obj['my_blocked_time_value']
           contract_obj['hidden'] = previous_obj['hidden']
+          contract_obj['pre_purchase_record_events'] = previous_obj['pre_purchase_record_events']
+          contract_obj['pre_purchase_transfer_events'] = previous_obj['pre_purchase_transfer_events']
+          contract_obj['prepurchase_awards_events'] = previous_obj['prepurchase_awards_events']
         }
       }
 
@@ -29581,7 +29624,13 @@ class App extends Component {
     
   }
 
-  set_extra_contract_data = async (object) => {
+  set_extra_contract_data = async (contract_object) => {
+    const object = structuredClone(contract_object)
+
+    var is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+    is_loading_prepurchase_balance_clone[object['e5_id']] = true
+    this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
+
     const e5 = object['e5']
     const id = object['id']
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -29613,7 +29662,6 @@ class App extends Component {
     var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
     var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
 
-    const my_account_id = this.state.user_account_id[e5]
     const my_address = this.state.accounts[this.state.selected_e5].address;
     var event_params = [
       [web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]}],
@@ -29681,18 +29729,6 @@ class App extends Component {
     object['my_blocked_time_value'] = my_blocked_time_value[i][0]
     object['hidden'] = false
 
-    if(object['ipfs'] != null && object['ipfs'].contract_type == 'workgroup' && object['ipfs'].get_contract_credits_purchase_enabled_tags_object != null && this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e') == 1){
-      var pre_purchase_record_events = all_events[2]
-      var pre_purchase_transfer_events = all_events[3]
-      var prepurchase_awards_events = all_events[4]
-
-      const target = 'pre_purchase|'+object['e5_id']
-      await this.get_objects_from_socket_and_set_in_state([target], [my_address], [], 0)
-      object['pre_purchase_record_events'] = pre_purchase_record_events
-      object['pre_purchase_transfer_events'] = pre_purchase_transfer_events
-      object['prepurchase_awards_events'] = prepurchase_awards_events
-      object['prepurchase_credit_balance'] = this.calculate_credit_balance(object)
-    }
 
     if(interactible_checker_status_values[0] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
       object['hidden'] = true
@@ -29704,14 +29740,35 @@ class App extends Component {
       object['hidden'] = false
     }
 
+    var pre_purchase_record_events = all_events[2]
+    var pre_purchase_transfer_events = all_events[3]
+    var prepurchase_awards_events = all_events[4]
+    object['pre_purchase_record_events'] = pre_purchase_record_events
+    object['pre_purchase_transfer_events'] = pre_purchase_transfer_events
+    object['prepurchase_awards_events'] = prepurchase_awards_events
+
+    const loading_prepurchase_balance = async (contract_obj) => {
+      var is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+      is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = true
+      this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
+
+      const target = 'pre_purchase|'+contract_obj['e5_id']
+      await this.get_objects_from_socket_and_set_in_state([target], [my_address], [], 0)
+
+      var is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+      is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = false
+      this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
+    }
+    
+
     var created_contract_object_data_clone = structuredClone(this.state.created_contracts)
-    created_contract_object_data_clone[e5][object['pos']] = object;
+    const index = created_contract_object_data_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+    created_contract_object_data_clone[e5][index] = object;
 
     var created_contract_mapping_clone = structuredClone(this.state.created_contract_mapping)
     created_contract_mapping_clone[e5][created_contracts[i]] = object
 
     this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone})
-
 
     const search_accounts = contract_entered_accounts.slice()
     archive_accounts.forEach(account_id => {
@@ -29724,8 +29781,10 @@ class App extends Component {
         search_accounts.push(account_id)
       }
     });
-    this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
 
+    await loading_prepurchase_balance(object)
+    await this.wait(700)
+    this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
   }
 
   calculate_credit_balance(contract_object){
@@ -29734,8 +29793,15 @@ class App extends Component {
     const pre_purchase_transfer_events = contract_object['pre_purchase_transfer_events']
     const prepurchase_awards_events = contract_object['prepurchase_awards_events']
 
+    if(pre_purchase_record_events == null || pre_purchase_transfer_events == null || prepurchase_awards_events == null){
+      return 0;
+    }
+
+    const contract_e5_id = contract_object['e5_id']
     const contract_prepurchase_data = this.state.contract_prepurchase_data
-    const my_emitted_transactions = contract_prepurchase_data[contract_object] == null ? [] : (contract_prepurchase_data[contract_object][my_address] == null ? [] : contract_prepurchase_data[contract_object][my_address]);
+    const my_emitted_transactions = contract_prepurchase_data[contract_e5_id] == null ? [] : (contract_prepurchase_data[contract_e5_id][my_address] == null ? [] : contract_prepurchase_data[contract_e5_id][my_address]);
+
+    // console.log('apppage', 'calculate_credit_balance', 'my_emitted_transactions', my_emitted_transactions)
 
     const all_transfers = [];
     const used_blocks = []
@@ -29752,14 +29818,14 @@ class App extends Component {
         const transfer_events = pre_purchase_transfer_events.filter(item => item.returnValues.p6/* block_number */ == block && item.returnValues.p4/* amount */ == transfer_amount && item.returnValues.p2/* sender */ == award_sender && !used_blocks.includes(block));
 
         if(transfer_events.length > 0){
-          all_transfers.push({'action':'in', 'time':time, 'amount':transfer_amount})
+          all_transfers.push({'action':'in', 'time':time, 'amount':parseInt(transfer_amount)})
           used_blocks.push(block)
         }
       }
     });
 
     my_emitted_transactions.forEach(message => {
-      all_transfers.push({'action':'out', 'time':message['time'], 'amount':message['amount']})
+      all_transfers.push({'action':'out', 'time':message['time'], 'amount':parseInt(message['amount'])})
     });
 
     const sorted_transactions = this.sortByAttributeDescending(all_transfers, 'time').reverse()
@@ -30094,7 +30160,8 @@ class App extends Component {
     object['is_part_of_contract'] = is_part_of_contract
 
     var my_proposals_clone = structuredClone(this.state.my_proposals)
-    my_proposals_clone[e5][object['pos']] = object
+    const index = my_proposals_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+    my_proposals_clone[e5][index] = object
     this.setState({my_proposals: my_proposals_clone})
 
     const search_accounts = archive_participants.slice()
@@ -30598,7 +30665,8 @@ class App extends Component {
 
     console.log('load_extra', object)
     var created_tokens_clone = this.structuredClone(this.state.created_tokens)
-    created_tokens_clone[e5][object['pos']] = object
+    const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+    created_tokens_clone[e5][index] = object
 
     var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
     created_token_object_mapping_clone[e5][created_tokens[i]] = object
@@ -33241,8 +33309,17 @@ class App extends Component {
   }
 
   load_contract_data = async (prioritized_accounts, preferred_e5, prioritized_accounts_data, extra_data={}) => {
+    const page = this.getLocale()['1197']/* 'contracts' */
+    console.log('apppage', 'load_contract_data', 'setting loading for page to be true')
+    this.set_loading_for_page(page, true)
     const my_prioritized_accounts_data = prioritized_accounts_data == null ? {} : prioritized_accounts_data
     const all_return_data = (this.state.beacon_node_enabled == true && Object.keys(this.state.saved_pre_launch_events).length > 0 && extra_data['return_data'] == null) ? await this.load_created_object_events_mapping_data(prioritized_accounts, preferred_e5, prioritized_accounts_data, 30/* contract_obj_id */) : {}
+
+    setTimeout(() => {
+      this.set_loading_for_page(page, false)
+    }, (1 * 3500));
+    
+    console.log('apppage', 'load_contract_data', 'setting loading for page to be false')
 
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -34400,15 +34477,17 @@ class App extends Component {
 
 
 
-
+  set_loading_for_page(page, value){
+    var is_fetching_objects_clone = structuredClone(this.state.is_fetching_objects)
+    is_fetching_objects_clone[page] = value;
+    this.setState({is_fetching_objects: is_fetching_objects_clone})
+  }
 
   fetch_objects_to_load_from_searched_tags = async (searched_tags, page, search, accounts) => {
     var target_type = this.get_target_type_from_page(page)
     if(target_type == 0) return;
 
-    var is_fetching_objects_clone = structuredClone(this.state.is_fetching_objects)
-    is_fetching_objects_clone[page] = true;
-    this.setState({is_fetching_objects: is_fetching_objects_clone})
+    this.set_loading_for_page(page, true)
 
     // if(this.fetch_object_history == null){
     //   this.fetch_object_history = {}
@@ -34492,12 +34571,11 @@ class App extends Component {
     if(accounts != null){
       this.prioritized_accounts = accounts.concat(this.prioritized_accounts)
     }
+    this.set_loading_for_page(page, false)
+    await this.wait(300);
     this.last_searched_tags = all_final_elements
     this.load_data_from_page_in_focus(page, extra_data)
 
-    var is_fetching_objects_clone = structuredClone(this.state.is_fetching_objects)
-    is_fetching_objects_clone[page] = false;
-    this.setState({is_fetching_objects: is_fetching_objects_clone})
   }
 
   fetch_all_followed_accounts(){
@@ -45644,29 +45722,25 @@ class App extends Component {
   async prepare_contractor_availability_message(object, availability_status){
     const tags = []
     const id = this.make_number_id(12)
-    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const web3 = new Web3(this.get_web3_url_from_e5(object['e5']))
     const block_number = await web3.eth.getBlockNumber()
 
-    const author = this.state.accounts[this.state.selected_e5].address
-    const e5 = this.state.selected_e5
+    const author = this.state.accounts[object['e5']].address
+    const e5 = object['e5']
     const recipient = ''
     const channeling = ''
     const lan = ''
     const state = ''
 
-
-    const object_as_string = availability_status
-    // const signature_data = Date.now()
-    // const target = 'contractor_availability|'+object['e5_id']
-    // const signature = await this.generate_signature(signature_data+target+object_as_string)
-
+    const object_as_string = JSON.stringify({availability_status, time: Date.now()})
+    const signature = await this.generate_signature(object_as_string)
     
     const message = {
       type: 'contractor_availability',
       message_identifier: this.make_number_id(12),
       author: author,
       id:id,
-      recipient: recipient,
+      recipient:recipient,
       tags: tags,
       channeling: channeling,
       e5: e5,
@@ -45677,6 +45751,7 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      signature,
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -47208,9 +47283,23 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = message.data
+
+    if(message.signature == null) return;
+    try{
+      const e = JSON.parse(message.data)
+    }catch(exception){
+      return;
+    }
+    const ipfs = JSON.parse(message.data)
+
+    const signature_confirmation = await this.confirm_signature(message.signature, message.data, message['author'])
     
-    
+    if(signature_confirmation == false) return;
+    const signature_account = await this.get_account_from_address(message['author'], message.e5)
+
+    const index = this.state.created_contractors[message.e5].findIndex(item => item['e5_id'] === message.contractor_object_id);
+
+    if(index != -1 && this.state.created_contractors[message.e5][index]['author'] != signature_account) return;
 
     if(this.storefront_contract_availability_info_time_history == null){
       this.storefront_contract_availability_info_time_history = {}
@@ -47224,9 +47313,24 @@ class App extends Component {
       this.storefront_contract_availability_info_time_history[message.contractor_object_id] = message.time
 
       const contractor_availability_info_clone = structuredClone(this.state.contractor_availability_info)
-      contractor_availability_info_clone[message.contractor_object_id] = ipfs
+      contractor_availability_info_clone[message.contractor_object_id] = ipfs['availability_status']
       this.setState({contractor_availability_info: contractor_availability_info_clone})
     }
+  }
+
+  async get_account_from_address(address, e5){
+    if(this.get_account_from_address_mapping == null){
+      this.get_account_from_address_mapping = {}
+    }
+    if(this.get_account_from_address_mapping[address+e5] != null) return this.get_account_from_address_mapping[address+e5];
+    const web3 = this.get_web3_instance_from_e5(e5)
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.state.addresses[e5][0]
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+    var accounts = await contractInstance.methods.f167([],[address], 2).call((error, result) => {});
+    var address_account = accounts[0]
+    this.get_account_from_address_mapping[address+e5] = address_account
+    return address_account;
   }
 
   async process_new_storefront_order_status_update(message, object_hash){
@@ -47404,6 +47508,7 @@ class App extends Component {
     const signature_confirmation = await this.confirm_signature(message.signature, message.data, ipfs['sender_address'])
 
     if(signature_confirmation == true){
+      console.log('socket_stuff', 'signature verification successful.')
       const clone = structuredClone(this.state.contract_prepurchase_data)
       const contract = ipfs['contract_id'] + ipfs['contract_e5']
       ipfs['contract'] = contract
@@ -47416,9 +47521,17 @@ class App extends Component {
       const index = clone[ipfs['contract']][ipfs['sender_address']].findIndex(item => item['transaction_id'] === ipfs['transaction_id']);
       if(index == -1){
         ipfs['time'] = message.time
+        ipfs['author'] =  message['author']
+        ipfs['e5'] =  message['e5']
         clone[ipfs['contract']][ipfs['sender_address']].push(ipfs)
       }
       this.setState({contract_prepurchase_data: clone})
+
+      // const message_account = message['author']
+      // const message_e5 = message['e5']
+      // this.get_alias_from_account_id(message_account, message_e5)
+    }else{
+      console.log('socket_stuff', 'signature verification failed.')
     }
   }
   
@@ -47647,8 +47760,8 @@ class App extends Component {
     return event
   }
 
-  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000))){
-    const load_step = (35*7*24*60*60*1000)
+  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000)), default_load_step=(35*7*24*60*60*1000)){
+    const load_step = absolute_load_limit == 0 ? Date.now()-1000 : (default_load_step)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     

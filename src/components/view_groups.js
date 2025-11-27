@@ -28,6 +28,7 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import Linkify from "linkify-react";
 import Markdown from 'react-markdown'
+import { motion, AnimatePresence } from "framer-motion";
 
 import Rating from 'react-rating';
 import { FaStar } from 'react-icons/fa';
@@ -158,13 +159,17 @@ class ViewGroups extends Component {
             return (
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'40px'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
-                      {active_tags.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
-                              <div style={{'background-color': this.get_tag_color(item, selected_tags, tag_background_color), 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
-                                <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{this.mask_item_if_enabled(masked, item)}</p>
-                            </div>
-                          </li>
-                      ))}
+                        <AnimatePresence initial={true}>
+                            {active_tags.map((item, index) => (
+                                <motion.li key={'tag'+item+index} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
+                                    <div>
+                                        <div style={{'background-color': this.get_tag_color(item, selected_tags, tag_background_color), 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
+                                            <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{this.mask_item_if_enabled(masked, item)}</p>
+                                        </div>
+                                    </div>
+                                </motion.li>
+                            ))}
+                     </AnimatePresence>
                   </ul>
                 </div>
             );
@@ -184,54 +189,64 @@ class ViewGroups extends Component {
                 number = '000'
             }
 
-            if(style == 's'){
-              return ( 
-                  <div style={{'margin': '0px 10px 0px 10px'}}>
-                      <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
-                          <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
-                              <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                      </div>
+            const number_ui = () => {
+                if(style == 's'){
+                    return (
+                        <div style={{'margin': '0px 10px 0px 10px'}}>
+                            <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
+                                <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
+                                    <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
 
-                      <div className="row">
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                              <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '10px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
-                              <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.font}} className="text-end">{relativepower}</p>
-                          </div>
-                      </div>
-                  </div>
-              );
-            }else{
-                return (
-                    <div style={{'margin': '5px 20px 0px 15px'}}>
-                        <div className="row">
-                            <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.font}} className="fw-bold">{title}</p>
-                            </div>
-                            <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
-                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '11px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{subtitle}</p>
+                            <div className="row">
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '10px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.font}} className="text-end">{relativepower}</p>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
-                            <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
-                                <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                    );
+                }else{
+                    return (
+                        <div style={{'margin': '5px 20px 0px 15px'}}>
+                            <div className="row">
+                                <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
+                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.font}} className="fw-bold">{title}</p>
+                                </div>
+                                <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '11px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{subtitle}</p>
+                                </div>
                             </div>
-                        </div>
+                            
+                            <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
+                                <div className="progress" style={{ height: 3, width: "100%", 'background-color': this.props.theme['linebar_background_color'] }}>
+                                    <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
 
-                        <div className="row">
-                            <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
-                            </div>
-                            <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
-                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '10px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.font}} className="text-end">{relativepower}</p>
+                            <div className="row">
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
+                                </div>
+                                <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '10px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.font}} className="text-end">{relativepower}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                );
+                    );
+                }
             }
+
+            return(
+                <AnimatePresence initial={true}>
+                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        {number_ui()}
+                    </motion.div>
+                </AnimatePresence>
+            )
         }
         else if(item_id=='3' || item_id=='8'){/* label-id */
             /* {this.render_detail_item('3', {'title':'', 'details':'', 'size':'l'})} */
@@ -286,53 +301,65 @@ class ViewGroups extends Component {
                 const subtitle = object_data != null && object_data['subtitle'] == null ? '' : object_data['subtitle']
                 const subdetails = object_data != null && object_data['subdetails'] == null ? '' : object_data['subdetails']
 
-               return (
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
-                        <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
-                            <div>
-                                {this.render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data)}
-                            </div>
-                            <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])}>
-                                <div style={{width: '99%', 'display': 'flex','flex-direction': 'row',}}>
-                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2, width: text_width}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                return(
+                    <div>
+                        <AnimatePresence initial={true}>
+                            <motion.div key={'image_label'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
+                                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                                        <div>
+                                            {this.render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data)}
+                                        </div>
+                                        <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])}>
+                                            <div style={{width: '99%', 'display': 'flex','flex-direction': 'row',}}>
+                                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2, width: text_width}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
 
-                                    {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2}} onClick={() => this.copy_id_to_clipboard(title)}>{subtitle}</p>  */}
+                                                {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2}} onClick={() => this.copy_id_to_clipboard(title)}>{subtitle}</p>  */}
+                                            </div>
+                                            <div style={{width: '99%', 'display': 'flex','flex-direction': 'row'}}>
+                                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, width: text_width }} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                                    parts.map((part, index) => {
+                                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                                    })
+                                                }</p>
+                                                {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['secondary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value}} onClick={() => this.copy_id_to_clipboard(title)}>{subdetails}</p>  */}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div style={{width: '99%', 'display': 'flex','flex-direction': 'row'}}>
-                                    <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, width: text_width }} onClick={() => this.copy_id_to_clipboard(details)}>{
-                                        parts.map((part, index) => {
-                                            return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
-                                        })
-                                    }</p>
-                                    {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['secondary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value}} onClick={() => this.copy_id_to_clipboard(title)}>{subdetails}</p>  */}
-                                </div>
-                            </div>
-                        </div>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
-                ); 
+                ) 
             }else{
                 return(
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
-                        <div style={{height:'100%', width:'100%'}}>
-                            <div>
-                                <div style={{'display': 'flex','flex-direction': 'row'}}>
-                                    {this.render_text_image(title_image, font_size, text_image_border_radius)}
-                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
-                                </div>
+                    <div>
+                        <AnimatePresence initial={true}>
+                            <motion.div key={'text_label'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
+                                    <div style={{height:'100%', width:'100%'}}>
+                                        <div>
+                                            <div style={{'display': 'flex','flex-direction': 'row'}}>
+                                                {this.render_text_image(title_image, font_size, text_image_border_radius)}
+                                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                            </div>
 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(details)}>{
-                                    parts.map((part, index) => {
-                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{index == 0 ? leading_trailing_spaces[0]:'' }{this.mask_word_if_censored(part)}{index == parts.length-1 ? leading_trailing_spaces[1]:' '}</span>;
-                                    })
-                                    }
-                                </p>
-                                {footer && (
-                                    <p style={{'font-size': '9px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(footer)}</Linkify></p>
-                                )}
-                            </div>
-                        </div>
+                                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                                parts.map((part, index) => {
+                                                    return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{index == 0 ? leading_trailing_spaces[0]:'' }{this.mask_word_if_censored(part)}{index == parts.length-1 ? leading_trailing_spaces[1]:' '}</span>;
+                                                })
+                                                }
+                                            </p>
+                                            {footer && (
+                                                <p style={{'font-size': '9px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(footer)}</Linkify></p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
-                );
+                )
             }
         }
         else if(item_id=='4'){/* text */
@@ -353,37 +380,41 @@ class ViewGroups extends Component {
             const parts = this.split_text(this.mask_profane_words(text))
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
-                      <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 10px 5px 10px','border-radius': '8px' }}>
-                          
-                            <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}>
-                                <Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>
-                                    {
-                                        parts.map((part, index) => {
-                                            const num = parseInt(part, 10);
-                                            const isId = !isNaN(num) && num > 1000;
-                                            if (isId) {
-                                                return (
-                                                    <span
-                                                        key={index}
-                                                        style={{ textDecoration: "underline", cursor: "pointer", color: color }}
-                                                        onClick={() => this.when_e5_link_tapped(num)}>
-                                                            {part}
-                                                    </span>
-                                                );
-                                            }
-                                            return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}</span>;
-                                        })
-                                    }
-                                </Linkify>
-                            </p>
+                    <AnimatePresence initial={true}>
+                        <motion.div key={'text'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                            <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
+                                <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 10px 5px 10px','border-radius': '8px' }}>
+                                    
+                                        <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}>
+                                            <Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>
+                                                {
+                                                    parts.map((part, index) => {
+                                                        const num = parseInt(part, 10);
+                                                        const isId = !isNaN(num) && num > 1000;
+                                                        if (isId) {
+                                                            return (
+                                                                <span
+                                                                    key={index}
+                                                                    style={{ textDecoration: "underline", cursor: "pointer", color: color }}
+                                                                    onClick={() => this.when_e5_link_tapped(num)}>
+                                                                        {part}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}</span>;
+                                                    })
+                                                }
+                                            </Linkify>
+                                        </p>
 
-                          {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} />
-                           */}
-                      </div>
-                    </div>
+                                    {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} />
+                                    */}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                    
                 </div>
-                
             );
         }
         else if(item_id=='5'){/* button */
@@ -412,9 +443,14 @@ class ViewGroups extends Component {
                             100% { transform: scale(1); }
                         }
                     `}</style>
-                    <button ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action, opacity)}>
-                      {text}
-                    </button>
+                    <AnimatePresence initial={true}>
+                        <motion.div key={'button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{width:'100%'}}>
+                            <button ref={(el) => (this.button = el)} /* className={this.state.animate ? 'button-click' : ''} */ style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action, opacity)}>
+                                {text}
+                            </button>
+                        </motion.div>
+                    </AnimatePresence>
+                    
                 </div>  
             );
         }
@@ -712,14 +748,19 @@ class ViewGroups extends Component {
             }
 
             return(
-                <div style={{height:230, width:'90%','display': 'flex', 'align-items':'center','justify-content':'center','padding':'0px 0px 0px 50px'}}>
-                    <img alt="" src={this.get_image_from_file(img)} style={{height: height ,width: width,'border-radius':border_radius}} />
+                <AnimatePresence initial={true}>
+                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        <div style={{height:230, width:'90%','display': 'flex', 'align-items':'center','justify-content':'center','padding':'0px 0px 0px 50px'}}>
+                            <img alt="" src={this.get_image_from_file(img)} style={{height: height ,width: width,'border-radius':border_radius}} />
 
-                    <div style={{'margin':'0px 0px 0px 20px'}}> 
-                        <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{header}</p>
-                        <p style={{'font-size': '13px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{subtitle}</p>
-                    </div>
-                </div>
+                            <div style={{'margin':'0px 0px 0px 20px'}}> 
+                                <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{header}</p>
+                                <p style={{'font-size': '13px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{subtitle}</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+                
             );
         }
         else if(item_id =='9'){/* images-list */
@@ -733,11 +774,15 @@ class ViewGroups extends Component {
             return (
                 <div style={{'margin':'0px 0px 0px 1px','padding': '0px 0px 0px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'auto'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 1px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:'auto'}} onClick={() => this.when_image_clicked(items, index)}>
-                            <img alt="" src={this.get_image_from_file(item)} style={{width:'auto', height:90, 'border-radius': '10px'}} />
-                          </li>
-                      ))}
+                        <AnimatePresence initial={true}>
+                            {items.map((item, index) => (
+                                <motion.li key={'image'+index} initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                                    <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:'auto'}} onClick={() => this.when_image_clicked(items, index)}>
+                                        <img alt="" src={this.get_image_from_file(item)} style={{width:'auto', height:90, 'border-radius': '10px'}} />
+                                    </li>
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
                     </ul>
                 </div>
             );
@@ -784,10 +829,15 @@ class ViewGroups extends Component {
             var caption = object_data != null ? object_data['caption']:{'text':'E5', 'textsize':'10px', 'font':'Times New Roman'}
             var image_border_radius = '9px'
             return(
-                <div style={{width:'90%', margin:'0px 0px 0px 10px'}}>
-                    <img alt="" src={this.get_image_from_file(img)} style={{height:'auto' ,width:'90%', 'border-radius': image_border_radius}} />
-                    {this.render_detail_item('10', caption)}
-                </div>
+                <AnimatePresence initial={true}>
+                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        <div style={{width:'90%', margin:'0px 0px 0px 10px'}}>
+                            <img alt="" src={this.get_image_from_file(img)} style={{height:'auto' ,width:'90%', 'border-radius': image_border_radius}} />
+                            {this.render_detail_item('10', caption)}
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+                
             )
         }
         else if(item_id=='12'){/* image_label */
@@ -821,18 +871,22 @@ class ViewGroups extends Component {
                 if(object_data['border_radius'] != null) image_border_radius = object_data['border_radius']
             }
             return (
-                <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
-                        <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img alt="" src={this.get_image_from_file(img)} style={{height:img_size ,width:img_size, 'border-radius': image_border_radius}} />
+                <AnimatePresence initial={true}>
+                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
+                                <div style={{'margin':'0px 0px 0px 0px'}}>
+                                    <img alt="" src={this.get_image_from_file(img)} style={{height:img_size ,width:img_size, 'border-radius': image_border_radius}} />
+                                </div>
+                                <div style={{'margin':'3px 0px 0px 5px'}}>
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                    
+                                    <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div style={{'margin':'3px 0px 0px 5px'}}>
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
-                            
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
-                        </div>
-                    </div>
-                </div>
+                    </motion.div>
+                </AnimatePresence> 
             ); 
         }
         else if(item_id=='13'){/* markdown preview */
@@ -908,18 +962,23 @@ class ViewGroups extends Component {
                 img_size = object_data['img_size']
             }
             return (
-                <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
-                        <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img alt="" src={img} style={{height:img_size ,width:img_size, 'border-radius':'6px'}} />
+                <AnimatePresence initial={true}>
+                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
+                                <div style={{'margin':'0px 0px 0px 0px'}}>
+                                    <img alt="" src={img} style={{height:img_size ,width:img_size, 'border-radius':'6px'}} />
+                                </div>
+                                <div style={{'margin':'0px 0px 0px 5px'}}>
+                                    <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                                    
+                                    <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div style={{'margin':'0px 0px 0px 5px'}}>
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
-                            
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
-                        </div>
-                    </div>
-                </div>
+                    </motion.div>
+                </AnimatePresence>
+                
             );
         }
         else if(item_id=='15'){/* rating */
@@ -1166,10 +1225,11 @@ class ViewGroups extends Component {
             console.log('prevented default!')
         }
 
-        this.setState({ animate: true }, () => {
-            setTimeout(() => this.setState({ animate: false }), 200); // match animation duration
-        });
-        this.when_action_button_clicked(action)
+        // this.setState({ animate: true }, () => {
+        //     setTimeout(() => this.setState({ animate: false }), 200); // match animation duration
+        // });
+        setTimeout(() => this.when_action_button_clicked(action), 400);
+        
     }
 
     get_tag_color(tag, selected_tags, tag_background_color){

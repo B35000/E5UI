@@ -45,14 +45,14 @@ function start_and_end(str) {
   return str;
 }
 
-const animate_time = 700;
+const animate_time = 400;
 const animate_style = `
     .button-click {
-        animation: clickAnim 0.95s ease;
+        animation: clickAnim 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
     }
     @keyframes clickAnim {
         0%   { transform: scale(1); }
-        50%  { transform: scale(0.99); }
+        50%  { transform: scale(0.97); }
         100% { transform: scale(1); }
     }
 `;
@@ -836,7 +836,10 @@ class PostListSection extends Component {
         object[this.props.app_state.loc['1219']/* 'spends' */] = this.props.app_state.created_tokens
         object[this.props.app_state.loc['1264aj']/* 'bills' */] = this.props.app_state.created_bills
 
-        if(reload != null) return this.props.app_state.is_fetching_objects[active_page] == true;
+        if(reload != null){
+            // console.log('is_loading_object_data', 'load_contract_data', this.props.app_state.is_fetching_objects, active_page)
+            return this.props.app_state.is_fetching_objects[active_page] == true;
+        } 
 
         return Object.keys(object[active_page]).length == 0 || this.props.app_state.is_fetching_objects[active_page] == true;
     }
@@ -854,11 +857,14 @@ class PostListSection extends Component {
             },
         };
         return(
-            <div style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
-                <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
-                    <Skeleton style={styles.skeletonBox}/>
-                </SkeletonTheme>
-            </div>
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
         )
     }
 
@@ -895,20 +901,20 @@ class PostListSection extends Component {
             return (
                 <div>
                     <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        <AnimatePresence initial={true}>
-                            <style>{animate_style}</style>
+                            
                             <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                                 {this.render_line_loader_if_reloading()}
                                 {this.show_load_metrics(items, 'jobs')}
                                 {this.show_new_objects_message_if_any(all_items)}
+                                <AnimatePresence initial={true}>
                                 {items.map((item, index) => (
-                                    <motion.li key={item['e5_id']} className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                    <motion.li key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': padding}}>
                                         {this.render_job_object(item, index)}
                                     </motion.li>
                                 ))}
+                                </AnimatePresence>
                             </ul>
-                        </AnimatePresence>
                     </div>
                 </div>
             );
@@ -1000,10 +1006,11 @@ class PostListSection extends Component {
     }
 
     when_job_item_clicked(index, object){
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_job_post_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_job_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
     remove_duplicates(list){
@@ -1089,21 +1096,20 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'contracts')}
                             {this.show_new_objects_message_if_any(all_items)}
-                            {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
-                                style={{'padding': padding}}>
-                                    {this.render_contract_item(item, index)}
-                                </motion.li>
-                            ))}
+                            <AnimatePresence initial={true}>
+                                {items.map((item, index) => (
+                                    <motion.li key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_contract_item(item, index)}
+                                    </motion.li>
+                                ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -1128,25 +1134,31 @@ class PostListSection extends Component {
         var opacity =  1.0
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
             return(
-                <div onClick={() => this.when_contract_item_clicked(index, object)}>
-                    {this.render_detail_item('3', item['min'])}
+                <div>
+                    <div onClick={() => this.when_contract_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['min'])}
+                    </div>
                 </div>
+                
             )
         }
         return(
-            <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '0px 0px 0px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
-                        {this.render_detail_item('3', item['id'])}
-                    </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
-                        {this.render_detail_item('2', item['age'])}
-                    </div>
-                    
-                </div>         
+            <div>
+                <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                        
+                    </div>         
+                </div>
             </div>
+            
         )
     }
 
@@ -1184,7 +1196,11 @@ class PostListSection extends Component {
         //     this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
         //     return;
         // }
-        this.props.when_contract_item_clicked(index, object['id'], object['e5'], null, object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_contract_item_clicked(index, object['id'], object['e5'], null, object), animate_time);
+        
     }
 
     should_hide_contract_info_because_private(object){
@@ -1236,21 +1252,21 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'proposals')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_proposal_object(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -1335,10 +1351,11 @@ class PostListSection extends Component {
     }
 
     when_proposal_item_clicked(index, object){
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_proposal_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_proposal_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
 
@@ -1380,20 +1397,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.nitro_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics([], 'nitro')}
                             {this.show_new_objects_message_if_any(all_items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_nitro_object_if_locked(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -1457,10 +1474,11 @@ class PostListSection extends Component {
     }
 
     when_nitro_item_clicked(index, object){
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_nitro_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_nitro_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
 
@@ -1499,21 +1517,21 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'subscriptions')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_pay_all_upcoming_subscriptions_button(items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_subscription_object(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -1582,10 +1600,11 @@ class PostListSection extends Component {
         //     this.props.notify(this.props.app_state.loc['2509d']/* 'That object is not available for you to access.' */, 9000)
         //     return;
         // }
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_subscription_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_subscription_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
     format_subscription_item(object){
@@ -1645,20 +1664,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, object_type)}
                             {this.show_new_objects_message_if_any(all_items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['convo_id']} className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_mail_object_or_null(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -1730,10 +1749,11 @@ class PostListSection extends Component {
     }
 
     when_mail_item_clicked(item, object){
-        this.setState({ animate_click: object['convo_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_mail_item_clicked(item, object['id'], object)
+        // this.setState({ animate_click: object['convo_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_mail_item_clicked(item, object['id'], object), animate_time);
+        
     }
 
     format_mail_item(object){
@@ -1811,20 +1831,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'contractor')}
                             {this.show_new_objects_message_if_any(all_items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_contractor_object(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -1887,10 +1907,11 @@ class PostListSection extends Component {
     }
 
     when_contractor_item_clicked(index, object){
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_contractor_post_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_contractor_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
 
@@ -1924,15 +1945,14 @@ class PostListSection extends Component {
         return (
             <div ref={this.e5_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    <style>{animate_style}</style>
-                    {items.map((item, index) => (
-                        <li key={item['id']} className={this.state.animate_click == item['id'] ? 'button-click' : ''} style={{'padding': '1px 5px 1px 5px'}}>
-                            {this.render_E5s_object(item['data'], index, item['id'])}
-                        </li>
-                    ))}
-                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
-                        {this.render_small_empty_object()}
-                    </div> */}
+                    <AnimatePresence initial={true}>
+                        {items.map((item, index) => (
+                            <motion.li key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                            style={{'padding': '1px 5px 1px 5px'}}>
+                                {this.render_E5s_object(item['data'], index, item['id'])}
+                            </motion.li>
+                        ))}
+                    </AnimatePresence>
                 </ul>
             </div>
         );
@@ -1990,10 +2010,11 @@ class PostListSection extends Component {
     }
 
     when_E5_item_clicked(index, name){
-        this.setState({ animate_click: name }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_E5_item_clicked(index, name)
+        // this.setState({ animate_click: name }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_E5_item_clicked(index, name), animate_time);
+        
     }
 
 
@@ -2131,12 +2152,14 @@ class PostListSection extends Component {
             return(
                 <div ref={this.searched_account_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <style>{animate_style}</style>
-                        {items.map((item, index) => (
-                            <li className={this.state.animate_click == item['address'] ? 'button-click' : ''} style={{'padding': '1px'}}>
-                                {this.render_searched_account_item(item)}
-                            </li>
-                        ))}
+                        <AnimatePresence initial={true}>
+                            {items.map((item, index) => (
+                                <motion.li key={item['address']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                style={{'padding': '1px'}}>
+                                    {this.render_searched_account_item(item)}
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
                     </ul>
                 </div>
             )
@@ -2158,10 +2181,11 @@ class PostListSection extends Component {
     }
 
     when_searched_account_clicked(item, typed_search){
-        this.setState({ animate_click: item['address'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_searched_account_clicked(item, typed_search)
+        // this.setState({ animate_click: item['address'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_searched_account_clicked(item, typed_search), animate_time);
+        
     }
 
     render_searched_object_results(){
@@ -2172,14 +2196,14 @@ class PostListSection extends Component {
         return(
             <div>
                 <div style={{}}>
-                    <style>{animate_style}</style>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                    <AnimatePresence initial={true}>
                         {items.map((item, index) => (
-                            <div className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} style={{'margin':padding}}>
+                            <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                            style={{'padding': padding}}>
                                 {this.render_link_object_item(item, index, item_types[index])}
-                            </div>
+                            </motion.li>
                         ))}
-                    </ul>
+                    </AnimatePresence>
                 </div>
             </div>
         )
@@ -2430,20 +2454,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'posts')}
                             {this.show_new_objects_message_if_any(all_items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_post_object_if_locked(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -2661,13 +2685,14 @@ class PostListSection extends Component {
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
         
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
         if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
+            setTimeout(() => this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
         }else{
-            this.props.show_post_item_preview_with_subscription(object, 'post')
+            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'post'), animate_time);
+            
         }
     }
 
@@ -2728,20 +2753,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'channels')}
                             {this.show_new_objects_message_if_any(all_items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_channel_object(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -2833,9 +2858,9 @@ class PostListSection extends Component {
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
 
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
 
         var is_blocked = false
         if(object['ipfs']['blocked_data'] != null){
@@ -2851,7 +2876,8 @@ class PostListSection extends Component {
             return;
         }
 
-        this.props.when_channel_item_clicked(index, object['id'], object['e5'], object)
+        setTimeout(() => this.props.when_channel_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
         
     }
 
@@ -2906,20 +2932,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.poll_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'polls')}
                             {this.show_new_objects_message_if_any(all_items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_poll_object(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -3003,10 +3029,11 @@ class PostListSection extends Component {
     }
 
     when_poll_item_clicked = async (index, object) => {
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_poll_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_poll_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
 
@@ -3045,20 +3072,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'storefront')}
                             {this.show_new_objects_message_if_any(all_items)}
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': padding}}>
                                     {this.render_storefront_object(item, index)}
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -3205,10 +3232,11 @@ class PostListSection extends Component {
     }
 
     when_storefront_item_clicked(index, object){
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_storefront_post_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_storefront_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
     is_item_listed(object){
@@ -3282,20 +3310,20 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return( 
                 <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'bags')}
                             {this.show_new_objects_message_if_any(all_items)}
-                            {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
-                                style={{'padding':padding}}>
-                                    {this.render_bag_object(item, index)}
-                                </motion.li>
-                            ))}
+                            <AnimatePresence initial={true}>
+                                {items.map((item, index) => (
+                                    <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding':padding}}>
+                                        {this.render_bag_object(item, index)}
+                                    </motion.li>
+                                ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         } 
@@ -3445,10 +3473,11 @@ class PostListSection extends Component {
     }
 
     when_bag_item_clicked(index, object){
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_bag_post_item_clicked(index, object['id'], object['e5'], object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        setTimeout(() => this.props.when_bag_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
+        
     }
 
 
@@ -3506,21 +3535,21 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.audio_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'audioport')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_search_songs(items)}
-                            {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
-                                style={{'padding': padding}}>
-                                    {this.render_audio_object_if_locked(item, index)}
-                                </motion.li>
-                            ))}
+                            <AnimatePresence initial={true}>
+                                {items.map((item, index) => (
+                                    <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_audio_object_if_locked(item, index)}
+                                    </motion.li>
+                                ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -3550,13 +3579,15 @@ class PostListSection extends Component {
 
         return(
             <div>
-                <style>{animate_style}</style>
-                {items.map((item, index) => (
-                    <div className={this.state.animate_click == item['song_id'] ? 'button-click' : ''} key={index}>
-                        {this.render_song(item['song'], item['object'], index, 'album')} 
-                        {this.render_space_if_not_last(index, items.length)}
-                    </div>
-                ))}
+                <AnimatePresence initial={true}>
+                    {items.map((item, index) => (
+                        <motion.li key={item['song_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                        style={{'padding': '2px'}}>
+                            {this.render_song(item['song'], item['object'], index, 'album')} 
+                            {this.render_space_if_not_last(index, items.length)}
+                        </motion.li>
+                    ))}
+                </AnimatePresence>
                 <div style={{height:10}}/>
             </div>
         )
@@ -3722,10 +3753,11 @@ class PostListSection extends Component {
             this.all_timeout3 = setTimeout(function() {
                 clearTimeout(this.all_timeout3);
                 // single tap
-                me.play_song_in_playlist(item, object)
-                me.setState({ animate_click: item['song_id'] }, () => {
-                    setTimeout(() => me.setState({ animate_click: null }), animate_time); // match animation duration
-                });
+                setTimeout(() => me.play_song_in_playlist(item, object), animate_time);
+                
+                // me.setState({ animate_click: item['song_id'] }, () => {
+                //     setTimeout(() => me.setState({ animate_click: null }), animate_time); // match animation duration
+                // });
             }, 200);
         }
         this.last_all_click_time3 = Date.now();
@@ -3752,10 +3784,11 @@ class PostListSection extends Component {
             this.all_timeout3 = setTimeout(function() {
                 clearTimeout(this.all_timeout3);
                 // single tap
-                me.setState({ animate_click: item['song_id'] }, () => {
-                    setTimeout(() => me.setState({ animate_click: null }), animate_time); // match animation duration
-                });
-                me.play_song(item, object)
+                // me.setState({ animate_click: item['song_id'] }, () => {
+                //     setTimeout(() => me.setState({ animate_click: null }), animate_time); // match animation duration
+                // });
+                setTimeout(() => me.play_song(item, object), animate_time);
+                
             }, 200);
         }
         this.last_all_click_time3 = Date.now();
@@ -3819,13 +3852,18 @@ class PostListSection extends Component {
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                        {items.map((item, index) => (
-                            <ImageListItem key={index}>
-                                <div>
-                                    {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)}
-                                </div>
-                            </ImageListItem>
-                        ))}
+                        <AnimatePresence initial={true}>
+                            {items.map((item, index) => (
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                style={{}}>
+                                    <ImageListItem key={index}>
+                                        <div>
+                                            {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)}
+                                        </div>
+                                    </ImageListItem>
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
                     </ImageList>
                 </div>
             )
@@ -4272,14 +4310,14 @@ return data['data']
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
 
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
         
         if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            this.props.when_audio_item_clicked(index, object['id'], object['e5'], object)
+            setTimeout(() => this.props.when_audio_item_clicked(index, object['id'], object['e5'], object), animate_time);
         }else{
-            this.props.show_post_item_preview_with_subscription(object, 'audio')
+            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'audio'), animate_time);
         }
     }
 
@@ -4289,15 +4327,18 @@ return data['data']
         if(me == null) me = 1
         var index = 0
 
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
 
         if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            this.props.when_audio_item_clicked(index, object['id'], object['e5'], object)
-            this.props.play_album_from_list_section(object)
+            const play_media = () => {
+                this.props.when_audio_item_clicked(index, object['id'], object['e5'], object)
+                this.props.play_album_from_list_section(object)
+            }
+            setTimeout(() => play_media(), animate_time);
         }else{
-            this.props.show_post_item_preview_with_subscription(object, 'audio')
+            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'audio'), animate_time);
         }
     }
 
@@ -4355,21 +4396,21 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.video_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'videoport')}
                             {this.show_new_objects_message_if_any(all_items)}
                             {this.render_search_videos(items)}
-                            {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
-                                style={{'padding': padding}}>
-                                    {this.render_video_object_if_locked(item, index)}
-                                </motion.li>
-                            ))}
+                            <AnimatePresence initial={true}>
+                                {items.map((item, index) => (
+                                    <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_video_object_if_locked(item, index)}
+                                    </motion.li>
+                                ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -4396,13 +4437,15 @@ return data['data']
 
         return(
             <div>
-                <style>{animate_style}</style>
-                {items.map((item, index) => (
-                    <div className={this.state.animate_click == item['video_id'] ? 'button-click' : ''} key={index}>
-                        {this.render_video(item['video'], item['object'], index)} 
-                        {this.render_space_if_not_last(index, items.length)}
-                    </div>
-                ))}
+                <AnimatePresence initial={true}>
+                    {items.map((item, index) => (
+                        <motion.li key={item['video_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                        style={{'padding': '2px'}}>
+                            {this.render_video(item['video'], item['object'], index)} 
+                            {this.render_space_if_not_last(index, items.length)}
+                        </motion.li>
+                    ))}
+                </AnimatePresence>
                 <div style={{height:10}}/>
             </div>
         )
@@ -4488,9 +4531,9 @@ return data['data']
     }
 
     when_searched_video_item_clicked(item, object){
-        this.setState({ animate_click: item['video_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: item['video_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
 
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
@@ -4504,9 +4547,9 @@ return data['data']
             if(me == null) me = 1
             var index = 0
             if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-                this.props.play_video_from_list_section(item, object)
+                setTimeout(() => this.props.play_video_from_list_section(item, object), animate_time);
             }else{
-                this.props.show_post_item_preview_with_subscription(object, 'video')
+                setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'video'), animate_time);
             }
         }
     }
@@ -4537,13 +4580,18 @@ return data['data']
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                        {items.map((item, index) => (
-                            <ImageListItem key={index}>
-                                <div onClick={() => this.when_video_item_clicked(index, item)}>
-                                    {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
-                                </div> 
-                            </ImageListItem>
-                        ))}
+                        <AnimatePresence initial={true}>
+                            {items.map((item, index) => (
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                style={{}}>
+                                    <ImageListItem key={index}>
+                                        <div onClick={() => this.when_video_item_clicked(index, item)}>
+                                            {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
+                                        </div> 
+                                    </ImageListItem>
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
                     </ImageList>
                 </div>
             )
@@ -4798,14 +4846,16 @@ return data['data']
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
 
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
         
         if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
+            
+            setTimeout(() => this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
         }else{
-            this.props.show_post_item_preview_with_subscription(object, 'video')
+            
+            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'video'), animate_time);
         }
     }
 
@@ -4815,15 +4865,19 @@ return data['data']
         if(me == null) me = 1
         var index = 0
 
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
 
         if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
-            this.props.play_videopost_from_list_section(object)
+            const start_play = () => {
+                this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
+                this.props.play_videopost_from_list_section(object)
+            }
+            setTimeout(() => start_play(), animate_time);
         }else{
-            this.props.show_post_item_preview_with_subscription(object, 'video')
+            
+            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'video'), animate_time);
         }
     }
 
@@ -4833,14 +4887,16 @@ return data['data']
         if(me == null) me = 1
         var index = 0
 
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
 
         if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object)
+            
+            setTimeout(() => this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
         }else{
-            this.props.show_post_item_preview_with_subscription(object, 'video')
+            
+            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'video'), animate_time);
         }
     }
 
@@ -4887,12 +4943,14 @@ return data['data']
                 </div>
                 <div ref={this.coin_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
                     <div style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <style>{animate_style}</style>
-                        {items.map((item, index) => (
-                            <div key={item['id']} className={this.state.animate_click == item['id'] ? 'button-click' : ''} style={{'padding': '1px 5px 1px 5px'}}>
-                                {this.render_coin_item(item, index)}
-                            </div>
-                        ))}
+                        <AnimatePresence initial={true}>
+                            {items.map((item, index) => (
+                                <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                style={{'padding': '1px 5px 1px 5px'}}>
+                                    {this.render_coin_item(item, index)}
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
                     </div>
                 </div>
             </div>
@@ -4977,10 +5035,11 @@ return data['data']
     }
 
     when_coin_object_clicked(index, item){
-        this.setState({ animate_click: item['id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_coin_object_clicked(item['id'])
+        // this.setState({ animate_click: item['id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        
+        setTimeout(() => this.props.when_coin_object_clicked(item['id']), animate_time);
     }
 
 
@@ -5026,15 +5085,14 @@ return data['data']
 
                 <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
                     <div style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <style>{animate_style}</style>
-                        {items.map((item, index) => (
-                            <div className={this.state.animate_click == item['id'] ? 'button-click' : ''} style={{'padding': '1px 5px 1px 5px'}}>
-                                {this.render_ether_item(item, index)}
-                            </div>
-                        ))}
-                        {/* <div style={{'padding': '1px 5px 1px 5px'}}>
-                            {this.render_small_empty_object()}
-                        </div> */}
+                        <AnimatePresence initial={true}>
+                            {items.map((item, index) => (
+                                <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                style={{'padding': '1px 5px 1px 5px'}}>
+                                    {this.render_ether_item(item, index)}
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
                     </div>
                 </div>
             </div>
@@ -5190,10 +5248,11 @@ return data['data']
     }
 
     when_ether_object_clicked(index, item){
-        this.setState({ animate_click: item['id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_ether_object_clicked(index, item['id'])
+        // this.setState({ animate_click: item['id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        
+        setTimeout(() => this.props.when_ether_object_clicked(index, item['id']), animate_time);
     }
 
 
@@ -5232,20 +5291,20 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return (
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <AnimatePresence initial={true}>
-                    <style>{animate_style}</style>
+                    
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics(items, 'tokens')}
                         {this.show_new_objects_message_if_any(all_items)}
-                        {items.map((item, index) => (
-                            <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
-                            style={{'padding': padding}}>
-                                {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
-                            </motion.li>
-                        ))}
+                        <AnimatePresence initial={true}>
+                            {items.map((item, index) => (
+                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                style={{'padding': padding}}>
+                                    {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
                     </ul>
-                </AnimatePresence>
             </div>
         );
     }
@@ -5304,10 +5363,11 @@ return data['data']
     }
 
     when_ends_object_clicked(index, item){
-        this.setState({ animate_click: item['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_ends_object_clicked(index, item['id'], item['e5'], item)
+        // this.setState({ animate_click: item['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        
+        setTimeout(() => this.props.when_ends_object_clicked(index, item['id'], item['e5'], item), animate_time);
     }
 
     get_exchanges_data(object_array, token_id, img, item){
@@ -5471,20 +5531,20 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <AnimatePresence initial={true}>
-                    <style>{animate_style}</style>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                        {this.render_line_loader_if_reloading()}
-                        {this.show_load_metrics(items, 'tokens')}
-                        {this.show_new_objects_message_if_any(all_items)}
+                
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'tokens')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <AnimatePresence initial={true}>
                         {items.map((item, index) => (
-                            <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                            <motion.li key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                             style={{'padding': padding}}>
                                 {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                             </motion.li>
                         ))}
-                    </ul>
-                </AnimatePresence>
+                    </AnimatePresence>
+                </ul>
             </div>
         );
     }
@@ -5538,10 +5598,11 @@ return data['data']
     }
 
     when_spends_object_item_clicked(index, item){
-        this.setState({ animate_click: item['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_spends_object_clicked(index, item['id'], item['e5'], item)
+        // this.setState({ animate_click: item['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        
+        setTimeout(() => this.props.when_spends_object_clicked(index, item['id'], item['e5'], item), animate_time);
     }
 
 
@@ -5584,20 +5645,21 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.bill_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    <AnimatePresence initial={true}>
-                        <style>{animate_style}</style>
+                    
+                        
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
                             {this.render_line_loader_if_reloading()}
                             {this.render_pay_all_bills_button(items)}
                             {this.show_new_objects_message_if_any(all_items)}
-                            {items.map((item, index) => (
-                                <motion.li className={this.state.animate_click == item['e5_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
-                                style={{'padding': padding}}>
-                                    {this.render_bill_object(item, index)}
-                                </motion.li>
-                            ))}
+                            <AnimatePresence initial={true}>
+                                {items.map((item, index) => (
+                                    <motion.li key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_bill_object(item, index)}
+                                    </motion.li>
+                                ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -5679,10 +5741,11 @@ return data['data']
     }
 
     when_bill_clicked(index, object){
-        this.setState({ animate_click: object['e5_id'] }, () => {
-            setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        });
-        this.props.when_bill_item_clicked(object)
+        // this.setState({ animate_click: object['e5_id'] }, () => {
+        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
+        // });
+        
+        setTimeout(() => this.props.when_bill_item_clicked(object), animate_time);
     }
 
     render_pay_all_bills_button(items){

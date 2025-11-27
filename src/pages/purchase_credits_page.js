@@ -64,10 +64,11 @@ class PurchaseCreditsPage extends Component {
     }
 
     set_data(contract){
+        const user_account_id = this.props.app_state.user_account_id[contract['e5']] || ''
         this.setState({
             contract_object: contract, 
             e5: contract['e5'], 
-            recipient_id: this.props.app_state.user_account_id[contract['e5']].toString()
+            recipient_id: user_account_id.toString()
         })
     }
 
@@ -97,7 +98,7 @@ class PurchaseCreditsPage extends Component {
 
     render_everything(){
         var size = this.props.app_state.size
-        if(this.state.nitro_object == null) return;
+        if(this.state.contract_object == null) return;
         if(size == 's'){
             return(
                 <div>
@@ -325,7 +326,7 @@ class PurchaseCreditsPage extends Component {
     }
 
     get_suggested_accounts(){
-        var memory_accounts = this.get_recipients_from_memory()
+        var memory_accounts = []
         var defaults = []
         memory_accounts.forEach(account => {
             defaults.push({'id':account,'label':{'title':account, 'details':this.get_account_alias(account), 'size':'s'}})
@@ -334,7 +335,7 @@ class PurchaseCreditsPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.props.app_state.contacts[this.state.token_item['e5']]
+        var contacts = this.props.app_state.contacts[this.state.e5]
         if(contacts == null) contacts = [];
         var return_array = []
         contacts.forEach(contact => {
@@ -360,7 +361,7 @@ class PurchaseCreditsPage extends Component {
 
     get_all_aliases(added_aliases, typed_name){
         const aliases = []
-        const e5 = this.state.token_item['e5']
+        const e5 = this.state.e5
         const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[e5][account_id]

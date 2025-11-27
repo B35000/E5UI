@@ -4623,7 +4623,7 @@ class StackPage extends Component {
                     ints.push(message_obj.record_obj)
                 }
                 else if(txs[i].type == this.props.app_state.loc['3092']/* 'purchase-credits' */){
-                    var buy_album_obj = this.format_buy_credits_object(txs[i])
+                    var buy_album_obj = await this.format_buy_credits_object(txs[i])
                     
                     strs.push(buy_album_obj.awards_string_obj)
                     adds.push([])
@@ -10078,7 +10078,7 @@ class StackPage extends Component {
         var awards_string_obj = [[]]
         const isEthereumAddress = (input) => /^0x[a-fA-F0-9]{40}$/.test(input);
         const recipient = t.recipient
-        const recipients_e5 = t.recipients_e5
+        const recipients_e5 = t.recipients_e5 || t.e5
         var string_data = isEthereumAddress(recipient) == true ? recipient : await this.props.get_recipient_address(recipient, recipients_e5)
 
         string_obj[0].push(string_data)
@@ -12407,11 +12407,7 @@ class StackPage extends Component {
         return(
             <div>
                 {this.render_wallet_address()}
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1593b']/* Wallet Balance in Ether and Wei */}</p>
-                        {this.render_detail_item('2', this.get_balance_amount_in_wei())}
-                        {this.render_detail_item('2', this.get_balance_amount_in_ether())}
-                </div>
+                {this.render_wallet_balances_if_any()}
                 
                 {this.render_reload_wallet_if_wallet_is_set()}
                 
@@ -12420,7 +12416,70 @@ class StackPage extends Component {
         )
     }
 
+    render_wallet_balances_if_any(){
+        if(this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true){
+            return(
+                <div>
+                    {this.render_skeleton_object()}
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1593b']/* Wallet Balance in Ether and Wei */}</p>
+                    {this.render_detail_item('2', this.get_balance_amount_in_wei())}
+                    {this.render_detail_item('2', this.get_balance_amount_in_ether())}
+                </div>
+            </div>
+        )
+    }
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
+
     render_reload_wallet_if_wallet_is_set(){
+        if(this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true){
+            return(
+                <div>
+                    
+                </div>
+            )
+        }
         if(this.props.app_state.has_wallet_been_set || this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1){
             return(
                 <div style={{}} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
@@ -12498,13 +12557,32 @@ class StackPage extends Component {
 
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1593it']/* 'Please Note ⚠️' */, 'details':this.props.app_state.loc['1593iu']/* 'If you didnt know to keep these provided details private, or dont know why they should remain private, kindly stop using this webapp.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
+
+                
                 
                 <div style={{}}>
-                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
+                    {this.render_when_set_wallet_button()}
                 </div>
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_when_set_wallet_button(){
+        if(this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true){
+            return(
+                <div>
+                    {this.render_small_skeleton_object()}
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{}}>
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
+                </div>
             </div>
         )
     }

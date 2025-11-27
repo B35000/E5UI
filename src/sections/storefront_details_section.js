@@ -2794,17 +2794,17 @@ class StorefrontDetailsSection extends Component {
         }else{
             return ( 
                 <div style={{overflow: 'auto'}}>
-                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': '0px'}}>
                                     {this.render_storefront_object(item, index)}
                                     <div style={{height: 4}}/>
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }
@@ -3112,17 +3112,17 @@ class StorefrontDetailsSection extends Component {
         }else{
             return ( 
                 <div style={{overflow: 'auto'}}>
-                    <AnimatePresence initial={true}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                                <motion.li key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
                                 style={{'padding': '0px'}}>
                                     {this.render_storefront_object(item, index)}
                                     <div style={{height: 4}}/>
                                 </motion.li>
                             ))}
+                            </AnimatePresence>
                         </ul>
-                    </AnimatePresence>
                 </div>
             );
         }

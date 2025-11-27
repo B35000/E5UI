@@ -117,7 +117,7 @@ class DialogPage extends Component {
 
         new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(), new_voice_call_number_id: make_number_id_str(15),
 
-        credit_spend_amount:0,
+        credit_spend_amount:0, typed_transaction_note:'',
     };
 
 
@@ -552,6 +552,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_spend_prepurchase_credits_ui()}
+                </div>
+            )
+        }
+        else if(option == 'export_prepurchase_transactions'){
+            return(
+                <div>
+                    {this.render_export_prepurchase_transactions_ui()}
                 </div>
             )
         }
@@ -7578,11 +7585,11 @@ return data['data']
                 </ThemeProvider>
 
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.export_start_time - Date.now()/1000), 'details':this.props.app_state.loc['2642ba']/* 'Filter Start Time.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff((Date.now()/1000) - this.state.export_start_time), 'details':this.props.app_state.loc['2642ba']/* 'Filter Start Time.' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_export_direct_purchases()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055dx']/* 'Copy Hex' */, 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2214bd']/* 'Export' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -9631,6 +9638,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_spend_prepurchase_credits_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -9644,6 +9653,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_spend_prepurchase_credits_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -9668,9 +9679,8 @@ return data['data']
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['2214q']/* 'Pre-purchase Credits Balance' */, 'subtitle':this.format_power_figure(credits_balance), 'barwidth':this.get_number_width(credits_balance), 'number':`${this.format_account_balance_figure(credits_balance)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
                 </div>
-                <div style={{height:10}}/>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_credit_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={54} pick_with_text_area={true} text_area_hint={'1000'}/>
+                <NumberPicker ref={(el) => (this.credits_number_picker = el)} clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_credit_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={54} pick_with_text_area={true} text_area_hint={'1000'}/>
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055jl']/* 'Transaction Note.' */, 'details': this.props.app_state.loc['3055jm']/* 'You can also attach a note to help identify the transaction.' */, 'size': 'l' })}
@@ -9708,6 +9718,8 @@ return data['data']
         }
         else{
             this.props.emit_pre_purchase_transaction(amount, contract, transaction_note)
+            this.setState({typed_transaction_note: '', credit_spend_amount:0})
+            this.credits_number_picker.reset_number_picker()
         }
     }
 
@@ -9718,6 +9730,105 @@ return data['data']
     when_typed_transaction_note_text_input_field_changed(text){
         this.setState({typed_transaction_note: text})
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_export_prepurchase_transactions_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_export_prepurchase_transactions_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_export_prepurchase_transactions_data()}
+                        <div style={{height:20}}/>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_export_prepurchase_transactions_data()}
+                        <div style={{height:20}}/>
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_export_prepurchase_transactions_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214s']/* 'Export Pre-purchase Transactions.' */, 'details': this.props.app_state.loc['2214t']/* 'Export all the pre-purchase transactions into a local file on your device.' */, 'size': 'l' })}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642y']/* Filter Time.' */, 'details':this.props.app_state.loc['2214v']/* 'Set the date and time after which a given transaction will be included in the pre-purchase' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_prepurchase_export_date_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff((Date.now()/1000) - (this.state.export_start_time/1000)), 'details':this.props.app_state.loc['2642ba']/* 'Filter Start Time.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_export_prepurchase_transactions()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2214bd']/* 'Export' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_new_prepurchase_export_date_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = selectedDate.getTime();
+        this.setState({export_start_time: timeInSeconds})
+    }
+
+    when_export_prepurchase_transactions(){
+        const contract_item = this.state.data['contract']
+        const export_start_time = this.state.export_start_time
+
+        if(export_start_time > (Date.now()) - (1000*60*5)){
+            this.props.notify(this.props.app_state.loc['2642bb']/* You can only filter for before 5 minutes or more. */, 4000)
+        }
+        else{
+            this.props.export_prepurchases(contract_item, export_start_time)
+        }
+    }
+
+
+
 
 
 

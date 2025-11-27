@@ -17,6 +17,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 
 function getOS() {
   if(iOS()) return 'iOS'
@@ -127,9 +128,9 @@ class Slider extends React.Component {
     }
 
     when_button_clicked = (event) => {
-        this.setState({ animate: true }, () => {
-            setTimeout(() => this.setState({ animate: false, has_interacted: true }), 200); // match animation duration
-        });
+        // this.setState({ animate: true }, () => {
+        //     setTimeout(() => this.setState({ animate: false, has_interacted: true }), 200); // match animation duration
+        // });
 
         let me = this;
         if(Date.now() - this.last_all_click_time < 400){
@@ -158,7 +159,11 @@ class Slider extends React.Component {
                         100% { transform: scale(1); background-color: ${this.props.theme['bar_background_color']}; }
                     }
                 `}</style>
-                <div ref={(el) => (this.button = el)} className={this.state.animate ? 'button-click' : ''} style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px', cursor: 'pointer' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
+                <AnimatePresence initial={true}>
+                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.75, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        <div ref={(el) => (this.button = el)} /* className={this.state.animate ? 'button-click' : ''} */ style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px', cursor: 'pointer' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
+                    </motion.div>
+                </AnimatePresence>
 
                 <div ref={this.sliderContainerRef} onClick={this.handleSliderClick} onTouchStart={this.handleTouchStart} style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 10px' , 'position': 'relative', cursor: 'pointer'}}>
 

@@ -3994,19 +3994,6 @@ return data['data']
         )
     }
 
-
-    render_small_empty_object(){
-        return(
-            <div>
-                <div style={{ height: 75, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
-                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                        <img alt="" src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];

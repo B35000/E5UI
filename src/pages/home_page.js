@@ -46,6 +46,7 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
+import { motion, AnimatePresence } from "framer-motion";
 
 
 var bigInt = require("big-integer");
@@ -441,8 +442,8 @@ class home_page extends Component {
         if(size == 'l'){
             var middle = this.props.height-112;
             return (
-                <div style={{}}>
-                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
+                <div style={{'background-color':background_color, height: this.props.height, width:width+13, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                    <div className="row" style={{height: this.props.height, width:width+13, /* 'background-color':background_color, */ 'padding':'0px 0px 0px 15px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         {this.render_side_bar()}
 
                         <div className="col-11" style={{}} >
@@ -461,46 +462,10 @@ class home_page extends Component {
                 </div>
             );
         }
-        else if(size == 'xl'){
-            var middle = this.props.height-113;
-            return(
-                <div style={{}}>
-                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
-                        {this.render_side_bar()}
-
-                        <div className="col-11" style={{}} >
-                            <div style={{height:top_bar, width:'99%', 'padding':'9px 0px 0px 5px'}}>
-                                {this.render_top_tag_bar(size)}
-                            </div>
-                            
-                            <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                                <div ref={this.posts_container} className="col-4" style={{height: (middle+55)}}>
-                                    {this.render_post_list_group(size, (middle+55))}
-                                </div>
-                                
-                                <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
-                                    {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
-                                </div>
-                                
-                                <div className="col-4" style={{height: (middle+55)}}>
-                                    {this.render_watch_account_ui()}
-                                </div>
-
-                            </div>
-                        </div>   
-                    </div>
-                    {this.render_filter_section_bottomsheet()}
-                    {this.render_post_preview_bottomsheet()}
-                    {this.render_nsfw_preview_bottomsheet()}
-                    {this.render_dialog_ui()}
-                    <ToastContainer limit={3} containerId="id3"/>
-                </div>
-            )
-        }
         else if(size == 'm'){
             var middle = this.props.height-126;
-            return ( 
-                <div className="row" style={{height: this.props.height, width:'102%','background-color':background_color, 'overflow': 'hidden'}}>
+            return (
+                <div className="row" style={{height: this.props.height, width:'102%','background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px'}}>
                             {this.render_top_tag_bar(size)}
@@ -525,23 +490,25 @@ class home_page extends Component {
         }
         else if(size == 's'){
             var bottom_bar = 75;
-            return (
-                <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
-                    {this.render_small_screen_size_ui(size, top_bar, width)}
-                    
-                    <div style={{height:5}}/>
-                    <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px'}}>
-                        {this.render_navbar_button_group(size)}
-                    </div>
+            return(
+                <div style={{height: this.props.height, width:'100%', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                    <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
+                        {this.render_small_screen_size_ui(size, top_bar, width)}
+                        
+                        <div style={{height:5}}/>
+                        <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px'}}>
+                            {this.render_navbar_button_group(size)}
+                        </div>
 
-                    {this.render_view_object_bottomsheet()}
-                    {this.render_filter_section_bottomsheet()}
-                    {this.render_post_preview_bottomsheet()}
-                    {this.render_nsfw_preview_bottomsheet()}
-                    {this.render_dialog_ui()}
-                    <ToastContainer limit={3} containerId="id3"/>
+                        {this.render_view_object_bottomsheet()}
+                        {this.render_filter_section_bottomsheet()}
+                        {this.render_post_preview_bottomsheet()}
+                        {this.render_nsfw_preview_bottomsheet()}
+                        {this.render_dialog_ui()}
+                        <ToastContainer limit={3} containerId="id3"/>
+                    </div>
                 </div>
-            );
+            )
         }
         else{
             return(
@@ -562,7 +529,7 @@ class home_page extends Component {
                 return(
                     <div>
                         <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -580,7 +547,7 @@ class home_page extends Component {
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                         </div>
@@ -597,7 +564,7 @@ class home_page extends Component {
                                 {this.render_metrics_section((middle+55))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -616,7 +583,7 @@ class home_page extends Component {
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                             
@@ -694,7 +661,7 @@ class home_page extends Component {
                         {this.render_post_list_group(size, h+10)}
                     </div>
 
-                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
@@ -703,7 +670,7 @@ class home_page extends Component {
         }else{
             return(
                 <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', }}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
@@ -781,21 +748,21 @@ class home_page extends Component {
         if(size == 'm'){
           return ( 
               <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
-                  <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
-                  </div>
+                    <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
+                        {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+                    </div>
 
-                  <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                    {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
-                  </div>
+                    <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+                        {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                    </div>
 
-                  <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
-                  </div>
-                  
-                  <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
-                  </div>
+                    <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+                        {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                    </div>
+                    
+                    <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+                        {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    </div>
               </div>
           );
         }
@@ -910,31 +877,39 @@ class home_page extends Component {
         var navbar_button_text_color = this.props.theme['primary_navbar_text_color']
         var navbar_button_secondary_text = this.props.theme['secondary_navbar_text_color']
         if(icontype == 's' || icontype == 'xs'){
-            return (
-                <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
-                    <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
-
-                    <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p>
-
-                    <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
-                </div>
-            );
-        }else{
-            return ( 
-                <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
-                    <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
-                        <div style={{height:'7%', width:'100%'}}>
+            return(
+                <AnimatePresence initial={true}>
+                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
                             <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
+
+                            <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p>
+
+                            <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                         </div>
-                    </div>
-                    <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
-                        <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
-                            <p style={{'font-size': '15px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p> 
-                            <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
-                        </div>
-                    </div>
-                </div> 
-            );
+                    </motion.div>
+                </AnimatePresence>
+            )
+        }else{
+            return(
+                <AnimatePresence initial={true}>
+                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                        <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
+                            <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
+                                <div style={{height:'7%', width:'100%'}}>
+                                    <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
+                                </div>
+                            </div>
+                            <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
+                                <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
+                                    <p style={{'font-size': '15px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p> 
+                                    <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
+                                </div>
+                            </div>
+                        </div> 
+                    </motion.div>
+                </AnimatePresence>
+            )
         }
     }
 
@@ -2436,8 +2411,6 @@ class home_page extends Component {
         if(all != null){
             return sorted_token_exchange_data
         }
-
-        console.log('homepage', 'loaded token count', sorted_token_exchange_data.length)
 
         return this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
     }
@@ -4075,13 +4048,13 @@ class home_page extends Component {
                 {this.render_line_if_enabled()}
                 {this.render_search_tags_views()}
                 <SwipeableViews index={pos} onChangeIndex={this.handleChange}>
-                    <div>
+                    <div key={'?'}>
                         {this.render_post_list_group2(size, '?', this.work_list_section, h)}
                     </div>
-                    <div>
+                    <div key={'e'}>
                         {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
                     </div>
-                    <div>
+                    <div key={'w'}>
                         {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
                     </div>
                 </SwipeableViews>
@@ -5274,7 +5247,7 @@ class home_page extends Component {
 
                 show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.state.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_new_chat_typing_notification={this.props.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)}
 
-                emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)}
+                emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.props.get_objects_from_socket_and_set_in_state.bind(this)}
                 />
             </div>
         )
