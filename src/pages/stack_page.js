@@ -14785,7 +14785,7 @@ class StackPage extends Component {
                 
                 <input ref={this.audio_input} style={{display: 'none'}} id="upload" type="file" accept =".mp3, audio/mpeg" onChange ={this.when_audio_picked.bind(this)} multiple/>
 
-                <input ref={this.video_input} style={{display: 'none'}} id="upload" type="file" accept =".mp4,video/mp4" onChange ={this.when_video_picked.bind(this)} multiple/>
+                <input ref={this.video_input} style={{display: 'none'}} id="upload" type="file" accept =".mp4,video/mp4" /* "video/mp4, video/webm, .mp4, .webm" */ onChange ={this.when_video_picked.bind(this)} multiple/>
 
                 <input ref={this.pdf_input} style={{display: 'none'}} id="upload" type="file" accept =".pdf" onChange ={this.when_pdf_picked.bind(this)} multiple/>
 
@@ -15286,8 +15286,16 @@ class StackPage extends Component {
                     const duration = await this.get_video_duration(videoFile)
                     const videoType = videoFile.type;
                     const chunk_duration = duration < 53 ? 5 : 53
-                    const codec = await media_processors.extractMP4Codec(videoFile)
-                    const return_packaged_data = await media_processors.buildVideoTimeToByteMap(videoFile, chunk_duration)
+                    let codec;
+                    let return_packaged_data;
+                    if(extension == 'webm'){
+                        const webm_data = await media_processors.buildWebMVideoTimeToByteMap(videoFile, chunk_duration)
+                        codec = webm_data.codec
+                        return_packaged_data = webm_data.return_packaged_data
+                    }else{
+                        codec = await media_processors.extractMP4Codec(videoFile)
+                        return_packaged_data = await media_processors.buildVideoTimeToByteMap(videoFile, chunk_duration)
+                    }
                     const timeToByteMap = return_packaged_data.mapping
                     if(timeToByteMap == null || codec == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)

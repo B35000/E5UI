@@ -442,7 +442,7 @@ class home_page extends Component {
         if(size == 'l'){
             var middle = this.props.height-112;
             return (
-                <div style={{'background-color':background_color, height: this.props.height, width:width+13, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                     <div className="row" style={{height: this.props.height, width:width+13, /* 'background-color':background_color, */ 'padding':'0px 0px 0px 15px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         {this.render_side_bar()}
 
@@ -465,7 +465,7 @@ class home_page extends Component {
         else if(size == 'm'){
             var middle = this.props.height-126;
             return (
-                <div className="row" style={{height: this.props.height, width:'102%','background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px'}}>
                             {this.render_top_tag_bar(size)}
@@ -491,7 +491,7 @@ class home_page extends Component {
         else if(size == 's'){
             var bottom_bar = 75;
             return(
-                <div style={{height: this.props.height, width:'100%', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                <div style={{backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                     <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
                         {this.render_small_screen_size_ui(size, top_bar, width)}
                         

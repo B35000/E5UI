@@ -1,4 +1,5 @@
 import { createFile } from 'mp4box';
+import { Input, BlobSource, ALL_FORMATS, Output, WebMOutputFormat, BufferTarget, Conversion, EncodedPacketSink } from "mediabunny";
 
 const readChunk = async (file, offset, size) => {
     const actualSize = Math.min(size, file.size - offset);
@@ -683,7 +684,7 @@ const buildVideoTimeToByteMap = async (file, intervalSeconds) => {
 
 
 
-//-----------------------------------------VIDEO-CODEC-----------------------------------------------
+//--------------------------------------VIDEO-CODEC------------------------------------------
 // Parse HEVC (H.265) codec string
 const parseHEVCCodec = (stsdData, offset) => {
     // Look for hvcC box
@@ -949,6 +950,223 @@ const extractMP4Codec = async (file) => {
 
 
 
-const media_processors = { buildTimeToByteMap, extractMP4Codec, buildVideoTimeToByteMap };
+
+
+
+//-----------------------------------------WEBM-FILE-----------------------------------------------
+const buildWebMVideoTimeToByteMap = async (file, intervalSeconds) => {
+    const final_interval_seconds = intervalSeconds == 53 ? intervalSeconds : 5
+    const input = new Input({ source: new BlobSource(file), formats: ALL_FORMATS, });
+    
+    const videoTrack = await input.getPrimaryVideoTrack();
+    const codec = await videoTrack.getCodecParameterString()
+    
+    const return_packaged_data = await extractSegments(input, final_interval_seconds)
+    console.log('webm fragments data', codec, return_packaged_data)
+    
+    return {codec, return_packaged_data}
+}
+
+async function extractSegments(input, segmentLengthSeconds = 5) {
+    const duration = await input.computeDuration();; // duration in seconds
+    const segments = [];
+    var totalSize = 0;
+    async function produceFragment(start, end) {
+        // we'll collect header bytes (once) and cluster bytes (one or more)
+        let segmentHeaderBytes = null;
+        const clusters = [];
+
+        const output = new Output({
+            format: new WebMOutputFormat({
+            // ensure clusters are reasonably sized; you can tune minimumClusterDuration
+            minimumClusterDuration: 0.5, // seconds (tune as needed)
+            onSegmentHeader: (headerUint8) => {
+                // headerUint8 is a Uint8Array
+                // store header bytes (EBML + Segment headers up to first Cluster)
+                segmentHeaderBytes = new Uint8Array(headerUint8);
+            },
+            onCluster: (clusterUint8, clusterStartTimeSec) => {
+                // clusterUint8 is a Uint8Array (one written cluster)
+                // clusterStartTimeSec: timestamp for cluster (if you need it)
+                clusters.push(new Uint8Array(clusterUint8));
+            },
+            }),
+            target: new BufferTarget(), // produce full file buffer if you want; we actually use callbacks
+        });
+
+        // Use Conversion.trim to copy the requested time range into the output
+        const conversion = await Conversion.init({
+            input,
+            output,
+            // trim: note these are seconds
+            trim: { start, end },
+        });
+
+        // Execute conversion; callbacks will be invoked as output is written
+        await conversion.execute();
+
+        // Sometimes WebMOutputFormat will have written header and clusters into BufferTarget too.
+        // But we rely on callbacks to build our fragment.
+        if (!segmentHeaderBytes) {
+            // fallback: if onSegmentHeader was not called, try to pull buffer and use entire file
+            const ab = output.target.buffer;
+            if (!ab) throw new Error("No output produced for fragment and no segment header callback fired.");
+            return new Uint8Array(ab);
+        }
+
+        // Concatenate header + clusters
+        // header first, then each cluster
+        let total = segmentHeaderBytes.byteLength;
+        for (const c of clusters) total += c.byteLength;
+        const frag = new Uint8Array(total);
+        let off = 0;
+        frag.set(segmentHeaderBytes, off);
+        off += segmentHeaderBytes.byteLength;
+        for (const c of clusters) {
+            frag.set(c, off);
+            off += c.byteLength;
+        }
+
+        return frag;
+    }
+    for (let start = 0; start < duration; start += segmentLengthSeconds) {
+        const end = Math.min(start + segmentLengthSeconds, duration);
+        const fragBytes = await produceFragment(start, end); // Uint8Array
+        segments.push({ start, end, data: fragBytes, duration: end - start });
+        totalSize += fragBytes.byteLength;
+    }
+
+    let mapping = new Map();
+    let offset = 0;
+    mapping.set(0, offset)
+    const combined = new Uint8Array(totalSize);
+    segments.forEach((segment, index) => {
+        combined.set(segment.data, offset);
+        if(segment.start != 0){
+            mapping.set(segment.start, offset) 
+        }
+        offset += segment.data.byteLength;
+    });
+
+    try {
+      input.dispose();
+    } catch (e) {
+      console.log('media_processor', e)
+    }
+
+    return { combined, mapping };
+}
+
+async function extractWebMPackets(webmFile, options = {}) {
+  const { startTime = 0, endTime = Infinity } = options;
+  
+  try {
+    // Create input from the WebM file
+    const input = new Input({
+      source: new BlobSource(webmFile),
+      formats: ALL_FORMATS,
+    });
+
+    const result = {
+      videoPackets: [],
+      data_chunk: null,
+      metadata: {
+        duration: 0,
+        videoTrack: null,
+      }
+    };
+
+    // Get file duration
+    result.metadata.duration = await input.computeDuration();
+    let data_length = 0
+    // Extract video packets
+    const videoTrack = await input.getPrimaryVideoTrack();
+    if (videoTrack) {
+        result.metadata.videoTrack = {
+            codec: videoTrack.codec,
+            displayWidth: videoTrack.displayWidth,
+            displayHeight: videoTrack.displayHeight,
+            rotation: videoTrack.rotation,
+        };
+
+        const videoSink = new EncodedPacketSink(videoTrack);
+        
+        // Iterate through packets in the time range
+        for await (const packet of videoSink.packets()) {
+            if (packet.timestamp >= startTime && packet.timestamp <= endTime) {
+                result.videoPackets.push({
+                    data: packet.data,
+                    timestamp: packet.timestamp,
+                    duration: packet.duration,
+                    type: packet.type, // 'key' or 'delta'
+                    sequenceNumber: packet.sequenceNumber,
+                    isKeyframe: packet.type === 'key'
+                });
+                data_length += packet.data.byteLength
+            }
+            
+            // Stop if we've passed the end time
+            if (packet.timestamp > endTime) break;
+        }
+    }
+
+    let offset = 0;
+    result.data_chunk = new Uint8Array(data_length);
+    result.videoPackets.forEach((packet, index) => {
+        result.data_chunk.set(packet.data, offset);
+        offset += packet.data.byteLength;
+    });
+
+    return result;
+
+  } catch (error) {
+    console.error('Error extracting WebM packets:', error);
+    throw error;
+  }
+}
+
+async function splitIntoSegments(input, segmentDuration = 10, webmFile) {
+  try {
+    const duration = await input.computeDuration();
+    const segments = [];
+    var totalSize = 0;
+    let currentTime = 0;
+    while (currentTime < duration) {
+      const endTime = Math.min(currentTime + segmentDuration, duration);      
+      const webm_packets = await extractWebMPackets(webmFile, { currentTime, endTime });
+
+      totalSize += webm_packets.data_chunk.byteLength;
+      segments.push({ start: currentTime, end: endTime, data: webm_packets.data_chunk, duration: endTime - currentTime});
+      currentTime = endTime;
+    }
+    
+    let mapping = new Map();
+    let offset = 0;
+    mapping.set(0, offset)
+    const combined = new Uint8Array(totalSize);
+    segments.forEach((segment, index) => {
+        combined.set(segment.data, offset);
+        if(segment.start != 0){
+            mapping.set(segment.start, offset) 
+        }
+        offset += segment.data.byteLength;
+    });
+
+    try {
+      input.dispose();
+    } catch (e) {
+      console.error('media_processor', e)
+    }
+
+    return { combined, mapping };
+  } 
+  catch (error) {
+    console.error('media_processor', 'Error splitting into segments:', error);
+    throw error;
+  }
+}
+
+
+const media_processors = { buildTimeToByteMap, extractMP4Codec, buildVideoTimeToByteMap, buildWebMVideoTimeToByteMap };
 
 export default media_processors;

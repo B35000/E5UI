@@ -17,6 +17,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { Component } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 
 function getOS() {
   if(iOS()) return 'iOS'
@@ -83,9 +84,14 @@ class TextInput extends Component {
     const box_shadow = this.props.theme['highlight_text_background'] == true || true ? '0px 0px 1px 1px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
     return(
       <div style={{'padding': '0px 0px 0px 0px'}}>
-        <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'], 'box-shadow': box_shadow,'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
-          {this.render_textarea_or_input(f)}
-        </div>
+        <AnimatePresence initial={true}>
+            <motion.div key={'text_area'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.75, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                 <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'], 'box-shadow': box_shadow,'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
+                    {this.render_textarea_or_input(f)}
+                  </div>
+            </motion.div>
+        </AnimatePresence>
+       
       </div>
     )
   }

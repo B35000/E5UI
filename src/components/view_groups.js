@@ -118,7 +118,7 @@ class ViewGroups extends Component {
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
-        var background_color = this.props.theme['view_group_card_item_background'];
+        var background_color = this.props.theme['view_group_card_item_background2'];
         var border_radius = '7px';
         var font = 'Sans-serif';
         // var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
@@ -305,7 +305,7 @@ class ViewGroups extends Component {
                     <div>
                         <AnimatePresence initial={true}>
                             <motion.div key={'image_label'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
-                                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
+                                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', background: background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
                                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                                         <div>
                                             {this.render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data)}
@@ -336,7 +336,7 @@ class ViewGroups extends Component {
                     <div>
                         <AnimatePresence initial={true}>
                             <motion.div key={'text_label'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
-                                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
+                                <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', background: background_color,'border-radius': border_radius, 'box-shadow': box_shadow}}>
                                     <div style={{height:'100%', width:'100%'}}>
                                         <div>
                                             <div style={{'display': 'flex','flex-direction': 'row'}}>
@@ -383,7 +383,7 @@ class ViewGroups extends Component {
                     <AnimatePresence initial={true}>
                         <motion.div key={'text'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
                             <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
-                                <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 10px 5px 10px','border-radius': '8px' }}>
+                                <div style={{width: '100%',background: background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 10px 5px 10px','border-radius': '8px' }}>
                                     
                                         <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}>
                                             <Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>
@@ -445,7 +445,7 @@ class ViewGroups extends Component {
                     `}</style>
                     <AnimatePresence initial={true}>
                         <motion.div key={'button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{width:'100%'}}>
-                            <button ref={(el) => (this.button = el)} /* className={this.state.animate ? 'button-click' : ''} */ style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font, transition: 'background-color 0.3s ease'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action, opacity)}>
+                            <button ref={(el) => (this.button = el)} /* className={this.state.animate ? 'button-click' : ''} */ style={{background: this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': text_transform, 'font-family': this.props.font}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default, action, opacity)}>
                                 {text}
                             </button>
                         </motion.div>
@@ -456,7 +456,7 @@ class ViewGroups extends Component {
         }
         else if(item_id=='6'){/* chart */
             var default_chart_color = this.props.theme['chart_color'];
-            var background_color = this.props.theme['chart_background_color'];
+            var chart_background_color = this.props.theme['chart_background_color'];
             
             var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
             var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
@@ -478,7 +478,7 @@ class ViewGroups extends Component {
 
             const defaultConfig = {
                 chartColor: default_chart_color,
-                chartBackgroundColor: background_color,
+                chartBackgroundColor: chart_background_color,
                 gridColor: this.props.theme['line_color'],
                 labelFontColor: this.props.theme['primary_text_color'],
                 gridLineWidth: 0.3,
@@ -646,7 +646,7 @@ class ViewGroups extends Component {
             };
 
             return(
-                <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:260, 'border-radius': border_radius}}>
+                <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': chart_background_color, height:260, 'border-radius': border_radius}}>
                     <div style={{'padding':'0px 0px 10px 0px', height: 'calc(100% - 1px)', position: 'relative'}}>
                         <Line ref={this.chart} data={getChartData()} options={getChartOptions()} plugins={[getIndexLabelPlugin()]} />
                     </div>
@@ -873,7 +873,7 @@ class ViewGroups extends Component {
             return (
                 <AnimatePresence initial={true}>
                     <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
-                        <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                        <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', background: background_color,'border-radius': border_radius}}>
                             <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
                                 <div style={{'margin':'0px 0px 0px 0px'}}>
                                     <img alt="" src={this.get_image_from_file(img)} style={{height:img_size ,width:img_size, 'border-radius': image_border_radius}} />
@@ -964,7 +964,7 @@ class ViewGroups extends Component {
             return (
                 <AnimatePresence initial={true}>
                     <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
-                        <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                        <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', background: background_color,'border-radius': border_radius}}>
                             <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
                                 <div style={{'margin':'0px 0px 0px 0px'}}>
                                     <img alt="" src={img} style={{height:img_size ,width:img_size, 'border-radius':'6px'}} />

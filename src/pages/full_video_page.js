@@ -1009,7 +1009,9 @@ class FullVideoPage extends Component {
         const video_type = track_data['video_type'] == null ? "video/mp4" : track_data['video_type']
         const mimeType = `${video_type}; codecs="${codec}"`;
 
-        console.log('Creating new MediaSource:', video_type, codec, mimeType)
+        console.log('Creating new MediaSource:', video_type)
+        console.log('Creating new MediaSource:', codec )
+        console.log('Creating new MediaSource:', mimeType)
 
         // Check if the browser supports the codec
         if (!MediaSource.isTypeSupported(mimeType)) {
