@@ -2506,7 +2506,7 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['b311i']/* 'Add Video.' */, 'details':this.props.app_state.loc['b311j']/* 'Add a new video item with the specified details set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_add_video_tapped()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['a311g']/* 'Add Audio.' */, 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['b311au']/* 'Add Video.' */, 'action':''})}
                 </div>
             </div>
         )

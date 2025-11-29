@@ -46,6 +46,18 @@ function makeid(length) {
     return result;
 }
 
+async function decrypt_chunk(chunk, key){
+    const iv = chunk.slice(0, 12);
+    const encryptedData = chunk.slice(12);
+    const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        encryptedData
+    );
+
+    return new Uint8Array(decrypted)
+}
+
 class AudioPip extends Component {
     
     state = {
@@ -451,32 +463,8 @@ class AudioPip extends Component {
     }
 
     decrypt_chunk = async (chunk, key) => {
-        return await this.props.decrypt_chunk(chunk, key)
-        // return new Promise((resolve, reject) => {
-        //     const worker = this.audio_worker;
-        //     const message_id = makeid(9)
-
-        //     worker.postMessage({
-        //         type: 'decrypt_chunk',
-        //         payload: {
-        //             chunk, 
-        //             key,
-        //             message_id
-        //         }
-        //     });
-            
-        //     worker.onmessage = (e) => {
-        //         if (e.data.type === 'SUCCESS'&& e.data.message_id == message_id) {
-        //             resolve(e.data.data);
-        //         } else if (e.data.type === 'ERROR'&& e.data.message_id == message_id) {
-        //             reject(e.data.error);
-        //         }
-        //     };
-            
-        //     worker.onerror = (error) => {
-        //         reject(error);
-        //     };
-        // });
+        // return await this.props.decrypt_chunk(chunk, key)
+        return await decrypt_chunk(chunk, key)
     }
 
     has_already_loaded_current_timestamp_key_pos(pos){

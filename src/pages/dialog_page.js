@@ -9148,8 +9148,17 @@ return data['data']
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_record_call_tags_object} tag_size={'l'} when_tags_updated={this.when_get_record_call_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
-                <div onClick={() => this.enter_new_call()}>
-                    {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={() => this.enter_new_call()}>
+                            {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                        <div onClick={()=> this.props.cancel_entering_call()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055jp']/* ''cancel ✖' */, 'action':''},)}
+                        </div>
+                    </div>
                 </div>
             </div>
         )
@@ -9409,9 +9418,19 @@ return data['data']
                         <div>
                             {this.render_detail_item('10', {'text':this.props.app_state.loc['3055id']/* Encryption supported on your device ✔ */, 'textsize':'9px', 'font':this.props.app_state.font})}
                             <div style={{height:10}}/>
-                            <div onClick={() => this.enter_existing_call_with_specified_details()}>
-                                {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                            <div className="row">
+                                <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                                   <div onClick={() => this.enter_existing_call_with_specified_details()}>
+                                        {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                                    </div>
+                                </div>
+                                <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                                    <div onClick={()=> this.props.cancel_entering_call()}>
+                                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055jp']/* ''cancel ✖' */, 'action':''},)}
+                                    </div>
+                                </div>
                             </div>
+                            
                         </div>
                     )}
                 </div>
@@ -9467,8 +9486,17 @@ return data['data']
                     {call_invite_obj['password'] != '' && this.props.app_state.isEncryptionSupported == true && (
                         <div>
                             <div style={{height:10}}/>
-                            <div onClick={() => this.enter_invited_call()}>
-                                {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                            <div className="row">
+                                <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                                   <div onClick={() => this.enter_invited_call()}>
+                                        {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                                    </div>
+                                </div>
+                                <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                                    <div onClick={()=> this.props.cancel_entering_call()}>
+                                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055jp']/* ''cancel ✖' */, 'action':''},)}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -9476,8 +9504,17 @@ return data['data']
                     {call_invite_obj['password'] == '' && (
                         <div>
                             <div style={{height:10}}/>
-                            <div onClick={() => this.enter_invited_call()}>
-                                {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                            <div className="row">
+                                <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                                   <div onClick={() => this.enter_invited_call()}>
+                                        {this.render_detail_item('5', {'text':button_message, 'action':''},)}
+                                    </div>
+                                </div>
+                                <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
+                                    <div onClick={()=> this.props.cancel_entering_call()}>
+                                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055jp']/* ''cancel ✖' */, 'action':''},)}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}

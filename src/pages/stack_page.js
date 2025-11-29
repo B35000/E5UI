@@ -2236,9 +2236,18 @@ class StackPage extends Component {
                 {this.render_arweave_network_fee_if_selected()}
 
                 <div style={{height:10}}/>
-                <div style={{'opacity':button_opacity}} onClick={()=> this.open_confirmation_bottomsheet(false)}>
-                    {this.render_detail_item('5', {'text':button_text, 'action':'', 'opacity':button_opacity})}
-                </div>
+                {is_running == true || (this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true) ? (
+                    <div>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{'opacity':button_opacity}} onClick={()=> this.open_confirmation_bottomsheet(false)}>
+                            {this.render_detail_item('5', {'text':button_text, 'action':'', 'opacity':button_opacity})}
+                        </div>
+                    </div>
+                )}
+                
                 <div style={{height:7}}/>
                 {this.show_e5_locked_message_if_locked()}
             </div>
@@ -12496,7 +12505,7 @@ class StackPage extends Component {
             return(
                 <div>
                     <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>
-                        {this.render_detail_item('3', {'title':ether_name+' '+this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':/* ether_name+' '+ */this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -12505,7 +12514,7 @@ class StackPage extends Component {
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':ether_name+' '+this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':/* ether_name+' '+ */this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -14795,9 +14804,17 @@ class StackPage extends Component {
 
                 <input ref={this.vtt_input} style={{display: 'none'}} id="upload" type="file" accept =".vtt" onChange ={this.when_vtt_picked.bind(this)} multiple/>
 
-                <div style={{'opacity':opacity}} onClick={() => this.when_upload_file_button_tapped()}>
-                    {this.render_detail_item('5', {'text':text, 'action':'', 'opacity':opacity})}
-                </div>
+                {this.props.app_state.file_upload_status == 'preparing' || this.props.app_state.file_upload_status == 'uploading' ? (
+                    <div>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{'opacity':opacity}} onClick={() => this.when_upload_file_button_tapped()}>
+                            {this.render_detail_item('5', {'text':text, 'action':'', 'opacity':opacity})}
+                        </div>
+                    </div>
+                )}
             </div>
         )
     }

@@ -93,6 +93,18 @@ for (i=0; i<l; i++) {  // link all TreeNode objects
 return nodeById[0].sortRecursive();
 }
 
+async function decrypt_chunk(chunk, key){
+    const iv = chunk.slice(0, 12);
+    const encryptedData = chunk.slice(12);
+    const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        encryptedData
+    );
+
+    return new Uint8Array(decrypted)
+}
+
 class FullVideoPage extends Component {
     
     state = {
@@ -293,11 +305,19 @@ class FullVideoPage extends Component {
 
 
     render_queue_then_comments_tags_option(){
-        if(this.state.object != null && this.state.object['ipfs'] != null){
-            return;
+        if(this.state.object != null && this.state.object['ipfs'] == null){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
         }
         if(this.get_video_object() != null && this.get_video_object()['ipfs'] != null && this.get_video_object()['ipfs'].selected == null){
-            return;
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
         }
         return(
             <div>
@@ -1209,32 +1229,8 @@ class FullVideoPage extends Component {
     }
 
     decrypt_chunk = async (chunk, key) => {
-        return await this.props.decrypt_chunk(chunk, key)
-        // return new Promise((resolve, reject) => {
-        //     const worker = this.video_worker;
-        //     const message_id = makeid(9)
-
-        //     worker.postMessage({
-        //         type: 'decrypt_chunk',
-        //         payload: {
-        //             chunk, 
-        //             key,
-        //             message_id
-        //         }
-        //     });
-            
-        //     worker.onmessage = (e) => {
-        //         if (e.data.type === 'SUCCESS'&& e.data.message_id == message_id) {
-        //             resolve(e.data.data);
-        //         } else if (e.data.type === 'ERROR'&& e.data.message_id == message_id) {
-        //             reject(e.data.error);
-        //         }
-        //     };
-            
-        //     worker.onerror = (error) => {
-        //         reject(error);
-        //     };
-        // });
+        // return await this.props.decrypt_chunk(chunk, key)
+        return await decrypt_chunk(chunk, key)
     }
 
     // Updated reset function

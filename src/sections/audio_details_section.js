@@ -2612,9 +2612,9 @@ return data['data']
             if((largest) < (yVal)){
                 largest = (yVal)
             }
-            var formatted_size = this.format_data_size(original_y_val)
-            var indicator = formatted_size['size']+' '+formatted_size['unit']
             if(yVal != null && !isNaN(yVal)){
+                var formatted_size = this.format_data_size(original_y_val)
+                var indicator = formatted_size['size']+' '+formatted_size['unit']
                 if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
                     dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
                 }else{
@@ -2718,10 +2718,10 @@ return data['data']
         var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
         var song_title = explicit_text + this.truncate(item['song_title'], 17) + ( this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
         
-        var song_length = this.get_song_duration(item['basic_data'])
-        var song_details = this.truncate(item['song_composer'], 19)+ ' '+song_length
+        // var song_length = this.get_song_duration(item['basic_data'])
+        var song_details = this.truncate(item['song_composer'], 19)/* + ' '+song_length */
         if(this.is_song_playing(item)){
-            song_details = '▶ '+this.truncate(item['song_composer'], 19)+ ' '+song_length
+            song_details = '▶ '+this.truncate(item['song_composer'], 19)/* + ' '+song_length */
         }
         
         if(this.state.selected_chart_song[object['e5_id']] == selection || (this.state.selected_chart_song[object['e5_id']] == null && index == 0)){

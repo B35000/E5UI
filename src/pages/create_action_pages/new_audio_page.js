@@ -101,7 +101,7 @@ class NewAudioPage extends Component {
         
         songs:[], edit_song_item_pos:-1,
 
-        entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:'',
+        entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:''+(this.props.app_state.user_account_id[this.props.app_state.selected_e5]),
 
         album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
         markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), song_credits:'', entered_zip_objects:[],
@@ -453,7 +453,7 @@ class NewAudioPage extends Component {
 
         if(size == 's'){
             return(
-                <div>
+                <div style={{'padding': '10px 10px 10px 10px'}}>
                     {this.render_title_tags_part()}
                     {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
@@ -464,28 +464,30 @@ class NewAudioPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_title_tags_part()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_title_tags_part2()}
+                <div style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="row">
+                        <div className="col-6" style={{}}>
+                            {this.render_title_tags_part()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_title_tags_part2()}
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
             return(
-                <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_title_tags_part()}
+                <div style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="row">
+                        <div className="col-5" style={{}}>
+                            {this.render_title_tags_part()}
+                        </div>
+                        <div className="col-5" style={{}}>
+                            {this.render_title_tags_part2()}
+                        </div>
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_title_tags_part2()}
-                    </div>
-                </div>
-                
+                </div> 
             )
         }
     }
@@ -515,7 +517,7 @@ class NewAudioPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
+            <div ref={this.screen} style={{'padding':'0px 0px 0px 10px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['301']})}
                 
                 <div style={{height:10}}/>
@@ -944,7 +946,7 @@ class NewAudioPage extends Component {
 
         if(size == 's'){
             return(
-                <div>
+                <div style={{'padding': '10px 10px 10px 10px'}}>
                     {this.render_metadata_section()}
                     {this.render_detail_item('0')}
                     {this.render_metadata_section2()}
@@ -953,35 +955,39 @@ class NewAudioPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section2()}
+                <div style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="row">
+                        <div className="col-6" >
+                            {this.render_metadata_section()}
+                        </div>
+                        <div className="col-6">
+                            {this.render_metadata_section2()}
+                        </div>
                     </div>
                 </div>
+                
                 
             )
         }
         else if(size == 'l'){
             return(
-                <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section()}
+                <div style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="row">
+                        <div className="col-5">
+                            {this.render_metadata_section()}
+                        </div>
+                        <div className="col-5">
+                            {this.render_metadata_section2()}
+                        </div>
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_metadata_section2()}
-                    </div>
-                </div>
-                
+                </div> 
             )
         }
     }
 
     render_metadata_section(){
         return(
-            <div>
+            <div style={{'padding':'0px 0px 0px 10px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'details':this.props.app_state.loc['a311be']/* 'Set the recipient account ID for all the purchases of this object.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <TextInput height={30} placeholder={this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */} when_text_input_field_changed={this.when_purchase_recipient_input_field_changed.bind(this)} text={this.state.purchase_recipient} theme={this.props.theme}/>
@@ -2531,7 +2537,7 @@ return data['data']
 
     get_suggested_tokens(target_type){
         var items = [
-            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e55].end_image, 'img_size':30}},
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
             {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
@@ -3198,7 +3204,7 @@ return data['data']
                 clone.push(song)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object()})
+            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(), subtitle_type:''})
             
         }
     }
@@ -3332,7 +3338,7 @@ return data['data']
 
     focus_tab(item_pos){
         if(this.is_tab_active(item_pos)){
-            this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object()})
+            this.setState({song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, songs_free_plays_count:0, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(), subtitle_type:''})
         }else{
             this.props.notify(this.props.app_state.loc['a311x']/* 'Editing that Track.' */, 2000)
             this.set_focused_song_data(item_pos)

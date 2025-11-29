@@ -1115,6 +1115,7 @@ class VideoDetailsSection extends Component {
     }
 
     get_video_files_view_counts(object){
+        // console.log('video_details_section', 'get_video_files_view_counts', this.props.app_state.file_streaming_data)
         var view_count = 0
         var videos = object['ipfs'].videos
         videos.forEach(video => {
@@ -2084,9 +2085,9 @@ class VideoDetailsSection extends Component {
             if((largest) < (yVal)){
                 largest = (yVal)
             }
-            var formatted_size = this.format_data_size(original_y_val)
-            var indicator = formatted_size['size']+' '+formatted_size['unit']
             if(yVal != null && !isNaN(yVal)){
+                var formatted_size = this.format_data_size(original_y_val)
+                var indicator = formatted_size['size']+' '+formatted_size['unit']
                 if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
                     dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
                 }else{
