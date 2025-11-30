@@ -462,6 +462,7 @@ class ViewGroups extends Component {
             var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
             const scale = object_data != null && object_data['scale'] != null ? object_data['scale'] : 1
             const chart_type = object_data != null && object_data['type'] != null ? object_data['type'] : 'linear'/* 'logarithmic' */
+            const y_axis_units = object_data != null && object_data['y_axis_units'] != null ? object_data['y_axis_units'] : ''
             
             const dataPoints = object_data != null ? 
             this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
@@ -590,14 +591,14 @@ class ViewGroups extends Component {
                                 },
                                 callback: function(value, index, ticks) {
                                     if(value.toString().includes('.')){
-                                        return (value * scale).toString()
+                                        return (value * scale).toString()+y_axis_units
                                     }
                                     const final_value = bigInt(value).multiply(scale)
                                     if(bigInt(final_value).lesser(bigInt(1_000_000))){
-                                        return number_with_commas(final_value.toString())
+                                        return number_with_commas(final_value.toString())+y_axis_units
                                     }else{
                                         var power = final_value.toString().length - 3
-                                        return number_with_commas(final_value.toString().substring(0, 3)) +'e'+power
+                                        return number_with_commas(final_value.toString().substring(0, 3)) +'e'+power+y_axis_units
                                     }
                                 }
                             },

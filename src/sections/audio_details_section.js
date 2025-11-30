@@ -137,8 +137,22 @@ class AudioDetailSection extends Component {
             var object = this.is_object_playlist() ? this.get_item_in_playlists(this.get_audio_items(), this.props.selected_audio_item) : this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
 
             if(object == null || object['ipfs'] == null) return;
+            this.perform_fetch_work(object)
+        }
+    }
+
+    perform_fetch_work(object){
+        const active = this.state.navigate_view_post_list_detail_tags_object['i'].active
+        const selected_item = this.get_selected_item(this.state.navigate_view_post_list_detail_tags_object, active)
+
+        if(selected_item == this.props.app_state.loc['a2527a']/* 'comments' */){
             this.props.get_objects_messages(object['id'],  object['e5'])
-            this.props.get_post_award_data(object['id'], object['e5'])
+        }
+        else if(active == this.props.app_state.loc['2514']/* awards */){
+           this.props.get_post_award_data(object['id'], object['e5'])
+        }
+        else if(active == this.props.app_state.loc['2028']/* 'metadata' */){
+            this.props.start_object_file_viewcount_fetch(object, 'audio')
         }
     }
 
@@ -227,6 +241,10 @@ class AudioDetailSection extends Component {
 
     when_navigate_view_post_list_detail_tags_object_updated(tag_obj){
         this.setState({navigate_view_post_list_detail_tags_object: tag_obj})
+        var me = this;
+        setTimeout(function() {
+            me.check_for_new_responses_and_messages()
+        }, (1 * 300));
     }
 
     when_get_navigate_playlist_details_tags_object_tags_updated(tag_obj){
@@ -1378,6 +1396,31 @@ return data['data']
                 </div>
             )
         }
+        else if(this.contains_nitro_file(object) == true){
+            return(
+                <div>
+                    {this.render_small_skeleton_object()}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    contains_nitro_file(object){
+        var contains = false
+        var songs = object['ipfs'].songs
+        songs.forEach(song => {
+            const track = song['track']
+            var ecid_obj = this.get_cid_split(track)
+            if(this.props.app_state.uploaded_data[ecid_obj['filetype']] != null && this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+                var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+                if(data['nitro'] != null){
+                    contains = true
+                }
+            }
+        });
+
+        return contains
     }
 
     calculate_total_streaming(object){
@@ -1663,7 +1706,7 @@ return data['data']
 
         var song_title = explicit_text + item['song_title'] + ( this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
         var song_details = item['song_composer']
-        var song_length = this.get_song_duration(item['basic_data'])
+        var song_length = this.get_song_duration(item)
         var text_color = this.props.theme['secondary_text_color']
         if(this.is_song_playing(item)){
             song_length = '▶ '+song_length
@@ -1789,8 +1832,9 @@ return data['data']
 
     get_song_duration(item){
         var duration = '0:00'
-        if(item['metadata'] != null && item['metadata']['format'] != null){
-            var format = item['metadata']['format']
+        // console.log('get_song_duration', 'basic_data', item['basic_data'])
+        if(item['basic_data'] != null && item['basic_data']['format'] != null){
+            var format = item['basic_data']['format']
             if(format['duration'] != null){
                var min = Math.floor(parseInt(format['duration']) / 60)
                var sec = parseInt(format['duration']) % 60
@@ -2541,7 +2585,7 @@ return data['data']
                     {this.render_my_available_songs(available_streaming_files_data.available_files_mapping, object)}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'start_time': data_points_data.starting_time, 'interval':110, 'hide_label': true})}
+                    {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'start_time': data_points_data.starting_time, 'interval':110, 'y_axis_units':'Mbs'})}
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.time_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_time_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -2600,12 +2644,12 @@ return data['data']
                     sum += slice[j]
                 }
                 var result = sum / (slice.length)
-                original_y_val = result*(1024*1024);
+                original_y_val = Math.round(result*(1024*1024));
                 // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
                 yVal = result
             }
             else{
-                original_y_val = data[factor * xVal]*(1024*1024)
+                original_y_val = Math.round(data[factor * xVal]*(1024*1024))
                 // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
                 yVal = data[factor * xVal]
             }
@@ -2624,12 +2668,12 @@ return data['data']
             } 
         }
 
-        for(var e=0; e<dps.length; e++){
-            dps[e].y = (dps[e].y) * (100) / (largest)
-            if(e>97 && dps[e].y == 0){
-                dps[e].y = dps[e-1].y
-            }
-        }
+        // for(var e=0; e<dps.length; e++){
+        //     dps[e].y = (dps[e].y) * (100) / (largest)
+        //     if(e>97 && dps[e].y == 0){
+        //         dps[e].y = dps[e-1].y
+        //     }
+        // }
 
         const chart_starting_time = timestamp_datapoints.length == 0 ? 1000*60*60*24 : timestamp_datapoints[0]
 
@@ -2718,7 +2762,7 @@ return data['data']
         var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
         var song_title = explicit_text + this.truncate(item['song_title'], 17) + ( this.is_song_available_for_adding_to_playlist(item) ? ' ✅':'')
         
-        // var song_length = this.get_song_duration(item['basic_data'])
+        // var song_length = this.get_song_duration(item)
         var song_details = this.truncate(item['song_composer'], 19)/* + ' '+song_length */
         if(this.is_song_playing(item)){
             song_details = '▶ '+this.truncate(item['song_composer'], 19)/* + ' '+song_length */

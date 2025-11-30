@@ -3204,7 +3204,7 @@ return data['data']
                 clone.push(song)
                 this.props.notify(this.props.app_state.loc['a311t']/* 'Added the track item.' */, 2600)
             }
-            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(), subtitle_type:''})
+            this.setState({songs: clone, song_title:'', song_composer:'', price_data2:[], edit_song_item_pos: -1, audio_file:null, song_lyrics:null, song_credits:'', get_explicit_selector_tags_object:this.get_explicit_selector_tags_object(), subtitle_type:'', songs_free_plays_count:0, track_lyric_file_name:null})
             
         }
     }

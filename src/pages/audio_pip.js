@@ -422,8 +422,8 @@ class AudioPip extends Component {
                             }
                             catch(e){
                                 console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
-                                mediaSource.endOfStream('decode');
-                                return;
+                                // mediaSource.endOfStream('decode');
+                                // return;
                             }
                         }
                         else{

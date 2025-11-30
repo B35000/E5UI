@@ -3913,7 +3913,7 @@ class App extends Component {
       should_update_playlists_in_E5: this.state.should_update_playlists_in_E5,
       song_plays: this.state.song_plays,
       should_update_song_plays: this.state.should_update_song_plays,
-      albums_to_stash: this.get_albums_to_stash(),
+      // albums_to_stash: this.get_albums_to_stash(),
       custom_gateway: this.state.custom_gateway,
       pdf_bookmarks: this.state.pdf_bookmarks,
 
@@ -6134,7 +6134,7 @@ class App extends Component {
 
           show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
 
-          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)}
+          get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)} start_object_file_viewcount_fetch={this.start_object_file_viewcount_fetch.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -19660,8 +19660,8 @@ class App extends Component {
   get_queue(item, object, audio_items, is_page_my_collection_page, should_shuffle){
     var songs = []
     var song_ids = []
-    item['album_art'] = object['ipfs'].album_art
-    item['object'] = object
+    item['album_art'] = object['ipfs'].album_art.slice()
+    item['object'] = structuredClone(object)
     songs.push(item)
     song_ids.push(item['song_id'])
 
@@ -19781,12 +19781,12 @@ class App extends Component {
       });
     }
 
-    for(var i=0; i<songs_to_load.length; i++){
-      const song = songs_to_load[i]
-      const lyrics = lyrics_to_load[i]
+    for(var j=0; j<songs_to_load.length; j++){
+      const song = songs_to_load[j]
+      const lyrics = lyrics_to_load[j]
 
       var has_played = false;
-      if(i == 0 && this.has_file_loaded(song) == true){
+      if(j == 0 && this.has_file_loaded(song) == true){
         //if its the song thats to be played
         await this.wait(750)
         this.audio_pip_page.current?.start_playing()
@@ -19799,7 +19799,7 @@ class App extends Component {
       }else{
         await this.fetch_uploaded_data_from_ipfs([song], false, keys)
       }
-      if(i == 0 && !has_played){
+      if(j == 0 && !has_played){
         //if its the song thats to be played
         await this.wait(750)
         this.audio_pip_page.current?.start_playing()
@@ -19807,10 +19807,10 @@ class App extends Component {
       }
     }
 
-    var load_data = []
-    for(var i=0; i<songs_to_load2.length; i++){
-      var song = songs_to_load2[i]
-      var lyrics = lyrics_to_load2[i]
+    const load_data = []
+    for(var k=0; k<songs_to_load2.length; k++){
+      const song = songs_to_load2[k]
+      const lyrics = lyrics_to_load2[k]
       
       load_data.push(song)
       if(lyrics != ''){
@@ -20356,8 +20356,8 @@ class App extends Component {
   get_video_queue(item, object){
     var videos = []
     var video_ids = []
-    item['album_art'] = object['ipfs'].album_art
-    item['object'] = object
+    item['album_art'] = object['ipfs'].album_art.slice()
+    item['object'] = structuredClone(object)
     videos.push(item)
     video_ids.push(item['video_id'])
 
@@ -22378,6 +22378,13 @@ class App extends Component {
   }
 
   update_nitro_privacy_signature = async ( get_sync_block_from_nitro = true ) => {
+    if(get_sync_block_from_nitro == false){
+      if(this.has_already_updated_nitro_privacy_signature != null && this.has_already_updated_nitro_privacy_signature > Date.now() - (1000*20)){
+        return;
+      }else{
+        this.has_already_updated_nitro_privacy_signature = Date.now()
+      }
+    }
     const seed = process.env.REACT_APP_PRIVACY_SIGNATURE_KEY
     const web3_url = this.get_web3_url_from_e5('E25')
     var account = this.get_account_from_seed(seed, web3_url)
@@ -37668,11 +37675,11 @@ class App extends Component {
             var e5_id2 = split_cid_array2[0]
             var nitro_cid2 = split_cid_array2[1]
 
-            var nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
+            var my_nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
             var content_type = this.get_file_extension(cid_data['name'])
-            if(nitro_url != null){
-              cid_data['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`
-              cid_data['data_deconstructed'] = [nitro_url, content_type, nitro_cid2, content_type]
+            if(my_nitro_url != null){
+              cid_data['data'] = `${my_nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`
+              cid_data['data_deconstructed'] = [my_nitro_url, content_type, nitro_cid2, content_type]
               cid_data['hash'] = nitro_cid2
               if(cid_data['nitro'] == null){
                 cid_data['nitro'] = e5_id2
@@ -37759,7 +37766,7 @@ class App extends Component {
       }
       this.fetch_index[search_index]['successful']++
       if(files_to_fetch_view_data.length > 0){
-        this.fetch_multiple_file_viewcounts_from_one_nitro_storage(nitro_url, files_to_fetch_view_data, files_to_fetch_view_data_e5s)
+        await this.fetch_multiple_file_viewcounts_from_one_nitro_storage(nitro_url, files_to_fetch_view_data, files_to_fetch_view_data_e5s)
       }
     }
     catch(e){
@@ -37908,6 +37915,7 @@ class App extends Component {
   }
 
   construct_encrypted_link_from_ecid_object = async (data, id) => {
+    await this.update_nitro_privacy_signature(false)
     var raw_link = data[id]
     // console.log('construct_encrypted_link_from_ecid_object', 'data deconstructed', data['data_deconstructed'])
     const nitro_url = data['data_deconstructed'][0]
@@ -37951,6 +37959,44 @@ class App extends Component {
     const sec = parseFloat(minsec[1]);
 
     return min + sec;
+  }
+
+  async start_object_file_viewcount_fetch(object, type){
+    const get_track_hashes = (track) => {
+      const ecid_obj = this.get_cid_split(track)
+        if(this.state.uploaded_data[ecid_obj['filetype']] != null && this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+          var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+          return { hash: data['hash'], nitro: data['nitro'] }
+        }
+    }
+
+    const hashes_to_get = {}
+    const e5s_to_get = {}
+    const tracks = type == 'audio' ? object['ipfs'].songs : object['ipfs'].videos
+    tracks.forEach(track => {
+      const file = type == 'audio' ? track['track'] : track['video']
+      const track_data = get_track_hashes(file)
+      if(track_data != null && track_data.nitro != null){
+        const nitro_url = this.get_nitro_link_from_e5_id(track_data.nitro)
+        if(hashes_to_get[nitro_url] == null){
+          hashes_to_get[nitro_url] = []
+        }
+        if(e5s_to_get[nitro_url] == null){
+          e5s_to_get[nitro_url] = []
+        }
+        hashes_to_get[nitro_url].push(track_data.hash)
+        e5s_to_get[nitro_url].push(track_data.nitro)
+      }
+    });
+
+    const url_items = Object.keys(hashes_to_get)
+    for(var e=0; e<url_items.length; e++){
+      const nitro_url = url_items[e]
+      const files_to_fetch_view_data = hashes_to_get[nitro_url]
+      const files_to_fetch_view_data_e5s =  e5s_to_get[nitro_url]
+      
+      await this.fetch_multiple_file_viewcounts_from_one_nitro_storage(nitro_url, files_to_fetch_view_data, files_to_fetch_view_data_e5s);
+    }
   }
 
 
