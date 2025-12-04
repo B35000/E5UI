@@ -1339,7 +1339,7 @@ class App extends Component {
 
     call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
     
-    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{},
+    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}
   };
 
   get_thread_pool_size(){
@@ -6135,6 +6135,8 @@ class App extends Component {
           show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} get_similar_posts={this.get_similar_posts.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} get_direct_purchase_orders={this.get_direct_purchase_orders.bind(this)} get_storefront_traffic_data={this.get_storefront_traffic_data.bind(this)} get_direct_purchase_files={this.get_direct_purchase_files.bind(this)}
 
           get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)} start_object_file_viewcount_fetch={this.start_object_file_viewcount_fetch.bind(this)}
+
+          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -14665,7 +14667,7 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                           <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}
-                          when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
+                          when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
                           />
                         </div>
                     </Sheet.Content>
@@ -14678,15 +14680,13 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
             
             />
           </div>
       </SwipeableBottomSheet>
     )
   }
-
-  
 
   open_view_job_request_bottomsheet(){
     this.when_bottomsheet_opened_or_closed('open_view_job_request_bottomsheet')
@@ -16334,7 +16334,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
         />
       </div>
     )
@@ -16408,8 +16408,8 @@ class App extends Component {
       'pick_from_my_locations':250,
       'transfer_alias_ui':350,
       'confirm_emit_new_object':220,
-      'view_job_application_details':350,
-      'view_bag_application_details':350,
+      'view_job_application_details':550,
+      'view_bag_application_details':550,
       'confirm_respond_to_signature_request':300,
       'request_cookies_permission':220,
       'start_voice_call':650,
@@ -17522,6 +17522,23 @@ class App extends Component {
     this.prompt_top_notification(this.getLocale()['3055jq']/* Disconnecting Microphone */)
     this.open_dialog_bottomsheet()
     this.leave_call2()
+  }
+
+  add_finish_job_payment_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -40166,6 +40183,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37}],/* application_responses */
       ]
       const all_events = (await this.load_multiple_events_from_nitro(event_params2)).all_events
+      console.log('apppage', 'application_responses', 'all_events', all_events, event_params2)
       created_job_respnse_data = all_events[0]
       application_responses = all_events[1]
     }else{
@@ -40174,6 +40192,7 @@ class App extends Component {
       application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37})
     }
 
+    console.log('apppage', 'application_responses', 'received application responses', application_responses)
     const e5_id = id+e5
     const target_type = type == 'bag' ? 'bag_application|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address : 'job_application|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address
     this.get_objects_from_socket_and_set_in_state([target_type], [], application_responses)
@@ -41775,6 +41794,128 @@ class App extends Component {
     catch(e){
       console.log('apppage', 'get_nitro_telemetry_data', e)
     }
+  }
+
+  get_tag_price_data_for_object = async (object) => {
+    const e5 = object['e5']
+    const id = object['id']
+    const e5_id = object['e5_id']
+
+    const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+    const keywords = []
+    const keywords_mapping = {}
+    for(var te=0; te<payment_tags.length; te++){
+      const word = payment_tags[te]
+      const hash_word = await this.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+      if(this.state.tag_price_data[hash_word] == null){
+        keywords.push(hash_word)
+        keywords_mapping[hash_word] = word
+      }
+    }
+
+    if(keywords.length == 0){
+      return;
+    }
+
+    const filter_type = object['object_type']
+    const filter_languages = [object['ipfs'].device_language_setting]
+    const filter_states = [this.hash_data_with_randomizer(object['ipfs'].device_country)]
+    const filter_e5s = [e5]
+    const end_time = Date.now()
+    const start_time = Date.now() - (52*7*24*60*60*1000)
+
+    const tag_price_data = await this.get_tag_price_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_e5s, false);
+
+    console.log('apppage', 'tag_price_data', tag_price_data)
+
+    const processed_data = this.process_tag_price_data(tag_price_data)
+    const tag_price_data_clone = structuredClone(this.state.tag_price_data)
+
+    console.log('apppage', 'tag_price_data', 'processed_data', processed_data)
+
+    Object.keys(processed_data).forEach(hash_word => {
+      tag_price_data_clone[keywords_mapping[hash_word]] = processed_data[hash_word]
+    });
+
+    this.setState({tag_price_data: tag_price_data_clone})
+  }
+
+  get_tag_price_data = async (keywords, end_time=(Date.now()), start_time=(Date.now() - (52*7*24*60*60*1000)), filter_type, filter_languages, filter_states, filter_e5s, updated_signature=false) => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+    
+    const arg_obj = {
+      keywords: keywords,
+      filter_type: filter_type,
+      filter_languages: filter_languages,
+      filter_e5s: filter_e5s,
+      filter_states: filter_states,
+      end_time,/* the newest entry to include */
+      start_time,/* the oldest entry to include */
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tag_prices')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log('datas', 'tag_prices',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('tag_prices', keywords, obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.get_tag_price_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_e5s, true)
+      }
+      var target_data = obj['price_data']
+      return target_data
+    }
+    catch(e){
+      console.log('apppage', 'tag_prices', 'something went wrong with tag_prices', e)
+    }
+  }
+
+  process_tag_price_data(data){
+    const return_data = {}
+    Object.keys(data).forEach(time => {
+      Object.keys(data[time]).forEach(item_type => {
+        Object.keys(data[time][item_type]).forEach(item_lan => {
+          Object.keys(data[time][item_type][item_lan]).forEach(tag => {
+            Object.keys(data[time][item_type][item_lan][tag]).forEach(item_state => {
+              Object.keys(data[time][item_type][item_lan][tag][item_state]).forEach(e5 => {
+                Object.keys(data[time][item_type][item_lan][tag][item_state][e5]).forEach(identifier => {
+                  if(return_data[tag] == null){
+                    return_data[tag] = []
+                  }
+                  const tag_data = data[time][item_type][item_lan][tag][item_state][e5][identifier]
+                  const entry = {time, item_type, item_lan, item_state, e5, identifier, tag_data}
+                  return_data[tag].push(entry)
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+    return return_data
   }
 
 
@@ -46728,11 +46869,12 @@ class App extends Component {
             ipfs_message['contract'] = ipfs_message['picked_contract_id']
             ipfs_message['proposals'] = []
             ipfs_message['id'] = event.returnValues.p5
-            ipfs_message['job_id'] = id;
+            ipfs_message['job_id'] = message.job_object_id;
             ipfs_message['e5'] = e5
             ipfs_message['time'] = event.returnValues.p6
             
             var filtered_events = []
+            console.log('apppage', 'socketstuff', 'application_responses', application_responses)
             for(var i=0; i<application_responses.length; i++){
               if(application_responses[i].returnValues.p5 == event.returnValues.p5){
                 filtered_events.push(application_responses[i])
@@ -46835,7 +46977,7 @@ class App extends Component {
             ipfs_message['contract'] = ipfs_message['picked_contract_id']
             ipfs_message['proposals'] = []
             ipfs_message['id'] = event.returnValues.p5
-            ipfs_message['job_id'] = id;
+            ipfs_message['job_id'] = message.job_object_id;
             ipfs_message['e5'] = e5
             ipfs_message['time'] = event.returnValues.p6
             
@@ -48485,16 +48627,6 @@ class App extends Component {
       const e5 = addresses_account_ids[0]['e5'];
       const alias = this.get_sender_title_text(account, e5)
       this.prompt_top_notification(this.getLocale()['3055jd']/* $ entered the call. */.replace('$', alias), 2300)
-    }
-  }
-
-  get_sender_title_text(account, e5){
-    if(account == this.state.user_account_id[e5]){
-      return this.state.loc['1694']/* 'You' */
-    }else{
-      const bucket = this.get_all_sorted_objects_mappings(this.state.alias_bucket)
-      var alias = (bucket[account] == null ? null : bucket[account])
-      return alias
     }
   }
 

@@ -3092,10 +3092,10 @@ class StackPage extends Component {
         var delete_pos_array = []
         var pushed_txs = []
         var should_optimize_run = true;
-        var now = Date.now()
+        const now = Date.now()
         
         
-        var ipfs_index = await this.get_ipfs_index_object(txs, now, calculate_gas)
+        const ipfs_index = await this.get_ipfs_index_object(txs, now, calculate_gas)
         // var ipfs_index = await this.props.get_ipfs_index_object_max(now, calculate_gas)
         
         
@@ -3127,7 +3127,7 @@ class StackPage extends Component {
             []/* int_data */
         ]
         const creator_group_updates_strings = [ [] ]
-
+        var tag_payment_indexer_data = false
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
                 var new_tx_index = -1
@@ -3946,6 +3946,8 @@ class StackPage extends Component {
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
+                    
+                    tag_payment_indexer_data = true
                 }
                 else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
                     var clear_obj = await this.format_clear_purchase_object(txs[i], calculate_gas, ipfs_index)
@@ -4026,8 +4028,8 @@ class StackPage extends Component {
                     // ints.push(index_data.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
-                    var now = parseInt(now.toString() + i)
-                    var message_obj = await this.format_job_request_object(txs[i], calculate_gas, now, ipfs_index)
+                    const my_now = parseInt(now.toString() + i)
+                    var message_obj = await this.format_job_request_object(txs[i], calculate_gas, my_now, ipfs_index)
 
                     if(!newly_participated_objects.includes(txs[i].contractor_item['e5_id'])){
                         newly_participated_objects.push(txs[i].contractor_item['e5_id'])
@@ -4641,6 +4643,19 @@ class StackPage extends Component {
                     strs.push(buy_album_obj.string_obj)
                     adds.push([])
                     ints.push(buy_album_obj.obj)
+                }
+                else if(txs[i].type == this.props.app_state.loc['1632o']/* 'finish-payment' */){
+                    var format_object = await this.format_finish_job_payment_object(txs[i], calculate_gas, ints, ipfs_index)
+                    if(format_object.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(format_object.depth)
+                    }
+                    strs.push(format_object.str)
+                    adds.push([])
+                    ints.push(format_object.int)
+
+                    tag_payment_indexer_data = true
                 }
                 
                 delete_pos_array.push(i)
@@ -5321,6 +5336,23 @@ class StackPage extends Component {
             // ints.push(transaction_obj)
         }
 
+        if(tag_payment_indexer_data == true){
+            const transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [31/* 31(tag_indexer_transaction_record) */], [23],/* target objects */
+                [35], /* contexts */
+                [0] /* int_data */
+            ]
+
+            const string_obj = [[]]
+
+            account_data_object[1].push(31)
+            account_data_object[2].push(23)
+            account_data_object[3].push(35/* context */)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(ipfs_index)
+        }
+
 
 
         if(account_data_object[1].length > 0){
@@ -5403,6 +5435,7 @@ class StackPage extends Component {
         const newly_participated_channels = []
         const newly_participated_polls = []
         const newly_participated_objects = [].concat(this.props.app_state.socket_participated_objects)
+        const payment_tag_index_objects = []
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 console.log('stackitem', 'pushing type', txs[i].type)
@@ -5573,6 +5606,22 @@ class StackPage extends Component {
 
                     ipfs_index_object[t.id] = encrypted_direct_purchase_object
                     ipfs_index_array.push({'id':t.id, 'data':encrypted_direct_purchase_object})
+
+                    
+                    
+                    const object = txs[i].storefront_item
+                    const amounts = txs[i].selected_variant['price_data']
+                    const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+
+                    const all_final_elements = []
+                    for(var te=0; te<payment_tags.length; te++){
+                        const word = payment_tags[te]
+                        all_final_elements.push(await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    }
+
+                    payment_tag_index_objects.push({
+                        'tags':all_final_elements, 'amounts':amounts, 'time':Date.now(), 'lan':this.props.app_state.device_language, 'state': this.props.hash_data_with_randomizer(object['ipfs'].device_country || this.props.app_state.device_country), 'type':object['object_type'], 'e5_id':object['e5_id'], 'e5':object['e5'], 'sender':this.props.app_state.user_account_id[object['e5']], 'recipient_account':object['e5']+':'+object['author'], 'identifier': txs[i].identifier, 'obligations':{}
+                    })
                 }
                 else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
                     var t = txs[i]
@@ -5990,12 +6039,37 @@ class StackPage extends Component {
                         ipfs_index_array.push({'id':t_id, 'data':purchase_object})
                     }
                 }
+                else if(txs[i].type == this.props.app_state.loc['1632o']/* 'finish-payment' */){
+                    const object = txs[i].object
+                    const amounts = txs[i].price_data
+                    const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+
+                    const all_final_elements = []
+                    for(var te=0; te<payment_tags.length; te++){
+                        const word = payment_tags[te]
+                        all_final_elements.push(await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    }
+
+                    const tags_payment_data = {
+                        'tags':all_final_elements,
+                        'amounts':amounts,
+                        'time':Date.now()
+                    }
+
+                    payment_tag_index_objects.push({
+                        'tags':all_final_elements, 'amounts':amounts, 'time':Date.now(), 'lan':this.props.app_state.device_language, 'state': this.props.hash_data_with_randomizer(object['ipfs'].device_country || this.props.app_state.device_country), 'type':object['object_type'], 'e5_id':object['e5_id'], 'e5':object['e5'], 'sender':this.props.app_state.user_account_id[object['e5']], 'recipient_account':object['e5']+':'+object['author'], 'identifier': txs[i].identifier, 'obligations':{}
+                    })
+
+                    ipfs_index_object[txs[i].id] = tags_payment_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':tags_payment_data})
+                }
             }
         }
 
 
-
-
+        if(payment_tag_index_objects.length > 0){
+            obj['tags']['payment_tag_index_data'] = payment_tag_index_objects
+        }
         
         if(this.props.app_state.should_update_contacts_onchain){
             var contacts_clone = structuredClone(this.props.app_state.contacts)
@@ -10095,6 +10169,60 @@ class StackPage extends Component {
 
 
         return {awards_obj: awards_obj, awards_string_obj: awards_string_obj,   obj: obj, string_obj: string_obj}
+    }
+
+    format_finish_job_payment_object = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var author = t.recipient
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
+            ['1'],/* awward contexts */
+            
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        for(var i=0; i<t.price_data.length; i++){
+            var exchange = t.price_data[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+            var amount = t.price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var f=0; f<transfer_actions.length; f++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[f]['amount'])
+                obj[7].push(transfer_actions[f]['depth'])
+            }
+        }
+        
+        var string_data = await this.get_object_ipfs_index({}, calculate_gas, ipfs_index, t.id);
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
     }
 
     

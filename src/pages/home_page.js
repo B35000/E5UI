@@ -4546,6 +4546,7 @@ class home_page extends Component {
         }
 
         await this.props.fetch_uploaded_files_for_object(object)
+        await this.props.get_tag_price_data_for_object(object)
         // await this.props.get_job_objects_responses(id, e5, 'job')
         // await this.props.get_objects_messages(id, e5)
         await this.props.get_object_censored_keywords_and_accounts(object)
@@ -4722,6 +4723,7 @@ class home_page extends Component {
 
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_storefront_traffic_data(id, e5)
+        await this.props.get_tag_price_data_for_object(object)
         // await this.props.get_direct_purchase_events(id, e5)
         // await this.props.get_storefront_auction_bids(object)
         // await this.props.get_direct_purchase_orders(id, e5)
@@ -4748,6 +4750,7 @@ class home_page extends Component {
             this.update_cookies()
         }
         this.props.load_bag_storefront_items(object)
+        this.props.get_tag_price_data_for_object(object)
         // this.props.get_job_objects_responses(id, e5, 'bag')
         // this.props.get_objects_messages(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
@@ -4783,6 +4786,7 @@ class home_page extends Component {
 
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_contractor_availability_status(object)
+        await this.props.get_tag_price_data_for_object(object)
         // await this.props.get_contractor_applications(id, e5)
         //get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)}
         await this.props.get_object_censored_keywords_and_accounts(object)

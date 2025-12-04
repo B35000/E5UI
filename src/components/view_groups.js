@@ -464,11 +464,10 @@ class ViewGroups extends Component {
             const chart_type = object_data != null && object_data['type'] != null ? object_data['type'] : 'linear'/* 'logarithmic' */
             const y_axis_units = object_data != null && object_data['y_axis_units'] != null ? object_data['y_axis_units'] : ''
             
-            const dataPoints = object_data != null ? 
+            const dataPoints = object_data != null && object_data['final_data_points'] != null ? object_data['final_data_points'] : (object_data != null ? 
             this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
-            this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time));
+            this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time)))
 
-            var interval = (object_data != null) ? object_data['interval'] : 0
             var label_font_size = 10
             if(object_data != null && object_data['hide_label'] != null){
                 if(object_data['hide_label']){

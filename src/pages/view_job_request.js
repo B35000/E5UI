@@ -321,7 +321,6 @@ class ViewJobRequestPage extends Component {
         }
     }
 
-
     render_medium_screen_selectors(){
         var selected_item = this.get_selected_item(this.state.accept_job_request_title_tags_object, this.state.accept_job_request_title_tags_object['i'].active)
 
@@ -411,6 +410,9 @@ class ViewJobRequestPage extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1683']/* 'Set Pay' */, 'details':this.props.app_state.loc['1684']/* 'The requested pay for the job' */, 'size':'l'})}
                     {this.render_set_prices_list_part(item)}
+
+                    <div style={{height:10}}/>
+                    {this.render_finish_job_and_make_payment(item, this.state.contractor_object)}
                 </div>
             )
         }else{
@@ -448,6 +450,53 @@ class ViewJobRequestPage extends Component {
             )
         }
         
+    }
+
+    render_finish_job_and_make_payment(item, object){
+        if(this.props.app_state.user_account_id[item['e5']] != item['applicant_id'] && item['is_response_accepted'] == true){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1632l']/* 'Finalize Transaction.' */, 'details':this.props.app_state.loc['1632m']/* 'Finish up by making the requested payments quoted and recording them on E5.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=> this.finish_transaction(item, object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1632n']/* 'Finalize And Finish' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    finish_transaction(item, object){
+        if(!this.check_if_sender_has_enough_balance_for_awards(item['price_data'], object['e5'])){
+            this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+        }
+        else{
+            const obj = {
+                id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
+                entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
+                e5: object['e5'], application: item, object: object, price_data: item['price_data'],
+                recipient: object['author'], identifier: item['purchase_identifier']
+            }
+            this.props.add_finish_job_payment_transaction_to_stack(obj)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+            this.props.open_dialog_bottomsheet()
+        }
+    }
+
+    check_if_sender_has_enough_balance_for_payouts(price_data, e5){
+        var has_enough = true
+        for(var i=0; i<price_data.length; i++){
+            var bounty_item_exchange = price_data[i]['id']
+            var bounty_item_amount = price_data[i]['amount']
+            var my_balance = this.props.calculate_actual_balance(e5, bounty_item_exchange)
+            my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(bounty_item_exchange, e5))
+            if(bigInt(my_balance).lesser(bigInt(bounty_item_amount))){
+                has_enough = false
+            }
+        }
+        return has_enough
     }
 
     when_get_chain_or_indexer_job_object_updated(tag_obj){

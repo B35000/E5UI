@@ -297,6 +297,8 @@ class ContractorDetailsSection extends Component {
                     {this.fee_per_hour_or_per_job(object)}
                     <div style={{height:10}}/>
                     {this.render_price_amounts(object)}
+                    {this.render_object_tag_price_info(object)}
+                    
                     {this.render_detail_item('0')}
 
                     {this.render_edit_object_button(object)}
@@ -1413,6 +1415,295 @@ class ContractorDetailsSection extends Component {
 
 
 
+    render_object_tag_price_info(object){
+        const tag_price_data = this.get_available_tag_data(object)
+        const available_tags = Object.keys(tag_price_data)
+        if(available_tags.length == 0) return;
+
+        const selected_tag_pos = this.get_selected_tag(object)
+        const selected_tag = available_tags[selected_tag_pos]
+
+        const price_data = tag_price_data[selected_tag]
+        const sorted_price_data = this.sortByAttributeDescending(price_data, 'time').reverse()
+        const { used_token_ids, used_token_price_data, used_tokens_max } = this.get_tags_used_tokens_and_price_data(sorted_price_data, object['e5'])
+
+        const selected_token_pos = this.get_selected_token(object)
+        const selected_token = used_token_ids[selected_token_pos]
+
+        const new_dps = this.get_transaction_tag_data_points(used_token_price_data, selected_token, used_tokens_max)
+
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2507e']/* 'Price Distribution.' */, 'details':this.props.app_state.loc['2507f']/* `A chart containing hits at certain price points for your selected tag.` */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_used_tokens(used_token_ids, object, selected_token)}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('6', {'final_data_points':new_dps.new_dps, 'y_axis_units':' '+this.props.app_state.loc['2507i']/* hits */})}
+                <div style={{height: 10}}/>
+
+                {this.render_used_tags(available_tags, object, selected_tag)}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cg']/* 'Y-Axis: ' */+this.props.app_state.loc['2507h']/* Transaction Hits */, 'details':this.props.app_state.loc['2507g']/* 'X-Axis: Price' */, 'size':'s'})}
+            </div>
+        )
+    }
+
+    get_selected_tag(object){
+        if(this.state.selected_price_tag[object['e5_id']] == null){
+            return 0
+        }else{
+            return this.state.selected_price_tag[object['e5_id']]
+        }
+    }
+
+    get_selected_token(object){
+        if(this.state.selected_token_tag[object['e5_id']] == null){
+            return 0
+        }else{
+            return this.state.selected_token_tag[object['e5_id']]
+        }
+    }
+
+    get_available_tag_data(object){
+        const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+
+        const return_object = {}
+        payment_tags.forEach(tag => {
+            if(this.props.app_state.tag_price_data[tag] != null && this.props.app_state.tag_price_data[tag].length > 0){
+                return_object[tag] = this.props.app_state.tag_price_data[tag]
+            }
+        });
+
+        return return_object
+    }
+
+    get_tags_used_tokens_and_price_data(sorted_price_data, filter_e5){
+        const used_token_ids = []
+        const used_token_price_data = {}
+        const used_tokens_max = {}
+        const sorted_price_data_to_use = sorted_price_data.filter(function (data_point) {
+            return (data_point['e5'] == filter_e5)
+        });
+        sorted_price_data_to_use.forEach(data_point => {
+            const tag_data = data_point['tag_data']
+            const amounts = tag_data['amounts']
+            amounts.forEach(item => {
+                const exchange_id = item['id']
+                const amount = item['amount']
+                if(!used_token_ids.includes(exchange_id)){
+                    used_token_ids.push(exchange_id) 
+                    used_tokens_max[exchange_id] = 0   
+                }
+                if(used_token_price_data[exchange_id] == null){
+                    used_token_price_data[exchange_id] = []
+                }
+                used_token_price_data[exchange_id].push(amount)
+                if(bigInt(used_tokens_max[exchange_id]).lesser(amount)){
+                    used_tokens_max[exchange_id] = bigInt(amount)
+                }
+            });
+        });
+
+        return { used_token_ids, used_token_price_data, used_tokens_max }
+    }
+
+    get_transaction_tag_data_points(used_token_price_data, selected_token, used_tokens_max){
+        const data = []
+        const price_datapoints = used_token_price_data[selected_token]
+        const used_token_max = used_tokens_max[selected_token]
+        const price_datapoint_object = {}
+        price_datapoints.forEach(data_item => {
+            const step = bigInt(used_token_max).divide(1000).plus(1)
+            const final_item = bigInt(data_item).divide(step).multiply(step)
+            if(price_datapoint_object[final_item] == null){
+                price_datapoint_object[final_item] = 0
+            }
+            price_datapoint_object[final_item]++
+        });
+        const price_data = Object.keys(price_datapoint_object)
+        const price_datapoint_object_as_list = []
+        price_data.forEach(price_target_set => {
+            price_datapoint_object_as_list.push({'price': price_target_set, 'count': price_datapoint_object[price_target_set]})
+        });
+
+        const sorted_price_datapoint_object_as_list = this.sortByAttributeDescending(price_datapoint_object_as_list, 'price').reverse()
+
+        var diff = 0
+        while(diff < sorted_price_datapoint_object_as_list[0]['count']){
+            diff += (data[data.length-1] || 0.001)*1.001
+            data.push(diff)
+        }
+
+        for(var i=0; i<sorted_price_datapoint_object_as_list.length; i++){
+            const focused_item = sorted_price_datapoint_object_as_list[i]
+            data.push(focused_item)
+
+            if(i==sorted_price_datapoint_object_as_list.length-1){
+                var diff = sorted_price_datapoint_object_as_list[i]['count']
+                while(diff > 0.0001){
+                    diff = data[data.length-1]*0.999
+                    data.push(diff)
+                }
+            }
+            else{
+                var diff = sorted_price_datapoint_object_as_list[i+1]['count'] - sorted_price_datapoint_object_as_list[i]['count']
+                while(diff > 0.0001){
+                    diff = data[data.length-1]*0.999
+                    data.push(diff)
+                }
+            }
+        }
+
+        const starting_price = bigInt(sorted_price_datapoint_object_as_list[0]['price']).minus(bigInt(sorted_price_datapoint_object_as_list[0]['price']).divide(10000))
+
+        const ending_price = bigInt(sorted_price_datapoint_object_as_list[sorted_price_datapoint_object_as_list.length - 1]['price']).divide(10000).plus(bigInt(sorted_price_datapoint_object_as_list[sorted_price_datapoint_object_as_list.length - 1]['price']))
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var largest = 0;
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200 && xVal < 100 && (factor * (xVal+1)) < data.length){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = sum / (slice.length)
+                original_y_val = result;
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if((largest) < (yVal)){
+                largest = (yVal)
+            }
+            var indicator = Math.round(yVal) +' '+ this.props.app_state.loc['2507i']/* 'hits' */
+            if(yVal != null && !isNaN(yVal)){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+
+        const new_dps = []
+        const diff_price = ending_price.minus(starting_price)
+        const time_chunk_period = diff_price.divide(dps.length - 1);
+        const token_symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]
+        dps.forEach((dp, index) => {
+            const period_of_x = starting_price.plus(bigInt(dp.x).times(time_chunk_period))
+            const final_x = this.format_account_balance_figure_minimized(period_of_x) /* + ' '+token_symbol */
+            const new_label = dp['indexLabel'] == null ? null : dp['indexLabel']
+            
+            if(this.props.app_state.graph_type == 2){
+                if(index % 3 == 0 || new_label != null){
+                    new_dps.push({x: final_x, y: dp.y, label: new_label})
+                }
+            }else{
+                new_dps.push({x: final_x, y: dp.y, label: new_label})
+            }
+        });
+
+        return { new_dps }
+    }
+
+    render_used_tags(items, object, selected_tag){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_used_tag_item(item, object, index, selected_tag)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_used_tag_item(item, object, index, selected_tag){
+        if(item == selected_tag){
+            return(
+                <div onClick={() => this.when_used_tag_clicked(item, object, index)}>
+                    {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.when_used_tag_clicked(item, object, index)}>
+                {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    when_used_tag_clicked(item, object, index){
+        const clone = structuredClone(this.state.selected_price_tag)
+        clone[object['e5_id']] = index
+        this.setState({selected_price_tag: clone})
+    }
+
+    render_used_tokens(items, object, selected_token){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_used_token_item(item, object, index, selected_token)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_used_token_item(item, object, index, selected_token){
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item]
+        const details = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]
+        const image = this.props.app_state.token_thumbnail_directory[object['e5']][item]
+        if(item == selected_token){
+            return(
+                <div onClick={() => this.when_used_token_clicked(item, object, index)}>
+                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.when_used_token_clicked(item, object, index)}>
+                {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+            </div>
+        )
+    }
+
+    when_used_token_clicked(item, object, index){
+        const clone = structuredClone(this.state.selected_token_tag)
+        clone[object['e5_id']] = index
+        this.setState({selected_token_tag: clone})
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1516,6 +1807,18 @@ class ContractorDetailsSection extends Component {
         
     }
 
+    format_account_balance_figure_minimized(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 6
+            return number_with_commas(amount.toString().substring(0, 6)) +'e'+power
+        }
+        
+    }
 
 
 

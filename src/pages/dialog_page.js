@@ -6992,9 +6992,11 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_confirm_new_wallet_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 
@@ -7005,9 +7007,11 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_confirm_new_wallet_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 
@@ -7021,7 +7025,7 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055dz']/* 'Confirm Switch Wallets' */, 'details':this.props.app_state.loc['3055ea']/* 'Are you sure you wish to set this wallet? The transactions you stacked with your previous wallet will be deleted.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div onClick={()=> this.props.set_new_wallet(this.state.data)}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055dx']/* 'Copy Hex' */, 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2507j']/* 'Continue' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -8686,7 +8690,7 @@ return data['data']
     render_view_job_application_data(){
         const item = this.state.data['item']
         const object = this.state.data['object']
-
+        const items = item['price_data']
         var is_application_accepted = item['is_response_accepted'];
         if(is_application_accepted){
             return(
@@ -8700,8 +8704,10 @@ return data['data']
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2499']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2500']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name5(item['applicant_id'], object), 'size':'l'})}
                     <div style={{height:10}}/>
 
+                    {this.render_payment_amounts(items, object)}
+                    
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2501']/* 'Accepted' */, 'details':this.props.app_state.loc['2502']/* 'The job owner picked this application' */, 'size':'l'})}
-
                     {object['author'] == this.props.app_state.user_account_id[object['e5']] && (
                         <div>
                             <div style={{height: 10}}/>
@@ -8710,6 +8716,8 @@ return data['data']
                             </div>
                         </div>
                     )}
+
+                    {this.render_finish_job_and_make_payment(item, object)}
                 </div>
             )
         }else{
@@ -8722,6 +8730,10 @@ return data['data']
                     <div style={{height:10}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2504']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2505']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name5(item['applicant_id'], object), 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_payment_amounts(items, object)}
+                    <div style={{height:10}}/>
 
                     {object['author'] == this.props.app_state.user_account_id[object['e5']] && (
                         <div>
@@ -8736,11 +8748,71 @@ return data['data']
         }
     }
 
+    render_payment_amounts(items, object){
+        return(
+            <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                {items.map((pay_item, index) => (
+                    <div style={{'padding': '3px 0px 3px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'number':pay_item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'subtitle':this.format_power_figure(pay_item['amount']), 'barwidth':this.calculate_bar_width(pay_item['amount']), 'number':this.format_account_balance_figure(pay_item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']], })}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     view_contract(item, object){
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
             this.props.open_dialog_bottomsheet()
             this.props.view_application_contract(item)
         }
+    }
+
+    render_finish_job_and_make_payment(item, object){
+        if(this.props.app_state.user_account_id[item['e5']] != item['applicant_id'] && item['is_response_accepted'] == true){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1632l']/* 'Finalize Transaction.' */, 'details':this.props.app_state.loc['1632m']/* 'Finish up by making the requested payments quoted and recording them on E5.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=> this.finish_transaction(item, object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1632n']/* 'Finalize And Finish' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    finish_transaction(item, object){
+        if(!this.check_if_sender_has_enough_balance_for_payouts(item['price_data'], object['e5'])){
+            this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+        }
+        else{
+            const obj = {
+                id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
+                entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
+                e5: object['e5'], application: item, object: object, price_data: item['price_data'], recipient: item['applicant_id'], identifier: object['e5_id']+item['applicant_id']+item['time']
+            }
+            this.props.add_finish_job_payment_transaction_to_stack(obj)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+            this.props.open_dialog_bottomsheet()
+        }
+    }
+
+    check_if_sender_has_enough_balance_for_payouts(price_data, e5){
+        var has_enough = true
+        for(var i=0; i<price_data.length; i++){
+            var bounty_item_exchange = price_data[i]['id']
+            var bounty_item_amount = price_data[i]['amount']
+            var my_balance = this.props.calculate_actual_balance(e5, bounty_item_exchange)
+            my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(bounty_item_exchange, e5))
+            if(bigInt(my_balance).lesser(bigInt(bounty_item_amount))){
+                has_enough = false
+            }
+        }
+        return has_enough
     }
 
 
@@ -8801,19 +8873,22 @@ return data['data']
     render_view_bag_application_data(){
         const item = this.state.data['item']
         const object = this.state.data['object']
-
+        const items = item['price_data']
         var is_application_accepted = item['is_response_accepted'];
         if(is_application_accepted == true){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
-                    <div style={{height:3}}/>
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                    <div style={{height:3}}/>
+                    <div style={{height:10}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2055']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2056']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name5(item['applicant_id'], object), 'size':'l'})}
-                    <div style={{height:3}}/>
+                    <div style={{height:10}}/>
+
+                    {this.render_payment_amounts(items, object)}
+                    {this.render_detail_item('0')}
                 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2057']/* 'Accepted' */, 'details':this.props.app_state.loc['2058']/* 'The bag owner picked this fulfilment application' */, 'size':'l'})}
 
@@ -8826,6 +8901,7 @@ return data['data']
                         </div>
                     )}
                     
+                    {this.render_finish_job_and_make_payment(item, object)}
                 </div>
             )
         }else{
@@ -8838,6 +8914,9 @@ return data['data']
                     <div style={{height:3}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2060']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2061']/* 'Sender ID: ' */+item['applicant_id']+', '+ this.get_senders_name5(item['applicant_id'], object), 'size':'l'})}
+
+                    {this.render_payment_amounts(items, object)}
+                    <div style={{height:10}}/>
                     
                     {object['author'] == this.props.app_state.user_account_id[object['e5']] && (
                         <div>

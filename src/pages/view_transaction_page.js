@@ -249,7 +249,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3077']/* 'fulfil-bids' */ &&
             item.type != this.props.app_state.loc['3055fg']/* 'vote_all' */ &&
             item.type != this.props.app_state.loc['2642bm']/* 'order-payment' */ &&
-            item.type != this.props.app_state.loc['3055gf']/* 'transfer-alias' */
+            item.type != this.props.app_state.loc['3055gf']/* 'transfer-alias' */ &&
+            item.type != this.props.app_state.loc['1632o']/* 'finish-payment' */
         ){
             return(
                 <div>
@@ -947,7 +948,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
-            
+            else if(tx.type == this.props.app_state.loc['1632o']/* 'finish-payment' */){
+                return(
+                    <div>
+                        {this.render_finish_job_bag_payments()}
+                    </div>
+                )
+            }
         }
     }
 
@@ -8343,6 +8350,65 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+    render_finish_job_bag_payments(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const price_data = transaction_item.price_data
+        const object = transaction_item.object
+        const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['1632r']/* 'Payment Indexable Tags' */, 'details': this.props.app_state.loc['1632s']/* 'These tags will be tied to this transaction and its consequent obgligations after the payment.' */, 'size': 'l' })}
+                <div style={{height: 10}}/>
+                
+                {this.render_payment_index_tags(payment_tags)}
+                <div style={{height: 10}}/>
+                
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['1632p']/* 'Finalize Payments.' */, 'details': this.props.app_state.loc['1632q']/* 'The amounts youll be paying for the indexed job.' */, 'size': 'l' })}
+                <div style={{height: 10}}/>
+
+                {this.render_payment_amounts(price_data, object)}
+            </div>
+        )
+    }
+
+    render_payment_amounts(items, object){
+        return(
+            <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                {items.map((pay_item, index) => (
+                    <div style={{'padding': '3px 0px 3px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'number':pay_item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'subtitle':this.format_power_figure(pay_item['amount']), 'barwidth':this.calculate_bar_width(pay_item['amount']), 'number':this.format_account_balance_figure(pay_item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']], })}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_payment_index_tags(items){
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
 
 

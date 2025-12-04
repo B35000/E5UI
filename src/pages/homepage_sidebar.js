@@ -72,7 +72,7 @@ function iOS() {
   || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 }
 
-class template extends Component {
+class HomepageSideBar extends Component {
     
     state = {
         selected: 0,
@@ -1541,7 +1541,7 @@ class template extends Component {
         var events = e5_chart_data['job']
         var amount = events.length
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_job_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if(events.length >= 23 || nitro_graphs_data['total'] != null && nitro_graphs_data['event_count'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -2571,4 +2571,4 @@ class template extends Component {
 
 
 
-export default template;
+export default HomepageSideBar;
