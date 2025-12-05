@@ -71,12 +71,13 @@ class ViewGroups extends Component {
     state = {
         keyboard_showing: false,
         animate: false,
-    
+        screen_width:0,
     };
 
     constructor(props) {
         super(props);
         this.chart = React.createRef()
+        this.screen = React.createRef();
     }
 
     componentDidUpdate(prevProps){
@@ -92,9 +93,13 @@ class ViewGroups extends Component {
         }
     }
 
+    componentDidMount(){
+        this.setState({screen_width: this.screen.current.offsetWidth})
+    }
+
     render(){
         return(
-            <div>
+            <div ref={this.screen}>
                 {this.render_detail_item(this.props.item_id, this.props.object_data)}
             </div>
         )
@@ -456,6 +461,7 @@ class ViewGroups extends Component {
         }
         else if(item_id=='6'){/* chart */
             var default_chart_color = this.props.theme['chart_color'];
+            var default_chart_color2 = this.props.theme['chart_color2'].trim();
             var chart_background_color = this.props.theme['chart_background_color'];
             
             var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
@@ -478,6 +484,7 @@ class ViewGroups extends Component {
 
             const defaultConfig = {
                 chartColor: default_chart_color,
+                chartColor2: default_chart_color2,
                 chartBackgroundColor: chart_background_color,
                 gridColor: this.props.theme['line_color'],
                 labelFontColor: this.props.theme['primary_text_color'],
@@ -498,13 +505,12 @@ class ViewGroups extends Component {
                 // Create gradient for the fill area
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const gradient = ctx.createLinearGradient(0, 0, 0, 250); // 250 is approximate chart height
+                const gradient = ctx.createLinearGradient(0, 0, this.state.screen_width, 250); // 250 is approximate chart height
                 
                 // Add color stops: top (1.0 opacity) to bottom (0.6 opacity)
-                gradient.addColorStop(0, `${config.chartColor}FF`); // 100% opacity (FF in hex)
-                gradient.addColorStop(0.75, `${config.chartColor}FF`);
-                gradient.addColorStop(0.8, `${config.chartColor}33`);
-                gradient.addColorStop(1, `${config.chartColor}33`);
+                gradient.addColorStop(0, `${config.chartColor}`); // 100% opacity (FF in hex)
+                gradient.addColorStop(0.4, `${config.chartColor}`);
+                gradient.addColorStop(1, `${config.chartColor2}`);
                 /* 
                     FF = 100% opacity
                     CC = 80% opacity
@@ -520,7 +526,7 @@ class ViewGroups extends Component {
                         {
                             data: config.data.map(item => item.y),
                             borderColor: config.chartColor,
-                            backgroundColor: config.chartColor, //gradient, config.chartColor
+                            backgroundColor: gradient, //gradient, config.chartColor
                             fill: true,
                             tension: config.line_tension, // Smooth curve
                             borderWidth: 0,
@@ -590,7 +596,7 @@ class ViewGroups extends Component {
                                 },
                                 callback: function(value, index, ticks) {
                                     if(value.toString().includes('.')){
-                                        return (value * scale).toString()+y_axis_units
+                                        return ((value * scale).toFixed(3)).toString()+y_axis_units
                                     }
                                     const final_value = bigInt(value).multiply(scale)
                                     if(bigInt(final_value).lesser(bigInt(1_000_000))){
@@ -652,82 +658,6 @@ class ViewGroups extends Component {
                     </div>
                 </div>
             )
-
-            // const options = {
-            //   theme: "light1", // "light1", "dark1", "dark2"
-            //   animationEnabled: true,
-            //   zoomEnabled: false,
-            //   title: {
-            //       text: ".",
-            //       fontColor: "rgb(210, 210, 210,.0)",
-            //       fontSize: 13
-            //   },
-            //   backgroundColor: background_color,//#F5F5F5
-            //   axisX:{
-            //     interval: 30,//size of space between labels
-            //     labelFontSize: label_font_size,
-            //     tickLength: 0,
-            //     gridThickness: 0,
-            //     gridColor: this.props.theme['line_color'],//"#767676"
-            //     lineColor: "rgb(210, 210, 210,.0)",
-            //     labelFontColor: this.props.theme['primary_text_color'], //#292929 #DEDEDE
-            //     // labelFormatter: function(e){
-            //     //     return  "x: " + e.value;
-            //     // }
-            //   },
-            //   axisY:{
-            //     labelFontSize: label_font_size,
-            //     interval: interval,//size of space between labels
-            //     tickLength: 0,
-            //     gridThickness: 0.3,
-            //     gridColor: this.props.theme['line_color'],//"#767676"
-            //     lineColor: "rgb(210, 210, 210,.0)",
-            //     labelFontColor: this.props.theme['primary_text_color'],//#292929 #DEDEDE
-            //     //   stripLines: [{
-            //     //         startValue:45,
-			// 	//         endValue:55, // The Y value for the line
-            //     //         label: "Gucci",
-            //     //         color: "red",
-            //     //         labelFontColor: "red",
-            //     //         labelPlacement: "inside",
-            //     //         thickness: 0.9,
-            //     //         labelBackgroundColor:'transparent',
-            //     //         opacity:0.2,
-            //     //         showOnTop: true,
-            //     //     }],
-            //   },
-            //   toolTip:{
-            //       enabled: false   //enable here
-            //   },
-            //   height:230,
-            //   data: [{
-            //             type: this.props.graph_type,//area, splineArea
-            //             color:default_chart_color,
-            //             lineThickness: 0.5,
-            //             fillOpacity: 1,
-            //             markerColor: "transparent",
-            //             indexLabelFontColor: this.props.theme['primary_text_color'],
-            //             indexLabelFontFamily:"Sans-serif",
-            //             indexLabelFontWeight:"bold",
-            //             dataPoints: dataPoints,
-            //   }]
-            // }
-
-            // return(
-            //     <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:260, 'border-radius': border_radius}}>
-            //         <div style={{'padding':'0px 0px 10px 0px', height:250}}>
-            //             <div style={{'margin': '10px 0px 0px 0px'}}>
-            //               <div style={{ height: 200, width: '100%' ,'position': 'relative'}}>
-            //                   <div style={{ height: 30, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
-
-            //                   <CanvasJSChart style={{ width: '100%' , 'z-index':'2' ,'position': 'fixed'}} options = {options}/>
-                              
-            //                   <div style={{ height: 19, width: '100%', 'background-color': background_color, 'opacity':1.0,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
-            //               </div>
-            //           </div>
-            //         </div>
-            //     </div>
-            // );
         }
         else if(item_id=='7'){/* banner-icon */
             var header = object_data != null ? this.mask_profane_words(object_data['header'], false):'E35'
@@ -1059,9 +989,9 @@ class ViewGroups extends Component {
         var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
         var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
 
-        const dataPoints = object_data != null ? 
-        this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
-        this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time));
+        const dataPoints = object_data != null && object_data['final_data_points'] != null ? object_data['final_data_points'] : (object_data != null ? 
+            this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
+            this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time)))
 
         const defaultConfig = {
             gridColor: this.props.theme['line_color'],
@@ -1301,7 +1231,8 @@ class ViewGroups extends Component {
         dps.forEach((dp, index) => {
             const period_of_x = start_time + (dp.x * time_chunk_period)
             const final_x = this.formatTimestamp(period_of_x, diffMs)
-            const new_label = dp['indexLabel'] == null ? null : dp['indexLabel'].replace('transactions', this.props.transactions_text) || 'transactions'
+            const transaction_text = dp['indexLabel'] == null ? 'transactions' : dp['indexLabel'].replace('transactions', (this.props.transactions_text == null ? 'transactions': this.props.transactions_text))
+            const new_label = dp['indexLabel'] == null ? null : transaction_text
             
             if(this.props.graph_type == 2){
                 if(index % 3 == 0 || new_label != null){

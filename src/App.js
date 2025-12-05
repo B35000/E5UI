@@ -1339,7 +1339,7 @@ class App extends Component {
 
     call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
     
-    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}
+    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}
   };
 
   get_thread_pool_size(){
@@ -5268,7 +5268,7 @@ class App extends Component {
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
         
-        'chart_color':'#FCFCFC','chart_background_color':'#D5D5D5',
+        'chart_color':'#FCFCFC','chart_background_color':'#D5D5D5', 'chart_color2':'rgb(170, 170, 170)',
   
         'number_picker_label_color':'#D5D5D5','number_picker_label_shadow':'#c9c9c9',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
@@ -5310,7 +5310,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#292929','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
 
-        'chart_color':'#333333','chart_background_color':'#232323',
+        'chart_color':'#333333','chart_background_color':'#232323', 'chart_color2':'rgb(100, 100, 100)',
 
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
@@ -5354,7 +5354,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#1a1a1a','tag_background_color':'#303030', 'indexed_tag_background':'#242424', 'tag_shadow':'#303030', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #1a1a1a,rgb(52, 51, 51))',
 
-        'chart_color':'#1a1a1a','chart_background_color':'#0a0a0a',
+        'chart_color':'#1a1a1a','chart_background_color':'#0a0a0a', 'chart_color2':'rgb(96, 95, 95)',
 
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
@@ -5398,7 +5398,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#13190c','tag_background_color':'#203f00', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2', 'view_group_card_item_background2':'linear-gradient(135deg, #13190c,rgb(32, 43, 20))',
 
-        'chart_color':'#01c601','chart_background_color':'#141e0a',
+        'chart_color':'#01c601','chart_background_color':'#141e0a', 'chart_color2':'rgb(77, 255, 77)',
 
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#013f01',
         'number_picker_power_color':'rgb(185, 247, 198,.9)','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#02f902', 'number_picker_picked_label_text_color':'white',
@@ -5439,7 +5439,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #d4e2cc,rgb(196, 209, 189))',
         
-        'chart_color':'#01c601','chart_background_color':'#d4e2cc',
+        'chart_color':'#01c601','chart_background_color':'#d4e2cc', 'chart_color2':'rgb(0, 136, 0)',
   
         'number_picker_label_color':'#d4e2cc','number_picker_label_shadow':'#c5e8d6',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#c5e8d6','number_picker_label_text_color':'#01c601', 'number_picker_picked_label_text_color':'#444444',
@@ -5481,7 +5481,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#190c0c','tag_background_color':'#3f0600', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a', 'view_group_card_item_background2':'linear-gradient(135deg, #190c0c,rgb(38, 18, 18))',
 
-        'chart_color':'#f70404','chart_background_color':'#190c0c',
+        'chart_color':'#f70404','chart_background_color':'#190c0c', 'chart_color2':'rgb(252, 122, 122)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#3f0101',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#3f0101','number_picker_label_text_color':'#f90202', 'number_picker_picked_label_text_color':'white',
@@ -5522,7 +5522,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2cdcc,rgb(211, 192, 191))',
         
-        'chart_color':'#c60b01','chart_background_color':'#e2cdcc',
+        'chart_color':'#c60b01','chart_background_color':'#e2cdcc', 'chart_color2':'rgb(114, 7, 2)',
   
         'number_picker_label_color':'#e2cdcc','number_picker_label_shadow':'#f9d1d1',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9d1d1','number_picker_label_text_color':'#c60b01', 'number_picker_picked_label_text_color':'#444444',
@@ -5564,7 +5564,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#0d0c19','tag_background_color':'#13293d', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7', 'view_group_card_item_background2':'linear-gradient(135deg, #0d0c19,rgb(27, 24, 51))',
 
-        'chart_color':'#0079ff','chart_background_color':'#0d0c19',
+        'chart_color':'#0079ff','chart_background_color':'#0d0c19', 'chart_color2':'rgb(99, 171, 253)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#183651',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#183651','number_picker_label_text_color':'#0079ff', 'number_picker_picked_label_text_color':'white',
@@ -5605,7 +5605,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #ccdce2,rgb(187, 203, 209))',
         
-        'chart_color':'#0181c6','chart_background_color':'#ccdce2',
+        'chart_color':'#0181c6','chart_background_color':'#ccdce2', 'chart_color2':'rgb(2, 77, 118)',
   
         'number_picker_label_color':'#ccdce2','number_picker_label_shadow':'#d1ebf9',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#d1ebf9','number_picker_label_text_color':'#0181c6', 'number_picker_picked_label_text_color':'#444444',
@@ -5647,7 +5647,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#19190c','tag_background_color':'#7c7a26', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a', 'view_group_card_item_background2':'linear-gradient(135deg, #19190c,rgb(43, 43, 21))',
 
-        'chart_color':'#f3f704','chart_background_color':'#19190c',
+        'chart_color':'#f3f704','chart_background_color':'#19190c', 'chart_color2':'rgb(255, 255, 255)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#505118',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#505118','number_picker_label_text_color':'#efec4c', 'number_picker_picked_label_text_color':'white',
@@ -5688,7 +5688,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2e2cc,rgb(208, 208, 187))',
         
-        'chart_color':'#9ba003','chart_background_color':'#e2e2cc',
+        'chart_color':'#9ba003','chart_background_color':'#e2e2cc', 'chart_color2':'rgb(90, 93, 0)',
   
         'number_picker_label_color':'#e2e2cc','number_picker_label_shadow':'#DCDCDC',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#DCDCDC','number_picker_label_text_color':'#9ba003', 'number_picker_picked_label_text_color':'#444444',
@@ -5730,7 +5730,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#160c19','tag_background_color':'#6a267c', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7', 'view_group_card_item_background2':'linear-gradient(135deg, #160c19,rgb(39, 21, 44))',
 
-        'chart_color':'#e704f7','chart_background_color':'#160c19',
+        'chart_color':'#e704f7','chart_background_color':'#160c19', 'chart_color2':'rgb(244, 133, 251)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#491851',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#491851','number_picker_label_text_color':'#dc4cef', 'number_picker_picked_label_text_color':'white',
@@ -5771,7 +5771,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #decce2,rgb(206, 188, 209))',
         
-        'chart_color':'#af01c6','chart_background_color':'#decce2',
+        'chart_color':'#af01c6','chart_background_color':'#decce2', 'chart_color2':'rgb(114, 1, 129)',
   
         'number_picker_label_color':'#decce2','number_picker_label_shadow':'#f2d1f9',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f2d1f9','number_picker_label_text_color':'#af01c6', 'number_picker_picked_label_text_color':'#444444',
@@ -5813,7 +5813,7 @@ class App extends Component {
 
         'view_group_card_item_background':'#19130c','tag_background_color':'#7c5326', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a', 'view_group_card_item_background2':'linear-gradient(135deg, #19130c,rgb(43, 32, 20))',
 
-        'chart_color':'#f78204','chart_background_color':'#19130c',
+        'chart_color':'#f78204','chart_background_color':'#19130c', 'chart_color2':'rgb(242, 185, 125)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#513a18',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#513a18','number_picker_label_text_color':'#ef964c', 'number_picker_picked_label_text_color':'white',
@@ -5854,7 +5854,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2d7cc,rgb(200, 190, 180))',
         
-        'chart_color':'#c67b01','chart_background_color':'#e2d7cc',
+        'chart_color':'#c67b01','chart_background_color':'#e2d7cc',  'chart_color2':'rgb(124, 77, 0)',
   
         'number_picker_label_color':'#e2d7cc','number_picker_label_shadow':'#f9ebd1',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#f9ebd1','number_picker_label_text_color':'#c67b01', 'number_picker_picked_label_text_color':'#444444',
@@ -41804,12 +41804,14 @@ class App extends Component {
     const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
     const keywords = []
     const keywords_mapping = {}
+    const hash_keyord_mapping = {}
     for(var te=0; te<payment_tags.length; te++){
       const word = payment_tags[te]
       const hash_word = await this.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY)
       if(this.state.tag_price_data[hash_word] == null){
         keywords.push(hash_word)
         keywords_mapping[hash_word] = word
+        hash_keyord_mapping[word] = hash_word
       }
     }
 
@@ -41830,6 +41832,7 @@ class App extends Component {
 
     const processed_data = this.process_tag_price_data(tag_price_data)
     const tag_price_data_clone = structuredClone(this.state.tag_price_data)
+    const hash_keyord_mapping_clone = structuredClone(this.state.hash_keyord_mapping_data)
 
     console.log('apppage', 'tag_price_data', 'processed_data', processed_data)
 
@@ -41837,7 +41840,11 @@ class App extends Component {
       tag_price_data_clone[keywords_mapping[hash_word]] = processed_data[hash_word]
     });
 
-    this.setState({tag_price_data: tag_price_data_clone})
+    Object.keys(hash_keyord_mapping).forEach(word => {
+      hash_keyord_mapping_clone[word] = hash_keyord_mapping[word]
+    });
+
+    this.setState({tag_price_data: tag_price_data_clone, hash_keyord_mapping_data: hash_keyord_mapping_clone})
   }
 
   get_tag_price_data = async (keywords, end_time=(Date.now()), start_time=(Date.now() - (52*7*24*60*60*1000)), filter_type, filter_languages, filter_states, filter_e5s, updated_signature=false) => {
