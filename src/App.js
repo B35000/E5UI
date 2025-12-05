@@ -8135,6 +8135,7 @@ class App extends Component {
       process_encrypted_file={this.process_encrypted_file.bind(this)} encrypt_data_string={this.encrypt_data_string.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} uint8ToBase64={this.uint8ToBase64.bind(this)} base64ToUint8={this.base64ToUint8.bind(this)} remove_moderator_note={this.remove_moderator_note.bind(this)} encrypt_string_using_crypto_js={this.encrypt_string_using_crypto_js.bind(this)} decrypt_string_using_crypto_js={this.decrypt_string_using_crypto_js.bind(this)} do_i_have_a_minimum_number_of_txs_in_account={this.do_i_have_a_minimum_number_of_txs_in_account.bind(this)} get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} when_post_load_size_changed={this.when_post_load_size_changed.bind(this)}
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
+      add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
       />
     )
   }
@@ -9457,14 +9458,14 @@ class App extends Component {
     var stack_clone = this.state.stack_items.slice()
     var existing_alias_transaction = false
     for(var i=0; i<stack_clone.length; i++){
-      if(stack_clone[i].type == 'alias'){
+      if(stack_clone[i].type == this.getLocale()['1593lb']/* 'alias' */){
         this.prompt_top_notification(this.getLocale()['2703']/* 'You cant do that more than once.' */, 4000)
         existing_alias_transaction = true
         break;
       }
     }
     if(!existing_alias_transaction){
-      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'alias', entered_indexing_tags:['alias', 'reserve', 'identification'], alias:id})
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:this.getLocale()['1593lb']/* 'alias' */, entered_indexing_tags:[this.getLocale()['1593lb']/* 'alias' */, this.getLocale()['1593lc']/* 'reserve' */, this.getLocale()['1593ld']/* 'identification' */], alias:id})
       this.prompt_top_notification(this.getLocale()['2704']/* 'Transaction added to stack.' */, 1600)
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
@@ -9475,7 +9476,7 @@ class App extends Component {
     var stack_clone = this.state.stack_items.slice()
     var existing_alias_transaction = false
     for(var i=0; i<stack_clone.length; i++){
-      if(stack_clone[i].type == 'unalias'){
+      if(stack_clone[i].type == this.getLocale()['2706']/* 'unalias' */){
         this.prompt_top_notification(this.getLocale()['2705']/* 'You cant do that more than once.' */, 1000)
         existing_alias_transaction = true
         break;
@@ -9584,6 +9585,24 @@ class App extends Component {
       result = result.shiftLeft(8).add(hashBytes[i]);
     }
     return bigInt(result).mod(bigInt('1e36'));
+  }
+
+  add_renew_alias_transaction_to_stack(id){
+    var stack_clone = this.state.stack_items.slice()
+    var existing_alias_transaction = false
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].type == this.getLocale()['1593le']/* 'renew-alias' */ && stack_clone[i].alias == id){
+        this.prompt_top_notification(this.getLocale()['2703']/* 'You cant do that more than once.' */, 4000)
+        existing_alias_transaction = true
+        break;
+      }
+    }
+    if(!existing_alias_transaction){
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:this.getLocale()['1593le']/* 'renew-alias' */, entered_indexing_tags:[this.getLocale()['1593le']/* 'renew-alias' */, this.getLocale()['1593lc']/* 'reserve' */, this.getLocale()['1593ld']/* 'identification' */], alias:id})
+      this.prompt_top_notification(this.getLocale()['2704']/* 'Transaction added to stack.' */, 1600)
+      this.setState({stack_items: stack_clone})
+      this.set_cookies_after_stack_action(stack_clone)
+    }
   }
 
 
@@ -16334,7 +16353,7 @@ class App extends Component {
         add_moderator_note={this.add_moderator_note.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} export_direct_purchases={this.export_direct_purchases.bind(this)} open_link={this.open_link.bind(this)} add_vote_proposals_action_to_stack={this.add_vote_proposals_action_to_stack.bind(this)} finish_add_vote_proposals_action_to_stack={this.finish_add_vote_proposals_action_to_stack.bind(this)} hide_audiopost_tracks={this.hide_audiopost_tracks.bind(this)} hide_videopost_tracks={this.hide_videopost_tracks.bind(this)}
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
-        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
+        send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
         />
       </div>
     )
@@ -26416,13 +26435,14 @@ class App extends Component {
       var alias_sender = parseInt(alias_events[i].returnValues.p2)/* owner */
       var alias_time = parseInt(alias_events[i].returnValues.p6)/* timestamp */
       var alias_target = parseInt(alias_events[i].returnValues.p5)/* int_data */
-
+      
       if(alias_target > 1000){
         alias_sender = alias_target
       }
 
       if(alias_owners[alias_string] == null){
-        if(alias_target < 1000){
+        const oldest_acceptable_date = (Date.now()/1000) - (72*52*7*24*60*60)
+        if(alias_target < 1000 && alias_time > oldest_acceptable_date){
           alias_owners[alias_string] = alias_sender
           alias_bucket[alias_sender] = alias_string
           alias_timestamp[alias_string] = alias_time
@@ -26588,7 +26608,8 @@ class App extends Component {
       }
 
       if(alias_owners[alias_string] == null){
-        if(alias_target < 1000){
+        const oldest_acceptable_date = (Date.now()/1000) - (72*52*7*24*60*60)
+        if(alias_target < 1000 && alias_time > oldest_acceptable_date){
           alias_owners[alias_string] = alias_sender
           alias_bucket[alias_sender] = alias_string
           alias_timestamp[alias_string] = alias_time
@@ -26661,7 +26682,7 @@ class App extends Component {
     var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
     alias_timestamp_clone[e5] = alias_timestamp
 
-    this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
+    this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp: alias_timestamp_clone})
 
     console.log('apppage','alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners)
     await this.wait(300)
@@ -43868,7 +43889,8 @@ class App extends Component {
       }
 
       if(alias_owners[e5][alias_string] == null){
-        if(alias_target < 1000){
+        const oldest_acceptable_date = (Date.now()/1000) - (72*52*7*24*60*60)
+        if(alias_target < 1000 && alias_time > oldest_acceptable_date){
           alias_owners[e5][alias_string] = alias_sender
           alias_bucket[e5][alias_sender] = alias_string 
           alias_timestamp[e5][alias_string] = alias_time

@@ -4657,6 +4657,13 @@ class StackPage extends Component {
 
                     tag_payment_indexer_data = true
                 }
+                else if(txs[i].type == this.props.app_state.loc['1593le']/* 'renew-alias' */){
+                    var alias_obj = await this.format_renew_alias_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(alias_obj.str)
+                    adds.push([])
+                    ints.push(alias_obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -8511,6 +8518,33 @@ class StackPage extends Component {
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj, int2: obj2}
+    }
+
+    format_renew_alias_object = async (t, calculate_gas) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [11, 11], [23, 23],/* 11(alias_obj_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        var int_data = 1
+
+        var string_data = t.alias
+
+        obj[3].push(context)
+        obj[3].push(context)
+
+        obj[4].push(int_data)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
     }
 
     format_edit_object = async (t, calculate_gas, ipfs_index) => {
@@ -13257,6 +13291,7 @@ class StackPage extends Component {
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1578']/* 'Reserve Alias' */, 'details':this.props.app_state.loc['1579']/* 'Reserve an alias for your account ID' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1593ky']/* 'Aliases need to be renewed after 72 years.' */, 'textsize':'11px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'100%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
@@ -13312,9 +13347,15 @@ class StackPage extends Component {
         
         const obj = this.props.app_state.alias_bucket[this.props.app_state.selected_e5] || {}
         const alias = (obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
+        
+        const obj2 = this.props.app_state.alias_timestamp[this.props.app_state.selected_e5] || {}
+        const alias_age = (obj2[alias] == null ? 0 : obj2[alias])
+        const time_to_expiry = alias_age+(72*52*7*24*60*60)
+        const difference = time_to_expiry - (Date.now()/1000)
+        const time_diff_text = this.get_time_diff(difference)
+        const show_renew_button = difference < (52*7*24*60*60) && alias_age != 0
         return(
             <div>
-                {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     <div onClick={() => this.copy_id_to_clipboard2(display)}>
                         {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':this.props.app_state.font})}
@@ -13322,6 +13363,16 @@ class StackPage extends Component {
                     <div onClick={() => this.copy_id_to_clipboard2(alias)} style={{'padding':'0px 0px 0px 5px'}}>
                         {this.render_detail_item('10', {'text':alias, 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
+                    {alias_age != 0 && show_renew_button == true && (
+                        <div style={{'padding':'0px 0px 0px 5px'}}>
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['1593kz']/* 'Expires after $' */.replace('$', time_diff_text), 'textsize':'10px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
+                    {show_renew_button == true && (
+                        <div onClick={()=> this.props.add_renew_alias_transaction_to_stack(alias)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['1593la']/* Renew Alias */, 'action':''})}
+                        </div>
+                    )}
                 </div>
             </div>
         )

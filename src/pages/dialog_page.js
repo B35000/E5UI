@@ -8527,6 +8527,14 @@ return data['data']
 
     render_transfer_alias_data(){
         const item = this.state.data['item']
+        const alias = item['alias']
+        const obj2 = this.props.app_state.alias_timestamp[this.props.app_state.selected_e5] || {}
+        const alias_age = (obj2[alias] == null ? 0 : obj2[alias])
+        const time_to_expiry = alias_age+(72*52*7*24*60*60)
+        const difference = time_to_expiry - (Date.now()/1000)
+        const time_diff_text = this.get_time_diff(difference)
+        const show_renew_button = difference < (52*7*24*60*60) && alias_age != 0
+
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055gb']/* 'Transfer Alias.' */, 'details':this.props.app_state.loc['3055gc']/* 'Change ownership of your alias by transferring it to another account.' */, 'size':'l'})}
@@ -8542,6 +8550,18 @@ return data['data']
                 <div onClick={()=> this.props.transfer_alias_transaction_to_stack(item, this.state.typed_recipient_account_id)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ge']/* Transfer Alias */, 'action':''})}
                 </div>
+
+                {show_renew_button == true && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055jr']/* 'Renew Alias.' */, 'details':this.props.app_state.loc['3055js']/* 'Renew the alias for another 72 years of use.' */, 'size':'l'})}
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1593kz']/* 'Expires after $' */.replace('$', time_diff_text), 'textsize':'10px', 'font':this.props.app_state.font})}
+                        <div style={{height: 10}}/>
+                        <div onClick={()=> this.props.add_renew_alias_transaction_to_stack(alias)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['1593la']/* Renew Alias */, 'action':''})}
+                        </div>
+                    </div>
+                )}
             </div>
         )
     }

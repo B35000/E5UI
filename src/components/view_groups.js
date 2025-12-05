@@ -509,7 +509,7 @@ class ViewGroups extends Component {
                 
                 // Add color stops: top (1.0 opacity) to bottom (0.6 opacity)
                 gradient.addColorStop(0, `${config.chartColor}`); // 100% opacity (FF in hex)
-                gradient.addColorStop(0.4, `${config.chartColor}`);
+                gradient.addColorStop(0.35, `${config.chartColor}`);
                 gradient.addColorStop(1, `${config.chartColor2}`);
                 /* 
                     FF = 100% opacity

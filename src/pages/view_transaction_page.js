@@ -250,7 +250,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3055fg']/* 'vote_all' */ &&
             item.type != this.props.app_state.loc['2642bm']/* 'order-payment' */ &&
             item.type != this.props.app_state.loc['3055gf']/* 'transfer-alias' */ &&
-            item.type != this.props.app_state.loc['1632o']/* 'finish-payment' */
+            item.type != this.props.app_state.loc['1632o']/* 'finish-payment' */ &&
+            item.type != this.props.app_state.loc['1593le']/* 'renew-alias' */
         ){
             return(
                 <div>
@@ -672,6 +673,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_realias_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['1593le']/* 'renew-alias' */){
+                return(
+                    <div>
+                        {this.render_renew_alias_data()}
                     </div>
                 )
             }
@@ -5954,6 +5962,20 @@ return data['data']
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':transaction_item.recipient, 'details':this.props.app_state.loc['3055gh']/* 'Transfer Recipient Account' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+            </div>
+        )
+    }
+
+    render_renew_alias_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':transaction_item.alias, 'details':'New Alias.', 'size':'l'})}
                 <div style={{height:10}}/>
                 
             </div>
