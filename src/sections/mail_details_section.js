@@ -694,7 +694,7 @@ class MailDetailsSection extends Component {
                             {this.render_top_title(object)}
                             {/* {this.render_focus_list(object)} */}
                             <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                            {this.render_sent_received_messages(object)}
+                            {this.render_sent_received_messages(object, he)}
                         </div>
                     </div>
                     <div style={{height:5}}/>
@@ -859,9 +859,11 @@ class MailDetailsSection extends Component {
     }
 
 
-    render_sent_received_messages(object){
-        var middle = this.props.height-240;
-        if(this.get_focused_message(object) != null) middle = this.props.height-290
+    render_sent_received_messages(object, he){
+        // var middle = this.props.height-240;
+        // if(this.get_focused_message(object) != null) middle = this.props.height-290
+        var middle = he - 135
+        // if(this.get_focused_message(object) != null) middle = he - 185
         // var size = this.props.size;
         // if(size == 'm'){
         //     middle = this.props.height-100;
@@ -892,9 +894,9 @@ class MailDetailsSection extends Component {
         }
         else{
             return(
-                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll'}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', height: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items, object)}
+                        {this.render_messages(final_items, object, middle-50)}
                         {this.render_bubble_if_typing(object)}
                         {this.render_last_opened_time(object)}
                         <div ref={this.messagesEnd}/>
@@ -951,8 +953,8 @@ class MailDetailsSection extends Component {
         return clone;
     }
 
-    render_messages(items, object){
-        var middle = this.props.height-200;        
+    render_messages(items, object, middle){
+        // var middle = this.props.height-200;        
         if(items.length == 0){
             var items = [0,1]
             return(

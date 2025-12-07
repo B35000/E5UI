@@ -1770,7 +1770,7 @@ class JobDetailsSection extends Component {
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
                         <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                        {this.render_sent_received_messages(object)}
+                        {this.render_sent_received_messages(object, he)}
                     </div>
                 </div>
                 <div style={{height:5}}/>
@@ -1888,9 +1888,11 @@ class JobDetailsSection extends Component {
         }
     }
 
-    render_sent_received_messages(object){
-        var middle = this.props.height-240;
-        if(this.get_focused_message(object) != null) middle = this.props.height-290
+    render_sent_received_messages(object, he){
+        // var middle = this.props.height-240;
+        // if(this.get_focused_message(object) != null) middle = this.props.height-290
+        var middle = he - 135
+        // if(this.get_focused_message(object) != null) middle = he - 185
         var size = this.props.size;
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
@@ -1916,19 +1918,19 @@ class JobDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items, object)}
-                        <div ref={this.messagesEnd}/>
+                        {this.render_messages(final_items, object, middle)}
+                        <div ref={this.messagesEnd} style={{display:'none'}}/>
                     </ul>
                 </div>
             )
             }else{
                 return(
-                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}} >
+                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}} >
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             <div ref={this.messagesEnd}/>
-                            {this.render_all_comments(object)}
+                            {this.render_all_comments(object, middle)}
                         </ul>
                     </div>
                 )
@@ -1936,8 +1938,8 @@ class JobDetailsSection extends Component {
         }
     }
 
-    render_messages(items, object){
-        var middle = this.props.height-200;        
+    render_messages(items, object, middle){
+        // var middle = this.props.height-200;        
         if(items.length == 0){
             var items = [0,1]
             return(
@@ -2055,7 +2057,7 @@ class JobDetailsSection extends Component {
                             >
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
-                    </SwipeableList>
+                </SwipeableList>
             </div>
         )
 
@@ -2165,8 +2167,8 @@ class JobDetailsSection extends Component {
         const parts = this.split_text(text);
         return(
             <div>
-                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
-                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 7px 7px 0px'}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 7px 7px 0px'}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 

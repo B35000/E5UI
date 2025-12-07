@@ -877,7 +877,7 @@ class CallPage extends Component {
                     <div onScroll={event => this.handleScroll(event)} style={{ 'overflow-y': 'auto', height: he, padding:'0px 0px 5px 0px'}}>
                         {this.render_top_title()}
                         <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                        {this.render_sent_received_messages()}
+                        {this.render_sent_received_messages(he)}
                     </div>
                 </div>
                 <div style={{height:5}}/>
@@ -994,7 +994,7 @@ class CallPage extends Component {
         }
     }
 
-    render_sent_received_messages(){
+    render_sent_received_messages(he){
         var items = [].concat(this.get_convo_messages())
         var final_items = this.append_divider_between_old_messages_and_new_ones(items)
 
@@ -1020,7 +1020,7 @@ class CallPage extends Component {
                 return(
                 <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items)}
+                        {this.render_messages(final_items, he-135)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -1059,8 +1059,7 @@ class CallPage extends Component {
         return clone;
     }
 
-    render_messages(items){
-        var middle = this.props.height-200;        
+    render_messages(items, middle){
         if(items.length == 0){
             var items = [0,1]
             return(

@@ -1220,7 +1220,7 @@ class ViewJobRequestPage extends Component {
                         {this.render_top_title()}
                         {/* {this.render_focus_list()} */}
                         {<div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>}
-                        {this.render_sent_received_messages()}
+                        {this.render_sent_received_messages(he)}
                     </div>
                 </div>
                 <div style={{height:5}}/>
@@ -1362,13 +1362,8 @@ class ViewJobRequestPage extends Component {
         }
     }
 
-    render_sent_received_messages(){
-        // var middle = this.props.height-240;
-        // if(this.get_focused_message() != null) middle = this.props.height-290
-        // var size = this.props.size;
-        // if(size == 'm'){
-        //     middle = this.props.height-100;
-        // }
+    render_sent_received_messages(he){
+        var middle = he-135;
         var items = [].concat(this.get_convo_messages())
         var stacked_items = [].concat(this.get_stacked_items()).reverse()
         var final_items_without_divider = stacked_items.concat(items)
@@ -1397,7 +1392,7 @@ class ViewJobRequestPage extends Component {
                 return(
                 <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items)}
+                        {this.render_messages(final_items, middle)}
                         {this.render_bubble_if_typing()}
                         {this.render_last_opened_time()}
                         <div ref={this.messagesEnd}/>
@@ -1468,8 +1463,7 @@ class ViewJobRequestPage extends Component {
         return clone;
     }
 
-    render_messages(items){
-        var middle = this.props.height-200;        
+    render_messages(items, middle){
         if(items.length == 0){
             var items = [0,1]
             return(

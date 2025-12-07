@@ -1461,7 +1461,7 @@ class ProposalDetailsSection extends Component {
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
                         <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                        {this.render_sent_received_messages(object)}
+                        {this.render_sent_received_messages(object, he)}
                     </div>
                 </div>
                 <div style={{height:5}}/>
@@ -1563,9 +1563,11 @@ class ProposalDetailsSection extends Component {
         )
     }
 
-    render_sent_received_messages(object){
-        var middle = this.props.height-240;
-        if(this.get_focused_message(object) != null) middle = this.props.height-290
+    render_sent_received_messages(object, he){
+        // var middle = this.props.height-240;
+        // if(this.get_focused_message(object) != null) middle = this.props.height-290
+        var middle = he - 135
+        // if(this.get_focused_message(object) != null) middle = he - 185
         // var size = this.props.size;
         // if(size == 'm'){
         //     middle = this.props.height-100;
@@ -1594,19 +1596,19 @@ class ProposalDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items, object)}
+                        {this.render_messages(final_items, object, middle)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
             )
             }else{
                 return(
-                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', maxHeight: middle}}>
+                    <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             <div ref={this.messagesEnd}/>
-                            {this.render_all_comments(object)}
+                            {this.render_all_comments(object, middle)}
                         </ul>
                     </div>
                 )
@@ -1614,8 +1616,8 @@ class ProposalDetailsSection extends Component {
         }
     }
 
-    render_messages(items, object){
-        var middle = this.props.height-200;        
+    render_messages(items, object, middle){
+        // var middle = this.props.height-200;        
         if(items.length == 0){
             var items = [0,1]
             return(
