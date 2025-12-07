@@ -34,6 +34,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
+import { Virtuoso } from "react-virtuoso";
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -236,9 +238,9 @@ class VideoDetailsSection extends Component {
             )
         }
 
-        if(this.props.screensize != 'l'){
-            return this.render_post_list_group_if_touch_screen(object)
-        }
+        // if(this.props.screensize != 'l'){
+        //     return this.render_post_list_group_if_touch_screen(object)
+        // }
 
         if(selected_item ==this.props.app_state.loc['2028']/*  'metadata' */){
             return(
@@ -2319,19 +2321,28 @@ class VideoDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <div>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div>
-                                        {this.render_detail_item('3', {'title':item['selected_tier_object']['label']['title']+' x'+item['multiplier'], 'details':item['entered_message'], 'size':'l'})}
-                                        <div style={{height: 1}}/>
-                                    </div>
-                                </li>
-                            ))}    
-                        </div>
-                    </ul>
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index]
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                                <div>
+                                                    {this.render_detail_item('3', {'title':item['selected_tier_object']['label']['title']+' x'+item['multiplier'], 'details':item['entered_message'], 'size':'l'})}
+                                                    <div style={{height: 1}}/>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
@@ -2604,21 +2615,21 @@ class VideoDetailsSection extends Component {
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.set_rating_filter_preference('bottom', object)}>
                         <div>
                             {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cb']/* 'Bottom  ratings' */, 'details':this.format_number(groups.bottom.length), 'size':'s'})}
-                            {this.render_line_if_selected('bottom', object)}
+                            {this.render_line_if_selected2('bottom', object)}
                         </div>
                         <div style={{width: 10}}/>
                     </li>
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.set_rating_filter_preference('middle', object)}>
                         <div>
                             {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cc']/* 'Middle  ratings' */, 'details':this.format_number(groups.middle.length), 'size':'s'})}
-                            {this.render_line_if_selected('middle', object)}
+                            {this.render_line_if_selected2('middle', object)}
                         </div>
                         <div style={{width: 10}}/>
                     </li>
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.set_rating_filter_preference('top', object)}>
                         <div>
                             {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cd']/* 'Top  ratings' */, 'details':this.format_number(groups.high.length), 'size':'s'})}
-                            {this.render_line_if_selected('top', object)}
+                            {this.render_line_if_selected2('top', object)}
                         </div>
                         <div style={{width: 10}}/>
                     </li>
@@ -2627,7 +2638,7 @@ class VideoDetailsSection extends Component {
         )
     }
 
-    render_line_if_selected(option, object){
+    render_line_if_selected2(option, object){
         if(this.state.selected_rating_group_filter[object['e5_id']] == option){
             return(
                 <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
@@ -2674,18 +2685,28 @@ class VideoDetailsSection extends Component {
                 </div>
             )
         }else{
+            const reversed_items = items.slice().reverse()
             return(
                 <div style={{}}>
-                    <AnimatePresence initial={true} mode="popLayout">
-                        {items.reverse().map((item, index) => (
-                            <motion.li key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = reversed_items[index];
+                            return (
                                 <div>
-                                    {this.render_message_as_focused_if_so(item, object)}
-                                    <div style={{height:3}}/>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div>
+                                                {this.render_message_as_focused_if_so(item, object)}
+                                                <div style={{height:3}}/>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </div>
-                            </motion.li>
-                        ))} 
-                    </AnimatePresence>   
+                            );
+                        }}
+                    />   
                 </div>
             )
         }

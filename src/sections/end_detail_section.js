@@ -215,9 +215,9 @@ class EndDetailSection extends Component {
                 </div>
             )
         }
-        if(this.props.screensize != 'l' && show_viewpager == true){
-            return this.render_post_list_group_if_touch_screen(selected_object)
-        }
+        // if(this.props.screensize != 'l' && show_viewpager == true){
+        //     return this.render_post_list_group_if_touch_screen(selected_object)
+        // }
         if(selected_item == this.props.app_state.loc['2118']/* 'details' */ || selected_item == 'e'){
             return(
                 <div key={selected_item}>

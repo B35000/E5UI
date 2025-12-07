@@ -37,6 +37,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import words from 'profane-words'
 import * as naughtyWords from 'naughty-words';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -272,9 +273,9 @@ class AudioDetailSection extends Component {
             )
         }
 
-        if(this.props.screensize != 'l'){
-            return this.render_post_list_group_if_touch_screen(object)
-        }
+        // if(this.props.screensize != 'l'){
+        //     return this.render_post_list_group_if_touch_screen(object)
+        // }
 
         if(selected_item == this.props.app_state.loc['2028']/*  'metadata' */){
             return(
@@ -389,9 +390,9 @@ class AudioDetailSection extends Component {
             )
         }
 
-        if(this.props.screensize != 'l'){
-            return this.render_post_list_group_if_touch_screen2(object)
-        }
+        // if(this.props.screensize != 'l'){
+        //     return this.render_post_list_group_if_touch_screen2(object)
+        // }
         if(selected_item ==this.props.app_state.loc['2028']/*  'metadata' */){
             return(
                 <div>
@@ -2852,19 +2853,28 @@ return data['data']
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <div>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div>
-                                        {this.render_detail_item('3', {'title':item['selected_tier_object']['label']['title']+' x'+item['multiplier'], 'details':item['entered_message'], 'size':'l'})}
-                                        <div style={{height: 1}}/>
-                                    </div>
-                                </li>
-                            ))}    
-                        </div>
-                    </ul>
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index]
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                                <div>
+                                                    {this.render_detail_item('3', {'title':item['selected_tier_object']['label']['title']+' x'+item['multiplier'], 'details':item['entered_message'], 'size':'l'})}
+                                                    <div style={{height: 1}}/>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
@@ -3206,18 +3216,28 @@ return data['data']
                 </div>
             )
         }else{
+            const reversed_items = items.slice().reverse()
             return(
                 <div style={{}}>
-                    <AnimatePresence initial={true} mode="popLayout">
-                        {items.reverse().map((item, index) => (
-                            <motion.li key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = reversed_items[index]
+                            return (
                                 <div>
-                                    {this.render_message_as_focused_if_so(item, object)}
-                                    <div style={{height:3}}/>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div>
+                                                {this.render_message_as_focused_if_so(item, object)}
+                                                <div style={{height:3}}/>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </div>
-                            </motion.li>
-                        ))} 
-                    </AnimatePresence>
+                            );
+                        }}
+                    />
                 </div>
             )
         }

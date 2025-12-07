@@ -42,6 +42,9 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import media_processors from '../resources/media_processors';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
+import { motion, AnimatePresence } from "framer-motion";
+import { Virtuoso } from "react-virtuoso";
+
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -17011,13 +17014,22 @@ class StackPage extends Component {
             var selected_item = this.get_selected_item(this.state.get_file_data_option_tags_object, this.state.get_file_data_option_tags_object['i'].active);
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
-                        {items.map((item, index) => (
-                            <div style={{'margin':'3px 0px 3px 0px'}}>
-                                {this.render_uploaded_file(item, index, selected_item)}
-                            </div>
-                        ))}
-                    </ul>
+                    <Virtuoso
+                        style={{ height: this.props.height-300 }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': '0px'}}>
+                                            {this.render_uploaded_file(item, index, selected_item)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }

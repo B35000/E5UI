@@ -36,6 +36,7 @@ import Linkify from "linkify-react";
 
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -1487,16 +1488,25 @@ class ViewJobRequestPage extends Component {
         }else{
             return(
                 <div>
-                    <AnimatePresence initial={true} mode="popLayout">
-                        {items.map((item, index) => (
-                            <motion.li key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
                                 <div>
-                                    {this.render_message_as_focused_if_so(item)}
-                                    <div style={{height:3}}/>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div>
+                                                {this.render_message_as_focused_if_so(item)}
+                                                <div style={{height:3}}/>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </div>
-                            </motion.li>
-                        ))} 
-                    </AnimatePresence>    
+                            );
+                        }}
+                    />    
                 </div>
             )
         }

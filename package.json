@@ -2,7 +2,7 @@
   "name": "old_e5",
   "homepage": "https://page.twentythreeinreverse.com",
   "hmepage": ".",
-  "version": "4.0",
+  "version": "5.0",
   "private": true,
   "dependencies": {
     "@cosmjs/crypto": "^0.32.4",
@@ -104,6 +104,7 @@
     "react-swipeable-views": "^0.14.0",
     "react-toastify": "^10.0.5",
     "react-view-pager": "^0.6.0",
+    "react-virtuoso": "^4.17.0",
     "react-zoom-pan-pinch": "^3.6.1",
     "ripple-secret-codec": "^1.0.3",
     "simple-peer": "^9.11.1",

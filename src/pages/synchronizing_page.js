@@ -167,6 +167,7 @@ class synchronizing_page extends Component {
                     borderRadius: '5px',
                     lineHeight: '0',
                     margin: 0,
+                    WebkitMaskImage: '-webkit-radial-gradient(white, black)',
                 },
             };
             return(

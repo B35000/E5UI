@@ -161,9 +161,9 @@ class ContractDetailsSection extends Component {
         }
 
         if(object != null){
-            if(this.props.screensize != 'l' && show_viewpager == true){
-                return this.render_post_list_group_if_touch_screen(object)
-            }
+            // if(this.props.screensize != 'l' && show_viewpager == true){
+            //     return this.render_post_list_group_if_touch_screen(object)
+            // }
             if (selected_item == this.props.app_state.loc['2118']/* 'details' */) {
                 return (
                     <div key={selected_item}>

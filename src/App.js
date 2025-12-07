@@ -1236,7 +1236,7 @@ class App extends Component {
   // }
 
   state = {
-    version:'4.0', os: getOS(),
+    version:'5.0', os: getOS(),
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -1247,7 +1247,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -24611,7 +24611,7 @@ class App extends Component {
       var e5_address = this.state.e5s[e5].e5_address;
       var account_for_e5 = this.state.accounts[e5]
       if(web3_url != ''){
-        this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+        this.get_wallet_data2(account_for_e5, is_syncing, web3_url, e5_address, e5)
         await this.wait(2000)
       }
     }
@@ -25517,6 +25517,104 @@ class App extends Component {
     // this.load_e5_wallet_icons(e5)
 
   } 
+
+  get_wallet_data2 = async (_account, is_syncing, web3_url, e5_address, e5) => {
+    const web3 = new Web3(web3_url);
+    const address_account = _account
+
+    // var wallet_status_clone = structuredClone(this.state.wallet_status)
+    // wallet_status_clone[e5] = 'synchronizing'
+    // this.setState({wallet_status: wallet_status_clone})
+
+    try{
+      // this.load_rpc_times(e5)
+
+      var s = JSON.stringify(this.state.account_balance, (key, value) =>
+              typeof value === 'bigint'
+                  ? value.toString()
+                  : value
+      )
+      var clone = JSON.parse(s)
+      clone[e5] = 0
+      if(clone[e5] == null)this.setState({account_balance: clone});
+
+      var balance = await web3.eth.getBalance(address_account.address)
+      var t = JSON.stringify(this.state.account_balance, (key, value) =>
+              typeof value === 'bigint'
+                  ? value.toString()
+                  : value
+      )
+      var clone = JSON.parse(t)
+      // console.log('bal', balance)
+      clone[e5] = bigInt(balance.toString())
+      this.setState({account_balance: clone});
+      if(is_syncing)this.inc_synch_progress()
+    
+
+      // this.load_ether_history(e5, address_account.address)
+
+      // var gasPrice = await web3.eth.getGasPrice();
+      // var clone = structuredClone(this.state.gas_price)
+      // clone[e5] = parseInt(gasPrice)
+      // this.setState({gas_price: clone})
+      // if(is_syncing)this.inc_synch_progress()
+
+      // var id = await web3.eth.net.getId()
+      // var clone = structuredClone(this.state.chain_id)
+      // clone[e5] = id
+      // this.setState({chain_id: clone});
+      // if(is_syncing)this.inc_synch_progress()
+      // await this.wait(this.state.web3_delay)
+
+
+      // var peers = await web3.eth.net.getPeerCount()
+      // var clone = structuredClone(this.state.number_of_peers)
+      // clone[e5] = parseInt(peers)
+      // this.setState({ number_of_peers: clone});
+      // console.log('number of peers: ', peers)
+      // this.inc_synch_progress()
+
+      // var blockNumber = await web3.eth.getBlockNumber()
+      // await this.wait(this.state.web3_delay)
+      // var last_blocks = [];
+      // var count = 3
+      // var start = parseInt(blockNumber)-count;
+      // if(blockNumber < count){
+      //   start = 0;
+      // }
+      // for (let i = start; i <= blockNumber; i++) {
+      //   await this.wait(this.state.web3_delay)
+      //   var block = await web3.eth.getBlock(i)
+      //   last_blocks.push(block)
+      // }
+
+      // var last_blocks_clone = structuredClone(this.state.last_blocks)
+      // last_blocks_clone[e5] = last_blocks
+
+      // var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
+      // number_of_blocks_clone[e5] = blockNumber
+      // this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
+      // if(is_syncing)this.inc_synch_progress()
+
+
+
+      // var mempool = await web3.eth.getPendingTransactions()
+      // var mempool_clone = structuredClone(this.state.mempool)
+      // mempool_clone[e5] = mempool
+      // this.setState({mempool: mempool_clone})
+    }catch(e){
+
+    }
+
+
+    // var wallet_status_clone = structuredClone(this.state.wallet_status)
+    // wallet_status_clone[e5] = 'done'
+    // this.setState({wallet_status: wallet_status_clone})
+
+
+    // this.load_e5_wallet_icons(e5)
+
+  }
 
 
 

@@ -128,9 +128,9 @@ class PollDetailsSection extends Component {
             )
         }
 
-        if(this.props.screensize != 'l'){
-            return this.render_post_list_group_if_touch_screen(object)
-        }
+        // if(this.props.screensize != 'l'){
+        //     return this.render_post_list_group_if_touch_screen(object)
+        // }
 
         if(selected_item == this.props.app_state.loc['2028']/*  'metadata' */){
             return(

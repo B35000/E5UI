@@ -4033,9 +4033,9 @@ class home_page extends Component {
     };
 
     render_post_list_group(size, height){
-        if(size != 'l'){
-            return this.render_post_list_group_if_touch_screen(size, height)
-        }
+        // if(size != 'l'){
+        //     return this.render_post_list_group_if_touch_screen(size, height)
+        // }
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
         var subtract = 60
@@ -4545,14 +4545,14 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        await this.props.fetch_uploaded_files_for_object(object)
-        await this.props.get_tag_price_data_for_object(object)
-        // await this.props.get_job_objects_responses(id, e5, 'job')
-        // await this.props.get_objects_messages(id, e5)
-        await this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+
+        await this.props.fetch_uploaded_files_for_object(object)
+        await this.props.get_tag_price_data_for_object(object)
+        await this.props.get_object_censored_keywords_and_accounts(object)
+        
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
@@ -4721,17 +4721,15 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        await this.props.fetch_uploaded_files_for_object(object)
-        await this.props.get_storefront_traffic_data(id, e5)
-        await this.props.get_tag_price_data_for_object(object)
-        // await this.props.get_direct_purchase_events(id, e5)
-        // await this.props.get_storefront_auction_bids(object)
-        // await this.props.get_direct_purchase_orders(id, e5)
-        // await this.props.get_objects_messages(id, e5)
-        await this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+
+        await this.props.fetch_uploaded_files_for_object(object)
+        await this.props.get_storefront_traffic_data(id, e5)
+        await this.props.get_tag_price_data_for_object(object)
+        await this.props.get_object_censored_keywords_and_accounts(object)
+        
         this.props.set_audio_pip_opacity_because_of_inactivity()
         this.update_audio_video_recommended_items(this.props.app_state.loc['1215']/* 'storefront' */, object['e5_id'])
     }
@@ -4751,8 +4749,6 @@ class home_page extends Component {
         }
         this.props.load_bag_storefront_items(object)
         this.props.get_tag_price_data_for_object(object)
-        // this.props.get_job_objects_responses(id, e5, 'bag')
-        // this.props.get_objects_messages(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -4784,19 +4780,19 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_contractor_availability_status(object)
         await this.props.get_tag_price_data_for_object(object)
         // await this.props.get_contractor_applications(id, e5)
-        //get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)}
         await this.props.get_object_censored_keywords_and_accounts(object)
-        if(this.props.screensize == 's'){
-            this.open_view_object_bottomsheet()
-        }
+        
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
-    when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_audio_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -4810,19 +4806,18 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.start_object_file_viewcount_fetch(object, 'audio')
-        this.props.fetch_uploaded_files_for_object(object)
-        // this.props.get_objects_messages(id, e5)
-        // this.props.get_post_award_data(id, e5)
-        this.props.get_object_censored_keywords_and_accounts(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+
+        this.props.start_object_file_viewcount_fetch(object, 'audio')
+        this.props.fetch_uploaded_files_for_object(object)
+        this.props.get_object_censored_keywords_and_accounts(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
+        await this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
 
-        this.update_audio_video_recommended_items(this.props.app_state.loc['1264k']/* 'audioport' */, object['e5_id'])
+        await this.update_audio_video_recommended_items(this.props.app_state.loc['1264k']/* 'audioport' */, object['e5_id'])
         
     }
 

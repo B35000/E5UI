@@ -30,7 +30,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -901,20 +901,26 @@ class PostListSection extends Component {
             return (
                 <div>
                     <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                            
-                            <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                                {this.render_line_loader_if_reloading()}
-                                {this.show_load_metrics(items, 'jobs')}
-                                {this.show_new_objects_message_if_any(all_items)}
-                                <AnimatePresence initial={true}>
-                                {items.map((item, index) => (
-                                    <motion.li key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': padding}}>
-                                        {this.render_job_object(item, index)}
-                                    </motion.li>
-                                ))}
-                                </AnimatePresence>
-                            </ul>
+                            {this.render_line_loader_if_reloading()}
+                            {this.show_load_metrics(items, 'jobs')}
+                            {this.show_new_objects_message_if_any(all_items)}
+                            <Virtuoso
+                                style={{ height: middle }}
+                                totalCount={items.length}
+                                itemContent={(index) => {
+                                    const item = items[index];
+                                    return (
+                                        <div>
+                                            <AnimatePresence initial={true}>
+                                                <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                                style={{'padding': padding}}>
+                                                    {this.render_job_object(item, index)}
+                                                </motion.div>
+                                            </AnimatePresence>
+                                        </div>
+                                    );
+                                }}
+                            />
                     </div>
                 </div>
             );
@@ -1097,19 +1103,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'contracts')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                                {items.map((item, index) => (
-                                    <motion.li key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': padding}}>
-                                        {this.render_contract_item(item, index)}
-                                    </motion.li>
-                                ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'contracts')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': padding}}>
+                                            {this.render_contract_item(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                    {item.text}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -1252,21 +1265,27 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'proposals')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_proposal_object(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'proposals')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_proposal_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -1397,20 +1416,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.nitro_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics([], 'nitro')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_nitro_object_if_locked(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics([], 'nitro')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_nitro_object_if_locked(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -1517,21 +1542,27 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'subscriptions')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            {this.render_pay_all_upcoming_subscriptions_button(items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_subscription_object(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'subscriptions')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    {this.render_pay_all_upcoming_subscriptions_button(items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_subscription_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -1664,20 +1695,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, object_type)}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['convo_id']} className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_mail_object_or_null(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, object_type)}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['convo_id']} className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_mail_object_or_null(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -1831,20 +1868,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'contractor')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_contractor_object(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'contractor')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_contractor_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -1944,16 +1987,23 @@ class PostListSection extends Component {
         }
         return (
             <div ref={this.e5_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    <AnimatePresence initial={true}>
-                        {items.map((item, index) => (
-                            <motion.li key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                            style={{'padding': '1px 5px 1px 5px'}}>
-                                {this.render_E5s_object(item['data'], index, item['id'])}
-                            </motion.li>
-                        ))}
-                    </AnimatePresence>
-                </ul>
+                <Virtuoso
+                    style={{ height: middle }}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index];
+                        return (
+                            <div>
+                                <AnimatePresence initial={true}>
+                                    <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': '1px 5px 1px 5px'}}>
+                                        {this.render_E5s_object(item['data'], index, item['id'])}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                />
             </div>
         );
     }
@@ -2154,10 +2204,10 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.li key={item['address']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                <motion.div key={item['address']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': '1px'}}>
                                     {this.render_searched_account_item(item)}
-                                </motion.li>
+                                </motion.div>
                             ))}
                         </AnimatePresence>
                     </ul>
@@ -2198,10 +2248,10 @@ class PostListSection extends Component {
                 <div style={{}}>
                     <AnimatePresence initial={true}>
                         {items.map((item, index) => (
-                            <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                             style={{'padding': padding}}>
                                 {this.render_link_object_item(item, index, item_types[index])}
-                            </motion.li>
+                            </motion.div>
                         ))}
                     </AnimatePresence>
                 </div>
@@ -2454,20 +2504,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'posts')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_post_object_if_locked(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'posts')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_post_object_if_locked(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -2753,20 +2809,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'channels')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_channel_object(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'channels')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_channel_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -2932,20 +2994,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.poll_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'polls')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_poll_object(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'polls')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_poll_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -3072,20 +3140,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'storefront')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_storefront_object(item, index)}
-                                </motion.li>
-                            ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'storefront')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_storefront_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -3310,20 +3384,26 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return( 
                 <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'bags')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                                {items.map((item, index) => (
-                                    <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding':padding}}>
-                                        {this.render_bag_object(item, index)}
-                                    </motion.li>
-                                ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'bags')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding':padding}}>
+                                            {this.render_bag_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         } 
@@ -3535,21 +3615,27 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.audio_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'audioport')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            {this.render_search_songs(items)}
-                            <AnimatePresence initial={true}>
-                                {items.map((item, index) => (
-                                    <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': padding}}>
-                                        {this.render_audio_object_if_locked(item, index)}
-                                    </motion.li>
-                                ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'audioport')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    {this.render_search_songs(items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_audio_object_if_locked(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -3581,11 +3667,11 @@ class PostListSection extends Component {
             <div>
                 <AnimatePresence initial={true}>
                     {items.map((item, index) => (
-                        <motion.li key={item['song_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                        <motion.div key={item['song_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                         style={{'padding': '2px'}}>
                             {this.render_song(item['song'], item['object'], index, 'album')} 
                             {this.render_space_if_not_last(index, items.length)}
-                        </motion.li>
+                        </motion.div>
                     ))}
                 </AnimatePresence>
                 <div style={{height:10}}/>
@@ -3621,7 +3707,7 @@ class PostListSection extends Component {
             });
         });
 
-        return selected_songs.concat(similar_songs)
+        return selected_songs.concat(similar_songs).slice(0, 23)
     }
     
     render_space_if_not_last(index, length){
@@ -3830,7 +3916,11 @@ class PostListSection extends Component {
 
 
     render_my_bought_albums(items){
-        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
         var col = Math.round(400 / 200)
         var w = (this.state.screen_width / 2) - 5
         var rowHeight = w+40;
@@ -3852,18 +3942,28 @@ class PostListSection extends Component {
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                        <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{}}>
-                                    <ImageListItem key={index}>
-                                        <div>
-                                            {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)}
-                                        </div>
-                                    </ImageListItem>
-                                </motion.li>
-                            ))}
-                        </AnimatePresence>
+                        <Virtuoso
+                            style={{ height: middle }}
+                            totalCount={items.length}
+                            itemContent={(index) => {
+                                const item = items[index];
+                                return (
+                                    <div>
+                                        <AnimatePresence initial={true}>
+                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            style={{}}>
+                                                <ImageListItem key={index}>
+                                                    <div>
+                                                        {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)}
+                                                    </div>
+                                                </ImageListItem>
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                );
+                            }}
+                        />
+                        
                     </ImageList>
                 </div>
             )
@@ -4289,7 +4389,7 @@ return data['data']
         if(this.is_post_anonymous(object)){
             author = ''
         }
-        var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        // var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
         var default_image = this.props.app_state.static_assets['music_label']
         var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
         var view_count_message = this.get_audio_files_view_counts(object)
@@ -4396,21 +4496,27 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.video_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'videoport')}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            {this.render_search_videos(items)}
-                            <AnimatePresence initial={true}>
-                                {items.map((item, index) => (
-                                    <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': padding}}>
-                                        {this.render_video_object_if_locked(item, index)}
-                                    </motion.li>
-                                ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.show_load_metrics(items, 'videoport')}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    {this.render_search_videos(items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_video_object_if_locked(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -4439,11 +4545,11 @@ return data['data']
             <div>
                 <AnimatePresence initial={true}>
                     {items.map((item, index) => (
-                        <motion.li key={item['video_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                        <motion.div key={item['video_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                         style={{'padding': '2px'}}>
                             {this.render_video(item['video'], item['object'], index)} 
                             {this.render_space_if_not_last(index, items.length)}
-                        </motion.li>
+                        </motion.div>
                     ))}
                 </AnimatePresence>
                 <div style={{height:10}}/>
@@ -4487,7 +4593,7 @@ return data['data']
             });
         });
 
-        return selected_videos.concat(similar_videos)
+        return selected_videos.concat(similar_videos).slice(0,23)
     }
 
     containsAllWords(text, requiredWords, type) {
@@ -4558,7 +4664,11 @@ return data['data']
 
 
     render_my_bought_videos(items){
-        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
         var col = Math.round(400 / 200)
         var w = (this.state.screen_width / 2) - 5
         var rowHeight = w+40;
@@ -4580,18 +4690,27 @@ return data['data']
             return(
                 <div>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                        <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{}}>
-                                    <ImageListItem key={index}>
-                                        <div onClick={() => this.when_video_item_clicked(index, item)}>
-                                            {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
-                                        </div> 
-                                    </ImageListItem>
-                                </motion.li>
-                            ))}
-                        </AnimatePresence>
+                        <Virtuoso
+                            style={{ height: middle }}
+                            totalCount={items.length}
+                            itemContent={(index) => {
+                                const item = items[index];
+                                return (
+                                    <div>
+                                        <AnimatePresence initial={true}>
+                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            style={{}}>
+                                                <ImageListItem key={index}>
+                                                    <div onClick={() => this.when_video_item_clicked(index, item)}>
+                                                        {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
+                                                    </div> 
+                                                </ImageListItem>
+                                            </motion.div>
+                                    </AnimatePresence>
+                                    </div>
+                                );
+                            }}
+                        />
                     </ImageList>
                 </div>
             )
@@ -4942,16 +5061,23 @@ return data['data']
                     <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} adjust_height={false} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
                 </div>
                 <div ref={this.coin_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
-                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': '1px 5px 1px 5px'}}>
-                                    {this.render_coin_item(item, index)}
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </div>
+                    <Virtuoso
+                        style={{ height: middle-x }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': '1px 5px 1px 5px'}}>
+                                            {this.render_coin_item(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             </div>
         );
@@ -5084,16 +5210,23 @@ return data['data']
                 </div>
 
                 <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
-                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': '1px 5px 1px 5px'}}>
-                                    {this.render_ether_item(item, index)}
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </div>
+                    <Virtuoso
+                        style={{ height: middle-x }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': '1px 5px 1px 5px'}}>
+                                            {this.render_ether_item(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             </div>
         );
@@ -5291,20 +5424,26 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return (
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                        {this.render_line_loader_if_reloading()}
-                        {this.show_load_metrics(items, 'tokens')}
-                        {this.show_new_objects_message_if_any(all_items)}
-                        <AnimatePresence initial={true}>
-                            {items.map((item, index) => (
-                                <motion.li key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                style={{'padding': padding}}>
-                                    {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
-                                </motion.li>
-                            ))}
-                        </AnimatePresence>
-                    </ul>
+                {this.render_line_loader_if_reloading()}
+                {this.show_load_metrics(items, 'tokens')}
+                {this.show_new_objects_message_if_any(all_items)}
+                <Virtuoso
+                    style={{ height: middle }}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index];
+                        return (
+                            <div>
+                                <AnimatePresence initial={true}>
+                                    <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                />
             </div>
         );
     }
@@ -5531,20 +5670,26 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'tokens')}
-                    {this.show_new_objects_message_if_any(all_items)}
-                    <AnimatePresence initial={true}>
-                        {items.map((item, index) => (
-                            <motion.li key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                            style={{'padding': padding}}>
-                                {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
-                            </motion.li>
-                        ))}
-                    </AnimatePresence>
-                </ul>
+                {this.render_line_loader_if_reloading()}
+                {this.show_load_metrics(items, 'tokens')}
+                {this.show_new_objects_message_if_any(all_items)}
+                <Virtuoso
+                    style={{ height: middle }}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index];
+                        return (
+                            <div>
+                                <AnimatePresence initial={true}>
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                />
             </div>
         );
     }
@@ -5645,21 +5790,26 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div ref={this.bill_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    
-                        
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.render_pay_all_bills_button(items)}
-                            {this.show_new_objects_message_if_any(all_items)}
-                            <AnimatePresence initial={true}>
-                                {items.map((item, index) => (
-                                    <motion.li key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': padding}}>
-                                        {this.render_bill_object(item, index)}
-                                    </motion.li>
-                                ))}
-                            </AnimatePresence>
-                        </ul>
+                    {this.render_line_loader_if_reloading()}
+                    {this.render_pay_all_bills_button(items)}
+                    {this.show_new_objects_message_if_any(all_items)}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': padding}}>
+                                            {this.render_bill_object(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             );
         }
@@ -5846,6 +5996,7 @@ return data['data']
                 height: 160,
                 borderRadius: '15px',
                 overflow: 'hidden',
+                WebkitMaskImage: '-webkit-radial-gradient(white, black)',
             },
             skeletonBox: {
                 width: '100%',

@@ -32,6 +32,7 @@ import Linkify from "linkify-react";
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -683,22 +684,30 @@ class CallPage extends Component {
             )
         }
 
-        var items = []
+        const peer_items = this.props.app_state.peers
         return(
             <div>
                 <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
-                    {this.props.app_state.peers.map((peerObj, index) => (
-                        <ImageListItem key={index}>
-                            <div>
-                                {this.render_peer_item(peerObj, w)}
-                            </div>
-                        </ImageListItem>
-                    ))}
-                    {items.map((item, index) => (
-                        <ImageListItem key={index}>
-                            {this.render_peer_empty_item(w)}
-                        </ImageListItem>
-                    ))}
+                    <Virtuoso
+                        style={{ height: this.props.height-300 }}
+                        totalCount={peer_items.length}
+                        itemContent={(index) => {
+                            const peerObj = peer_items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={peerObj.peerId} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': '0px'}}>
+                                            <ImageListItem key={index}>
+                                                <div>
+                                                    {this.render_peer_item(peerObj, w)}
+                                                </div>
+                                            </ImageListItem>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </ImageList>
             </div>
         )
@@ -1070,16 +1079,25 @@ class CallPage extends Component {
         }else{
             return(
                 <div>
-                    <AnimatePresence initial={true} mode="popLayout">
-                        {items.map((item, index) => (
-                            <motion.li key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
                                 <div>
-                                    {this.render_message_as_focused_if_so(item)}
-                                    <div style={{height:3}}/>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div>
+                                                {this.render_message_as_focused_if_so(item)}
+                                                <div style={{height:3}}/>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </div>
-                            </motion.li>
-                        ))} 
-                    </AnimatePresence>    
+                            );
+                        }}
+                    />   
                 </div>
             )
         }

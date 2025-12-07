@@ -127,9 +127,9 @@ class BillDetailsSection extends Component {
                 </div>
             )
         }
-        if(this.props.screensize != 'l'){
-            return this.render_post_list_group_if_touch_screen(item)
-        }
+        // if(this.props.screensize != 'l'){
+        //     return this.render_post_list_group_if_touch_screen(item)
+        // }
         if(selected_item == this.props.app_state.loc['2232']/* 'details' */){
             return(
                 <div>
