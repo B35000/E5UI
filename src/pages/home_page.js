@@ -491,8 +491,8 @@ class home_page extends Component {
         else if(size == 's'){
             var bottom_bar = 75;
             return(
-                <div style={{backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                    <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
+                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+                    <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
                         {this.render_small_screen_size_ui(size, top_bar, width)}
                         
                         <div style={{height:5}}/>
@@ -4047,7 +4047,7 @@ class home_page extends Component {
             <div>
                 {this.render_line_if_enabled()}
                 {this.render_search_tags_views()}
-                <SwipeableViews index={pos} onChangeIndex={this.handleChange}>
+                <SwipeableViews disabled={true} index={pos} onChangeIndex={this.handleChange}>
                     <div key={'?'}>
                         {this.render_post_list_group2(size, '?', this.work_list_section, h)}
                     </div>

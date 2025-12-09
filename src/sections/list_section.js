@@ -5996,7 +5996,6 @@ return data['data']
                 height: 160,
                 borderRadius: '15px',
                 overflow: 'hidden',
-                WebkitMaskImage: '-webkit-radial-gradient(white, black)',
             },
             skeletonBox: {
                 width: '100%',

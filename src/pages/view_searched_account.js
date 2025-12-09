@@ -26,6 +26,9 @@ import Linkify from "linkify-react";
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -257,7 +260,7 @@ class SearchedAccountPage extends Component {
         if(size == 's'){
             return(
                 <div>
-                    {this.render_empty_views(3)}
+                    {this.render_empty_loading_views(3)}
                 </div>
             )
         }
@@ -265,7 +268,7 @@ class SearchedAccountPage extends Component {
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_empty_loading_views(3)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(2)}
@@ -278,7 +281,7 @@ class SearchedAccountPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_empty_loading_views(3)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(2)}
@@ -287,6 +290,63 @@ class SearchedAccountPage extends Component {
                 
             )
         }
+    }
+
+    render_empty_loading_views(count){
+        var items = []
+        for(var i=0; i<count; i++){
+            items.push(0)
+        }
+        return(
+            <div>
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                {this.render_small_skeleton_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
 
@@ -815,15 +875,15 @@ class SearchedAccountPage extends Component {
         }
         return(
             <div style={{}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{ 'padding': '0px 0px 0px 0px'}}>
                     {interacted_exchanges.map((item, index) => (
-                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                        <div style={{'padding': '3px 0px 3px 0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':interacted_exchanges_balances[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                                 {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(interacted_exchanges_balances[index]), 'barwidth':this.calculate_bar_width(interacted_exchanges_balances[index]), 'number':this.format_account_balance_figure(interacted_exchanges_balances[index]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
                             </div>
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         )
     }
@@ -1025,7 +1085,7 @@ class SearchedAccountPage extends Component {
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
                 
-                {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'interval':110, 'hide_label': true})}
+                {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'scale':datapoints.scale})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'l'})}
                
@@ -1257,8 +1317,10 @@ class SearchedAccountPage extends Component {
                 xVal++;
             }
         }
+
+        // console.log('deposit_amount_data_points', 'dps', dps)
         
-        return { dps, starting_time: chart_starting_time }
+        return { dps, scale: bigInt(largest_number).divide(100), starting_time: chart_starting_time }
     }
 
 

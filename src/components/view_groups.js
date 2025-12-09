@@ -89,6 +89,9 @@ class ViewGroups extends Component {
                 else if(prevProps.theme['primary_text_color'] != this.props.theme['primary_text_color'] || this.props.graph_type != prevProps.graph_type){
                     this.update_chart_plugins(this.props.object_data)
                 }
+                else if(prevProps.object_data['dataPoints'] != this.props.object_data['dataPoints'] || prevProps.object_data['final_data_points'] != this.props.object_data['final_data_points']){
+                    this.update_chart_plugins(this.props.object_data)
+                }
             }
         }
     }
@@ -602,8 +605,10 @@ class ViewGroups extends Component {
                                     if(bigInt(final_value).lesser(bigInt(1_000_000))){
                                         return number_with_commas(final_value.toString())+y_axis_units
                                     }else{
-                                        var power = final_value.toString().length - 3
-                                        return number_with_commas(final_value.toString().substring(0, 3)) +'e'+power+y_axis_units
+                                        const main = final_value.toString().slice(0, 3)
+                                        const rest = final_value.toString().slice(3)
+                                        var power = rest.length
+                                        return number_with_commas(main) +'e'+power+y_axis_units
                                     }
                                 }
                             },

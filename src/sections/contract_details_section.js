@@ -1170,7 +1170,7 @@ class ContractDetailsSection extends Component {
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        const contract_age = (Date.now()/1000) - parseInt(object['event'].returnValues.p4)
+        const contract_age = object['id'] == 2 ? 60*60*24*500 :(Date.now()/1000) - parseInt(object['event'].returnValues.p4)
         if (time_to_expiry > 0 || object['id'] == 2){
             return (
                 <div>

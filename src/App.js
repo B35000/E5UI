@@ -5991,11 +5991,11 @@ class App extends Component {
           {this.render_rpc_settings_bottomsheet()}
           {this.render_confirm_run_bottomsheet()}
           {this.render_edit_proposal_object_bottomsheet()}
-          {this.render_successful_send_bottomsheet()}
           {this.render_stage_royalties_bottomsheet()}
           {this.render_view_staged_royalties_bottomsheet()}
           {this.render_pay_upcoming_subscriptions_bottomsheet()}
           {this.render_send_receive_coin_bottomsheet()}
+          {this.render_successful_send_bottomsheet()}
           {this.render_edit_audiopost_object_bottomsheet()}
           {this.render_full_audio_bottomsheet()}
           {this.render_buy_album_bottomsheet()}
@@ -7001,7 +7001,7 @@ class App extends Component {
         me.setState({send_receive_coin_bottomsheet: !me.state.send_receive_coin_bottomsheet});
         
         if(me.send_receive_coin_bottomsheet != null){
-          me.send_receive_coin_page.current?.setState(me.send_receive_coin_bottomsheet)
+          // me.send_receive_coin_page.current?.setState(me.send_receive_coin_bottomsheet)
         }
       }, (1 * 100));
     }
@@ -7367,9 +7367,9 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
-    await this.wait(2500)
-    this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
-    return;
+    // await this.wait(2500)
+    // this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
+    // return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'btc')
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
@@ -7516,9 +7516,9 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
-    await this.wait(2500)
-    this.show_dialog_bottomsheet({'hash':raw, 'chain':'LTC'}, 'manual_transaction_broadcast')
-    return;
+    // await this.wait(2500)
+    // this.show_dialog_bottomsheet({'hash':raw, 'chain':'LTC'}, 'manual_transaction_broadcast')
+    // return;
 
     const hash = await this.broadcast_block_cypher_transaction(raw, 'ltc')
     if(hash != null){
@@ -7568,9 +7568,9 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
-    await this.wait(2500)
-    this.show_dialog_bottomsheet({'hash':raw, 'chain':'DOGE'}, 'manual_transaction_broadcast')
-    return;
+    // await this.wait(2500)
+    // this.show_dialog_bottomsheet({'hash':raw, 'chain':'DOGE'}, 'manual_transaction_broadcast')
+    // return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'doge')
 
     if(hash != null){
@@ -7619,9 +7619,9 @@ class App extends Component {
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     txb.sign(0, key)
     const raw = txb.build().toHex();
-    await this.wait(2500)
-    this.show_dialog_bottomsheet({'hash':raw, 'chain':'DASH'}, 'manual_transaction_broadcast')
-    return;
+    // await this.wait(2500)
+    // this.show_dialog_bottomsheet({'hash':raw, 'chain':'DASH'}, 'manual_transaction_broadcast')
+    // return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'dash')
     if(hash != null){
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
@@ -11196,7 +11196,7 @@ class App extends Component {
           me.setState({mint_token_bottomsheet: !me.state.mint_token_bottomsheet});
           
           if(me.mint_token_bottomsheet != null){
-            me.new_mint_dump_token_page.current?.setState(me.mint_token_bottomsheet)
+            // me.new_mint_dump_token_page.current?.setState(me.mint_token_bottomsheet)
           }
         }
         
@@ -11211,7 +11211,7 @@ class App extends Component {
       if(me.new_mint_dump_token_page.current != null){
       me.new_mint_dump_token_page.current.set_token(mint_burn_token_item)
     }
-    }, (1 * 500));
+    }, (1 * 700));
       
   }
 
@@ -11290,7 +11290,7 @@ class App extends Component {
         if(me.state != null){
           me.setState({transfer_token_bottomsheet: !me.state.transfer_token_bottomsheet});
           if(me.transfer_token_bottomsheet != null){
-            me.new_transfer_token_page.current?.setState(me.transfer_token_bottomsheet)
+            // me.new_transfer_token_page.current?.setState(me.transfer_token_bottomsheet)
           }
 
         }
@@ -11303,9 +11303,9 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       if(me.new_transfer_token_page.current != null){
-      me.new_transfer_token_page.current.set_token(token_item)
-    }
-    }, (1 * 500));
+        me.new_transfer_token_page.current.set_token(token_item)
+      }
+    }, (1 * 700));
     
   }
 
@@ -25304,7 +25304,7 @@ class App extends Component {
           dialer_addresses: dialer_addresses, 
           theme_images: theme_images, 
           line_setting: line_setting, 
-          // get_available_for_all_tags_object: get_available_for_all_tags_object, 
+          get_available_for_all_tags_object: get_available_for_all_tags_object, 
           recommended_videopost_threshold: recommended_videopost_threshold, 
           recommended_video_threshold: recommended_video_threshold, 
           recommended_audiopost_threshold: recommended_audiopost_threshold, 
@@ -46441,15 +46441,12 @@ class App extends Component {
       const sender_acc = message.author
       const event = {returnValues:{p1:channeling, p2:id, p3: 17, p4:channeling, p5:sender_acc, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
-
       var hash = web3.utils.keccak256('en')
+      
       if(event.returnValues.p1.toString() == hash.toString()|| this.is_post_index_valid(event.returnValues.p1.toString(), web3)){
-        const post_data = {'id':id, 'ipfs':ipfs_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5 ,'e5_id':id+e5, 'responses':0, 
-        'object_type':'job'}
-
         var created_posts = this.state.socket_created_posts[e5] == null ? [] : this.state.socket_created_posts[e5].slice()
 
-        const obj = {'id':id, 'ipfs':post_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5, 'e5_id':id+e5, 'object_type':'post'}
+        const obj = {'id':id, 'ipfs':ipfs_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5, 'e5_id':id+e5, 'object_type':'post'}
 
         const index = created_posts.findIndex(item => item['e5_id'] === obj['e5_id']);
         if(index != -1){

@@ -25,8 +25,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 
+const hidePreloader = () => {
+  const el = document.getElementById("preloader");
+  if (el) el.style.display = "none";
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <App/>
-);
+root.render( <App/> );
+window.addEventListener("load", hidePreloader);
 

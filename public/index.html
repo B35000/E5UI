@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="version" content="5.0.7(beta)" />
+    <meta name="version" content="5.0.22(beta)" />
     <script>
       // Required by some npm packages
       window.process = { browser: true, env: { ENVIRONMENT: "BROWSER" } };
@@ -19,6 +19,9 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/ios_app_icon.png">
+    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/app_icon.png">
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -36,10 +39,42 @@
         padding: 0;
         background-color: #292929;
       }
+      #preloader {
+        position: fixed;
+        inset: 0;
+        background: #ffffff; /* match your theme */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999; /* stays above everything */
+        /* background: url("%PUBLIC_URL%/puzzle_background_dark.png");
+        background-repeat: no-repeat;
+        background-size: cover; */
+      }
+
+      #preloader-logo {
+        width: 120px; /* adjust */
+        height: auto;
+        opacity: 1.0;
+      }
+
+      #title{
+        display: flex;
+        align-items: flex;
+        justify-content: center;
+        padding: 0px 0px 0px 5px;
+        color: gray;
+      }
     </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="preloader">
+      <div>
+        <img src="%PUBLIC_URL%/app_icon.png" id="preloader-logo" />
+        <p id="title">E5(Beta)</p>
+      </div>
+    </div>
     <div id="root"></div>
     <!--
       This HTML file is a template.
