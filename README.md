@@ -1,78 +1,53 @@
-# E5(Beta)
+# E5.
 
-Official repository for the User Interface used in the E5 webapp.
-[It Works on most web browsers](https://b35000.github.io/E5UI/). Feel free to try it out for yourself.
+The official repository for the User Interface used in E5; A progressive web app built using javascript.
 
-# Getting Started
+## What is it exactly? A passion project?
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-To get it working, youll need to do two things; first modify the webpack.config.js file which is under node_modules>react-scripts>config by replacing all the contents with the webpack.config.js file thats in the src directory. I made some changes to make some of the libraries work, so be sure to do so yourself.
+Yes. Its an amalgamation of different projects and ideas I had over the years touching different parts of the internet, realized in one unified, cross-platform system tied together by a set of [smart contracts](https://en.wikipedia.org/wiki/Smart_contract) and [blockchains](https://en.wikipedia.org/wiki/Blockchain):
 
-Then run `npm install` to install all the dependencies specified in the package.json file.
+- Jobs and the Gig Economy.
+- Contracts for Trust-less transactions through Unanimous Consensus.
+- Time based Subscription payments.
+- Off-chain end to end encrypted messaging and calls.
+- Content and Information dissemination.
+- Channels for on-topic conversing.
+- Polls and On-chain Voting.
+- Storefronts.
+- Audio and Video based content distribution.
+- Web-wallets.
+- A Token Engine for creating custom tokens.
 
-## Available Scripts
+Its not exactly easy to pin down what it is exactly, because its a lot of things all at once; but at the heart of it, its a web-wallet; A tool for managing and controlling data, information and virtual assets.
 
-In the project directory, you can run:
+## Decentralized or a for-profit hustle?
 
-### `npm start`
+This isn't for profit. It's not a project with a purpose of selling another asset to gamble with. The main goal with this is to attempt to derive some utility out of those blockchains for real world use. Decentralization as a state of organization, while yes being an overall positive thing, isn't really the case for most of the blockchain projects out there, and this is no different; A codebase written and maintained by a single individual.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Getting started.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), so all you need to do is just clone, download and run `npm install` to install all the dependencies specified in the `package.json` file. It makes use of some dependencies that were compiled into [webassembly](https://webassembly.org/), so [craco](https://craco.js.org/docs/) was used to handle essential configuration changes that are required to make some web-wallet tokens work on all browsers.
+Once all the dependencies have been installed, run `npm start` to start the app. This should run it on development mode on [http://localhost:3000](http://localhost:3000) in your browser of choice. You'll need to add a `.env` file with specific values to ensure the app correctly loads data from an indexer.
 
-### `npm test`
+## Results.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+It's a fairly intimidating and complicated app to navigate, but once you learn how to do one thing, everything will become easier and straight forward. Take note of the tags at the top for navigating between different sections of the app. Also, being a developer who comes from a mobile app background (Android and iOS), its mostly touch screen oriented. So I'd advise you use it on your phone or iPad.
+![image1](https://i.postimg.cc/mD6H0khP/desktophomepage.png)
+![image2](https://i.postimg.cc/Gt8yrRsF/dialerscreenshot.png)
+![image3](https://i.postimg.cc/2ybZmYB4/homepage.png)
+![image4](https://i.postimg.cc/KjkMFbgr/homepage2.png)
+![image5](https://i.postimg.cc/WzFkjVJg/homepage3.png)
+![image6](https://i.postimg.cc/tJKV4chM/postssection.png)
+![image7](https://i.postimg.cc/QC2Wdzpv/settingspage.png)
+![image8](https://i.postimg.cc/QC2WdzQZ/walletpage.png)
+![image9](https://i.postimg.cc/hvk7tYLF/walletpage2.png)
 
-### `npm run build`
+I elected to use my own web-wallets that connect to their respective rpcs directly, rather than forcing users to fiddle with multiple web-extensions and applications.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Contributions
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Contributions are welcome. If you have a particular idea or request, feel free to open an issue.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### License
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+All the source code in this repository is released under the terms of the MIT license. Copyright (c) 2025, Bry Onyoni.

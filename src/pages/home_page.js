@@ -4038,7 +4038,7 @@ class home_page extends Component {
         // }
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
-        var subtract = 60
+        var subtract = 65
         var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
         var subtract2 = this.should_show_line() == true ? 10 : 0
         h -= subtract2;

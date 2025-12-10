@@ -1868,8 +1868,8 @@ class StackPage extends Component {
                     {this.render_simplified_stack_history()}
                     {this.render_detail_item('0')}
                     {this.render_stack_run_settings_part()}
-                    {this.render_gas_history_chart()}
-                    {this.render_mempool_metrics()}
+                    {/* {this.render_gas_history_chart()} */}
+                    {/* {this.render_mempool_metrics()} */}
                     {this.render_dialog_ui()}
                     {this.render_extra_information()}
                     {this.render_beacon_node_enabled_message()}
@@ -1884,7 +1884,7 @@ class StackPage extends Component {
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
-                            {this.render_gas_history_chart()}
+                            {/* {this.render_gas_history_chart()} */}
                             {this.render_extra_information()}
                             {this.render_beacon_node_enabled_message()}
                         </div>
