@@ -2382,9 +2382,9 @@ class App extends Component {
 
         'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
 
-        'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 1000, '~~~'),
+        'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~'),
 
-        'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 1000, '~~~'),
+        'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 143_000, '~~~'),
 
         'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
 
@@ -7761,7 +7761,7 @@ class App extends Component {
   create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_dot_wallet(seed)
-    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-polkadot');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
 
@@ -7779,7 +7779,7 @@ class App extends Component {
   create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_ksm_wallet(seed)
-    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-kusama');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
 
@@ -23533,14 +23533,15 @@ class App extends Component {
     var seed = seed1
     const wallet = await this.generate_dot_wallet(seed)
     const address = wallet.dot_address
-    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-polkadot');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
     const existential_deposit = await this.get_existential_dot_deposit(api)
     const address_balance = await this.get_dot_balance(address, api)
+    const fee = await this.get_dot_transaction_fee(api, address)
     await api.disconnect()
 
-    var fee_info = {'fee':await this.get_dot_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var fee_info = {'fee':fee, 'type':'fixed', 'per':'transaction'}
     var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
     var clone = structuredClone(this.state.coin_data)
     clone['DOT'] = data;
@@ -23578,14 +23579,17 @@ class App extends Component {
     }
   }
 
-  get_dot_transaction_fee = async () => {
-    return (0.015 * 10_000_000_000)
+  get_dot_transaction_fee = async (api, address) => {
+    const tx = api.tx.balances.transferKeepAlive(address, 10000);
+    const info = await tx.paymentInfo('16ZL8yLyXv3V3L3z9ofR1ovFLziyXaN1DPq4yffMAZ9czzBD')
+    return info.partialFee.toString()
+    // return (0.015 * 10_000_000_000)
   }
 
   update_dot_balance = async (clone) => {
     // var clone = structuredClone(this.state.coin_data)
     const address = clone['DOT']['address']
-    const wsProvider = new WsProvider('wss://polkadot-rpc.publicnode.com');
+    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-polkadot');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
     const address_balance = await this.get_dot_balance(address, api)
@@ -23601,14 +23605,15 @@ class App extends Component {
   get_and_set_kusama_wallet_info = async (seed) => {
     const wallet = await this.generate_ksm_wallet(seed)
     const address = wallet.ksm_address
-    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-kusama');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady
     const existential_deposit = await this.get_existential_ksm_deposit(api)
     const balance = await this.get_ksm_balance(address, api)
+    const fee = await this.get_ksm_transaction_fee(api, address)
     await api.disconnect()
 
-    var fee_info = {'fee':await this.get_ksm_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var fee_info = {'fee':fee, 'type':'fixed', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
     // var clone = structuredClone(this.state.coin_data)
     // clone['KSM'] = data;
@@ -23645,13 +23650,16 @@ class App extends Component {
     }
   }
 
-  get_ksm_transaction_fee = async () => {
-    return (0.01 * 1_000_000_000_000)
+  get_ksm_transaction_fee = async (api, address) => {
+    const tx = api.tx.balances.transferKeepAlive(address, 10000);
+    const info = await tx.paymentInfo('EGP7XztdTosm1EmaATZVMjSWujGEj9nNidhjqA2zZtttkFg')
+    return info.partialFee.toString()
+    // return (0.01 * 1_000_000_000_000)
   }
 
   update_ksm_balance = async (clone) => {
     const address = clone['KSM']['address']
-    const wsProvider = new WsProvider('wss://kusama-rpc.publicnode.com');
+    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-kusama');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
     const address_balance = await this.get_ksm_balance(address, api)
@@ -28066,21 +28074,21 @@ class App extends Component {
 
     this.homepage.current?.setState({
       all_pinns: all_pins, 
-      pinned_bags: all_object_type_pins['bag'], 
-      pinned_channels:all_object_type_pins['channel'], 
-      pinned_item: all_object_type_pins['storefront'], 
-      pinned_post: all_object_type_pins['post'], 
-      pinned_subscriptions: all_object_type_pins['subscription'], 
-      pinned_proposal: all_object_type_pins['proposal'], 
-      pinned_contractor: all_object_type_pins['contractor'], 
-      pinned_contract: all_object_type_pins['contract'], 
-      pinned_job: all_object_type_pins['job'], 
-      pinned_audios: all_object_type_pins['audiopost'], 
-      pinned_videos: all_object_type_pins['videopost'], 
-      pinned_nitros: all_object_type_pins['nitropost'], 
-      pinned_bills: all_object_type_pins['bill'], 
-      pinned_polls: all_object_type_pins['poll'], 
-      pinned_tokens: all_object_type_pins['token'],
+      pinned_bags: all_object_type_pins['bag'] || [], 
+      pinned_channels:all_object_type_pins['channel'] || [], 
+      pinned_item: all_object_type_pins['storefront'] || [], 
+      pinned_post: all_object_type_pins['post'] || [], 
+      pinned_subscriptions: all_object_type_pins['subscription'] || [], 
+      pinned_proposal: all_object_type_pins['proposal'] || [], 
+      pinned_contractor: all_object_type_pins['contractor'] || [], 
+      pinned_contract: all_object_type_pins['contract'] || [], 
+      pinned_job: all_object_type_pins['job'] || [], 
+      pinned_audios: all_object_type_pins['audiopost'] || [], 
+      pinned_videos: all_object_type_pins['videopost'] || [], 
+      pinned_nitros: all_object_type_pins['nitropost'] || [], 
+      pinned_bills: all_object_type_pins['bill'] || [], 
+      pinned_polls: all_object_type_pins['poll'] || [], 
+      pinned_tokens: all_object_type_pins['token'] || [],
     })
   }
 
