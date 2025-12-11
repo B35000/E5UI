@@ -4016,7 +4016,9 @@ class App extends Component {
       cached_files: await this.get_uploaded_data_to_stash(),
       all_cities: this.state.all_cities,
       new_object_changes: this.state.new_object_changes,
-      my_data_items: this.fetch_my_personal_data_in_memory()
+      my_data_items: this.fetch_my_personal_data_in_memory(),
+      file_data: this.get_uploaded_file_data(),
+      file_streaming_data: this.state.file_streaming_data,
     }
   }
 
@@ -4040,6 +4042,8 @@ class App extends Component {
     if(state != null){
       var cached_tracks = state.cached_tracks
       var cached_files = state.cached_files
+      var file_data = state.file_data
+      var file_streaming_data = state.file_streaming_data
       var all_cities = state.all_cities == null ? this.state.all_cities : state.all_cities
       var new_object_changes = state.new_object_changes == null ? this.state.new_object_changes : state.new_object_changes
       var my_data_items = state.my_data_items == null ? {} : state.my_data_items
@@ -4051,6 +4055,13 @@ class App extends Component {
       // if(cached_files != null){
       //   this.load_cached_files_into_memory(cached_files)
       // }
+
+      if(file_data != null){
+        this.set_uploaded_file_data(file_data)
+      }
+      if(file_streaming_data != null){
+        this.setState({file_streaming_data: file_streaming_data})
+      }
 
       this.write_my_data_items_to_memory_for_faster_load_times(my_data_items)
       this.setState({all_cities: all_cities, new_object_changes: new_object_changes})
@@ -4445,6 +4456,35 @@ class App extends Component {
       });
       this.setState({uploaded_data_cids: cid_clone, uploaded_data: data_clone})
     }
+  }
+
+  get_uploaded_file_data(){
+    const items = this.state.uploaded_data_cids
+    const item_object = {}
+    items.forEach(cid => {
+      const ecid_obj = this.get_cid_split(cid)
+      if(this.state.uploaded_data[ecid_obj['filetype']] != null && this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+        const data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        item_object[cid] = data
+      }
+    });
+    return item_object
+  }
+
+  set_uploaded_file_data(data_object){
+    const cids = Object.keys(data_object)
+    const uploaded_data_clone = structuredClone(this.state.uploaded_data)
+    cids.forEach(cid => {
+      const ecid_obj = this.get_cid_split(cid)
+      if(uploaded_data_clone[ecid_obj['filetype']] == null){
+        uploaded_data_clone[ecid_obj['filetype']] = {}
+      }
+      uploaded_data_clone[ecid_obj['filetype']][ecid_obj['full']] = data_object[cid]
+      if(ecid_obj['filetype'] == 'video'){
+        this.load_and_store_video_thumbnail(cid, data_object[cid])
+      }
+    });
+    this.setState({uploaded_data: uploaded_data_clone, uploaded_data_cids: cids})
   }
 
 
@@ -37978,6 +38018,7 @@ class App extends Component {
           file_streaming_data_clone[file] = {files_view_count, files_stream_count, files_renewal_years, is_file_deleted}
         }
         this.setState({file_streaming_data: file_streaming_data_clone})
+        this.set_cookies()
       }
     }
     catch(e){

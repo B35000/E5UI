@@ -17024,6 +17024,7 @@ class StackPage extends Component {
                                     <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': '0px'}}>
                                             {this.render_uploaded_file(item, index, selected_item)}
+                                            <div style={{height:5}}/>
                                         </motion.div>
                                     </AnimatePresence>
                                 </div>

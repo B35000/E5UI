@@ -85,7 +85,7 @@ class TextInput extends Component {
     return(
       <div style={{'padding': '0px 0px 0px 0px'}}>
         <AnimatePresence initial={true}>
-            <motion.div key={'text_area'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.75, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+            <motion.div key={'text_area'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} style={{}}>
                  <div style={{'display': 'flex', 'background-color': this.props.theme['secondary_text_color'], 'box-shadow': box_shadow,'flex-direction': 'row','margin': '0px 0px 0px 0px','border-radius': '0px 11px 11px 0px'}}>
                     {this.render_textarea_or_input(f)}
                   </div>

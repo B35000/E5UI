@@ -2139,16 +2139,19 @@ class home_page extends Component {
     get_bag_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+        var id = this.state.explore_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1216']/* 'bags' */
+
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1216']/* 'bags' */|| all != null){
             return this.get_all_sorted_objects(this.props.app_state.created_bags)
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.filter_using_searched_text(this.get_items_for_page()))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.filter_using_searched_text(this.get_items_for_page2(id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_bags = []
-            var all_bags = this.get_items_for_page()
+            var all_bags = this.get_items_for_page2(id, selected_page)
             for(var i=0; i<this.state.viewed_bags.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
@@ -2157,7 +2160,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_bags = []
-            var all_bags = this.get_items_for_page()
+            var all_bags = this.get_items_for_page2(id, selected_page)
             for(var i=0; i<this.state.pinned_bags.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
@@ -2166,7 +2169,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ae']/* 'my-responses' */){
             var my_applied_bags = []
-            var all_bags = this.get_items_for_page()
+            var all_bags = this.get_items_for_page2(id, selected_page)
             for(var i=0; i<all_bags.length; i++){
                 if(all_bags[i]['responded_to'] == true){
                     my_applied_bags.push(all_bags[i])
@@ -2176,7 +2179,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(id, selected_page)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p3
@@ -2189,11 +2192,11 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page()))))
+            return this.sort_feed_based_on_my_section_tags2(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(id, selected_page)
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -2206,7 +2209,7 @@ class home_page extends Component {
         }
         else {
             var my_bags = []
-            var all_bags = this.get_items_for_page()
+            var all_bags = this.get_items_for_page2(id, selected_page)
             for(var i = 0; i < all_bags.length; i++){
                 var post_author = all_bags[i]['event'].returnValues.p3
                 var myid = this.props.app_state.user_account_id[all_bags[i]['e5']]
@@ -2222,16 +2225,19 @@ class home_page extends Component {
     get_channel_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+        var page_id = this.state.explore_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1214']/* 'channels' */
+
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1214']/* 'channels' */|| all != null){
             return this.get_all_sorted_objects(this.props.app_state.created_channels)
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page()))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_channels = []
-            var created_channels = this.get_items_for_page()
+            var created_channels = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_channels.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_channels[i], created_channels)
                 if(obj != null) my_viewed_channels.push(obj)
@@ -2240,7 +2246,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_channels = []
-            var created_channels = this.get_items_for_page()
+            var created_channels = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_channels.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_channels[i], created_channels)
                 if(obj != null) my_viewed_channels.push(obj)
@@ -2249,7 +2255,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
@@ -2262,11 +2268,11 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page())))
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_channels = this.props.app_state.my_channels.slice().concat(this.props.app_state.my_objects)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -2279,7 +2285,7 @@ class home_page extends Component {
         }
         else {
             var my_channels = []
-            var created_channels = this.get_items_for_page()
+            var created_channels = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < created_channels.length; i++){
                 var channel_author = created_channels[i]['event'].returnValues.p5
@@ -2296,16 +2302,19 @@ class home_page extends Component {
     get_contractor_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
+        var page_id = this.state.work_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1198']/* 'contractors' */
+
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1198']/* 'contractors' */|| all != null){
             return this.get_all_sorted_objects(this.props.app_state.created_contractors)
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page()))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_contractors = []
-            var all_contractors = this.get_items_for_page()
+            var all_contractors = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_contractors.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_contractors[i], all_contractors)
                 if(obj != null) my_viewed_contractors.push(obj)
@@ -2314,7 +2323,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_contractors = []
-            var all_contractors = this.get_items_for_page()
+            var all_contractors = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_contractor.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_contractor[i], all_contractors)
                 if(obj != null) my_viewed_contractors.push(obj)
@@ -2323,7 +2332,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
@@ -2336,11 +2345,11 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page())))
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))
         }
         else {
             var my_contractors = []
-            var all_contractors = this.get_items_for_page()
+            var all_contractors = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_contractors.length; i++){
                 var post_author = all_contractors[i]['event'].returnValues.p5
@@ -2356,7 +2365,24 @@ class home_page extends Component {
 
     get_exchange_tokens(exchange_type, all){
         var token_exchanges = []
-        var exchanges_from_sync = this.get_items_for_page(this.get_all_sorted_objects(this.props.app_state.created_tokens))
+
+        var exchanges_from_sync;
+
+        if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
+            var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.props.app_state.loc['1219']/* 'spends' */)
+            var page_id = this.props.app_state.loc['1219']/* 'spends' */+selected_option_name
+            var selected_page = this.props.app_state.loc['1219']/* 'spends' */
+
+            exchanges_from_sync = this.get_items_for_page(this.get_all_sorted_objects(this.props.app_state.created_tokens), page_id, selected_page)
+        }
+        else{
+            var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.props.app_state.loc['1218']/* 'ends' */)
+            var page_id = this.props.app_state.loc['1218']/* 'ends' */+selected_option_name
+            var selected_page = this.props.app_state.loc['1218']/* 'ends' */
+
+            exchanges_from_sync = this.get_items_for_page(this.get_all_sorted_objects(this.props.app_state.created_tokens), page_id, selected_page)
+        }
+        
         for (let i = 0; i < exchanges_from_sync.length; i++) {
             var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
             var e5 = exchanges_from_sync[i]['e5']
@@ -2534,6 +2560,9 @@ class home_page extends Component {
     get_job_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
+        var page_id = this.state.work_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1196']/* 'jobs' */
+
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1196']/* 'jobs' */|| all != null){
             var chain_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
             var socket_jobs = this.get_all_sorted_objects(this.props.app_state.socket_created_jobs)
@@ -2542,11 +2571,11 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page())))))
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_jobs = []
-            var all_jobs = this.get_items_for_page()
+            var all_jobs = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_jobs.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_jobs[i], all_jobs)
                 if(obj != null) my_viewed_jobs.push(obj)
@@ -2556,7 +2585,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_jobs = []
-            var all_jobs = this.get_items_for_page()
+            var all_jobs = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_job.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_job[i], all_jobs)
                 if(obj != null) my_viewed_jobs.push(obj)
@@ -2566,7 +2595,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1205']/* 'applied' */){
             var my_applied_jobs = []
-            var all_jobs = this.get_items_for_page()
+            var all_jobs = this.get_items_for_page2(page_id, selected_page)
             var all_applications = this.get_all_sorted_objects(this.props.app_state.my_applications)
             var all_job_mappings = this.get_all_sorted_objects_mappings(this.props.app_state.created_job_mappings)
             
@@ -2581,7 +2610,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
@@ -2594,11 +2623,11 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page())))
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -2611,7 +2640,7 @@ class home_page extends Component {
         }
         else {
             var my_jobs = []
-            var all_jobs = this.get_items_for_page()
+            var all_jobs = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_jobs.length; i++){
                 var post_author = all_jobs[i]['event'].returnValues.p5
@@ -2736,6 +2765,9 @@ class home_page extends Component {
     get_post_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+        var page_id = this.state.explore_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1213']/* 'posts' */
+
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1213']/* 'posts' */|| all != null){
             var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
             var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_posts)
@@ -2744,11 +2776,11 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page())))))
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_posts.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_posts[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -2757,7 +2789,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_post.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_post[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -2766,7 +2798,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var followed_accounts = this.props.app_state.followed_accounts
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['post']
             for(var i=0; i<all_objects.length; i++){
@@ -2781,11 +2813,11 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page())))
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -2798,7 +2830,7 @@ class home_page extends Component {
         }
         else {
             var my_posts = []
-            var all_posts = this.get_items_for_page()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_posts.length; i++){
                 var post_author = all_posts[i]['event'].returnValues.p5
@@ -2815,12 +2847,15 @@ class home_page extends Component {
     get_proposal_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
+        var page_id = this.state.work_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1199']/* 'proposals' */
+
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1199']/* 'proposals' */|| all != null){
             return this.get_all_sorted_objects(this.props.app_state.my_proposals)
         }
 
         if(selected_option_name == this.props.app_state.loc['1211']/* 'my-proposals' */){
-            var all_proposals = this.get_items_for_page()
+            var all_proposals = this.get_items_for_page2(page_id, selected_page)
             var main_contract_proposals = []
             for(var i=0; i<all_proposals.length; i++){
                 var proposal_target_contract_authority = all_proposals[i]['data'][1/* config */][5/* <5>target_contract_authority */]
@@ -2831,7 +2866,7 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(main_contract_proposals))
         }
         else if(selected_option_name == this.props.app_state.loc['1264aa']/* 'main-contract' */){
-            var all_proposals = this.get_items_for_page()
+            var all_proposals = this.get_items_for_page2(page_id, selected_page)
             var main_contract_proposals = []
             for(var i=0; i<all_proposals.length; i++){
                 var proposal_target_contract_authority = all_proposals[i]['data'][1/* config */][5/* <5>target_contract_authority */]
@@ -2843,7 +2878,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_proposals = []
-            var all_proposals = this.get_items_for_page()
+            var all_proposals = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_proposals.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_proposals[i], all_proposals)
                 if(obj != null) my_viewed_proposals.push(obj)
@@ -2852,7 +2887,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_proposals = []
-            var all_proposals = this.get_items_for_page()
+            var all_proposals = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_proposal.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_proposal[i], all_proposals)
                 if(obj != null) my_viewed_proposals.push(obj)
@@ -2861,7 +2896,7 @@ class home_page extends Component {
         }
         else {
             var proposals = []
-            var all_proposals = this.get_items_for_page()
+            var all_proposals = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_proposals.length; i++){
                 var proposal_author = all_proposals[i]['event'].returnValues.p4/* should be p3 */
@@ -2880,16 +2915,19 @@ class home_page extends Component {
     get_storefront_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+        var page_id = this.state.explore_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1215']/* 'storefront' */
+
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1215']/* 'storefront' */|| all != null){
             return this.get_all_sorted_objects(this.props.app_state.created_stores)
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page())))))
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_stores = []
-            var all_stores = this.get_items_for_page()
+            var all_stores = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_stores.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_stores[i], all_stores)
                 if(obj != null) my_viewed_stores.push(obj)
@@ -2898,7 +2936,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_stores = []
-            var all_stores = this.get_items_for_page()
+            var all_stores = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_item.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_item[i], all_stores)
                 if(obj != null) my_viewed_stores.push(obj)
@@ -2907,7 +2945,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
@@ -2920,11 +2958,11 @@ class home_page extends Component {
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page())))
+            return this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264az']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -2938,7 +2976,7 @@ class home_page extends Component {
         else {
             var my_stores = []
             
-            var all_stores = this.get_items_for_page()
+            var all_stores = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_stores.length; i++){
                 var post_author = all_stores[i]['event'].returnValues.p5
@@ -2955,16 +2993,19 @@ class home_page extends Component {
     get_subscription_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
+        var page_id = this.state.work_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1200']/* 'subscriptions' */
+
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1200']/* 'subscriptions' */|| all != null){
             return this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page()))))
+            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_subscriptions = []
-            var all_subscriptions = this.get_items_for_page()
+            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_subscriptions.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
@@ -2973,7 +3014,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_subscriptions = []
-            var all_subscriptions = this.get_items_for_page()
+            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_subscriptions.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
@@ -2982,7 +3023,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1207']/* 'paid' */){
             var my_paid_subscriptions = []
-            var all_subscriptions = this.get_items_for_page()
+            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<all_subscriptions.length; i++){
                 var object = all_subscriptions[i]
                 if(object['payment'] != 0){
@@ -2993,7 +3034,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264b']/* upcoming */){
             var my_paid_subscriptions = []
-            var all_subscriptions = this.get_items_for_page()
+            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
             var now = Math.floor(Date.now()/1000)
             var selected_e5 = this.props.app_state.selected_e5
             for(var i=0; i<all_subscriptions.length; i++){
@@ -3009,7 +3050,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1332f']/* 'history' */){
             var my_paid_subscriptions = []
-            var all_subscriptions = this.get_items_for_page()
+            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<all_subscriptions.length; i++){
                var object = all_subscriptions[i]
                 if(parseInt(object['last_expiration_time'].toString()) > 0){
@@ -3020,7 +3061,7 @@ class home_page extends Component {
         }
         else {
             var my_subscriptions = []
-            var all_subscriptions = this.get_items_for_page()
+            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_subscriptions.length; i++){
                 var post_author = all_subscriptions[i]['event'] == null ? 0 : all_subscriptions[i]['event'].returnValues.p3
@@ -3037,6 +3078,8 @@ class home_page extends Component {
     get_audio_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+        var page_id = this.state.explore_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1264k']/* 'audioport' */
 
         if(all == 'discography'){
             return this.get_all_sorted_objects(this.props.app_state.created_audios)
@@ -3047,11 +3090,11 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page()))))))
+            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_audios = []
-            var all_audios = this.get_items_for_page()
+            var all_audios = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_audios.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
@@ -3060,7 +3103,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_audios = []
-            var all_audios = this.get_items_for_page()
+            var all_audios = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_audios.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
@@ -3069,7 +3112,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
             var my_added_album_ids = this.get_stack_albums().reverse()
-            var all_audios = this.get_items_for_page()
+            var all_audios = this.get_items_for_page2(page_id, selected_page)
             var my_acquired_albums_in_stack = []
             for(var i=0; i<my_added_album_ids.length; i++){
                 var obj = this.get_item_in_array2(my_added_album_ids[i], all_audios)
@@ -3083,7 +3126,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var followed_accounts = this.props.app_state.followed_accounts
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['audio']
             for(var i=0; i<all_objects.length; i++){
@@ -3098,10 +3141,10 @@ class home_page extends Component {
             return this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page()))))
+            return this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */){
-            const all_audios = this.get_items_for_page()
+            const all_audios = this.get_items_for_page2(page_id, selected_page)
             const hidden_audioposts_ids = Object.keys(this.props.app_state.hidden_audioposts)
             const final_all_audios = all_audios.filter(function (object) {
                 return (hidden_audioposts_ids.includes(object['e5_id']))
@@ -3110,7 +3153,7 @@ class home_page extends Component {
         }
         else {
             var my_audios = []
-            var all_audios = this.get_items_for_page()
+            var all_audios = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_audios.length; i++){
                 var audio_author = all_audios[i]['event'].returnValues.p5
@@ -3151,6 +3194,8 @@ class home_page extends Component {
     get_video_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+        var page_id = this.state.explore_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1264p']/* 'videoport' */
 
         if(all == 'discography'){
             return this.get_all_sorted_objects(this.props.app_state.created_videos)
@@ -3161,11 +3206,11 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page()))))))
+            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_videos = []
-            var all_videos = this.get_items_for_page()
+            var all_videos = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_videos.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
@@ -3174,7 +3219,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_videos = []
-            var all_videos = this.get_items_for_page()
+            var all_videos = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_videos.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
@@ -3183,7 +3228,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
             var my_added_videopost_ids = this.get_stack_videposts().reverse()
-            var all_videos = this.get_items_for_page()
+            var all_videos = this.get_items_for_page2(page_id, selected_page)
             var my_stacked_videoposts = []
             for(var i=0; i<my_added_videopost_ids.length; i++){
                 var obj = this.get_item_in_array2(my_added_videopost_ids[i], all_videos)
@@ -3194,7 +3239,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var followed_accounts = this.props.app_state.followed_accounts
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['video']
             for(var i=0; i<all_objects.length; i++){
@@ -3208,11 +3253,11 @@ class home_page extends Component {
             return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page()))))
+            return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3224,7 +3269,7 @@ class home_page extends Component {
             return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else if(selected_option_name == this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */){
-            var all_videos = this.get_items_for_page()
+            var all_videos = this.get_items_for_page2(page_id, selected_page)
             const hidden_videoposts_ids = Object.keys(this.props.app_state.hidden_videoposts)
             const final_all_videos = all_videos.filter(function (object) {
                 return (hidden_videoposts_ids.includes(object['e5_id']))
@@ -3233,7 +3278,7 @@ class home_page extends Component {
         }
         else {
             var my_videos = []
-            var all_videos = this.get_items_for_page()
+            var all_videos = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_videos.length; i++){
                 var audio_author = all_videos[i]['event'].returnValues.p5
@@ -3274,15 +3319,18 @@ class home_page extends Component {
     get_nitro_items(all){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
+        var page_id = this.state.work_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1264s']/* 'nitro' */
+
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1264s']/* 'nitro' */|| all != null){
             return this.get_all_sorted_objects(this.props.app_state.created_nitros)
         }
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page()))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)()))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_nitros = []
-            var all_nitros = this.get_items_for_page()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
             for(var i=0; i<this.state.viewed_nitros.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_nitros[i], all_nitros)
                 if(obj != null) my_viewed_nitros.push(obj)
@@ -3292,7 +3340,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought' */){
             var my_bought_nitros = []
-            var all_nitros = this.get_items_for_page()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
             for(var i=0; i<all_nitros.length; i++){
                 var obj = all_nitros[i]
                 if(obj['bought'] == true) my_bought_nitros.push(obj)
@@ -3301,7 +3349,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_nitros = []
-            var all_nitros = this.get_items_for_page()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
             for(var i=0; i<this.state.pinned_nitros.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_nitros[i], all_nitros)
                 if(obj != null) my_viewed_nitros.push(obj)
@@ -3311,7 +3359,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)()
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3324,7 +3372,7 @@ class home_page extends Component {
         }
         else {
             var my_nitros = []
-            var all_nitros = this.get_items_for_page()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
             
             for(var i = 0; i < all_nitros.length; i++){
                 var post_author = all_nitros[i]['event'].returnValues.p5
@@ -3403,18 +3451,21 @@ class home_page extends Component {
     get_poll_items(all){
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
+        var page_id = this.state.explore_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1264ao']/* 'polls' */
+
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264ao']/* 'polls' */ || all != null){
             return this.get_all_sorted_objects(this.props.app_state.created_polls)
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            var items = this.get_items_for_page()
+            var items = this.get_items_for_page2(page_id, selected_page)()
             
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)()
             for(var i=0; i<this.state.viewed_polls.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -3423,7 +3474,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)()
             for(var i=0; i<this.state.pinned_polls.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -3432,7 +3483,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)()
             var followed_accounts = this.props.app_state.followed_accounts
             // console.log('followed_accounts', followed_accounts)
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['post']
@@ -3449,7 +3500,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)()
             var my_polls = this.props.app_state.my_polls.slice().concat(this.props.app_state.my_objects)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3462,7 +3513,7 @@ class home_page extends Component {
         }
         else {
             var my_posts = []
-            var all_posts = this.get_items_for_page()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)()
             
             for(var i = 0; i < all_posts.length; i++){
                 var post_author = all_posts[i]['event'].returnValues.p5
@@ -3533,10 +3584,22 @@ class home_page extends Component {
         return pointers.map(id => objMap.get(id)).filter(Boolean);
     }
 
-    get_items_for_page(provided_pages_objects){
-        const pages_objects = provided_pages_objects || this.get_pages_objects(this.get_selected_page()) || []
+    get_items_for_page(provided_pages_objects, id, selected_page){
+        const pages_objects = provided_pages_objects || this.get_pages_objects(selected_page) || []
         const searched_text = this.get_typed_text()
-        const id = this.get_page_id()
+        
+        if(searched_text != null && searched_text != '' && this.state.search_results[id] != null && this.state.search_results[id][searched_text] != null){
+            // console.log('homepage', 'calling get_items_from_array_and_pointers', this.state.search_results[id][searched_text], id, searched_text)
+            return this.get_items_from_array_and_pointers(pages_objects, this.state.search_results[id][searched_text])
+        }else{
+            // console.log('homepage', 'returning pages_objects', pages_objects.length)
+            return pages_objects
+        }
+    }
+
+    get_items_for_page2(id, selected_page){
+        const pages_objects = this.get_pages_objects(selected_page) || []
+        const searched_text = this.get_typed_text()
         
         if(searched_text != null && searched_text != '' && this.state.search_results[id] != null && this.state.search_results[id][searched_text] != null){
             // console.log('homepage', 'calling get_items_from_array_and_pointers', this.state.search_results[id][searched_text], id, searched_text)
@@ -4047,7 +4110,7 @@ class home_page extends Component {
             <div>
                 {this.render_line_if_enabled()}
                 {this.render_search_tags_views()}
-                <SwipeableViews disabled={true} index={pos} onChangeIndex={this.handleChange}>
+                <SwipeableViews index={pos} onChangeIndex={this.handleChange}>
                     <div key={'?'}>
                         {this.render_post_list_group2(size, '?', this.work_list_section, h)}
                     </div>

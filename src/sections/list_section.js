@@ -950,7 +950,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_job_item(object)
-        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || this.is_object_blocked_for_sender(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || this.is_object_blocked_for_sender(object) || object == null){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1020,10 +1020,11 @@ class PostListSection extends Component {
     }
 
     remove_duplicates(list){
+        if(list == null) return []
         var filtered = []
         var item_mapping = {}
         list.forEach(element => {
-            if(!filtered.includes(element) && item_mapping[element['e5_id']] == null){
+            if(element != null && !filtered.includes(element) && item_mapping[element['e5_id']] == null){
                 filtered.push(element)
                 item_mapping[element['e5_id']] = element['e5_id']
             }
@@ -1137,7 +1138,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contract_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || object == null){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1327,6 +1328,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_proposal_item(object)
+        if(object == null) return;
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
             return(
                 <div onClick={() => this.when_proposal_item_clicked(index, object)}>
@@ -1449,7 +1451,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_nitro_item(object)
-        if(this.is_post_taken_down_for_sender(object)){
+        if(this.is_post_taken_down_for_sender(object) || object == null){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1594,7 +1596,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || object == null){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1755,7 +1757,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_mail_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || object == null){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -2260,6 +2262,7 @@ class PostListSection extends Component {
     }
 
     render_link_object_item(object, index, type){
+        if(object == null) return;
         const item = this.format_link_item(object, type)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -2624,7 +2627,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_post_item(object)
-        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object) || object == null){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -2838,7 +2841,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_channel_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || object == null){
             return(
                 <div>
                     {this.render_empty_object()}
