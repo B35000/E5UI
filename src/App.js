@@ -22287,11 +22287,11 @@ class App extends Component {
     await this.wait(500)
     if(this.is_allowed_in_e5()){
       this.enableConsole()
-      if(this.state.os == 'iOS'){
-        this.changeFavicon('/ios_app_icon.png')
-      }else{
-        this.changeFavicon('/app_icon.png')
-      }
+      // if(this.state.os == 'iOS'){
+      //   this.changeFavicon('/ios_app_icon.png')
+      // }else{
+      //   this.changeFavicon('/app_icon.png')
+      // }
       if(this.state.device_country == null || this.state.device_city == null){
         this.prompt_top_notification(this.getLocale()['2738al']/* 'e cant seem to access your general location info.' */, (35*60*1000))
         return;

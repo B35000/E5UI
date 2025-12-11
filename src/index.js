@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 // Copyright (c) 2023 Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,3 +35,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render( <App/> );
 window.addEventListener("load", hidePreloader);
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js");
+  });
+}
