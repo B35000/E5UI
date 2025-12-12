@@ -201,7 +201,7 @@ class NewJobPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
 
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
                     <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
                         <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -222,8 +222,10 @@ class NewJobPage extends Component {
                 </div> */}
                 
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
-                    {this.render_everything()}   
+                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
+                    <div style={{'width':'98%'}}>
+                        {this.render_everything()}
+                    </div>  
                 </div>
                 
             </div>
@@ -357,10 +359,12 @@ class NewJobPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part2()}
                     </div>
                 </div>
@@ -370,10 +374,12 @@ class NewJobPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part2()}
                     </div>
                 </div>
@@ -754,11 +760,11 @@ class NewJobPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1535,10 +1541,10 @@ class NewJobPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1548,10 +1554,10 @@ class NewJobPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1780,10 +1786,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1793,10 +1799,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1958,10 +1964,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1971,10 +1977,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2094,7 +2100,7 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                         <div style={{height:10}}/>
 
@@ -2104,7 +2110,7 @@ return data['data']
 
                         {this.render_markdown_shortcut_list()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_markdown_or_empty()}
                     </div>
                 </div>
@@ -2229,10 +2235,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_location_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2242,10 +2248,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_location_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2265,12 +2271,12 @@ return data['data']
                 <div style={{height:10}}/>
 
                 <div className="row">
-                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div className="col-6" >
                             <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
                             </div>
                         </div>
-                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div className="col-6" >
                             <div onClick={()=> this.props.show_dialog_bottomsheet({'pins':this.state.pins}, 'pick_from_my_locations')}>
                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
                             </div>
@@ -2392,10 +2398,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -2405,10 +2411,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div> 

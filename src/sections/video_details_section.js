@@ -2238,14 +2238,14 @@ class VideoDetailsSection extends Component {
             var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
             return(
                 <div onClick={() => this.when_chart_song_selected(selection, object)}>
-                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'s', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
                     {this.render_line_if_selected(object, selection, index)}
                 </div>
             )
         }else{
             return(
                 <div onClick={() => this.when_chart_song_selected(selection, object)}>
-                    {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'l'})}
+                    {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title']+(this.is_video_available_for_viewing(item) ? ' ✅':''), 'size':'s'})}
                     {this.render_line_if_selected(object, selection, index)}
                 </div>
             )

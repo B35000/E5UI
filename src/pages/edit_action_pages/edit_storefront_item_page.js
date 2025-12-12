@@ -75,7 +75,7 @@ class NewStorefrontItemPage extends Component {
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
         purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(), 
         get_option_storefront_type_object:this.get_option_storefront_type_object(),
-        get_purchase_through_bags_tags_object:this.get_purchase_through_bags_tags_object(),
+        get_purchase_through_bags_tags_object:this.get_purchase_through_bags_tags_object(), get_bundle_image_tags_option:this.get_bundle_image_tags_option(),
         
         typed_link_text:'', link_search_results:[], added_links:[],
         edit_text_item_pos:-1, edit_variant_item_pos:-1,
@@ -272,6 +272,17 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+    get_bundle_image_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311dw']/* 'bundle' */], [1]
+            ],
+        };
+    }
+
 
 
 
@@ -315,7 +326,7 @@ class NewStorefrontItemPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
 
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
                     <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
                         <Tags app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -335,8 +346,10 @@ class NewStorefrontItemPage extends Component {
                     </div>
                 </div> */}
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
-                    {this.render_everything()}   
+                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
+                    <div style={{'width':'98%'}}>
+                        {this.render_everything()}
+                    </div>  
                 </div>
                 
             </div>
@@ -475,10 +488,10 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_subscription_configuration_part1()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_subscription_configuration_part2()}
                     </div>
                 </div>
@@ -488,10 +501,10 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_subscription_configuration_part1()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_subscription_configuration_part2()}
                     </div>
                 </div>
@@ -546,12 +559,12 @@ class NewStorefrontItemPage extends Component {
                     {this.render_shipping_detail_suggestions()}
                     <div style={{height:10}}/>
                     <div className="row">
-                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div className="col-6" >
                             <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
                             </div>
                         </div>
-                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div className="col-6" >
                             <div onClick={()=> this.props.show_dialog_bottomsheet({'pins':this.state.pins}, 'pick_from_my_locations')}>
                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
                             </div>
@@ -1183,10 +1196,10 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1239,6 +1252,10 @@ class NewStorefrontItemPage extends Component {
                 {this.render_create_image_ui_buttons_part2()}
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311du']/* 'Bundle Thumbnail.' */, 'details':this.props.app_state.loc['a311dv']/* 'Bundle the image set as the thumbnail in the object to be displayed as a default while loading. This will make your object larger.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_bundle_image_tags_option} tag_size={'l'} when_tags_updated={this.when_get_bundle_image_tags_option_updated.bind(this)} theme={this.props.theme}/>
 
 
                 {this.render_detail_item('0')}
@@ -1250,6 +1267,19 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_bundle_image_tags_option_updated(tag_obj){
+        this.setState({get_bundle_image_tags_option: tag_obj})
+
+        const selected_item = this.get_selected_item(tag_obj, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(this.state.storefront_item_art != null){
+                this.setState({image_bundle: this.get_image_from_file(this.state.storefront_item_art)})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
     when_get_purchase_through_bags_tags_object_updated(tag_obj){
@@ -1365,6 +1395,15 @@ class NewStorefrontItemPage extends Component {
         }
 
         this.setState({storefront_item_art: files[0], ecid_encryption_passwords: cloned_ecid_encryption_passwords});
+
+        const selected_item = this.get_selected_item(this.state.get_bundle_image_tags_option, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(files[0] != null){
+                this.setState({image_bundle: this.get_image_from_file(files[0])})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
 
@@ -1484,11 +1523,11 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1498,11 +1537,11 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2259,10 +2298,10 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2272,10 +2311,10 @@ class NewStorefrontItemPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2506,10 +2545,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2519,10 +2558,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2686,10 +2725,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2699,10 +2738,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2822,7 +2861,7 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                         <div style={{height:10}}/>
 
@@ -2832,7 +2871,7 @@ return data['data']
 
                         {this.render_markdown_shortcut_list()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_markdown_or_empty()}
                     </div>
                 </div>
@@ -2957,11 +2996,11 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_purchase_options_parts()}
                         
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_purchase_options_parts2()}
                     </div>
                 </div>
@@ -2971,11 +3010,11 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_purchase_options_parts()}
                         
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_purchase_options_parts2()}
                     </div>
                 </div>
@@ -3558,10 +3597,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_variant_details_picker_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_enter_item_price_part()}
                     </div>
                 </div>
@@ -3571,10 +3610,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_variant_details_picker_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_enter_item_price_part()}
                     </div>
                 </div>
@@ -4233,10 +4272,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_variants_exipry_time_picker()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -4246,10 +4285,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_variants_exipry_time_picker()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -4324,10 +4363,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_auction_registration_deposit_data()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -4337,10 +4376,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_auction_registration_deposit_data()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -4542,10 +4581,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_access_rights_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -4555,10 +4594,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_access_rights_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>

@@ -3326,11 +3326,11 @@ class home_page extends Component {
             return this.get_all_sorted_objects(this.props.app_state.created_nitros)
         }
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)()))))
+            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_nitros = []
-            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_nitros.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_nitros[i], all_nitros)
                 if(obj != null) my_viewed_nitros.push(obj)
@@ -3340,7 +3340,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought' */){
             var my_bought_nitros = []
-            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<all_nitros.length; i++){
                 var obj = all_nitros[i]
                 if(obj['bought'] == true) my_bought_nitros.push(obj)
@@ -3349,7 +3349,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_nitros = []
-            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_nitros.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_nitros[i], all_nitros)
                 if(obj != null) my_viewed_nitros.push(obj)
@@ -3359,7 +3359,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page2(page_id, selected_page)()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_objects = this.props.app_state.my_objects
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3372,7 +3372,7 @@ class home_page extends Component {
         }
         else {
             var my_nitros = []
-            var all_nitros = this.get_items_for_page2(page_id, selected_page)()
+            var all_nitros = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_nitros.length; i++){
                 var post_author = all_nitros[i]['event'].returnValues.p5
@@ -3459,13 +3459,13 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            var items = this.get_items_for_page2(page_id, selected_page)()
+            var items = this.get_items_for_page2(page_id, selected_page)
             
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page2(page_id, selected_page)()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.viewed_polls.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -3474,7 +3474,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page2(page_id, selected_page)()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)
             for(var i=0; i<this.state.pinned_polls.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -3483,7 +3483,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
-            var all_objects = this.get_items_for_page2(page_id, selected_page)()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var followed_accounts = this.props.app_state.followed_accounts
             // console.log('followed_accounts', followed_accounts)
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['post']
@@ -3500,7 +3500,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
-            var all_objects = this.get_items_for_page2(page_id, selected_page)()
+            var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_polls = this.props.app_state.my_polls.slice().concat(this.props.app_state.my_objects)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3513,7 +3513,7 @@ class home_page extends Component {
         }
         else {
             var my_posts = []
-            var all_posts = this.get_items_for_page2(page_id, selected_page)()
+            var all_posts = this.get_items_for_page2(page_id, selected_page)
             
             for(var i = 0; i < all_posts.length; i++){
                 var post_author = all_posts[i]['event'].returnValues.p5

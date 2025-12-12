@@ -67,7 +67,7 @@ class NewTokenPage extends Component {
     state = {
         id: makeid(8), object_type:31, type:this.props.app_state.loc['767']/* 'edit-token' */,
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
-        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:null,
+        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:null, get_bundle_image_tags_option:this.get_bundle_image_tags_option(),
 
         new_token_type_tags_object: this.get_new_token_type_tags_object(),
         token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0,   
@@ -193,6 +193,16 @@ class NewTokenPage extends Component {
         };
     }
 
+    get_bundle_image_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311dw']/* 'bundle' */], [1]
+            ],
+        };
+    }
 
 
     set_edit_data(){
@@ -210,7 +220,7 @@ class NewTokenPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
                     <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
                         <Tags app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.new_token_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -231,8 +241,10 @@ class NewTokenPage extends Component {
                 </div> */}
                 
                 
-                <div style={{'margin':'10px 0px 0px 0px'}}>
-                    {this.render_everything()}   
+                <div style={{'margin':'10px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
+                   <div style={{'width':'98%'}}>
+                        {this.render_everything()}
+                    </div>   
                 </div>
                 
             </div>
@@ -308,10 +320,10 @@ class NewTokenPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row" style={{}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part2()}
                     </div>
                 </div>
@@ -320,10 +332,10 @@ class NewTokenPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part2()}
                     </div>
                 </div>  
@@ -383,11 +395,29 @@ class NewTokenPage extends Component {
                 {this.render_specific_country_selector()}
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311du']/* 'Bundle Thumbnail.' */, 'details':this.props.app_state.loc['a311dv']/* 'Bundle the image set as the thumbnail in the object to be displayed as a default while loading. This will make your object larger.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_bundle_image_tags_option} tag_size={'l'} when_tags_updated={this.when_get_bundle_image_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_bundle_image_tags_option_updated(tag_obj){
+        this.setState({get_bundle_image_tags_option: tag_obj})
+
+        const selected_item = this.get_selected_item(tag_obj, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(this.state.token_image != null){
+                this.setState({image_bundle: this.get_image_from_file(this.state.token_image)})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
 
@@ -487,12 +517,12 @@ class NewTokenPage extends Component {
                 {this.render_detail_item('1',{'active_tags':this.get_included_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_included_country_selected'})}
                 <div style={{height:10}}/>
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         <div onClick={()=> this.add_all_countries()}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['a273w']/* 'Add all' */, 'action':''})}
                         </div>
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         <div onClick={()=> this.remove_all_countries()}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['a273x']/* 'remove all' */, 'action':''})}
                         </div>
@@ -617,6 +647,15 @@ class NewTokenPage extends Component {
             cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
         }
         this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords});
+
+        const selected_item = this.get_selected_item(this.state.get_bundle_image_tags_option, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(files[0] != null){
+                this.setState({image_bundle: this.get_image_from_file(files[0])})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
     get_image_from_file(ecid){

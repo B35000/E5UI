@@ -130,7 +130,7 @@ class PostsDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2514']/* 'awards' */,this.props.app_state.loc['1693']/* 'responses' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2514']/* 'awards' */,this.props.app_state.loc['1674']/* 'activity' */],[1]
           ],
         }
     }
@@ -206,7 +206,7 @@ class PostsDetailsSection extends Component {
                     {this.render_post_main_details_section(object)}
                 </div>
             )
-        }else if(selected_item == this.props.app_state.loc['1693']/* 'responses' */){
+        }else if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
             return(
                 <div>
                     {this.render_post_responses(object)}

@@ -27182,6 +27182,7 @@ class App extends Component {
           try{
             if(clone[filetype] == null) clone[filetype] = {}
             clone[filetype][cids[e]] = data
+            delete clone[cids[e]]
             this.setState({uploaded_data: clone})
             // console.log('apppage', 'set one cid object in memory.')
           }catch(e){
@@ -27217,6 +27218,7 @@ class App extends Component {
         try{
           if(clone[filetype] == null) clone[filetype] = {}
           clone[filetype][cids[i]] = data
+          delete clone[cids[e]]
           this.setState({uploaded_data: clone})
           // console.log('apppage', 'set one cid object in memory.')
         }catch(e){
@@ -30545,6 +30547,11 @@ class App extends Component {
       
       if(tokens_data != null){
         token_thumbnail_directory[created_tokens[i]] = tokens_data.token_image
+        if(tokens_data.image_bundle != null){
+          const uploaded_data_clone = structuredClone(this.state.uploaded_data)
+          uploaded_data_clone[tokens_data.token_image] = tokens_data.image_bundle
+          this.setState({uploaded_data: uploaded_data_clone})
+        }
       }
       else if(created_tokens[i] == 3){
         token_thumbnail_directory[created_tokens[i]] = this.state.e5s[e5].end_image
@@ -31884,6 +31891,12 @@ class App extends Component {
           });
           if(data != null && data.storefront_item_art != null && data.storefront_item_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([data.storefront_item_art], false, keys)
 
+          if(data.image_bundle != null){
+            const uploaded_data_clone = structuredClone(this.state.uploaded_data)
+            uploaded_data_clone[data.storefront_item_art] = data.image_bundle
+            this.setState({uploaded_data: uploaded_data_clone})
+          }
+
           var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':parseInt(created_store_events[i].returnValues.p6), 'author':created_store_events[i].returnValues.p5, 'e5_id':id+e5, 'participated':auction_bids_event_data.includes(id), 'object_type':'storefront'}
           
           const index = created_stores.findIndex(item => item['e5_id'] === obj['e5_id']);
@@ -32501,6 +32514,12 @@ class App extends Component {
           });
           if(audio_data != null && audio_data.album_art != null && audio_data.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([audio_data.album_art], false, keys);
 
+          if(audio_data.image_bundle != null){
+            const uploaded_data_clone = structuredClone(this.state.uploaded_data)
+            uploaded_data_clone[audio_data.album_art] = audio_data.image_bundle
+            this.setState({uploaded_data: uploaded_data_clone})
+          }
+
           audio_data.songs.forEach(song => {
             songs_to_load.push(song['track'])
           });
@@ -32684,6 +32703,12 @@ class App extends Component {
           });
           if(video_data.album_art != null && video_data.album_art.startsWith('image')) {
             this.fetch_uploaded_data_from_ipfs([video_data.album_art], false, keys)
+          }
+
+          if(video_data.image_bundle != null){
+            const uploaded_data_clone = structuredClone(this.state.uploaded_data)
+            uploaded_data_clone[video_data.album_art] = video_data.image_bundle
+            this.setState({uploaded_data: uploaded_data_clone})
           }
           
           video_data.videos.forEach(video => {
@@ -32909,6 +32934,12 @@ class App extends Component {
             const nitro_album_art_clone = structuredClone(this.state.nitro_album_art)
             nitro_album_art_clone[id+e5] = nitro_data.album_art
             this.setState({nitro_album_art: nitro_album_art_clone})
+          }
+
+          if(nitro_data.image_bundle != null){
+            const uploaded_data_clone = structuredClone(this.state.uploaded_data)
+            uploaded_data_clone[nitro_data.album_art] = nitro_data.image_bundle
+            this.setState({uploaded_data: uploaded_data_clone})
           }
 
           if(this.state.my_preferred_nitro == (id+e5) || true){
@@ -35005,13 +35036,16 @@ class App extends Component {
   }
 
   async get_alias_from_account_id(account_id, e5){
-    const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    var contract_addresses = this.state.addresses[e5]
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = contract_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-
-    await this.get_alias_data_for_accounts(E52contractInstance, e5, [account_id], web3)
+    try{
+      const web3 = new Web3(this.get_web3_url_from_e5(e5));
+      var contract_addresses = this.state.addresses[e5]
+      const E52contractArtifact = require('./contract_abis/E52.json');
+      const E52_address = contract_addresses[1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+      await this.get_alias_data_for_accounts(E52contractInstance, e5, [account_id], web3)
+    }catch(e){
+      console.log(e)
+    }
   }
 
 

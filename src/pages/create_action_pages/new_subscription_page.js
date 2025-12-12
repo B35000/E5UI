@@ -171,7 +171,7 @@ class NewSubscriptionPage extends Component {
         return(
             <div>
                 <div style={{'padding':'10px 10px 0px 10px'}}>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
                         <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
                             <Tags app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.new_subscription_tags_object} tag_size={'l'} when_tags_updated={this.when_new_subscription_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
@@ -191,8 +191,10 @@ class NewSubscriptionPage extends Component {
                     </div> */}
                     
                     
-                    <div style={{'margin':'10px 0px 0px 0px'}}>
-                        {this.render_everything()}   
+                    <div style={{'margin':'10px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
+                        <div style={{'width':'98%'}}>
+                            {this.render_everything()}
+                        </div>   
                     </div>
                     
                 </div>
@@ -201,7 +203,7 @@ class NewSubscriptionPage extends Component {
     }
 
     when_new_subscription_tags_object(tag_obj){
-        this.setState({when_new_subscription_tags_object: tag_obj})
+        this.setState({new_subscription_tags_object: tag_obj})
     }
 
     set_state(state){
@@ -296,16 +298,24 @@ class NewSubscriptionPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
+                        {this.render_title_tags_part2()}
+                        <div style={{height: 10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -315,10 +325,14 @@ class NewSubscriptionPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
+                        {this.render_title_tags_part2()}
+                        <div style={{height: 10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -364,18 +378,17 @@ class NewSubscriptionPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
 
 
-
                 {this.render_previous_edits_if_existing()}
+            </div>
+        )
+    }
 
-
-
-                {this.render_detail_item('0')}
+    render_title_tags_part2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
-                
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -747,10 +760,10 @@ class NewSubscriptionPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_medium_screen_subscription_settings_section1()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_medium_screen_subscription_settings_section2()}
                     </div>
                 </div>
@@ -760,10 +773,10 @@ class NewSubscriptionPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_medium_screen_subscription_settings_section1()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_medium_screen_subscription_settings_section2()}
                     </div>
                 </div>
@@ -971,10 +984,10 @@ class NewSubscriptionPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_subscription_authority_target()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_moderator_interactible_ui()}
                     </div>
                 </div>
@@ -984,10 +997,10 @@ class NewSubscriptionPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_subscription_authority_target()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_moderator_interactible_ui()}
                     </div>
                 </div>
@@ -1333,10 +1346,10 @@ class NewSubscriptionPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -1346,10 +1359,10 @@ class NewSubscriptionPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -1553,7 +1566,7 @@ class NewSubscriptionPage extends Component {
     get_suggested_tokens(target_type){
         var items = [
             {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
-            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.selected_e55.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         if(exchanges_from_sync == null) exchanges_from_sync = []

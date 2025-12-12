@@ -1383,17 +1383,21 @@ class ViewGroups extends Component {
             if(ecid == null) return empty_image
             if(!ecid.startsWith('image')) return ecid
             var ecid_obj = this.get_cid_split(ecid)
-            if(this.props.uploaded_data[ecid_obj['filetype']] == null) return empty_image
+            if(this.props.uploaded_data[ecid_obj['filetype']] == null) return this.get_default_image_or_empty_image(ecid)
             var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-            if(data == null) return empty_image
+            if(data == null) return this.get_default_image_or_empty_image(ecid)
             return data['data']
         }catch(e){
             console.log(e)
             console.log('view_groups',ecid)
-            return empty_image
-        }
-        
-        
+            return this.get_default_image_or_empty_image(ecid)
+        } 
+    }
+
+    get_default_image_or_empty_image(ecid){
+        if(ecid == null) return empty_image;
+        if(this.props.uploaded_data[ecid] == null) return empty_image;
+        return this.props.uploaded_data[ecid];
     }
 
     get_cid_split(ecid){

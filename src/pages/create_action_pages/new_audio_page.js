@@ -94,6 +94,7 @@ class NewAudioPage extends Component {
         get_album_item_listing_option:this.get_album_item_listing_option(),
         get_listing_type_tags_option:this.get_listing_type_tags_option(),
         get_content_channeling_object:this.get_content_channeling_object(),
+        get_bundle_image_tags_option:this.get_bundle_image_tags_option(),
 
         exchange_id:'', price_amount:0, price_data:[], 
         exchange_id2:'', price_amount2:0, price_data2:[], 
@@ -284,6 +285,17 @@ class NewAudioPage extends Component {
         };
     }
 
+    get_bundle_image_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311dw']/* 'bundle' */], [1]
+            ],
+        };
+    }
+
 
 
 
@@ -296,7 +308,7 @@ class NewAudioPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
                     <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}
                         app_state={this.props.app_state}
@@ -306,21 +318,11 @@ class NewAudioPage extends Component {
                         <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                     </div>
                 </div>
-                {/* <div className="row" style={{'width':'102%'}}>
-                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}
-                        app_state={this.props.app_state}
-                        />
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            
-                        </div>
-                    </div>
-                </div> */}
                 
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
-                    {this.render_everything()}   
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120 }}>
+                    <div style={{'width':'98%'}}>
+                        {this.render_everything()}
+                    </div>
                 </div>
                 
             </div>
@@ -453,7 +455,7 @@ class NewAudioPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '10px 10px 10px 10px'}}>
+                <div >
                     {this.render_title_tags_part()}
                     {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
@@ -464,7 +466,7 @@ class NewAudioPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div style={{'padding': '10px 10px 10px 10px'}}>
+                <div >
                     <div className="row">
                         <div className="col-6" style={{}}>
                             {this.render_title_tags_part()}
@@ -478,7 +480,7 @@ class NewAudioPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div style={{'padding': '10px 10px 10px 10px'}}>
+                <div >
                     <div className="row">
                         <div className="col-5" style={{}}>
                             {this.render_title_tags_part()}
@@ -606,6 +608,13 @@ class NewAudioPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_listing_type_tags_option} tag_size={'l'} when_tags_updated={this.when_get_listing_type_tags_option_updated.bind(this)} theme={this.props.theme}/>
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311du']/* 'Bundle Thumbnail.' */, 'details':this.props.app_state.loc['a311dv']/* 'Bundle the image set as the thumbnail in the object to be displayed as a default while loading. This will make your object larger.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_bundle_image_tags_option} tag_size={'l'} when_tags_updated={this.when_get_bundle_image_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
+
                 {this.render_previous_edits_if_existing()}
 
 
@@ -616,6 +625,19 @@ class NewAudioPage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_bundle_image_tags_option_updated(tag_obj){
+        this.setState({get_bundle_image_tags_option: tag_obj})
+
+        const selected_item = this.get_selected_item(tag_obj, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(this.state.album_art != null){
+                this.setState({image_bundle: this.get_image_from_file(this.state.album_art)})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
     when_get_disabled_comments_section_option(tag_obj){
@@ -932,6 +954,15 @@ class NewAudioPage extends Component {
         }
 
         this.setState({album_art: files[0], ecid_encryption_passwords: cloned_ecid_encryption_passwords});
+
+        const selected_item = this.get_selected_item(this.state.get_bundle_image_tags_option, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(files[0] != null){
+                this.setState({image_bundle: this.get_image_from_file(files[0])})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
 
@@ -946,7 +977,7 @@ class NewAudioPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '10px 10px 10px 10px'}}>
+                <div >
                     {this.render_metadata_section()}
                     {this.render_detail_item('0')}
                     {this.render_metadata_section2()}
@@ -955,7 +986,7 @@ class NewAudioPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div style={{'padding': '10px 10px 10px 10px'}}>
+                <div >
                     <div className="row">
                         <div className="col-6" >
                             {this.render_metadata_section()}
@@ -971,7 +1002,7 @@ class NewAudioPage extends Component {
         }
         else if(size == 'l'){
             return(
-                <div style={{'padding': '10px 10px 10px 10px'}}>
+                <div >
                     <div className="row">
                         <div className="col-5">
                             {this.render_metadata_section()}
@@ -1061,10 +1092,10 @@ class NewAudioPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_subscription_lock_content()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1074,10 +1105,10 @@ class NewAudioPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_subscription_lock_content()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1300,7 +1331,7 @@ class NewAudioPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
@@ -1314,11 +1345,11 @@ class NewAudioPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1645,10 +1676,10 @@ class NewAudioPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1658,10 +1689,10 @@ class NewAudioPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1846,7 +1877,7 @@ class NewAudioPage extends Component {
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data == null) return
-return data['data']
+        return data['data']
     }
 
     get_cid_split(ecid){
@@ -1892,10 +1923,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1905,10 +1936,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2029,10 +2060,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2042,10 +2073,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2168,7 +2199,7 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row" style={{'width':'100%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                         <div style={{height:10}}/>
 
@@ -2179,7 +2210,7 @@ return data['data']
 
                         {this.render_markdown_shortcut_list()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_markdown_or_empty()}
                     </div>
                 </div>
@@ -2301,10 +2332,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -2314,10 +2345,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -2630,10 +2661,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_song_details_picker_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_enter_item_price_part()}
                     </div>
                 </div>
@@ -2643,10 +2674,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row" style={{'overflow-x':'hidden'}}>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_song_details_picker_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_enter_item_price_part()}
                     </div>
                 </div>
@@ -3371,10 +3402,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_select_creator_group_ui()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -3384,10 +3415,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_select_creator_group_ui()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>

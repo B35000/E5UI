@@ -61,7 +61,7 @@ class EditNitroPage extends Component {
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[],
+        entered_objects:[], get_bundle_image_tags_option:this.get_bundle_image_tags_option(),
 
         content_channeling_setting: this.props.app_state.content_channeling, 
         device_language_setting: this.props.app_state.device_language, 
@@ -155,6 +155,17 @@ class EditNitroPage extends Component {
         };
     }
 
+    get_bundle_image_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311dw']/* 'bundle' */], [1]
+            ],
+        };
+    }
+
 
 
     set(){
@@ -177,7 +188,7 @@ class EditNitroPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
                     <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
                         <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -198,7 +209,9 @@ class EditNitroPage extends Component {
                 
                 
                 <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
-                    {this.render_everything()}   
+                    <div style={{'width':'98%'}}>
+                        {this.render_everything()}
+                    </div>   
                 </div> 
             </div>
         )
@@ -290,10 +303,10 @@ class EditNitroPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part2()}
                     </div>
                 </div>
@@ -303,10 +316,10 @@ class EditNitroPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part2()}
                     </div>
                 </div>
@@ -397,6 +410,10 @@ class EditNitroPage extends Component {
                 {this.render_specific_country_selector()}
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311du']/* 'Bundle Thumbnail.' */, 'details':this.props.app_state.loc['a311dv']/* 'Bundle the image set as the thumbnail in the object to be displayed as a default while loading. This will make your object larger.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_bundle_image_tags_option} tag_size={'l'} when_tags_updated={this.when_get_bundle_image_tags_option_updated.bind(this)} theme={this.props.theme}/>
 
 
                 {this.render_detail_item('0')}
@@ -406,6 +423,19 @@ class EditNitroPage extends Component {
 
             </div>
         )
+    }
+
+    when_get_bundle_image_tags_option_updated(tag_obj){
+        this.setState({get_bundle_image_tags_option: tag_obj})
+
+        const selected_item = this.get_selected_item(tag_obj, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(this.state.album_art != null){
+                this.setState({image_bundle: this.get_image_from_file(this.state.album_art)})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
     render_specific_country_selector(){
@@ -422,12 +452,12 @@ class EditNitroPage extends Component {
                 {this.render_detail_item('1',{'active_tags':this.get_included_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_included_country_selected'})}
                 <div style={{height:10}}/>
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         <div onClick={()=> this.add_all_countries()}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['a273w']/* 'Add all' */, 'action':''})}
                         </div>
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         <div onClick={()=> this.remove_all_countries()}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['a273x']/* 'remove all' */, 'action':''})}
                         </div>
@@ -672,6 +702,15 @@ class EditNitroPage extends Component {
         }
 
         this.setState({album_art: files[0], ecid_encryption_passwords: cloned_ecid_encryption_passwords});
+
+        const selected_item = this.get_selected_item(this.state.get_bundle_image_tags_option, 'e')
+        if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
+            if(files[0] != null){
+                this.setState({image_bundle: this.get_image_from_file(files[0])})
+            }
+        }else{
+            this.setState({image_bundle: null})
+        }
     }
 
 
@@ -791,7 +830,7 @@ class EditNitroPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
@@ -805,11 +844,11 @@ class EditNitroPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1140,10 +1179,10 @@ class EditNitroPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1153,10 +1192,10 @@ class EditNitroPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_images_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1395,10 +1434,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1408,10 +1447,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_pdf_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1577,10 +1616,10 @@ return data['data']
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1590,10 +1629,10 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_pick_zip_parts()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1717,7 +1756,7 @@ return data['data']
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_detail_item('4', {'text':this.props.app_state.loc['a311bv']/* 'You can add some Markdown text below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                         <div style={{height:10}}/>
 
@@ -1727,7 +1766,7 @@ return data['data']
 
                         {this.render_markdown_shortcut_list()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_markdown_or_empty()}
                     </div>
                 </div>

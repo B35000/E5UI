@@ -361,7 +361,7 @@ class PickFilePage extends Component {
                 }
                 return(
                     <div>
-                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':img, 'border_radius':'15%'})}
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':img, 'border_radius':'15%', 'image_width':'auto'})}
                     </div>
                 )
             }

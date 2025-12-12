@@ -214,7 +214,7 @@ class NewContractPage extends Component {
         return(
             <div>
                 <div style={{'padding':'10px 10px 0px 10px'}}>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
                         <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
                             <Tags font={this.props.app_state.font} page_tags_object={this.state.new_contract_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_tags_object.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                         </div>
@@ -234,8 +234,10 @@ class NewContractPage extends Component {
                     </div> */}
                     
                     
-                    <div style={{'margin':'5px 0px 0px 0px'}}>
-                        {this.render_everything()}   
+                    <div style={{'margin':'5px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
+                        <div style={{'width':'98%'}}>
+                            {this.render_everything()}
+                        </div>  
                     </div>
                     
                 </div>
@@ -324,10 +326,10 @@ class NewContractPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_presets_menu()}
                     </div>
                 </div>
@@ -337,10 +339,10 @@ class NewContractPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_presets_menu()}
                     </div>
                 </div>
@@ -1016,10 +1018,10 @@ class NewContractPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row"> 
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_contract_list_medium_screen()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_contract_list_medium_screen2()}
                     </div>
                 </div>
@@ -1029,10 +1031,10 @@ class NewContractPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_contract_list_medium_screen()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_contract_list_medium_screen2()}
                     </div>
                 </div>
@@ -1485,10 +1487,10 @@ class NewContractPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_moderator_ui()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1498,10 +1500,10 @@ class NewContractPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_moderator_ui()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -1636,10 +1638,10 @@ class NewContractPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_interactable_calendar_picker()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_interactible_accounts()}
                     </div>
                 </div>
@@ -1649,10 +1651,10 @@ class NewContractPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_interactable_calendar_picker()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_interactible_accounts()}
                     </div>
                 </div>
@@ -1823,10 +1825,10 @@ class NewContractPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>
@@ -1836,10 +1838,10 @@ class NewContractPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_token_and_amount_part()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" >
                         {this.render_set_prices_list_part()}
                     </div>
                 </div>

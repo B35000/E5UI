@@ -5925,7 +5925,7 @@ class StackPage extends Component {
                                 extra_tags.push(video['video_composer'].toLowerCase())
                             }
                         });
-                        extra_tags.push(data.audio_type.toLowerCase())
+                        extra_tags.push(data.video_type.toLowerCase())
                     }
                     var all_elements = extra_tags.concat(data.entered_indexing_tags)
 
