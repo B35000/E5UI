@@ -3666,7 +3666,7 @@ class StorefrontDetailsSection extends Component {
                 <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                     <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(final_items, object, middle)}
-                        <div ref={this.messagesEnd}/>
+                        <div ref={this.messagesEnd} style={{display:'none'}}/>
                     </div>
                 </div>
             )
@@ -3680,7 +3680,7 @@ class StorefrontDetailsSection extends Component {
                         <div style={{height: 10}}/>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {this.render_messages(selected_ratings, object, middle-60)}
-                            <div ref={this.messagesEnd}/>
+                            <div ref={this.messagesEnd} style={{display:'none'}}/>
                         </ul>
                     </div>
                 )
@@ -3689,7 +3689,7 @@ class StorefrontDetailsSection extends Component {
                 return(
                     <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            <div ref={this.messagesEnd}/>
+                            <div ref={this.messagesEnd} style={{display:'none'}}/>
                             {this.render_all_comments(object, middle)}
                         </ul>
                     </div>
@@ -4257,6 +4257,9 @@ class StorefrontDetailsSection extends Component {
         if(blocked_accounts.includes(item['sender'])){
             value = true
         }
+        if(this.props.app_state.blocked_accounts_data.includes(item['sender']+item['sender_e5'])){
+            value = true;
+        }
         if(this.state.visible_hidden_messages.includes(item['message_id'])){
             value = false
         }
@@ -4458,7 +4461,7 @@ class StorefrontDetailsSection extends Component {
 
             this.props.add_storefront_message_to_stack_object(tx)
 
-            this.setState({entered_text:''})
+            this.setState({entered_text:'', text_input_field_height: 30})
             // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack' */, 1600)
             
             if (this.messagesEnd.current){

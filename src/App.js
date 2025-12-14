@@ -1339,7 +1339,7 @@ class App extends Component {
 
     call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
     
-    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}
+    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[]
   };
 
   get_thread_pool_size(){
@@ -3571,6 +3571,10 @@ class App extends Component {
 
   componentDidMount() {
     console.log("mounted", 'os version: ', iOS());
+
+    if (this.props.onReady) {
+      this.props.onReady();
+    }
     
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
@@ -16938,6 +16942,7 @@ class App extends Component {
   when_block_contact_selected(account, e5){
     this.open_dialog_bottomsheet()
     this.add_account_to_blocked_list(account, e5)
+    this.blacklist_account_for_my_following(account, e5)
   }
 
   when_add_to_contact_selected(account, e5){
@@ -27749,7 +27754,17 @@ class App extends Component {
 
   load_censored_keywords = async (web3, E52contractInstance, e5, account) => {
     var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
-    var followed_accounts_censored_keywords_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:10})
+    if(accounts_to_load.length == 0) return;
+    var followed_accounts_censored_keywords_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:10, p1: this.process_array_for_indexer_query(accounts_to_load)})
+
+    const get_filter_tags_for_blocked_accounts = () => {
+      const accounts_to_target = []
+      accounts_to_load.forEach(account_id => {
+        accounts_to_target.push(account_id+e5)
+      });
+      return accounts_to_target
+    }
+    this.get_objects_from_socket_and_set_in_state(['blocked_account'], get_filter_tags_for_blocked_accounts())
 
     var followed_accounts_censored_keywords_events_data = followed_accounts_censored_keywords_events_data.filter(function (event) {
       return (accounts_to_load.includes(parseInt(event.returnValues.p1)))
@@ -44466,6 +44481,9 @@ class App extends Component {
       else if(roomId == 'contracts' && message.type == 'pre_purchase_transaction'){
         me.process_prepurchase_message(message, object_hash)
       }
+      else if(roomId == 'jobs' && message.type == 'blocked_account'){
+        me.process_new_blocked_account_message_update(message, object_hash)
+      }
       else{
         if(this.state.active_rooms.includes(roomId)){
           if(message.type == 'channel-message'){
@@ -45022,6 +45040,23 @@ class App extends Component {
 
     await this.wait(3000)
     this.process_prepurchase_message(message_object.message, message_object.object_hash)
+  }
+
+  async blacklist_account_for_my_following(account, e5){
+    this.prompt_top_notification(this.getLocale()['2231n']/* 'Blocking Account... */, 1900)
+    const availability_object = await this.prepare_block_account_message(account, e5)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(availability_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const target = 'blocked_account'
+    const broadcasat_object = {roomId: 'jobs', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
+
+    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(3000)
+
+    await this.process_new_blocked_account_message_update(availability_object.message, availability_object.object_hash)
   }
 
   
@@ -46427,6 +46462,55 @@ class App extends Component {
     return { message, object_hash }
   }
 
+
+
+
+  async prepare_block_account_message(account, account_e5){
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const tags = [this.state.user_account_id[this.state.selected_e5]+this.state.selected_e5, account+account_e5]
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const object_data = {
+      'account_id':account,
+      'e5':account_e5,
+      'time':Date.now(),
+      'id':id,
+      'e5_id':account+account_e5
+    }
+
+    const object_as_string = JSON.stringify(object_data)
+    const signature = await this.generate_signature(object_as_string)
+    
+    const message = {
+      type: 'blocked_account',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      id:id,
+      recipient:recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: object_as_string,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      signature,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  
 
   
 
@@ -47950,6 +48034,35 @@ class App extends Component {
       console.log('socket_stuff', 'signature verification failed.')
     }
   }
+
+  async process_new_blocked_account_message_update(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const ipfs = JSON.parse(message.data)
+    const signature_confirmation = await this.confirm_signature(message.signature, message.data, message['author'])
+    
+    if(signature_confirmation == false) return;
+    const signature_account = await this.get_account_from_address(message['author'], message.e5)
+
+    const blocked_accounts_data_clone = this.state.blocked_accounts_data.slice()
+    if(!blocked_accounts_data_clone.includes(ipfs['e5_id'])){
+      blocked_accounts_data_clone.push(ipfs['e5_id'])
+    }
+    this.setState({blocked_accounts_data: blocked_accounts_data_clone})
+  }
   
 
 
@@ -48290,6 +48403,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'pre_purchase_transaction'){
             await this.process_prepurchase_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'blocked_account'){
+            await this.process_new_blocked_account_message_update(object_data, object_hash)
           }
           await this.wait(200)
         }

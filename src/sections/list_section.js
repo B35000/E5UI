@@ -315,6 +315,10 @@ class PostListSection extends Component {
         if(blocked_accounts.includes(object['author'])){
             return true
         }
+
+        if(this.props.app_state.blocked_accounts_data.includes(object['author']+object['e5'])){
+            return true;
+        }
         return false
     }
 

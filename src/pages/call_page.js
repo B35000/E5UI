@@ -1021,7 +1021,7 @@ class CallPage extends Component {
                 <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(final_items, he-135)}
-                        <div ref={this.messagesEnd}/>
+                        <div ref={this.messagesEnd} style={{display:'none'}}/>
                     </ul>
                 </div>
             )
@@ -1029,7 +1029,7 @@ class CallPage extends Component {
                 return(
                     <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            <div ref={this.messagesEnd}/>
+                            <div ref={this.messagesEnd} style={{display:'none'}}/>
                             {this.render_all_comments()}
                         </ul>
                     </div>
@@ -1791,7 +1791,7 @@ class CallPage extends Component {
 
             this.props.add_call_page_message_to_stack_object(tx)
 
-            this.setState({entered_text:''})
+            this.setState({entered_text:'', text_input_field_height: 30})
             // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){

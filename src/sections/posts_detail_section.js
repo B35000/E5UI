@@ -1267,9 +1267,9 @@ class PostsDetailsSection extends Component {
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
                     <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <ul style={{ 'padding': '5px 0px 0px 0px'}}>
                             {this.render_messages(final_items, object, middle)}
-                            <div ref={this.messagesEnd}/>
+                            <div ref={this.messagesEnd} style={{display:'none'}}/>
                         </ul>
                     </div>
                 )
@@ -1277,7 +1277,7 @@ class PostsDetailsSection extends Component {
                 return(
                     <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            <div ref={this.messagesEnd}/>
+                            <div ref={this.messagesEnd} style={{display:'none'}}/>
                             {this.render_all_comments(object, middle)}
                         </ul>
                     </div>
@@ -1510,6 +1510,7 @@ class PostsDetailsSection extends Component {
         var text = this.format_message(item['message'], object)
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
+        var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
@@ -1523,7 +1524,7 @@ class PostsDetailsSection extends Component {
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                                 </div>
                             </div>
-                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': 'break-all'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={this.linkifyOptions}  /* options={{target: '_blank'}} */>{
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={this.linkifyOptions}  /* options={{target: '_blank'}} */>{
                                 parts.map((part, index) => {
                                     const num = parseInt(part, 10);
                                     const isId = !isNaN(num) && num > 1000;
@@ -1554,6 +1555,15 @@ class PostsDetailsSection extends Component {
             </div>
         )
         
+    }
+
+    longest_word_length(text) {
+        if(text == null) {
+            return 0
+        }
+        return text.toString()
+            .split(/\s+/) // Split by whitespace (handles multiple spaces & newlines)
+            .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
 
     linkifyOptions = {
@@ -1780,6 +1790,9 @@ class PostsDetailsSection extends Component {
 
         if(blocked_accounts.includes(item['sender'])){
             value = true
+        }
+        if(this.props.app_state.blocked_accounts_data.includes(item['sender']+item['sender_e5'])){
+            value = true;
         }
         if(this.state.visible_hidden_messages.includes(item['message_id'])){
             value = false
@@ -2145,7 +2158,7 @@ class PostsDetailsSection extends Component {
 
             this.props.add_post_reply_to_stack(tx)
 
-            this.setState({entered_text:''})
+            this.setState({entered_text:'', text_input_field_height: 30})
             // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){

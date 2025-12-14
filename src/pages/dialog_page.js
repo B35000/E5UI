@@ -4007,7 +4007,7 @@ return data['data']
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'action':'', 'font':this.props.app_state.font})}
                 </div>
                 <div style={{height:5}}/>
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run. This action cannot be undone.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
             </div>
         )
     }

@@ -899,7 +899,7 @@ class MailDetailsSection extends Component {
                         {this.render_messages(final_items, object, middle-50)}
                         {this.render_bubble_if_typing(object)}
                         {this.render_last_opened_time(object)}
-                        <div ref={this.messagesEnd}/>
+                        <div ref={this.messagesEnd} style={{display:'none'}}/>
                     </ul>
                 </div>
             )

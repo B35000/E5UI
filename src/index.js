@@ -31,12 +31,8 @@ const hidePreloader = () => {
   if (el) el.style.display = "none";
 };
 
+// window.addEventListener("load", hidePreloader);
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render( <App/> );
-window.addEventListener("load", hidePreloader);
+root.render( <App onReady={hidePreloader}/> );
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js");
-  });
-}
+

@@ -255,7 +255,7 @@ class FullVideoPage extends Component {
 
 
     render_details_or_queue_tags_then_option(){
-        if(this.state.object != null && this.state.object['ipfs'] != null){
+        if(this.state.object != null && this.state.object['ipfs'] == null){
             return;
         }
         if(this.get_video_object() != null && this.get_video_object()['ipfs'] != null && this.get_video_object()['ipfs'].selected == null){
@@ -2134,7 +2134,7 @@ class FullVideoPage extends Component {
                 return(
                 <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        <div ref={this.messagesEnd}/>
+                        <div ref={this.messagesEnd} style={{display:'none'}}/>
                         {this.render_messages(final_items)}
                     </ul>
                 </div>
@@ -2143,7 +2143,7 @@ class FullVideoPage extends Component {
                 return(
                     <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            <div ref={this.messagesEnd}/>
+                            <div ref={this.messagesEnd} style={{display:'none'}}/>
                             {this.render_all_comments()}
                         </ul>
                     </div>

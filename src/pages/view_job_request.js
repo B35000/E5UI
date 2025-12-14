@@ -1395,7 +1395,7 @@ class ViewJobRequestPage extends Component {
                         {this.render_messages(final_items, middle)}
                         {this.render_bubble_if_typing()}
                         {this.render_last_opened_time()}
-                        <div ref={this.messagesEnd}/>
+                        <div ref={this.messagesEnd} style={{display:'none'}}/>
                     </ul>
                 </div>
             )
@@ -1403,7 +1403,7 @@ class ViewJobRequestPage extends Component {
                 return(
                     <div /* onScroll={event => this.handleScroll(event)} */ style={{ 'display': 'flex', 'flex-direction': 'column-reverse', /* overflow: 'scroll', maxHeight: middle */}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            <div ref={this.messagesEnd}/>
+                            <div ref={this.messagesEnd} style={{display:'none'}}/>
                             {this.render_all_comments()}
                             {this.render_bubble_if_typing()}
                             {this.render_last_opened_time()}
@@ -2339,7 +2339,7 @@ class ViewJobRequestPage extends Component {
 
             this.props.add_job_request_message_to_stack_object(tx)
 
-            this.setState({entered_text:''})
+            this.setState({entered_text:'', text_input_field_height: 30})
             // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){

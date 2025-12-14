@@ -4755,7 +4755,7 @@ return data['data']
                             </li>
                         ))}
 
-                        <div ref={this.messagesEnd}/>
+                        <div ref={this.messagesEnd} style={{display:'none'}}/>
                     </ul>
                 </div>
             )
