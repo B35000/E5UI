@@ -41964,7 +41964,7 @@ class App extends Component {
     this.setState({current_nitro_purchases: clone})
   }
 
-  get_nitro_telemetry_data = async (object) => {
+  get_nitro_telemetry_data = async (object, updated_signature=false) => {
     var node_url = object['ipfs'].node_url
     const e5_id = object['e5_id']
     const start_time = Date.now() - (1000*60*60*24)
@@ -41977,6 +41977,12 @@ class App extends Component {
       }
       var data = await response.text();
       var obj = await this.process_nitro_api_call_result(data, node_url);
+
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.get_nitro_telemetry_data(object, true)
+      }
 
       const clone = structuredClone(this.state.nitro_telemetry_data_object)
       clone[e5_id] = obj

@@ -347,8 +347,6 @@ class ProposalDetailsSection extends Component {
                     {this.render_selected_links(object)}
                     {this.render_pdf_files_if_any(object)}
                     {this.render_zip_files_if_any(object)}
-
-                    <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
 
                     {this.render_detail_item('0')}
@@ -556,6 +554,7 @@ class ProposalDetailsSection extends Component {
         if(state.markdown != null && state.markdown != ''){
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('13', {'source':state.markdown})}
                 </div>
             )
@@ -757,17 +756,17 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                     <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
                                     </div>
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 </div>
             )

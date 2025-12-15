@@ -1360,7 +1360,7 @@ class NitroDetailsSection extends Component {
 
     render_memory_stats(object){
         const telemetry_data = this.props.app_state.nitro_telemetry_data_object[object['e5_id']]
-        if(telemetry_data != null){
+        if(telemetry_data != null && telemetry_data['memory_stats'] != null){
             const memory_stats_data = telemetry_data['memory_stats']
             const data_points_data = this.get_memory_stats_data_points(memory_stats_data, object)
             return(
@@ -1508,7 +1508,7 @@ class NitroDetailsSection extends Component {
 
     render_requests_stats(object){
         const telemetry_data = this.props.app_state.nitro_telemetry_data_object[object['e5_id']]
-        if(telemetry_data != null){
+        if(telemetry_data != null && telemetry_data['request_stats'] != null){
             const request_stats_data = telemetry_data['request_stats']
             const data_points_data = this.get_request_stats_data_points(request_stats_data, object)
             
