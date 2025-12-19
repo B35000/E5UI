@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.736ba592.css",
-    "main.js": "/static/js/main.e761177b.js",
+    "main.js": "/static/js/main.c7abc27d.js",
     "static/js/231.de23fbad.chunk.js": "/static/js/231.de23fbad.chunk.js",
     "static/js/898.ba3f9bb9.chunk.js": "/static/js/898.ba3f9bb9.chunk.js",
     "static/js/386.9d146b60.chunk.js": "/static/js/386.9d146b60.chunk.js",
@@ -77,12 +77,14 @@
     "static/media/darkred2.jpg": "/static/media/darkred2.51f3f4747915b117f22e.jpg",
     "static/media/darkblue1.jpg": "/static/media/darkblue1.4e7ca78e47ead293e6ed.jpg",
     "static/media/lightblue1.jpg": "/static/media/lightblue1.e44a501aa568e72e88ff.jpg",
+    "static/media/tutorial_image_add_transaction.png": "/static/media/tutorial_image_add_transaction.03807c09aa76f9a3aa0f.png",
     "static/media/lightyellow1.jpg": "/static/media/lightyellow1.c0450658d5005a2afd2e.jpg",
     "static/media/default_page_background_dark.png": "/static/media/default_page_background_dark.fa58dfbba548968665a5.png",
     "static/media/darkred4.jpg": "/static/media/darkred4.400269991137ed5954f7.jpg",
     "static/media/puzzle_background_dark.png": "/static/media/puzzle_background_dark.77126673f38beead7102.png",
     "static/media/stack_icon_pink.png": "/static/media/stack_icon_pink.7c804fb6e47e4ca37646.png",
     "static/media/stack_icon_orange.png": "/static/media/stack_icon_orange.32ff875507e154f7e841.png",
+    "static/media/tutorial_image_new_object.png": "/static/media/tutorial_image_new_object.de8482ef0f90a43d475a.png",
     "static/media/stack_icon_darkyellow.png": "/static/media/stack_icon_darkyellow.e79d8d3452460e733084.png",
     "static/media/stack_icon_darkblue.png": "/static/media/stack_icon_darkblue.bdc8eaf39610a4669947.png",
     "static/media/explore_icon_pink.png": "/static/media/explore_icon_pink.b2c7fd61858a73df0864.png",
@@ -123,14 +125,20 @@
     "static/media/explore_icon_light.png": "/static/media/explore_icon_light.3385b9c695c67c0439c1.png",
     "static/media/job_icon_orange.png": "/static/media/job_icon_orange.b4aaaac1884b29d12950.png",
     "static/media/job_icon_darkyellow.png": "/static/media/job_icon_darkyellow.e0d60bdc9fdb7367d1ea.png",
+    "static/media/tutorial_image_number_picker3.png": "/static/media/tutorial_image_number_picker3.3c8b305822c6cb7fe17a.png",
+    "static/media/tutorial_image_number_picker2.png": "/static/media/tutorial_image_number_picker2.1718def6fec35471dc7d.png",
+    "static/media/tutorial_image_number_picker.png": "/static/media/tutorial_image_number_picker.a39bc8cab7bdcb4797d0.png",
     "static/media/wallet_section_4.png": "/static/media/wallet_section_4.5d80acce8085a0eabd7a.png",
     "static/media/job_icon_darkblue.png": "/static/media/job_icon_darkblue.ce4e2c731e833eaeee66.png",
     "static/media/job_icon_darkorange.png": "/static/media/job_icon_darkorange.1b893998648b53a7a887.png",
     "static/media/alert_icon_pink.png": "/static/media/alert_icon_pink.6909791bccd3c288c39e.png",
     "static/media/job_icon_darkpink.png": "/static/media/job_icon_darkpink.8be35208911555c87ba6.png",
     "static/media/ComicSans.ttf": "/static/media/ComicSans.3198d266c6629f0b7ce0.ttf",
+    "static/media/tutorial_image_navigate_back.png": "/static/media/tutorial_image_navigate_back.f1de295ffb71e7f98066.png",
+    "static/media/tutorial_image_navigation_buttons.png": "/static/media/tutorial_image_navigation_buttons.1b5fa5cc48d4cb752650.png",
     "static/media/alert_icon_darkyellow.png": "/static/media/alert_icon_darkyellow.db39d682b561451e32d5.png",
     "static/media/alert_icon_orange.png": "/static/media/alert_icon_orange.1af5687b05608b6dba64.png",
+    "static/media/tutorial_image_run_transactions.png": "/static/media/tutorial_image_run_transactions.8bf0ac8138905d8c5a55.png",
     "static/media/e5_logo_pink.png": "/static/media/e5_logo_pink.436f8416cae1b58cc9fa.png",
     "static/media/alert_icon_darkblue.png": "/static/media/alert_icon_darkblue.e225741998e9307ade85.png",
     "static/media/alert_icon_darkorange.png": "/static/media/alert_icon_darkorange.f216215f54ff8d9f44f7.png",
@@ -145,6 +153,7 @@
     "static/media/e5_logo_darkblue.png": "/static/media/e5_logo_darkblue.5b8b6f3862afaab9d1d5.png",
     "static/media/wallet_icon_darkgreen.png": "/static/media/wallet_icon_darkgreen.69fa9bc7ab38cdfbf8a9.png",
     "static/media/job_icon_yellow.png": "/static/media/job_icon_yellow.70fc063ecf0c7d06b1ca.png",
+    "static/media/tutorial_image_begin.png": "/static/media/tutorial_image_begin.34c4a1c51a330813fc6e.png",
     "static/media/job_icon_darkgreen.png": "/static/media/job_icon_darkgreen.353a761742ebfc5b0996.png",
     "static/media/job_icon_darkred.png": "/static/media/job_icon_darkred.2e94015941651de6ea0f.png",
     "static/media/sublogo_dark_cracked5.png": "/static/media/sublogo_dark_cracked5.8e71a36c333776dc8349.png",
@@ -518,6 +527,6 @@
   },
   "entrypoints": [
     "static/css/main.736ba592.css",
-    "static/js/main.e761177b.js"
+    "static/js/main.c7abc27d.js"
   ]
 }
