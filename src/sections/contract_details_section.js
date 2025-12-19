@@ -24,6 +24,7 @@ import TextInput from './../components/text_input';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -369,104 +370,155 @@ class ContractDetailsSection extends Component {
         return (
             <div style={{ 'background-color': background_color, 'border-radius': '15px', 'margin': '5px 10px 2px 10px', 'padding': '0px 10px 0px 10px' }}>
                 <div style={{ 'overflow-y': 'auto', width: '100%', height: he, padding: '0px 10px 0px 10px' }}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{ height: 10 }} />
-                    <div onClick={() => this.copy_id_to_clipboard(object)}>
-                        {this.render_detail_item('3', item['id'])}
-                    </div>
-                    <div style={{ height: 10 }} />
-                    {this.show_moderator_note_if_any(object)}
-                    {this.render_post_state(object)}
-                    {this.render_contract_type(object)}
-                    <div onClick={() => this.add_to_contacts2(object)}>
-                        {this.render_detail_item('3', { 'title': '' + author, 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' })}
-                    </div>
+                    <Virtuoso
+                        style={{ height: he }}
+                        totalCount={44}
+                        itemContent={(index) => {
+                            return (
+                                <div>
+                                    {index == 0 && this.render_detail_item('1', item['tags'])}
+                                    {index == 1 && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            <div onClick={() => this.copy_id_to_clipboard(object)}>
+                                                {this.render_detail_item('3', item['id'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {index == 2 && (<div style={{height:10}}/>)}
+                                    {index == 2 && this.show_moderator_note_if_any(object)}
+                                    {index == 3 && this.render_post_state(object)}
+                                    {index == 4 && this.render_contract_type(object)}
 
-                    {object['hidden'] == true && (
-                        <div>
-                            <div style={{ height: 10 }} />
-                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2214i']/* 'Loading the contracts metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                        </div>
-                    )}
+                                    {index == 5 && (
+                                        <div>
+                                            <div onClick={() => this.add_to_contacts2(object)}>
+                                                {this.render_detail_item('3', { 'title': '' + author, 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' })}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 6 && object['hidden'] == true && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2214i']/* 'Loading the contracts metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                                        </div>
+                                    )}
+                                    
+                                    {index == 7 && (<div style={{height:10}}/>)}
+                                    {index == 7 && this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
+                                    
+                                    {index == 8 && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                                                {this.render_detail_item('2', item['age'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {index == 9 && (<div style={{height:10}}/>)}
+                                    {index == 9 && this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
+                                    {index == 10 && (<div style={{height:10}}/>)}
+                                    {index == 10 && this.render_detail_item('3', item['default_consensus_majority_limit'])}
+                                    {index == 11 && (<div style={{height:10}}/>)}
+                                    {index == 11 && this.render_detail_item('3', item['default_voter_weight_exchange'])}
+
+                                    {index == 12 && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['voter_weight_balance']['title'], 'number':item['voter_weight_balance']['n'], 'relativepower':item['voter_weight_balance']['relativepower']})}>
+                                                {this.render_detail_item('2', item['voter_weight_balance'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 13 && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_end_vote_bounty_amount']['title'], 'number':item['default_minimum_end_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_end_vote_bounty_amount']['relativepower']})}>
+                                                {this.render_detail_item('2', item['default_minimum_end_vote_bounty_amount'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 14 && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_spend_vote_bounty_amount']['title'], 'number':item['default_minimum_spend_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_spend_vote_bounty_amount']['relativepower']})}>
+                                                {this.render_detail_item('2', item['default_minimum_spend_vote_bounty_amount'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {index == 15 && (<div style={{height:10}}/>)}
+                                    {index == 15 && this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
+                                    {index == 16 && (<div style={{height:10}}/>)}
+                                    {index == 16 && this.render_detail_item('3', item['max_enter_contract_duration'])}
+                                    {index == 17 && (<div style={{height:10}}/>)}
+                                    {index == 17 && this.render_detail_item('3', item['auto_wait_for_all_proposals_for_all_voters'])}
+                                    {index == 18 && (<div style={{height:10}}/>)}
+                                    {index == 18 && this.render_detail_item('3', item['proposal_modify_expiry_duration_limit'])}
+                                    {index == 19 && (<div style={{height:10}}/>)}
+                                    {index == 19 && this.render_detail_item('3', item['can_modify_contract_as_moderator'])}
+                                    {index == 20 && (<div style={{height:10}}/>)}
+                                    {index == 20 && this.render_detail_item('3', item['can_extend_enter_contract_at_any_time'])}
+                                    {index == 21 && (<div style={{height:10}}/>)}
+                                    {index == 21 && this.render_detail_item('3', item['maximum_proposal_expiry_submit_expiry_time_difference'])}
+                                    {index == 22 && (<div style={{height:10}}/>)}
+                                    {index == 22 && this.render_detail_item('3', item['bounty_limit_type'])}
+                                    {index == 23 && (<div style={{height:10}}/>)}
+                                    {index == 23 && this.render_detail_item('3', item['contract_force_exit_enabled'])}
+
+                                    {index == 24 && (<div style={{height:10}}/>)}
+                                    {index == 24 && this.render_revoke_author_privelages_event(object)}
+                                    
+                                    {index == 25 && this.render_participants(object)}
+
+                                    {index == 26 && this.show_contract_balance(item, object)}
+
+                                    {index == 27 && this.render_entry_fees(object, item)}
+
+                                    {index == 28 && object['id'] != 2 && object['hidden'] == false && this.render_detail_item('0')}
+
+                                    {index == 29 && object['id'] != 2 && object['hidden'] == false && this.show_enter_contract_button(object)}
+
+                                    {index == 30 && object['id'] != 2 && object['hidden'] == false && this.show_extend_stay_in_contract_button(object)}
+
+                                    {index == 31 && object['id'] != 2 && object['hidden'] == false && this.show_exit_contract_action(object)}
+
+                                    {index == 32 && object['id'] != 2 && object['hidden'] == false && this.render_archive_button_if_author(object)}
+
+                                    {index == 33 && this.show_send_proposal_button(object)}
+
+                                    {index == 34 && this.show_send_main_contract_proposal(object)}
+
+                                    {index == 35 && this.show_make_pre_purchase_button(object)}
+
+                                    {index == 36 && this.show_spend_pre_purchase_credits_button(object)}
+
+                                    {index == 37 && this.show_export_pre_purchase_credit_transactions_button(object)}
+
+                                    {index == 38 && this.render_auth_modify_button(object)}
+
+                                    {index == 39 && this.render_force_exit_button(object)}
+
+                                    {index == 40 && this.render_moderator_button(object)}
+
+                                    {index == 41 && this.render_pin_contract_button(object)}
+
+                                    {index == 42 && this.render_detail_item('0')}
+                                    {index == 43 && this.render_detail_item('0')}
+                                    {index == 43 && (<div style={{height:1}}/>)}
+                                </div>
+                            );
+                        }}
+                    />
                     
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
-                    <div style={{ height: 10 }} />
-
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', item['age'])}
-                    </div>
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['default_consensus_majority_limit'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['default_voter_weight_exchange'])}
-
-                    <div style={{ height: 10 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['voter_weight_balance']['title'], 'number':item['voter_weight_balance']['n'], 'relativepower':item['voter_weight_balance']['relativepower']})}>
-                        {this.render_detail_item('2', item['voter_weight_balance'])}
-                    </div>
-
-                    <div style={{ height: 10 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_end_vote_bounty_amount']['title'], 'number':item['default_minimum_end_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_end_vote_bounty_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['default_minimum_end_vote_bounty_amount'])}
-                    </div>
-
-                    <div style={{ height: 10 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_spend_vote_bounty_amount']['title'], 'number':item['default_minimum_spend_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_spend_vote_bounty_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['default_minimum_spend_vote_bounty_amount'])}
-                    </div>
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['max_enter_contract_duration'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['auto_wait_for_all_proposals_for_all_voters'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['proposal_modify_expiry_duration_limit'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['can_modify_contract_as_moderator'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['can_extend_enter_contract_at_any_time'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['maximum_proposal_expiry_submit_expiry_time_difference'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['bounty_limit_type'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', item['contract_force_exit_enabled'])}
-
-                    <div style={{height: 10}}/>
-                    {this.render_revoke_author_privelages_event(object)}
-                    
-                    {this.render_participants(object)}
-
-                    {this.show_contract_balance(item, object)}
-
-                    {this.render_entry_fees(object, item)}
-
-                    {this.show_normal_contract_buttons(object)}
-
-                    {this.show_send_proposal_button(object)}
-
-                    {this.show_send_main_contract_proposal(object)}
-
-                    {this.show_make_pre_purchase_button(object)}
-
-                    {this.show_spend_pre_purchase_credits_button(object)}
-
-                    {this.show_export_pre_purchase_credit_transactions_button(object)}
-
-                    {this.render_auth_modify_button(object)}
-
-                    {this.render_force_exit_button(object)}
-
-                    {this.render_moderator_button(object)}
-
-                    {this.render_pin_contract_button(object)}
-
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
@@ -747,17 +799,15 @@ class ContractDetailsSection extends Component {
         if (object['id'] != 2 && object['hidden'] == false) {
             return (
                 <div>
-                    {this.render_detail_item('0')}
+                    {object['id'] != 2 && object['hidden'] == false && this.render_detail_item('0')}
 
-                    {this.show_enter_contract_button(object)}
+                    {object['id'] != 2 && object['hidden'] == false && this.show_enter_contract_button(object)}
 
-                    {/* <div style={{ height: 10 }} /> */}
+                    {object['id'] != 2 && object['hidden'] == false && this.show_extend_stay_in_contract_button(object)}
 
-                    {this.show_extend_stay_in_contract_button(object)}
+                    {object['id'] != 2 && object['hidden'] == false && this.show_exit_contract_action(object)}
 
-                    {this.show_exit_contract_action(object)}
-
-                    {this.render_archive_button_if_author(object)}
+                    {object['id'] != 2 && object['hidden'] == false && this.render_archive_button_if_author(object)}
 
                 </div>
             )

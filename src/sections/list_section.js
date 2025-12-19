@@ -770,7 +770,7 @@ class PostListSection extends Component {
                 const title = this.props.app_state.loc['2509r']/* $ new % loaded. */.replace('$', number_with_commas(new_objects.length)).replace('%', this.get_section_name())
                 return(
                     <div onClick={() => this.when_refresh_feed_tapped(page_id)}>
-                        {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['2509s']/* 'Tap this to refresh your feed and show them.' */, 'size':'s'})}
+                        {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['2509s']/* 'Tap this to refresh your feed and show them.' */, 'size':'l'})}
                         <div style={{height:10}}/>
                     </div>
                 )
@@ -969,7 +969,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1162,7 +1162,7 @@ class PostListSection extends Component {
         }
         return(
             <div>
-                <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     <div style={{'padding': '0px 0px 0px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
@@ -1341,7 +1341,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1470,7 +1470,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1616,7 +1616,7 @@ class PostListSection extends Component {
         }
         var opacity = 1.0
         return(
-            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1776,7 +1776,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1922,7 +1922,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -2286,7 +2286,7 @@ class PostListSection extends Component {
                 )
             }
             return(
-                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     <div style={{'padding': '0px 0px 0px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
@@ -2646,7 +2646,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -2865,7 +2865,7 @@ class PostListSection extends Component {
             }
             var opacity = 1.0
             return(
-                <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     <div style={{'padding': '0px 0px 0px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
@@ -3046,7 +3046,7 @@ class PostListSection extends Component {
         }
         var opacity = 1.0
         return(
-            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -3203,7 +3203,7 @@ class PostListSection extends Component {
             var variants_available = this.props.app_state.loc['2509j']/* $ variants available. */.replace('$', object['ipfs'].variants.length)
             var e5_img = this.props.app_state.e5s[object['e5']].e5_img
             return(
-                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
                         <div style={{'padding':'1px 0px 0px 0px'}}>
                             <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:90, 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_storefront_item_clicked(index, object)}/>
@@ -3235,7 +3235,7 @@ class PostListSection extends Component {
         }
 
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -3440,7 +3440,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_tags_or_images(item, object)}
                     <div style={{height: 10}}/>
@@ -4276,7 +4276,7 @@ return data['data']
             var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
 
             return(
-                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
                         <div style={{'padding':'1px 0px 0px 0px'}}>
                             <img src={this.get_image_from_file(image)} alt="" style={{height:90 ,width:90, 'border-radius': '7px', 'background-image':this.props.app_state.static_assets['empty_image'], 'max-width':170}} onClick={() => this.when_audio_image_clicked(object)}/>
@@ -4308,7 +4308,7 @@ return data['data']
         }
 
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -4829,7 +4829,7 @@ return data['data']
             var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
             var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
             return(
-                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
                         <div style={{'padding':'1px 0px 0px 0px'}}>
                             {this.render_video_image(image, object, blur)}
@@ -4861,7 +4861,7 @@ return data['data']
         }
 
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -5491,7 +5491,7 @@ return data['data']
         }
         var opacity = 1.0
         return (
-            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -5733,7 +5733,7 @@ return data['data']
         }
         var opacity = 1.0
         return (
-            <div style={{height:'auto', opacity: opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', opacity: opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -5852,7 +5852,7 @@ return data['data']
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>

@@ -446,7 +446,9 @@ class NewTokenPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
                     {this.render_presets_menu()}
+                    {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
                 </div>
             )
@@ -459,6 +461,7 @@ class NewTokenPage extends Component {
                     </div>
                     <div className="col-6" >
                         {this.render_presets_menu()}
+                        {this.render_detail_item('0')}
                         {this.render_title_tags_part2()}
                     </div>
                 </div>
@@ -473,6 +476,7 @@ class NewTokenPage extends Component {
                     </div>
                     <div className="col-5" >
                         {this.render_presets_menu()}
+                        {this.render_detail_item('0')}
                         {this.render_title_tags_part2()}
                     </div>
                 </div>
@@ -4083,7 +4087,11 @@ return data['data']
         if(coins.includes(symbol.toUpperCase())) return true;
         for(var c=0; c<coins.length; c++){
             const coin = coins[c]
-            if(this.props.app_state.coins[coins]['name'].toUpperCase() == symbol.toUpperCase() || this.props.app_state.coins[coins]['symbol'].toUpperCase() == symbol.toUpperCase() || this.props.app_state.coins[coins]['base_unit'].toUpperCase() == symbol.toUpperCase()){
+            if(
+                this.props.app_state.coins[coin]['name'].toUpperCase() == symbol.toUpperCase() || 
+                this.props.app_state.coins[coin]['symbol'].toUpperCase() == symbol.toUpperCase() || 
+                this.props.app_state.coins[coin]['base_unit'].toUpperCase() == symbol.toUpperCase()
+            ){
                 return true;
             }
         }
@@ -4121,7 +4129,11 @@ return data['data']
         if(coins.includes(name.toUpperCase())) return true;
         for(var c=0; c<coins.length; c++){
             const coin = coins[c]
-            if(this.props.app_state.coins[coins]['name'].toUpperCase() == name.toUpperCase() || this.props.app_state.coins[coins]['symbol'].toUpperCase() == name.toUpperCase() || this.props.app_state.coins[coins]['base_unit'].toUpperCase() == name.toUpperCase()){
+            if(
+                this.props.app_state.coins[coin]['name'].toUpperCase() == name.toUpperCase() || 
+                this.props.app_state.coins[coin]['symbol'].toUpperCase() == name.toUpperCase() || 
+                this.props.app_state.coins[coin]['base_unit'].toUpperCase() == name.toUpperCase()
+            ){
                 return true;
             }
         }

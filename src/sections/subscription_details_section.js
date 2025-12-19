@@ -22,6 +22,7 @@ import Tags from './../components/tags';
 // import Letter from './../assets/letter.png'; 
 import TextInput from './../components/text_input';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -300,83 +301,130 @@ class SubscriptionDetailsSection extends Component {
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    <div onClick={() => this.copy_id_to_clipboard(object)}>
-                        {this.render_detail_item('3', item['id'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                    {this.show_moderator_note_if_any(object)}
-                    {this.render_post_state(object)}
-                    
-                    <div onClick={() => this.add_to_contacts2(object)}>
-                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
-                    </div>
+                    <Virtuoso
+                        style={{ height: he }}
+                        totalCount={29}
+                        itemContent={(index) => {
+                            return (
+                                <div>
+                                    {index == 0 && this.render_detail_item('1', item['tags'])}
+                                    {index == 1 && (
+                                        <div>
+                                            <div style={{height: 10}}/>
+                                            <div onClick={() => this.copy_id_to_clipboard(object)}>
+                                                {this.render_detail_item('3', item['id'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {index == 2 && (<div style={{height:10}}/>)}
+                                    {index == 2 && this.show_moderator_note_if_any(object)}
+                                    {index == 2 && this.render_post_state(object)}
+                                    
+                                    {index == 3 && (
+                                        <div>
+                                            <div onClick={() => this.add_to_contacts2(object)}>
+                                                {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
 
-                    {object['hidden'] == true && (
-                        <div>
-                            <div style={{ height: 10 }} />
-                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2695k']/* 'Loading the subscriptions metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                        </div>
-                    )}
+                                    {index == 4 && object['hidden'] == true && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2695k']/* 'Loading the subscriptions metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                                        </div>
+                                    )}
 
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
+                                    {index == 5 && (<div style={{height:10}}/>)}
+                                    {index == 5 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
 
-                    <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', item['age'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['target_authority_id'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['minimum_buy_amount']['title'], 'number':item['minimum_buy_amount']['n'], 'relativepower':item['minimum_buy_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['minimum_buy_amount'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['can_cancel_subscription'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['maximum_buy_amount']['title'], 'number':item['maximum_buy_amount']['n'], 'relativepower':item['maximum_buy_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['maximum_buy_amount'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['minimum_cancellable_balance_amount']['title'], 'number':item['minimum_cancellable_balance_amount']['n'], 'relativepower':item['minimum_cancellable_balance_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['minimum_cancellable_balance_amount'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['time_unit'])}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['subscription_beneficiary'])}
+                                    {index == 6 && (
+                                        <div>
+                                            <div style={{height: 10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                                                {this.render_detail_item('2', item['age'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', item['entry_fees'])}
-                    <div style={{height: 10}}/>
-                    {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4], object)}
-                    <div style={{height: 10}}/>
-                    
-                    {this.render_revoke_author_privelages_event(object)}
+                                    {index == 7 && (<div style={{height:10}}/>)}
+                                    {index == 7 && this.render_detail_item('3', item['target_authority_id'])}
 
-                    {this.render_income_stream_chart(object)}
+                                    {index == 8 && (
+                                        <div>
+                                            <div style={{height: 10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['minimum_buy_amount']['title'], 'number':item['minimum_buy_amount']['n'], 'relativepower':item['minimum_buy_amount']['relativepower']})}>
+                                                {this.render_detail_item('2', item['minimum_buy_amount'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {index == 9 && (<div style={{height:10}}/>)}
+                                    {index == 9 && this.render_detail_item('3', item['can_cancel_subscription'])}
 
-                    {this.render_detail_item('0')}
+                                    {index == 10 && (
+                                        <div>
+                                            <div style={{height: 10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['maximum_buy_amount']['title'], 'number':item['maximum_buy_amount']['n'], 'relativepower':item['maximum_buy_amount']['relativepower']})}>
+                                                {this.render_detail_item('2', item['maximum_buy_amount'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
 
-                    {this.render_detail_item('3', item['payment_amount'])}
-                    <div style={{height: 10}}/>
+                                    {index == 11 && (
+                                        <div>
+                                            <div style={{height: 10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['minimum_cancellable_balance_amount']['title'], 'number':item['minimum_cancellable_balance_amount']['n'], 'relativepower':item['minimum_cancellable_balance_amount']['relativepower']})}>
+                                                {this.render_detail_item('2', item['minimum_cancellable_balance_amount'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
 
-                    {this.render_pay_subscription_button(object)}
 
-                    {this.render_cancel_button(object)}
+                                    {index == 12 && (<div style={{height:10}}/>)}
+                                    {index == 12 && this.render_detail_item('3', item['time_unit'])}
+                                    {index == 13 && (<div style={{height:10}}/>)}
+                                    {index == 13 && this.render_detail_item('3', item['subscription_beneficiary'])}
 
-                    {this.render_collect_button(object)}
+                                    {index == 14 && this.render_detail_item('0')}
+                                    {index == 15 && this.render_detail_item('3', item['entry_fees'])}
+                                    {index == 15 && (<div style={{height:10}}/>)}
+                                    {index == 16 && this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4], object)}
+                                    {index == 16 && (<div style={{height:10}}/>)}
+                                    
+                                    {index == 17 && this.render_revoke_author_privelages_event(object)}
 
-                    {this.render_auth_modify_button(object)}
+                                    {index == 18 && this.render_income_stream_chart(object)}
 
-                    {this.render_moderator_button(object)}
+                                    {index == 19 && this.render_detail_item('0')}
 
-                    {this.render_pin_post_button(object)}
-                    
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
+                                    {index == 20 && this.render_detail_item('3', item['payment_amount'])}
+                                    {index == 20 && (<div style={{height:10}}/>)}
+
+                                    {index == 21 && this.render_pay_subscription_button(object)}
+
+                                    {index == 22 && this.render_cancel_button(object)}
+
+                                    {index == 23 && this.render_collect_button(object)}
+
+                                    {index == 24 && this.render_auth_modify_button(object)}
+
+                                    {index == 25 && this.render_moderator_button(object)}
+
+                                    {index == 26 && this.render_pin_post_button(object)}
+                                    
+                                    {index == 27 && this.render_detail_item('0')}
+                                    {index == 28 && this.render_detail_item('0')}
+                                    {index == 28 && (<div style={{height:10}}/>)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             </div>
         )

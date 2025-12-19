@@ -27,6 +27,7 @@ import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
 
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -369,178 +370,254 @@ class SpendDetailSection extends Component {
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{'overflow-y': 'auto', width:'100%', height: he,padding:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('7', item['banner-icon'])}
-                    {this.render_detail_item('1', item['tags'])}
+                    <Virtuoso
+                        style={{ height: he }}
+                        totalCount={65}
+                        itemContent={(index) => {
+                            return (
+                                <div>
+                                    {index == 0 && this.render_detail_item('7', item['banner-icon'])}
+                                    {index == 1 && this.render_detail_item('1', item['tags'])}
+                                    
+                                    {index == 2 && (
+                                        <div>
+                                            <div style={{height: 10}}/>
+                                            <div onClick={() => this.copy_id_to_clipboard(selected_object)}>
+                                                {this.render_detail_item('3', item['token_id'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 3 && (
+                                        <div>
+                                        <div style={{height:10}}/>
+                                            <div onClick={() => this.add_to_contacts2(selected_object)}>
+                                                {this.render_detail_item('3', {'title':''+author, 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    
+
+
+                                    {index == 4 && selected_object['hidden'] == true && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g']/* 'Loading the exchanges metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                                        </div>
+                                    )}
+
+
+                                    {index == 5 && (<div style={{height:10}}/>)}
+                                    {index == 5 && this.show_moderator_note_if_any(selected_object)}
+                                    {/* {this.render_post_state(selected_object)} */}
+                                    {index == 6 && this.render_token_type(selected_object)}
+                                    {index == 7 && this.render_object_age(selected_object, item)}
+                                    {index == 8 && this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
+                                    {index == 9 && this.render_detail_item('0')}
+
+                                    {index == 10 && this.render_detail_item('3', item['token_type'])}
+                                    {index == 10 && (<div style={{height:10}}/>)}
+                                    {index == 11 && this.render_detail_item('3', item['unlocked_supply'])}
+                                    {index == 11 && (<div style={{height:10}}/>)}
+                                    {index == 12 && this.render_detail_item('3', item['unlocked_liquidity'])}
+                                    {index == 12 && (<div style={{height:10}}/>)}
+                                    {index == 13 && this.render_detail_item('3', item['fully_custom'])}
+
+                                    {index == 14 && this.render_detail_item('0')}
+
+                                    {index == 15 && (
+                                        <div>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['buy_limit']['title'], 'number':item['buy_limit']['n'], 'relativepower':item['buy_limit']['relativepower']})}>
+                                                {this.render_detail_item('2', item['buy_limit'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 16 && (
+                                        <div>
+                                            <div style={{height:10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['sell_limit']['title'], 'number':item['sell_limit']['n'], 'relativepower':item['sell_limit']['relativepower']})}>
+                                                {this.render_detail_item('2', item['sell_limit'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 17 && (
+                                        <div>
+                                            <div style={{height:10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['exchanges_liquidity']['title'], 'number':item['exchanges_liquidity']['n'], 'relativepower':item['exchanges_liquidity']['relativepower']})}>
+                                                {this.render_detail_item('2', item['exchanges_liquidity'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 18 && this.show_total_supply_chart(item, selected_object, symbol)}
+                                    
+                                    {index == 19 && this.render_detail_item('0')}
+                                    {index == 20 && this.show_transaction_count_chart(selected_object, symbol)}
+                                    
+                                    {index == 21 && (<div style={{height:10}}/>)}
+                                    {index == 21 && this.render_detail_item('3', item['minimum_transactions_between_swap'])}
+                                    {index == 22 && (<div style={{height:10}}/>)}
+                                    {index == 22 && this.render_detail_item('3', item['minimum_blocks_between_swap'])}
+                                    {index == 23 && (<div style={{height:10}}/>)}
+                                    {index == 23 && this.render_detail_item('3', item['minimum_time_between_swap'])}
+                                    {index == 24 && (<div style={{height:10}}/>)}
+                                    {index == 24 && this.render_detail_item('3', item['minimum_entered_contracts_between_swap'])}
+                                    {index == 25 && (<div style={{height:10}}/>)}
+                                    {index == 25 && this.render_detail_item('3', item['minimum_transactions_for_first_buy'])}
+                                    {index == 26 && (<div style={{height:10}}/>)}
+                                    {index == 26 && this.render_detail_item('3', item['minimum_entered_contracts_for_first_buy'])}
+
+                                    {index == 26 &&this.render_detail_item('0')}
+
+                                    {index == 27 && this.render_detail_item('3', item['trust_fee_proportion'])}
+                                    {index == 27 && (<div style={{height:10}}/>)}
+                                    {index == 28 && this.render_detail_item('3', item['exchange_authority'])}
+                                    {index == 28 && (<div style={{height:10}}/>)}
+                                    {index == 29 && this.render_detail_item('3', item['trust_fee_target'])}
+                                    
+
+                                    {index == 30 && this.render_revoke_author_privelages_event(selected_object)}
+
+                                    {index == 31 && this.render_detail_item('0')}
+
+                                    {index == 32 && (
+                                        <div>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['wallet_dominance']['title'], 'number':item['wallet_dominance']['n'], 'relativepower':item['wallet_dominance']['relativepower']})}>
+                                                {this.render_detail_item('2', item['wallet_dominance'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 33 && (
+                                        <div>
+                                            <div style={{height:10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['ratio_x']['title'], 'number': item['ratio_x']['n'], 'relativepower': item['ratio_x']['relativepower']})}>
+                                                {this.render_detail_item('2', item['ratio_x'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 34 && (
+                                        <div>
+                                            <div style={{height:10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['ratio_y']['title'], 'number':item['ratio_y']['n'], 'relativepower':item['ratio_y']['relativepower']})}>
+                                                {this.render_detail_item('2', item['ratio_y'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {index == 35 && (<div style={{height:10}}/>)}
+                                    {index == 35 && this.render_detail_item('3', item['combined_exchange_ratio'])}
+                                    {/* <div style={{height:10}}/> */}
+                                    {/* {this.show_24_hour_volume_data(selected_object, symbol)} */}
+
+                                    
+                                    {index == 36 && this.render_price_of_token(selected_object)}
+                                    {index == 36 &&this.render_detail_item('0')}
+
+                                    {index == 37 && (
+                                        <div>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['block_limit']['title'], 'number':item['block_limit']['n'], 'relativepower':item['block_limit']['relativepower']})}>
+                                                {this.render_detail_item('2', item['block_limit'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {index == 38 && (<div style={{height:10}}/>)}
+                                    {index == 38 && this.render_detail_item('3', item['internal_block_halfing_proportion'])}
+                                    {index == 39 && (<div style={{height:10}}/>)}
+                                    {index == 39 && this.render_detail_item('3', item['block_limit_reduction_proportion'])}
+                                    {index == 40 && (<div style={{height:10}}/>)}
+                                    {index == 40 && this.render_detail_item('3', item['block_reset_limit'])}
+                                    {index == 41 && (<div style={{height:10}}/>)}
+                                    {index == 41 && this.render_detail_item('3', item['block_limit_sensitivity'])}
+                                    {/* <div style={{height:10}}/> */}
+                                    {/* {this.render_detail_item('3', item['default_authority_mint_limit'])} */}
+                                    {index == 42 && (<div style={{height:10}}/>)}
+                                    {index == 42 && this.render_detail_item('3', item['block_halfing_type'])}
+
+
+                                    {index == 43 && this.render_detail_item('0')}
+                                    {index == 44 && (
+                                        <div>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['maturity_limit']['title'], 'number':item['maturity_limit']['n'], 'relativepower':item['maturity_limit']['relativepower']})}>
+                                                {this.render_detail_item('2', item['maturity_limit'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 45 && (<div style={{height:10}}/>)}
+                                    {index == 45 && this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
+                                    {index == 45 && this.render_proportion_ratio_chart(selected_object)}
+
+                                    {index == 46 && (
+                                        <div>
+                                            <div style={{height:10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['active_mint_limit']['title'], 'number':item['active_mint_limit']['n'], 'relativepower':item['active_mint_limit']['relativepower']})}>
+                                                {this.render_detail_item('2', item['active_mint_limit'])}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+
+                                    {index == 47 && (<div style={{height:10}}/>)}
+                                    {index == 47 && this.render_token_liquidity_balance(selected_object, symbol)}
+
+                                    {index == 48 && this.render_last_swap_block(selected_object)}
+                                    {index == 49 && this.render_last_swap_timestamp(selected_object)}
+                                    {index == 50 && this.render_last_swap_transaction_count(selected_object)}
+                                    {index == 51 && this.render_last_entered_contracts_count(selected_object)}
+
+                                    
+                                    {index == 52 && this.render_mint_dump_token_button(selected_object, item)}
+
+                                    {index == 53 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2562']/* 'Make a token transfer to a specified account' */, 'title':this.props.app_state.loc['2563']/* 'Send/Transfer' */})}
+
+                                    {index == 54 && (
+                                        <div>
+                                            <div style={{height:10}}/>
+                                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1849']/* 'Your Balance' */, 'number':selected_object['balance'], 'relativepower':symbol})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1849']/* 'Your Balance' */, 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
+                                            </div> 
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 55 && this.render_transfer_button(selected_object)}
+                                    
+                                    {index == 56 && this.render_auth_modify_button(selected_object)}
+
+                                    {index == 57 && this.render_exchange_transfer_button(selected_object)}
+
+                                    {index == 58 && this.render_freeze_unfreeze_tokens_button(selected_object)}
+
+                                    {index == 59 && this.render_authmint_tokens_button(selected_object)}
+
+                                    {index == 60 && this.render_moderator_button(selected_object)}
+
+                                    {index == 61 && this.render_basic_edit_object_button(selected_object)}
+
+                                    {index == 62 && this.render_pin_exchange_button(selected_object)}
+
+                                    {index == 63 && this.render_detail_item('0')}
+                                    {index == 64 && this.render_detail_item('0')}
+                                    {index == 64 && (<div style={{height:1}}/>)}
+                                </div>
+                            );
+                        }}
+                    />
                     
-                    <div style={{height: 10}}/>
-                    <div onClick={() => this.copy_id_to_clipboard(selected_object)}>
-                        {this.render_detail_item('3', item['token_id'])}
-                    </div>
-
-
-                    <div style={{height:10}}/>
-                    <div onClick={() => this.add_to_contacts2(selected_object)}>
-                        {this.render_detail_item('3', {'title':''+author, 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
-                    </div>
-                    
-
-
-                    {selected_object['hidden'] == true && (
-                        <div>
-                            <div style={{ height: 10 }} />
-                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g']/* 'Loading the exchanges metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                        </div>
-                    )}
-
-
-                    <div style={{height:10}}/>
-                    {this.show_moderator_note_if_any(selected_object)}
-                    {/* {this.render_post_state(selected_object)} */}
-                    {this.render_token_type(selected_object)}
-                    {this.render_object_age(selected_object, item)}
-                    {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
-                    {this.render_detail_item('0')}
-
-                    {this.render_detail_item('3', item['token_type'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['unlocked_supply'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['unlocked_liquidity'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['fully_custom'])}
-
-                    {this.render_detail_item('0')}
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['buy_limit']['title'], 'number':item['buy_limit']['n'], 'relativepower':item['buy_limit']['relativepower']})}>
-                        {this.render_detail_item('2', item['buy_limit'])}
-                    </div>
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['sell_limit']['title'], 'number':item['sell_limit']['n'], 'relativepower':item['sell_limit']['relativepower']})}>
-                        {this.render_detail_item('2', item['sell_limit'])}
-                    </div>
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['exchanges_liquidity']['title'], 'number':item['exchanges_liquidity']['n'], 'relativepower':item['exchanges_liquidity']['relativepower']})}>
-                        {this.render_detail_item('2', item['exchanges_liquidity'])}
-                    </div>
-
-                    {this.show_total_supply_chart(item, selected_object, symbol)}
-                    
-                    {this.render_detail_item('0')}
-                    {this.show_transaction_count_chart(selected_object, symbol)}
-                    
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_transactions_between_swap'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_blocks_between_swap'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_time_between_swap'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_entered_contracts_between_swap'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_transactions_for_first_buy'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_entered_contracts_for_first_buy'])}
-
-                    {this.render_detail_item('0')}
-
-                    {this.render_detail_item('3', item['trust_fee_proportion'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['exchange_authority'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['trust_fee_target'])}
-                    
-
-                    {this.render_revoke_author_privelages_event(selected_object)}
-
-                    {this.render_detail_item('0')}
-
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['wallet_dominance']['title'], 'number':item['wallet_dominance']['n'], 'relativepower':item['wallet_dominance']['relativepower']})}>
-                        {this.render_detail_item('2', item['wallet_dominance'])}
-                    </div>
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['ratio_x']['title'], 'number': item['ratio_x']['n'], 'relativepower': item['ratio_x']['relativepower']})}>
-                        {this.render_detail_item('2', item['ratio_x'])}
-                    </div>
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['ratio_y']['title'], 'number':item['ratio_y']['n'], 'relativepower':item['ratio_y']['relativepower']})}>
-                        {this.render_detail_item('2', item['ratio_y'])}
-                    </div>
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['combined_exchange_ratio'])}
-                    {/* <div style={{height:10}}/> */}
-                    {/* {this.show_24_hour_volume_data(selected_object, symbol)} */}
-
-                    
-                    {this.render_price_of_token(selected_object)}
-                    {this.render_detail_item('0')}
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['block_limit']['title'], 'number':item['block_limit']['n'], 'relativepower':item['block_limit']['relativepower']})}>
-                        {this.render_detail_item('2', item['block_limit'])}
-                    </div>
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['internal_block_halfing_proportion'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['block_limit_reduction_proportion'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['block_reset_limit'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['block_limit_sensitivity'])}
-                    {/* <div style={{height:10}}/> */}
-                    {/* {this.render_detail_item('3', item['default_authority_mint_limit'])} */}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['block_halfing_type'])}
-
-
-                    {this.render_detail_item('0')}
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['maturity_limit']['title'], 'number':item['maturity_limit']['n'], 'relativepower':item['maturity_limit']['relativepower']})}>
-                        {this.render_detail_item('2', item['maturity_limit'])}
-                    </div>
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
-
-                    {this.render_proportion_ratio_chart(selected_object)}
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['active_mint_limit']['title'], 'number':item['active_mint_limit']['n'], 'relativepower':item['active_mint_limit']['relativepower']})}>
-                        {this.render_detail_item('2', item['active_mint_limit'])}
-                    </div>
-                    <div style={{height:10}}/>
-
-                    {this.render_token_liquidity_balance(selected_object, symbol)}
-
-                    {this.render_last_swap_block(selected_object)}
-                    {this.render_last_swap_timestamp(selected_object)}
-                    {this.render_last_swap_transaction_count(selected_object)}
-                    {this.render_last_entered_contracts_count(selected_object)}
-
-                    
-                    {this.render_mint_dump_token_button(selected_object, item)}
-
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2562']/* 'Make a token transfer to a specified account' */, 'title':this.props.app_state.loc['2563']/* 'Send/Transfer' */})}
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1849']/* 'Your Balance' */, 'number':selected_object['balance'], 'relativepower':symbol})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1849']/* 'Your Balance' */, 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
-                    </div>
-
-                    {this.render_transfer_button(selected_object)}
-                    
-                    {this.render_auth_modify_button(selected_object)}
-
-                    {this.render_exchange_transfer_button(selected_object)}
-
-                    {this.render_freeze_unfreeze_tokens_button(selected_object)}
-
-                    {this.render_authmint_tokens_button(selected_object)}
-
-                    {this.render_moderator_button(selected_object)}
-
-                    {this.render_basic_edit_object_button(selected_object)}
-
-                    {this.render_pin_exchange_button(selected_object)}
-
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
                 </div>
             </div>
         )

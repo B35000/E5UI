@@ -9670,7 +9670,7 @@ class App extends Component {
                 <Sheet.Container>
                     <Sheet.Content>
                         <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}> 
-                          <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} />
+                          <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} />
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -9682,7 +9682,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_wiki_bottomsheet.bind(this)} open={this.state.wiki_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}> 
-            <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} />
+            <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width}  theme={this.state.theme} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -17511,7 +17511,9 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.prompt_top_notification(me.getLocale()['3055gu']/* Cookies Accepted. */, 1200)
-    }, (1 * 700))
+    }, (1 * 600))
+
+    this.open_wallet_guide_bottomsheet('tutorial')
   }
 
   reject_cookies(){
@@ -17520,7 +17522,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.prompt_top_notification(me.getLocale()['3055gv']/* Cookies Rejected. */, 1200)
-    }, (1 * 700))
+    }, (1 * 300))
   }
 
   enter_new_call(call_id, recipients, call_password, record_call){
@@ -17777,7 +17779,7 @@ class App extends Component {
   }
 
   return_selected_files(picked_files, function_name){
-    if(!this.can_sender_include_file_in_media()){
+    if(!this.can_sender_include_file_in_media() && (this.new_token_page.current == null && this.edit_token_page.current == null)){
       return;
     }
     this.open_pick_file_bottomsheet()
@@ -17930,8 +17932,10 @@ class App extends Component {
   can_sender_include_file_in_media(){
     const users_tx_data = this.senders_transaction_count()
     if(users_tx_data.transaction_count < this.state.media_activation_tx_limit){
-      this.prompt_top_notification(this.getLocale()['2738as']/* 'Make more transactions first.' */, 4000)
-      return false
+      if(this.new_token_page.current == null && this.edit_token_page.current == null){
+        this.prompt_top_notification(this.getLocale()['2738as']/* 'Make more transactions first.' */, 4000)
+        return false
+      }
     }
     else if(this.state.media_activation_age_limit > (Date.now()/1000) - users_tx_data.oldest_transaction_time){
       this.prompt_top_notification(this.getLocale()['2738at']/* 'Your account is too new.' */, 4000)
@@ -24643,9 +24647,11 @@ class App extends Component {
     }
     const pre_launch_data = should_skip_pre_launch == false ? await this.pre_launch_fetch() : {};
     console.log('apppage', 'pre_launch_data', pre_launch_data)
+    var set_wallet = false
     if(this.did_just_set_wallet == true && should_skip_pre_launch == false && is_synching == false){
       this.did_just_set_wallet = false;
       // this.prompt_top_notification(this.getLocale()['2738bl']/* Setting sync data in state... */, 1800)
+      set_wallet = true;
     }
     if(is_synching == true){
       this.inc_synch_progress()
@@ -24654,6 +24660,11 @@ class App extends Component {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       await this.start_get_accounts_for_specific_e5(is_synching, e5, should_skip_account_data, pre_launch_data)
+    }
+
+    if(set_wallet == true){
+      await this.load_and_notify_flash()
+      await this.load_and_notify_flash2()
     }
   }
 
@@ -34907,31 +34918,34 @@ class App extends Component {
   load_and_notify_flash = async () => {
     if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account() || this.load_and_notify_flash_running == true) return;
     this.load_and_notify_flash_running = true;
-    await this.load_and_notify_user_of_incoming_payments()
-    await this.load_and_notify_user_of_incoming_mail()
-    await this.load_and_notify_user_of_incoming_messages()
-
+    const event_data = await this.get_all_notification_flash_event_fetch_objects()
+    
+    await this.load_and_notify_user_of_incoming_payments(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_mail(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_messages(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_proposals(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_job_applications(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_job_requests(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_job_application_responses(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_job_request_responses(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_entered_contracts(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_bag_application(event_data.return_object)
+    await this.load_and_nofity_user_of_incoming_bag_application_responses(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_storefront_direct_order(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_bills(event_data.return_object)
+    await this.load_and_notify_user_of_incoming_post_comments(event_data.return_object, event_data.id_object_data_object)
     await this.wait(3000)
     this.load_and_notify_flash_running = false;
   }
 
   load_and_notify_flash2 = async () => {
-    if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account() || this.load_and_notify_flash2_running == true) return;
+    // if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account() || this.load_and_notify_flash2_running == true) return;
   
-    this.load_and_notify_flash2_running = true;
-    await this.load_and_notify_user_of_incoming_proposals()
-    await this.load_and_notify_user_of_incoming_job_applications()
-    await this.load_and_notify_user_of_incoming_job_requests()
-    await this.load_and_notify_user_of_incoming_job_application_responses()
-    await this.load_and_notify_user_of_incoming_job_request_responses()
-    await this.load_and_notify_user_of_incoming_entered_contracts()
-    await this.load_and_notify_user_of_incoming_bag_application()
-    await this.load_and_nofity_user_of_incoming_bag_application_responses()
-    await this.load_and_notify_user_of_incoming_storefront_direct_order()
-    await this.load_and_notify_user_of_incoming_bills()
+    // this.load_and_notify_flash2_running = true;
+    
 
-    await this.wait(3000)
-    this.load_and_notify_flash2_running = false;
+    // await this.wait(3000)
+    // this.load_and_notify_flash2_running = false;
   }
 
   load_and_notify_flash3 = async () => {
@@ -34945,12 +34959,317 @@ class App extends Component {
     this.load_and_notify_flash3_running = false;
   }
 
+  async get_all_notification_flash_event_fetch_objects(){
+    const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+    const id_object_data_object = await this.load_my_post_ids()
+    const id_object_data = id_object_data_object.ids_data
+    const id_types = id_object_data_object.id_types_data
+
+    const prefetch_stuff = async () => {
+      var prefetch_array = []
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const focused_e5 = this.state.e5s['data'][i]
+        const account = this.state.user_account_id[focused_e5]
+        if(this.state.addresses[focused_e5] != null && account > 1000){
+          const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+          const E52contractArtifact = require('./contract_abis/E52.json');
+          const E52_address = this.state.addresses[focused_e5][1];
+          const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address)
+          
+          const E5contractArtifact = require('./contract_abis/E5.json');
+          const E5_address = this.state.addresses[focused_e5][0];
+          const contractInstance = new web3.eth.Contract(E5contractArtifact.abi, E5_address);
+
+          const e = [
+            [web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:30/* 30(contract_obj_id) */, p3/* sender_account_id */: account}],
+            [web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account}],
+            [web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36}],
+            [web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:38}],
+            [web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:25/* 25(storefront_bag_object) */, p3/* sender_account_id */: account}],
+            [web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36}],
+            [web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:27/* 27(storefront-item) */, p3/* sender_account_id */: account}],
+            [web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:25/* 25(storefront_bag_object) */}]
+          ]
+          e.forEach(element => {
+            prefetch_array.push(element)
+          });
+        }
+      }
+      // console.log('get_all_notification_flash_event_fetch_objects', 'prefetch_array', prefetch_array)
+      return (await this.load_multiple_events_from_nitro(prefetch_array)).all_events
+    }
+    const prefetch_object = await prefetch_stuff()
+
+    // console.log('get_all_notification_flash_event_fetch_objects', 'prefetch_object', prefetch_object)
+
+    var all_queries = []
+    var e5s_used = []
+    var block_numbers = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      const account = this.state.user_account_id[focused_e5]
+      if(this.state.addresses[focused_e5] != null && account > 1000){
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = this.state.addresses[focused_e5][1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address)
+
+        const G5contractArtifact = require('./contract_abis/G5.json');
+        const G5_address = this.state.addresses[focused_e5][3];
+        const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+        const G52contractArtifact = require('./contract_abis/G52.json');
+        const G52_address = this.state.addresses[focused_e5][4];
+        const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+        
+        const E5contractArtifact = require('./contract_abis/E5.json');
+        const E5_address = this.state.addresses[focused_e5][0];
+        const contractInstance = new web3.eth.Contract(E5contractArtifact.abi, E5_address);
+
+        const H52contractArtifact = require('./contract_abis/H52.json');
+        const H52_address = this.state.addresses[focused_e5][6];
+        const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+        const job_ids = this.get_my_job_ids(focused_e5)
+        if(job_ids.length == 0){
+          job_ids.push(0)
+        }
+
+        const all_bags = () => {
+          const pos = 7
+          const x = (i*8) + pos
+          var created_bag_events = prefetch_object[x]
+
+          var my_bags = []
+          created_bag_events.forEach(event => {
+            var id = event.returnValues.p1/* object_id */
+            if(!my_bags.includes(id)){
+              my_bags.push(id)
+            }
+          });
+
+          return my_bags
+        }
+
+        const all_bag_ids = all_bags()
+
+        const get_contract_ids =  () => {
+          const pos = 0
+          const x = (i*8) + pos
+          var created_contracts_events = prefetch_object[x]
+          //await this.load_event_data(web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:30/* 30(contract_obj_id) */, p3/* sender_account_id */: account})
+
+          var my_contracts = []
+          created_contracts_events.forEach(event => {
+            var id = event.returnValues.p1/* object_id */
+            if(my_contracts.includes(id)){
+              my_contracts.push(id)
+            }
+          });
+
+          return my_contracts
+        }
+
+        const get_contractor_post_ids =  () => {
+          const pos = 1
+          const x = (i*8) + pos
+          var my_contractor_post_events = prefetch_object[x]
+          // await this.load_event_data(web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account});
+
+          var contractor_post_ids = []
+          my_contractor_post_events.forEach(event => {
+            var id = event.returnValues.p2/* item */
+            if(!contractor_post_ids.includes(id)){
+              contractor_post_ids.push(id)
+            }
+          });
+
+          if(contractor_post_ids.length == 0){
+            contractor_post_ids.push(0)
+          }
+          return contractor_post_ids
+        }
+
+        const get_incoming_jobs =  () => {
+          const pos = 2
+          const x = (i*8) + pos
+          var my_created_job_respnse_data = prefetch_object[x]
+          // await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
+
+          var job_object_ids = []
+          my_created_job_respnse_data.forEach(event => {
+            var id = event.returnValues.p1/* target_id */
+            if(!job_object_ids.includes(id) && !all_bag_ids.includes(id)){
+              job_object_ids.push(id)
+            }
+          });
+
+          return job_object_ids
+        }
+
+        const get_job_request_respnse_jobs =  () => {
+          const pos = 3
+          const x = (i*8) + pos
+          var my_job_request_respnse_data = prefetch_object[x]
+          // await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:38})
+
+          var job_object_ids = []
+          my_job_request_respnse_data.forEach(event => {
+            var id = event.returnValues.p1/* target_id */
+            if(!job_object_ids.includes(id)){
+              job_object_ids.push(id)
+            }
+          });
+
+          return job_object_ids
+        }
+
+        const get_my_bags =  () => {
+          const pos = 4
+          const x = (i*8) + pos
+          var created_bag_events = prefetch_object[x]
+          // await this.load_event_data(web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:25/* 25(storefront_bag_object) */, p3/* sender_account_id */: account})
+
+          var my_bags = []
+          created_bag_events.forEach(event => {
+            var id = event.returnValues.p1/* object_id */
+            if(!my_bags.includes(id)){
+              my_bags.push(id)
+            }
+          });
+
+          return my_bags
+        }
+
+        const get_my_bag_application_responses =  () => {
+          const pos = 5
+          const x = (i*8) + pos
+          var my_created_job_respnse_data = prefetch_object[x]
+          // await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
+
+          var bag_application_response_ids = []
+          my_created_job_respnse_data.forEach(event => {
+            var id = event.returnValues.p1/* target_id */
+            if(!bag_application_response_ids.includes(id) && all_bag_ids.includes(id)){
+              bag_application_response_ids.push(id)
+            }
+          });
+
+          return bag_application_response_ids
+        }
+
+        const get_my_storefronts =  () => {
+          const pos = 6
+          const x = (i*8) + pos
+          var created_bag_events = prefetch_object[x]
+          // await this.load_event_data(web3, contractInstance, 'e1', focused_e5, {p2/* object_type */:27/* 27(storefront-item) */, p3/* sender_account_id */: account})
+
+          var my_bags = []
+          created_bag_events.forEach(event => {
+            var id = event.returnValues.p1/* object_id */
+            if(!my_bags.includes(id)){
+              my_bags.push(id)
+            }
+          });
+
+          if(my_bags.length == 0){
+            my_bags.push(0)
+          }
+
+          return my_bags
+        }
+
+        const comment_object_ids = Object.values(id_object_data).flat()
+
+        const ff = [
+          /* incoming mail */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: crosschain_identifier, p3/* context */:30}],
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: crosschain_identifier, p3/* context */:31}],
+          
+          /* incoming messages */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: crosschain_identifier, p3/* context */:32}],
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: crosschain_identifier, p3/* context */:33}],
+
+          /* incoming proposals */
+          [web3, G5contractInstance, 'e1', focused_e5, {p1/* contract_id */: this.process_array_for_indexer_query(get_contract_ids())}],
+
+          /* incoming job applications */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(job_ids), p3/* context */:36}],
+
+          /* incoming job requests */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(get_contractor_post_ids()), p3/* context */:38}],
+
+          /* incoming job application response */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(get_incoming_jobs()), p3/* context */:37}],
+
+          /* incoming job request responses */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(get_job_request_respnse_jobs()), p3/* context */:39}],
+
+          /* incoming entered contracts */
+          [web3, G52contractInstance, 'e2', focused_e5, {p1/* contract_id */: get_contract_ids(), p3/* action */: 3/* enters_a_contract */}],
+          
+          /* incoming bag applications  */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(get_my_bags()), p3/* context */:36}],
+          
+          /* bag application responses */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(get_my_bag_application_responses()), p3/* context */:37}],
+          
+          /* storefront responses */
+          [web3, H52contractInstance, 'e5', focused_e5, {p3/* awward_context */: this.process_array_for_indexer_query(get_my_storefronts())}],
+          [web3, E52contractInstance, 'e4', focused_e5, {p3/* awward_context */: this.process_array_for_indexer_query(get_my_storefronts()), p3/* context */:45}],
+
+          /* bill responses */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: account, p3/* context */:13/* bills */}],
+
+          /* comment responses */
+          [web3, E52contractInstance, 'e4', focused_e5, {p3/* context */: comment_object_ids, p1/* target_id */: 17/* shadow_object_container */}],
+
+          /* payments */
+          [web3, H52contractInstance, 'e1', focused_e5, {p3/* receiver */: account}],
+        ]
+        ff.forEach(element => {
+          all_queries.push(element)
+        });
+
+        e5s_used.push(focused_e5)
+        block_numbers[focused_e5] = await web3.eth.getBlockNumber()
+      }
+    }
+    
+    const all_events = (await this.load_multiple_events_from_nitro(all_queries)).all_events
+    const return_object = {'b':block_numbers}
+    for(var e=0; e<e5s_used.length; e++){
+      const e5 = e5s_used[e]
+      const pos = (e*17)
+      return_object[e5] = {
+        'incoming mail': [all_events[pos+0], all_events[pos+1]],
+        'incoming messages': [all_events[pos+2], all_events[pos+3]],
+        'incoming proposals': all_events[pos+4],
+        'incoming job applications': all_events[pos+5],
+        'incoming job requests':all_events[pos+6],
+        'incoming job application response':all_events[pos+7],
+        'incoming job request responses': all_events[pos+8],
+        'incoming entered contracts': all_events[pos+9],
+        'incoming bag applications': all_events[pos+10],
+        'bag application responses': all_events[pos+11],
+        'storefront responses':[all_events[pos+12], all_events[pos+13]],
+        'bill responses': all_events[pos+14],
+        'comment responses': all_events[pos+15],
+        'payments':all_events[pos+16]
+      }
+    }
+
+    console.log('get_all_notification_flash_event_fetch_objects', 'return_object', return_object)
+
+    return {return_object, id_object_data_object}
+  }
 
 
 
 
 
-  load_and_notify_user_of_incoming_payments = async () => {
+
+  load_and_notify_user_of_incoming_payments = async (all_event_object_data) => {
     console.log('notifier', 'loading notification for upcoming recepits...')
     var all_unsorted_events = {}
     var block_stamp = {}
@@ -34964,12 +35283,13 @@ class App extends Component {
         const H52_address = this.state.addresses[focused_e5][6];
         const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var all_received_events = await H52contractInstance.getPastEvents('e1', { filter: { p3/* receiver */: account }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_events = all_event_object_data[focused_e5]['payments']
+        // await H52contractInstance.getPastEvents('e1', { filter: { p3/* receiver */: account }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_events
         block_stamp[focused_e5] = current_block_number
@@ -35065,11 +35385,11 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_mail = async () => {
+  load_and_notify_user_of_incoming_mail = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
-    const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+    // const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
     for(var i=0; i<this.state.e5s['data'].length; i++){
       const focused_e5 = this.state.e5s['data'][i]
       var account = this.state.user_account_id[focused_e5]
@@ -35079,14 +35399,16 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:30}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming mail'][0]
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:30}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
-        var all_received_cross_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:31}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_cross_chain_events = all_event_object_data[focused_e5]['incoming mail'][1]
+        //await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:31}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
         const my_received_mail_events = all_received_on_chain_events.concat(all_received_cross_chain_events)
 
         all_unsorted_events[focused_e5] = my_received_mail_events
@@ -35158,11 +35480,11 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_messages = async () => {
+  load_and_notify_user_of_incoming_messages = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
-    const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+    // const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
     for(var i=0; i<this.state.e5s['data'].length; i++){
       const focused_e5 = this.state.e5s['data'][i]
       var account = this.state.user_account_id[focused_e5]
@@ -35172,14 +35494,16 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:32}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming messages'][0]
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:32}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
-        var all_received_cross_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:33}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_cross_chain_events = all_event_object_data[focused_e5]['incoming messages'][1]
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: crosschain_identifier, p3/* context */:33}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
         const my_received_mail_events = all_received_on_chain_events.concat(all_received_cross_chain_events)
 
         all_unsorted_events[focused_e5] = my_received_mail_events
@@ -35282,7 +35606,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_proposals = async () => {
+  load_and_notify_user_of_incoming_proposals = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -35290,25 +35614,26 @@ class App extends Component {
       const focused_e5 = this.state.e5s['data'][i]
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
-        var ids = await this.get_my_created_contract_ids_in_e5(focused_e5, account)
+        // var ids = await this.get_my_created_contract_ids_in_e5(focused_e5, account)
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
         const G5contractArtifact = require('./contract_abis/G5.json');
         const G5_address = this.state.addresses[focused_e5][3];
         const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        if(ids.length == 0){
-          ids.push(0)
-        }
-        ids.push(2)
+        // if(ids.length == 0){
+        //   ids.push(0)
+        // }
+        // ids.push(2)
 
 
 
-        var all_received_on_chain_events = await G5contractInstance.getPastEvents('e1', { filter: {p1/* contract_id */: ids}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming proposals']
+        // await G5contractInstance.getPastEvents('e1', { filter: {p1/* contract_id */: ids}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -35427,7 +35752,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_job_applications = async () => {
+  load_and_notify_user_of_incoming_job_applications = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -35441,7 +35766,7 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
@@ -35450,7 +35775,8 @@ class App extends Component {
           ids.push(0)
         }
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:36}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming job applications']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:36}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -35563,7 +35889,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_job_requests = async () => {
+  load_and_notify_user_of_incoming_job_requests = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -35576,26 +35902,27 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var my_contractor_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account});
+        // var my_contractor_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account});
 
-        var ids = []
-        my_contractor_post_events.forEach(event => {
-          var id = event.returnValues.p2/* item */
-          if(!ids.includes(id)){
-            ids.push(id)
-          }
-        });
+        // var ids = []
+        // my_contractor_post_events.forEach(event => {
+        //   var id = event.returnValues.p2/* item */
+        //   if(!ids.includes(id)){
+        //     ids.push(id)
+        //   }
+        // });
 
-        if(ids.length == 0){
-          ids.push(0)
-        }
+        // if(ids.length == 0){
+        //   ids.push(0)
+        // }
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:38}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming job requests']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:38}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -35667,7 +35994,7 @@ class App extends Component {
   
 
 
-  load_and_notify_user_of_incoming_job_application_responses = async () => {
+  load_and_notify_user_of_incoming_job_application_responses = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -35676,27 +36003,28 @@ class App extends Component {
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
-        const all_bag_ids = await this.get_all_bags_ids(focused_e5)
+        // const all_bag_ids = await this.get_all_bags_ids(focused_e5)
         const E52contractArtifact = require('./contract_abis/E52.json');
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
+        // var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
 
-        var ids = []
-        my_created_job_respnse_data.forEach(event => {
-          var id = event.returnValues.p1/* target_id */
-          if(!ids.includes(id) && !all_bag_ids.includes(id)){
-            ids.push(id)
-          }
-        });
+        // var ids = []
+        // my_created_job_respnse_data.forEach(event => {
+        //   var id = event.returnValues.p1/* target_id */
+        //   if(!ids.includes(id) && !all_bag_ids.includes(id)){
+        //     ids.push(id)
+        //   }
+        // });
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:37}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming job application response']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:37}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -35780,7 +36108,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_job_request_responses = async () => {
+  load_and_notify_user_of_incoming_job_request_responses = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -35793,22 +36121,23 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var my_job_request_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:38})
+        // var my_job_request_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:38})
 
-        var ids = []
-        my_job_request_respnse_data.forEach(event => {
-          var id = event.returnValues.p1/* target_id */
-          if(!ids.includes(id)){
-            ids.push(id)
-          }
-        });
+        // var ids = []
+        // my_job_request_respnse_data.forEach(event => {
+        //   var id = event.returnValues.p1/* target_id */
+        //   if(!ids.includes(id)){
+        //     ids.push(id)
+        //   }
+        // });
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:39}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming job request responses']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:39}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -35908,7 +36237,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_entered_contracts = async () => {
+  load_and_notify_user_of_incoming_entered_contracts = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -35916,18 +36245,19 @@ class App extends Component {
       const focused_e5 = this.state.e5s['data'][i]
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
-        var ids = await this.get_my_created_contract_ids_in_e5(focused_e5, account)
+        // var ids = await this.get_my_created_contract_ids_in_e5(focused_e5, account)
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
         const G52contractArtifact = require('./contract_abis/G52.json');
         const G52_address = this.state.addresses[focused_e5][4];
         const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var all_received_on_chain_events = await G52contractInstance.getPastEvents('e2', { filter: {p1/* contract_id */: ids, p3/* action */: 3/* enters_a_contract */}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming entered contracts']
+        // await G52contractInstance.getPastEvents('e2', { filter: {p1/* contract_id */: ids, p3/* action */: 3/* enters_a_contract */}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         // console.log('dialog_page','all the received g52 events', ids, all_received_on_chain_events)
 
@@ -36033,7 +36363,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_bag_application = async () => {
+  load_and_notify_user_of_incoming_bag_application = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -36041,23 +36371,24 @@ class App extends Component {
       const focused_e5 = this.state.e5s['data'][i]
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
-        const ids = await this.load_my_bag_ids(focused_e5, account)
+        // const ids = await this.load_my_bag_ids(focused_e5, account)
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
         const E52contractArtifact = require('./contract_abis/E52.json');
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        if(ids.length == 0){
-          ids.push(0)
-        }
+        // if(ids.length == 0){
+        //   ids.push(0)
+        // }
 
-        console.log('notifier', 'incoming bags to check', ids)
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:36}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        // console.log('notifier', 'incoming bags to check', ids)
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming bag applications']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:36}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -36178,7 +36509,7 @@ class App extends Component {
 
 
 
-  load_and_nofity_user_of_incoming_bag_application_responses = async() => {
+  load_and_nofity_user_of_incoming_bag_application_responses = async(all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -36187,27 +36518,28 @@ class App extends Component {
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
-        const all_bag_ids = await this.get_all_bags_ids(focused_e5)
+        // const all_bag_ids = await this.get_all_bags_ids(focused_e5)
         const E52contractArtifact = require('./contract_abis/E52.json');
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
+        // var my_created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
 
-        var ids = []
-        my_created_job_respnse_data.forEach(event => {
-          var id = event.returnValues.p1/* target_id */
-          if(!ids.includes(id) && all_bag_ids.includes(id)){
-            ids.push(id)
-          }
-        });
+        // var ids = []
+        // my_created_job_respnse_data.forEach(event => {
+        //   var id = event.returnValues.p1/* target_id */
+        //   if(!ids.includes(id) && all_bag_ids.includes(id)){
+        //     ids.push(id)
+        //   }
+        // });
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:37}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['bag application responses']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:37}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -36275,7 +36607,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_storefront_direct_order = async () => {
+  load_and_notify_user_of_incoming_storefront_direct_order = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var all_unsorted_bid_events = {}
     var block_stamp = {}
@@ -36284,7 +36616,7 @@ class App extends Component {
       const focused_e5 = this.state.e5s['data'][i]
       var account = this.state.user_account_id[focused_e5]
       if(this.state.addresses[focused_e5] != null && account > 1000){
-        const ids = await this.load_my_storefront_ids(focused_e5, account)
+        // const ids = await this.load_my_storefront_ids(focused_e5, account)
         const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
         const H52contractArtifact = require('./contract_abis/H52.json');
         const H52_address = this.state.addresses[focused_e5][6];
@@ -36294,18 +36626,20 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        if(ids.length == 0){
-          ids.push(0)
-        }
+        // if(ids.length == 0){
+        //   ids.push(0)
+        // }
 
-        var all_received_on_chain_events = await H52contractInstance.getPastEvents('e5', { filter: { p3/* awward_context */: ids}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['storefront responses'][0]
+        // await H52contractInstance.getPastEvents('e5', { filter: { p3/* awward_context */: ids}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
-        var all_received_bid_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: { p1/* target_id */: ids, p3/* context */:45}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_bid_on_chain_events = all_event_object_data[focused_e5]['storefront responses'][1]
+        // await E52contractInstance.getPastEvents('e4', { filter: { p1/* target_id */: ids, p3/* context */:45}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         all_unsorted_bid_events[focused_e5] = all_received_bid_on_chain_events
@@ -36497,7 +36831,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_bills = async () => {
+  load_and_notify_user_of_incoming_bills = async (all_event_object_data) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
@@ -36510,12 +36844,13 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: account, p3/* context */:13/* bills */}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['bill responses']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: account, p3/* context */:13/* bills */}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
         block_stamp[focused_e5] = current_block_number
@@ -36586,11 +36921,11 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_post_comments = async () => {
+  load_and_notify_user_of_incoming_post_comments = async (all_event_object_data, id_object_data_object) => {
     var all_unsorted_events = {}
     var block_stamp = {}
     var current_blocks = {}
-    const id_object_data_object = await this.load_my_post_ids()
+    // const id_object_data_object = await this.load_my_post_ids()
     const id_object_data = id_object_data_object.ids_data
     const id_types = id_object_data_object.id_types_data
     const id_types_data_arrays = id_object_data_object.id_types_data_arrays
@@ -36603,14 +36938,15 @@ class App extends Component {
         const E52_address = this.state.addresses[focused_e5][1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = await web3.eth.getBlockNumber()
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
         var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
         const ids = Object.values(id_object_data).flat()
 
-        var all_received_on_chain_events = await E52contractInstance.getPastEvents('e4', { filter: { p3/* context */: ids, p1/* target_id */: 17/* shadow_object_container */ }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['comment responses']
+        // await E52contractInstance.getPastEvents('e4', { filter: { p3/* context */: ids, p1/* target_id */: 17/* shadow_object_container */ }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         var filtered_all_received_on_chain_events = []
         all_received_on_chain_events.forEach(event => {

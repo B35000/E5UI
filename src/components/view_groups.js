@@ -599,7 +599,7 @@ class ViewGroups extends Component {
                                 },
                                 callback: function(value, index, ticks) {
                                     if(value.toString().includes('.')){
-                                        return ((value * scale).toFixed(3)).toString()+y_axis_units
+                                        return ((value * scale).toFixed(4)).toString()+y_axis_units
                                     }
                                     const final_value = bigInt(value).multiply(scale)
                                     if(bigInt(final_value).lesser(bigInt(1_000_000))){

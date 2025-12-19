@@ -1042,6 +1042,18 @@ class NewPollPage extends Component {
         this.setState({entered_objects: cloned_array, entered_text:'', edit_text_item_pos: -1})
     }
 
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
 
     render_kaomoji_list(){
         var items = this.props.app_state.kaomojis
@@ -2636,7 +2648,7 @@ class NewPollPage extends Component {
             return(
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeLeft={{

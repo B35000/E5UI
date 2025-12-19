@@ -24,6 +24,8 @@ import End35 from './../assets/end35.png';
 import End25 from './../assets/E25.png';
 // import Letter from './../assets/letter.png'; 
 
+import { Virtuoso } from "react-virtuoso";
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -132,161 +134,286 @@ class E5DetailsSection extends Component {
         // var obj = this.get_e5_data()[this.props.selected_e5_item]
         var e5 = obj['id']
         var spent_end = bigInt('1e72').minus(bigInt('1e70')).minus(bigInt(this.props.app_state.end_balance_of_E5[e5]))
+        var e5_chart_data = this.props.app_state.all_data[obj['id']]
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    <Virtuoso
+                        style={{ height: he }}
+                        totalCount={51}
+                        itemContent={(index) => {
+                            return (
+                                <div>
+                                    {index == 0 && this.render_detail_item('7', item['label'])}
+                                    {index == 0 && (<div style={{height:10}}/>)}
+
+                                    {index == 1 && this.render_detail_item('1', item['tags'])}
+                                    {index == 1 && (<div style={{height:10}}/>)}
+
+                                    {index == 2 && (
+                                        <div onClick={() => this.when_address_tapped(obj)}>
+                                            {this.render_detail_item('3', item['address'])}
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 3 && (<div style={{height:10}}/>)}
+                                    {index == 3 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['e5_tx_height']['title'], 'number':item['e5_tx_height']['n'], 'relativepower':item['e5_tx_height']['relativepower']})}>
+                                            {this.render_detail_item('2', item['e5_tx_height'])}
+                                        </div>
+                                    )}
+                                    
+                                    
+                                    {index == 4 && (<div style={{height:10}}/>)}
+                                    {index == 4 && this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
+                                    
+                                    {index == 5 && (<div style={{height:10}}/>)}
+                                    {index == 5 && this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
+
+                                    {index == 6 && (<div style={{height:10}}/>)}
+                                    {index == 6 && (
+                                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_end_minimum_contract_amount']['title'], 'number':item['default_end_minimum_contract_amount']['n'], 'relativepower':item['default_end_minimum_contract_amount']['relativepower']})}>
+                                            {this.render_detail_item('2', item['default_end_minimum_contract_amount'])}
+                                        </div> 
+                                    )}
+                                    
+
+                                    {index == 7 && (<div style={{height:10}}/>)}
+                                    {index == 7 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_spend_minimum_contract_amount']['title'], 'number':item['default_spend_minimum_contract_amount']['n'], 'relativepower':item['default_spend_minimum_contract_amount']['relativepower']})}>
+                                            {this.render_detail_item('2', item['default_spend_minimum_contract_amount'])}
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 8 && (<div style={{height:10}}/>)}
+                                    {index == 8 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_end_vote_bounty_amount']['title'], 'number':item['default_minimum_end_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_end_vote_bounty_amount']['relativepower']})}>
+                                            {this.render_detail_item('2', item['default_minimum_end_vote_bounty_amount'])}
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 9 && (<div style={{height:10}}/>)}
+                                    {index == 9 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_spend_vote_bounty_amount']['title'], 'number':item['default_minimum_spend_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_spend_vote_bounty_amount']['relativepower']})}>
+                                            {this.render_detail_item('2', item['default_minimum_spend_vote_bounty_amount'])}
+                                        </div>
+                                    )}
+                                    
+                                    
+                                    {index == 10 && (<div style={{height:10}}/>)}
+                                    {index == 10 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_limit']['title'], 'number':item['tx_gas_limit']['n'], 'relativepower':item['tx_gas_limit']['relativepower']})}>
+                                            {this.render_detail_item('2', item['tx_gas_limit'])}
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 11 && (<div style={{height:10}}/>)}
+                                    {index == 11 && this.render_detail_item('3', item['contract_block_invocation_limit'])}
+
+                                    {index == 12 && (<div style={{height:10}}/>)}
+                                    {index == 12 && this.render_detail_item('3', item['contract_time_invocation_limit'])}
+
+                                    {index == 13 && (<div style={{height:10}}/>)}
+                                    {index == 13 && this.render_detail_item('3', item['minimum_entered_contracts'])}
+
+                                    {index == 14 && (<div style={{height:10}}/>)}
+                                    {index == 14 && this.render_detail_item('3', item['tag_indexing_limit'])}
+
+                                    {index == 15 && (<div style={{height:10}}/>)}
+                                    {index == 15 && this.render_detail_item('3', item['minimum_transaction_count'])}
+
+                                    {index == 16 && (<div style={{height:10}}/>)}
+                                    {index == 16 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['gas_anchor_price']['title'], 'number':item['gas_anchor_price']['n'], 'relativepower':item['gas_anchor_price']['relativepower']})}>
+                                            {this.render_detail_item('2', item['gas_anchor_price'])}
+                                        </div>
+                                    )}
+                                    
+
+                                    
+                                    {index == 17 && (<div style={{height:10}}/>)}
+                                    {index == 17 && this.render_detail_item('3', item['tx_gas_reduction_proportion'])}
+
+                                    {index == 18 && (<div style={{height:10}}/>)}
+                                    {index == 18 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_anchor_price']['title'], 'number':item['tx_gas_anchor_price']['n'], 'relativepower':item['tx_gas_anchor_price']['relativepower']})}>
+                                            {this.render_detail_item('2', item['tx_gas_anchor_price'])}
+                                        </div>
+                                    )}
+                                    
+
+
+                                    {index == 19 && (<div style={{height:10}}/>)}
+                                    {index == 19 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_lower_limit']['title'], 'number':item['tx_gas_lower_limit']['n'], 'relativepower':item['tx_gas_lower_limit']['relativepower']})}>
+                                            {this.render_detail_item('2', item['tx_gas_lower_limit'])}
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 20 && (<div style={{height:10}}/>)}
+                                    {index == 20 && this.render_detail_item('3', item['absolute_proposal_expiry_duration_limit'])}
+                                    
+
+                                    {index == 21 && (<div style={{height:10}}/>)}
+                                    {index == 21 && this.render_detail_item('3', item['invite_only_e5'])}
+
+                                    {index == 22 && (<div style={{height:10}}/>)}
+                                    {index == 22 && this.render_detail_item('3', item['primary_tx_account'])}
+
+                                    {index == 23 && (<div style={{height:10}}/>)}
+                                    {index == 23 && this.render_detail_item('3', item['primary_account_tx_period'])}
+
+                                    {index == 24 && this.render_detail_item('0')}
+
+                                    {index == 25 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['377']/* 'End Balance' */, 'number':this.props.app_state.end_balance_of_E5[e5], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_E5[e5]), 'relativepower':this.props.app_state.loc['3078']/* END */})}
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 26 && (<div style={{height:10}}/>)}
+                                    {index == 26 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['378']/* Spend Balance' */, 'number':this.props.app_state.spend_balance_of_E5[e5], 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* Spend Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.spend_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.spend_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.spend_balance_of_E5[e5]), 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}
+                                        </div>
+                                    )}
+                                    
+                                    {index == 27 && (<div style={{height:10}}/>)}
+                                    {index == 27 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'number':this.props.app_state.end_balance_of_burn_account[e5], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':this.props.app_state.loc['3078']/* END */})}
+                                        </div>
+                                    )}
+
+                                    {index == 28 && (<div style={{height:10}}/>)}
+                                    {index == 28 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'number':spent_end, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'subtitle':this.format_power_figure(spent_end), 'barwidth':this.calculate_bar_width(spent_end), 'number':this.format_account_balance_figure(spent_end), 'relativepower':this.props.app_state.loc['3078']/* END */})}
+                                        </div>
+                                    )}
+                                    
+                                    {index == 29 && (<div style={{height:10}}/>)}
+
+                                    {index == 29 && this.render_end_to_spend_use_ratio(obj)}
+
+                                    {index == 30 && this.render_channeling_depth_data(obj)}
+
+                                    {index == 31 && this.render_spend_bottom_80_dominance(obj)}
+
+                                    {index == 32 && this.render_traffic_distribution_number(obj)}
+
+                                    {index == 33 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
+                                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2234']}</p>
+                                        
+                                            {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'relativepower':'Ether'})}
+
+                                            {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 34 && this.render_detail_item('0')}
+
+                                    {index == 35 && this.render_last_transaction_time_data(e5)}
+
+                                    {index == 36 && (
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'number':this.props.app_state.withdraw_balance[e5], 'relativepower':'wei'})}>
+                                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5]), 'relativepower':'wei'})}
+                                        </div>
+                                    )}
+                                    
+
+                                    
+                                    {index == 37 && (
+                                        <div>
+                                            <div style={{height:10}}/>
+                                            {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2241']/* 'Withdraw your Ether to a specified address' */, 'title':this.props.app_state.loc['2242']/* 'Withdraw Ether' */})}
+                                            <div style={{height:10}}/>
+                                            <div onClick={()=>this.open_withdraw_ether_ui(obj)}>
+                                                {this.render_detail_item('5', {'text':this.props.app_state.loc['2243']/* 'Withdraw' */, 'action':''})}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+
+                                    {index == 38 && this.render_detail_item('0')}
+                                    
+
+                                    {index == 39 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_chart_item_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_chart_item_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                                        </div>
+                                    )}
+
+                                    {index == 40 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.render_selected_chart_item(e5_chart_data, obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 41 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_contract_chart_item_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_contract_chart_item_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                                        </div>
+                                    )}
+
+                                    {index == 42 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.render_selected_contract_chart_item(obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 43 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.show_data_transaction_count_chart(e5_chart_data, obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 44 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.show_metadata_transaction_count_chart(e5_chart_data, obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 45 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.show_deposit_amount_data_chart(e5_chart_data, obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 46 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.show_transfer_events_chart(e5_chart_data, obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 47 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.show_transaction_transaction_count_chart(e5_chart_data, obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 48 && (e5_chart_data != null || (this.props.app_state.saved_pre_launch_events[obj['id']] != null && this.props.app_state.saved_pre_launch_events[obj['id']]['e5_charts_data'] != null)) && (
+                                        <div>
+                                            {this.show_deflation_events_chart(obj['id'])}
+                                        </div>
+                                    )}
+
+                                    {index == 49 && this.render_detail_item('0')}
+                                    {index == 50 && this.render_detail_item('0')}
+                                    {index == 50 && (<div style={{height:1}}/>)}
+                                </div>
+                            );
+                        }}
+                    />
                     
-                    {this.render_detail_item('7', item['label'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height:10}}/>
-                    <div onClick={() => this.when_address_tapped(obj)}>
-                        {this.render_detail_item('3', item['address'])}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['e5_tx_height']['title'], 'number':item['e5_tx_height']['n'], 'relativepower':item['e5_tx_height']['relativepower']})}>
-                        {this.render_detail_item('2', item['e5_tx_height'])}
-                    </div>
-                    
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
-                   <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_end_minimum_contract_amount']['title'], 'number':item['default_end_minimum_contract_amount']['n'], 'relativepower':item['default_end_minimum_contract_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['default_end_minimum_contract_amount'])}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_spend_minimum_contract_amount']['title'], 'number':item['default_spend_minimum_contract_amount']['n'], 'relativepower':item['default_spend_minimum_contract_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['default_spend_minimum_contract_amount'])}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_end_vote_bounty_amount']['title'], 'number':item['default_minimum_end_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_end_vote_bounty_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['default_minimum_end_vote_bounty_amount'])}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_spend_vote_bounty_amount']['title'], 'number':item['default_minimum_spend_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_spend_vote_bounty_amount']['relativepower']})}>
-                        {this.render_detail_item('2', item['default_minimum_spend_vote_bounty_amount'])}
-                    </div>
-                    
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_limit']['title'], 'number':item['tx_gas_limit']['n'], 'relativepower':item['tx_gas_limit']['relativepower']})}>
-                        {this.render_detail_item('2', item['tx_gas_limit'])}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['contract_block_invocation_limit'])}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['contract_time_invocation_limit'])}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_entered_contracts'])}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['tag_indexing_limit'])}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['minimum_transaction_count'])}
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['gas_anchor_price']['title'], 'number':item['gas_anchor_price']['n'], 'relativepower':item['gas_anchor_price']['relativepower']})}>
-                        {this.render_detail_item('2', item['gas_anchor_price'])}
-                    </div>
-
-                    
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['tx_gas_reduction_proportion'])}
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_anchor_price']['title'], 'number':item['tx_gas_anchor_price']['n'], 'relativepower':item['tx_gas_anchor_price']['relativepower']})}>
-                        {this.render_detail_item('2', item['tx_gas_anchor_price'])}
-                    </div>
-
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['tx_gas_lower_limit']['title'], 'number':item['tx_gas_lower_limit']['n'], 'relativepower':item['tx_gas_lower_limit']['relativepower']})}>
-                        {this.render_detail_item('2', item['tx_gas_lower_limit'])}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['absolute_proposal_expiry_duration_limit'])}
-                    
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['invite_only_e5'])}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['primary_tx_account'])}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['primary_account_tx_period'])}
-
-                    {this.render_detail_item('0')}
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['377']/* 'End Balance' */, 'number':this.props.app_state.end_balance_of_E5[e5], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_E5[e5]), 'relativepower':this.props.app_state.loc['3078']/* END */})}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['378']/* Spend Balance' */, 'number':this.props.app_state.spend_balance_of_E5[e5], 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* Spend Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.spend_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.spend_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.spend_balance_of_E5[e5]), 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}
-                    </div>
-                    <div style={{height:10}}/>
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'number':this.props.app_state.end_balance_of_burn_account[e5], 'relativepower':this.props.app_state.loc['3078']/* END */})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':this.props.app_state.loc['3078']/* END */})}
-                    </div>
-                    <div style={{height:10}}/>
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'number':spent_end, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2336k']/* 'Spent End' */, 'subtitle':this.format_power_figure(spent_end), 'barwidth':this.calculate_bar_width(spent_end), 'number':this.format_account_balance_figure(spent_end), 'relativepower':this.props.app_state.loc['3078']/* END */})}
-                    </div>
-                    <div style={{height:10}}/>
-
-                    {this.render_end_to_spend_use_ratio(obj)}
-
-                    {this.render_channeling_depth_data(obj)}
-
-                    {this.render_spend_bottom_80_dominance(obj)}
-
-                    {this.render_traffic_distribution_number(obj)}
-
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2234']}</p>
-                    
-                        {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'relativepower':'Ether'})}
-
-                        {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
-                    </div>
-
-                    {this.render_detail_item('0')}
-
-                    {this.render_last_transaction_time_data(e5)}
-
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'number':this.props.app_state.withdraw_balance[e5], 'relativepower':'wei'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5]), 'relativepower':'wei'})}
-                    </div>
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2241']/* 'Withdraw your Ether to a specified address' */, 'title':this.props.app_state.loc['2242']/* 'Withdraw Ether' */})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_withdraw_ether_ui(obj)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2243']/* 'Withdraw' */, 'action':''})}
-                    </div>
-
-                    {this.render_detail_item('0')}
-
-                    {this.load_E5_charts(obj)}
-
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
                 </div>
             </div>
         )

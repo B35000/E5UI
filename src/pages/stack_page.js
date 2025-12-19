@@ -16,7 +16,7 @@
 // OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-import React, { Component } from 'react';
+import React, { Component, forwardRef } from 'react';
 import Tags from './../components/tags';
 import ViewGroups from './../components/view_groups'
 import TextInput from './../components/text_input';
@@ -43,7 +43,7 @@ import media_processors from '../resources/media_processors';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Virtuoso } from "react-virtuoso";
+import { Virtuoso, VirtuosoGrid } from "react-virtuoso";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -79,6 +79,35 @@ function start_and_end(str) {
   }
   return str;
 }
+
+const gridComponents = {
+  List: forwardRef(({ style, children, ...props }, ref) => (
+    <div
+      ref={ref}
+      {...props}
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)", // 👈 2 equal columns
+        gap: "10px",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  )),
+
+  Item: ({ children, ...props }) => (
+    <div
+      {...props}
+      style={{
+        width: "100%",           // 👈 fill grid cell
+        boxSizing: "border-box",
+      }}
+    >
+      {children}
+    </div>
+  ),
+};
 
 class StackPage extends Component {
     
@@ -138,6 +167,19 @@ class StackPage extends Component {
         setting_text:'',
         
     };
+
+    constructor(props) {
+        super(props);
+        this.image_input = React.createRef()
+        this.audio_input = React.createRef()
+        this.video_input = React.createRef()
+        this.pdf_input = React.createRef()
+        this.zip_input = React.createRef()
+        this.lrc_input = React.createRef()
+        this.vtt_input = React.createRef()
+        this.locationPickerRef = React.createRef()
+        this.screen = React.createRef()
+    }
 
     get_stack_page_tags_object(){
         var obj = {
@@ -1863,7 +1905,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px',  'overflow-x':'none', 'width':'97%'}}>
+                <div ref={this.screen} style={{'padding': '0px 0px 0px 0px',  'overflow-x':'none', 'width':'97%'}}>
                     {this.render_stack_gas_part()}
                     {this.render_simplified_stack_history()}
                     {this.render_detail_item('0')}
@@ -1881,7 +1923,7 @@ class StackPage extends Component {
             return(
                 <div style={{'overflow-x':'none'}}>
                     <div className="row" style={{'width':'99%'}}>
-                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div ref={this.screen} className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {/* {this.render_gas_history_chart()} */}
@@ -1900,7 +1942,7 @@ class StackPage extends Component {
             return(
                 <div style={{'overflow-x':'none'}}>
                     <div className="row" style={{'width':'99%'}}>
-                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div ref={this.screen} className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {this.render_gas_history_chart()}
@@ -2162,6 +2204,7 @@ class StackPage extends Component {
 
     componentDidMount() {
         this.set_viewed_data()
+        this.setState({screen_width: this.screen.current.offsetWidth})
     }
 
     set_viewed_data = async () => {
@@ -11395,10 +11438,8 @@ class StackPage extends Component {
         if(size == 's'){
             return(
                 <div style={{'width':'97%'}}>
-                    {this.render_search_bar_input()}
-                    {this.render_settings_details()}
-                    {this.render_settings_details2()}
-                    {this.render_empty_views(2)}
+                    {this.render_old_settings_details()}
+                    {this.render_old_settings_details2()}
                 </div>
             )
         }
@@ -11408,29 +11449,57 @@ class StackPage extends Component {
                     <div className="row">
                         <div className="col-6" style={{}}>
                             {this.render_search_bar_input()}
+                            {this.render_old_settings_details()}
+                        </div>
+                        <div className="col-6" style={{}}>
+                            {this.render_old_settings_details2()}
+                        </div>
+
+                        {/* <div className="col-6" style={{}}>
+                            {this.render_search_bar_input()}
                             {this.render_settings_details()}
-                            {this.render_empty_views(2)}
                         </div>
                         <div className="col-6" style={{}}>
                             {this.render_settings_details2()}
-                            {this.render_empty_views(2)}
+                        </div> */}
+                        
+                        {/* <div className="col-6" style={{}}>
+                            {this.render_search_bar_input()}
                         </div>
+                        <div className="col-12" style={{}}>
+                            {this.render_settings_details_grid()}
+                        </div> */}
+                        
                     </div>
                 </div>
             )
         }
         else if(size == 'l'){
             return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                <div className="row" style={{'width':'99%', 'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" style={{}}>
+                        {this.render_search_bar_input()}
+                        {this.render_old_settings_details()}
+                    </div>
+                    <div className="col-5" style={{}}>
+                        {this.render_old_settings_details2()}
+                    </div>
+
+                    {/* <div className="col-5" style={{}}>
                         {this.render_search_bar_input()}
                         {this.render_settings_details()}
-                        {this.render_empty_views(2)}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" style={{}}>
                         {this.render_settings_details2()}
-                        {this.render_empty_views(2)}
+                    </div> */}
+
+                    {/* <div className="col-5" style={{}}>
+                        {this.render_search_bar_input()}
                     </div>
+                    <div className="col-10" style={{}}>
+                        
+                        {this.render_settings_details_grid()}
+                    </div> */}
                 </div>
                 
             )
@@ -11450,243 +11519,1370 @@ class StackPage extends Component {
         this.setState({setting_text: text})
     }
 
-    render_settings_details(){
+    render_old_settings_details(){
         return(
             <div>
-                {this.does_title_details_contain_searched_text('1528','1529') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
+                <div>
+                    {this.does_title_details_contain_searched_text('1528','1529') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
 
+                    {this.does_title_details_contain_searched_text('2813', '2814') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                {this.does_title_details_contain_searched_text('2813', '2814') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+                    {this.does_title_details_contain_searched_text('1530', '1531') && (
+                        <div>
+                            {/* preferred E5 */}
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
+                            <div style={{height: 10}}/>
+                            {this.load_preferred_e5_ui()}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
 
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
+                    {this.does_title_details_contain_searched_text('1593dd', '1593de') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                
-                {this.does_title_details_contain_searched_text('1530', '1531') && (
-                    <div>
-                        {/* preferred E5 */}
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
-                        <div style={{height: 10}}/>
-                        {this.load_preferred_e5_ui()}
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
+                            {this.load_my_nitro_objects_to_select()}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}   
 
-                
+                    {this.does_title_details_contain_searched_text('1593en', '1593eo') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                            
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
 
-                {this.does_title_details_contain_searched_text('1593dd', '1593de') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
 
-                        {this.load_my_nitro_objects_to_select()}
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
+                    {this.does_title_details_contain_searched_text('1535', '1536') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+                    {this.does_title_details_contain_searched_text('1537', '1538') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
 
-                {this.does_title_details_contain_searched_text('1593en', '1593eo') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
+                    {this.does_title_details_contain_searched_text('1539', '1540') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                        
-                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
 
+                    {this.does_title_details_contain_searched_text('2893', '2894') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
 
+                    {this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
 
-                {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1532'], 'details':this.props.app_state.loc['1533'], 'size':'l'})}
-                <div style={{height: 10}}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
-                <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1534'], 'action':''},)}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.render_auto_run_setting_if_not_ios()}
+
+                    {this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+                    {this.render_disable_moderation_setting()}
+
+                    {this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593jr', '1593js') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.render_empty_views(2)}
                 </div>
-
-                {this.render_detail_item('0')} */}
-
-
-
-                {this.does_title_details_contain_searched_text('1535', '1536') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
-
-
-
-
-                {this.does_title_details_contain_searched_text('1537', '1538') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
-
-
-
-                {this.does_title_details_contain_searched_text('1539', '1540') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
-
-
-
-
-
-                {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
-                <div style={{height: 10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')} */}
-
-
-
-
-
-                {this.does_title_details_contain_searched_text('2893', '2894') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
-
-
-
-                {this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
-                {this.render_auto_run_setting_if_not_ios()}
-
-
-
-
-                {this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
-
-                {this.render_disable_moderation_setting()}
-
-
-
-
-                {this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
-
-
-
-                {this.does_title_details_contain_searched_text('1593jr', '1593js') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-
-
-
-
-
-                {this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
-                    <div>
-                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
-                        <div style={{height: 10}}/>
-
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                        {this.render_detail_item('0')}
-                    </div>
-                )}
-                
-
             </div>
         )
     }
+
+    render_old_settings_details2(){
+        return(
+            <div>
+                <div>
+                    {this.does_title_details_contain_searched_text('1543', '1544') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1545', '1546') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1547', '1548') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593i', '1593j') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593m', '1593n') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+                    {this.does_title_details_contain_searched_text('1593o', '1593p') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('2754', '2755') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593el', '1593em') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.render_theme_image_setting_if_any()}
+
+                    {this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593jd', '1593je') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+                    {this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+
+                    {this.render_empty_views(2)}
+                </div>
+            </div>
+        )
+    }
+
+    // render_settings_details(){
+    //     const items = 17
+    //     return(
+    //         <div>
+    //             <Virtuoso
+    //                 style={{ height: this.props.height-210, 'width':'98%', }}
+    //                 totalCount={items}
+    //                 itemContent={(index) => {
+    //                     return (
+    //                         <div>
+    //                             {index == 0 && this.does_title_details_contain_searched_text('1528','1529') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 1 && this.does_title_details_contain_searched_text('2813', '2814') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 2 && this.does_title_details_contain_searched_text('1530', '1531') && (
+    //                                 <div>
+    //                                     {/* preferred E5 */}
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
+    //                                     <div style={{height: 10}}/>
+    //                                     {this.load_preferred_e5_ui()}
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 3 && this.does_title_details_contain_searched_text('1593dd', '1593de') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     {this.load_my_nitro_objects_to_select()}
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}   
+
+    //                             {index == 4 && this.does_title_details_contain_searched_text('1593en', '1593eo') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                                        
+    //                                     {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 5 && this.does_title_details_contain_searched_text('1535', '1536') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 6 && this.does_title_details_contain_searched_text('1537', '1538') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 7 && this.does_title_details_contain_searched_text('1539', '1540') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 8 && this.does_title_details_contain_searched_text('2893', '2894') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 9 && this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 10 && this.render_auto_run_setting_if_not_ios()}
+
+    //                             {index == 11 && this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 12 && this.render_disable_moderation_setting()}
+
+    //                             {index == 13 && this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 14 && this.does_title_details_contain_searched_text('1593jr', '1593js') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 15 && this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 16 && this.render_empty_views(2)}
+    //                         </div>
+    //                     );
+    //                 }}
+    //             />
+
+
+    //             {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1532'], 'details':this.props.app_state.loc['1533'], 'size':'l'})}
+    //             <div style={{height: 10}}/>
+
+    //             <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
+    //                 {this.render_detail_item('5', {'text':this.props.app_state.loc['1534'], 'action':''},)}
+    //             </div>
+
+    //             {this.render_detail_item('0')} */}
+
+
+    //             {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
+    //             <div style={{height: 10}}/>
+
+    //             <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
+
+    //             {this.render_detail_item('0')} */}
+                
+
+    //         </div>
+    //     )
+    // }
+    // //here
+    // render_settings_details2(){
+    //     return(
+    //         <div>
+    //             <div style={{'padding': '0px 0px 0px 0px'}}>
+    //                 <Virtuoso
+    //                     style={{ height: this.props.height-150, 'width':'98%', }}
+    //                     totalCount={16}
+    //                     itemContent={(index) => {
+    //                         return (
+    //                             <div>
+    //                                 {index == 0 && this.does_title_details_contain_searched_text('1543', '1544') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 1 && this.does_title_details_contain_searched_text('1545', '1546') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+                
+    //                                 {index == 2 && this.does_title_details_contain_searched_text('1547', '1548') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 3 && this.does_title_details_contain_searched_text('1593i', '1593j') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 4 && this.does_title_details_contain_searched_text('1593m', '1593n') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+                                    
+    //                                 {index == 5 && this.does_title_details_contain_searched_text('1593o', '1593p') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 6 && this.does_title_details_contain_searched_text('2754', '2755') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 7 && this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 8 && this.does_title_details_contain_searched_text('1593el', '1593em') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 9 && this.render_theme_image_setting_if_any()}
+
+    //                                 {index == 10 && this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 11 && this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 12 && this.does_title_details_contain_searched_text('1593jd', '1593je') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 13 && this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+                                    
+    //                                 {index == 14 && this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 15 && this.render_empty_views(2)}
+    //                             </div>
+    //                         );
+    //                     }}
+    //                 />
+                    
+    //             </div>
+    //         </div>
+    //     )
+    // }
+
+    // render_settings_details_all(){
+    //     return(
+    //         <div>
+    //             <Virtuoso
+    //                 style={{ height: this.props.height-190 }}
+    //                 totalCount={32}
+    //                 itemContent={(index) => {
+    //                     return (
+    //                         <div>
+    //                             {index == 0 && this.does_title_details_contain_searched_text('1528','1529') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 1 && this.does_title_details_contain_searched_text('2813', '2814') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 2 && this.does_title_details_contain_searched_text('1530', '1531') && (
+    //                                 <div>
+    //                                     {/* preferred E5 */}
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
+    //                                     <div style={{height: 10}}/>
+    //                                     {this.load_preferred_e5_ui()}
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 3 && this.does_title_details_contain_searched_text('1593dd', '1593de') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     {this.load_my_nitro_objects_to_select()}
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}   
+
+    //                             {index == 4 && this.does_title_details_contain_searched_text('1593en', '1593eo') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                                        
+    //                                     {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 5 && this.does_title_details_contain_searched_text('1535', '1536') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 6 && this.does_title_details_contain_searched_text('1537', '1538') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 7 && this.does_title_details_contain_searched_text('1539', '1540') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 8 && this.does_title_details_contain_searched_text('2893', '2894') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 9 && this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 10 && this.render_auto_run_setting_if_not_ios()}
+
+    //                             {index == 11 && this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 12 && this.render_disable_moderation_setting()}
+
+    //                             {index == 13 && this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 14 && this.does_title_details_contain_searched_text('1593jr', '1593js') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 15 && this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
+    //                                 <div>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 16 && this.does_title_details_contain_searched_text('1543', '1544') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 17 && this.does_title_details_contain_searched_text('1545', '1546') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+                
+    //                                 {index == 18 && this.does_title_details_contain_searched_text('1547', '1548') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 19 && this.does_title_details_contain_searched_text('1593i', '1593j') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 20 && this.does_title_details_contain_searched_text('1593m', '1593n') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+                                    
+    //                                 {index == 21 && this.does_title_details_contain_searched_text('1593o', '1593p') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 22 && this.does_title_details_contain_searched_text('2754', '2755') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 23 && this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 24 && this.does_title_details_contain_searched_text('1593el', '1593em') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 25 && this.render_theme_image_setting_if_any()}
+
+    //                                 {index == 26 && this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 27 && this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 28 && this.does_title_details_contain_searched_text('1593jd', '1593je') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 29 && this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+                                    
+    //                                 {index == 30 && this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
+    //                                     <div>
+    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
+    //                                         <div style={{height: 10}}/>
+
+    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                         {this.render_detail_item('0')}
+    //                                     </div>
+    //                                 )}
+
+    //                                 {index == 31 && this.render_empty_views(2)}
+    //                         </div>
+    //                     );
+    //                 }}
+    //             />
+    //         </div>
+    //     )
+    // }
+
+    // render_settings_details_grid(){
+    //     return(
+    //         <div>
+    //             <VirtuosoGrid
+    //                 style={{ height: this.props.height-177 }}
+    //                 totalCount={32}
+    //                 components={gridComponents}
+    //                 itemContent={(index) => {
+    //                     return (
+    //                         <div>
+    //                             {index == 0 && this.does_title_details_contain_searched_text('1528','1529') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 1 && this.does_title_details_contain_searched_text('2813', '2814') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 2 && this.does_title_details_contain_searched_text('1530', '1531') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {/* preferred E5 */}
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
+    //                                     <div style={{height: 10}}/>
+    //                                     {this.load_preferred_e5_ui()}
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 3 && this.does_title_details_contain_searched_text('1593dd', '1593de') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     {this.load_my_nitro_objects_to_select()}
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}   
+
+    //                             {index == 4 && this.does_title_details_contain_searched_text('1593en', '1593eo') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                                        
+    //                                     {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 5 && this.does_title_details_contain_searched_text('1535', '1536') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 6 && this.does_title_details_contain_searched_text('1537', '1538') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 7 && this.does_title_details_contain_searched_text('1539', '1540') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 8 && this.does_title_details_contain_searched_text('2893', '2894') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 9 && this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 10 && this.render_auto_run_setting_if_not_ios()}
+
+    //                             {index == 11 && this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 12 && this.render_disable_moderation_setting()}
+
+    //                             {index == 13 && this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 14 && this.does_title_details_contain_searched_text('1593jr', '1593js') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 15 && this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 16 && this.does_title_details_contain_searched_text('1543', '1544') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 17 && this.does_title_details_contain_searched_text('1545', '1546') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+            
+    //                             {index == 18 && this.does_title_details_contain_searched_text('1547', '1548') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 19 && this.does_title_details_contain_searched_text('1593i', '1593j') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 20 && this.does_title_details_contain_searched_text('1593m', '1593n') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 21 && this.does_title_details_contain_searched_text('1593o', '1593p') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 22 && this.does_title_details_contain_searched_text('2754', '2755') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 23 && this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 24 && this.does_title_details_contain_searched_text('1593el', '1593em') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 25 && this.render_theme_image_setting_if_any()}
+
+    //                             {index == 26 && this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 27 && this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 28 && this.does_title_details_contain_searched_text('1593jd', '1593je') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 29 && this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+                                
+    //                             {index == 30 && this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
+    //                                 <div style={{width: this.state.screen_width-20}}>
+    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
+    //                                     <div style={{height: 10}}/>
+
+    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+    //                                     {this.render_detail_item('0')}
+    //                                 </div>
+    //                             )}
+
+    //                             {index == 31 && this.render_empty_views(2)}
+    //                         </div>
+    //                     );
+    //                 }}
+    //             />
+    //         </div>
+    //     )
+    // }
 
     render_disable_moderation_setting(){
         const disable_moderation_setting = this.get_selected_item(this.state.get_disable_moderation_setting_object, 'e')
@@ -11694,12 +12890,26 @@ class StackPage extends Component {
             (!this.props.do_i_have_an_account() && disable_moderation_setting == 'e') || 
             (!this.props.do_i_have_a_minimum_number_of_txs_in_account() && disable_moderation_setting == 'e')
         ){
-            return;
+            return(
+                <div style={{opacity:0.5}}>
+                    {this.does_title_details_contain_searched_text('1593hn', '1593ho') && (
+                        <div /* style={{width: this.state.screen_width-20}} */>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hn']/* 'Disable All Moderation.' */, 'details':this.props.app_state.loc['1593ho']/* 'Show all the hidden posts and content by your chosen moderators.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disable_moderation_setting_object} tag_size={'l'} when_tags_updated={() => console.log()} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+                </div>
+            )
         }
         return(
             <div>
                 {this.does_title_details_contain_searched_text('1593hn', '1593ho') && (
-                    <div>
+                    <div /* style={{width: this.state.screen_width-20}} */>
                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hn']/* 'Disable All Moderation.' */, 'details':this.props.app_state.loc['1593ho']/* 'Show all the hidden posts and content by your chosen moderators.' */, 'size':'l'})}
                         <div style={{height: 10}}/>
 
@@ -11714,12 +12924,30 @@ class StackPage extends Component {
     }
 
     render_auto_run_setting_if_not_ios(){
-        if(this.props.app_state.os == 'iOS') return;
+        if(this.props.app_state.os == 'iOS'){
+            return(
+                <div style={{opacity:0.5}}>
+                    {this.does_title_details_contain_searched_text('1593fw', '1593fx') && (
+                        <div /* style={{width: this.state.screen_width-20}} */>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fw']/* 'Auto-Run Stack.' */, 'details':this.props.app_state.loc['1593fx']/* 'Run all your stacked transactions automatically in the background at the frequency you set below.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_auto_run_setting_object} tag_size={'l'} when_tags_updated={() => console.log()} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['1593fy']/* 'Youll need to set your wallet for the runs to occur.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+                    
+                </div>
+            )
+        }
 
         return(
             <div>
                 {this.does_title_details_contain_searched_text('1593fw', '1593fx') && (
-                    <div>
+                    <div /* style={{width: this.state.screen_width-20}} */>
                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fw']/* 'Auto-Run Stack.' */, 'details':this.props.app_state.loc['1593fx']/* 'Run all your stacked transactions automatically in the background at the frequency you set below.' */, 'size':'l'})}
                         <div style={{height: 10}}/>
 
@@ -11735,221 +12963,31 @@ class StackPage extends Component {
         )
     }
 
-    //here
-    render_settings_details2(){
-        return(
-            <div>
-                <div style={{'padding': '0px 0px 0px 0px'}}>
-                    {this.does_title_details_contain_searched_text('1543', '1544') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-                    {this.does_title_details_contain_searched_text('1545', '1546') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-
-                    {this.does_title_details_contain_searched_text('1547', '1548') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-
-
-                    {this.does_title_details_contain_searched_text('1593i', '1593j') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-
-
-                    {this.does_title_details_contain_searched_text('1593m', '1593n') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-                    
-                    {this.does_title_details_contain_searched_text('1593o', '1593p') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-
-                    {this.does_title_details_contain_searched_text('2754', '2755') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-
-
-                    {this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-                    {this.does_title_details_contain_searched_text('1593el', '1593em') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-                    {this.render_theme_image_setting_if_any()}
-
-
-                    {this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-
-                    {this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-                    {this.does_title_details_contain_searched_text('1593jd', '1593je') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                    
-
-
-
-
-                    {this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-
-                    
-                    {this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
-                        <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
-                            <div style={{height: 10}}/>
-
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                            {this.render_detail_item('0')}
-                        </div>
-                    )}
-                </div>
-            </div>
-        )
-    }
-
     render_theme_image_setting_if_any(){
-        if(this.props.app_state.theme_images_enabled == false) return;
+        const render_no_theme_image_settings = () => {
+            const items = [0,0,0]
+            return(
+                <div style={{opacity: 0.5}}>
+                    {this.does_title_details_contain_searched_text('1593eu', '1593ev') && (
+                        <div /* style={{width: this.state.screen_width-20}} */>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593eu']/* 'Background Theme' */, 'details':this.props.app_state.loc['1593ev']/* 'Set the background theme image for the webapp. */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+                            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                                    {items.map((item, index) => (
+                                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.set_background_image(item)}>
+                                            {this.render_empty_horizontal_list_item()}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                    
+                </div>
+            )
+        }
+        if(this.props.app_state.theme_images_enabled == false) return render_no_theme_image_settings();
         var selected_theme = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
 
         const findKeyByValue = (obj, value) => {
@@ -11984,6 +13022,8 @@ class StackPage extends Component {
                     
                 </div>
             )
+        }else{
+            return render_no_theme_image_settings()
         }
     }
 
@@ -14948,18 +15988,6 @@ class StackPage extends Component {
 
     when_get_file_data_option_tags_object_updated(tag_obj){
         this.setState({get_file_data_option_tags_object: tag_obj})
-    }
-
-    constructor(props) {
-        super(props);
-        this.image_input = React.createRef()
-        this.audio_input = React.createRef()
-        this.video_input = React.createRef()
-        this.pdf_input = React.createRef()
-        this.zip_input = React.createRef()
-        this.lrc_input = React.createRef()
-        this.vtt_input = React.createRef()
-        this.locationPickerRef = React.createRef()
     }
 
     render_open_options_picker_upload_button(){

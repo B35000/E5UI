@@ -20,6 +20,9 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
+import { Virtuoso } from "react-virtuoso";
+import { motion, AnimatePresence } from "framer-motion";
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -277,7 +280,24 @@ class ViewNotificationLogPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
-                    <div style={{overflow: 'auto'}}>
+                    <Virtuoso
+                        style={{ height: this.props.height-127 }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['time']+item['sender']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => this.when_event_clicked(item)} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': '3px 0px 3px 0px'}}>
+                                            {this.render_work_notification_item(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
+                    {/* <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                             {items.map((item, index) => (
                                 <div style={{'margin':'3px 0px 3px 0px'}} onClick={() => this.when_event_clicked(item)}>
@@ -285,7 +305,7 @@ class ViewNotificationLogPage extends Component {
                                 </div>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
             )
         }
@@ -387,7 +407,24 @@ class ViewNotificationLogPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
-                    <div style={{overflow: 'auto'}}>
+                    <Virtuoso
+                        style={{ height: this.props.height-127 }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['time']+item['sender']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => this.when_event_clicked(item)} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': '3px 0px 3px 0px'}}>
+                                            {this.render_explore_notification_item(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
+                    {/* <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                             {items.map((item, index) => (
                                 <div style={{'margin':'3px 0px 3px 0px'}} onClick={() => this.when_event_clicked(item)}>
@@ -395,7 +432,7 @@ class ViewNotificationLogPage extends Component {
                                 </div>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
             )
         }
@@ -460,7 +497,24 @@ class ViewNotificationLogPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Your notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
-                    <div style={{overflow: 'auto'}}>
+                    <Virtuoso
+                        style={{ height: this.props.height-127 }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['time']+item['sender']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{'padding': '3px 0px 3px 0px'}}>
+                                            {this.render_token_notification_item(item, index)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
+                    {/* <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                             {items.map((item, index) => (
                                 <div style={{'margin':'3px 0px 3px 0px'}}>
@@ -468,7 +522,7 @@ class ViewNotificationLogPage extends Component {
                                 </div>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
             )
         }

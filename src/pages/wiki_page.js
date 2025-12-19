@@ -19,11 +19,23 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import SwipeableViews from 'react-swipeable-views';
+import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
 import stack_section_pointer from './../assets/wallet_section_1.png';
 import settings_section_pointer from './../assets/wallet_section_2.png';
 import wallet_section_pointer from './../assets/wallet_section_3.png';
 import deposit_section_pointer from './../assets/wallet_section_4.png';
+
+import tutorial_image_begin from './../assets/tutorial_image_begin.png'
+import tutorial_image_navigation_buttons from './../assets/tutorial_image_navigation_buttons.png'
+import tutorial_image_navigate_back from './../assets/tutorial_image_navigate_back.png'
+import tutorial_image_new_object from './../assets/tutorial_image_new_object.png'
+import tutorial_image_add_transaction from './../assets/tutorial_image_add_transaction.png'
+import tutorial_image_run_transactions from './../assets/tutorial_image_run_transactions.png'
+import tutorial_image_number_picker from './../assets/tutorial_image_number_picker.png'
+import tutorial_image_number_picker2 from './../assets/tutorial_image_number_picker2.png'
+import tutorial_image_number_picker3 from './../assets/tutorial_image_number_picker3.png'
 
 // import SettingsDataImage from './../assets/settings_data_image.png';
 // import WalletDataImage from './../assets/wallet_data_image.png';
@@ -33,7 +45,7 @@ import deposit_section_pointer from './../assets/wallet_section_4.png';
 class WikiPage extends Component {
     
     state = {
-        selected: 0,
+        selected: 0, page:0,
         get_wiki_page_tags_object: this.get_wiki_page_tags_object(),
     };
 
@@ -151,7 +163,7 @@ class WikiPage extends Component {
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1984']/* 'Then afterwards fill it with the E5s ether of your choice' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={deposit_section_pointer/* 'https://nftstorage.link/ipfs/bafkreic2g67litsuomu6n7nqy7ydbbpzdtplhf6lt7d2cfknfpq7vwkhpi' */} alt="E5"/>
-                    <div style={{height: 20}}/>
+                    <div style={{height: 30}}/>
                 </div>
             )
         }
@@ -179,11 +191,277 @@ class WikiPage extends Component {
                 </div>
             )
         }
+        else if(this.state.option == 'tutorial'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1989a']/* 'Quick Tutorial' */, 'details':this.props.app_state.loc['1989b']/* 'You need to know how to use this webapp.' */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989c']/* 'The top and bottom navigation buttons are for navigating e.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_navigation_buttons} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989d']/* 'Tap a tag to view its sub-options, then tap it again (the very first tag-option) to go back.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_navigate_back} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989e']/* 'Then tap the e+ button at the top right corner to create a new post or object.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_new_object} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989f']/* 'Then when you\'re done creating an object, tap the top right icon to add it to your stack. The stack is where all your staged transactions go before your next run.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_add_transaction} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989h']/* 'The number picker is what is used on e to pick large numbers. The top slider picks a number, and the bottom slider picks a power.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_number_picker} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989i']/* 'Tap the numbers at the top to select which part of the number your setting. Then tap the circles to the left to increment by one, and double tap to decrement by one.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_number_picker2} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989j']/* 'Then tap the black circle to change input to be a textarea for small exact figues, and tap the grey circle to reset the number picker.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_number_picker3} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989g']/* 'Then when your ready to run your stack, tap this button to start your run. This executes all your transactions in your stack as one combined transaction on the blockchain.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_run_transactions} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+                </div>
+            )
+        }
+    }
+
+    handleChange = (value) => {
+        this.setState({page: parseInt(value)})
+    };
+
+    render_option_view_pager(){
+        const pos = this.state.page
+        const h = this.props.height*0.7
+        if(this.state.option == 'one'){
+            const final_pos = pos+1
+            const message = (final_pos) + ' / '+ 3
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1980']/* 'One more step' */, 'details':this.props.app_state.loc['1981']/* 'You need to set your wallet and fill it with some ether' */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+                    <ViewPager tag="main">
+                        <Frame className="frame">
+                            <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => this.handleChange(e)} className="track">
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'0'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{width:'auto', height:h}} src={settings_section_pointer} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1983']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'1'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{width:'auto', height:h}} src={wallet_section_pointer} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1984']/* 'Then afterwards fill it with the E5s ether of your choice' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'2'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{width:'auto', height:h}} src={deposit_section_pointer} alt="E5"/>
+                                            <div style={{height: 20}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                            </Track>
+                        </Frame>
+                    </ViewPager>
+                    {this.render_detail_item('16', {'message':message})}
+                </div>
+            )
+        }
+        else if(this.state.option == 'action'){
+            const final_pos = pos+1
+            const message = (final_pos) + ' / '+ 3
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1985']/* 'Action Required' */, 'details':this.props.app_state.loc['1986']/* 'You need to set your wallet first' */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+                    <ViewPager tag="main">
+                        <Frame className="frame">
+                            <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => this.handleChange(e)} className="track">
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'0'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{width:'auto', height:h}} src={stack_section_pointer} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1988']/* 'In the settings-data section...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'1'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{width:'auto', height:h}} src={settings_section_pointer} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'2'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{width:'auto', height:h}} src={wallet_section_pointer} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                            </Track>
+                        </Frame>
+                    </ViewPager>
+                    {this.render_detail_item('16', {'message':message})}
+                </div>
+            )
+        }
+        else if(this.state.option == 'tutorial'){
+            const final_pos = pos+1
+            const message = (final_pos) + ' / '+ 9
+            return(
+                <div>
+                    <ViewPager tag="main">
+                        <Frame className="frame">
+                            <Track ref={c => this.track = c} viewsToShow={1} onViewChange={(e) => this.handleChange(e)} className="track">
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1989a']/* 'Quick Tutorial' */, 'details':this.props.app_state.loc['1989b']/* 'You need to know how to use this webapp.' */, 'size':'l'})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'0'} style={{ display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{width:'auto', height:h}} src={tutorial_image_begin} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989c']/* 'The top and bottom navigation buttons are for navigating e.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'1'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_navigation_buttons} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989d']/* 'Tap a tag to view its sub-options, then tap it again (the very first tag-option) to go back.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'2'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_navigate_back} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989e']/* 'Then tap the e+ button at the top right corner to create a new post or object.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'3'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_new_object} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989f']/* 'Then when you\'re done creating an object, tap the top right icon to add it to your stack. The stack is where all your staged transactions go before your next run.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'4'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_add_transaction} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989h']/* 'The number picker is what is used on e to pick large numbers. The top slider picks a number, and the bottom slider picks a power.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'6'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker} alt="E5"/>
+                                            <div style={{height: 20}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989i']/* 'Tap the numbers at the top to select which part of the number your setting. Then tap the circles to the left to increment by one, and double tap to decrement by one.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'7'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker2} alt="E5"/>
+                                            <div style={{height: 20}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989j']/* 'Then tap the black circle to change input to be a textarea for small exact figues, and tap the grey circle to reset the number picker.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'8'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker3} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989g']/* 'Then when your ready to run your stack, tap this button to start your run. This executes all your transactions in your stack as one combined transaction on the blockchain.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'9'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_run_transactions} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+                            </Track>
+                        </Frame>
+                    </ViewPager>
+                    {this.render_detail_item('16', {'message':message})}
+                    <div style={{height: 20}}/>
+                </div>
+            )
+        }
     }
 
     when_wiki_tags_updated(tag_group){
         this.setState({get_wiki_page_tags_object: tag_group})
-
     }
 
     render_everything(){

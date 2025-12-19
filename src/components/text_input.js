@@ -68,6 +68,12 @@ class TextInput extends Component {
     this.inputRef = React.createRef();
   }
 
+  componentDidUpdate(prevProps){
+    if(prevProps.text != this.props.text && this.props.text == '' && this.inputRef.current != null){
+      this.adjustTextareaHeight(this.inputRef.current);
+    }
+  }
+
   render(){
     return(
       <div>
@@ -125,7 +131,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <textarea className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+            <textarea ref={this.inputRef} className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
         </div> 
       )
     }
@@ -182,7 +188,23 @@ class TextInput extends Component {
     if(textarea.scrollHeight < 270 && this.props.adjust_height != false && textarea.scrollHeight > this.props.height){
       textarea.style.height = 'auto'; // reset first
       textarea.style.height = textarea.scrollHeight + 'px'; // set to scrollHeight
-      this.props.when_text_input_field_height_changed(parseInt(textarea.scrollHeight))
+      try{
+        this.props.when_text_input_field_height_changed(parseInt(textarea.scrollHeight))
+      }catch(e){
+        console.log(e)
+      }
+    }
+  }
+
+  adjustTextareaHeight(textarea) {
+    if (textarea.scrollHeight < 270 && this.props.adjust_height !== false && textarea.scrollHeight > this.props.height) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+      try{
+        this.props.when_text_input_field_height_changed(parseInt(textarea.scrollHeight, 10));
+      }catch(e){
+        console.log(e)
+      }
     }
   }
 

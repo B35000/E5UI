@@ -59,3 +59,12 @@ input,
 textarea {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* .react-view-pager {
+  touch-action: pan-x;
+  overscroll-behavior: contain;
+} */
+
+/* .page {
+  touch-action: none;
+} */

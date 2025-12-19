@@ -842,6 +842,18 @@ class NewNitroPage extends Component {
         return this.sortByAttributeDescending(return_data, 'last_modified')
     }
 
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
     render_previous_edit_item(data){
         const title = this.truncate(data.entered_title_text, 17);
         const details = (new Date(data.last_modified))+''
