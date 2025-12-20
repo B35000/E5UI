@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.736ba592.css",
-    "main.js": "/static/js/main.00f7b6ff.js",
+    "main.js": "/static/js/main.a98d167b.js",
     "static/js/231.de23fbad.chunk.js": "/static/js/231.de23fbad.chunk.js",
     "static/js/898.ba3f9bb9.chunk.js": "/static/js/898.ba3f9bb9.chunk.js",
     "static/js/386.9d146b60.chunk.js": "/static/js/386.9d146b60.chunk.js",
@@ -133,6 +133,7 @@
     "static/media/job_icon_darkorange.png": "/static/media/job_icon_darkorange.1b893998648b53a7a887.png",
     "static/media/alert_icon_pink.png": "/static/media/alert_icon_pink.6909791bccd3c288c39e.png",
     "static/media/job_icon_darkpink.png": "/static/media/job_icon_darkpink.8be35208911555c87ba6.png",
+    "static/media/filecoin_evm.png": "/static/media/filecoin_evm.1594e5bfa5c3823ef034.png",
     "static/media/ComicSans.ttf": "/static/media/ComicSans.3198d266c6629f0b7ce0.ttf",
     "static/media/tutorial_image_navigate_back.png": "/static/media/tutorial_image_navigate_back.f1de295ffb71e7f98066.png",
     "static/media/tutorial_image_navigation_buttons.png": "/static/media/tutorial_image_navigation_buttons.1b5fa5cc48d4cb752650.png",
@@ -527,6 +528,6 @@
   },
   "entrypoints": [
     "static/css/main.736ba592.css",
-    "static/js/main.00f7b6ff.js"
+    "static/js/main.a98d167b.js"
   ]
 }
