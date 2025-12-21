@@ -689,7 +689,7 @@ class home_page extends Component {
         var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
         var size = this.props.screensize;
         var os = getOS()
-        if(os == 'iOS'){
+        if(os == 'iOS' || true){
             return(
                 <Sheet isOpen={this.state.view_post_bottomsheet} onClose={this.open_view_object_bottomsheet.bind(this)} detent="content-height" disableDrag={true}>
                     <Sheet.Container>
@@ -939,12 +939,17 @@ class home_page extends Component {
         } 
         if(size == 'xl') width = this.props.width - 120;
         if(size == 's') width = this.props.width
+
+        const color = this.props.app_state.socket_online == true ? (this.props.app_state.is_device_online == true ? this.props.app_state.theme['online_dot_color'] : this.props.app_state.theme['offline_dot_color']) : this.props.app_state.theme['unset_dot_color'];
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: width}}>
                 <div style={{'padding': '0px 0px 0px 10px', width:width-60}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
-                <div style={{'padding': '0px 0px 0px 0px', width:60}}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height:36}}>
+                    <div style={{ height: 4, width: 4, 'background-color': color, 'margin':'', 'border-radius': '3px' }}/>
+                </div>
+                <div style={{'padding': '0px 0px 0px 0px', width:55}}>
                     {this.render_e_plus_button()}
                 </div>
             </div>
@@ -4797,7 +4802,7 @@ class home_page extends Component {
         this.update_audio_video_recommended_items(this.props.app_state.loc['1215']/* 'storefront' */, object['e5_id'])
     }
 
-    when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_bag_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
@@ -4810,13 +4815,17 @@ class home_page extends Component {
             this.setState({viewed_bags: viewed_bag_clone})
             this.update_cookies()
         }
-        this.props.load_bag_storefront_items(object)
-        this.props.get_tag_price_data_for_object(object)
+        
+        const tags = object['ipfs']['tags'] != null ? object['ipfs']['tags'] : []
+        this.props.get_tag_price_data_for_object(object, tags)
         this.props.get_object_censored_keywords_and_accounts(object)
+        this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+
+        await this.props.load_bag_storefront_items(object)
     }
 
     get_bag_stores(object){
@@ -5221,6 +5230,24 @@ class home_page extends Component {
     }
 
     show_post_item_preview_with_subscription(post, type){
+        const item = post;
+        var required_subscriptions = (item['ipfs'].selected_subscriptions != null && item['ipfs'].selected_subscriptions.length > 0) ? item['ipfs'].selected_subscriptions : item['ipfs'].selected_subscriptions
+        const ids = {}
+        required_subscriptions.forEach(subscription_e5_id => {
+            var subscription_id = subscription_e5_id
+            var subscription_e5 = 'E25'
+            if(subscription_e5_id.includes('E')){
+                subscription_id = subscription_e5_id.split('E')[0]
+                subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+            }
+            if(ids[subscription_e5] == null){
+                ids[subscription_e5] = []
+            }
+            ids[subscription_e5].push(parseInt(subscription_id))
+        });
+        Object.keys(ids).forEach(e5_item => {
+            this.props.load_objects(33/* subscription */, ids[e5_item], e5_item)
+        });
         this.open_post_preview_section(post, type)
     }
 
@@ -5313,7 +5340,7 @@ class home_page extends Component {
 
                 emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.props.get_objects_from_socket_and_set_in_state.bind(this)}
 
-                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)}
+                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)}
                 />
             </div>
         )

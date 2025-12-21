@@ -2318,6 +2318,7 @@ class StackPage extends Component {
 
         if(contract_obj['primary_account'] != null && contract_obj['primary_account_tx_period'] != null){
             const time_diff = (Date.now()/1000) - contract_obj['primary_account_last_tx_time']
+            const time_remainder = contract_obj['primary_account_tx_period'] - time_diff
             if(time_diff > contract_obj['primary_account_tx_period']){
                 return(
                     <div>
@@ -2326,10 +2327,10 @@ class StackPage extends Component {
                     </div>
                 )
             }
-            else if(time_diff < (60*60*24*3)){
+            else if(time_remainder < (60*60*24*20)){
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593jc']/* Upcoming Lock Time.' */, 'details':(this.get_time_diff(time_diff)), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593jc']/* Upcoming Lock Time.' */, 'details':this.props.app_state.loc['1593lf']/* e will be locked in $' */.replace('$', this.get_time_diff(time_remainder)), 'size':'l'})}
                         <div style={{height:7}}/>
                     </div>
                 )
@@ -11440,6 +11441,7 @@ class StackPage extends Component {
                 <div style={{'width':'97%'}}>
                     {this.render_old_settings_details()}
                     {this.render_old_settings_details2()}
+                     {this.render_empty_views(2)}
                 </div>
             )
         }
@@ -11450,9 +11452,11 @@ class StackPage extends Component {
                         <div className="col-6" style={{}}>
                             {this.render_search_bar_input()}
                             {this.render_old_settings_details()}
+                             {this.render_empty_views(2)}
                         </div>
                         <div className="col-6" style={{}}>
                             {this.render_old_settings_details2()}
+                             {this.render_empty_views(2)}
                         </div>
 
                         {/* <div className="col-6" style={{}}>
@@ -11480,9 +11484,11 @@ class StackPage extends Component {
                     <div className="col-5" style={{}}>
                         {this.render_search_bar_input()}
                         {this.render_old_settings_details()}
+                         {this.render_empty_views(2)}
                     </div>
                     <div className="col-5" style={{}}>
                         {this.render_old_settings_details2()}
+                         {this.render_empty_views(2)}
                     </div>
 
                     {/* <div className="col-5" style={{}}>
@@ -11678,8 +11684,6 @@ class StackPage extends Component {
                             {this.render_detail_item('0')}
                         </div>
                     )}
-
-                    {this.render_empty_views(2)}
                 </div>
             </div>
         )
@@ -11844,8 +11848,6 @@ class StackPage extends Component {
                             {this.render_detail_item('0')}
                         </div>
                     )}
-
-                    {this.render_empty_views(2)}
                 </div>
             </div>
         )
@@ -12981,6 +12983,7 @@ class StackPage extends Component {
                                     ))}
                                 </ul>
                             </div>
+                            {this.render_detail_item('0')}
                         </div>
                     )}
                     
@@ -13017,6 +13020,7 @@ class StackPage extends Component {
                                     ))}
                                 </ul>
                             </div>
+                            {this.render_detail_item('0')}
                         </div>
                     )}
                     
@@ -14642,13 +14646,25 @@ class StackPage extends Component {
                 <div style={{}}>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
-                        {items.map((item, index) => (
-                            <div style={{'margin':'3px 0px 3px 0px'}}>
-                                {this.render_targeted_notification_item(item, index)}
-                            </div>
-                        ))}
-                    </ul>
+                    <Virtuoso
+                        style={{ height: this.props.height-200 }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['time']+item['sender']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => this.when_event_clicked(item)} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{}}>
+                                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                                                {this.render_targeted_notification_item(item, index)}
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }

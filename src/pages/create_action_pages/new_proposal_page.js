@@ -2337,12 +2337,12 @@ return data['data']
                 {this.render_configuration_section_parts(page)}
 
                 <div style={{height:20}}/>
-                <div style={{'width':'97%'}}>
+                <div style={{'width':'96%', 'padding':'0px 0px 0px 10px'}}>
                     <div className="row">
-                        <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                        <div className="col-6">
                             {this.show_previous_button()}
                         </div>
-                        <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="col-6">
                             {this.show_next_button()}
                         </div>
                     </div>

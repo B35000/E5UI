@@ -97,6 +97,7 @@ class SubmitProposalPage extends Component {
             return(
                 <div>
                     {this.render_consensus_object()}
+                    <div style={{height:15}}/>
                     {this.render_consensus_data()}
                 </div>
             )
@@ -185,6 +186,8 @@ class SubmitProposalPage extends Component {
 
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[3]), 'details':this.props.app_state.loc['793']/* 'Proposal submit expiry time from now' */, 'size':'l'})}
+
+                <div style={{height:20}}/>
             </div>
         )
     }

@@ -562,6 +562,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'view_ordered_variant_details'){
+            return(
+                <div>
+                    {this.render_view_ordered_variant_details_ui()}
+                </div>
+            )
+        }
     }
 
 
@@ -9972,6 +9979,191 @@ return data['data']
 
 
 
+    render_view_ordered_variant_details_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_ordered_variant_details_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_ordered_variant_details_data()}
+                        <div style={{height:20}}/>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_ordered_variant_details_data()}
+                        <div style={{height:20}}/>
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_view_ordered_variant_details_data(){
+        const object = this.state.data['object']
+        const item = this.state.data['item']
+        
+        var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+        var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
+        var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+        if(variant_in_store == null) return null
+        var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':storefront['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2048']/* 'Store ID:' */+storefront['id'] , 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':item['purchase_unit_count'], 'details':composition_type+this.props.app_state.loc['2049']/* ' ordered.' */ , 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':this.props.app_state.loc['2050']/* 'Variant Description' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2051']/* 'Pick-up Location' */, 'details':storefront['ipfs'].fulfilment_location, 'size':'l'})}
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':(item['custom_specifications'] == null ? '...':item['custom_specifications']), 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_purchase_options_if_any2(item)}
+                {this.render_variant_final_prices(variant_in_store, item, object)}
+                {this.render_variant_image_if_any(variant_in_store)}
+            </div>
+        )
+    }
+
+    get_storefront(storefront_id, e5){
+        // var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
+        // var store = this.get_item_in_array_using_id(storefront_id, all_stores)
+        // return store
+        var item = this.props.app_state.created_store_mappings[e5] == null ? null : this.props.app_state.created_store_mappings[e5][storefront_id]
+        return item
+    }
+
+    get_variant_object_from_storefront(storefront, id){
+        if(storefront == null) return null;
+        for(var i=0; i<storefront['ipfs'].variants.length; i++){
+            if(storefront['ipfs'].variants[i]['variant_id'] == id){
+                return storefront['ipfs'].variants[i]
+            }
+        }
+    }
+
+    render_variant_image_if_any(variant_in_store){
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            return(
+                <div style={{padding:'0px 0px 0px 0px'}}>
+                    {this.render_detail_item('9', variant_in_store['image_data']['data'])}
+                </div>
+            )
+        }
+    }
+
+    render_purchase_options_if_any2(item){
+        var items = item['options']
+        if(items == null || items.length == 0) return;
+        var storefront_options = item['storefront_options']
+        if(storefront_options == null || storefront_options.length == 0) return;
+        return(
+            <div>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
+                        <div style={{height:3}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={item} tag_size={'l'} when_tags_updated={this.when_purchase_option_tag_selected.bind(this)} theme={this.props.theme} locked={true}/>
+                        <div style={{height:(index == items.length -1 ? 0 : 3)}}/>
+                    </div>
+                ))}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_purchase_option_tag_selected(tag_item){
+        //do nothing
+    }
+
+    render_variant_final_prices(variant_in_store, item, object){
+        var price_items = variant_in_store['price_data']
+        var price_obj = {}
+        price_items.forEach(price => {
+            if(price_obj[price['id']] == null) price_obj[price['id']] = bigInt(0)
+            price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+        });
+
+        if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+            var options = item['storefront_options']
+
+            for(var i=0; i<item['options'].length; i++){
+                var tag_obj = item['options'][i]
+                var selected_items = []
+                for(var j=0; j<tag_obj['e'][2].length; j++){
+                    var selected_item_pos = tag_obj['e'][2][j]
+                    if(selected_item_pos != 0){
+                        selected_items.push(selected_item_pos-1)
+                    }
+                }
+                for(var k=0; k<selected_items.length; k++){
+                    var selected_pos = selected_items[k]
+                    var option_prices = options[i]['options'][selected_pos]['price']
+                    option_prices.forEach(price => {
+                        if(price_obj[price['id']] == null){
+                            price_obj[price['id']] = bigInt(0)
+                        }
+                        price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                    });
+                } 
+            }
+        }
+
+        var price_array = []
+        for (const id in price_obj) {
+            if (price_obj.hasOwnProperty(id)) {
+                price_array.push({'id':id, 'amount':price_obj[id]})
+            }
+        }
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064o']/* 'Order Price.' */, 'details':this.props.app_state.loc['2064p'] /* 'The price of the ordered item with the specified options.' */})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_array.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
 
     
 
@@ -10031,7 +10223,7 @@ return data['data']
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} show_images={this.props.show_images.bind(this)} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
     }

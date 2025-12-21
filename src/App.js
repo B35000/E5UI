@@ -503,6 +503,7 @@ import moonriver_logo from './assets/moonriver.png'
 import sonic_logo from './assets/sonic.png'
 import kaia_logo from './assets/kaia.png'
 import manta_logo from './assets/manta.png'
+import filecoin_evm_logo from './assets/filecoin_evm.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -1339,7 +1340,7 @@ class App extends Component {
 
     call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
     
-    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[]
+    contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[], is_device_online: true,
   };
 
   get_thread_pool_size(){
@@ -1392,7 +1393,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -2190,7 +2191,12 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:manta_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
       },
-      
+      'E1305':{
+        web3:['https://api.node.glif.io'],
+        token:'FIL',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
+      },
     }
   }
 
@@ -2353,7 +2359,8 @@ class App extends Component {
       this.get_token('zkCRO', 'Cronos zkEVM', 'E1265'),
       this.get_token('ZERETH', 'ZERϴ Network', 'E1275'),
       this.get_token('SOPH', 'Sophon', 'E1285'),
-      this.get_token('MAETH', 'Manta Pacific', 'E1295')
+      this.get_token('MAETH', 'Manta Pacific', 'E1295'),
+      this.get_token('FIL', 'Filecoin EVM', 'E1305'),
     ]
 
     return list
@@ -4002,7 +4009,7 @@ class App extends Component {
   
   get_account_address(){
     if(this.state.accounts[this.state.selected_e5] != null){
-      return this.state.accounts[this.state.selected_e5]
+      return this.state.accounts[this.state.selected_e5].address
     }
   }
 
@@ -5305,7 +5312,8 @@ class App extends Component {
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
-        'primary_text_color':'#393e46','secondary_text_color':'grey',
+        'primary_text_color':'#393e46','secondary_text_color':'grey', 
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
         'navbar_button_selected_color':'#f2f2f2','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
         'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
@@ -5348,6 +5356,7 @@ class App extends Component {
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
 
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
         'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'rgb(69, 68, 68)',
@@ -5392,6 +5401,7 @@ class App extends Component {
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
         'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(42, 41, 41)',
@@ -5436,6 +5446,7 @@ class App extends Component {
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#212821','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#04e504', 'secondary_text_color':'#02f902',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#203f00','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'#013f01', 'navbar_text_shadow_color':'#5bc15b',
         'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
@@ -5478,6 +5489,7 @@ class App extends Component {
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#029302','secondary_text_color':'#03a003',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
         'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#c5e8d6', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
@@ -5519,6 +5531,7 @@ class App extends Component {
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1717','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#f70404', 'secondary_text_color':'#f43535',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#332020','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'#3f0101',
         'navbar_text_shadow_color':'#511616', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
@@ -5561,6 +5574,7 @@ class App extends Component {
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#930101','secondary_text_color':'#a00803',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
         'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9d1d1', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
@@ -5602,6 +5616,7 @@ class App extends Component {
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#17171c','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#0079ff', 'secondary_text_color':'#2587f7',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#202c33','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'#183651',
         'navbar_text_shadow_color':'#171651', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
@@ -5644,6 +5659,7 @@ class App extends Component {
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#017493','secondary_text_color':'#0374a0',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
         'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#d1ebf9', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
@@ -5685,6 +5701,7 @@ class App extends Component {
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b1c17','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#efec4c', 'secondary_text_color':'#efea58',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#333220','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'#505118',
         'navbar_text_shadow_color':'#505116', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
@@ -5727,6 +5744,7 @@ class App extends Component {
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#757701','secondary_text_color':'#9ba003',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
         'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
@@ -5768,6 +5786,7 @@ class App extends Component {
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b171c','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#c94cef', 'secondary_text_color':'#e058ef',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#312033','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#e058ef','secondary_navbar_text_color':'#c94cef','card_shadow_color':'#491851',
         'navbar_text_shadow_color':'#481651', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
@@ -5810,6 +5829,7 @@ class App extends Component {
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#930191','secondary_text_color':'#8e03a0',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
         'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f2d1f9', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
@@ -5851,6 +5871,7 @@ class App extends Component {
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1a17','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#efa04c', 'secondary_text_color':'#efb358',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#332c20','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efb358','secondary_navbar_text_color':'#efa04c','card_shadow_color':'#513a18',
         'navbar_text_shadow_color':'#513d16', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
@@ -5893,6 +5914,7 @@ class App extends Component {
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#935b01','secondary_text_color':'#a05403',
+        'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
         'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9ebd1', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
         
@@ -6180,7 +6202,7 @@ class App extends Component {
 
           get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)} start_object_file_viewcount_fetch={this.start_object_file_viewcount_fetch.bind(this)}
 
-          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)}
+          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -16480,6 +16502,7 @@ class App extends Component {
       'confirm_leave_call':200,
       'spend_prepurchase_credits':700,
       'export_prepurchase_transactions':700,
+      'view_ordered_variant_details':650,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17605,6 +17628,45 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  async export_order(object, exportable_delivery_location){
+    this.prompt_top_notification(this.getLocale()['2642bc']/* The export should begin shortly.. */, 3000)
+    await this.wait(2500)
+    const final_object = {}
+    final_object[this.getLocale()['2064u']/* bag_id */] = object['id']
+    final_object[this.getLocale()['2064v']/* bag_e5 */] = object['e5']
+    final_object[this.getLocale()['2064w']/* bag_city */] = object['ipfs'].device_city
+    final_object[this.getLocale()['2064x']/* bag_delivery_location */] = exportable_delivery_location
+    final_object[this.getLocale()['2064y']/* delivery_frequency */] = object['ipfs'].delivery_frequency_time
+    final_object[this.getLocale()['2064z']/* bag_orders */] = []
+
+    object['ipfs']['bag_orders'].forEach(order => {
+      const order_item = {}
+      const get_options_data = () => {
+        const options = []
+        const storefront_options = order['storefront_options']
+        order['options'].forEach((option, index) => {
+          const option_item = {}
+          option_item[this.getLocale()['2064bg']/* option_title */] = storefront_options[index]['title']
+          option_item[this.getLocale()['2064bh']/* option_details */] = storefront_options[index]['details']
+          option_item[this.getLocale()['2064bi']/* selected_option */] = this.get_selected_item(option, 'e')
+          options.push(option_item)
+        });
+        return options
+      }
+      order_item[this.getLocale()['2064ba']/* storefront_id */] = order['storefront_item_id'];
+      order_item[this.getLocale()['2064bb']/* storefront_e5 */] = order['storefront_item_e5'] || object['e5'];
+      order_item[this.getLocale()['2064bc']/* variant_id */] = order['storefront_variant_id'];
+      order_item[this.getLocale()['2064bd']/* unit_count */] = order['purchase_unit_count'];
+      order_item[this.getLocale()['2064be']/* custom_specifications */] = order['custom_specifications'];
+      order_item[this.getLocale()['2064bf']/* options */] = get_options_data();
+      final_object[this.getLocale()['2064z']/* bag_orders */].push(order_item)
+    });
+
+    const bag_e5_id = object['e5']+':'+object['id']
+    const file_name = this.getLocale()['2064t']/* 'e-bag-export: ' */+new Date()+'-'+bag_e5_id+'.json'
+    this.download_file({'e':final_object}, file_name)
   }
 
 
@@ -22858,7 +22920,7 @@ class App extends Component {
     const myAddress = await walletProvider.getDefaultAddress();
     const balance = await this.get_filecoin_balance(myAddress, lotusClient)
 
-    var fee_info = {'fee':await this.get_filecoin_transaction_fee(), 'type':'variable', 'per':'gas'}
+    var fee_info = {'fee':await this.get_filecoin_transaction_fee(myAddress), 'type':'variable', 'per':'gas'}
 
     var filecoin_data = {'balance':(balance.toString()), 'address':myAddress, 'min_deposit':0, 'fee':fee_info}
     // var clone = structuredClone(this.state.coin_data)
@@ -22879,8 +22941,30 @@ class App extends Component {
     return balance
   }
 
-  get_filecoin_transaction_fee = async () => {
-    return 2_000_000_000
+  get_filecoin_transaction_fee = async (address) => {
+    // return 2_000_000_000
+    const response = await fetch('https://api.node.glif.io/rpc/v1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'Filecoin.GasEstimateMessageGas',
+        params: [{
+          From: 'f15ghx3rjnyqnt6iws4lgb7hqmswdi43k5mvovstq',  // sender address
+          To: 'f15ghx3rjnyqnt6iws4lgb7hqmswdi43k5mvovstq',    // recipient address
+          Value: "2000000000"  // amount in attoFIL
+        }, {
+          GasFeeCap: "0",  // Let node estimate
+          GasPremium: "0", // Let node estimate
+          GasLimit: 0      // Let node estimate
+        }, []],
+        id: 1
+      })
+    });
+
+    const data = await response.json();
+    // console.log('get_filecoin_transaction_fee', 'data', data)
+    return bigInt(data.result.GasPremium)
   }
 
   update_filecoin_wallet_balance = async (clone) => {
@@ -23050,7 +23134,10 @@ class App extends Component {
   }
 
   get_bitcoin_cash_fees = async () => {
-    return (0.0000015 * 100_000_000)
+    // return (0.0000015 * 100_000_000)
+    const response = await fetch('https://api.blockchair.com/bitcoin-cash/stats');
+    const data = await response.json();
+    return parseInt(data.data.suggested_transaction_fee_per_byte_sat)
   }
 
   update_bitcoin_cash_balance = async (clone) => {
@@ -23882,7 +23969,7 @@ class App extends Component {
     const connection = new Connection('https://solana-rpc.publicnode.com')
     const balance = await this.get_solana_address_balance(address, connection)
     
-    var fee_info = {'fee':await this.get_sol_transaction_fee(), 'type':'fixed', 'per':'transaction'}
+    var fee_info = {'fee':await this.get_sol_transaction_fee(address, connection), 'type':'fixed', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
     // var clone = structuredClone(this.state.coin_data)
     // clone['SOL'] = data;
@@ -23911,8 +23998,32 @@ class App extends Component {
     }
   }
 
-  get_sol_transaction_fee(){
-    return 5000
+  async get_sol_transaction_fee(address, connection){
+    // return 5000
+    const fromPubkey = new PublicKey(address);
+    const toPubkey = new PublicKey(address);
+
+    const lamports = 1000000;
+  
+    // Create the transaction
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey,
+        toPubkey,
+        lamports,
+      })
+    );
+
+    transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    transaction.feePayer = fromPubkey;
+    
+    // Get the fee estimate
+    const fee = await connection.getFeeForMessage(
+      transaction.compileMessage(),
+      'confirmed'
+    );
+
+    return fee.value
   }
 
   update_solana_balance = async (clone) => {
@@ -25326,8 +25437,8 @@ class App extends Component {
         const document_title = root_data.get_document_title_object == null ? 'e(Beta)': this.get_selected_item(root_data.get_document_title_object, 'e')
 
         const censored_keywords = root_data.data['censored_keywords'] || []
-        const media_activation_tx_limit = root_data.data['media_activation_tx_limit'] || 53
-        const media_activation_age_limit = root_data.data['media_activation_age_limit'] || (60*60*24*95)
+        const media_activation_tx_limit = root_data.data['media_activation_tx_limit'] || 3
+        const media_activation_age_limit = root_data.data['media_activation_age_limit'] || (60*60*24*23)
         const allWords = Object.values(naughtyWords).flat();
         const censored_keywords_by_my_following = this.state.censored_keywords_by_my_following.slice().concat(censored_keywords, allWords)
 
@@ -29296,7 +29407,7 @@ class App extends Component {
         }else{
           created_subscription_object_data.push(subscription_object)
         }
-        created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
+        created_subscription_object_mapping[created_subscriptions[i]] = subscription_object
       }
       
 
@@ -33460,7 +33571,7 @@ class App extends Component {
     this.prioritized_accounts = []
 
     if(page == this.getLocale()['1196']/* 'jobs' */){
-      this.load_contract_data([], null, [])
+      // this.load_contract_data([], null, [])
       this.load_jobs_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1197']/* 'contracts' */){
@@ -33470,7 +33581,7 @@ class App extends Component {
       this.load_proposal_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1198']/* 'contractors' */){
-      this.load_contract_data([], null, [])
+      // this.load_contract_data([], null, [])
       this.load_contractor_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1200']/* 'subscriptions' */){
@@ -33489,19 +33600,19 @@ class App extends Component {
     }
     if(page == this.getLocale()['1215']/* 'storefront' */){
       this.load_storefront_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      this.load_bag_data([], null, [])
+      // this.load_bag_data([], null, [])
     }
     if(page == this.getLocale()['1216']/* 'bags' */){
-      this.load_storefront_data([], null, [])
+      // this.load_storefront_data([], null, [])
       this.load_bag_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      this.load_contract_data([], null, [])
+      // this.load_contract_data([], null, [])
     }
     if(page == this.getLocale()['1264k']/* 'audioport' */){
-      this.load_subscription_data([], null, [])
+      // this.load_subscription_data([], null, [])
       this.load_audio_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264p']/* videoport */){
-      this.load_subscription_data([], null, [])
+      // this.load_subscription_data([], null, [])
       this.load_video_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264s']/* 'nitro' */){
@@ -34482,12 +34593,23 @@ class App extends Component {
 
   load_bag_storefront_items = async (object) => {
     var items_to_deliver = object['ipfs']['bag_orders']
-    var storefronts_to_load = []
+    // console.log('items_to_deliver', items_to_deliver)
+    var storefronts_to_load = {}
     items_to_deliver.forEach(item => {
       var storefront_id = item['storefront_item_id']
-      if(!storefronts_to_load.includes(storefront_id)) storefronts_to_load.push(storefront_id);
+      var storefront_e5 = item['storefront_item_e5'] || object['e5']
+      if(storefronts_to_load[storefront_e5] == null){
+        storefronts_to_load[storefront_e5] = []
+      }
+      if(!storefronts_to_load[storefront_e5].includes(parseInt(storefront_id))) storefronts_to_load[storefront_e5].push(parseInt(storefront_id));
     });
-    this.load_storefront_data(storefronts_to_load)
+
+    const used_e5s = Object.keys(storefronts_to_load)
+    for(var e=0; e<used_e5s.length; e++){
+      const e5 = used_e5s[e]
+      // console.log('loading: ', e5, storefronts_to_load[e5])
+      await this.load_storefront_data(storefronts_to_load[e5], e5)
+    }
   }
 
   // load_my_file_items = async () => {
@@ -34527,6 +34649,51 @@ class App extends Component {
 
         this.load_id_type_then_object(id, E52contractInstance, e5) 
       }
+    }
+  }
+
+  load_objects = async (object_type, ids, e5) => {
+    if(object_type == 17/* jobs */){
+      this.load_jobs_data(ids, e5)
+    }
+    else if(object_type == 30/* contracts */){
+      this.load_contract_data(ids, e5)
+    }
+    else if(object_type == 32/* proposal */){
+      this.load_proposal_data(ids, e5)
+    }
+    else if(object_type == 26/* contractor */){
+      this.load_contractor_data(ids, e5)
+    }
+    else if(object_type == 33/* subscription */){
+      this.load_subscription_data(ids, e5)
+    }
+    else if(object_type == 18/* post */){
+      this.load_post_data(ids, e5)
+    }
+    else if(object_type == 36/* channel */){
+      this.load_channel_data(ids, e5)
+    }
+    else if(object_type == 27/* storefront */){
+      this.load_storefront_data(ids, e5)
+    }
+    else if(object_type == 25/* bag */){
+      this.load_bag_data(ids, e5)
+    }
+    else if(object_type == 31/* token */){
+      this.load_token_data(ids, e5)
+    }
+    else if(object_type == 19/* audioport */){
+      this.load_audio_data(ids, e5)
+    }
+    else if(object_type == 20/* videoport */){
+      this.load_video_data(ids, e5)
+    }
+    else if(object_type == 21/* nitro */){
+      this.load_nitro_data(ids, e5)
+    }
+    else if(object_type == 28/* 28(poll-object) */){
+      this.load_poll_data(ids, e5)
     }
   }
 
@@ -34649,6 +34816,9 @@ class App extends Component {
           created_object_events_mapping[e5] = await this.get_channel_data(E52contractInstance, web3, e5, contract_addresses, account, filter_data_accounts, [], true) || []
         }
         else if(item_type == 27/* 27(storefront-item)  */){
+          console.log('created_object_events_mapping', 'my_prioritized_accounts_data[e5]', my_prioritized_accounts_data[e5])
+          console.log('created_object_events_mapping', 'prioritized_accounts', prioritized_accounts)
+          //(E52contractInstance: any, web3: any, e5: any, contract_addresses: any, H52contractInstance: any, account: any, prioritized_accounts: any, load_prioritized_accounts_exclusively: any, specific_items: any, return_created_object_events_only?: boolean, all_return_data?: {})
           created_object_events_mapping[e5] = await this.get_storefront_data(E52contractInstance, web3, e5, contract_addresses, H52contractInstance, account, filter_data_accounts, false, [], true, {}) || []
         }
         else if(item_type == 25/* 25(storefront_bag_object)  */){
@@ -40569,8 +40739,8 @@ class App extends Component {
 
   async get_objects_messages_from_socket_and_enter_chatroom(target){
     if(!target.startsWith('job_request_mail') && !target.startsWith('mail')) this.enter_chatroom_if_socket_enabled(target);
-    const absolute_load_limit = Date.now() - (72*7*24*60*60*1000)
-    const load_step = target.startsWith('job_request_mail') ? (71*7*24*60*60*1000) : (30*7*24*60*60*1000)
+    const absolute_load_limit = /* Date.now() - (7200*7*24*60*60*1000) */ 0
+    const load_step = /* target.startsWith('job_request_mail') ? (7100*7*24*60*60*1000) : (3000*7*24*60*60*1000) */ Date.now() - 1000;
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     
@@ -40623,7 +40793,7 @@ class App extends Component {
 
   get_object_comment_events = async (id, e5, target_id) => {
     var all_unsorted_events = []
-    const cutoff_timestamp = Math.round(Date.now()/1000) - (60*60*24*400)
+    const cutoff_timestamp = /* Math.round(Date.now()/1000) - (60*60*24*400000) */ 0
     if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
       const event_params = []
       const used_e5s = []
@@ -42355,12 +42525,14 @@ class App extends Component {
     }
   }
 
-  get_tag_price_data_for_object = async (object) => {
+  get_tag_price_data_for_object = async (object, tags) => {
     const e5 = object['e5']
     const id = object['id']
     const e5_id = object['e5_id']
+    
+    const payment_tags = tags == null ? object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3)) : tags
 
-    const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+
     const keywords = []
     const keywords_mapping = {}
     const hash_keyord_mapping = {}
@@ -44695,15 +44867,18 @@ class App extends Component {
 
     this.socket2.on('connect', () => {
       if(this.is_device_online != null){
-        this.prompt_top_notification(this.getLocale()['2738bh']/* Youre back online.' */, 3000)
+        this.setState({is_device_online: true})
+        // this.prompt_top_notification(this.getLocale()['2738bh']/* Youre back online.' */, 3000)
         this.resume_call()
       }
       this.is_device_online = true;
+      
     });
 
     this.socket2.on('disconnect', () => {
-      this.prompt_top_notification(this.getLocale()['2738bm']/* Youve gone offline.' */, 3000)
+      // this.prompt_top_notification(this.getLocale()['2738bm']/* Youve gone offline.' */, 3000)
       this.is_device_online = false;
+      this.setState({is_device_online: false})
     });
 
     const isSupported = typeof RTCRtpSender !== 'undefined' && 'createEncodedStreams' in RTCRtpSender.prototype;

@@ -149,7 +149,7 @@ class BagDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,'e.'+this.props.app_state.loc['2029']/* 'responses' */,this.props.app_state.loc['2030']/* 'activity' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2064n']/* 'orders 📦' */,'e.'+this.props.app_state.loc['1693']/* 'responses' */,this.props.app_state.loc['2030']/* 'activity' */],[1]
           ],
         }
 
@@ -235,7 +235,7 @@ class BagDetailsSection extends Component {
                     </div>
                 )
             }
-            else if(active == this.props.app_state.loc['2029']/* 'responses' */){
+            else if(active == this.props.app_state.loc['1693']/* 'responses' */){
                 return(
                     <div>
                         {this.render_bag_post_responses(object)}
@@ -248,6 +248,13 @@ class BagDetailsSection extends Component {
                         {this.render_bag_message_activity(object)}
                     </div>
                 ) 
+            }
+            else if(selected_item == this.props.app_state.loc['2064n']/* 'orders 📦' */){
+                return(
+                    <div>
+                        {this.render_bag_orders(object)}
+                    </div>
+                )
             }
         }
     }
@@ -349,13 +356,14 @@ class BagDetailsSection extends Component {
 
                     {this.render_bag_value(object)}
 
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064i']/* 'Ordered Items.' */, 'details':this.props.app_state.loc['2064j']/* 'Below are all the items ordered in the bag.' */})}
+                    {/* {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064i']'Ordered Items.', 'details':this.props.app_state.loc['2064j'] 'Below are all the items ordered in the bag.'})}
                     <div style={{height: 10}}/>
-                    {this.render_all_variants(object)}
+                    {this.render_all_variants(object)} */}
 
                     {this.render_object_tag_price_info(object)}
 
                     {this.render_fulfil_order_button(object)}
+                    {this.render_export_order_button(object)}
                     {this.render_pin_order_button(object)}
                     {this.render_follow_unfollow_author_button(object)}
                     
@@ -522,6 +530,18 @@ class BagDetailsSection extends Component {
         this.props.pin_bag(object)
     }
 
+    render_export_order_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2064r']/* 'Export a file containing the details of the order in JSON format.' */, 'title':this.props.app_state.loc['2064q']/* 'Export Order.' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.props.export_order(object, this.get_delivery_location_data_if_allowed(object))}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2064s']/* 'Export Bag' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
 
     render_fulfil_order_button(object){
         return(
@@ -624,7 +644,7 @@ class BagDetailsSection extends Component {
                                 </div>
                             </div>
                         ))}
-                        {this.render_detail_item('0')}
+                        {/* {this.render_detail_item('0')} */}
                     </div>
                 )
             }
@@ -701,6 +721,9 @@ class BagDetailsSection extends Component {
         return object
     }
 
+
+
+
     render_all_variants(object){
         var items_to_deliver = [].concat(object['ipfs']['bag_orders'])
         if(items_to_deliver.length == 0){
@@ -737,7 +760,6 @@ class BagDetailsSection extends Component {
     }
 
     render_variant_item_if_selected(item, object){
-        // var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
         var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
         var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
         if(storefront == null){
@@ -751,7 +773,6 @@ class BagDetailsSection extends Component {
                 </div>
             )
         }
-        // var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
         var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
         if(variant_in_store == null){
             return(
@@ -764,8 +785,6 @@ class BagDetailsSection extends Component {
                 </div>
             )
         }
-        // var items = variant_in_store['price_data']
-        // var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
 
         var image = (variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0) ? variant_in_store['image_data']['data']['images'][0] : this.props.app_state.static_assets['empty_image']
 
@@ -1398,8 +1417,7 @@ class BagDetailsSection extends Component {
     }
 
     get_available_tag_data(object){
-        const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
-
+        const payment_tags = object['ipfs']['tags'] != null ? object['ipfs']['tags'] : []
         const filter_words = this.props.get_stop_words()
 
         const final_payment_tags = payment_tags.filter(function (tag) {
@@ -1639,6 +1657,108 @@ class BagDetailsSection extends Component {
         clone[object['e5_id']] = index
         this.setState({selected_token_tag: clone})
     }
+
+
+
+
+
+
+
+
+
+
+    render_bag_orders(object){
+        var he = this.props.height-50
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_bag_order_top_title(object)}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_bag_ordered_items(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_bag_order_top_title(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+number_with_commas(object['id']), 'details':this.props.app_state.loc['2064m']/* 'Ordered Items.' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_bag_ordered_items(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items_to_deliver = [].concat(object['ipfs']['bag_orders'])
+
+        return(
+            <div style={{}}>
+                <div style={{'padding':'0px 10px 0px 10px'}}>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items_to_deliver.length}
+                        itemContent={(index) => {
+                            const item = items_to_deliver[index]
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={(item['storefront_variant_id']+index)} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{}} onClick={()=>console.log()}>
+                                            <div>
+                                                <div style={{'margin': '3px 0px 3px 0px'}} onClick={()=> this.when_ordered_variant_item_clicked(item, object)}>
+                                                    {this.render_ordered_variant_item(item, object)}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    /> 
+                </div>
+            </div>
+        )
+    }
+
+    render_ordered_variant_item(item, object){
+        var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+        var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
+        if(storefront == null){
+            return(
+                <div>
+                    {this.render_small_skeleton_object()}
+                </div>
+            )
+        }
+        var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+        if(variant_in_store == null){
+            return(
+                <div>
+                    {this.render_small_skeleton_object()}
+                </div>
+            )
+        }
+
+        var image = (variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0) ? variant_in_store['image_data']['data']['images'][0] : this.props.app_state.static_assets['empty_image']
+
+        return(
+            <div>
+                {this.render_detail_item('8',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15), 'size':'l', 'image':image, 'border_radius':'7px', 'image_width':'auto'})}
+            </div>
+        )
+    }
+
+    when_ordered_variant_item_clicked(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_ordered_variant_details')
+    }
+
+
+
 
 
 

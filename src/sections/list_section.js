@@ -2706,9 +2706,9 @@ class PostListSection extends Component {
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
-            extra = extra+'🔏'
-        }
+        // if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
+        //     extra = extra+'🔏'
+        // }
         if(extra != '') extra = extra + ' '
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
@@ -2751,12 +2751,12 @@ class PostListSection extends Component {
         // this.setState({ animate_click: object['e5_id'] }, () => {
         //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
         // });
-        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            setTimeout(() => this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
-        }else{
-            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'post'), animate_time);
+        setTimeout(() => this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
+        // if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
+        // }else{
+        //     setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'post'), animate_time);
             
-        }
+        // }
     }
 
     get_senders_name(sender, object){
@@ -5051,13 +5051,13 @@ return data['data']
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} adjust_height={false} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
                     </div>
                     <div style={{overflow: 'auto', height: middle-x}}>
-                        <ul style={{'list-style-type':'none', 'margin': '0px 0px 0px 0px'}}>
+                        <div style={{'list-style-type':'none', 'margin': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
-                                <li style={{'padding': '1px 5px 1px 5px'}}>
+                                <div style={{'padding': '1px 5px 1px 5px'}}>
                                     {this.render_small_empty_object()}
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 </div>
             );
@@ -5196,13 +5196,13 @@ return data['data']
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} adjust_height={false} theme={this.props.theme}/>
                     </div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'margin': '0px 0px 0px 0px'}}>
+                        <div style={{ 'margin': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
-                                <li style={{'padding': '1px 5px 1px 5px'}}>
+                                <div style={{'padding': '1px 5px 1px 5px'}}>
                                     {this.render_small_empty_object()}
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 </div>
             );

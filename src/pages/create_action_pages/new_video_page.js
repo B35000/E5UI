@@ -2498,6 +2498,7 @@ return data['data']
             return(
                 <div style={{'overflow-x':'hidden'}}>
                     {this.render_video_details_picker_part()}
+                    {this.render_detail_item('0')}
                     {this.render_enter_item_price_part()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}

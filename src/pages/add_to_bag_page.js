@@ -213,6 +213,7 @@ class AddToBagPage extends Component {
                     <div style={{height:10}}/>
                     <TextInput height={30} placeholder={this.props.app_state.loc['1058f']/* 'Amount...' */} when_text_input_field_changed={this.when_purchase_unit_count_input_field_changed.bind(this)} text={this.state.purchase_unit_count.toString()} theme={this.props.theme}/>
 
+                    <div style={{height:15}}/>
                 </div>
             )
         }

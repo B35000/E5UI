@@ -1103,14 +1103,17 @@ class NewContractPage extends Component {
                 {this.render_contract_section_parts(page)}
 
                 <div style={{height:20}}/>
-                <div className="row">
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.show_previous_button()}
-                    </div>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.show_next_button()}
+                <div style={{'width':'96%', 'padding':'0px 0px 0px 10px'}}>
+                    <div className="row">
+                        <div className="col-6">
+                            {this.show_previous_button()}
+                        </div>
+                        <div className="col-6">
+                            {this.show_next_button()}
+                        </div>
                     </div>
                 </div>
+                
                 <div style={{height:20}}/>
             </div>
         )

@@ -20,6 +20,9 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 // import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
@@ -91,7 +94,7 @@ class PostPreview extends Component {
     }
 
     render_content(){
-        var subscriptions = this.get_post_object_subscriptions()
+        const { subscriptions, all_subscriptions_available, missing_subscriptions } = this.get_post_object_subscriptions()
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1302']/* 'You need to pay those subscriptions first before you can view the full post.' */, 'title':this.props.app_state.loc['1301']/* Subscription Locked' */})}
@@ -101,7 +104,8 @@ class PostPreview extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1303']/* 'Subscriptions to pay.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
-                {this.render_subscription_objects(subscriptions)}
+                {this.render_subscription_objects(subscriptions, all_subscriptions_available, missing_subscriptions)}
+                {this.render_detail_item('0')}
                 {this.render_pin_post_or_channel(this.state.post_object)}
             </div>
         )
@@ -120,7 +124,7 @@ class PostPreview extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -139,6 +143,9 @@ class PostPreview extends Component {
         var subscriptions = []
         var item = this.state.post_object
         var required_subscriptions = (item['ipfs'].selected_subscriptions != null && item['ipfs'].selected_subscriptions.length > 0) ? item['ipfs'].selected_subscriptions : item['ipfs'].selected_subscriptions
+        var all_subscriptions_available = true;
+        var missing_subscriptions = []
+        // console.log('get_post_object_subscriptions', 'created_subscription_object_mapping',this.props.app_state.created_subscription_object_mapping)
         required_subscriptions.forEach(subscription_e5_id => {
             var subscription_id = subscription_e5_id
             var subscription_e5 = 'E25'
@@ -146,10 +153,15 @@ class PostPreview extends Component {
                 subscription_id = subscription_e5_id.split('E')[0]
                 subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
             }
-            var subscription_item = this.props.app_state.created_subscription_object_mapping[subscription_e5][subscription_id]
-            subscriptions.push(subscription_item)
+            if(this.props.app_state.created_subscription_object_mapping[subscription_e5] != null && this.props.app_state.created_subscription_object_mapping[subscription_e5][subscription_id] != null){
+                var subscription_item = this.props.app_state.created_subscription_object_mapping[subscription_e5][subscription_id]
+                subscriptions.push(subscription_item)
+            }else{
+                all_subscriptions_available = false
+                missing_subscriptions.push(subscription_id)
+            }
         });
-        return subscriptions
+        return {subscriptions, all_subscriptions_available, missing_subscriptions}
     }
 
     get_all_sorted_objects_mappings(object){
@@ -170,7 +182,7 @@ class PostPreview extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_post_item(object)
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -207,19 +219,68 @@ class PostPreview extends Component {
 
 
 
-    render_subscription_objects(subscriptions){
+    render_subscription_objects(subscriptions, all_subscriptions_available, missing_subscriptions){
+        if(all_subscriptions_available == false){
+            return(
+                <div style={{margin:'5px 0px 5px 0px'}}>
+                    {missing_subscriptions.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}}>
+                            {this.render_skeleton_object()}
+                        </div>
+                    ))}
+                </div>
+            )
+        }
         const items = this.sort_subscriptions(subscriptions)
         return ( 
             <div style={{}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '2px 0px 2px 0px'}}>
+                        <div style={{'padding': '2px 0px 2px 0px'}}>
                             {this.render_subscription_object(item, index)}
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         );
+    }
+
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     sort_subscriptions(items){
