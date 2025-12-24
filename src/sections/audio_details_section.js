@@ -2970,6 +2970,10 @@ return data['data']
     scroll_to_bottom(){
         this.is_auto_scrolling = true
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        this.virtuoso_list?.scrollToIndex({
+            index: "LAST",
+            behavior: "smooth"
+        });
         var me = this;
         setTimeout(function() {
             me.is_auto_scrolling = false
@@ -3087,7 +3091,7 @@ return data['data']
                         <div style={{height: 10}}/>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {this.render_messages(selected_ratings, object, middle-60)}
-                            <div ref={this.messagesEnd} style={{display:'none'}}/>
+                            {/* <div ref={this.messagesEnd} style={{display:'none'}}/> */}
                         </ul>
                     </div>
                 )
@@ -3222,10 +3226,13 @@ return data['data']
             return(
                 <div style={{}}>
                     <Virtuoso
+                        ref={(el) => (this.virtuoso_list = el)}
                         style={{ height: middle }}
+                        initialTopMostItemIndex={items.length-1}
                         totalCount={items.length}
                         itemContent={(index) => {
                             const item = reversed_items[index]
+                            const ref_item = index == items.length - 1 ? this.messagesEnd : null;
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">
@@ -3956,18 +3963,49 @@ return data['data']
         this.setState({focused_message: clone})
     }
 
-    render_all_comments(object){
+
+
+
+
+
+
+
+    render_all_comments(object, middle){
         var sorted_messages_in_tree = this.get_message_replies_in_sorted_object(object)
+        const items = sorted_messages_in_tree.children.map((item, index) => {
+            return item
+        })
         return(
-            <div  style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                {sorted_messages_in_tree.children.map((item, index) => (
+            <div style={{/* 'display': 'flex', 'flex-direction': 'column-reverse' */}}>
+                <Virtuoso
+                    ref={(el) => (this.virtuoso_list = el)}
+                    style={{ height: middle }}
+                    initialTopMostItemIndex={0}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index]
+                        return (
+                            <div>
+                                <AnimatePresence initial={true} mode="popLayout">
+                                    <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                        <div>
+                                            {this.render_main_comment(item, 0, object)}
+                                            <div style={{height:3}}/>
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                />
+                {/* {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
-                        <div >
+                        <div>
                             {this.render_main_comment(item, 0, object)}
                             <div style={{height:3}}/>
                         </div>
                     </li>
-                ))}    
+                ))}     */}
             </div>
         )
     }

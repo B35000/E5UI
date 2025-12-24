@@ -44,7 +44,7 @@ class SpendDetailSection extends Component {
     
     state = {
         selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object(),
-        mint_limit_chart_tags_object: this.block_limit_chart_tags_object()
+        mint_limit_chart_tags_object: this.block_limit_chart_tags_object(), selected_exchange_item:{}
     };
 
     componentDidMount() {
@@ -838,19 +838,216 @@ class SpendDetailSection extends Component {
             is_type_spend = true
         }
         if(selected_object['id'] != 5 && !is_type_spend){
+            // const datapoints = this.get_all_deposited_amount_data_points(selected_object)
+            // const selected_exchange_id = this.get_selected_token_liquidity_buy_token_item(selected_object)
+            // const selected_exchange = this.get_token_symbol_from_id(selected_exchange_id, selected_object)
+
             return(
                 <div>
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2564']/* 'The exchanges balance for each of the tokens used to buy ' */+symbol, 'title':this.props.app_state.loc['2565']/* 'Buy Token Liquidity' */})}
                     <div style={{height:10}}/>
+
                     {this.render_buy_token_uis(selected_object)}
+                    {/* <div style={{height:10}}/>
+
+                    {this.load_my_used_exchange_objects(selected_object['data'][3], selected_exchange_id, selected_object)}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'scale':datapoints.scale})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c'] 'Y-Axis: Total in ' +selected_exchange, 'details':this.props.app_state.loc['2275'] 'X-Axis: Time' , 'size':'l'})} */}
 
                     {this.render_detail_item('0')}
                 </div>
             )
         }
     }
+
+    get_selected_token_liquidity_buy_token_item(object){
+        if(this.state.selected_exchange_item[object['e5_id']] == null){
+            return object['data'][3][0]
+        }else{
+            return this.state.selected_exchange_item[object['e5_id']]
+        }
+    }
+
+    get_all_deposited_amount_data_points(object){
+        const sends = object['sends']
+        const receipts = object['receipts']
+
+        const all_events = []
+        sends.forEach(send_event => {
+            all_events.push({'time':parseInt(send_event.returnValues.p5/* timestamp */), 'action':'Sent', 'event':send_event})
+        });
+        receipts.forEach(receipt_event => {
+            all_events.push({'time':parseInt(receipt_event.returnValues.p5/* timestamp */), 'action':'Received', 'event':receipt_event})
+        });
+
+        return this.get_deposit_amount_data_points(this.sortByAttributeDescending(all_events, 'time'))
+    }
+
+    get_deposit_amount_data_points(events){
+        var data = []
+        var max_amount = bigInt(0);
+        var active_balance = bigInt(0)
+        var data_time_mapping = {}
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */)))
+                    }
+                    else if(events[i]['action'] == 'Update'){
+                        data.push(bigInt(events[i]['event'].returnValues.p3/* new_balance */))
+                    }
+                    else if(events[i]['action'] == 'DepthMint'){
+                        var val = bigInt(this.get_actual_number(events[i]['event'].returnValues.p5/* amount */, events[i]['event'].returnValues.p4/* depth_val */))
+                        data.push(val)
+                        active_balance = val
+                    }
+                    max_amount = bigInt(data[data.length-1])
+                }else{
+                    if(events[i]['action'] == 'Received'){
+                        data.push(bigInt(data[data.length-1]).add(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */))))
+                    }
+                    else if(events[i]['action'] == 'Update'){
+                        var val = bigInt(events[i]['event'].returnValues.p3/* new_balance */)
+                        if(!active_balance.greater(bigInt('1e72'))){
+                            data.push(val)
+                        }
+                    }
+                    else if(events[i]['action'] == 'DepthMint'){
+                        var val = bigInt(this.get_actual_number(events[i]['event'].returnValues.p5/* amount */, events[i]['event'].returnValues.p4/* depth_val */))
+                        data.push(active_balance.plus(val))
+                        active_balance = active_balance.plus(val)
+                    }
+                    else{
+                        if(bigInt(data[data.length-1]).greaterOrEquals(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */)))){
+                            var val = bigInt(data[data.length-1]).minus(bigInt(this.get_actual_number(events[i]['event'].returnValues.p4/* amount */, events[i]['event'].returnValues.p7/* depth */)))
+                            data.push(val)
+                        }
+                    }
+                    if(bigInt(max_amount).lesser(data[data.length-1])){
+                       max_amount = bigInt(data[data.length-1]) 
+                    }
+                }
+                data_time_mapping[data.length-1] = events[i]['timestamp']
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i]['timestamp']
+                    var t_diff = parseInt(events[i]['timestamp'])+0;
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1]) 
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff     
+                    }
+                }
+                else{
+                    var diff = events[i+1]['timestamp'] - events[i]['timestamp']
+                    var t_diff = parseInt(events[i]['timestamp'])+0;
+                    for(var t=0; t<diff; t+=(61*2651)){
+                        data.push(data[data.length-1])
+                        t_diff+=(60*100)
+                        data_time_mapping[data.length-1] = t_diff      
+                    }
+                }
+            }
+        }catch(e){
+            console.log(e)
+        }
+
+        
+        const slice_pos = Math.floor(data.length * this.props.app_state.graph_slice_proportion)
+        data = data.slice(slice_pos)
+        const chart_starting_time = data_time_mapping[slice_pos] * 1000
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        var largest_number = max_amount
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/4)) == 0 && i != 0 && !recorded){
+                    // recorded = true
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        // console.log('deposit_amount_data_points', 'dps', dps)
+        
+        return { dps, scale: bigInt(largest_number).divide(100), starting_time: chart_starting_time }
+    }
+
+    load_my_used_exchange_objects(items, selected_exchange, object){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_view_account_exchange_tapped(item, object)}>
+                            {this.render_exchange_item(item, selected_exchange, object)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_view_account_exchange_tapped(exchange_id, object){
+        const e5_id = object['e5_id']
+        const clone = structuredClone(this.state.selected_exchange_item)
+        clone[e5_id] = exchange_id;
+        this.setState({selected_exchange_item: clone});
+    }
+
+    render_exchange_item(item, selected_exchange, object){
+        var e5 = object['e5']
+        var title = this.get_token_name_from_id(item, object)
+        var details = this.get_token_symbol_from_id(item, object)
+        var image = this.props.app_state.token_thumbnail_directory[e5][item]
+        if(selected_exchange == item){
+            return(
+                <div>
+                    {this.render_detail_item('14', {'title':title, 'image':image,'details':details, 'size':'s', 'border_radius':'9px', 'img_size':30})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'border_radius':'9px', 'img_size':30})}
+                </div>
+            )
+        }
+    }
+
+    get_token_symbol_from_id(exchange_id, object){
+        var e5 = object['e5']
+        var symbol = this.props.app_state.token_directory[e5][exchange_id]
+        if(symbol == null) return exchange_id
+        return symbol
+    }
+
+    get_token_name_from_id(exchange_id, object){
+        var e5 = object['e5']
+        var name = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id]
+        if(name == null) return exchange_id
+        return name
+    }
+
+
+
 
     when_block_limit_chart_tags_objectt_updated(tag_obj){
         this.setState({block_limit_chart_tags_object: tag_obj})

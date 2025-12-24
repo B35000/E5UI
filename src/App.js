@@ -9386,15 +9386,17 @@ class App extends Component {
     //   }
     // }
 
-    // var os = getOS()
-    // if(os == 'iOS'){
-    //   setTimeout(function() {
-    //     me.setState({is_reloading_stack_due_to_ios_run: true})
-    //     setTimeout(function() {
-    //       me.setState({is_reloading_stack_due_to_ios_run: false})
-    //     }, (1 * 500));
-    //   }, (1 * 1000));
-    // }
+    var os = getOS()
+    if(os == 'iOS'){
+      setTimeout(function() {
+        // me.setState({is_reloading_stack_due_to_ios_run: true})
+        me.open_stack_bottomsheet()
+        setTimeout(function() {
+          // me.setState({is_reloading_stack_due_to_ios_run: false})
+          me.open_stack_bottomsheet()
+        }, (1 * 500));
+      }, (1 * 1000));
+    }
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
       web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
@@ -21918,17 +21920,25 @@ class App extends Component {
   render_set_map_location_bottomsheet(){
     if(this.state.set_map_location_bottomsheet2 != true) return;
     var os = getOS()
+    if(os == 'iOS'){
+      return(
+        <Sheet isOpen={this.state.set_map_location_bottomsheet} onClose={this.open_set_map_location_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+            <Sheet.Container>
+                <Sheet.Content>
+                  {this.render_set_map_location_element()}
+                </Sheet.Content>
+                <ToastContainer limit={3} containerId="id2"/>
+            </Sheet.Container>
+            <Sheet.Backdrop onTap={()=> this.open_set_map_location_bottomsheet()}/>
+        </Sheet>
+      )
+    }
     return(
-      <Sheet isOpen={this.state.set_map_location_bottomsheet} onClose={this.open_set_map_location_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-          <Sheet.Container>
-              <Sheet.Content>
-                {this.render_set_map_location_element()}
-              </Sheet.Content>
-              <ToastContainer limit={3} containerId="id2"/>
-          </Sheet.Container>
-          <Sheet.Backdrop onTap={()=> this.open_set_map_location_bottomsheet()}/>
-      </Sheet>
+      <SwipeableBottomSheet swipeableViewsProps={{ disabled: true }} overflowHeight={0} marginTop={0} onChange={this.open_set_map_location_bottomsheet.bind(this)} open={this.state.set_map_location_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_set_map_location_element()}
+      </SwipeableBottomSheet>
     )
+    
   }
 
   render_set_map_location_element(){
@@ -22015,17 +22025,25 @@ class App extends Component {
   render_view_map_location_pins_bottomsheet(){
     if(this.state.view_map_location_pins_bottomsheet2 != true) return;
     var os = getOS()
-    return(
-      <Sheet isOpen={this.state.view_map_location_pins_bottomsheet} onClose={this.open_view_map_location_pins_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    if(os == 'iOS'){
+      return(
+        <Sheet isOpen={this.state.view_map_location_pins_bottomsheet} onClose={this.open_view_map_location_pins_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
           <Sheet.Container>
-              <Sheet.Content>
-                {this.render_view_map_location_pins_element()}
-              </Sheet.Content>
-              <ToastContainer limit={3} containerId="id2"/>
+            <Sheet.Content>
+              {this.render_view_map_location_pins_element()}
+            </Sheet.Content>
+            <ToastContainer limit={3} containerId="id2"/>
           </Sheet.Container>
           <Sheet.Backdrop onTap={()=> this.open_view_map_location_pins_bottomsheet()}/>
-      </Sheet>
+        </Sheet>
+      )
+    }
+    return(
+      <SwipeableBottomSheet swipeableViewsProps={{ disabled: true }} overflowHeight={0} marginTop={0} onChange={this.open_view_map_location_pins_bottomsheet.bind(this)} open={this.state.view_map_location_pins_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+        {this.render_view_map_location_pins_element()}
+      </SwipeableBottomSheet>
     )
+    
   }
 
   render_view_map_location_pins_element(){
@@ -24797,9 +24815,10 @@ class App extends Component {
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
     const address = this.state.accounts['E25'].address
     const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+    console.log('pre_launch_fetch', 'known_hashes', this.get_my_recorded_hashes(''))
     const arg_obj = {
       target_address: address,
-      max_post_bulk_load_count: this.state.max_post_bulk_load_count,
+      max_post_bulk_load_count: /* this.state.max_post_bulk_load_count */10000000,
       indexing_hash: this.get_valid_post_index(this.get_web3_instance_from_e5('E25')),
       event_fetches: this.get_all_event_fetches(crosschain_identifier),
       known_hashes: this.get_my_recorded_hashes(''),
@@ -26683,7 +26702,7 @@ class App extends Component {
     }
 
     await this.wait_for_alias_objects_to_resolve(set_id);
-    console.log('apppage','apppage_alias', 'begun get_alias_data work...', pre_loaded_events)
+    // console.log('apppage','apppage_alias', 'begun get_alias_data work...', pre_loaded_events)
     this.is_resolving_alias_data = true;
 
     if(this.alias_data == null){
@@ -26732,7 +26751,7 @@ class App extends Component {
             delete alias_owners[alias_string]
             delete alias_bucket[alias_sender]
 
-            console.log('apppage', 'deleting alias', alias_string)
+            // console.log('apppage', 'deleting alias', alias_string)
 
             const pos = my_alias_events.findIndex(obj => obj['alias'] == alias_string)
             if(pos != -1){
@@ -26754,7 +26773,7 @@ class App extends Component {
               my_alias_events_clone[invalid_data['e5']].splice(pos, 1)
             }
 
-            console.log('apppage','apppage_alias', 'deleting alias in other e5', alias_string)
+            // console.log('apppage','apppage_alias', 'deleting alias in other e5', alias_string)
 
             var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
             delete alias_timestamp_clone[invalid_data['e5']][invalid_data['name']]
@@ -26778,7 +26797,7 @@ class App extends Component {
         }
         delete this.alias_data[alias_string]
 
-        console.log('apppage','apppage_alias', 'revoking alias', alias_string)
+        // console.log('apppage','apppage_alias', 'revoking alias', alias_string)
       }else{
         if(alias_sender.toString() == account.toString()){
           //my alias
@@ -26820,27 +26839,27 @@ class App extends Component {
 
     this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
-    console.log('apppage','apppage_alias', 'alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners, my_alias_events_clone)
+    // console.log('apppage','apppage_alias', 'alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners, my_alias_events_clone)
     await this.wait(300)
     this.is_resolving_alias_data = false
   }
 
   get_alias_data_for_accounts = async (E52contractInstance, e5, specified_accounts, web3) => {
-    console.log('apppage','alias_data', 'begun get_alias_data_for_accounts work...', specified_accounts)
+    // console.log('apppage','alias_data', 'begun get_alias_data_for_accounts work...', specified_accounts)
     const accounts = this.filter_existing_alias_accounts(e5, specified_accounts)
     if(accounts.length == 0){
-      console.log('apppage','alias_data', 'accounts empty, ending process', accounts)
+      // console.log('apppage','alias_data', 'accounts empty, ending process', accounts)
       return;
     }else{
-      console.log('apppage', 'alias_data','accounts not empty empty, proceeding...')
+      // console.log('apppage', 'alias_data','accounts not empty empty, proceeding...')
     }
     var alias_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 11, p2/* sender_acc_id */: this.process_array_for_indexer_query(accounts)})
 
-    console.log('apppage','alias_data', 'received alias events for accounts:', alias_events)
+    // console.log('apppage','alias_data', 'received alias events for accounts:', alias_events)
 
     const set_id = makeid(9)
     await this.wait_for_alias_objects_to_resolve(set_id);
-    console.log('apppage','alias_data', 'proceeding with resolving process')
+    // console.log('apppage','alias_data', 'proceeding with resolving process')
     this.is_resolving_alias_data = true
 
     if(this.alias_data == null){
@@ -26855,7 +26874,7 @@ class App extends Component {
       this.searched_accounts.push(account+e5)
     });
 
-    console.log('apppage','alias_data', 'received alias events', alias_events)
+    // console.log('apppage','alias_data', 'received alias events', alias_events)
 
     var my_alias_events = this.state.my_alias_events[e5] == null ? [] : this.state.my_alias_events[e5].slice()
     var alias_bucket = this.state.alias_bucket[e5] == null ? {} : structuredClone(this.state.alias_bucket[e5])
@@ -26957,7 +26976,7 @@ class App extends Component {
 
     this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp: alias_timestamp_clone})
 
-    console.log('apppage','alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners)
+    // console.log('apppage','alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners)
     await this.wait(300)
     this.is_resolving_alias_data = false;
   }
@@ -30514,6 +30533,10 @@ class App extends Component {
     var created_token_events = extra_data['created_object_events_mapping'] != null ? extra_data['created_object_events_mapping'][e5] : (pre_launch_data[e5] != null ? pre_launch_data[e5]['exchange_objects_data']['created_object_events'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}))
     var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
 
+    console.log('get_token_data','token events to load', created_token_events)
+    const test_load = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+    console.log('get_token_data','actual token events from indexer', test_load)
+
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var my_posted_events = created_token_events.filter(function (event) {
         return (prioritized_accounts.includes(parseInt(event.returnValues.p3/* sender_account_id */)) || prioritized_accounts.includes(parseInt(event.returnValues.p1/* object_id */)))
@@ -30719,7 +30742,9 @@ class App extends Component {
           token_obj['hidden'] = previous_obj['hidden']
           token_obj['balance'] = previous_obj['balance']
           token_obj['token_balances_data'] = previous_obj['token_balances_data']
-          token_obj['account_data'] = previous_obj['account_data'] 
+          token_obj['account_data'] = previous_obj['account_data']
+          token_obj['sends'] = previous_obj['sends']
+          token_obj['receipts'] = previous_obj['receipts'];
         }
       }
 
@@ -30894,7 +30919,8 @@ class App extends Component {
     this.setState({registered_token_names: registered_token_names_clone, registered_token_symbols: registered_token_symbols_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone})
   }
 
-  load_extra_token_data = async (object) => {
+  load_extra_token_data = async (object_arg) => {
+    const object = structuredClone(object_arg)
     const e5 = object['e5']
     const id = object['id']
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -30936,12 +30962,17 @@ class App extends Component {
     }
     var exchanges_balances = await H52contractInstance.methods.f140e(object['data'][3], created_tokens[i], depth_values).call((error, result) => {});
 
+    const exchanges_buy_tokens = object['data'][3]
+
     var event_params = [
       [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */}],
       [web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i]}],
       [web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i]}],
+
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p2/* sender */: id}],
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p3/* receiver */: id}]
     ]
-    var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+    const { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
     var moderator_data = all_events[0]
     var old_moderators = []
@@ -30970,7 +31001,6 @@ class App extends Component {
     var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_tokens
 
     var update_exchange_ratio_event_data = all_events[1]
-
     var update_proportion_ratio_event_data = all_events[2]
 
     console.log('load_extra_token_data', 'loaded update_proportion_ratio_event_data...')
@@ -30991,8 +31021,13 @@ class App extends Component {
     object['proportion_ratio_data'] = update_proportion_ratio_event_data
     object['hidden'] = false
     object['balance'] = balance
-    object['token_balances_data'] = token_balance_data
-    object['account_data'] = accounts_exchange_data[i]
+    object['token_balances_data'] = token_balance_data;
+    object['account_data'] = accounts_exchange_data[i];
+
+    object['sends'] = all_events[3];
+    object['receipts'] = all_events[4];
+    console.log('load_extra_token_data','sends and recepits events', all_events[3], all_events[4])
+    console.log('load_extra_token_data','sends and recepits set data', object['sends'], object['receipts'])
 
     if(interactible_checker_status_values[i] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
       object['hidden'] = true
@@ -31005,7 +31040,7 @@ class App extends Component {
     }
 
     console.log('load_extra', object)
-    var created_tokens_clone = this.structuredClone(this.state.created_tokens)
+    var created_tokens_clone = structuredClone(this.state.created_tokens)
     const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
     created_tokens_clone[e5][index] = object
 
@@ -31015,7 +31050,6 @@ class App extends Component {
     this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
 
     console.log('load_extra_token_data', 'finished loading all exchange data.')
-
 
     const search_accounts = moderators.slice()
     this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
@@ -47053,7 +47087,7 @@ class App extends Component {
     }
 
     const ipfs_data = JSON.parse(await this.decrypt_storage_object(message.data))
-    console.log('socket_stuff', 'ipfs data for job', ipfs_data)
+    // console.log('socket_stuff', 'ipfs data for job', ipfs_data)
     if(ipfs_data != message.data){
       const e5 = message.e5;
       const id = message.id
@@ -47092,7 +47126,7 @@ class App extends Component {
         // }
       }
       else{
-        console.log('socket_stuff', 'channeling invalid', event.returnValues.p1, event.returnValues.p1.toString())
+        // console.log('socket_stuff', 'channeling invalid', event.returnValues.p1, event.returnValues.p1.toString())
       }
     }
 

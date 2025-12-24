@@ -771,6 +771,10 @@ class MailDetailsSection extends Component {
     scroll_to_bottom(){
         this.is_auto_scrolling = true
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        this.virtuoso_list?.scrollToIndex({
+            index: "LAST",
+            behavior: "smooth"
+        });
         var me = this;
         setTimeout(function() {
             me.is_auto_scrolling = false
@@ -899,7 +903,7 @@ class MailDetailsSection extends Component {
                         {this.render_messages(final_items, object, middle-50)}
                         {this.render_bubble_if_typing(object)}
                         {this.render_last_opened_time(object)}
-                        <div ref={this.messagesEnd} style={{display:'none'}}/>
+                        {/* <div ref={this.messagesEnd} style={{display:'none'}}/> */}
                     </ul>
                 </div>
             )
@@ -976,10 +980,13 @@ class MailDetailsSection extends Component {
             return(
                 <div style={{}}>
                     <Virtuoso
+                        ref={(el) => (this.virtuoso_list = el)}
                         style={{ height: middle }}
                         totalCount={items.length}
+                        initialTopMostItemIndex={items.length-1}
                         itemContent={(index) => {
                             const item = reversed_items[index]
+                            const ref_item = index == items.length - 1 ? this.messagesEnd : null;
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">

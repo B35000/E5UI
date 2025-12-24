@@ -1513,6 +1513,10 @@ class ProposalDetailsSection extends Component {
     scroll_to_bottom(){
         this.is_auto_scrolling = true
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        this.virtuoso_list?.scrollToIndex({
+            index: "LAST",
+            behavior: "smooth"
+        });
         var me = this;
         setTimeout(function() {
             me.is_auto_scrolling = false
@@ -1598,7 +1602,7 @@ class ProposalDetailsSection extends Component {
                 <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(final_items, object, middle)}
-                        <div ref={this.messagesEnd} style={{display:'none'}}/>
+                        {/* <div ref={this.messagesEnd} style={{display:'none'}}/> */}
                     </ul>
                 </div>
             )
@@ -1637,10 +1641,13 @@ class ProposalDetailsSection extends Component {
             return(
                 <div style={{}}>
                     <Virtuoso
+                        ref={(el) => (this.virtuoso_list = el)}
                         style={{ height: middle }}
                         totalCount={items.length}
+                        initialTopMostItemIndex={items.length-1}
                         itemContent={(index) => {
                             const item = reversed_items[index]
+                            const ref_item = index == items.length - 1 ? this.messagesEnd : null;
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">
@@ -2387,18 +2394,42 @@ class ProposalDetailsSection extends Component {
 
 
 
-    render_all_comments(object){
-        var sorted_messages_in_tree = (this.get_message_replies_in_sorted_object(object))
+    render_all_comments(object, middle){
+        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object(object)
+        const items = sorted_messages_in_tree.children.map((item, index) => {
+            return item
+        })
         return(
-            <div  style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
-                {sorted_messages_in_tree.children.map((item, index) => (
+            <div style={{/* 'display': 'flex', 'flex-direction': 'column-reverse' */}}>
+                <Virtuoso
+                    ref={(el) => (this.virtuoso_list = el)}
+                    style={{ height: middle }}
+                    initialTopMostItemIndex={0}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index]
+                        return (
+                            <div>
+                                <AnimatePresence initial={true} mode="popLayout">
+                                    <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                        <div>
+                                            {this.render_main_comment(item, 0, object)}
+                                            <div style={{height:3}}/>
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                />
+                {/* {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
-                        <div >
+                        <div>
                             {this.render_main_comment(item, 0, object)}
                             <div style={{height:3}}/>
                         </div>
                     </li>
-                ))}    
+                ))}     */}
             </div>
         )
     }

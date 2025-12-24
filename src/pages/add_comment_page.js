@@ -658,7 +658,7 @@ class AddCommentPage extends Component {
                 </div>
 
                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
-                    <img alt="" src={this.props.app_state.static_assets['pdf_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'pdf_file_button', 10**16)}/>
+                    <img alt="" src={this.props.app_state.static_assets['pdf_file_button']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
                 </div>
 
                 {this.render_media_pickers_if_valid()}

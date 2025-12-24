@@ -1272,6 +1272,10 @@ class ViewJobRequestPage extends Component {
 
     scroll_to_bottom(){
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        this.virtuoso_list?.scrollToIndex({
+            index: "LAST",
+            behavior: "smooth"
+        });
     }
 
     handleScroll = (event) => {
@@ -1395,7 +1399,7 @@ class ViewJobRequestPage extends Component {
                         {this.render_messages(final_items, middle)}
                         {this.render_bubble_if_typing()}
                         {this.render_last_opened_time()}
-                        <div ref={this.messagesEnd} style={{display:'none'}}/>
+                        {/* <div ref={this.messagesEnd} style={{display:'none'}}/> */}
                     </ul>
                 </div>
             )
@@ -1483,8 +1487,10 @@ class ViewJobRequestPage extends Component {
             return(
                 <div>
                     <Virtuoso
+                        ref={(el) => (this.virtuoso_list = el)}
                         style={{ height: middle }}
                         totalCount={items.length}
+                        initialTopMostItemIndex={items.length-1}
                         itemContent={(index) => {
                             const item = items[index];
                             return (
@@ -2415,18 +2421,42 @@ class ViewJobRequestPage extends Component {
 
 
 
-    render_all_comments(){
-        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
+    render_all_comments(object, middle){
+        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object(object)
+        const items = sorted_messages_in_tree.children.map((item, index) => {
+            return item
+        })
         return(
-            <div>
-                {sorted_messages_in_tree.children.map((item, index) => (
+            <div style={{/* 'display': 'flex', 'flex-direction': 'column-reverse' */}}>
+                <Virtuoso
+                    ref={(el) => (this.virtuoso_list = el)}
+                    style={{ height: middle }}
+                    initialTopMostItemIndex={0}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index]
+                        return (
+                            <div>
+                                <AnimatePresence initial={true} mode="popLayout">
+                                    <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                        <div>
+                                            {this.render_main_comment(item, 0, object)}
+                                            <div style={{height:3}}/>
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                />
+                {/* {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
-                        <div >
-                            {this.render_main_comment(item, 0)}
+                        <div>
+                            {this.render_main_comment(item, 0, object)}
                             <div style={{height:3}}/>
                         </div>
                     </li>
-                ))}    
+                ))}     */}
             </div>
         )
     }

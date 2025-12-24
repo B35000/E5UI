@@ -392,7 +392,7 @@ class home_page extends Component {
             ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired ✅' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */], [1],[1]
         ]
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264bn']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
         ]
         return obj
       }
@@ -689,7 +689,7 @@ class home_page extends Component {
         var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
         var size = this.props.screensize;
         var os = getOS()
-        if(os == 'iOS' || true){
+        if(os == 'iOS'){
             return(
                 <Sheet isOpen={this.state.view_post_bottomsheet} onClose={this.open_view_object_bottomsheet.bind(this)} detent="content-height" disableDrag={true}>
                     <Sheet.Container>
@@ -707,7 +707,7 @@ class home_page extends Component {
         var m = '0px -11px 0px 0px';
         m = '0px 0px 0px 0px'
         return(
-            <SwipeableBottomSheet /* fullScreen={true} */  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':m, 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
+            <SwipeableBottomSheet /* fullScreen={true} */ swipeableViewsProps={{ disabled: true }}  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':m, 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
                 <div style={{ height: this.props.height-40, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', }}>
                     {this.render_post_detail_object(size, this.props.height-40, this.props.width)}
                 </div>
@@ -3503,7 +3503,7 @@ class home_page extends Component {
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))
         }
-        else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
+        else if(selected_option_name == this.props.app_state.loc['1264bn']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
             var my_polls = this.props.app_state.my_polls.slice().concat(this.props.app_state.my_objects)
