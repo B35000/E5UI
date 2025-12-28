@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.736ba592.css",
-    "main.js": "/static/js/main.934697ac.js",
+    "main.js": "/static/js/main.f20ffad5.js",
     "static/js/231.de23fbad.chunk.js": "/static/js/231.de23fbad.chunk.js",
     "static/js/898.ba3f9bb9.chunk.js": "/static/js/898.ba3f9bb9.chunk.js",
     "static/js/386.9d146b60.chunk.js": "/static/js/386.9d146b60.chunk.js",
@@ -224,6 +224,7 @@
     "static/media/add_text_yellow.png": "/static/media/add_text_yellow.a85dfbaee4e3acfbe84b.png",
     "static/media/close_icon_darkgreen.png": "/static/media/close_icon_darkgreen.620802c2d45a0ec33cd5.png",
     "static/media/shuffle_icon_green.png": "/static/media/shuffle_icon_green.e22b55c591eeef3a4115.png",
+    "static/media/tutorial_image_number.png": "/static/media/tutorial_image_number.6bffafc751ff63a9c2cc.png",
     "static/media/repeat_icon_darkblue.png": "/static/media/repeat_icon_darkblue.2b5bd97d4041d4b5b732.png",
     "static/media/repeat_icon_darkorange.png": "/static/media/repeat_icon_darkorange.a79e0c46aea20c05e021.png",
     "static/media/repeat_icon_darkpink.png": "/static/media/repeat_icon_darkpink.083566f18ab48905130c.png",
@@ -235,6 +236,7 @@
     "static/media/unanimous_consensus_image.png": "/static/media/unanimous_consensus_image.a1d1aa647899799769d2.png",
     "static/media/close_icon_blue.png": "/static/media/close_icon_blue.da004ed698454182af83.png",
     "static/media/shuffle_icon_darkgreen.png": "/static/media/shuffle_icon_darkgreen.116644b05902268e7b1b.png",
+    "static/media/tutorial_image_number2.png": "/static/media/tutorial_image_number2.b7f20eb26dbc14838308.png",
     "static/media/e5_logo_dark.png": "/static/media/e5_logo_dark.18e5cceb4cf6ac5775f2.png",
     "static/media/e5_logo_light.png": "/static/media/e5_logo_light.887769983105474c4045.png",
     "static/media/repeat_icon_green.png": "/static/media/repeat_icon_green.7fe77f49c06cba6af9fc.png",
@@ -528,6 +530,6 @@
   },
   "entrypoints": [
     "static/css/main.736ba592.css",
-    "static/js/main.934697ac.js"
+    "static/js/main.f20ffad5.js"
   ]
 }
