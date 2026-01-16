@@ -7858,10 +7858,11 @@ return data['data']
             var title = this.props.app_state.loc['3055da']/* '$ consumed.' */.replace('$', fs)
             var details = this.props.app_state.loc['3055db']/* '$ files.' */.replace('$', number_with_commas(renew_data.length))
 
-            var opacity = this.state.ignored_nitro_files_items.includes(item) ? 0.6 : 1.0
+            var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+            var opacity = transaction_item.ignored_nitros.includes(item) ? 0.6 : 1.0
             return(
                 <div style={{'opacity': opacity}} onClick={() => this.when_nitro_file_item_clicked(item, nitro_count)}>
-                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                    {this.render_detail_item('8', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':23})}
                 </div>
             )
         }else{
@@ -7874,9 +7875,9 @@ return data['data']
     }
 
     render_total_payment_amounts_for_all_the_selected_nitros(price_data_object){
-        const total_price_amounts = price_data_object.total_price_amounts
-        const items = Object.keys(total_price_amounts)
+        const total_price_amounts = price_data_object
         const e5 = this.props.app_state.selected_e5
+        const items = Object.keys(total_price_amounts)
         return(
             <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style-type': 'none'}}>
@@ -7890,6 +7891,10 @@ return data['data']
                 </ul>
             </div>
         )
+    }
+
+    get_amount(exchange_value){
+        return bigInt(exchange_value)
     }
 
 
@@ -8458,7 +8463,7 @@ return data['data']
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12') uploaded_data = this.props.app_state.uploaded_data;
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data;
 
         var rating_denomination = this.props.app_state.rating_denomination == this.props.app_state.loc['1593hj']/* percentage */ ? 'percentage' : 'score'
         return(

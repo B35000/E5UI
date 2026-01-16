@@ -22607,7 +22607,7 @@ class App extends Component {
     }
   }
 
-  when_wallet_data_updated3(added_tags, set_salt, selected_item, is_synching, selected_item_2){
+  async when_wallet_data_updated3(added_tags, set_salt, selected_item, is_synching, selected_item_2){
     this.prompt_top_notification(this.getLocale()['1561']/* 'Setting your wallet.' */, 5500)
     const randomizer = selected_item_2 == this.getLocale()['1593hm']/* 'enabled' */ ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
     var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
@@ -22668,6 +22668,7 @@ class App extends Component {
     // Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
     this.last_load_time = {};
 
+    await this.wait(400);
     if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0){
       //sender has set a different address from the previously used one, so delete the transactions they created with the other address
       var stack = this.state.stack_items.slice()
@@ -30595,10 +30596,13 @@ class App extends Component {
       exchange_accounts.push(account)
     }
 
-    var focused_exchanges = exchanges_to_load_first.slice()
+    var focused_exchanges = [3, 5];
     var depths = []
     exchanges_to_load_first.forEach(exchange_id => {
       depths.push(0)
+      if(!focused_exchanges.includes(parseInt(exchange_id))){
+        focused_exchanges.push(parseInt(exchange_id))
+      }
     });
 
     this.record_number_of_items(e5, 'tokens', created_tokens.length)
@@ -37167,7 +37171,7 @@ class App extends Component {
     }
 
     if(this.load_and_notify_user_times_post_comment == null){
-      this.load_and_notify_user_times_direct_storefront_order = {}
+      this.load_and_notify_user_times_post_comment = {}
     }
 
     var notifs = []
@@ -38738,10 +38742,10 @@ class App extends Component {
   async start_object_file_viewcount_fetch(object, type){
     const get_track_hashes = (track) => {
       const ecid_obj = this.get_cid_split(track)
-        if(this.state.uploaded_data[ecid_obj['filetype']] != null && this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
-          var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-          return { hash: data['hash'], nitro: data['nitro'] }
-        }
+      if(this.state.uploaded_data[ecid_obj['filetype']] != null && this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+        var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        return { hash: data['hash'], nitro: data['nitro'] }
+      }
     }
 
     const hashes_to_get = {}
@@ -49126,7 +49130,7 @@ class App extends Component {
 
   async begin_enter_call_process(call_id, call_password, record_call){
     this.prompt_top_notification(this.getLocale()['2738bs']/* Joining the call... */, 1200)
-    // this.prompt_top_notification(this.getLocale()['3091bt']/* initializing... */, 1200)
+    await this.wait(1500)
     this.enter_chatroom_if_socket_enabled_without_emitting()
     const call_start_time = Date.now()
     this.setState({current_call_id: call_id, current_call_password: call_password, call_join_time: call_start_time})

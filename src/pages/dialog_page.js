@@ -6269,12 +6269,18 @@ return data['data']
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ex']/* 'If the indexer charges streaming fees on your files, the data streamed is combined with the displayed file size.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 {this.render_nitro_items(files_to_be_renewed_data.files_to_renew)}
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
                 {this.render_total_payment_amounts_for_all_the_selected_nitros_and_e5_selector(files_to_be_renewed_data.files_to_renew)}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055ju']/* 'Stack all the payments to each of the indexers for storage of all the files specified for renewal.' */, 'title':this.props.app_state.loc['3055jt']/* 'Stack Payment Transactions.' */})}
                 <div style={{height:10}}/>
+
                 <div style={{'opacity':opacity}} onClick={()=> this.add_renew_files_transaction_to_stack(files_to_be_renewed_data.has_all_nitro_metadata_loaded, files_to_be_renewed_data.files_to_renew, has_all_objects_loaded)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593hf']/* 'Renew Files' */, 'action':''},)}
                 </div>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -6512,7 +6518,7 @@ return data['data']
             var opacity = this.state.ignored_nitro_files_items.includes(item) ? 0.6 : 1.0
             return(
                 <div style={{'opacity': opacity}} onClick={() => this.when_nitro_file_item_clicked(item, nitro_count)}>
-                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                    {this.render_detail_item('8', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':23})}
                 </div>
             )
         }else{
@@ -6585,6 +6591,10 @@ return data['data']
                 </ul>
             </div>
         )
+    }
+
+    get_amount(exchange_value){
+        return bigInt(exchange_value)
     }
 
     get_total_payments_to_be_made(files_to_be_renewed_data){
@@ -10220,7 +10230,7 @@ return data['data']
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
                 <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} show_images={this.props.show_images.bind(this)} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />

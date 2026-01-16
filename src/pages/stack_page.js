@@ -2327,7 +2327,7 @@ class StackPage extends Component {
                     </div>
                 )
             }
-            else if(time_remainder < (60*60*24*20)){
+            else if(time_remainder < (60*60*24*5)){
                 return(
                     <div>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['1593jc']/* Upcoming Lock Time.' */, 'details':this.props.app_state.loc['1593lf']/* e will be locked in $' */.replace('$', this.get_time_diff(time_remainder)), 'size':'l'})}

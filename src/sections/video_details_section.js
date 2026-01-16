@@ -1094,7 +1094,7 @@ class VideoDetailsSection extends Component {
         var view_count = this.get_video_files_view_counts(object)
         var stream_bytes_count = this.calculate_total_streaming(object)
 
-        if(stream_bytes_count > 0){
+        if(bigInt(stream_bytes_count).greater(0)){
             var views_text = this.props.app_state.loc['2509n']/* views */
             if(view_count == 1){
                 views_text = this.props.app_state.loc['2509o']/* view */
@@ -1113,11 +1113,48 @@ class VideoDetailsSection extends Component {
         else if(this.contains_nitro_file(object) == true){
             return(
                 <div>
-                    {this.render_small_skeleton_object()}
+                    {this.render_small_skeleton_object2()}
                     <div style={{height:10}}/>
                 </div>
             )
         }
+    }
+
+    render_small_skeleton_object2(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['view_group_card_item_background']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     contains_nitro_file(object){

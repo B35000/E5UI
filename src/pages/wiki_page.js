@@ -36,6 +36,8 @@ import tutorial_image_run_transactions from './../assets/tutorial_image_run_tran
 import tutorial_image_number_picker from './../assets/tutorial_image_number_picker.png'
 import tutorial_image_number_picker2 from './../assets/tutorial_image_number_picker2.png'
 import tutorial_image_number_picker3 from './../assets/tutorial_image_number_picker3.png'
+import tutorial_image_number from './../assets/tutorial_image_number.png'
+import tutorial_image_number2 from './../assets/tutorial_image_number2.png'
 
 // import SettingsDataImage from './../assets/settings_data_image.png';
 // import WalletDataImage from './../assets/wallet_data_image.png';
@@ -218,6 +220,22 @@ class WikiPage extends Component {
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1989f']/* 'Then when you\'re done creating an object, tap the top right icon to add it to your stack. The stack is where all your staged transactions go before your next run.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_add_transaction} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+                    
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989k']/* 'To express very large numbers, scientific notation values such as \'e+\' and \'E\' are used. However, for simplicity sake, a lowercase \'e\' is used here.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_number} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989l']/* 'Note how the first nine digits of a large number are shown for greater context, and the \'power\' at the end representing the remaining omitted and least significant values.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={tutorial_image_number2} alt="E5"/>
                     <div style={{height: 30}}/>
 
 
