@@ -6238,7 +6238,7 @@ class App extends Component {
 
   direct_message_via_socket_enabled(message){
     const size = this.lengthInUtf8Bytes(JSON.stringify(message))
-    return this.state.has_wallet_been_set == true && this.do_i_have_an_account(this.state.selected_e5) && size < (1024*23) && (message['award_amount'] == null || message['award_amount'] == 0);
+    return this.state.has_wallet_been_set == true && this.do_i_have_an_account(this.state.selected_e5) && size < (1024*23) && this.state.message_comment_fulfilment == this.getLocale()['1593cw']/* 'nitro 🛰️' */ && (message['award_amount'] == null || message['award_amount'] == 0);
   }
 
   add_mail_to_stack_object(message){

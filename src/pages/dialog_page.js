@@ -2987,7 +2987,7 @@ return data['data']
         if(object == null){
             return(
                 <div>
-                    {this.render_empty_object()}
+                    {this.render_skeleton_object()}
                 </div>
             )
         }else{
@@ -3009,6 +3009,43 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     load_object(event){
@@ -3079,8 +3116,8 @@ return data['data']
             }
         }
         for(const convo_id in all_messages2){
-            if(all_messages.hasOwnProperty(convo_id)){
-                var convo_messages = all_messages[convo_id]
+            if(all_messages2.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages2[convo_id]
                 convo_messages.forEach(message => {
                     if(message['ipfs'] != null && message['ipfs'].entered_title_text != null){
                         mail_objects.push(message)
@@ -4869,7 +4906,7 @@ return data['data']
         var alias = this.get_followed_account_name_from_id(account, e5)
         return(
             <div>
-                {this.render_detail_item('3', {'title':' • '+(account), 'details':alias, 'title_image':this.props.app_state.e5s[e5].e5_img, 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+(account), 'details':alias, 'title_image':this.props.app_state.e5s[e5].e5_img, 'size':'l'})}
             </div>
         )
     }
@@ -6236,6 +6273,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_renew_nitro_upload_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -6249,6 +6288,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_renew_nitro_upload_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -6278,9 +6319,6 @@ return data['data']
                 <div style={{'opacity':opacity}} onClick={()=> this.add_renew_files_transaction_to_stack(files_to_be_renewed_data.has_all_nitro_metadata_loaded, files_to_be_renewed_data.files_to_renew, has_all_objects_loaded)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1593hf']/* 'Renew Files' */, 'action':''},)}
                 </div>
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }

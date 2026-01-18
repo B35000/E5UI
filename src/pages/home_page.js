@@ -2697,8 +2697,8 @@ class home_page extends Component {
             }
         }
         for(const convo_id in all_messages2){
-            if(all_messages.hasOwnProperty(convo_id)){
-                var convo_messages = all_messages[convo_id]
+            if(all_messages2.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages2[convo_id]
                 convo_messages.forEach(message => {
                     if(message['ipfs'] != null && message['ipfs'].entered_title_text != null){
                         mail_objects.push(message)
@@ -2754,8 +2754,8 @@ class home_page extends Component {
             }
         }
         for(const convo_id in all_messages2){
-            if(all_messages.hasOwnProperty(convo_id)){
-                var convo_messages = all_messages[convo_id]
+            if(all_messages2.hasOwnProperty(convo_id)){
+                var convo_messages = all_messages2[convo_id]
                 convo_messages.forEach(message => {
                     if(message['type'] == created_mail_obj && message['ipfs'] != null &&  message['ipfs'].entered_title_text != null){
                         mail_objects.push(message)

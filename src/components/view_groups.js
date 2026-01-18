@@ -902,7 +902,7 @@ class ViewGroups extends Component {
                         <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', background: background_color,'border-radius': border_radius}}>
                             <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
                                 <div style={{'margin':'0px 0px 0px 0px'}}>
-                                    <img alt="" src={img} style={{height:img_size ,width:img_size, 'border-radius':'6px'}} />
+                                    <img alt="" src={this.get_image_from_file(img)} style={{height:img_size ,width:img_size, 'border-radius':'6px'}} />
                                 </div>
                                 <div style={{'margin':'0px 0px 0px 5px'}}>
                                     <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 

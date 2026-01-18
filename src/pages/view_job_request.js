@@ -306,14 +306,14 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['1676']/* 'contract' */){
+        else if(selected_item == this.props.app_state.loc['1673']/* 'contract' */){
             return(
                 <div>
                     {this.render_select_contract_parts()}
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['1677']/* 'activity' */){
+        else if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
             return(
                 <div>
                     {this.render_messages_parts()}
@@ -325,7 +325,7 @@ class ViewJobRequestPage extends Component {
     render_medium_screen_selectors(){
         var selected_item = this.get_selected_item(this.state.accept_job_request_title_tags_object, this.state.accept_job_request_title_tags_object['i'].active)
 
-        if(selected_item == 'e' || selected_item == this.props.app_state.loc['1676']/* 'contract' */){
+        if(selected_item == 'e' || selected_item == this.props.app_state.loc['1673']/* 'contract' */){
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
@@ -337,7 +337,7 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['1677']/* 'activity' */){
+        else if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
@@ -1206,7 +1206,7 @@ class ViewJobRequestPage extends Component {
             (this.state.text_input_field_height < 30 ? 30 : this.state.text_input_field_height));
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
             (this.state.text_input_field_height-35 < 0 ? 0 : this.state.text_input_field_height-35))
-        var size = this.props.screensize
+        var size = this.props.size
         var ww = '80%'
         if(size == 'l') ww = '90%'
         if(this.props.app_state.width > 1100){

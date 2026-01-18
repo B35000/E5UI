@@ -393,6 +393,7 @@ class NewPostPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
                 </div>
             )

@@ -494,8 +494,9 @@ class E5DetailsSection extends Component {
         var address = this.props.app_state.e5s[obj['id']].e5_address
         var contract_config = obj['data'][1]
         var e5_height = this.props.app_state.e5s_transaction_height[obj['id']]
+        var chain_message = this.props.app_state.loc['2336bt']/* 'On $' */.replace('$', chain)
         return{
-            'label':{'header':obj['id'], 'subtitle':chain, 'size':'l', 'image': image},
+            'label':{'header':obj['id'], 'subtitle':chain_message, 'size':'l', 'image': image},
             'tags':{'active_tags':[obj['id'],this.props.app_state.loc['2244']/* 'E5' */, this.props.app_state.loc['2245']/* 'Main' */, this.props.app_state.loc['361']/* 'Contract' */], 'index_option':'indexed'},
             
             'address': {'title':this.props.app_state.loc['2246']/* 'E5 Address:' */, 'details':address, 'size':'l'},
