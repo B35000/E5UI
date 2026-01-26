@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.736ba592.css",
-    "main.js": "/static/js/main.02094940.js",
+    "main.js": "/static/js/main.1cbb3b07.js",
     "static/js/231.de23fbad.chunk.js": "/static/js/231.de23fbad.chunk.js",
     "static/js/898.ba3f9bb9.chunk.js": "/static/js/898.ba3f9bb9.chunk.js",
     "static/js/386.9d146b60.chunk.js": "/static/js/386.9d146b60.chunk.js",
@@ -254,6 +254,7 @@
     "static/media/pick_image_file_button.png": "/static/media/pick_image_file_button.021d07044e2140a38aaf.png",
     "static/media/wallet_icon_orange.png": "/static/media/wallet_icon_orange.55933ed759e8d84def46.png",
     "static/media/pick_json_file_button.png": "/static/media/pick_json_file_button.fe4621bfeda0a171dc6d.png",
+    "static/media/notification_sound_pop.mp3": "/static/media/notification_sound_pop.21092dd722c984e02975.mp3",
     "static/media/repeat_icon_darkred.png": "/static/media/repeat_icon_darkred.1ab31614eb2e58f821af.png",
     "static/media/wallet_icon_darkblue.png": "/static/media/wallet_icon_darkblue.00335e81cec2f265fbe2.png",
     "static/media/wallet_icon_darkpink.png": "/static/media/wallet_icon_darkpink.b78c31ca491823966f08.png",
@@ -530,6 +531,6 @@
   },
   "entrypoints": [
     "static/css/main.736ba592.css",
-    "static/js/main.02094940.js"
+    "static/js/main.1cbb3b07.js"
   ]
 }
