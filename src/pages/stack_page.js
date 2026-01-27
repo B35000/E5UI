@@ -7706,6 +7706,7 @@ class StackPage extends Component {
         // var recipient_account = t.target_recipient
         console.log('object',t)
         var recipient_account = (await this.get_unique_crosschain_identifier_number(t.target_recipient, t, t.recipients_e5))
+        if(recipient_account == '') recipient_account = '1000';
         var context = this.props.app_state.selected_e5 == t.recipients_e5 ? 30 : 31
         var int_data = t.convo_id
 
@@ -14060,7 +14061,7 @@ class StackPage extends Component {
 
     render_users_contacts(){
         // var items = this.props.app_state.contacts[this.props.app_state.selected_e5];
-        var items = this.get_all_sorted_objects_mappings(this.props.app_state.contacts)
+        var items = this.get_all_sorted_objects(this.props.app_state.contacts)
         if(items == null){
             items = []
         }
@@ -14092,7 +14093,7 @@ class StackPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
-                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id'], item['e5']), 'details':''+item['address'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id'], item['e5']), 'details':''+item['address'], 'size':'l'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>

@@ -4663,7 +4663,10 @@ return data['data']
                     {this.render_item_data(items)}
                     {this.render_item_images()}
 
-                    {this.render_selected_links()}
+                    {this.render_pdf_files_if_any()}
+                    {this.render_zip_files_if_any()}
+
+                    {this.render_markdown_if_any()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}

@@ -692,6 +692,7 @@ import english from "./texts/english";
 import currencies from './resources/coins';
 import WorkerFactory from './WorkerFactory';
 import myWorker from './resources/encryptor_decryptor_worker';
+import notificationSound from './sounds/notification_sound_pop.mp3';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -1341,6 +1342,7 @@ class App extends Component {
     call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
     
     contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[], is_device_online: true,
+    last_notification_view_time: {'?':0, 'e':0, 'w':0}
   };
 
   get_thread_pool_size(){
@@ -3573,6 +3575,8 @@ class App extends Component {
     this.gateway_traffic_cache_pointers_index = 0
     this.is_resolving_alias_data = false;
 
+    this.notification_audio = new Audio(notificationSound);
+
     this.instantiate_webworkers()
   }
 
@@ -3981,7 +3985,8 @@ class App extends Component {
       page_background_setting: this.state.page_background_setting,
       socket_participated_objects: this.state.socket_participated_objects,
 
-      message_comment_fulfilment: this.state.message_comment_fulfilment
+      message_comment_fulfilment: this.state.message_comment_fulfilment,
+      last_notification_view_time: this.state.last_notification_view_time,
     }
   }
 
@@ -4196,6 +4201,7 @@ class App extends Component {
 
       var socket_participated_objects = state.socket_participated_objects || this.state.socket_participated_objects;
       var message_comment_fulfilment = state.message_comment_fulfilment || this.state.message_comment_fulfilment
+      var last_notification_view_time = state.last_notification_view_time || this.state.last_notification_view_time
 
       this.setState({
         theme: theme,
@@ -4279,6 +4285,7 @@ class App extends Component {
         page_background_setting: page_background_setting,
         socket_participated_objects: socket_participated_objects,
         message_comment_fulfilment: message_comment_fulfilment,
+        last_notification_view_time: last_notification_view_time,
       })
       var me = this;
       setTimeout(function() {
@@ -20793,7 +20800,11 @@ class App extends Component {
       //closing
       this.view_notification_log_bottomsheet = this.view_transaction_page.current?.state;
 
-      this.setState({view_notification_log_bottomsheet: !this.state.view_notification_log_bottomsheet});
+      const new_notification_time = this.state.has_wallet_been_set == true ? Date.now() : this.state.last_notification_view_time[this.new_notification_time_item];
+      const clone = structuredClone(this.state.last_notification_view_time);
+      clone[this.new_notification_time_item] = new_notification_time;
+
+      this.setState({view_notification_log_bottomsheet: !this.state.view_notification_log_bottomsheet, last_notification_view_time: clone});
       var me = this;
       setTimeout(function() {
         me.setState({view_notification_log_bottomsheet2: false});
@@ -20815,6 +20826,7 @@ class App extends Component {
   }
 
   show_view_notification_log_bottomsheet(item){
+    this.new_notification_time_item = item;
     this.open_view_notification_log_bottomsheet()
     var me = this;
     setTimeout(function() {
@@ -20875,6 +20887,9 @@ class App extends Component {
     }
     else if(event_type == 'signature'){
       this.load_specific_storefront_items(events, 'p2')
+    }
+    else if(event_type =='bill_request'){
+      this.load_bill_data([])
     }
     
 
@@ -22330,28 +22345,34 @@ class App extends Component {
 
   /* prompts an alert notification from the top */
   prompt_top_notification(data, duration, onClickData){
-      var os = getOS()
-      var id = "id"
-      if(os == 'iOS' && !this.state.syncronizing_page_bottomsheet) id = "id2";
-      // console.log('top_notification', 'showing', data, 'on id:', id)
-      var time = duration == null ? 1000: duration;
-      // data = 'toast item blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah '
-      // time = 1500000
-      if(toast.isActive(data)) return;
-      toast(this.render_toast_item(data, onClickData), {
-          position: "top-center",
-          autoClose: time,
-          closeButton: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          transition: Slide,
-          containerId:id,
-          toastId:data,
-          hideProgressBar: true,
-          style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:'auto'}
+    var os = getOS()
+    var id = "id"
+    if(os == 'iOS' && !this.state.syncronizing_page_bottomsheet) id = "id2";
+    // console.log('top_notification', 'showing', data, 'on id:', id)
+    var time = duration == null ? 1000: duration;
+    // data = 'toast item blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah '
+    // time = 1500000
+    if(toast.isActive(data)) return;
+
+    if(duration == 15023 || onClickData != null){
+      this.notification_audio.play().catch(error => {
+        console.error('Error playing sound:', error);
       });
+    }
+    toast(this.render_toast_item(data, onClickData), {
+        position: "top-center",
+        autoClose: time,
+        closeButton: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        transition: Slide,
+        containerId:id,
+        toastId:data,
+        hideProgressBar: true,
+        style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:'auto'}
+    });
   }
 
   /* renders the toast item used */
@@ -22615,58 +22636,60 @@ class App extends Component {
     
     this.did_just_set_wallet = true;
 
-    this.setState({
-      account_balance: {}, 
-      account_seed: seed, 
-      mail_message_events:{}, 
-      all_mail:{}, 
-      account_balance:{}, 
-      contacts:{}, 
-      blocked_accounts:{}, 
-      job_section_tags: [], 
-      explore_section_tags: [],  
-      my_albums: [], 
-      my_tracks: [], 
-      my_playlists:[], 
-      song_plays:{}, 
-      my_videoposts: [], 
-      my_videos: [], 
-      followed_accounts: primary_following, 
-      posts_blocked_by_me:[], 
-      posts_blocked_by_my_following:[], 
-      censored_keyword_phrases:[], 
-      censored_keywords_by_my_following:[], 
-      posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, 
-      posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]},
-      my_channels:[],
-      my_polls:[],
-      my_objects:[],
-      notification_object:{},
-      latest_file_renewal_time:{},
-      current_nitro_purchases:{},
-      hidden_audioposts:{},
-      hidden_videoposts:{},
-      all_my_pinns:{},
-      default_location_pins:[],
-      my_acquired_videos:[], 
-      my_acquired_audios:[]
-    });
+    if(this.state.has_wallet_been_set == true && this.state.account_seed != seed){
+      this.setState({
+        account_balance: {}, 
+        account_seed: seed, 
+        mail_message_events:{}, 
+        all_mail:{}, 
+        account_balance:{}, 
+        contacts:{}, 
+        blocked_accounts:{}, 
+        job_section_tags: [], 
+        explore_section_tags: [],  
+        my_albums: [], 
+        my_tracks: [], 
+        my_playlists:[], 
+        song_plays:{}, 
+        my_videoposts: [], 
+        my_videos: [], 
+        followed_accounts: primary_following, 
+        posts_blocked_by_me:[], 
+        posts_blocked_by_my_following:[], 
+        censored_keyword_phrases:[], 
+        censored_keywords_by_my_following:[], 
+        posts_reposted_by_me:{'audio':[], 'video':[], 'post':[]}, 
+        posts_reposted_by_my_following:{'audio':[], 'video':[], 'post':[]},
+        my_channels:[],
+        my_polls:[],
+        my_objects:[],
+        notification_object:{},
+        latest_file_renewal_time:{},
+        current_nitro_purchases:{},
+        hidden_audioposts:{},
+        hidden_videoposts:{},
+        all_my_pinns:{},
+        default_location_pins:[],
+        my_acquired_videos:[], 
+        my_acquired_audios:[]
+      });
 
-    this.get_blocked_accounts_data_e5_timestamp = 0
-    this.get_section_tags_data_e5_timestamp = 0
-    this.my_contacts_timestamp = 0
-    this.my_collection_timestamp = 0
-    this.my_followed_accounts_collection_timestamp = 0
-    this.my_loaded_plays_collection_timestamp = 0
-    this.my_playlists_timestamp = 0
-    this.my_channel_timestamp = 0
-    this.my_poll_timestamp = 0
-    this.my_object_timestamp = 0
-    this.my_hidden_objects_timestamp = 0
-    this.all_my_pinns_timestamp = 0
-    this.all_my_location_pinns_timestamp = 0
-    // Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
-    this.last_load_time = {};
+      this.get_blocked_accounts_data_e5_timestamp = 0
+      this.get_section_tags_data_e5_timestamp = 0
+      this.my_contacts_timestamp = 0
+      this.my_collection_timestamp = 0
+      this.my_followed_accounts_collection_timestamp = 0
+      this.my_loaded_plays_collection_timestamp = 0
+      this.my_playlists_timestamp = 0
+      this.my_channel_timestamp = 0
+      this.my_poll_timestamp = 0
+      this.my_object_timestamp = 0
+      this.my_hidden_objects_timestamp = 0
+      this.all_my_pinns_timestamp = 0
+      this.all_my_location_pinns_timestamp = 0
+      // Object.keys(this.alias_data).forEach(key => delete this.alias_data[key]);
+      this.last_load_time = {};
+    }
 
     await this.wait(400);
     if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0){
@@ -22706,6 +22729,7 @@ class App extends Component {
     var e5 = this.state.e5s['data'][0]
     var web3_url = this.get_web3_url_from_e5(e5)
     var account = this.get_account_from_seed(seed, web3_url)
+    // this.is_generated_address_different = this.state.has_wallet_been_set == true ? this.state.accounts['E25'].address == account.address : false;
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var focused_e5 = this.state.e5s['data'][i];
       _accounts[focused_e5] = {privateKey:account.privateKey, address: account.address}
@@ -24792,10 +24816,10 @@ class App extends Component {
       await this.start_get_accounts_for_specific_e5(is_synching, e5, should_skip_account_data, pre_launch_data)
     }
 
-    if(set_wallet == true){
-      await this.load_and_notify_flash()
-      await this.load_and_notify_flash2()
-    }
+    // if(set_wallet == true){
+    //   await this.load_and_notify_flash()
+    //   // await this.load_and_notify_flash2()
+    // }
   }
 
   start_get_accounts_wallet_data = async (is_syncing) => {
@@ -26053,6 +26077,12 @@ class App extends Component {
       this.inc_synch_progress()
     }
 
+    if(account != null && account > 1000){
+      if(e5 == 'E25'){
+        await this.load_and_notify_flash()
+      }
+    }
+
 
     if(pre_launch_data[e5] != null){
       const hash_data = pre_launch_return_data.hash_data || {}
@@ -26573,6 +26603,10 @@ class App extends Component {
         this.load_my_subscriptions(e5)
       }
 
+      if(e5 == 'E25'){
+        await this.load_and_notify_flash()
+      }
+
       const load_signature_data = async () => {
         this.setState({loading_open_socket_signature_request_response_data: true})
         const signature_request_target = 'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
@@ -27087,19 +27121,29 @@ class App extends Component {
         }
 
         if(time > this.my_contacts_timestamp){
-          this.setState({contacts: contacts})
+          var clone = structuredClone(this.state.contacts)
+          for(var i=0; i<this.state.e5s['data'].length; i++){
+            var focused_e5 = this.state.e5s['data'][i];
+            var existing_contacts = clone[focused_e5]
+            if(existing_contacts == null){
+              existing_contacts = []
+            }
+            clone[focused_e5] = this.combine_contacts(existing_contacts, contacts[focused_e5] || [])
+          }
+          if(!this.state.should_update_contacts_onchain) this.setState({contacts: clone})
           this.my_contacts_timestamp = time
         }
       }
-    }else{
-      var clone = structuredClone(this.state.contacts)
-      var existing_contacts = clone[e5]
-      if(existing_contacts == null){
-        existing_contacts = []
-      }
-      clone[e5] = this.combine_contacts(existing_contacts, [])
-      if(!this.state.should_update_contacts_onchain) this.setState({contacts: clone})
     }
+    // else{
+    //   var clone = structuredClone(this.state.contacts)
+    //   var existing_contacts = clone[e5]
+    //   if(existing_contacts == null){
+    //     existing_contacts = []
+    //   }
+    //   clone[e5] = this.combine_contacts(existing_contacts, [])
+    //   if(!this.state.should_update_contacts_onchain) this.setState({contacts: clone})
+    // }
   }
 
   decrypt_data = async (data) => {
@@ -31138,7 +31182,7 @@ class App extends Component {
   load_my_bills = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items) => {
     if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
     if(e5 == 'E25'){
-      this.get_objects_from_socket_and_set_in_state(['bill|'+this.state.accounts[this.state.selected_e5].address], [])
+      await this.get_objects_from_socket_and_set_in_state(['bill|'+this.state.accounts[this.state.selected_e5].address], [])
     }
     var created_bill_events = this.state.saved_pre_launch_events[e5] != null && this.state.created_bills[e5] == null ? this.state.saved_pre_launch_events[e5]['created_bill_events'] :  await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:13/* bills */, p1/* target_id */:account})
 
@@ -35129,18 +35173,31 @@ class App extends Component {
     const event_data = await this.get_all_notification_flash_event_fetch_objects()
     
     await this.load_and_notify_user_of_incoming_payments(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_mail(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_messages(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_proposals(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_job_applications(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_job_requests(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_job_application_responses(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_job_request_responses(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_entered_contracts(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_bag_application(event_data.return_object)
+    await this.wait(200)
     await this.load_and_nofity_user_of_incoming_bag_application_responses(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_storefront_direct_order(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_bills(event_data.return_object)
+    await this.wait(200)
     await this.load_and_notify_user_of_incoming_post_comments(event_data.return_object, event_data.id_object_data_object)
     await this.wait(3000)
     this.load_and_notify_flash_running = false;
@@ -35209,6 +35266,10 @@ class App extends Component {
     const prefetch_object = await prefetch_stuff()
 
     // console.log('get_all_notification_flash_event_fetch_objects', 'prefetch_object', prefetch_object)
+
+    const socket_job_application_events = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (72*7*24*60*60*1000), 'job_application')
+
+    const socket_bag_application_events = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (72*7*24*60*60*1000), 'bag_application')
 
     var all_queries = []
     var e5s_used = []
@@ -35298,20 +35359,21 @@ class App extends Component {
           return contractor_post_ids
         }
 
-        const get_incoming_jobs =  () => {
+        const get_incoming_jobs = () => {
           const pos = 2
           const x = (i*8) + pos
-          var my_created_job_respnse_data = prefetch_object[x]
+          var my_created_job_respnse_data = prefetch_object[x].concat(socket_job_application_events)
           // await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
 
           var job_object_ids = []
           my_created_job_respnse_data.forEach(event => {
-            var id = event.returnValues.p1/* target_id */
+            var id = event.returnValues.p1.toString()/* target_id */
             if(!job_object_ids.includes(id) && !all_bag_ids.includes(id)){
               job_object_ids.push(id)
             }
           });
 
+          console.log('get_incoming_jobs', 'job_object_ids', job_object_ids)
           return job_object_ids
         }
 
@@ -35352,7 +35414,7 @@ class App extends Component {
         const get_my_bag_application_responses =  () => {
           const pos = 5
           const x = (i*8) + pos
-          var my_created_job_respnse_data = prefetch_object[x]
+          var my_created_job_respnse_data = prefetch_object[x].concat(socket_bag_application_events)
           // await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:36})
 
           var bag_application_response_ids = []
@@ -35564,7 +35626,7 @@ class App extends Component {
     }
     var prompt = this.getLocale()['2738k']/* 'Incoming payments from $' */
     prompt = prompt.replace('$', senders.toString())
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_receipts','events':events, 'previous_events':previous_notifs})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_receipts','events':events, 'previous_events':previous_notifs})
   }
 
   async get_sender_title_text(account, e5){
@@ -35683,7 +35745,7 @@ class App extends Component {
     }
     var prompt = this.getLocale()['2738m']/* 'Incoming mail from $' */
     prompt = prompt.replace('$', senders.toString())
-    this.prompt_top_notification(prompt, 15000)
+    this.prompt_top_notification(prompt, 15023)
   }
 
 
@@ -35781,7 +35843,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738n']/* 'Incoming messages from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_incoming_message_mail_item(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'message', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'message', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
   load_specific_incoming_message_mail_item = async (events) => {
@@ -35918,7 +35980,7 @@ class App extends Component {
     }
     var prompt = this.getLocale()['2738o']/* 'Incoming proposals from $' */
     prompt = prompt.replace('$', senders.toString())
-    this.prompt_top_notification(prompt, 15000)
+    this.prompt_top_notification(prompt, 15023)
   }
 
   load_specific_notification_proposals(events){
@@ -36065,7 +36127,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738p']/* 'Incoming job applications from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_job_application_jobs(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
   load_specific_job_application_jobs = async (events) => {
@@ -36197,7 +36259,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738q']/* 'Incoming job requests from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_contractor_objects(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
   
 
@@ -36232,6 +36294,8 @@ class App extends Component {
         // });
 
         var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming job application response']
+
+        console.log('incoming_job_application_responses', 'all_received_on_chain_events', all_received_on_chain_events)
         // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:37}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
         all_unsorted_events[focused_e5] = all_received_on_chain_events
@@ -36255,11 +36319,10 @@ class App extends Component {
         all_unsorted_events[e5].forEach(event => {
           var event_block = event.returnValues.p7/* block_number */
           var event_emitter = event.returnValues.p2/* sender_acc_id */
+          event['e5'] = e5
           if(event_block > this.load_and_notify_user_times_job_application_responses[e5] && event_emitter != account){
-            event['e5'] = e5
             notifs.push(event)
           }
-          event['e5'] = e5
           event['p'] = event.returnValues.p1
           event['time'] = event.returnValues.p6
           event['block'] = event.returnValues.p7
@@ -36277,6 +36340,8 @@ class App extends Component {
       console.log('notifier', 'found one job application response to nofity', notifs)
       this.handle_job_application_response_notifications(notifs)
     }
+
+    console.log('incoming_job_application_responses', 'all_notifications', all_notifications)
 
     var clone = structuredClone(this.state.notification_object)
     clone['job_application_response'] = all_notifications.reverse()
@@ -36311,7 +36376,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738r']/* 'Youre applications for jobs posted by $ have been accepted.' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_job_application_jobs(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
 
@@ -36412,7 +36477,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738t']/* 'Incoming contractor job responses from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_contractor_objects(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
   load_specific_contractor_objects(events){
@@ -36526,7 +36591,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738u']/* '$ entered your contract' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_contract_objects(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'contract', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'contract', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
   load_specific_contract_objects(events){
@@ -36679,7 +36744,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738w']/* 'Incoming bag applications from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_bag_items(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'bag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'bag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
   load_specific_bag_items(events){
@@ -36808,7 +36873,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738ad']/* 'Youre applications for bags posted by $ have been accepted.' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_bag_items(events)
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'bag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'bag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
 
@@ -36944,9 +37009,11 @@ class App extends Component {
 
     const socket_notifications2 = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'signature_request')
 
-    socket_notifications2.forEach(event => {
-      this.set_signature_request_event_in_notifications2(event)
-    });
+    // socket_notifications2.forEach(event => {
+    //   this.set_signature_request_event_in_notifications2(event)
+    // });
+    this.set_events_in_notifications(socket_notifications2, 'signature')
+
     this.load_specific_storefront_items(socket_notifications2, 'p2')
   }
 
@@ -36985,7 +37052,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738x']/* 'Incoming storefront direct purchases from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_storefront_items(events, 'p3')
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'storefront', 'p':'p3', 'time':'p5','block':'p6', 'sender':'p1'})
   }
 
   async handle_incoming_storefront_auction_bid_notifications(events){
@@ -36998,7 +37065,7 @@ class App extends Component {
     var prompt = this.getLocale()['2738ak']/* 'Incoming storefront auction bids from $' */
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_storefront_items(events, 'p1')
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'auctionbids', 'p':'p1', 'time':'p6', 'block':'p7', 'sender':'p2'})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'auctionbids', 'p':'p1', 'time':'p6', 'block':'p7', 'sender':'p2'})
   }
 
   load_specific_storefront_items(events, p){
@@ -37104,6 +37171,9 @@ class App extends Component {
       this.handle_bill_request_notifications(notifs)
     }
 
+    const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'bill')
+    this.set_events_in_notifications(socket_notifications, 'bill_request')
+
     var clone = structuredClone(this.state.notification_object)
     clone['bill_request'] = all_notifications.reverse()
     this.setState({notification_object: clone})
@@ -37118,7 +37188,7 @@ class App extends Component {
     }
     var prompt = this.getLocale()['2738ag']/* 'Incoming bills from $' */
     prompt = prompt.replace('$', senders.toString())
-    this.prompt_top_notification(prompt, 15000)
+    this.prompt_top_notification(prompt, 15023)
   }
 
 
@@ -37151,8 +37221,6 @@ class App extends Component {
         var start = current_block_number == 0 ? 0 : current_block_number - difference
         if(start < 0) start = 0;
 
-        const ids = Object.values(id_object_data).flat()
-
         var all_received_on_chain_events = all_event_object_data[focused_e5]['comment responses']
         // await E52contractInstance.getPastEvents('e4', { filter: { p3/* context */: ids, p1/* target_id */: 17/* shadow_object_container */ }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
@@ -37174,6 +37242,13 @@ class App extends Component {
       this.load_and_notify_user_times_post_comment = {}
     }
 
+    const ids = []
+    Object.keys(id_object_data).forEach(focused_e5 => {
+      id_object_data[focused_e5].forEach(id => {
+        ids.push(id+focused_e5)
+      });
+    });
+    
     var notifs = []
     var all_notifications = []
     for(const e5 in all_unsorted_events){
@@ -37209,8 +37284,22 @@ class App extends Component {
       this.start_loading_objects_in_background(id_types_data_arrays)
     }
 
+    const socket_events = await this.get_existing_comment_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), ids);
+
+    this.set_events_in_notifications(socket_events, 'comment')
+
     var clone = structuredClone(this.state.notification_object)
     clone['comment'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+  }
+
+  set_events_in_notifications(events, object_name){
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone[object_name] == null ? [] : clone[object_name].slice()
+    events.forEach(event => {
+      request_clone_array.push(event)
+    });
+    clone[object_name] = this.sortByAttributeDescending(request_clone_array, 'time')
     this.setState({notification_object: clone})
   }
 
@@ -37296,7 +37385,7 @@ class App extends Component {
     }
     var prompt = and_more == true ? this.getLocale()['2738aj']/* 'Incoming comments from $ and more.' */ : this.getLocale()['2738ai']/* 'Incoming comments from $' */;
     prompt = prompt.replace('$', senders.toString())
-    this.prompt_top_notification(prompt, 15000, {'notification_id':'view_incoming_transactions','events':events, 'type':'comment', 'p':'p3', 'time':'p6','block':'p7', 'sender':'p2', 'id_types':id_types})
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'comment', 'p':'p3', 'time':'p6','block':'p7', 'sender':'p2', 'id_types':id_types})
   }
 
   start_loading_objects_in_background(id_types_data_arrays){
@@ -42960,7 +43049,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
         me.set_cookies()
-        me.prompt_top_notification(this.getLocale()['3055bj']/* 'Done' */, 1000)
+        // me.prompt_top_notification(me.getLocale()['3055bj']/* 'Done' */, 1000)
     }, (1 * 1000));
   }
 
@@ -48632,7 +48721,7 @@ class App extends Component {
 
 
 
-  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0) => {
+  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0, filter_authors=[]) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -48648,7 +48737,7 @@ class App extends Component {
       filter_end_time,/* the oldest entry to include */
       filter_start_time,/* the newest entry to include */
       filter_tags,
-      filter_authors:[],
+      filter_authors,
       filter_recipients:[],
       all_tags_present:[],
       channeling:'',
@@ -48697,6 +48786,31 @@ class App extends Component {
     }
   }
 
+  async get_existing_comment_socket_events(current_filter_start_time, current_filter_end_time, targets){
+    const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), [])
+    const target_data = socket_data
+    const events = []
+    if(target_data != null){
+      const entries = Object.keys(target_data)
+      for(var j=0; j<entries.length; j++){
+        const time_entry = entries[j]
+        const target_entries = Object.keys(target_data[time_entry])
+        for(var k=0; k<target_entries.length; k++){
+          const target_entry = target_entries[k]
+          const object_hashes = Object.keys(target_data[time_entry][target_entry])
+          for(var i=0; i<object_hashes.length; i++){
+            const object_hash = object_hashes[i]
+            const object_data = target_data[time_entry][target_entry][object_hash]
+            if(object_data['type'] == 'comment_message'){
+              events.push(this.process_new_socket_object_comment_event(object_data, object_hash))
+            }
+          }
+        }
+      }
+    }
+    return this.sortByAttributeDescending(events, 'time')
+  }
+
   async get_existing_mail_socket_events(current_filter_start_time, current_filter_end_time, type){
     const target_object = {
       'bag_application': 'bag_application|'+this.state.accounts[this.state.selected_e5].address,
@@ -48707,7 +48821,8 @@ class App extends Component {
       'mail-message': 'mail|'+this.state.accounts[this.state.selected_e5].address,
       'storefront_order':'storefront_order|'+this.state.accounts[this.state.selected_e5].address,
       'signature_request':'signature_request|'+this.state.accounts[this.state.selected_e5].address,
-      'open_signature_request':'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
+      'open_signature_request':'open_signature_request|'+this.state.accounts[this.state.selected_e5].address,
+      'bill': 'bill|'+this.state.accounts[this.state.selected_e5].address
     }
     const target = target_object[type]
     
@@ -48744,6 +48859,9 @@ class App extends Component {
               else if(type == 'signature_request' || type == 'open_signature_request'){
                 events.push(this.process_new_signature_request_event(object_data, object_hash))
               }
+              else if(type == 'bill'){
+                events.push(this.process_new_bill_event(object_data, object_hash))
+              }
               else{
                 events.push(this.process_new_mail_event(object_data, object_hash))
               }
@@ -48751,7 +48869,6 @@ class App extends Component {
           }
         }
       }
-      
     }
 
     return this.sortByAttributeDescending(events, 'time')
@@ -48840,6 +48957,31 @@ class App extends Component {
     event['type'] = 'signature'
     event['event_type'] = 'signature'
     event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'signature', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1'}
+
+    return event
+  }
+
+  process_new_socket_object_comment_event(message, object_hash){
+    const e5 = message.e5;
+    const id = message.id;
+    const sender_acc = message.author;
+    const convo_id = id;
+    const cid = object_hash;
+    const request_id = message.id+e5
+
+    const event = {returnValues:{p1:17, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'time':message.time, 'e5':e5, 'socket_object':true}
+
+    return event
+  }
+
+  process_new_bill_event(message, object_hash){
+    const e5 = message.e5;
+    const id = message.id;
+    const sender_acc = message.author
+    const convo_id = id;
+    const cid = object_hash;
+
+    const event = {returnValues:{p1: message.recipient, p2:sender_acc, p3:13, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'time':message.time, 'e5':e5, 'socket_object':true}
 
     return event
   }
@@ -49241,7 +49383,7 @@ class App extends Component {
       await this.set_caller_details_in_state(from, this.state.current_call_id, false)
     });
 
-    this.socket.on("user_left", ({userId, roomId}) => {
+    this.socket.on("user_left", async ({userId, roomId}) => {
       console.log('socket_stuff',`User ${userId} left`);
       const clone = this.state.peers.filter((p) => p.peerId !== userId);
       this.setState({ peers: clone });
@@ -49251,7 +49393,7 @@ class App extends Component {
       if(address_accounts.length > 0){
         const account = address_accounts[0]['id']
         const e5 = address_accounts[0]['e5'];
-        const alias = this.get_sender_title_text(account, e5)
+        const alias = await this.get_sender_title_text(account, e5)
         this.prompt_top_notification(this.getLocale()['3055iv']/* $ left the call. */.replace('$', alias), 2300)
       }
     });

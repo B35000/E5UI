@@ -2972,7 +2972,7 @@ return data['data']
                 <div style={{overflow: 'auto'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
-                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                            <div style={{'margin':'3px 2px 3px 2px'}}>
                                 {this.render_object_item(item, index)}
                             </div>
                         ))}
@@ -3077,7 +3077,11 @@ return data['data']
             items = this.props.app_state.my_proposals[e5]
         }
         else if(type == 'bill'){
+            const socket_bills = this.props.app_state.socket_created_bills[e5]
             items = this.props.app_state.created_bills[e5]
+            if(items != null && socket_bills != null){
+                items = items.concat(socket_bills)
+            }
         }
         else if(type == 'comment'){
             const id_type = event['id_type']
@@ -9252,7 +9256,7 @@ return data['data']
         
         const formatted_call_id = this.state.call_password != '' ? 'e'+this.format_voice_call_id(this.state.new_voice_call_number_id) : this.format_voice_call_id(this.state.new_voice_call_number_id)
 
-        const button_message = this.props.app_state.stream == null ? this.props.app_state.loc['3055it']/* Turn On Mic */ : this.props.app_state.loc['3055ic']/* 'Enter Call.' */
+        const button_message = this.props.app_state.stream == null ? this.props.app_state.loc['3055it']/* 'Microphone 🎙️' */ : this.props.app_state.loc['3055ic']/* 'Enter Call.' */
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055hp']/* 'Start An Indexer Call' */, 'details':this.props.app_state.loc['3055hq']/* 'Specify the accounts you wish to start a voice call with. */, 'size':'l'})}
@@ -9544,7 +9548,7 @@ return data['data']
 
     render_enter_voice_call_data(){
         const call_invite_obj = this.state.data['message']
-        const button_message = this.props.app_state.stream == null ? this.props.app_state.loc['3055it']/* Turn On Mic */ : this.props.app_state.loc['3055ic']/* 'Enter Call.' */
+        const button_message = this.props.app_state.stream == null ? this.props.app_state.loc['3055it']/* 'Microphone 🎙️' */ : this.props.app_state.loc['3055ic']/* 'Enter Call.' */
         if(call_invite_obj == null){
             return(
                 <div>

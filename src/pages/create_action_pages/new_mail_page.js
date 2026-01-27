@@ -2367,7 +2367,7 @@ return data['data']
     }
 
     when_suggestion_clicked(item){
-        this.setState({target_recipient: item['details']})
+        this.setState({target_recipient: item['label']['details']})
     }
 
 
@@ -2424,8 +2424,7 @@ return data['data']
         if(isNaN(recipient)){
             var recipients_e5 = await this.get_recipient_e5(recipient)
             recipient = await this.get_recipient_id(recipient)
-            console.log('recipients e5', recipients_e5)
-            this.setState({target_recipient: recipient, recipients_e5: recipients_e5})
+            this.setState({target_recipient: recipient.toString(), recipients_e5: recipients_e5})
         }
 
         if(index_tags.length < 1){
@@ -2440,7 +2439,7 @@ return data['data']
         // else if(recipients.length == 0){
         //     this.props.notify('set at least one recipient', 700)
         // }
-        else if(isNaN(recipient) || parseInt(recipient) < 1000 || recipient == '' || recipient.includes('.')){
+        else if(isNaN(recipient) || parseInt(recipient) < 1000 || recipient == '' || recipient.toString().includes('.')){
             this.props.notify(this.props.app_state.loc['296'], 2700)
         }
         else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){

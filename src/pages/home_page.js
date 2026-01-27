@@ -742,26 +742,199 @@ class home_page extends Component {
     }
 
 
+    // render_navbar_button_group(size){
+    //     var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
+    //     if(size == 'm'){
+    //       return ( 
+    //           <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
+    //                 <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
+    //                     {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+    //                 </div>
+
+    //                 <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+    //                     {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+    //                 </div>
+
+    //                 <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+    //                     {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+    //                 </div>
+                    
+    //                 <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+    //                     {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+    //                 </div>
+    //           </div>
+    //       );
+    //     }
+    //     else if(size == 's'){
+    //       return(
+    //         <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:'103%'}}>
+    //               <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
+    //                   {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+    //               </div>
+
+    //               <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+    //                   {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['ExploreIcon'], 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+    //               </div>
+
+    //               <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+    //                 {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '42px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                      
+    //               </div>
+
+    //               <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+    //                 {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['StackIcon'], 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+    //               </div>
+    //           </div>
+    //       );
+    //     }
+    //     else if(size == 'l' || size == 'xl'){
+    //         return ( 
+    //             <div style={{height: '100%', width:'100%', padding:'5px 0px 0px 0px'}}>
+    //               <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': line_margin}}/>
+    //               <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('?'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
+    //                   {this.render_navbar_button('s', '1px 0px 10px 6px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)} 
+    //               </div>
+                
+
+    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
+    //               <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('e'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+    //                   {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['ExploreIcon'], 'auto', '50px','5px 11px 0px 10px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                      
+    //               </div>
+                
+
+    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
+    //               <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+    //                 {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 4px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+    //               </div>
+                
+
+    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '10px 12px '+(this.props.height-460)+'px 0px'}} />
+    //                 <div style={{'background-color':'transparent', padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+    //                     {this.render_navbar_button('s', '0px 0px 0px 9px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+    //                 </div>
+    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '0px 12px 5px 0px'}}/>
+    //             </div>  
+    //         );
+    //     }
+    // }
+
+    // /* returns if button selected is highlighted */
+    // get_navbar_normal_or_highlighted_button_background(val){
+    //     var color = 'transparent';
+    //     if(val == this.state.page){
+    //         color = this.props.theme['navbar_button_selected_color'];
+    //     }
+    //     return color;
+    // }
+
+    // get_navbar_line_margin_percentage(){
+    //     var page = this.state.page
+    //     if(page == '?'){
+    //         return '80%'
+    //     }
+    //     else if(page == 'e'){
+    //         return '55%'
+    //     }
+    //     else return '25%'
+    // }
+
+    // /* called when a bottom navbar item has been clicked */
+    // when_bottom_navbar_button_clicked(item){
+    //     if(item == 's'){
+    //         console.log('stack item clicked');
+    //         this.open_view_stack_bottomsheet();
+    //     }
+    //     else {
+    //         // let me = this;
+    //         // if(Date.now() - this.last_all_click_time2 < 200){
+    //         //     clearTimeout(this.all_timeout);
+    //         //     //double tap
+    //         //     me.props.show_view_notification_log_bottomsheet(item)
+    //         // }else{
+    //         //     this.all_timeout = setTimeout(function() {
+    //         //         clearTimeout(this.all_timeout);
+    //         //         // single tap
+    //         //         me.normal_bottom_navbar_item_click(item)
+    //         //     }, 200);
+    //         // }
+    //         // this.last_all_click_time2 = Date.now();
+            
+    //         if(this.state.page == item){
+    //             this.props.show_view_notification_log_bottomsheet(item)
+    //         }else{
+    //             this.normal_bottom_navbar_item_click(item)
+    //         }
+    //     }
+    // }
+
+    // normal_bottom_navbar_item_click(item){
+    //     this.setState({page: item});
+    //     var me = this;
+    //     setTimeout(function() {
+    //         me.update_scroll_position()
+    //     }, (1 * 10));
+    // }
+
+    // render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
+    //     var navbar_button_text_color = this.props.theme['primary_navbar_text_color']
+    //     var navbar_button_secondary_text = this.props.theme['secondary_navbar_text_color']
+    //     if(icontype == 's' || icontype == 'xs'){
+    //         return(
+    //             <AnimatePresence initial={true}>
+    //                 <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+    //                     <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
+    //                         <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
+
+    //                         <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p>
+
+    //                         <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
+    //                     </div>
+    //                 </motion.div>
+    //             </AnimatePresence>
+    //         )
+    //     }else{
+    //         return(
+    //             <AnimatePresence initial={true}>
+    //                 <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+    //                     <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
+    //                         <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
+    //                             <div style={{height:'7%', width:'100%'}}>
+    //                                 <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
+    //                             </div>
+    //                         </div>
+    //                         <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
+    //                             <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
+    //                                 <p style={{'font-size': '15px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p> 
+    //                                 <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
+    //                             </div>
+    //                         </div>
+    //                     </div> 
+    //                 </motion.div>
+    //             </AnimatePresence>
+    //         )
+    //     }
+    // }
+
     render_navbar_button_group(size){
-        //#545454 - highlight color
         var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
         if(size == 'm'){
           return ( 
               <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
-                    <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
-                        {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+                    <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px', position: 'relative'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
+                        {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
                     </div>
 
-                    <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                        {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                    <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+                        {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */, this.get_notification_count('e'))}
                     </div>
 
-                    <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                        {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                    <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+                        {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
                     </div>
                     
-                    <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                        {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    <div className="col" style={{'padding':'5px 0px 0px 30px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+                        {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */, this.get_notification_count('s'))}
                     </div>
               </div>
           );
@@ -769,21 +942,21 @@ class home_page extends Component {
         else if(size == 's'){
           return(
             <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:'103%'}}>
-                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
+                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
                   </div>
 
-                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['ExploreIcon'], 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['ExploreIcon'], 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */, this.get_notification_count('e'))}
                   </div>
 
-                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '42px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '42px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
                       
                   </div>
 
-                  <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['StackIcon'], 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                  <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['StackIcon'], 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */, this.get_notification_count('s'))}
                   </div>
               </div>
           );
@@ -792,27 +965,27 @@ class home_page extends Component {
             return ( 
                 <div style={{height: '100%', width:'100%', padding:'5px 0px 0px 0px'}}>
                   <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': line_margin}}/>
-                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('?'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('s', '1px 0px 10px 6px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)} 
+                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('?'), padding:'0px 5px 0px 0px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
+                      {this.render_navbar_button('s', '1px 0px 10px 6px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))} 
                   </div>
                 
 
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
-                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('e'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                      {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['ExploreIcon'], 'auto', '50px','5px 11px 0px 10px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('e'), padding:'0px 5px 0px 0px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+                      {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['ExploreIcon'], 'auto', '50px','5px 11px 0px 10px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */, this.get_notification_count('e'))}
                       
                   </div>
                 
 
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
-                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 4px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+                    {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 4px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
                   </div>
                 
 
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '10px 12px '+(this.props.height-460)+'px 0px'}} />
-                    <div style={{'background-color':'transparent', padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                        {this.render_navbar_button('s', '0px 0px 0px 9px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    <div style={{'background-color':'transparent', padding:'0px 5px 0px 0px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+                        {this.render_navbar_button('s', '0px 0px 0px 9px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */, this.get_notification_count('s'))}
                     </div>
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '0px 12px 5px 0px'}}/>
                 </div>  
@@ -822,7 +995,7 @@ class home_page extends Component {
 
     /* returns if button selected is highlighted */
     get_navbar_normal_or_highlighted_button_background(val){
-      var color = 'transparent';
+        var color = 'transparent';
         if(val == this.state.page){
             color = this.props.theme['navbar_button_selected_color'];
         }
@@ -840,28 +1013,145 @@ class home_page extends Component {
         else return '25%'
     }
 
+    /* Get notification count for a specific page */
+    get_notification_count(page){
+        // Replace this with your actual notification logic
+        // For example, you might have notifications stored in state or props
+        // return 35;
+        
+        var count = 0;
+        switch(page){
+            case '?':
+                count = this.get_all_work_notification_items([]).length || 0;
+                break;
+            case 'e':
+                count = this.get_all_explore_notification_items([]).length || 0;
+                break;
+            case 'w':
+                count = this.get_all_wallet_notification_items([]).length || 0;
+                break;
+            default:
+                count = 0;
+        }
+        return count;
+    }
+
+    get_all_work_notification_items(types){
+        const notification_object = this.props.app_state.notification_object
+        const mail = notification_object['mail'] == null ? [] : notification_object['mail']
+        const message = notification_object['message'] == null ? [] : notification_object['message']
+        const proposal = notification_object['proposal'] == null ? [] : notification_object['proposal']
+        const job_application = notification_object['job_application'] == null ? [] : notification_object['job_application']
+        const job_request = notification_object['job_request'] == null ? [] : notification_object['job_request']
+        const job_application_response = notification_object['job_application_response'] == null ? [] : notification_object['job_application_response']
+        const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
+        const contract = notification_object['contract'] == null ? [] : notification_object['contract']
+        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+        
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment)
+
+        const me = this;
+        const filtered_events = all_events.filter(function (event) {
+            return (types.includes(event['event_type']) || types.length == 0) && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['?'] / 1000)
+        });
+
+        return this.sortByAttributeDescending(filtered_events, 'time')
+    }
+
+    get_all_explore_notification_items(types){
+        const notification_object = this.props.app_state.notification_object
+        const bag = notification_object['bag'] == null ? [] : notification_object['bag']
+        const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
+        const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
+        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+        const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
+        
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment)
+
+        const me = this
+        const filtered_events = all_events.filter(function (event) {
+            return (types.includes(event['event_type'])  || types.length == 0)  && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['e'] / 1000)
+        });
+
+        return this.sortByAttributeDescending(filtered_events, 'time')
+    }
+
+    get_all_wallet_notification_items(types){
+        const notification_object = this.props.app_state.notification_object
+        const token = notification_object['token'] == null ? [] : notification_object['token']
+        const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
+        const signature = notification_object['signature'] == null ? [] : notification_object['signature']
+        
+        
+        const all_events = token.concat(bill_request, signature)
+        const me = this;
+        const filtered_events = all_events.filter(function (event) {
+            return (types.includes(event['event_type'])  || types.length == 0)  && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['w'] / 1000)
+        });
+
+        return this.sortByAttributeDescending(filtered_events, 'time')
+    }
+
+    /* Render notification badge */
+    render_notification_badge(count, size){
+        if(!count || count === 0) return null;
+        // if(this.props.app_state.opened_bottomsheets.length != 0) return;
+
+        const icontype = this.props.screensize
+        
+        const badge_sizes = {'xs':'21px', 's':'21px', 'm':'23px', 'l':'23px', 'xl':'23px'}
+        var badge_size = badge_sizes[icontype]
+        
+        const font_sizes = {'xs':'12px', 's':'12px', 'm':'13px', 'l':'13px', 'xl':'13px'}
+        var font_size = font_sizes[icontype]
+
+        const tops = {'xs':'0px', 's':'0px', 'm':'3px', 'l':'0px', 'xl':'0px'}
+        var position_top = tops[icontype]
+
+        // const rights = {'xs':'30px', 's':'30px', 'm':'50px', 'l':'-3px', 'xl':'-3px'}
+        const rights = {'xs':'23%', 's':'23%', 'm':'24%', 'l':'-3px', 'xl':'-3px'}
+        var position_right = rights[icontype]
+        
+        // Format count display (show 99+ for counts over 99)
+        var display_count = count > 99 ? '99+' : count.toString();
+        
+        return(
+            <div style={{
+                position: 'absolute',
+                top: position_top,
+                right: position_right,
+                backgroundColor: this.props.theme['tag_text_color'],
+                color: this.props.theme['indexed_tag_background'],
+                borderRadius: '9px',
+                minWidth: badge_size,
+                height: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: font_size,
+                fontWeight: 'bold',
+                fontFamily: this.props.app_state.font,
+                padding: count > 9 ? '0px 3px 0px 3px' : '0px 6px 0px 6px',
+                'box-shadow': '0px 0px 1px 2px '+this.props.theme['tag_text_color'],
+                zIndex: 3
+            }}>
+                {display_count}
+            </div>
+        );
+    }
+
     /* called when a bottom navbar item has been clicked */
     when_bottom_navbar_button_clicked(item){
         if(item == 's'){
             console.log('stack item clicked');
             this.open_view_stack_bottomsheet();
         }
-        else {
-            let me = this;
-            if(Date.now() - this.last_all_click_time2 < 200){
-                clearTimeout(this.all_timeout);
-                //double tap
-                me.props.show_view_notification_log_bottomsheet(item)
+        else {            
+            if(this.state.page == item){
+                this.props.show_view_notification_log_bottomsheet(item)
             }else{
-                this.all_timeout = setTimeout(function() {
-                    clearTimeout(this.all_timeout);
-                    // single tap
-                    me.normal_bottom_navbar_item_click(item)
-                }, 200);
+                this.normal_bottom_navbar_item_click(item)
             }
-            this.last_all_click_time2 = Date.now();
-            
-            
         }
     }
 
@@ -873,13 +1163,14 @@ class home_page extends Component {
         }, (1 * 10));
     }
 
-    render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
+    render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs, notification_count){
         var navbar_button_text_color = this.props.theme['primary_navbar_text_color']
         var navbar_button_secondary_text = this.props.theme['secondary_navbar_text_color']
         if(icontype == 's' || icontype == 'xs'){
             return(
                 <AnimatePresence initial={true}>
-                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{position: 'relative'}}>
+                        {this.render_notification_badge(notification_count, icontype)}
                         <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
                             <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
 
@@ -893,7 +1184,8 @@ class home_page extends Component {
         }else{
             return(
                 <AnimatePresence initial={true}>
-                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{position: 'relative'}}>
+                        {this.render_notification_badge(notification_count, icontype)}
                         <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
                             <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
                                 <div style={{height:'7%', width:'100%'}}>

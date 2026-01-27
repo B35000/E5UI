@@ -264,9 +264,32 @@ class ViewNotificationLogPage extends Component {
         }
     }
 
+    append_divider_between_old_notifications_and_new_ones(items){
+        if(items.length == 0) return [];
+        const last_login_time = this.props.app_state.last_notification_view_time[this.state.data]
+        const newElement = 'e';
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        const sorted_items = items
+        sorted_items.forEach((obj, i) => {
+            const diff = Math.abs(obj['time'] - last_login_time);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIndex = i;
+            }
+        });
+        if(closestIndex == 0){
+            return sorted_items
+        }
+        const clone = items.slice()
+        clone.splice(closestIndex + 1, 0, newElement);
+        return clone;
+    }
+
 
     render_work_notifications(type){
-        var items = this.get_all_work_notification_items(type)
+        var items = this.append_divider_between_old_notifications_and_new_ones(this.get_all_work_notification_items(type))
+
         if(items.length == 0){
             return(
                 <div>
@@ -281,7 +304,7 @@ class ViewNotificationLogPage extends Component {
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
                     <Virtuoso
-                        style={{ height: this.props.height-127 }}
+                        style={{ height: this.props.height-230 }}
                         totalCount={items.length}
                         itemContent={(index) => {
                             const item = items[index];
@@ -312,6 +335,13 @@ class ViewNotificationLogPage extends Component {
     }
 
     render_work_notification_item(item, index){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['3067ae']/* older */})}
+                </div>
+            )
+        }
         const obj = {
             'mail':this.props.app_state.loc['3067j'],/* '📬 You received new mail from $' */
             'message':this.props.app_state.loc['3067k'],/* '📧 You received a new message from $' */
@@ -349,6 +379,9 @@ class ViewNotificationLogPage extends Component {
         const job_application = notification_object['job_application'] == null ? [] : notification_object['job_application']
         const job_request = notification_object['job_request'] == null ? [] : notification_object['job_request']
         const job_application_response = notification_object['job_application_response'] == null ? [] : notification_object['job_application_response']
+        
+        // console.log('get_all_work_notifications', 'job_application_response', job_application_response, notification_object['job_application_response'])
+        
         const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
         const contract = notification_object['contract'] == null ? [] : notification_object['contract']
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
@@ -393,7 +426,7 @@ class ViewNotificationLogPage extends Component {
 
 
     render_explore_notifications(type){
-        var items = this.get_all_explore_notification_items(type)
+        var items = this.append_divider_between_old_notifications_and_new_ones(this.get_all_explore_notification_items(type))
         if(items.length == 0){
             return(
                 <div>
@@ -408,7 +441,7 @@ class ViewNotificationLogPage extends Component {
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
                     <Virtuoso
-                        style={{ height: this.props.height-127 }}
+                        style={{ height: this.props.height-230 }}
                         totalCount={items.length}
                         itemContent={(index) => {
                             const item = items[index];
@@ -439,6 +472,13 @@ class ViewNotificationLogPage extends Component {
     }
 
     render_explore_notification_item(item, index){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['3067ae']/* older */})}
+                </div>
+            )
+        }
         const obj = {
             'bag':this.props.app_state.loc['3067r'],/* '🛍️ $ applied to fulfil one of your bags.' */
             'bag_application_response':this.props.app_state.loc['3067s'],/* '📥 $ accepted your bag application.' */
@@ -483,7 +523,7 @@ class ViewNotificationLogPage extends Component {
 
 
     render_wallet_data(types){
-        var items = this.get_all_wallet_notification_items(types)
+        var items = this.append_divider_between_old_notifications_and_new_ones(this.get_all_wallet_notification_items(types))
         if(items.length == 0){
             return(
                 <div>
@@ -498,7 +538,7 @@ class ViewNotificationLogPage extends Component {
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Your notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
                     <div style={{height:10}}/>
                     <Virtuoso
-                        style={{ height: this.props.height-127 }}
+                        style={{ height: this.props.height-230 }}
                         totalCount={items.length}
                         itemContent={(index) => {
                             const item = items[index];
@@ -529,6 +569,13 @@ class ViewNotificationLogPage extends Component {
     }
 
     render_token_notification_item(item, index){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['3067ae']/* older */})}
+                </div>
+            )
+        }
         if(item['event_type'] == 'token'){
             var sender = item.returnValues.p2
             var amount = item.returnValues.p4

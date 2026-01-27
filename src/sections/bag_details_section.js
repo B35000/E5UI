@@ -315,7 +315,7 @@ class BagDetailsSection extends Component {
         const responses = this.props.app_state.job_responses[object['id']] == null ? 0 : this.props.app_state.job_responses[object['id']].length
 
         return(
-            <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'scroll', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
 

@@ -211,9 +211,10 @@ class HomepageSideBar extends Component {
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
         
         const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment)
-
+        
+        const me = this;
         const filtered_events = all_events.filter(function (event) {
-            return (types.includes(event['event_type'])  || types.length == 0)
+            return (types.includes(event['event_type'])  || types.length == 0) && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['?'] / 1000)
         });
 
         return this.sortByAttributeDescending(filtered_events, 'time')
@@ -228,9 +229,10 @@ class HomepageSideBar extends Component {
         const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
         
         const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment)
-
+        
+        const me = this;
         const filtered_events = all_events.filter(function (event) {
-            return (types.includes(event['event_type'])  || types.length == 0)
+            return (types.includes(event['event_type'])  || types.length == 0) && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['e'] / 1000)
         });
 
         return this.sortByAttributeDescending(filtered_events, 'time')
@@ -242,11 +244,11 @@ class HomepageSideBar extends Component {
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         
-        
         const all_events = token.concat(bill_request, signature)
-
+        
+        const me = this;
         const filtered_events = all_events.filter(function (event) {
-            return (types.includes(event['event_type'])  || types.length == 0)
+            return (types.includes(event['event_type'])  || types.length == 0)  && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['w'] / 1000)
         });
 
         return this.sortByAttributeDescending(filtered_events, 'time')
