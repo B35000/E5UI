@@ -67,7 +67,7 @@ class PostListSection extends Component {
         direction:'positive',
         typed_search_coin_id:'',
         screen_width:0,
-        current_load_time:{},
+        current_load_time:this.props.current_load_time,
     };
 
 
@@ -760,6 +760,7 @@ class PostListSection extends Component {
             const clone = structuredClone(this.state.current_load_time)
             clone[page_id] = Date.now()/1000
             this.setState({current_load_time:clone})
+            this.props.set_page_refresh_feed_tapped_data(clone)
         }else{
             const current_pages_load_time = this.state.current_load_time[page_id]
             var new_objects = objects.filter(function (object) {
@@ -783,6 +784,7 @@ class PostListSection extends Component {
         const clone = structuredClone(this.state.current_load_time)
         clone[page_id] = Date.now()/1000
         this.setState({current_load_time:clone})
+        this.props.set_page_refresh_feed_tapped_data(clone)
     }
 
     get_section_name(){

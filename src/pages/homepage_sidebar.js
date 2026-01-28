@@ -209,8 +209,10 @@ class HomepageSideBar extends Component {
         const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
         const contract = notification_object['contract'] == null ? [] : notification_object['contract']
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+
+        const follower_job = notification_object['follower_job'] || [];
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {
@@ -227,8 +229,14 @@ class HomepageSideBar extends Component {
         const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
         const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
+
+        const follower_post = notification_object['follower_post'] || [];
+        const follower_audio = notification_object['follower_audio'] || [];
+        const follower_video = notification_object['follower_video'] || [];
+        const follower_poll = notification_object['follower_poll'] || [];
+        const follower_bag = notification_object['follower_bag'] || [];
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {
@@ -486,7 +494,7 @@ class HomepageSideBar extends Component {
 
     get_my_balances(){
         var e5s = this.props.app_state.e5s['data']
-        var selected_e5s = []
+        const selected_e5s = []
         for(var i=0; i<e5s.length; i++){
             var focused_e5 = e5s[i]
             var balance = this.props.app_state.account_balance[focused_e5]

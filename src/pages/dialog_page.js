@@ -3067,7 +3067,11 @@ return data['data']
             items = this.props.app_state.created_contractors[e5]
         }
         else if(type == 'job'){
+            const socket_jobs = this.props.app_state.socket_created_jobs[e5]
             items = this.props.app_state.created_jobs[e5]
+            if(items != null && socket_jobs != null){
+                items = items.concat(socket_jobs)
+            }
         }
         else if(type == 'message'){
             items = this.get_all_mail()
@@ -3086,6 +3090,8 @@ return data['data']
         else if(type == 'comment'){
             const id_type = event['id_type']
             e5 = event['target_e5'] == null ? e5 : event['target_e5']
+            const socket_jobs = this.props.app_state.socket_created_jobs[e5]
+            const socket_posts = this.props.app_state.socket_created_posts[e5]
             const dir = {
                 17/* 17(job object) */:this.props.app_state.created_jobs[e5], 
                 18/* 18(post object) */:this.props.app_state.created_posts[e5], 
@@ -3098,11 +3104,34 @@ return data['data']
                 36/* 36(type_channel_target) */:this.props.app_state.created_channels[e5],
             }
             items = dir[id_type];
+            if(items != null && socket_jobs != null && id_type == 17/* 17(job object) */){
+                items = items.concat(socket_jobs)
+            }
+            else if(items != null && socket_posts != null && id_type == 18/* 18(post object) */){
+                items = items.concat(socket_posts)
+            }
         }
-        console.log('when_event_clicked', items)
+        else if(type == 'post'){
+            const socket_posts = this.props.app_state.socket_created_posts[e5]
+            items = this.props.app_state.created_posts[e5]
+            if(items != null && socket_posts != null){
+                items = items.concat(socket_posts)
+            }
+        }
+        else if(type == 'audio'){
+            items = this.props.app_state.created_audios[e5]
+        }
+        else if(type == 'video'){
+            items = this.props.app_state.created_videos[e5]
+        }
+        else if(type == 'poll'){
+            items = this.props.app_state.created_polls[e5]
+        }
+
+        console.log('when_event_clicked', id, type, items)
         if(items == null) items = [];
 
-        return items.find(e => e['id'] === id)
+        return items.find(e => e['id'] == id)
     }
 
     get_all_mail(){

@@ -187,7 +187,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593kn']/* 'calls ☎️' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */, this.props.app_state.loc['1593d']/* 'notifications 🔔' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' */, this.props.app_state.loc['1593kn']/* 'calls ☎️' */, this.props.app_state.loc['1593ba']/* 'storage 💾' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳'' */, /* this.props.app_state.loc['1593d'] *//* 'notifications 🔔' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -13458,7 +13458,7 @@ class StackPage extends Component {
 
     get_my_balances(){
         var e5s = this.props.app_state.e5s['data']
-        var selected_e5s = []
+        const selected_e5s = []
         for(var i=0; i<e5s.length; i++){
             var focused_e5 = e5s[i]
             var balance = this.props.app_state.account_balance[focused_e5]

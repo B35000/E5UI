@@ -124,7 +124,7 @@ class tags extends Component {
                         <AnimatePresence initial={true}>
                             {active_tags.map((item, index) => (
                                 <motion.li key={'tag'+item+index} initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
-                                    {this.render_tag_button(index,selected,item,tag_size)}
+                                    {this.render_tag_button(index,selected,item,tag_size, this.getBadgeCount(item, index))}
                                 </motion.li>
                             ))}
                         </AnimatePresence>
@@ -133,10 +133,72 @@ class tags extends Component {
         );
     }
 
+    getBadgeCount(item, index) {
+        // return 35;
+        return null;
+    }
 
-    /* renders the tag button item */
-    render_tag_button(index, selected, text, tag_size){
-        var background = this.props.theme['tag_background_color'];//#444444,  #5B5B5B
+    // /* renders the tag button item */
+    // render_tag_button(index, selected, text, tag_size){
+    //     var background = this.props.theme['tag_background_color'];
+    //     var txt = text+'';
+    //     if(txt.startsWith('a.') || txt.startsWith('e.')|| txt.startsWith('v.')){
+    //         background = this.props.theme['indexed_tag_background'];
+    //     }
+
+    //     if(index == 0){
+    //         background = 'black';
+    //     }
+    //     if(selected != null){
+    //         if(selected == index){
+    //             background = 'black';
+    //         }
+    //     }
+
+    //     var font = this.props.font
+    //     const final_text = this.final_text(txt,index)
+    //     if(tag_size == 's'){
+    //         return (
+    //             <div>
+    //                 <style>{`
+    //                     .button-click {
+    //                         animation: clickAnim 0.3s ease;
+    //                     }
+    //                     @keyframes clickAnim {
+    //                         0%   { transform: scale(1); }
+    //                         50%  { transform: scale(0.85); }
+    //                         100% { transform: scale(1); }
+    //                     }
+    //                 `}</style>
+    //                 <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
+    //                     <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
+    //                 </div>
+    //             </div>
+    //         );
+    //     }else{
+    //         return (
+    //             <div>
+    //                 <style>{`
+    //                     .button-click {
+    //                         animation: clickAnim 0.2s ease;
+    //                     }
+    //                     @keyframes clickAnim {
+    //                         0%   { transform: scale(1); }
+    //                         50%  { transform: scale(0.85); }
+    //                         100% { transform: scale(1); }
+    //                     }
+    //                 `}</style>
+    //                 <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
+    //                     <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
+    //                 </div>
+    //             </div>
+    //         );
+    //     }
+    // }
+
+    /* renders the tag button item with optional notification badge */
+    render_tag_button(index, selected, text, tag_size, badgeCount = null){
+        var background = this.props.theme['tag_background_color'];
         var txt = text+'';
         if(txt.startsWith('a.') || txt.startsWith('e.')|| txt.startsWith('v.')){
             background = this.props.theme['indexed_tag_background'];
@@ -153,9 +215,29 @@ class tags extends Component {
 
         var font = this.props.font
         const final_text = this.final_text(txt,index)
+        
+        // Badge styles
+        const badgeStyle = {
+            position: 'absolute',
+            top: '-4px',
+            right: '-6px',
+            backgroundColor: this.props.theme['tag_text_color'],
+            color: this.props.theme['indexed_tag_background'],
+            borderRadius: '10px',
+            minWidth: '20px',
+            height: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            padding: '0 5px',
+            boxShadow: '0px 0px 1px 1px '+this.props.theme['tag_text_color'],
+        };
+        
         if(tag_size == 's'){
             return (
-                <div>
+                <div style={{position: 'relative', display: 'inline-block'}}>
                     <style>{`
                         .button-click {
                             animation: clickAnim 0.3s ease;
@@ -166,14 +248,19 @@ class tags extends Component {
                             100% { transform: scale(1); }
                         }
                     `}</style>
-                    <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
+                    <div style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
                         <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
+                    {badgeCount && badgeCount > 0 && (
+                        <div style={badgeStyle}>
+                            {badgeCount > 99 ? '99+' : badgeCount}
+                        </div>
+                    )}
                 </div>
             );
         }else{
             return (
-                <div>
+                <div style={{position: 'relative', display: 'inline-block'}}>
                     <style>{`
                         .button-click {
                             animation: clickAnim 0.2s ease;
@@ -184,9 +271,14 @@ class tags extends Component {
                             100% { transform: scale(1); }
                         }
                     `}</style>
-                    <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
+                    <div style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
                         <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
+                    {badgeCount && badgeCount > 0 && (
+                        <div style={badgeStyle}>
+                            {badgeCount > 99 ? '99+' : badgeCount}
+                        </div>
+                    )}
                 </div>
             );
         }

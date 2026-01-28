@@ -60,7 +60,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067a']/* 'mail' */, this.props.app_state.loc['3067b']/* 'proposals' */, this.props.app_state.loc['3067c']/* 'jobs' */, this.props.app_state.loc['3067d']/* 'contractors' */, this.props.app_state.loc['3067e']/* 'contracts' */, this.props.app_state.loc['3067y']/* 'work-comments' */ ], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067a']/* 'mail' */, this.props.app_state.loc['3067b']/* 'proposals' */, this.props.app_state.loc['3067c']/* 'jobs' */, this.props.app_state.loc['3067d']/* 'contractors' */, this.props.app_state.loc['3067e']/* 'contracts' */, this.props.app_state.loc['3067af']/* 'job-following' */, this.props.app_state.loc['3067y']/* 'work-comments' */ ], [0]
                 ],
             };
         }
@@ -71,7 +71,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067x']/* 'explore-comments' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067ag']/* 'post-following' */, this.props.app_state.loc['3067x']/* 'explore-comments' */], [0]
                 ],
             };
         }
@@ -210,6 +210,13 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3067af']/* 'job-following' */){
+            return(
+                <div>
+                    {this.render_work_notifications(['follower_job'])}
+                </div>
+            )
+        }
 
         else if(selected_item == this.props.app_state.loc['3067f']/* 'bags' */){
             //bag, storefront, bag_application_response
@@ -240,6 +247,13 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3067ag']/* 'post-following' */){
+            return(
+                <div>
+                    {this.render_explore_notifications(['follower_post', 'follower_audio', 'follower_video', 'follower_poll', 'follower_bag'])}
+                </div>
+            )
+        }
 
         else if(selected_item == this.props.app_state.loc['3067']/* 'wallet' */){
             return(
@@ -262,6 +276,8 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        
+        
     }
 
     append_divider_between_old_notifications_and_new_ones(items){
@@ -352,12 +368,13 @@ class ViewNotificationLogPage extends Component {
             'job_request_response':this.props.app_state.loc['3067p'],/* '👷 $ accepted your job request in their contractor post' */
             'contract':this.props.app_state.loc['3067q'],/* '↪📑 $ entered your contract.' */
             'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
+            'follower_job': this.props.app_state.loc['3067ah'],/* '💼 $ posted a new job you could do.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
         var message = obj[event_type]
         if(event_type == 'proposal' && item.returnValues.p1 == 2){
-            message = this.props.app_state.loc['3067u']/* '🧎 $ sent a proposal to one of the  main contracts' */
+            message = this.props.app_state.loc['3067u']/* '🧎 $ sent a proposal to one of the main contracts' */
         }
         const processed_message = message.replace('$', sender_alias_or_account)
         const timestamp = item['time']
@@ -385,8 +402,10 @@ class ViewNotificationLogPage extends Component {
         const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
         const contract = notification_object['contract'] == null ? [] : notification_object['contract']
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+
+        const follower_job = notification_object['follower_job'] || [];
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)
@@ -485,6 +504,11 @@ class ViewNotificationLogPage extends Component {
             'storefront':this.props.app_state.loc['3067t'],/* '🏪 $ purchased an item from one of your stores.' */
             'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
             'auctionbids': this.props.app_state.loc['3067ab'],/* '🙋‍♂️ $ bid in one of your auctions.' */
+            'follower_post': this.props.app_state.loc['3067ai'],/* '👩‍💻 $ posted a new post for you to read.' */
+            'follower_audio':this.props.app_state.loc['3067aj'],/* '🎧ྀི $ posted a new audiopost for you to listen to.' */
+            'follower_video':this.props.app_state.loc['3067ak'],/* '🎞️ $ posted a new videopost for you to watch.' */
+            'follower_poll':this.props.app_state.loc['3067al'],/* '🗳️ $ posted a new poll for you to participate in.' */
+            'follower_bag':this.props.app_state.loc['3067am'],/* '🛍️ $ posted a new bag for you to fulfil.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -507,8 +531,13 @@ class ViewNotificationLogPage extends Component {
         const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
         const comment = notification_object['comment'] == null ? [] : notification_object['comment']
         const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
+        const follower_post = notification_object['follower_post'] || [];
+        const follower_audio = notification_object['follower_audio'] || [];
+        const follower_video = notification_object['follower_video'] || [];
+        const follower_poll = notification_object['follower_poll'] || [];
+        const follower_bag = notification_object['follower_bag'] || [];
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)
