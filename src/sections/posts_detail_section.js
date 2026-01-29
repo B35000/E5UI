@@ -302,15 +302,13 @@ class PostsDetailsSection extends Component {
                     {this.render_zip_files_if_any(object)}
 
                     {this.render_markdown_if_any(object)}
-                    
-                    {this.render_edit_object_button(object)}
 
-
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['reply_count'])}
-                    <div style={{height: 10}}/>
 
                     {this.render_award_count_if_not_anonymous(item, object)}
+
+                    {this.render_edit_object_button(object)}
 
                     {this.render_award_button(object)}
 
@@ -477,8 +475,8 @@ class PostsDetailsSection extends Component {
         if(this.is_post_anonymous(object)) return;
         return(
             <div>
-                {this.render_detail_item('3', item['award_count'])}
                 <div style={{height: 10}}/>
+                {this.render_detail_item('3', item['award_count'])}
             </div>
         )
     }

@@ -1344,7 +1344,7 @@ class App extends Component {
     contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[], is_device_online: true,
     last_notification_view_time: {'?':0, 'e':0, 'w':0}, 
     
-    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }
+    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}
 
     
   };
@@ -3991,6 +3991,7 @@ class App extends Component {
 
       message_comment_fulfilment: this.state.message_comment_fulfilment,
       last_notification_view_time: this.state.last_notification_view_time,
+      notification_object: this.state.notification_object
     }
   }
 
@@ -4178,6 +4179,7 @@ class App extends Component {
       var audiplayer_position = state.audiplayer_position == null ? this.state.audiplayer_position: state.audiplayer_position
 
       var stack_address = stack_items.length > 0 ? state.address : null
+      var last_address = state.address
       var stacked_ids = stack_items.length > 0 ? state.stacked_ids : null
       var rating_denomination = state.rating_denomination == null ? this.state.rating_denomination : state.rating_denomination
       this.my_active_e5s = state.my_active_e5s == null ? [] : state.my_active_e5s
@@ -4206,6 +4208,7 @@ class App extends Component {
       var socket_participated_objects = state.socket_participated_objects || this.state.socket_participated_objects;
       var message_comment_fulfilment = state.message_comment_fulfilment || this.state.message_comment_fulfilment
       var last_notification_view_time = state.last_notification_view_time || this.state.last_notification_view_time
+      var notification_object = state.notification_object || this.state.notification_object;
 
       this.setState({
         theme: theme,
@@ -4290,6 +4293,8 @@ class App extends Component {
         socket_participated_objects: socket_participated_objects,
         message_comment_fulfilment: message_comment_fulfilment,
         last_notification_view_time: last_notification_view_time,
+        last_address: last_address,
+        previous_notification_objects: notification_object,
       })
       var me = this;
       setTimeout(function() {
@@ -16751,7 +16756,7 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  when_notification_object_clicked(index, object, data, post_nsfw){
+  when_notification_object_clicked(index, object, data, post_nsfw, event){
     var type = data['type']
     if(type == 'storefront' || type == 'auctionbids'){
       this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1215']/* 'storefront' */})
@@ -16806,8 +16811,8 @@ class App extends Component {
       this.homepage.current?.reset_post_detail_object()
     }
     else if(type == 'comment'){
-      const id_types = data['id_types']
-      const id_type = id_types[object['id']]
+      // const id_types = data['view']['id_types']
+      const id_type = parseInt(event['view']['id_type'])
 
       if(id_type == 17/* 17(job object) */){
         this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
@@ -20904,7 +20909,7 @@ class App extends Component {
       this.load_specific_storefront_items(events, 'p1')
     }
     else if(event_type == 'comment'){
-      const id_type = obj['id_type']
+      const id_type = parseInt(obj['id_type'])
       const event_object_id = parseInt(event.returnValues[obj['p']])
       const id_types_array_object = {}
       id_types_array_object[id_type] = [event_object_id]
@@ -22743,6 +22748,16 @@ class App extends Component {
       this.last_load_time = {};
     }
 
+    await this.wait(400)
+    if(this.state.has_wallet_been_set == false){
+      if(this.state.accounts[this.state.selected_e5].address == this.state.last_address){
+        const clone = structuredClone(this.state.previous_notification_objects)
+        this.setState({notification_object: clone, previous_notification_objects: {}})
+      }else{
+        this.setState({last_notification_view_time: {'?':0, 'e':0, 'w':0}, previous_notification_objects: {}})
+      }
+    }
+
     await this.wait(400);
     if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0){
       //sender has set a different address from the previously used one, so delete the transactions they created with the other address
@@ -22755,12 +22770,6 @@ class App extends Component {
       }
       this.setState({stack_items: new_stack, stack_address: null, stacked_ids: null})
       this.set_cookies_after_stack_action(new_stack)
-    }
-
-    
-    await this.wait(400);
-    if(this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address){
-      this.setState({last_notification_view_time: {'?':0, 'e':0, 'w':0}})
     }
 
     await this.wait(400);
@@ -35326,7 +35335,8 @@ class App extends Component {
         }
       }
       // console.log('get_all_notification_flash_event_fetch_objects', 'prefetch_array', prefetch_array)
-      return (await this.load_multiple_events_from_nitro(prefetch_array)).all_events
+      const prefetch_data = await this.load_multiple_events_from_nitro(prefetch_array);
+      return prefetch_data.all_events
     }
     const prefetch_object = await prefetch_stuff()
 
@@ -35614,7 +35624,7 @@ class App extends Component {
       }
     }
 
-    // console.log('get_all_notification_flash_event_fetch_objects', 'return_object', return_object)
+    console.log('get_all_notification_flash_event_fetch_objects', id_object_data_object, return_object)
 
     return {return_object, id_object_data_object}
   }
@@ -37329,13 +37339,23 @@ class App extends Component {
       }
     }
 
+    const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'bill')
+    
+    socket_notifications.forEach(event => {
+      event['p'] = event.returnValues.p5
+      event['time'] = event.returnValues.p6
+      event['block'] = event.returnValues.p7
+      event['sender'] = event.returnValues.p2
+      event['type'] = 'bill'
+      event['event_type'] = 'bill_request'
+      event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'bill', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'}
+      all_notifications.push(event)
+    });
+
     if(notifs.length > 0){
       console.log('notifier', 'found one bill request to nofity', notifs)
       this.handle_bill_request_notifications(notifs)
     }
-
-    const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'bill')
-    this.set_events_in_notifications(socket_notifications, 'bill_request')
 
     var clone = structuredClone(this.state.notification_object)
     clone['bill_request'] = all_notifications.reverse()
@@ -37441,15 +37461,27 @@ class App extends Component {
       }
     }
 
+    const socket_events = await this.get_existing_comment_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), ids);
+
+    // console.log('load_and_notify_user_of_incoming_post_comments', ids, socket_events)
+
+    socket_events.forEach(event => {
+      event['p'] = event.returnValues.p3/* context */
+      event['time'] = event.returnValues.p6/* timestamp */
+      event['block'] = event.returnValues.p7/* block_number */
+      event['sender'] = event.returnValues.p2/* sender_acc_id */
+      event['type'] = 'comment'
+      event['event_type'] = 'comment'
+      const target_e5 = Object.entries(id_object_data).find(([key, arr]) => arr.includes(event.returnValues.p3/* context */))?.[0];
+      event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'comment', 'p':'p3', 'time':'p6','block':'p7', 'sender':'p2', 'id_type':id_types[event.returnValues.p3/* context */], 'target_e5':target_e5}
+      all_notifications.push(event)
+    });
+
     if(notifs.length > 0){
       console.log('notifier', 'found one comment to nofity', notifs)
       this.handle_incoming_post_comment_notifications(notifs, id_types)
       this.start_loading_objects_in_background(id_types_data_arrays)
     }
-
-    const socket_events = await this.get_existing_comment_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), ids);
-
-    this.set_events_in_notifications(socket_events, 'comment')
 
     var clone = structuredClone(this.state.notification_object)
     clone['comment'] = all_notifications.reverse()
@@ -37475,6 +37507,7 @@ class App extends Component {
     if(this.state.beacon_node_enabled == true){
       const event_params = []
       const used_e5s = []
+      const my_accounts = []
       for(var i=0; i<this.state.e5s['data'].length; i++){
         const focused_e5 = this.state.e5s['data'][i]
         const account = this.state.user_account_id[focused_e5]
@@ -37486,25 +37519,37 @@ class App extends Component {
           const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
           event_params.push([web3, contractInstance, 'e1', focused_e5, {p3/* sender_account_id */: account}])
           used_e5s.push(focused_e5)
+          my_accounts.push(account)
         }
       }
       const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+      const socket_follower_posts_events = (await this.get_existing_comment_socket_events(Date.now(), Date.now() - (72*7*24*60*60*1000), ['posts', 'jobs'], my_accounts))
+
+      const process_event = (event, e5_used) => {
+        if(accepted_object_types.includes(parseInt(event.returnValues.p2/* object_type */))){
+          if(ids_data[e5_used] == null){
+            ids_data[e5_used] = []
+          }
+          ids_data[e5_used].push(event.returnValues.p1/* object_id */)
+          id_types_data[event.returnValues.p1/* object_id */] = event.returnValues.p2/* object_type */
+          if(id_types_data_arrays[event.returnValues.p2/* object_type */] == null){
+            id_types_data_arrays[event.returnValues.p2/* object_type */] = []
+          }
+          id_types_data_arrays[event.returnValues.p2/* object_type */].push(event.returnValues.p1/* object_id */)
+        }
+      }
+
       all_events.forEach((event_array, index) => {
         const e5_used = used_e5s[index]
         event_array.forEach(event => {
-          if(accepted_object_types.includes(event.returnValues.p2/* object_type */)){
-            if(ids_data[e5_used] == null){
-              ids_data[e5_used] = []
-            }
-            ids_data[e5_used].push(event.returnValues.p1/* object_id */)
-            id_types_data[event.returnValues.p1/* object_id */] = event.returnValues.p2/* object_type */
-            if(id_types_data_arrays[event.returnValues.p2/* object_type */] == null){
-              id_types_data_arrays[event.returnValues.p2/* object_type */] = []
-            }
-            id_types_data_arrays[event.returnValues.p2/* object_type */].push(event.returnValues.p1/* object_id */)
-          }
+          process_event(event, e5_used)
         });
       });
+
+      socket_follower_posts_events.forEach(event => {
+        process_event(event, event['e5'])
+      });
+
     }else{
       for(var i=0; i<this.state.e5s['data'].length; i++){
         const focused_e5 = this.state.e5s['data'][i]
@@ -37534,6 +37579,8 @@ class App extends Component {
       }
     }
 
+    // console.log('load_my_post_ids', ids_data)
+
     return {ids_data, id_types_data, id_types_data_arrays}
   }
 
@@ -37553,7 +37600,8 @@ class App extends Component {
 
   start_loading_objects_in_background(id_types_data_arrays){
     var keys = Object.keys(id_types_data_arrays)
-    keys.forEach(id_type => {
+    keys.forEach(id_type_string => {
+      const id_type = parseInt(id_type_string)
       const load_ids = id_types_data_arrays[id_type].map(x => parseInt(x, 10));
       if(id_type == 17/* 17(job object) */){
         this.load_jobs_data(load_ids)
@@ -46554,7 +46602,7 @@ class App extends Component {
       typeof value === 'bigint' ? value.toString() : value
     )
     const data = await this.encrypt_storage_object(object_as_string, {})
-    const context = message_obj['contractor_id']
+    const context = message_obj['id']
     const message = {
       type: 'comment_message',
       message_identifier: this.make_number_id(12),
@@ -46571,6 +46619,7 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      object_e5: message_obj['e5']
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -49411,9 +49460,8 @@ class App extends Component {
     const sender_acc = message.author;
     const convo_id = id;
     const cid = object_hash;
-    const request_id = message.id+e5
 
-    const event = {returnValues:{p1:17, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'time':message.time, 'e5':e5, 'socket_object':true}
+    const event = {returnValues:{p1:17, p2:sender_acc, p3:message.id, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'time':message.time, 'e5':e5, 'socket_object':true}
 
     return event
   }

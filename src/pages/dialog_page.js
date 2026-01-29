@@ -2999,10 +2999,10 @@ return data['data']
                     <div style={{'padding': '0px 0px 0px 5px'}}>
                         {this.render_detail_item('1', item['tags'])}
                         <div style={{height: 10}}/>
-                        <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_object_clicked(index, object)}>
+                        <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_object_clicked(index, object, event)}>
                             {this.render_detail_item('3', item['id'])}
                         </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_object_clicked(index, object)}>
+                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_object_clicked(index, object, event)}>
                             {this.render_detail_item('2', item['age'])}
                         </div>
                     </div>         
@@ -3088,8 +3088,8 @@ return data['data']
             }
         }
         else if(type == 'comment'){
-            const id_type = event['id_type']
-            e5 = event['target_e5'] == null ? e5 : event['target_e5']
+            const id_type = event['view']['id_type']
+            e5 = event['view']['target_e5'] == null ? e5 : event['view']['target_e5']
             const socket_jobs = this.props.app_state.socket_created_jobs[e5]
             const socket_posts = this.props.app_state.socket_created_posts[e5]
             const dir = {
@@ -3103,7 +3103,8 @@ return data['data']
                 32/* 32(consensus_request) */:this.props.app_state.my_proposals[e5], 
                 36/* 36(type_channel_target) */:this.props.app_state.created_channels[e5],
             }
-            items = dir[id_type];
+            console.log('when_event_clicked', event, id_type)
+            items = dir[parseInt(id_type)];
             if(items != null && socket_jobs != null && id_type == 17/* 17(job object) */){
                 items = items.concat(socket_jobs)
             }
@@ -3277,8 +3278,8 @@ return data['data']
         }
     }
 
-    when_object_clicked(index, object){
-        this.props.when_notification_object_clicked(index, object, this.state.data, this.is_post_nsfw(object))
+    when_object_clicked(index, object, event){
+        this.props.when_notification_object_clicked(index, object, this.state.data, this.is_post_nsfw(object), event)
     }
 
 

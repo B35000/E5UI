@@ -401,7 +401,11 @@ class ViewNotificationLogPage extends Component {
         
         const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
         const contract = notification_object['contract'] == null ? [] : notification_object['contract']
-        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+
+        const work_id_types = [17/* 17(job object) */, 32/* 32(consensus_request) */, 21/* 21(nitro_object) */]
+        const comment = (notification_object['comment'] || []).filter(function (event) {
+            return (work_id_types.includes(parseInt(event['view']['id_type'])))
+        });
 
         const follower_job = notification_object['follower_job'] || [];
         
@@ -529,7 +533,14 @@ class ViewNotificationLogPage extends Component {
         const bag = notification_object['bag'] == null ? [] : notification_object['bag']
         const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
         const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
-        const comment = notification_object['comment'] == null ? [] : notification_object['comment']
+
+        const work_id_types = [18/* 18(post object) */, 19/* 19(audio_object) */, 20/* 20(video_object) */, 25/* 25(storefront_bag_object) */, 27/* 27(storefront-item) */, 36/* 36(type_channel_target) */]
+        const comment = (notification_object['comment'] || []).filter(function (event) {
+            return (work_id_types.includes(parseInt(event['view']['id_type'])))
+        });
+
+        // console.log('get_all_explore_notification_items', notification_object['comment'], comment)
+
         const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
         const follower_post = notification_object['follower_post'] || [];
         const follower_audio = notification_object['follower_audio'] || [];
