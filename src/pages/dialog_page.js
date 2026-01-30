@@ -569,6 +569,13 @@ class DialogPage extends Component {
                 </div>
             )
         }
+        else if(option == 'view_coin_ether_request'){
+            return(
+                <div>
+                    {this.render_received_ether_coin_request_details_ui()}
+                </div>
+            )
+        }
     }
 
 
@@ -10238,6 +10245,196 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+    render_received_ether_coin_request_details_ui(){
+         var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_received_ether_coin_request_details_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_received_ether_coin_request_details_data()}
+                        <div style={{height:20}}/>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_received_ether_coin_request_details_data()}
+                        <div style={{height:20}}/>
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_received_ether_coin_request_details_data(){
+        const ipfs = this.state.data
+        const id = ipfs['request_id']
+        const time = ipfs['time'] / 1000
+        const sender_account = ipfs['sender_account']
+        const sender_account_e5 = ipfs['sender_account_e5']
+        const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
+        const alias = this.get_senders_alias(sender_account, sender_account_e5)
+        const ether_coin_id = ipfs['message_obj']['ether_id']
+        const base_unit_amount = ipfs['message_obj']['picked_base_unit_amount']
+        const recipient_address = ipfs['message_obj']['recipient_address']
+        const memo_text = ipfs['message_obj']['memo_text'] || ''
+        const ether_coin_object_data = ipfs['message_obj']['ether_or_coin'] == 'ether' ? this.get_specific_ether_data_if_ether(ether_coin_id) : this.get_specific_ether_data_if_coin(ether_coin_id);
+        const decimal_count = ipfs['message_obj']['ether_or_coin'] == 'ether' ? 18 : ether_coin_object_data['decimals']
+        const decimal_amount = base_unit_amount / 10**decimal_count
+
+        const render_amount_in_ether_and_wei = () => {
+            return(
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055jx']/* Requested Amount in Ether and Wei */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(base_unit_amount), 'number':this.format_account_balance_figure(base_unit_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(base_unit_amount/10**18), 'number':(base_unit_amount/10**18), 'barcolor':'#606060', 'relativepower':ether_coin_id, })}
+                </div>
+            )
+        }
+
+        const render_amount_in_coin_and_decimal = () => {
+            return(
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055ka']/* 'Requested Amount in $ and %' */.replace('$', ether_coin_id).replace('%', ether_coin_object_data['base_unit'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(base_unit_amount), 'number':this.format_account_balance_figure(base_unit_amount), 'barcolor':'#606060', 'relativepower':ether_coin_object_data['base_unit'], })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(decimal_amount), 'number':(decimal_amount), 'barcolor':'#606060', 'relativepower':ether_coin_id, })}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('8', ether_coin_object_data['label'])}
+                <div style={{height: 10}}/>
+                
+                {this.render_detail_item('3', {'title':id, 'details':this.props.app_state.loc['3055jv']/* 'Request ID' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':alias, 'details':this.props.app_state.loc['3055jw']/* 'Request Author.' */, 'size':'l', 'title_image': e5_image})}
+                <div style={{height: 10}}/>
+
+                {ipfs['message_obj']['ether_or_coin'] == 'ether' ? render_amount_in_ether_and_wei() : render_amount_in_coin_and_decimal()}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':recipient_address, 'details':this.props.app_state.loc['3055kb']/* 'Requested Recipient\'s Address.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':memo_text, 'details':this.props.app_state.loc['3055kf']/* 'Requested Transaction Memo.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055kc']/* 'Fulfil Request.' */, 'details':this.props.app_state.loc['3055kd']/* 'Open the Send Ether/Coin section and fulfil their requested amount.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div onClick={() => this.prompt_enter_coin_or_ether_send_sections(ipfs, ether_coin_object_data)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ke']/* 'Fulfil Request' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    get_senders_alias(account, e5){
+        if(account == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const bucket = this.get_all_sorted_objects_mappings(this.state.alias_bucket)
+            var alias = (bucket[account] == null ? account : bucket[account])
+            return alias
+        }
+    }
+
+    get_specific_ether_data_if_ether(ether_coin_id){
+        var state_list = this.props.app_state.ether_data
+        var token_data = null;
+        state_list.forEach(ether_desc => {
+            if(ether_desc['symbol'] == ether_coin_id){
+                token_data = this.get_token_data(ether_desc['symbol'], ether_desc['name'], ether_desc['e5'])
+            }
+        });
+        return token_data
+    }
+
+    get_token_data(symbol, name, e5){
+        return {
+            'id':symbol,
+            'e5':e5,
+            'name': name,
+            'sortname':name.toLowerCase(),
+            'symbol': symbol,
+            'image': this.props.app_state.e5s[e5].ether_image,
+            'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
+            'tags':{'active_tags':[name, 'EVM', symbol], 'index_option':'indexed'},
+            'number_label':this.get_blockchain_data('s', e5),
+            'number_label_large': this.get_blockchain_data('l', e5),
+            'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},
+        }
+    }
+
+    get_blockchain_data(size, e5){
+        var number_of_blocks = this.props.app_state.number_of_blocks[e5]
+        if(number_of_blocks == null){
+            number_of_blocks = 0
+        }
+        return{
+            'style':size,
+            'title':'Number of Blocks Mined',
+            'subtitle':this.format_power_figure(number_of_blocks),
+            'barwidth':this.get_number_width(number_of_blocks),
+            'number':`${number_with_commas(number_of_blocks)} blocks`,
+            'barcolor':'#606060',
+            'relativepower':'ledger size',
+        }
+    }
+
+    get_specific_ether_data_if_coin(ether_coin_id){
+        var coins = this.props.app_state.coins
+        for (const coin in coins) {
+            if (coins.hasOwnProperty(coin) && ether_coin_id == coin) {
+                return coins[coin]
+            }
+        }
+    }
+
+    prompt_enter_coin_or_ether_send_sections(ipfs, ether_coin_object_data){
+        if(ipfs['message_obj']['ether_or_coin'] == 'ether'){
+            this.props.open_send_ether_section(ipfs, ether_coin_object_data)
+        }else{
+            this.props.open_send_coin_section(ipfs, ether_coin_object_data)
+        }
+    }
 
 
 

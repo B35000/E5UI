@@ -42,7 +42,11 @@ class SendReceiveCoinPage extends Component {
         get_send_receive_coin_tags_obj:this.get_send_receive_coin_tags_obj(),
         recipient_address:'', picked_sats_amount:0, picked_sats_fee_amount:0,
         memo_text:'',
-        get_kill_substrate_wallet_tags_obj:this.get_kill_substrate_wallet_tags_obj()
+        get_kill_substrate_wallet_tags_obj:this.get_kill_substrate_wallet_tags_obj(),
+        
+        request_coin_recipient:'',
+        request_coin_recipient_address:this.get_account_address(),
+        request_coin_memo:''
     };
 
 
@@ -52,7 +56,7 @@ class SendReceiveCoinPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */, this.props.app_state.loc['1407ba']/* 'request' */], [1]
             ],
         };
     }
@@ -119,7 +123,15 @@ class SendReceiveCoinPage extends Component {
                     {this.render_send_coin_ui()}
                 </div>
             )
-        }else{
+        }
+        else if(selected_item == this.props.app_state.loc['1407ba']/* 'request' */ ){
+            return(
+                <div>
+                    {this.render_request_coin_ui()}
+                </div>
+            )
+        }
+        else{
             return(
                 <div>
                     {this.render_receive_coin_ui()}
@@ -656,6 +668,9 @@ class SendReceiveCoinPage extends Component {
         else if(set_fee == 0){
             this.props.notify(this.props.app_state.loc['2940']/* 'That transaction fee is invalid.' */, 4000)
         }
+        else if(memo_text.length > 53){
+            this.props.notify(this.props.app_state.loc['2954j']/* 'That memo is too long.' */, 4000)
+        }
         else{
             this.props.show_dialog_bottomsheet({'coin':item, 'fee':set_fee, 'amount':transfer_amount,'recipient':recipient, 'sender':this.get_account_address(), 'memo':memo_text, 'kill_wallet': kill_wallet}, 'confirm_send_coin_dialog')
         }
@@ -726,7 +741,6 @@ class SendReceiveCoinPage extends Component {
         }
     }
 
-
     render_scan_qr_code_ui(){
         var item = this.state.coin
         var address = this.get_account_address()
@@ -767,6 +781,144 @@ class SendReceiveCoinPage extends Component {
         var item = this.state.coin
         var data = this.props.app_state.coin_data[item['symbol']]
         return data['address']
+    }
+
+
+
+
+
+
+
+    render_request_coin_ui(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_request_coin_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_request_coin_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_request_coin_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_request_coin_data(){
+        const item = this.state.coin
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2954a']/* 'Request Coin.' */, 'details':this.props.app_state.loc['2954b']/* 'Send a request via an indexer to another account for some coin.' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407s']/* 'Target Account.' */, 'details':this.props.app_state.loc['2954c']/* 'The account you wish to receive the request and send you coin.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_request_recipient_input_field_changed.bind(this)} text={this.state.request_coin_recipient} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407u']/* 'Requested Amount (optional)' */, 'details':this.props.app_state.loc['2954d']/* 'The amount of coin you wish the recipient to credit you with.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407i']/* Picked Amount. */}</p>
+                    {this.render_detail_item('2', this.get_picked_amount_in_base_units())}
+                    {this.render_detail_item('2', this.get_picked_amount_in_decimal())}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={this.get_coin_decimal_count()} pick_with_text_area={true}/>
+                <div style={{height: 10}}/>
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407bb']/* 'Transfer Recipient.' */, 'details':this.props.app_state.loc['2954f']/* 'The address you wish to receive the coin when the request is fulfilled.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_coin_recipient_input_field_changed.bind(this)} text={this.state.request_coin_recipient_address} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+
+
+                {item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA' && (
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954g']/* 'Transfer Memo.' */, 'details':this.props.app_state.loc['2954h']/* 'You may optionally include a required memo for the requested transfer.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['2954i']/* 'Set Memo Here...' */} when_text_input_field_changed={this.when_request_coin_memo_input_field_changed.bind(this)} text={this.state.request_coin_memo} theme={this.props.theme}/>
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+
+                <div onClick={() => this.prompt_coin_request_from_target()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2954e']/* 'Request Coin' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_request_recipient_input_field_changed(text){
+        this.state({request_coin_recipient: text})
+    }
+
+    when_request_coin_recipient_input_field_changed(text){
+        this.setState({request_coin_recipient_address: text})
+    }
+
+    when_request_coin_memo_input_field_changed(text){
+        this.setState({request_coin_memo: text})
+    }
+
+    async prompt_coin_request_from_target(){
+        const recipient = this.state.request_coin_recipient.trim()
+        const request_ether_recipient = await this.get_typed_alias_id(recipient)
+        const recipient_e5 = this.get_recipient_e5(recipient)
+        const recipient_address = this.state.request_coin_recipient_address.trim()
+        const picked_wei_amount = this.state.picked_sats_amount
+        const ether_id = this.state.coin['id']
+        const request_coin_memo = this.state.request_coin_memo.trim()
+        
+        if(isNaN(request_ether_recipient) || request_ether_recipient =='' || parseInt(request_ether_recipient)<1001){
+            this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 1800)
+        }
+        else if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['1571']/* 'Please set your wallet first.' */, 3200);
+        }
+        else if(!this.isValidAddress(recipient_address)){
+            this.props.notify(this.props.app_state.loc['1407x']/* 'That recipient address is not valid.' */, 3200);
+        }
+        else if(request_coin_memo.length > 35){
+            this.props.notify(this.props.app_state.loc['2954j']/* 'That memo is too long.' */, 4000)
+        }
+        else{
+            //request_ether_recipient -> request_ether_coin_recipient
+            //picked_wei_amount -> picked_base_unit_amount
+            //ether -> 'ether_or_coin'
+            this.props.send_coin_request_message(request_ether_recipient, recipient_address, picked_wei_amount, recipient_e5, ether_id, request_coin_memo)
+            this.setState({request_coin_recipient:'', request_coin_recipient_address:''})
+        }
     }
 
 

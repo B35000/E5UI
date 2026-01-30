@@ -55,7 +55,7 @@ class EthersDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */, this.props.app_state.loc['2481d']/* 'requests' */],[1]
           ],
         }
     }
@@ -112,13 +112,21 @@ class EthersDetailsSection extends Component {
                     {this.render_ethers_main_details_section(item)}
                 </div>
             )
-        }else if(selected_item == this.props.app_state.loc['2448']/* 'transactions' */){
+        }
+        else if(selected_item == this.props.app_state.loc['2448']/* 'transactions' */){
             return(
                 <div>
                     {this.render_block_history_logs(item)}
                 </div>
             )
             
+        }
+        else if(selected_item == this.props.app_state.loc['2481d']/* 'requests' */){
+            return(
+                <div>
+                    {this.render_ether_requests_section(item)}
+                </div>
+            )
         }
         
     }
@@ -989,6 +997,108 @@ class EthersDetailsSection extends Component {
             return 0
         }
     }
+
+
+
+
+
+
+
+
+
+    render_ether_requests_section(item){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2481a']/* 'Ether Requests.' */, 'details':this.props.app_state.loc['2481b']/* 'All the Ether transfer reqests sent to your account.' */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_ether_request_items(item)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_ether_request_items(ether_item){
+        var middle = this.props.height-200;
+        var items = [].concat(this.get_requests(ether_item))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}}>
+                                    {this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.map((item, index) => (
+                                <li style={{}} onClick={() => this.when_request_item_clicked(item, ether_item)}>
+                                    <div>
+                                        {this.render_request_item(item)}
+                                        <div style={{height: 4}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_requests(ether_item){
+        const id = ether_item['id']
+        const data = this.props.app_state.received_coin_ether_requests[id] || {}
+        const requets = [];
+        Object.keys(data).forEach(request_id => {
+            requets.push(data[request_id])
+        });
+        return this.sortByAttributeDescending(requets, 'time')
+    }
+
+    render_small_empty_object(){
+        return(
+            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 10px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                </div>
+            </div>
+        );
+    }
+
+    render_request_item(ipfs){
+        const time = ipfs['time']/1000
+        const sender_account = ipfs['sender_account']
+        const sender_account_e5 = ipfs['sender_account_e5']
+        const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
+        const base_unit_amount = ipfs['message_obj']['picked_base_unit_amount']
+        const decimal_amount = base_unit_amount / 10**18
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2481c']/* 'From $' */.replace('$', sender_account).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+','+decimal_amount+' '+ipfs['message_obj']['ether_id'], 'size':'l', 'title_image': e5_image})}
+            </div>
+        )
+    }
+
+
 
 
 

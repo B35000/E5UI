@@ -62,6 +62,9 @@ class SendReceiveEtherPage extends Component {
         ether:{'e5':this.props.app_state.selected_e5},
         picked_max_priority_per_gas_amount: 0,
         picked_max_fee_per_gas_amount: 0,
+        
+        request_ether_recipient:'',
+        request_ether_recipient_address: this.get_account_address(),
     };
 
     set_object(item){
@@ -81,7 +84,7 @@ class SendReceiveEtherPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */], [1]
+                    ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */, this.props.app_state.loc['1407ba']/* 'request' */], [1]
                 ],
             };
         }else{
@@ -90,7 +93,7 @@ class SendReceiveEtherPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */], [1]
+                    ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */, this.props.app_state.loc['1407ba']/* 'request' */],  [1]
                 ],
             };
         }
@@ -116,6 +119,16 @@ class SendReceiveEtherPage extends Component {
                         </div>
                         {this.render_send_ether_ui()}
                     </div> 
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1407ba']/* 'request' */){
+            return(
+                <div>
+                    <div style={{'margin':'10px 10px 0px 10px'}}>
+                        {this.render_top_tag_bar_group()}
+                        {this.render_request_ether_ui()}
+                    </div>
                 </div>
             )
         }
@@ -263,7 +276,6 @@ class SendReceiveEtherPage extends Component {
 
     render_send_ether_middle_part2(){
         var e5 = this.state.ether['e5']
-
         var gas_price = this.props.app_state.gas_price[e5]
         if(gas_price == null){
             gas_price = this.get_gas_price_from_runs()
@@ -840,7 +852,7 @@ class SendReceiveEtherPage extends Component {
             <div style={{'padding':'10px 10px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1400']/* 'Receive Ether using the address shown below' */, 'color':'dark-grey'})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1401']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1401']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('5',{'text':this.props.app_state.loc['1402']/* 'Copy to Clipboard' */, 'action':'copy_to_clipboard'})}
                 <div style={{height: 200, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'30px 0px 0px 0px'}}>
@@ -856,6 +868,170 @@ class SendReceiveEtherPage extends Component {
             </div>
         )
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_request_ether_ui(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_request_ether_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_request_ether_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_request_ether_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_request_ether_data(){
+        var e5 = this.state.ether['e5']
+        var gas_price = this.props.app_state.gas_price[e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        if(gas_price == 0 || gas_price > 10**18) gas_price = 10**10
+        var gas_transactions = this.state.picked_wei_amount == 0 ? 0 : Math.floor((this.state.picked_wei_amount/gas_price)/2_300_000)
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407p']/* 'Request Ether.' */, 'details':this.props.app_state.loc['1407q']/* 'Send a request via an indexer to another account for some ether.' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407s']/* 'Target Account.' */, 'details':this.props.app_state.loc['1407t']/* 'The account you wish to receive the request and send you ether.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_request_recipient_input_field_changed.bind(this)} text={this.state.request_ether_recipient} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407u']/* 'Requested Amount (optional)' */, 'details':this.props.app_state.loc['1407v']/* 'The amount of ether you wish the recipient to credit you with.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1383']/* Picked Amount In Ether and Wei */}</p>
+
+                    {this.render_detail_item('2', this.get_picked_amount_in_wei())}
+                    {this.render_detail_item('2', this.get_picked_amount_in_ether())}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
+                </div>
+                {this.render_amount_number_picker()}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407bb']/* 'Transfer Recipient.' */, 'details':this.props.app_state.loc['1407bc']/* 'The address you wish to receive the ether when the request is fulfilled.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_ether_recipient_input_field_changed.bind(this)} text={this.state.request_ether_recipient_address} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                <div onClick={() => this.prompt_ether_request_from_target()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1407w']/* 'Request Ether' */, 'action':''})}
+                </div>
+
+            </div>
+        )
+    }
+
+    when_request_recipient_input_field_changed(text){
+        this.state({request_ether_recipient: text})
+    }
+
+    when_request_ether_recipient_input_field_changed(text){
+        this.setState({request_ether_recipient_address: text})
+    }
+
+    async prompt_ether_request_from_target(){
+        const recipient = this.state.request_ether_recipient.trim()
+        const request_ether_recipient = await this.get_typed_alias_id(recipient)
+        const recipient_e5 = this.get_recipient_e5(recipient)
+        const recipient_address = this.state.request_ether_recipient_address.trim()
+        const picked_wei_amount = this.state.picked_wei_amount
+        const ether_id = this.state.ether['id']
+        
+        if(isNaN(request_ether_recipient) || request_ether_recipient =='' || parseInt(request_ether_recipient)<1001){
+            this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 1800)
+        }
+        else if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['1571']/* 'Please set your wallet first.' */, 3200);
+        }
+        else if(!this.isValidAddress(recipient_address)){
+            this.props.notify(this.props.app_state.loc['1407x']/* 'That recipient address is not valid.' */, 3200);
+        }
+        else{
+            //request_ether_recipient -> request_ether_coin_recipient
+            //picked_wei_amount -> picked_base_unit_amount
+            //ether -> 'ether_or_coin'
+            this.props.send_ether_request_message(request_ether_recipient, recipient_address, picked_wei_amount, recipient_e5, ether_id)
+            this.setState({request_ether_recipient:'', request_ether_recipient_address:''})
+        }
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
+    }
+
+    get_recipient_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+
+
+
+
+
+
+
 
 
 

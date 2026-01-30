@@ -1155,7 +1155,7 @@ class PollDetailsSection extends Component {
         var time = item['event'].returnValues.p6/* timestamp */
         return(
             <div>
-                {this.render_detail_item('3', {'details':this.get_time_difference(time), 'title':''+(new Date(time * 1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'details':this.get_time_difference(time), 'title':''+(new Date(time * 1000).toLocaleString()), 'size':'l'})}
             </div>
         )
     }

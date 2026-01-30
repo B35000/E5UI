@@ -1344,8 +1344,7 @@ class App extends Component {
     contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[], is_device_online: true,
     last_notification_view_time: {'?':0, 'e':0, 'w':0}, 
     
-    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}
-
+    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{},
     
   };
 
@@ -2432,6 +2431,7 @@ class App extends Component {
       'base_unit':base_unit,
       'decimals':decimals,
       'conversion':conversion,
+      'image': image_url,
       'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
       'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
       'tags':{'active_tags':[name, 'Coin', symbol], 'index_option':'indexed'},
@@ -6917,7 +6917,8 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                           <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
-                          start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}/>
+                          start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)}
+                          />
                       </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -6930,7 +6931,8 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
               <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
-              start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}/>
+              start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)}
+              />
           </div>
       </SwipeableBottomSheet>
     )
@@ -7019,6 +7021,18 @@ class App extends Component {
 
   }
 
+  async send_ether_request_message(request_ether_recipient, recipient_address, picked_wei_amount, recipient_e5, ether_id){
+    const state_object = {
+      'ether_or_coin':'ether',
+      'request_ether_coin_recipient':request_ether_recipient,
+      'recipient_address':recipient_address,
+      'picked_base_unit_amount':picked_wei_amount,
+      'recipient_e5':recipient_e5,
+      'ether_id':ether_id
+    }
+    await this.emit_new_ether_or_coin_request(state_object)
+  }
+
 
 
 
@@ -7057,7 +7071,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-        <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)}
+        <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)} send_coin_request_message={this.send_coin_request_message.bind(this)}
         
         />
       </div>
@@ -8153,6 +8167,19 @@ class App extends Component {
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
+  }
+
+  async send_coin_request_message(request_coin_recipient, recipient_address, picked_sat_amount, recipient_e5, ether_id, request_coin_memo){
+    const state_object = {
+      'ether_or_coin':'coin',
+      'request_ether_coin_recipient':request_coin_recipient,
+      'recipient_address':recipient_address,
+      'picked_base_unit_amount':picked_sat_amount,
+      'recipient_e5':recipient_e5,
+      'ether_id':ether_id,
+      'memo_text':request_coin_memo
+    }
+    await this.emit_new_ether_or_coin_request(state_object)
   }
 
 
@@ -16438,6 +16465,8 @@ class App extends Component {
         
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
         send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
+
+        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)}
         />
       </div>
     )
@@ -16521,6 +16550,7 @@ class App extends Component {
       'spend_prepurchase_credits':700,
       'export_prepurchase_transactions':700,
       'view_ordered_variant_details':650,
+      'view_coin_ether_request':450,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17706,6 +17736,24 @@ class App extends Component {
     const bag_e5_id = object['e5']+':'+object['id']
     const file_name = this.getLocale()['2064t']/* 'e-bag-export: ' */+new Date()+'-'+bag_e5_id+'.json'
     this.download_file({'e':final_object}, file_name)
+  }
+
+  async open_send_ether_section(ipfs, ether_coin_object_data){
+    this.open_dialog_bottomsheet();
+    if(this.state.send_receive_bottomsheet == false){
+      this.start_send_receive_ether_bottomsheet(ether_coin_object_data)
+    }
+    await this.wait(500)
+    this.send_receive_ether_page.current?.setState({picked_wei_amount: ipfs['message_obj']['picked_base_unit_amount'], recipient_address: ipfs['message_obj']['recipient_address']})
+  }
+
+  async open_send_coin_section(ipfs, ether_coin_object_data){
+    this.open_dialog_bottomsheet();
+    if(this.state.send_receive_coin_bottomsheet == false){
+      this.start_send_receive_coin_bottomsheet(ether_coin_object_data)
+    }
+    await this.wait(500)
+    this.send_receive_coin_page.current?.setState({picked_sats_amount: ipfs['message_obj']['picked_base_unit_amount'], recipient_address: ipfs['message_obj']['recipient_address'], memo_text: ipfs['message_obj']['memo_text']})
   }
 
 
@@ -22455,7 +22503,11 @@ class App extends Component {
     if(onClickData != null){
       var id = onClickData['notification_id']
       if(this.state.dialog_bottomsheet == false){
-        this.show_dialog_bottomsheet(onClickData, id)
+        if(id == 'view_coin_ether_request'){
+          this.show_dialog_bottomsheet(onClickData['data'], id)
+        }else{
+          this.show_dialog_bottomsheet(onClickData, id)
+        }
       }
     }
   }
@@ -24909,7 +24961,7 @@ class App extends Component {
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
     const address = this.state.accounts['E25'].address
     const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
-    console.log('pre_launch_fetch', 'known_hashes', this.get_my_recorded_hashes(''))
+    // console.log('pre_launch_fetch', 'known_hashes', this.get_my_recorded_hashes(''))
     const arg_obj = {
       target_address: address,
       max_post_bulk_load_count: /* this.state.max_post_bulk_load_count */10000000,
@@ -45680,6 +45732,9 @@ class App extends Component {
       else if(message['type'] == 'call_invite'){
         me.process_new_call_invite_message(message, object_hash, from, true)
       }
+      else if(message['type'] == 'ether_coin_request'){
+        me.process_ether_coin_request_message(message, object_hash, from, true)
+      }
     });
     this.socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -46190,6 +46245,20 @@ class App extends Component {
     await this.wait(3000)
 
     await this.process_new_blocked_account_message_update(availability_object.message, availability_object.object_hash)
+  }
+
+  async emit_new_ether_or_coin_request(state_object){
+    this.prompt_top_notification(this.getLocale()['1407y']/* 'Sending Your Request... */, 1900)
+    const mail_message_object = await this.prepare_ether_coin_request_message(state_object)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(mail_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(state_object.request_ether_coin_recipient, state_object.recipient_e5)
+    const target = 'ether_coin_request|'+to
+    const secondary_target = 'ether_coin_request|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   
@@ -47639,6 +47708,51 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       signature,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_ether_coin_request_message(message_obj){
+    const id = this.make_number_id(12)
+    const signature_request = {
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'sender_address': this.state.accounts[this.state.selected_e5].address,
+      'message_obj': message_obj,
+      'request_id': id,
+      'time': Date.now(),
+    }
+
+    const tags = []
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(signature_request, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'ether_coin_request',
+      message_identifier: id,
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -49197,6 +49311,46 @@ class App extends Component {
     }
     this.setState({blocked_accounts_data: blocked_accounts_data_clone})
   }
+
+  async process_ether_coin_request_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    const received_coin_ether_requests_object = structuredClone(this.state.received_coin_ether_requests)
+    if(received_coin_ether_requests_object[ipfs['message_obj']['ether_id']] == null){
+      received_coin_ether_requests_object[ipfs['message_obj']['ether_id']] = {}
+    }
+    received_coin_ether_requests_object[ipfs['message_obj']['ether_id']][ipfs['request_id']] = ipfs
+    this.setState({received_coin_ether_requests: received_coin_ether_requests_object})
+
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+      await this.handle_coin_ether_request_notifications(ipfs)
+    }
+  }
+
+  async handle_coin_ether_request_notifications(ipfs){
+    var sender_account = ipfs['sender_account']
+    var sender_account_e5 = ipfs['sender_account_e5']
+    var ether_id = ipfs['message_obj']['ether_id']
+    var prompt = this.getLocale()['1407z']/* 'Incoming request for % from $' */
+    const alias = await this.get_sender_title_text(sender_account, sender_account_e5)
+    prompt = prompt.replace('$', alias)
+    prompt = prompt.replace('%', ether_id)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_coin_ether_request', 'data':ipfs})
+  }
   
 
 
@@ -49607,7 +49761,10 @@ class App extends Component {
           else if(object_data['type'] == 'blocked_account'){
             await this.process_new_blocked_account_message_update(object_data, object_hash)
           }
-          await this.wait(200)
+          else if(object_data['type'] == 'ether_coin_request'){
+            await this.process_ether_coin_request_message(object_data, object_hash, '', false)
+          }
+          await this.wait(300)
         }
       }
     }
