@@ -1344,7 +1344,7 @@ class App extends Component {
     contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[], is_device_online: true,
     last_notification_view_time: {'?':0, 'e':0, 'w':0}, 
     
-    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{},
+    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{}
     
   };
 
@@ -6218,7 +6218,7 @@ class App extends Component {
 
           get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)} start_object_file_viewcount_fetch={this.start_object_file_viewcount_fetch.bind(this)}
 
-          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)}
+          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -16466,7 +16466,7 @@ class App extends Component {
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
         send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
 
-        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)}
+        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)}
         />
       </div>
     )
@@ -16550,7 +16550,9 @@ class App extends Component {
       'spend_prepurchase_credits':700,
       'export_prepurchase_transactions':700,
       'view_ordered_variant_details':650,
-      'view_coin_ether_request':450,
+      'view_coin_ether_request':650,
+      'prompt_spend_prepurchase_credits':700,
+      'view_pre_purchase_request':570,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17677,7 +17679,9 @@ class App extends Component {
   }
 
   cancel_entering_call(){
-    this.prompt_top_notification(this.getLocale()['3055jq']/* Disconnecting Microphone */)
+    if(this.state.microphoneInitialized == true){
+      this.prompt_top_notification(this.getLocale()['3055jq']/* Disconnecting Microphone */)
+    }
     this.open_dialog_bottomsheet()
     this.leave_call2()
   }
@@ -17740,6 +17744,9 @@ class App extends Component {
 
   async open_send_ether_section(ipfs, ether_coin_object_data){
     this.open_dialog_bottomsheet();
+    if(this.state.view_notification_log_bottomsheet == true){
+      this.open_view_notification_log_bottomsheet();
+    }
     if(this.state.send_receive_bottomsheet == false){
       this.start_send_receive_ether_bottomsheet(ether_coin_object_data)
     }
@@ -17749,6 +17756,9 @@ class App extends Component {
 
   async open_send_coin_section(ipfs, ether_coin_object_data){
     this.open_dialog_bottomsheet();
+    if(this.state.view_notification_log_bottomsheet == true){
+      this.open_view_notification_log_bottomsheet();
+    }
     if(this.state.send_receive_coin_bottomsheet == false){
       this.start_send_receive_coin_bottomsheet(ether_coin_object_data)
     }
@@ -20995,6 +21005,22 @@ class App extends Component {
       const object_id = parseInt(event.returnValues[obj['p']])
       this.load_bag_data([object_id])
     }
+    else if(event_type == 'ether_coin_request'){
+      const ipfs = event['view']['data']
+      this.show_dialog_bottomsheet(ipfs, 'view_coin_ether_request')
+      return;
+    }
+    else if(event_type == 'call_request'){
+      const data = event['view']['data']
+      this.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
+      return;
+    }
+    else if(event_type == 'pre_purchase_request'){
+      const data = event['view']['data']
+      this.load_prepurchase_balance_for_prompt(data)
+      this.show_dialog_bottomsheet(data, 'view_pre_purchase_request')
+      return;
+    }
     
 
     var id = obj['notification_id']
@@ -22504,8 +22530,13 @@ class App extends Component {
       var id = onClickData['notification_id']
       if(this.state.dialog_bottomsheet == false){
         if(id == 'view_coin_ether_request'){
-          this.show_dialog_bottomsheet(onClickData['data'], id)
-        }else{
+          this.show_dialog_bottomsheet(onClickData['data'], 'view_coin_ether_request')
+        }
+        else if(id == 'view_pre_purchase_request'){
+          this.load_prepurchase_balance_for_prompt(onClickData['data'])
+          this.show_dialog_bottomsheet(onClickData['data'], 'view_pre_purchase_request')
+        }
+        else{
           this.show_dialog_bottomsheet(onClickData, id)
         }
       }
@@ -30306,6 +30337,52 @@ class App extends Component {
     await loading_prepurchase_balance(object)
     await this.wait(700)
     this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
+  }
+
+  async load_prepurchase_balance_for_prompt(data){
+    const contract_id = data['contract_id']
+    const e5 = data['contract_e5']
+    const object = {'e5_id': contract_id+e5, 'id':contract_id, 'e5':e5}
+
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const contract_addresses = this.state.addresses[e5]
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const my_address = this.state.accounts[this.state.selected_e5].address;
+    var event_params = [
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:30/* 30(contract_prepurchase_credits_sale) */, p3/* context */:contract_id, p4/* string_data */:my_address}],
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */:5, p3/* receiver */:contract_id}],
+      [web3, H52contractInstance, 'e5', e5, {p2/* awward_receiver */:contract_id, p4/* metadata */:my_address}],
+    ]
+    const all_events = (await this.load_multiple_events_from_nitro(event_params)).all_events
+
+    const pre_purchase_record_events = all_events[0]
+    const pre_purchase_transfer_events = all_events[1]
+    const prepurchase_awards_events = all_events[2]
+    object['pre_purchase_record_events'] = pre_purchase_record_events
+    object['pre_purchase_transfer_events'] = pre_purchase_transfer_events
+    object['prepurchase_awards_events'] = prepurchase_awards_events
+
+    const loading_prepurchase_balance = async (contract_obj) => {
+      var is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
+      is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = true
+      this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
+
+      const target = 'pre_purchase|'+contract_obj['e5_id']
+      await this.get_objects_from_socket_and_set_in_state([target], [my_address], [], 0)
+    }
+    await loading_prepurchase_balance(object)
+
+    const pre_purchase_prompt_data_clone = structuredClone(this.state.pre_purchase_prompt_data)
+    pre_purchase_prompt_data_clone[object['e5_id']] = object;
+    this.setState({pre_purchase_prompt_data: pre_purchase_prompt_data_clone})
   }
 
   calculate_credit_balance(contract_object){
@@ -45735,6 +45812,9 @@ class App extends Component {
       else if(message['type'] == 'ether_coin_request'){
         me.process_ether_coin_request_message(message, object_hash, from, true)
       }
+      else if(message['type'] == 'pre_purchase_request'){
+        me.process_pre_purchase_request_message(message, object_hash, from, true)
+      }
     });
     this.socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -46258,6 +46338,20 @@ class App extends Component {
     const to = await this.get_recipient_address(state_object.request_ether_coin_recipient, state_object.recipient_e5)
     const target = 'ether_coin_request|'+to
     const secondary_target = 'ether_coin_request|'+this.state.accounts[this.state.selected_e5].address
+    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_pre_purchase_request_transaction(amount, contract_object, note, request_recipient, recipient_e5){
+    this.prompt_top_notification(this.getLocale()['1407y']/* 'Sending Your Request... */, 1900)
+    const mail_message_object = await this.prepare_pre_purchase_request_message(amount, contract_object, note, request_recipient, recipient_e5)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(mail_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(request_recipient, recipient_e5)
+    const target = 'pre_purchase_request|'+to
+    const secondary_target = 'pre_purchase_request|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
@@ -47758,6 +47852,55 @@ class App extends Component {
     return { message, object_hash }
   }
 
+  async prepare_pre_purchase_request_message(amount, contract_object, note, request_recipient, recipient_e5){
+    const id = this.make_number_id(12)
+    const signature_request = {
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'sender_address': this.state.accounts[this.state.selected_e5].address,
+      'amount': amount,
+      'contract_id':contract_object['id'],
+      'contract_e5':contract_object['e5'],
+      'contract_e5_id':contract_object['e5_id'],
+      'note':note,
+      'request_id': id,
+      'time': Date.now(),
+    }
+
+    const tags = []
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(signature_request, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'pre_purchase_request',
+      message_identifier: id,
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
   
 
   
@@ -49123,7 +49266,6 @@ class App extends Component {
 
     if(ipfs != message.data){
       const e5 = message.e5;
-
       const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
       var ipfs_message = ipfs;
 
@@ -49136,18 +49278,20 @@ class App extends Component {
       }
       if(ipfs_message != null){
         const clone = structuredClone(this.state.call_invites)
-        clone[message.invite_id] = ipfs_message
+        clone[ipfs_message['call_id']] = ipfs_message
         this.setState({call_invites: clone})
+        // console.log('process_new_call_invite_message', clone)
 
         if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
           this.handle_call_invite_notifications(ipfs_message)
         }
-
         this.get_room_participant_count(ipfs_message['call_id'])
 
         const message_account = message['author']
         const message_e5 = message['e5']
         this.get_alias_from_account_id(message_account, message_e5)
+
+        this.set_call_request_event_in_notifications(ipfs_message, message, object_hash)
       }
     }
   }
@@ -49157,6 +49301,25 @@ class App extends Component {
     var prompt = this.getLocale()['2738bn']/* 'Incoming call request from $' */
     prompt = prompt.replace('$', sender_account)
     this.prompt_top_notification(prompt, 10000, {'notification_id':'enter_voice_call', 'message':message})
+  }
+
+  set_call_request_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: message.author, p2:0, p3:0, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['e5']
+    event['p'] = 0
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = message['author']
+    event['type'] = 'call_request'
+    event['event_type'] = 'call_request'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'call_request', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1', 'data':ipfs}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['call_request'] == null ? [] : clone['call_request'].slice()
+    request_clone_array.push(event)
+    clone['call_request'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
   }
 
   async process_new_call_metadata_for_entering_call(message, object_hash){
@@ -49339,6 +49502,8 @@ class App extends Component {
     if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
       await this.handle_coin_ether_request_notifications(ipfs)
     }
+
+    this.set_coin_ether_request_event_in_notifications(ipfs, message, object_hash)
   }
 
   async handle_coin_ether_request_notifications(ipfs){
@@ -49350,6 +49515,84 @@ class App extends Component {
     prompt = prompt.replace('$', alias)
     prompt = prompt.replace('%', ether_id)
     this.prompt_top_notification(prompt, 15023, {'notification_id':'view_coin_ether_request', 'data':ipfs})
+  }
+
+  set_coin_ether_request_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: message.author, p2:0, p3:0, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['e5']
+    event['p'] = 0
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = ipfs['sender_account']
+    event['type'] = 'ether_coin_request'
+    event['event_type'] = 'ether_coin_request'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'ether_coin_request', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1', 'data':ipfs}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['ether_coin_request'] == null ? [] : clone['ether_coin_request'].slice()
+    request_clone_array.push(event)
+    clone['ether_coin_request'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
+  async process_pre_purchase_request_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    const received_pre_purchase_request_object = structuredClone(this.state.received_pre_purchase_request)
+    if(received_pre_purchase_request_object[ipfs['contract_e5_id']] == null){
+      received_pre_purchase_request_object[ipfs['contract_e5_id']] = {}
+    }
+    received_pre_purchase_request_object[ipfs['contract_e5_id']][ipfs['request_id']] = ipfs
+    this.setState({received_pre_purchase_request: received_pre_purchase_request_object})
+
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+      await this.handle_pre_purchase_request_notifications(ipfs)
+    }
+
+    this.set_pre_purchase_request_event_in_notifications(ipfs, message, object_hash)
+  }
+
+  async handle_pre_purchase_request_notifications(ipfs){
+    var sender_account = ipfs['sender_account']
+    var sender_account_e5 = ipfs['sender_account_e5']
+    var prompt = this.getLocale()['1407bd']/* 'Incoming pre-purchase payment request from $' */
+    const alias = await this.get_sender_title_text(sender_account, sender_account_e5)
+    prompt = prompt.replace('$', alias)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_pre_purchase_request', 'data':ipfs})
+  }
+
+  set_pre_purchase_request_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: message.author, p2:0, p3:0, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['e5']
+    event['p'] = 0
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = ipfs['sender_account']
+    event['type'] = 'pre_purchase_request'
+    event['event_type'] = 'pre_purchase_request'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'pre_purchase_request', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1', 'data':ipfs}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['pre_purchase_request'] == null ? [] : clone['pre_purchase_request'].slice()
+    request_clone_array.push(event)
+    clone['pre_purchase_request'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
   }
   
 
@@ -49762,7 +50005,10 @@ class App extends Component {
             await this.process_new_blocked_account_message_update(object_data, object_hash)
           }
           else if(object_data['type'] == 'ether_coin_request'){
-            await this.process_ether_coin_request_message(object_data, object_hash, '', false)
+            await this.process_ether_coin_request_message(object_data, object_hash, '', true)
+          }
+          else if(object_data['type'] == 'pre_purchase_request'){
+            await this.process_pre_purchase_request_message(object_data, object_hash, '', true)
           }
           await this.wait(300)
         }
@@ -49941,6 +50187,9 @@ class App extends Component {
     this.socket.emit("join_room", join_room_obj);
 
     this.open_dialog_bottomsheet()
+    if(this.state.view_notification_log_bottomsheet == true){
+      this.open_view_notification_log_bottomsheet();
+    }
     await this.wait(200)
     this.show_view_call_interface()
     this.pause_media_if_any()

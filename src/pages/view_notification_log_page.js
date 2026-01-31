@@ -60,7 +60,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067a']/* 'mail' */, this.props.app_state.loc['3067b']/* 'proposals' */, this.props.app_state.loc['3067c']/* 'jobs' */, this.props.app_state.loc['3067d']/* 'contractors' */, this.props.app_state.loc['3067e']/* 'contracts' */, this.props.app_state.loc['3067af']/* 'job-following' */, this.props.app_state.loc['3067y']/* 'work-comments' */ ], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067a']/* 'mail' */, this.props.app_state.loc['3067b']/* 'proposals' */, this.props.app_state.loc['3067c']/* 'jobs' */, this.props.app_state.loc['3067d']/* 'contractors' */, this.props.app_state.loc['3067e']/* 'contracts' */, this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */, this.props.app_state.loc['3067af']/* 'job-following' */, this.props.app_state.loc['3067as']/* 'calls ☎️' */, this.props.app_state.loc['3067y']/* 'work-comments' */ ], [0]
                 ],
             };
         }
@@ -81,7 +81,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */, this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['3067ac']/* 'signatures' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */, this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['3067ac']/* 'signatures' */, this.props.app_state.loc['2481d']/* 'requests 📥' */], [0]
                 ],
             };
         }
@@ -217,6 +217,20 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3067as']/* 'calls ☎️' */){
+            return(
+                <div>
+                    {this.render_work_notifications(['call_request'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */){
+            return(
+                <div>
+                    {this.render_work_notifications(['pre_purchase_request'])}
+                </div>
+            )
+        }
 
         else if(selected_item == this.props.app_state.loc['3067f']/* 'bags' */){
             //bag, storefront, bag_application_response
@@ -273,6 +287,13 @@ class ViewNotificationLogPage extends Component {
             return(
                 <div>
                     {this.render_wallet_data(['signature'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['2481d']/* 'requests 📥' */){
+            return(
+                <div>
+                    {this.render_wallet_data(['ether_coin_request'])}
                 </div>
             )
         }
@@ -369,6 +390,8 @@ class ViewNotificationLogPage extends Component {
             'contract':this.props.app_state.loc['3067q'],/* '↪📑 $ entered your contract.' */
             'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
             'follower_job': this.props.app_state.loc['3067ah'],/* '💼 $ posted a new job you could do.' */
+            'call_request': this.props.app_state.loc['3067ar'],/* '📞 $ invited you to join a call.' */
+            'pre_purchase_request': this.props.app_state.loc['3067at'],/* '💳 $ sent you a pre-purchase payment request.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -408,8 +431,10 @@ class ViewNotificationLogPage extends Component {
         });
 
         const follower_job = notification_object['follower_job'] || [];
+        const call_request = notification_object['call_request'] || [];
+        const pre_purchase_request = notification_object['pre_purchase_request'] || []
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)
@@ -628,15 +653,20 @@ class ViewNotificationLogPage extends Component {
                     {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
                 </div>
             )
-        }else{
+        }
+        else{
             const obj = {
                 'bill_request': this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
                 'signature': this.props.app_state.loc['3067ad'],/* '✍️ $ sent you a singature request.' */
+                'ether_coin_request': this.props.app_state.loc['3067aq'],/* '📥 $ sent you a request for some %' */
             }
             const event_type = item['event_type']
             const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
             const message = obj[event_type]
-            const processed_message = message.replace('$', sender_alias_or_account)
+            var processed_message = message.replace('$', sender_alias_or_account)
+            if(event_type == 'ether_coin_request'){
+                processed_message = processed_message.replace('%', item['view']['data']['message_obj']['ether_id'])
+            }
             const timestamp = item['time']
             const e5 = item['e5']
             return(
@@ -653,8 +683,9 @@ class ViewNotificationLogPage extends Component {
         const token = notification_object['token'] == null ? [] : notification_object['token']
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
+        const ether_coin_request = notification_object['ether_coin_request'] || []
         
-        const all_events = token.concat(bill_request, signature)
+        const all_events = token.concat(bill_request, signature, ether_coin_request)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

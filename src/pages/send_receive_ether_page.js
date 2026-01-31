@@ -64,16 +64,17 @@ class SendReceiveEtherPage extends Component {
         picked_max_fee_per_gas_amount: 0,
         
         request_ether_recipient:'',
-        request_ether_recipient_address: this.get_account_address(),
+        request_ether_recipient_address: '',
     };
 
     set_object(item){
         this.setState({ether: item})
         var me = this;
-        setTimeout(function() {
+        setTimeout(() => {
             if(me.number_picker.current != null){
                 me.number_picker.current.reset_number_picker()
             }
+            me.setState({request_ether_recipient_address: me.get_account_address()})
         }, (1 * 1000));
     }
 
@@ -927,15 +928,15 @@ class SendReceiveEtherPage extends Component {
         var gas_transactions = this.state.picked_wei_amount == 0 ? 0 : Math.floor((this.state.picked_wei_amount/gas_price)/2_300_000)
 
         return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407p']/* 'Request Ether.' */, 'details':this.props.app_state.loc['1407q']/* 'Send a request via an indexer to another account for some ether.' */, 'size':'l'})}
-                {this.render_detail_item('0')}
+            <div style={{'padding':'0px 0px 0px 10px'}}>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1407q']/* 'Send a request via an indexer to another account for some ether.' */, 'color':'dark-grey'})}
+                <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1407s']/* 'Target Account.' */, 'details':this.props.app_state.loc['1407t']/* 'The account you wish to receive the request and send you ether.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_request_recipient_input_field_changed.bind(this)} text={this.state.request_ether_recipient} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1407u']/* 'Requested Amount (optional)' */, 'details':this.props.app_state.loc['1407v']/* 'The amount of ether you wish the recipient to credit you with.' */, 'size':'l'})}
@@ -950,13 +951,13 @@ class SendReceiveEtherPage extends Component {
                     {this.render_detail_item('2', { 'style':'s', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
                 {this.render_amount_number_picker()}
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1407bb']/* 'Transfer Recipient.' */, 'details':this.props.app_state.loc['1407bc']/* 'The address you wish to receive the ether when the request is fulfilled.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_ether_recipient_input_field_changed.bind(this)} text={this.state.request_ether_recipient_address} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_ether_recipient_input_field_changed.bind(this)} text={this.state.request_ether_recipient_address} theme={this.props.theme}/>
+                <div style={{height: 20}}/>
 
                 <div onClick={() => this.prompt_ether_request_from_target()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1407w']/* 'Request Ether' */, 'action':''})}
@@ -967,7 +968,7 @@ class SendReceiveEtherPage extends Component {
     }
 
     when_request_recipient_input_field_changed(text){
-        this.state({request_ether_recipient: text})
+        this.setState({request_ether_recipient: text})
     }
 
     when_request_ether_recipient_input_field_changed(text){

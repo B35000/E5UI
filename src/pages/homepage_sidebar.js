@@ -214,8 +214,10 @@ class HomepageSideBar extends Component {
         });
 
         const follower_job = notification_object['follower_job'] || [];
+        const call_request = notification_object['call_request'] || []
+        const pre_purchase_request = notification_object['pre_purchase_request'] || []
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {
@@ -259,8 +261,9 @@ class HomepageSideBar extends Component {
         const token = notification_object['token'] == null ? [] : notification_object['token']
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
-        
-        const all_events = token.concat(bill_request, signature)
+        const ether_coin_request = notification_object['ether_coin_request'] || []
+
+        const all_events = token.concat(bill_request, signature, ether_coin_request)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {

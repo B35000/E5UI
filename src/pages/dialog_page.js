@@ -117,7 +117,7 @@ class DialogPage extends Component {
 
         new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(), new_voice_call_number_id: make_number_id_str(15),
 
-        credit_spend_amount:0, typed_transaction_note:'',
+        credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'',
     };
 
 
@@ -573,6 +573,20 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_received_ether_coin_request_details_ui()}
+                </div>
+            )
+        }
+        else if(option == 'prompt_spend_prepurchase_credits'){
+            return(
+                <div>
+                    {this.render_promopt_spend_prepurchase_credits_ui()}
+                </div>
+            )
+        }
+        else if(option == 'view_pre_purchase_request'){
+            return(
+                <div>
+                    {this.render_view_request_spend_prepurchase_credits_ui()}
                 </div>
             )
         }
@@ -10350,9 +10364,9 @@ return data['data']
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':recipient_address, 'details':this.props.app_state.loc['3055kb']/* 'Requested Recipient\'s Address.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {memo_text != '' && ( <div style={{height: 10}}/> )}
 
-                {this.render_detail_item('3', {'title':memo_text, 'details':this.props.app_state.loc['3055kf']/* 'Requested Transaction Memo.' */, 'size':'l'})}
+                {memo_text != '' && this.render_detail_item('3', {'title':memo_text, 'details':this.props.app_state.loc['3055kf']/* 'Requested Transaction Memo.' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
@@ -10437,6 +10451,251 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    render_promopt_spend_prepurchase_credits_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_promopt_spend_prepurchase_credits_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_promopt_spend_prepurchase_credits_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_promopt_spend_prepurchase_credits_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_promopt_spend_prepurchase_credits_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1407s']/* 'Target Account.' */, 'details':this.props.app_state.loc['3055kh']/* 'The account you wish to receive the pre-purchase spend request.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_request_recipient_input_field_changed.bind(this)} text={this.state.prepurchase_request_recipient} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055je']/* 'Credits Amount.' */, 'details': this.props.app_state.loc['3055kg']/* 'Set the amount you wish the target amount should spend.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3055jg']/* 'Set Amount.' */, 'subtitle':this.format_power_figure(this.state.credit_spend_amount), 'barwidth':this.get_number_width(this.state.credit_spend_amount), 'number':`${this.format_account_balance_figure(this.state.credit_spend_amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <NumberPicker ref={(el) => (this.credits_number_picker = el)} clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_credit_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={54} pick_with_text_area={true} text_area_hint={'1000'}/>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055jl']/* 'Transaction Note.' */, 'details': this.props.app_state.loc['3055ki']/* 'You can also specify a note required for the pre-purchase transaction.' */, 'size': 'l' })}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3055jn']/* 'Note...' */} when_text_input_field_changed={this.when_typed_transaction_note_text_input_field_changed.bind(this)} text={this.state.typed_transaction_note} theme={this.props.theme} adjust_height={false}/>
+                
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.transaction_note_length - this.state.typed_transaction_note.length)})}
+
+                <div style={{height:10}}/>
+                <div onClick={()=> this.make_pre_purchase_request()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055kj']/* 'Send Request' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_request_recipient_input_field_changed(text){
+        this.setState({prepurchase_request_recipient: text})
+    }
+
+    async make_pre_purchase_request(){
+        const recipient = this.state.prepurchase_request_recipient.trim()
+        const request_recipient = await this.get_typed_alias_id(recipient)
+        const recipient_e5 = this.get_recipient_e5(recipient)
+        const amount = this.state.credit_spend_amount
+        const transaction_note = this.state.typed_transaction_note.trim();
+        const contract = this.state.data['contract']
+
+        if(amount == 0){
+            this.props.notify(this.props.app_state.loc['3055ji']/* You need to specify an amount. */, 4000)
+        }
+        else if(isNaN(request_recipient) || request_recipient =='' || parseInt(request_recipient)<1001){
+            this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 3800)
+        }
+        else if(transaction_note.length > this.props.app_state.transaction_note_length){
+            this.props.notify(this.props.app_state.loc['3055jo']/* That note is too long. */, 4000)
+        }
+        else{
+            this.props.emit_pre_purchase_request_transaction(amount, contract, transaction_note, request_recipient, recipient_e5)
+            this.setState({prepurchase_request_recipient: '', credit_spend_amount:0})
+            this.credits_number_picker.reset_number_picker()
+        }
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
+    }
+
+
+
+
+
+
+
+
+
+    render_view_request_spend_prepurchase_credits_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_request_spend_prepurchase_credits_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_request_spend_prepurchase_credits_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_request_spend_prepurchase_credits_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_request_spend_prepurchase_credits_data(){
+        const ipfs = this.state.data;
+        const time = ipfs['time']/1000
+        const sender_account = ipfs['sender_account']
+        const sender_account_e5 = ipfs['sender_account_e5']
+        // const sender_address = ipfs['sender_address']
+        const amount = ipfs['amount']
+        const contract_id = ipfs['contract_id']
+        const contract_e5 = ipfs['contract_e5']
+        const note = ipfs['note']
+        const id = ipfs['request_id']
+        const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
+        const alias = this.get_senders_alias(sender_account, sender_account_e5)
+        const mock_contract = this.props.app_state.pre_purchase_prompt_data[ipfs['contract_e5_id']]
+        var credits_balance = 0;
+        try{
+            credits_balance = this.props.calculate_credit_balance(mock_contract)
+        }catch(e){
+            credits_balance = 0;
+        }
+        
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':id, 'details':this.props.app_state.loc['3055jv']/* 'Request ID' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':alias, 'details':this.props.app_state.loc['3055jw']/* 'Request Author.' */, 'size':'l', 'title_image': e5_image})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3055jg']/* 'Set Amount.' */, 'subtitle':this.format_power_figure(amount), 'barwidth':this.get_number_width(amount), 'number':`${this.format_account_balance_figure(amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3092b']/* credits */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':number_with_commas(contract_id), 'details':this.props.app_state.loc['3055kk']/* 'Pre-purchase Contract' */, 'size':'l', 'title_image': this.props.app_state.e5s[contract_e5].e5_img})}
+                <div style={{height: 10}}/>
+
+                {note != '' && this.render_detail_item('3', {'title':note, 'details':this.props.app_state.loc['3055km']/* 'Requested Transaction Note' */, 'size':'l'})}
+
+                {credits_balance > 0 && mock_contract != null && (
+                    <div>
+                        <div style={{height:10}}/>
+                        <div onClick={()=> this.fulfil_pre_purchase_request(amount, note, mock_contract)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055kn']/* 'Fulfil Request' */, 'action':''},)}
+                        </div>
+                    </div>
+                )}
+                {mock_contract == null && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_small_skeleton_object2()}
+                    </div>
+                )}
+                
+            </div>
+        )
+    }
+
+    fulfil_pre_purchase_request(amount, transaction_note, contract){
+        if(!this.does_account_have_enough_credits_for_transaction(amount, contract)){
+            this.props.notify(this.props.app_state.loc['3055jk']/* You dont have enough credits to make that transaction. */, 6000)
+        }
+        else{
+            this.props.emit_pre_purchase_transaction(amount, contract, transaction_note)
+            this.props.open_dialog_bottomsheet()
+        }
+    }
 
 
 

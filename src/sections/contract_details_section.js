@@ -68,7 +68,7 @@ class ContractDetailsSection extends Component {
                 active: 'e',
             },
             'e': [
-                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */], [1]
+                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */, this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */], [1]
             ],
             'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
@@ -270,6 +270,13 @@ class ContractDetailsSection extends Component {
                     </div>
                 )
             }
+            else if(selected_item == this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */){
+                return(
+                    <div key={selected_item}>
+                        {this.render_prepurchase_requests_section(object)}
+                    </div>
+                )
+            }
         }
     }
 
@@ -418,8 +425,9 @@ class ContractDetailsSection extends Component {
                                             </div>
                                         </div>
                                     )}
+
+                                    {index == 8 && this.render_detail_item('0')}
                                     
-                                    {index == 9 && (<div style={{height:10}}/>)}
                                     {index == 9 && this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
                                     {index == 10 && (<div style={{height:10}}/>)}
                                     {index == 10 && this.render_detail_item('3', item['default_consensus_majority_limit'])}
@@ -455,7 +463,7 @@ class ContractDetailsSection extends Component {
                                         </div>
                                     )}
                                     
-                                    {index == 15 && (<div style={{height:10}}/>)}
+                                    {index == 15 && this.render_detail_item('0')}
                                     {index == 15 && this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
                                     {index == 16 && (<div style={{height:10}}/>)}
                                     {index == 16 && this.render_detail_item('3', item['max_enter_contract_duration'])}
@@ -500,6 +508,8 @@ class ContractDetailsSection extends Component {
                                     {index == 35 && this.show_make_pre_purchase_button(object)}
 
                                     {index == 36 && this.show_spend_pre_purchase_credits_button(object)}
+
+                                    {index == 36 && this.show_prompt_spend_pre_purchase_credits_button(object)}
 
                                     {index == 37 && this.show_export_pre_purchase_credit_transactions_button(object)}
 
@@ -1152,6 +1162,29 @@ class ContractDetailsSection extends Component {
         }
     }
 
+    show_prompt_spend_pre_purchase_credits_button(object){
+        if(object['ipfs'] != null && object['ipfs'].contract_type == 'workgroup' && object['ipfs'].get_contract_credits_purchase_enabled_tags_object != null && object['hidden'] == false){
+            const selected_item = this.get_selected_item2(object['ipfs'].get_contract_credits_purchase_enabled_tags_object, 'e')
+            const my_account = this.props.app_state.user_account_id[object['e5']]
+            
+            if(selected_item == 1){
+                return(
+                    <div>
+                        {this.render_detail_item('0')}
+
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214be']/* 'Prompt Pre-purchase Transaction' */, 'details': this.props.app_state.loc['2214bf']/* 'Prompt a pre-purchase transaction targeting a specific account.' */, 'size': 'l' })}
+                        <div style={{ height: 10 }} />
+                        <div onClick={() => this.open_prompt_spend_purchase_credits(object)}>
+                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214bg']/* 'Prompt Spend' */, 'action': '' })}
+                        </div>
+
+                    </div>
+                )
+            }
+        }
+    }
+
+
     
 
 
@@ -1170,6 +1203,14 @@ class ContractDetailsSection extends Component {
             return;
         }
         this.props.show_dialog_bottomsheet({'contract':object}, 'spend_prepurchase_credits')
+    }
+
+    open_prompt_spend_purchase_credits(object){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({'contract':object}, 'prompt_spend_prepurchase_credits')
     }
 
     open_purchase_credits(object){
@@ -3286,7 +3327,6 @@ class ContractDetailsSection extends Component {
         }
     }
 
-
     render_blocked_account_event_item(item, object, index){
         if (this.state.selected_blocked_account_event_item == index) {
             return (
@@ -3317,6 +3357,101 @@ class ContractDetailsSection extends Component {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+    
+    render_prepurchase_requests_section(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2214bh']/* 'Pre-purchase Transaction Requests.' */, 'details':this.props.app_state.loc['2214bi']/* 'All the Pre-purchase transfer reqests sent to your account.' */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_prepurchase_request_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_prepurchase_request_items(object){
+        var middle = this.props.height-200;
+        var items = [].concat(this.get_requests(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}}>
+                                    {this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.map((item, index) => (
+                                <li style={{}} onClick={() => this.when_request_item_clicked(item, object)}>
+                                    <div>
+                                        {this.render_request_item(item)}
+                                        <div style={{height: 4}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_requests(object){
+        const id = object['e5_id']
+        const data = this.props.app_state.received_pre_purchase_request[id] || {}
+        const requets = [];
+        Object.keys(data).forEach(request_id => {
+            requets.push(data[request_id])
+        });
+        return this.sortByAttributeDescending(requets, 'time')
+    }
+
+    render_request_item(ipfs){
+        const time = ipfs['time']/1000
+        const sender_account = ipfs['sender_account']
+        const sender_account_e5 = ipfs['sender_account_e5']
+        const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2481c']/* 'From $' */.replace('$', sender_account).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+', '+ipfs['amount']+' '+this.props.app_state.loc['3092b']/* credits */, 'size':'l', 'title_image': e5_image})}
+            </div>
+        )
+    }
+
+    async when_request_item_clicked(ipfs, object){
+        this.props.show_dialog_bottomsheet(ipfs, 'view_pre_purchase_request')
+        await this.props.load_prepurchase_balance_for_prompt(ipfs)
+    }
 
 
 

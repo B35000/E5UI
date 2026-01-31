@@ -1093,9 +1093,13 @@ class EthersDetailsSection extends Component {
         const decimal_amount = base_unit_amount / 10**18
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2481c']/* 'From $' */.replace('$', sender_account).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+','+decimal_amount+' '+ipfs['message_obj']['ether_id'], 'size':'l', 'title_image': e5_image})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2481c']/* 'From $' */.replace('$', sender_account).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+', '+decimal_amount+' '+ipfs['message_obj']['ether_id'], 'size':'l', 'title_image': e5_image})}
             </div>
         )
+    }
+
+    when_request_item_clicked(ipfs, ether_item){
+        this.props.show_dialog_bottomsheet(ipfs, 'view_coin_ether_request')
     }
 
 

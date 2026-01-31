@@ -1059,8 +1059,10 @@ class home_page extends Component {
         });
 
         const follower_job = notification_object['follower_job'] || [];
+        const call_request = notification_object['call_request'] || []
+        const pre_purchase_request = notification_object['pre_purchase_request'] || []
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request)
 
         const me = this;
         const filtered_events = all_events.filter(function (event) {
@@ -1104,9 +1106,10 @@ class home_page extends Component {
         const token = notification_object['token'] == null ? [] : notification_object['token']
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
+        const ether_coin_request = notification_object['ether_coin_request'] || []
         
         
-        const all_events = token.concat(bill_request, signature)
+        const all_events = token.concat(bill_request, signature, ether_coin_request)
         const me = this;
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)  && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['w'] / 1000)
@@ -5786,7 +5789,7 @@ class home_page extends Component {
 
                 emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.props.get_objects_from_socket_and_set_in_state.bind(this)}
 
-                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)}
+                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)}
                 />
             </div>
         )

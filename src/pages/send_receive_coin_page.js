@@ -45,7 +45,7 @@ class SendReceiveCoinPage extends Component {
         get_kill_substrate_wallet_tags_obj:this.get_kill_substrate_wallet_tags_obj(),
         
         request_coin_recipient:'',
-        request_coin_recipient_address:this.get_account_address(),
+        request_coin_recipient_address:'',
         request_coin_memo:''
     };
 
@@ -74,6 +74,10 @@ class SendReceiveCoinPage extends Component {
 
     set_object(item){
         this.setState({coin: item})
+        setTimeout(() => {
+            this.setState({request_coin_recipient_address:this.get_account_address()})
+        }, (1 * 1000));
+        
     }
 
     render(){
@@ -830,15 +834,15 @@ class SendReceiveCoinPage extends Component {
     render_request_coin_data(){
         const item = this.state.coin
         return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2954a']/* 'Request Coin.' */, 'details':this.props.app_state.loc['2954b']/* 'Send a request via an indexer to another account for some coin.' */, 'size':'l'})}
-                {this.render_detail_item('0')}
+            <div style={{'padding':'0px 0px 0px 10px'}}>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['2954b']/* 'Send a request via an indexer to another account for some coin.' */, 'color':'dark-grey'})}
+                <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1407s']/* 'Target Account.' */, 'details':this.props.app_state.loc['2954c']/* 'The account you wish to receive the request and send you coin.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_request_recipient_input_field_changed.bind(this)} text={this.state.request_coin_recipient} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1407u']/* 'Requested Amount (optional)' */, 'details':this.props.app_state.loc['2954d']/* 'The amount of coin you wish the recipient to credit you with.' */, 'size':'l'})}
@@ -851,19 +855,18 @@ class SendReceiveCoinPage extends Component {
                 </div>
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={this.get_coin_decimal_count()} pick_with_text_area={true}/>
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1407bb']/* 'Transfer Recipient.' */, 'details':this.props.app_state.loc['2954f']/* 'The address you wish to receive the coin when the request is fulfilled.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_coin_recipient_input_field_changed.bind(this)} text={this.state.request_coin_recipient_address} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
-
 
 
                 {item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA' && (
                     <div>
+                        {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2954g']/* 'Transfer Memo.' */, 'details':this.props.app_state.loc['2954h']/* 'You may optionally include a required memo for the requested transfer.' */, 'size':'l'})}
                         <div style={{height: 10}}/>
 
@@ -880,7 +883,7 @@ class SendReceiveCoinPage extends Component {
     }
 
     when_request_recipient_input_field_changed(text){
-        this.state({request_coin_recipient: text})
+        this.setState({request_coin_recipient: text})
     }
 
     when_request_coin_recipient_input_field_changed(text){
