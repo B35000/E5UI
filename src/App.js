@@ -17895,7 +17895,21 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <PickFilePage ref={this.pick_file_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} return_selected_files={this.return_selected_files.bind(this)}/>
+            <PickFilePage ref={this.pick_file_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} return_selected_files={this.return_selected_files.bind(this)} default_nitro_option={default_nitro_option} 
+            load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} 
+            encrypt_data_string={this.encrypt_data_string.bind(this)} 
+            hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} 
+            get_file_extension={this.get_file_extension.bind(this)} 
+            get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} 
+            process_encrypted_file={this.process_encrypted_file.bind(this)} 
+            get_encrypted_file_size={this.get_encrypted_file_size.bind(this)}
+            process_encrypted_chunks={this.process_encrypted_chunks.bind(this)}
+            encrypt_singular_file={this.encrypt_singular_file.bind(this)}
+            encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)}
+            encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)}
+            upload_multiple_encrypted_files_to_nitro_node={this.upload_multiple_encrypted_files_to_nitro_node.bind(this)}
+
+            />
       </div>
     )
   }
@@ -39659,10 +39673,12 @@ class App extends Component {
       e_cids.push(ecid)
     }
 
-    this.when_uploading_multiple_encrypted_files_complete(e_cids, '', final_objects_2, type)
+    await this.when_uploading_multiple_encrypted_files_complete(e_cids, '', final_objects_2, type)
     this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 2000)
     await this.load_my_account_storage_info(nitro_object)
     this.set_file_upload_status('')
+
+    return e_cids
   }
 
 
