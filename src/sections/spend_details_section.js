@@ -44,7 +44,7 @@ class SpendDetailSection extends Component {
     
     state = {
         selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(), block_limit_chart_tags_object: this.block_limit_chart_tags_object(), total_supply_chart_tags_object: this.total_supply_chart_tags_object(), trading_volume_chart_tags_object: this.trading_volume_chart_tags_object(),
-        mint_limit_chart_tags_object: this.block_limit_chart_tags_object(), selected_exchange_item:{}
+        mint_limit_chart_tags_object: this.block_limit_chart_tags_object(), selected_exchange_item:{}, mint_buy_traffic_chart_tags_object:this.total_supply_chart_tags_object()
     };
 
     componentDidMount() {
@@ -107,7 +107,7 @@ class SpendDetailSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
             ],
         };
     }
@@ -460,6 +460,8 @@ class SpendDetailSection extends Component {
                                     
                                     {index == 19 && this.render_detail_item('0')}
                                     {index == 20 && this.show_transaction_count_chart(selected_object, symbol)}
+
+                                    {index == 20 && this.show_mint_buy_traffic_chart(selected_object, symbol)}
                                     
                                     {index == 21 && (<div style={{height:10}}/>)}
                                     {index == 21 && this.render_detail_item('3', item['minimum_transactions_between_swap'])}
@@ -2103,7 +2105,7 @@ return data['data']
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2582']/* Total Transactions' */, 'details':this.props.app_state.loc['2583']/* `Chart containing the total number of buy/sell transactions over time.` */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'interval':this.get_transaction_count_interval_figure(exchange_ratio_events)})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2584']/* 'Y-Axis: Total Transactions' */, 'details':this.props.app_state.loc['2585']/* 'X-Axis: Time' */, 'size':'s'})}
 
@@ -2190,6 +2192,163 @@ return data['data']
         var largest = Math.min.apply(Math, data);
         return largest
     }
+
+
+
+
+    show_mint_buy_traffic_chart(selected_object, symbol){
+        var proportion_ratio_events = selected_object['proportion_ratio_data']
+        var is_end_token = false
+        var token_ipfs = selected_object['ipfs']
+        if(token_ipfs != null) {
+            var depth = token_ipfs.default_depth == null ? 0 : token_ipfs.default_depth
+            if(depth != 0) is_end_token = true
+        }
+        if(proportion_ratio_events.length > 10 && !is_end_token){
+            const datapoints1 = this.get_mint_buy_traffic_points(proportion_ratio_events.reverse(), symbol)
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2602h']/* Block Mint Volume' */, 'details':this.props.app_state.loc['2602i']/* `Chart containing the amount of $ minted in each block over time.` */.replace('$', symbol), 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time})}
+                    <div style={{height: 10}}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.mint_buy_traffic_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_mint_buy_traffic_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2602j']/* 'Y-Axis: Total $' */.replace('$', symbol), 'details':this.props.app_state.loc['2585']/* 'X-Axis: Time' */, 'size':'s'})}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    when_mint_buy_traffic_chart_tags_object_updated(tag_obj){
+        this.setState({mint_buy_traffic_chart_tags_object: tag_obj})
+    }
+
+    get_mint_buy_traffic_points(proportion_ratio_events, symbol){
+        var events = this.filter_proportion_ratio_events3(proportion_ratio_events);
+        if(events.length == 0){
+            return []
+        }
+        return this.get_mint_buy_traffic_data_points(events, symbol)
+    }
+
+    filter_proportion_ratio_events3(events){
+        var selected_item = this.get_selected_item(this.state.mint_buy_traffic_chart_tags_object, this.state.mint_buy_traffic_chart_tags_object['i'].active)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now()/1000 - filter_value
+        events.forEach(event => {
+            if(event.returnValues.p5 > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        return data
+    }
+
+    get_mint_buy_traffic_data_points(events, symbol){
+        const block_obj = {}
+        const block_time_obj = {}
+        events.forEach(event => {
+            const amount_handled = bigInt(event.returnValues.p3/* tokens_to_receive */)
+            const block = parseInt(event.returnValues.p4)
+            const time = parseInt(event.returnValues.p5)
+
+            if(block_obj[block] == null){
+                block_obj[block] = bigInt(0)
+                block_time_obj[block] = time;
+            }
+            block_obj[block] = bigInt(block_obj[block]).plus(amount_handled);
+        });
+        const data = []
+        const block_datapoints = Object.keys(block_obj)
+        for(var i=0; i<block_datapoints.length; i++){
+            const amount = block_datapoints[i]
+            data.push(amount)
+
+            if(i==block_datapoints.length-1){
+                if(data.length > 100){
+                    var diff = Date.now()/1000 - block_time_obj[block_datapoints[i]]
+                    for(var t=0; t<diff; t+=60*60*3){
+                        data.push(data[data.length-1]*0.999)      
+                    }
+                }
+            }
+            else{
+                var diff = block_time_obj[block_datapoints[i+1]] - block_time_obj[block_datapoints[i]]
+                for(var t=0; t<diff; t+=60*60*3){
+                    data.push(data[data.length-1]*0.999)      
+                }
+            }
+        }
+
+
+
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var largest = 0;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = isNaN(parseInt(sum / slice.length)) ? 0 : parseInt(sum / slice.length)
+                original_y_val = result
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if(yVal > largest){
+                largest = yVal
+            }
+            var indicator = number_with_commas(original_y_val)+' '+symbol
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            } 
+        }
+
+        const chart_starting_time = block_datapoints.length == 0 ? 1000*60*60*24 : block_time_obj[block_datapoints[0]] * 1000
+
+        const chart_ending_time = block_datapoints.length == 0 ? Date.now() : block_time_obj[block_datapoints[block_datapoints.length-1]] * 1000
+
+        return { dps, largest, starting_time: chart_starting_time, ending_time: chart_ending_time }
+    }
+
+
 
 
 

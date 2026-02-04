@@ -303,66 +303,66 @@ import e5_logo_darkpink from './assets/e5_logo_darkpurple.png'
 import e5_logo_orange from './assets/e5_logo_orange.png'
 import e5_logo_darkorange from './assets/e5_logo_darkorange.png'
 
-import darkblue1 from './assets/darkblue1.jpg'
-import darkblue2 from './assets/darkblue2.jpg'
-import darkblue3 from './assets/darkblue3.jpg'
-import darkblue4 from './assets/darkblue4.jpg'
-import darkblue5 from './assets/darkblue5.jpg'
-import darkgreen1 from './assets/darkgreen1.jpg'
-import darkgreen2 from './assets/darkgreen2.jpg'
-import darkgreen3 from './assets/darkgreen3.jpg'
-import darkgreen4 from './assets/darkgreen4.jpg'
-import darkgreen5 from './assets/darkgreen5.jpg'
-import darkorange1 from './assets/darkorange1.jpg'
-import darkorange2 from './assets/darkorange2.jpg'
-import darkorange3 from './assets/darkorange3.jpg'
-import darkorange4 from './assets/darkorange4.jpg'
-import darkorange5 from './assets/darkorange5.jpg'
-import darkpink1 from './assets/darkpink1.jpg'
-import darkpink2 from './assets/darkpink2.jpg'
-import darkpink3 from './assets/darkpink3.jpg'
-import darkpink4 from './assets/darkpink4.jpg'
-import darkpink5 from './assets/darkpink5.jpg'
-import darkred1 from './assets/darkred1.jpg'
-import darkred2 from './assets/darkred2.jpg'
-import darkred3 from './assets/darkred3.jpg'
-import darkred4 from './assets/darkred4.jpg'
-import darkred5 from './assets/darkred5.jpg'
-import darkyellow1 from './assets/darkyellow1.jpg'
-import darkyellow2 from './assets/darkyellow2.jpg'
-import darkyellow3 from './assets/darkyellow3.jpg'
-import darkyellow4 from './assets/darkyellow4.jpg'
-import darkyellow5 from './assets/darkyellow5.jpg'
-import lightblue1 from './assets/lightblue1.jpg'
-import lightblue2 from './assets/lightblue2.jpg'
-import lightblue3 from './assets/lightblue3.jpg'
-import lightblue4 from './assets/lightblue4.jpg'
-import lightblue5 from './assets/lightblue5.jpg'
-import lightgreen1 from './assets/lightgreen1.jpg'
-import lightgreen2 from './assets/lightgreen2.jpg'
-import lightgreen3 from './assets/lightgreen3.jpg'
-import lightgreen4 from './assets/lightgreen4.jpg'
-import lightgreen5 from './assets/lightgreen5.jpg'
-import lightorange1 from './assets/lightorange1.jpg'
-import lightorange2 from './assets/lightorange2.jpg'
-import lightorange3 from './assets/lightorange3.jpg'
-import lightorange4 from './assets/lightorange4.jpg'
-import lightorange5 from './assets/lightorange5.jpg'
-import lightpink1 from './assets/lightpink1.jpg'
-import lightpink2 from './assets/lightpink2.jpg'
-import lightpink3 from './assets/lightpink3.jpg'
-import lightpink4 from './assets/lightpink4.jpg'
-import lightpink5 from './assets/lightpink5.jpg'
-import lightred1 from './assets/lightred1.jpg'
-import lightred2 from './assets/lightred2.jpg'
-import lightred3 from './assets/lightred3.jpg'
-import lightred4 from './assets/lightred4.jpg'
-import lightred5 from './assets/lightred5.jpg'
-import lightyellow1 from './assets/lightyellow1.jpg'
-import lightyellow2 from './assets/lightyellow2.jpg'
-import lightyellow3 from './assets/lightyellow3.jpg'
-import lightyellow4 from './assets/lightyellow4.jpg'
-import lightyellow5 from './assets/lightyellow5.jpg'
+// import darkblue1 from './assets/darkblue1.jpg'
+// import darkblue2 from './assets/darkblue2.jpg'
+// import darkblue3 from './assets/darkblue3.jpg'
+// import darkblue4 from './assets/darkblue4.jpg'
+// import darkblue5 from './assets/darkblue5.jpg'
+// import darkgreen1 from './assets/darkgreen1.jpg'
+// import darkgreen2 from './assets/darkgreen2.jpg'
+// import darkgreen3 from './assets/darkgreen3.jpg'
+// import darkgreen4 from './assets/darkgreen4.jpg'
+// import darkgreen5 from './assets/darkgreen5.jpg'
+// import darkorange1 from './assets/darkorange1.jpg'
+// import darkorange2 from './assets/darkorange2.jpg'
+// import darkorange3 from './assets/darkorange3.jpg'
+// import darkorange4 from './assets/darkorange4.jpg'
+// import darkorange5 from './assets/darkorange5.jpg'
+// import darkpink1 from './assets/darkpink1.jpg'
+// import darkpink2 from './assets/darkpink2.jpg'
+// import darkpink3 from './assets/darkpink3.jpg'
+// import darkpink4 from './assets/darkpink4.jpg'
+// import darkpink5 from './assets/darkpink5.jpg'
+// import darkred1 from './assets/darkred1.jpg'
+// import darkred2 from './assets/darkred2.jpg'
+// import darkred3 from './assets/darkred3.jpg'
+// import darkred4 from './assets/darkred4.jpg'
+// import darkred5 from './assets/darkred5.jpg'
+// import darkyellow1 from './assets/darkyellow1.jpg'
+// import darkyellow2 from './assets/darkyellow2.jpg'
+// import darkyellow3 from './assets/darkyellow3.jpg'
+// import darkyellow4 from './assets/darkyellow4.jpg'
+// import darkyellow5 from './assets/darkyellow5.jpg'
+// import lightblue1 from './assets/lightblue1.jpg'
+// import lightblue2 from './assets/lightblue2.jpg'
+// import lightblue3 from './assets/lightblue3.jpg'
+// import lightblue4 from './assets/lightblue4.jpg'
+// import lightblue5 from './assets/lightblue5.jpg'
+// import lightgreen1 from './assets/lightgreen1.jpg'
+// import lightgreen2 from './assets/lightgreen2.jpg'
+// import lightgreen3 from './assets/lightgreen3.jpg'
+// import lightgreen4 from './assets/lightgreen4.jpg'
+// import lightgreen5 from './assets/lightgreen5.jpg'
+// import lightorange1 from './assets/lightorange1.jpg'
+// import lightorange2 from './assets/lightorange2.jpg'
+// import lightorange3 from './assets/lightorange3.jpg'
+// import lightorange4 from './assets/lightorange4.jpg'
+// import lightorange5 from './assets/lightorange5.jpg'
+// import lightpink1 from './assets/lightpink1.jpg'
+// import lightpink2 from './assets/lightpink2.jpg'
+// import lightpink3 from './assets/lightpink3.jpg'
+// import lightpink4 from './assets/lightpink4.jpg'
+// import lightpink5 from './assets/lightpink5.jpg'
+// import lightred1 from './assets/lightred1.jpg'
+// import lightred2 from './assets/lightred2.jpg'
+// import lightred3 from './assets/lightred3.jpg'
+// import lightred4 from './assets/lightred4.jpg'
+// import lightred5 from './assets/lightred5.jpg'
+// import lightyellow1 from './assets/lightyellow1.jpg'
+// import lightyellow2 from './assets/lightyellow2.jpg'
+// import lightyellow3 from './assets/lightyellow3.jpg'
+// import lightyellow4 from './assets/lightyellow4.jpg'
+// import lightyellow5 from './assets/lightyellow5.jpg'
 
 import default_page_background_green from './assets/default_page_background_green_dark.png'
 import default_page_background_red from './assets/default_page_background_red_dark.png'
@@ -5493,7 +5493,12 @@ class App extends Component {
 
         'letter':letter_green,
         'e5_logo':e5_logo_green,
-        'backgrounds':[darkgreen1, darkgreen2, darkgreen3, darkgreen4, darkgreen5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen5.jpg'],
         'page_background':default_page_background_green,
       }
     }
@@ -5534,7 +5539,12 @@ class App extends Component {
 
         'letter':letter_darkgreen,
         'e5_logo':e5_logo_darkgreen,
-        'backgrounds':[lightgreen1, lightgreen2, lightgreen3, lightgreen4, lightgreen5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen1.jpg',
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen5.jpg'],
         'page_background':default_page_background_green,
       }
     }
@@ -5578,7 +5588,12 @@ class App extends Component {
 
         'letter':letter_red,
         'e5_logo':e5_logo_red,
-        'backgrounds':[darkred1, darkred2, darkred3, darkred4, darkred5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred5.jpg'],
         'page_background':default_page_background_red,
       }
     }
@@ -5619,7 +5634,12 @@ class App extends Component {
 
         'letter':letter_darkred,
         'e5_logo':e5_logo_darkred,
-        'backgrounds':[lightred1, lightred2, lightred3, lightred4, lightred5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred5.jpg'],
         'page_background':default_page_background_red,
       }
     }
@@ -5663,7 +5683,12 @@ class App extends Component {
 
         'letter':letter_blue,
         'e5_logo':e5_logo_blue,
-        'backgrounds':[darkblue1, darkblue2, darkblue3, darkblue4, darkblue5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue5.jpg'],
         'page_background':default_page_background_blue,
       }
     }
@@ -5704,7 +5729,12 @@ class App extends Component {
 
         'letter':letter_darkblue,
         'e5_logo':e5_logo_darkblue,
-        'backgrounds':[lightblue1, lightblue2, lightblue3, lightblue4, lightblue5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue5.jpg'],
         'page_background':default_page_background_blue,
       }
     }
@@ -5748,7 +5778,12 @@ class App extends Component {
 
         'letter':letter_yellow,
         'e5_logo':e5_logo_yellow,
-        'backgrounds':[darkyellow1, darkyellow2, darkyellow3, darkyellow4, darkyellow5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow5.jpg'],
         'page_background':default_page_background_yellow,
       }
     }
@@ -5789,7 +5824,12 @@ class App extends Component {
 
         'letter':letter_darkyellow,
         'e5_logo':e5_logo_darkyellow,
-        'backgrounds':[lightyellow1, lightyellow2, lightyellow3, lightyellow4, lightyellow5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow5.jpg'],
         'page_background':default_page_background_yellow,
       }
     }
@@ -5833,7 +5873,12 @@ class App extends Component {
 
         'letter':letter_pink,
         'e5_logo':e5_logo_pink,
-        'backgrounds':[darkpink1, darkpink2, darkpink3, darkpink4, darkpink5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink5.jpg'],
         'page_background':default_page_background_pink,
       }
     }
@@ -5874,7 +5919,12 @@ class App extends Component {
 
         'letter':letter_darkpink,
         'e5_logo':e5_logo_darkpink,
-        'backgrounds':[lightpink1, lightpink2, lightpink3, lightpink4, lightpink5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink5.jpg'],
         'page_background':default_page_background_pink,
       }
     }
@@ -5918,7 +5968,12 @@ class App extends Component {
 
         'letter':letter_orange,
         'e5_logo':e5_logo_orange,
-        'backgrounds':[darkorange1, darkorange2, darkorange3, darkorange4, darkorange5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange5.jpg'],
         'page_background':default_page_background_orange,
       }
     }
@@ -5959,7 +6014,12 @@ class App extends Component {
 
         'letter':letter_darkorange,
         'e5_logo':e5_logo_darkorange,
-        'backgrounds':[lightorange1, lightorange2, lightorange3, lightorange4, lightorange5],
+        'backgrounds':[
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange1.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange2.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange3.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange4.jpg', 
+          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange5.jpg'],
         'page_background':default_page_background_orange,
       }
     }

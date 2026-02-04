@@ -721,7 +721,8 @@ class CoinsDetailsSection extends Component {
     }
 
     get_requests(coin_item){
-        const id = coin_item['id']
+        var coin_data = this.props.app_state.coin_data[coin_item['symbol']]
+        const id = coin_data['id']
         const data = this.props.app_state.received_coin_ether_requests[id] || {}
         const requets = [];
         Object.keys(data).forEach(request_id => {
@@ -810,6 +811,17 @@ class CoinsDetailsSection extends Component {
         return last_two_digits+'%'
     }
 
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] > b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] < b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
 
     /* gets a formatted time diffrence from now to a given time */
     get_time_difference(time){
