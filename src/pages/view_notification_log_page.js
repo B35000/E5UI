@@ -81,7 +81,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */, this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['3067ac']/* 'signatures' */, this.props.app_state.loc['2481d']/* 'requests 📥' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067']/* 'wallet' */, this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['3067ac']/* 'signatures' */, this.props.app_state.loc['2481d']/* 'requests 📥' */, this.props.app_state.loc['3067aw']/* 'receipts 🧾' */], [0]
                 ],
             };
         }
@@ -297,6 +297,13 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3067aw']/* 'receipts 🧾' */){
+            return(
+                <div>
+                    {this.render_wallet_data(['ether_coin_receipt'])}
+                </div>
+            )
+        }
         
         
     }
@@ -465,6 +472,10 @@ class ViewNotificationLogPage extends Component {
     }
 
     when_event_clicked(event){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         console.log('when_event_clicked', event)
         this.props.when_event_clicked(event)
     }
@@ -659,6 +670,7 @@ class ViewNotificationLogPage extends Component {
                 'bill_request': this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
                 'signature': this.props.app_state.loc['3067ad'],/* '✍️ $ sent you a singature request.' */
                 'ether_coin_request': this.props.app_state.loc['3067aq'],/* '📥 $ sent you a request for some %' */
+                'ether_coin_receipt': this.props.app_state.loc['3067av'],/* '🧾 $ sent you a transaction receipt for some %' */
             }
             const event_type = item['event_type']
             const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -666,6 +678,9 @@ class ViewNotificationLogPage extends Component {
             var processed_message = message.replace('$', sender_alias_or_account)
             if(event_type == 'ether_coin_request'){
                 processed_message = processed_message.replace('%', item['view']['data']['message_obj']['ether_id'])
+            }
+            else if(event_type == 'ether_coin_receipt'){
+                processed_message = processed_message.replace('%', item['view']['data']['ether_id'])
             }
             const timestamp = item['time']
             const e5 = item['e5']
@@ -684,8 +699,9 @@ class ViewNotificationLogPage extends Component {
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         const ether_coin_request = notification_object['ether_coin_request'] || []
+        const ether_coin_receipt = notification_object['ether_coin_receipt'] || []
         
-        const all_events = token.concat(bill_request, signature, ether_coin_request)
+        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

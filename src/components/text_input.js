@@ -106,6 +106,9 @@ class TextInput extends Component {
     var height = this.props.height
     if(height < 0 || this.props.adjust_height == false){
       var text_type = this.state.input_type == null ? 'text' : this.state.input_type
+      if(text_type == 'number'){
+        text_type = 'tel'
+      }
       var step = text_type == 'number' ? 'any' : ''
       return(
         <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }} onClick={() => this.when_textarea_clicked()}>
@@ -117,7 +120,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <input ref={this.inputRef} className="form-control" step={step}  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
+            <input ref={this.inputRef} className="form-control" step={step}  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} onWheel="return false;" placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
         </div> 
       )
     }else{
@@ -131,7 +134,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <textarea ref={this.inputRef} className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+            <textarea ref={this.inputRef} className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} autocapitalize="off" onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
         </div> 
       )
     }

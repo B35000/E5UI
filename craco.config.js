@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-
+const webpack = require('webpack');
 const isProd = process.env.NODE_ENV === "production";
 
 module.exports = {
@@ -55,16 +55,25 @@ module.exports = {
         fallback: {
           buffer: require.resolve("buffer"),
           crypto: require.resolve("crypto-browserify"),
+          process: require.resolve("process/browser"),
           stream: require.resolve("stream-browserify"),
           https: require.resolve("https-browserify"),
           http: require.resolve("stream-http"),
           querystring: require.resolve("querystring-es3"),
           url: require.resolve("url/"),
-          path: require.resolve("path-browserify")
+          path: require.resolve("path-browserify"),
+          zlib: require.resolve("browserify-zlib"),
+          util: require.resolve("util/"),
         },
       };
 
-      webpackConfig.module.rules.push({
+      webpackConfig.resolve.extensions = [
+        ...(webpackConfig.resolve.extensions || []),
+        ".wasm",
+      ];
+
+      const oneOfRule = webpackConfig.module.rules.find(rule => rule.oneOf);
+      oneOfRule.oneOf.unshift({
         test: /\.wasm$/,
         type: "webassembly/async",
       });
@@ -74,30 +83,53 @@ module.exports = {
         type: 'javascript/auto'
       });
 
-      webpackConfig.module.rules.unshift({
-        test: /\.(js|mjs|cjs)$/,
-        include: [
-          path.resolve(__dirname, "node_modules/@lucid-evolution"),
-        ],
-        use: {
-          loader: require.resolve("babel-loader"),
-          options: {
-            presets: [
-              [require.resolve("@babel/preset-env"), { 
-                targets: { ios: "12" },
-                modules: false // Important: preserve ES modules
-              }]
-            ],
-            plugins: [
-              [require.resolve("@babel/plugin-transform-named-capturing-groups-regex"), { runtime: true }]
-            ],
-            cacheDirectory: true, // Speed up subsequent builds
-            compact: false,
-            babelrc: false,
-            configFile: false
-          }
-        }
-      });
+      // Add ProvidePlugin to automatically inject Buffer globally
+      webpackConfig.plugins.push(
+        new webpack.ProvidePlugin({
+          Buffer: ['buffer', 'Buffer'],
+        })
+      );
+
+      // webpackConfig.module.rules.unshift({
+      //   test: /\.(js|mjs|cjs)$/,
+      //   include: [
+      //     path.resolve(__dirname, "node_modules/@lucid-evolution"),
+      //     path.resolve(__dirname, "node_modules/cardano-wasm-libs"),
+      //     path.resolve(__dirname, "node_modules/cardano-web3-js"),
+      //   ],
+      //   use: {
+      //     loader: require.resolve("babel-loader"),
+      //     options: {
+      //       presets: [
+      //         [require.resolve("@babel/preset-env"), { 
+      //           targets: { ios: "12" },
+      //           modules: false // Important: preserve ES modules
+      //         }]
+      //       ],
+      //       plugins: [
+      //         [require.resolve("@babel/plugin-transform-named-capturing-groups-regex"), { runtime: true }]
+      //       ],
+      //       cacheDirectory: true, // Speed up subsequent builds
+      //       compact: false,
+      //       babelrc: false,
+      //       configFile: false
+      //     }
+      //   }
+      // });
+
+      const terserPlugin = webpackConfig.optimization.minimizer.find(
+        (plugin) => plugin.constructor.name === 'TerserPlugin'
+      );
+
+      if (terserPlugin) {
+        terserPlugin.options.minimizer.options = {
+          ...terserPlugin.options.minimizer.options,
+          mangle: {
+            safari10: true,
+            keep_fnames: true,
+          },
+        };
+      }
 
       return webpackConfig;
     },

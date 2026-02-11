@@ -550,7 +550,7 @@ import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 import algosdk from 'algosdk';
 import { TezosToolkit } from "@taquito/taquito";
 import { InMemorySigner } from '@taquito/signer';
-import { b58cencode, prefix, validateAddress, ValidationResult } from '@taquito/utils';
+import { b58Encode, PrefixV2, validateAddress } from '@taquito/utils';
 import * as sodium from 'libsodium-wrappers';
 import { DirectSecp256k1Wallet } from '@cosmjs/proto-signing';
 import { Secp256k1, sha256 } from '@cosmjs/crypto';
@@ -560,7 +560,7 @@ import { isValidClassicAddress } from 'ripple-address-codec';
 import { Keypair, Connection, PublicKey, Transaction, SystemProgram, sendAndConfirmTransaction } from '@solana/web3.js';
 import { derivePath } from 'ed25519-hd-key';
 import { AptosAccount, AptosClient } from 'aptos';
-import { create as createW3UpClient } from '@web3-storage/w3up-client';
+// import { create as createW3UpClient } from '@web3-storage/w3up-client';
 import { from } from "@iotexproject/iotex-address-ts";
 import { STACKS_MAINNET } from '@stacks/network'
 import { makeSTXTokenTransfer, broadcastTransaction, getAddressFromPrivateKey, validateStacksAddress } from '@stacks/transactions';
@@ -696,7 +696,7 @@ import notificationSound from './sounds/notification_sound_pop.mp3';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
-import { create } from 'ipfs-http-client'
+// import { create } from 'ipfs-http-client'
 import { NFTStorage, Blob } from 'nft.storage'
 
 import Draggable from "react-draggable";
@@ -716,6 +716,7 @@ import io from 'socket.io-client';
 import { createHash } from 'crypto';
 import * as naughtyWords from 'naughty-words';
 // import { Lucid, Blockfrost, addressFromHexOrBech32 } from "@lucid-evolution/lucid";
+import { CardanoWeb3, utils as cardano_web3_utils } from "cardano-web3-js/browser"
 import SimplePeer from "simple-peer";
 import * as Tone from 'tone';
 
@@ -1344,8 +1345,9 @@ class App extends Component {
     contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[], is_device_online: true,
     last_notification_view_time: {'?':0, 'e':0, 'w':0}, 
     
-    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{}
+    notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
+    received_coin_ether_sends:{},
   };
 
   get_thread_pool_size(){
@@ -2410,9 +2412,9 @@ class App extends Component {
 
         'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
 
-        // 'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
+        'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
 
-        'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'microSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
+        'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'µSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
 
         'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
 
@@ -6137,7 +6139,6 @@ class App extends Component {
           {this.render_view_staged_royalties_bottomsheet()}
           {this.render_pay_upcoming_subscriptions_bottomsheet()}
           {this.render_send_receive_coin_bottomsheet()}
-          {this.render_successful_send_bottomsheet()}
           {this.render_edit_audiopost_object_bottomsheet()}
           {this.render_full_audio_bottomsheet()}
           {this.render_buy_album_bottomsheet()}
@@ -6148,6 +6149,7 @@ class App extends Component {
           {this.render_configure_nitro_node_bottomsheet()}
           {this.render_dialer_bottomsheet()}
           {this.render_view_notification_log_bottomsheet()}
+          {this.render_successful_send_bottomsheet()}
           {this.render_edit_videopost_object_bottomsheet()}
           {this.render_view_contextual_transfer_bottomsheet()}
           {this.render_edit_poll_object_bottomsheet()}
@@ -6179,14 +6181,20 @@ class App extends Component {
   }
 
   render_toast_container(){
-    var os = getOS()
-    if(os != 'iOS' || this.state.syncronizing_page_bottomsheet == true){
-      return(
-        <div>
-          <ToastContainer limit={3} containerId="id"/>
-        </div>
-      )
-    }
+    const os = getOS()
+    const container_id = os != 'iOS' ? 'id' : 'id2'
+    return(
+      <div>
+        <ToastContainer limit={3} containerId={container_id}/>
+      </div>
+    )
+    // if(os != 'iOS' || this.state.syncronizing_page_bottomsheet == true){
+    //   return(
+    //     <div>
+    //       <ToastContainer limit={3} containerId="id"/>
+    //     </div>
+    //   )
+    // }
   }
 
   render_page(){
@@ -6278,7 +6286,7 @@ class App extends Component {
 
           get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)} start_object_file_viewcount_fetch={this.start_object_file_viewcount_fetch.bind(this)}
 
-          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)}
+          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -7036,6 +7044,7 @@ class App extends Component {
   }
 
   send_ether_to_target(recipientAddress, amount, gasPrice, state, e5, set_max_priority_per_gas, set_max_fee_per_gas, ether){
+    // this.prompt_top_notification(this.getLocale()['2738cf']/* 'Sending the ether...' */, 5000);
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const me = this;
 
@@ -7066,7 +7075,10 @@ class App extends Component {
       me.start_get_accounts_data(false, false, true/* should_skip_pre_launch */)
       console.log('send_result: ',hash)
       me.show_successful_send_bottomsheet({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether, 'type':'ether'}, )
-      // me.get_transaction_receipt({'tx':tx, 'hash':hash, 'e5':e5, 'ether':ether}, hash, web3)
+    })
+    .on('receipt', (receipt) => {
+      console.log('Transaction mined:', receipt);
+      me.prompt_top_notification(me.getLocale()['2738cg']/* 'Send Complete.' */, 5000);
     })
     .on('error', function (error) {
       console.error('Failed to send transaction:', error);
@@ -7326,14 +7338,10 @@ class App extends Component {
 
   validate_dot_address(address){
     try {
-      // Attempt to decode and re-encode the address
-      const decoded = decodeAddress(address);
-      const reencoded = encodeAddress(decoded);
-      
-      // If the re-encoded address matches the input, it's valid
-      return reencoded === address;
-    } catch (error) {
-      return false; // If an error occurs, the address is invalid
+      decodeAddress(address);
+      return true;
+    } catch {
+      return false;
     }
   }
 
@@ -7342,7 +7350,7 @@ class App extends Component {
   }
 
   validate_tezos_address(address){
-    return validateAddress(address) === ValidationResult.VALID;
+    return validateAddress(address) == 3;
   }
 
   validate_cosmos_address(address){
@@ -7381,12 +7389,11 @@ class App extends Component {
   }
 
   validate_cardano_address(address){
-    // try {
-    //   const addr = addressFromHexOrBech32(address);
-    //   return addr !== null;
-    // } catch (error) {
-    //   return false;
-    // }
+    try {
+      return cardano_web3_utils.address.validateAddress(address)
+    } catch (err) {
+      return false;
+    }
   }
 
   validate_stacks_address(address){
@@ -7521,7 +7528,9 @@ class App extends Component {
     }
 
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
-    txb.sign(0, key)
+    for (let i = 0; i < input_count; i++) {
+      txb.sign(i, key);
+    }
     const raw = txb.build().toHex();
     // await this.wait(2500)
     // this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
@@ -7635,6 +7644,10 @@ class App extends Component {
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
       var data = await response.text();
+      if(data.includes('error')){
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        return;
+      }
       return data
     }
     catch(e){
@@ -7670,7 +7683,9 @@ class App extends Component {
       txb.addOutput(wallet.address, change);
     }
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
-    txb.sign(0, key)
+    for (let i = 0; i < input_count; i++) {
+      txb.sign(i, key);
+    }
     const raw = txb.build().toHex();
     // await this.wait(2500)
     // this.show_dialog_bottomsheet({'hash':raw, 'chain':'LTC'}, 'manual_transaction_broadcast')
@@ -7722,8 +7737,11 @@ class App extends Component {
     }
 
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
-    txb.sign(0, key)
-    const raw = txb.build().toHex();
+    // txb.sign(0, key)
+    for (let i = 0; i < input_count; i++) {
+      txb.sign(i, key);
+    }
+    const raw = txb.build().toHex(); // <-----the error hits here
     // await this.wait(2500)
     // this.show_dialog_bottomsheet({'hash':raw, 'chain':'DOGE'}, 'manual_transaction_broadcast')
     // return;
@@ -7773,7 +7791,9 @@ class App extends Component {
     }
 
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
-    txb.sign(0, key)
+    for (let i = 0; i < input_count; i++) {
+      txb.sign(i, key);
+    }
     const raw = txb.build().toHex();
     // await this.wait(2500)
     // this.show_dialog_bottomsheet({'hash':raw, 'chain':'DASH'}, 'manual_transaction_broadcast')
@@ -7923,6 +7943,7 @@ class App extends Component {
 
     try{
       const hash = kill_wallet != 'e' ? await api.tx.balances.transferAll(recipient_address, false).signAndSend(wallet.keys) : await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
+
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
     }catch(e){
       console.log(e)
@@ -7987,15 +8008,18 @@ class App extends Component {
   }
 
   create_and_broadcast_tezos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-    var seed = this.state.final_seed
-    const wallet = await this.generate_tezos_wallet(seed)
-    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
-    Tezos.setProvider({ signer: wallet });
+    // var seed = this.state.final_seed
+    // const wallet = await this.generate_tezos_wallet(seed)
+    // const wallet = data['wallet']
+    // const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    // Tezos.setProvider({ signer: wallet });
+    const Tezos = data['Tezos']
     const amount = this.get_amount_int_tez(transfer_amount)
     try{
-      const tx = await Tezos.contract.transfer({ to: recipient_address, amount: amount })
-      const hash = tx.hash
+      const tx = await Tezos.wallet.transfer({ to: recipient_address, amount: amount }).send();
       await tx.confirmation(1)
+      
+      const hash = tx.opHash
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
     }
     catch(e){
@@ -8015,10 +8039,10 @@ class App extends Component {
     const rpc = "https://cosmos-rpc.publicnode.com:443"
 
     var send_amount = transfer_amount
-    var gasfee = fee / 40_000
+    var gasfee = fee
     const signingClient = await SigningStargateClient.connectWithSigner(rpc, wallet.wall)
     var amount_obj = [{ denom: "uatom", amount: send_amount.toString() }]
-    var fee_obj = { amount: [{ denom: "uatom", amount: gasfee.toString() }], gas: "200000", }
+    var fee_obj = { amount: [{ denom: "uatom", amount: gasfee.toString() }], gas: "140000", }
 
     try{
       const result = await signingClient.sendTokens(wallet.cosmosAddress, recipient_address, amount_obj, fee_obj, memo_text)
@@ -8132,6 +8156,26 @@ class App extends Component {
     //   this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     // }
     
+    var seed = this.state.final_seed
+    var wallet = await this.generate_cardano_wallet(seed)
+    var amount = bigInt(transfer_amount).value
+    try{
+      const cardano_web3 = new CardanoWeb3()
+      const tx_build = await cardano_web3
+        .createTx()
+        .setChangeAddress(wallet.account.__config.paymentAddress)
+        .addInputs(wallet.state.utxos)
+        .addOutputs([ { address: recipient_address, value: amount, }, ])
+        .applyAndBuild();
+      const txHash = await tx_build.signWithAccount(wallet.account).applyAndSubmit() 
+      
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':txHash});
+    }
+    catch(e){
+      console.log('cardano', e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      this.prompt_top_notification(e.message, 7000)
+    }
   }
 
   create_and_broadcast_stacks_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
@@ -8214,10 +8258,10 @@ class App extends Component {
     const rpc = "https://celestia-rpc.publicnode.com:443"
 
     var send_amount = transfer_amount
-    var gasfee = fee / 40_000
+    var gasfee = fee
     const signingClient = await SigningStargateClient.connectWithSigner(rpc, wallet.wall)
     var amount_obj = [{ denom: "utia", amount: send_amount.toString() }]
-    var fee_obj = { amount: [{ denom: "utia", amount: gasfee.toString() }], gas: "200000", }
+    var fee_obj = { amount: [{ denom: "utia", amount: gasfee.toString() }], gas: "140000", }
 
     try{
       const result = await signingClient.sendTokens(wallet.celestiaAddress, recipient_address, amount_obj, fee_obj, memo_text)
@@ -9020,44 +9064,44 @@ class App extends Component {
   }
 
   set_up_web3_account = async (email) => {
-    if(this.update_web3_time == null) {
-      this.update_web3_time = 0
-    }
-    if((Date.now() - this.update_web3_time) < (5*1000)){
-      return;
-    }
-    this.update_web3_time = Date.now()
+    // if(this.update_web3_time == null) {
+    //   this.update_web3_time = 0
+    // }
+    // if((Date.now() - this.update_web3_time) < (5*1000)){
+    //   return;
+    // }
+    // this.update_web3_time = Date.now()
 
-    this.web3_email_verification_sent = false;
-    var is_client_verified = false;
-    const client = await createW3UpClient()
-    const space = await client.createSpace('E5')
-    const myAccount = await client.login(email)
+    // this.web3_email_verification_sent = false;
+    // var is_client_verified = false;
+    // const client = await createW3UpClient()
+    // const space = await client.createSpace('E5')
+    // const myAccount = await client.login(email)
 
-    setTimeout(function() {
-      if(!this.web3_email_verification_sent && !is_client_verified){
-        this.web3_email_verification_sent = true
-        this.prompt_top_notification(this.getLocale()['1593bi']/* Verification email sent. */, 5000)
-      }
-    }, (1 * 1000));
+    // setTimeout(function() {
+    //   if(!this.web3_email_verification_sent && !is_client_verified){
+    //     this.web3_email_verification_sent = true
+    //     this.prompt_top_notification(this.getLocale()['1593bi']/* Verification email sent. */, 5000)
+    //   }
+    // }, (1 * 1000));
 
-    while (true) {
-      const res = await myAccount.plan.get()
-      if (res.ok){
-        is_client_verified = true
-        break;
-      }
-      await new Promise(resolve => setTimeout(resolve, 1000))
-    }
-    await myAccount.provision(space.did())
-    await space.save()
+    // while (true) {
+    //   const res = await myAccount.plan.get()
+    //   if (res.ok){
+    //     is_client_verified = true
+    //     break;
+    //   }
+    //   await new Promise(resolve => setTimeout(resolve, 1000))
+    // }
+    // await myAccount.provision(space.did())
+    // await space.save()
 
-    this.setState({web3_account_email: email, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
-    var me = this;
-    setTimeout(function() {
-      me.set_cookies()
-      me.prompt_top_notification(me.getLocale()['1593bv']/* Email Verified */, 3000)
-    }, (1 * 1000));
+    // this.setState({web3_account_email: email, storage_permissions:this.getLocale()['1428']/* 'enabled' */})
+    // var me = this;
+    // setTimeout(function() {
+    //   me.set_cookies()
+    //   me.prompt_top_notification(me.getLocale()['1593bv']/* Email Verified */, 3000)
+    // }, (1 * 1000));
   }
 
   when_run_gas_price_set(number){
@@ -16282,14 +16326,33 @@ class App extends Component {
     }
   }
 
-  show_successful_send_bottomsheet(data){
+  show_successful_send_bottomsheet(data, send_message=true){
     this.open_successful_send_bottomsheet()
+    if(send_message == true){
+      this.send_message_to_recipient(data)
+    }
     var me = this;
     setTimeout(function() {
       if(me.successful_send_page.current != null){
         me.successful_send_page.current.set_data(data)
       }
     }, (1 * 500));
+  }
+
+  async send_message_to_recipient(data){
+    const ether_id = data['type'] == 'coin' ? data['item']['id'] : this.state.e5s[data['e5']].token
+    const sender_address = data['type'] == 'coin' ? data['sender'] : data['tx'].from
+    const recipient_address = data['type'] == 'coin' ? data['recipient'] : data['tx'].to
+
+    const object_data = {
+      'sender_address': sender_address,
+      'recipient_address': recipient_address,
+      'ether_id':ether_id,
+      'hash': data,
+    }
+    console.log('ether_coin_receipt', 'object_data', object_data)
+
+    await this.emit_new_ether_or_coin_receipt(object_data)
   }
 
 
@@ -16565,7 +16628,7 @@ class App extends Component {
     var obj = {
       'invalid_ether_amount_dialog_box':400, 
       'confirm_clear_stack_dialog':200, 
-      'confirm_send_ether_dialog': 450, 
+      'confirm_send_ether_dialog': 500, 
       'confirm_delete_dialog_box':200, 
       'confirm_withdraw_ether':430,
       'confirm_send_coin_dialog':600, 
@@ -21095,6 +21158,11 @@ class App extends Component {
       this.show_dialog_bottomsheet(data, 'view_pre_purchase_request')
       return;
     }
+    else if(event_type == 'ether_coin_receipt'){
+      const data = event['view']['data']
+      this.show_successful_send_bottomsheet(data['hash'], false)
+      return;
+    }
     
 
     var id = obj['notification_id']
@@ -22602,6 +22670,11 @@ class App extends Component {
   handle_onclick_data_if_any(onClickData){
     if(onClickData != null){
       var id = onClickData['notification_id']
+      if(this.state.successful_send_bottomsheet == false){
+        if(id == 'view_coin_ether_receipt'){
+          this.show_successful_send_bottomsheet(onClickData['data']['hash'], false)
+        }
+      }
       if(this.state.dialog_bottomsheet == false){
         if(id == 'view_coin_ether_request'){
           this.show_dialog_bottomsheet(onClickData['data'], 'view_coin_ether_request')
@@ -22930,24 +23003,20 @@ class App extends Component {
     }
 
     await this.wait(400);
-    
-    var me = this
-    setTimeout(function() {
-      me.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
-    }, (200));
-
-    var me = this
-    setTimeout(function() {
-      me.generate_account_data_for_each_coin(seed)
-    }, (3000));
-
     this.setState({has_wallet_been_set: true})
-
-    var me = this;
-    setTimeout(function() {
-      me.set_cookies()
-      me.set_up_socket_connection_and_initialize_listeners(0)
-    }, (1 * 1000));
+    
+    await this.wait(400);
+    this.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
+    
+    
+    await this.wait(1000)
+    this.set_cookies()
+    this.set_up_socket_connection_and_initialize_listeners(0)
+    this.fetch_specific_coin_receipts(this.state.accounts['E25'].address)
+    
+    
+    await this.wait(3000)
+    await this.generate_account_data_for_each_coin(seed)
   }
 
   generate_one_account_for_all_e5s(seed){
@@ -23030,85 +23099,130 @@ class App extends Component {
     // console.log('coin', 'bitcoin...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['FIL'] = await this.get_and_set_filecoin_wallet_info(seed)
     // console.log('coin', 'filecoin...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['BCH'] = await this.get_and_set_bitcoin_cash_wallet_info(seed)
     // console.log('coin', 'bitcoin cash...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['LTC'] = await this.get_and_set_litecoin_wallet_info(seed)
     // console.log('coin', 'litecoin...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['DOGE'] = await this.get_and_set_dogecoin_wallet_info(seed)
     // console.log('coin', 'dogecoin...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['DASH'] = await this.get_and_set_dash_wallet_info(seed)
     // console.log('coin', 'dash...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['TRX'] = await this.get_and_set_tron_wallet_info(seed)
     // console.log('coin', 'tron...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['XRP'] = await this.get_and_set_xrp_wallet_info(seed)
     // console.log('coin', 'xrp...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['XLM'] = await this.get_and_set_xlm_wallet_info(seed)
     // console.log('coin', 'xlm...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['DOT'] = await this.get_and_set_dot_wallet_info(seed)
     // console.log('coin', 'dot...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['KSM'] = await this.get_and_set_kusama_wallet_info(seed)
     // console.log('coin', 'kusama...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    await this.wait(400)
     coin_data['ALGO'] = await this.get_and_set_algorand_wallet_info(seed)
     // console.log('coin', 'algorand...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    await this.wait(400)
     coin_data['XTZ'] = await this.get_and_set_tezos_wallet_info(seed)
     // console.log('coin', 'tezos...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['ATOM'] = await this.get_and_set_cosmos_wallet_info(seed)
     // console.log('coin', 'cosmos...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['SOL'] = await this.get_and_set_solana_wallet_info(seed)
     // console.log('coin', 'solana...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['APT'] = await this.get_and_set_aptos_wallet_info(seed)
     // console.log('coin', 'aptos...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['ADA'] = await this.get_and_set_cardano_wallet_info(seed)
     // console.log('coin', 'cardano...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['STX'] = await this.get_and_set_stacks_wallet_info(seed)
     // console.log('coin', 'stacks...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['SUI'] = await this.get_and_set_sui_wallet_info(seed)
 
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     coin_data['TIA'] = await this.get_and_set_celestia_wallet_info(seed)
 
     this.setState({coin_data: coin_data})
+    // await this.wait(400)
     //should be last
     coin_data['AR'] = await this.get_and_set_arweave_wallet_info(seed)
     // console.log('coin', 'arweave...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data_status: 'set', coin_data: coin_data})
+    // await this.wait(400)
+    // await this.fetch_all_coin_receipts(coin_data)
+  }
+
+  async fetch_all_coin_receipts(coin_data){
+    if(this.state.has_wallet_been_set == false){
+      return;
+    }
+    const target_array = []
+    Object.keys(coin_data).forEach(coin_id => {
+      const address = coin_data[coin_id]['address']
+      target_array.push(this.hash_data_with_randomizer(address.toString().toLowerCase()))
+    });
+    target_array.push(this.hash_data_with_randomizer(this.state.accounts['E25'].address.toString().toLowerCase()))
+    await this.get_objects_from_socket_and_set_in_state(['ether_coin_receipt'], target_array, [])
+  }
+
+  async fetch_specific_coin_receipts(address){
+    if(this.state.has_wallet_been_set == false){
+      return;
+    }
+    const target_array = []
+    target_array.push(this.hash_data_with_randomizer(address.toString().toLowerCase()))
+    await this.wait(700)
+    await this.get_objects_from_socket_and_set_in_state(['ether_coin_receipt'], target_array, [])
   }
 
   get_formatted_seed(seed){
@@ -23195,6 +23309,7 @@ class App extends Component {
     // var clone = structuredClone(this.state.coin_data)
     // clone['FIL'] = filecoin_data;
     // this.setState({coin_data: clone})
+    await this.fetch_specific_coin_receipts(myAddress)
     return filecoin_data
   }
 
@@ -23253,7 +23368,7 @@ class App extends Component {
 
 
   get_and_set_bitcoin_wallet_info = async (seed) => {
-    try{  
+    try{
       const path = "m/44'/0'/0'/0/0" // bitcoin mainnet
       const network = bitcoin.networks.bitcoin;
       var wallet = await this.get_bitcoin_wallet(seed, network, path)
@@ -23270,6 +23385,7 @@ class App extends Component {
       // clone['BTC'] = bitcoin_data;
       // this.setState({coin_data: clone})
       // await this.wait(100)
+      this.fetch_specific_coin_receipts(address)
       return bitcoin_data
     }catch(e){
       console.log('coin', e)
@@ -23367,6 +23483,7 @@ class App extends Component {
       // clone['BCH'] = bitcoin_cash_data;
       // this.setState({coin_data: clone})
       // await this.wait(100)
+      this.fetch_specific_coin_receipts(address)
       return bitcoin_cash_data
     }catch(e){
       console.log('coin', e)
@@ -23439,6 +23556,7 @@ class App extends Component {
     // clone['LTC'] = litecoin_data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return litecoin_data
   }
 
@@ -23532,6 +23650,7 @@ class App extends Component {
     // clone['DOGE'] = dogecoin_data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return dogecoin_data
   }
 
@@ -23639,6 +23758,7 @@ class App extends Component {
     // clone['DASH'] = dash_data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return dash_data
   }
 
@@ -23726,6 +23846,7 @@ class App extends Component {
     // clone['TRX'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
@@ -23788,6 +23909,7 @@ class App extends Component {
     // clone['XRP'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
@@ -23869,6 +23991,7 @@ class App extends Component {
     // clone['XLM'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
@@ -23948,18 +24071,25 @@ class App extends Component {
 
     var fee_info = {'fee':fee, 'type':'fixed', 'per':'transaction'}
     var data = {'balance':address_balance, 'address':address, 'min_deposit':existential_deposit.toString(), 'fee':fee_info}
-    var clone = structuredClone(this.state.coin_data)
-    clone['DOT'] = data;
-    this.setState({coin_data: clone})
-    await this.wait(100)
+    // var clone = structuredClone(this.state.coin_data)
+    // clone['DOT'] = data;
+    // this.setState({coin_data: clone})
+    // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
   generate_dot_wallet = async (mnemonic) => {
     await waitReady();
     const keyring = new Keyring({ type: 'sr25519' });
-    
-    const keys = keyring.addFromMnemonic(mnemonic)
+    let keys;
+    try{
+      keys = keyring.addFromMnemonic(mnemonic)
+    }
+    catch(e){
+      const entropic_seed = await this.generate_mnemonic_from_seed(mnemonic)
+      keys = keyring.addFromMnemonic(entropic_seed)
+    } 
     const public_address = encodeAddress(keys.publicKey, 0) //2 is Kusama
     return {keys: keys, dot_address: public_address}
   }
@@ -24024,13 +24154,22 @@ class App extends Component {
     // clone['KSM'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
   generate_ksm_wallet = async (mnemonic) => {
     await waitReady();
     const keyring = new Keyring({ type: 'sr25519' });
-    const keys = keyring.addFromMnemonic(mnemonic)
+    // const keys = keyring.addFromMnemonic(mnemonic)
+    let keys;
+    try{
+      keys = keyring.addFromMnemonic(mnemonic)
+    }
+    catch(e){
+      const entropic_seed = await this.generate_mnemonic_from_seed(mnemonic)
+      keys = keyring.addFromMnemonic(entropic_seed)
+    } 
     const public_address = encodeAddress(keys.publicKey, 2) //2 is Kusama
     return {keys: keys, ksm_address: public_address}
   }
@@ -24093,11 +24232,12 @@ class App extends Component {
     // clone['ALGO'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
   generate_algo_wallet = async (mnemonic) => {
-    const seed = mnemonicToSeedSync(mnemonic);
+    const seed = mnemonicToSeedSync(mnemonic); 
     const account = algosdk.secretKeyToMnemonic(Buffer.from(seed.toString('hex')));
     const recoveredAccount = algosdk.mnemonicToSecretKey(account);
     const address = recoveredAccount.addr.toString()
@@ -24134,11 +24274,12 @@ class App extends Component {
     const balance = (await Tezos.tz.getBalance(address)).toString()
 
     var fee_info = {'fee':await this.get_tezos_transaction_fee(), 'type':'variable', 'per':'transaction'}
-    var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
+    var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet, 'Tezos':Tezos}
     // var clone = structuredClone(this.state.coin_data)
     // clone['XTZ'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
@@ -24146,13 +24287,19 @@ class App extends Component {
     await sodium.ready;
     const seed = sodium.crypto_generichash(32, sodium.from_string(mnemonic));
     const keyPair = sodium.crypto_sign_seed_keypair(seed);
-    const privateKey = b58cencode(keyPair.privateKey.slice(0, 64), prefix.edsk);
+    const privateKey = b58Encode(keyPair.privateKey, PrefixV2.Ed25519SecretKey);
     const signer = await InMemorySigner.fromSecretKey(privateKey);
     return signer
+
+    // var entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    // return await InMemorySigner.fromMnemonic({
+    //   entropic_mnemonic,
+    //   derivationPath: "44'/1729'/0'/0'",
+    // });
   }
 
   get_tezos_transaction_fee = async () => {
-    return (0.064544 * 1_000_000)
+    return 65_000
   }
 
   update_tezos_balance = async (clone) => {
@@ -24182,6 +24329,7 @@ class App extends Component {
     // clone['ATOM'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
@@ -24244,6 +24392,7 @@ class App extends Component {
     // clone['SOL'] = data;
     // this.setState({coin_data: clone})
     // await this.wait(100)
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
@@ -24328,6 +24477,7 @@ class App extends Component {
       // clone['APT'] = data;
       // this.setState({coin_data: clone})
       // await this.wait(100)
+      this.fetch_specific_coin_receipts(address)
       return data
     }catch(e){
       console.log('coin',e)
@@ -24381,30 +24531,36 @@ class App extends Component {
 
 
   get_and_set_cardano_wallet_info = async (seed) => {
-    // try{
-    //   const wallet = await this.generate_cardano_wallet(seed)
-    //   const address = wallet.address
-    //   const balance_and_utxos = await this.get_cardano_wallet_balance(wallet)
-    //   const fees = await this.get_cardano_transaction_fees(wallet, balance_and_utxos)
+    try{
+      const cardano_web3 = new CardanoWeb3()
+      const wallet = await this.generate_cardano_wallet(seed, cardano_web3)
+      const address = wallet.address
+      const balance = await this.get_cardano_wallet_balance(wallet)
+      const fees = await this.get_cardano_transaction_fees(wallet, balance)
 
-    //   var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
-    //   var data = {'balance':balance_and_utxos.balance, 'address':address,'utxos':balance_and_utxos.utxos, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
-    //   return data
-    // }catch(e){
-    //   console.log('coin',e)
-    // }
+      var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
+      var data = { 'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet }
+      this.fetch_specific_coin_receipts(address)
+      return data
+    }catch(e){
+      console.log('coin',e)
+    }
   }
 
-  generate_cardano_wallet = async (mnemonic) => {
-    // var hash = await this.generate_hash(mnemonic)
-    // let bytes = Buffer.from(hash, "utf8");
-    // if (bytes.length < 16) {
-    //   bytes = Buffer.concat([bytes, Buffer.alloc(16 - bytes.length)]); // Pad with zeros
-    // } else if (bytes.length > 16) {
-    //   bytes = bytes.slice(0, 16); // Trim excess bytes
-    // }
-    // const mnemonic_entropy = bytes.toString("hex");
-    // const new_mnemonic = entropyToMnemonic(mnemonic_entropy);
+  generate_cardano_wallet = async (mnemonic, cardano_web3) => {
+    var hash = await this.generate_hash(mnemonic)
+    let bytes = Buffer.from(hash, "utf8");
+    if (bytes.length < 16) {
+      bytes = Buffer.concat([bytes, Buffer.alloc(16 - bytes.length)]); // Pad with zeros
+    } else if (bytes.length > 16) {
+      bytes = bytes.slice(0, 16); // Trim excess bytes
+    }
+    const mnemonic_entropy = bytes.toString("hex");
+    const new_mnemonic = entropyToMnemonic(mnemonic_entropy);
+
+    const account = cardano_web3.account.fromMnemonic(new_mnemonic)
+    const state = await account.getState()
+    return {address: account.__config.paymentAddress, state, account}
 
     // const key = `${process.env.REACT_APP_BLOCKFROST_KEY}`
     // const blockfrost = new Blockfrost("https://cardano-mainnet.blockfrost.io/api/v0", key)
@@ -24429,6 +24585,7 @@ class App extends Component {
   }
 
   get_cardano_wallet_balance = async (wallet) => {
+    return await wallet.state.balance.value
     // const wallet_utxos = await wallet.lucid.wallet().getUtxos();
     // var total_balance = bigInt(0)
     // wallet_utxos.forEach(utxo => {
@@ -24442,6 +24599,7 @@ class App extends Component {
   }
 
   get_cardano_transaction_fees = async (wallet, balance_and_utxos) => {
+    return 268_317
     // if(balance_and_utxos.utxos.length > 0){
     //   var test_recipient = 'addr1qy80v2j6xpk7zgrqv74c6lt55nw5ppkc34cwd0vxf247rk7lu29fpk40pdwalsjjrp9dlwvwhp7jg8v9g24lmnfh9tcqfq7f90'
     //   const draftTx = await wallet.lucid.newTx()
@@ -24455,13 +24613,11 @@ class App extends Component {
   }
 
   update_ada_balance = async (clone) => {
-    // var wallet = clone['ADA']['wallet']
-    // const balance_and_utxos = await this.get_cardano_wallet_balance(wallet)
-    // const fees = await this.get_cardano_transaction_fees(wallet, balance_and_utxos)
-    // clone['ADA']['balance'] = balance_and_utxos.balance;
-    // clone['ADA']['utxos'] = balance_and_utxos.utxos;
-    // clone['ADA']['fee']['fee'] = fees;
-    // return clone
+    const cardano_web3 = new CardanoWeb3()
+    const wallet = await this.generate_cardano_wallet(this.state.final_seed, cardano_web3)
+    const balance = await this.get_cardano_wallet_balance(wallet)
+    clone['ADA']['balance'] = balance;
+    return clone
   }
 
 
@@ -24484,6 +24640,7 @@ class App extends Component {
 
       var fee_info = {'fee':fees, 'type':'variable', 'per':'transaction'}
       var data = {'balance':bigInt(balance), 'address':address,'nonce':nonce, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
+      this.fetch_specific_coin_receipts(address)
       return data
     }catch(e){
       console.log('coin',e)
@@ -24578,6 +24735,7 @@ class App extends Component {
 
       var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
       var data = {'balance':bigInt(balance), 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
+      this.fetch_specific_coin_receipts(address)
       return data
     }catch(e){
       console.log('coin',e)
@@ -24646,6 +24804,7 @@ class App extends Component {
 
       var fee_info = {'fee':fees, 'type':'fixed', 'per':'transaction'}
       var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
+      this.fetch_specific_coin_receipts(address)
       return data
     }catch(e){
       console.log('coin',e)
@@ -24694,6 +24853,7 @@ class App extends Component {
 
     var fee_info = {'fee':await this.get_tia_transaction_fee(), 'type':'variable', 'per':'transaction'}
     var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
+    this.fetch_specific_coin_receipts(address)
     return data
   }
 
@@ -38732,59 +38892,59 @@ class App extends Component {
 
 
   store_data_in_infura = async (_data, unencrypt_image, tags_obj) => {
-    var data = unencrypt_image ? _data: await this.encrypt_storage_object(_data, tags_obj)
-    var data = unencrypt_image ? _data: (tags_obj != null ? await this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
+    // var data = unencrypt_image ? _data: await this.encrypt_storage_object(_data, tags_obj)
+    // var data = unencrypt_image ? _data: (tags_obj != null ? await this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
 
-    const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
-    const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
-    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
-    const client = create({
-      host: 'ipfs.infura.io',
-      port: 5001,
-      protocol: 'https',
-      apiPath: '/api/v0',
-      headers: {
-        authorization: auth,
-      }
-    })
+    // const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
+    // const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
+    // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    // const client = create({
+    //   host: 'ipfs.infura.io',
+    //   port: 5001,
+    //   protocol: 'https',
+    //   apiPath: '/api/v0',
+    //   headers: {
+    //     authorization: auth,
+    //   }
+    // })
 
-    try {
-      const added = await client.add(data)
-      return added.path.toString()
-    } catch (error) {
-      console.log('Error uploading file: ', error)
-      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
-      this.lock_run(false)
-      return '';
-    }
+    // try {
+    //   const added = await client.add(data)
+    //   return added.path.toString()
+    // } catch (error) {
+    //   console.log('Error uploading file: ', error)
+    //   this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+    //   this.lock_run(false)
+    //   return '';
+    // }
   }
 
   store_data_in_infura2 = async (_data, unencrypt_image, tags_obj) => {
-    var data = unencrypt_image ? _data: (tags_obj != null ? await this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
+    // var data = unencrypt_image ? _data: (tags_obj != null ? await this.encrypt_storage_object(_data, tags_obj) : await this.encrypt_storage_data(_data))
     
-    const obj = { data: data }
-    const final_data = JSON.stringify(obj)
-    const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
-    const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
-    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
-    const client = create({
-      host: 'ipfs.infura.io',
-      port: 5001,
-      protocol: 'https',
-      apiPath: '/api/v0',
-      headers: {
-        authorization: auth,
-      }
-    })
+    // const obj = { data: data }
+    // const final_data = JSON.stringify(obj)
+    // const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
+    // const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
+    // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    // const client = create({
+    //   host: 'ipfs.infura.io',
+    //   port: 5001,
+    //   protocol: 'https',
+    //   apiPath: '/api/v0',
+    //   headers: {
+    //     authorization: auth,
+    //   }
+    // })
 
-    try {
-      const added = await client.add(final_data)
-      return added.path.toString()
-    } catch (error) {
-      console.log('Error uploading file: ', error)
-      this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
-      return '';
-    }
+    // try {
+    //   const added = await client.add(final_data)
+    //   return added.path.toString()
+    // } catch (error) {
+    //   console.log('Error uploading file: ', error)
+    //   this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
+    //   return '';
+    // }
   }
 
   fetch_object_data_from_infura = async (cid, depth) => {
@@ -39565,67 +39725,67 @@ class App extends Component {
 
 
   upload_multiple_files_to_web3_or_chainsafe = async (datas, type) => {
-    this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
-    if(this.state.web3_account_email != ''){
-      //upload to web3
-      const client = await createW3UpClient()
-      const myAccount = await client.login(this.state.web3_account_email)
-      while (true) {
-        const res = await myAccount.plan.get()
-        if (res.ok) break
-        console.log('stackdata','Waiting for payment plan to be selected...')
-        await new Promise(resolve => setTimeout(resolve, 1000))
-      }
+    // this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
+    // if(this.state.web3_account_email != ''){
+    //   //upload to web3
+    //   const client = await createW3UpClient()
+    //   const myAccount = await client.login(this.state.web3_account_email)
+    //   while (true) {
+    //     const res = await myAccount.plan.get()
+    //     if (res.ok) break
+    //     console.log('stackdata','Waiting for payment plan to be selected...')
+    //     await new Promise(resolve => setTimeout(resolve, 1000))
+    //   }
 
-      var data_files = []
-      for(var i=0; i<datas.length; i++){
-        var _data = datas[i]
-        var file_name = _data['name']
-        data_files.push(this.make_file2(_data['data'], file_name))
-      }
-      //upload the streamable files
-      const streamable_cid_obj = await client.uploadDirectory(data_files)
-      var streamable_cid = streamable_cid_obj.toString()
+    //   var data_files = []
+    //   for(var i=0; i<datas.length; i++){
+    //     var _data = datas[i]
+    //     var file_name = _data['name']
+    //     data_files.push(this.make_file2(_data['data'], file_name))
+    //   }
+    //   //upload the streamable files
+    //   const streamable_cid_obj = await client.uploadDirectory(data_files)
+    //   var streamable_cid = streamable_cid_obj.toString()
 
-      var files = []
-      for(var i=0; i<datas.length; i++){
-        var _data = structuredClone(datas[i])
-        var file_name = 'data'+i
-        _data['data'] = `https://${streamable_cid}.ipfs.w3s.link/${_data['name']}`
-        files.push(this.make_file(await this.encrypt_storage_data(JSON.stringify(_data)), file_name))
-      }
-      const directoryCid = await client.uploadDirectory(files)
-      var cid = directoryCid.toString()
-      var e_cids = []
-      var cids = []
-      for(var i=0; i<datas.length; i++){
-        var file_name = 'data'+i
-        var _data = datas[i]
-        const ecid = _data['type']+'_'+cid+'.w3'+','+file_name
-        e_cids.push(ecid)
-        cids.push(cid)
-      }
-      this.when_uploading_multiple_files_complete(e_cids, cids, datas)
-      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
-    }else{
-      //upload to chainsasfe
-      var e_cids = []
-      var cids = []
-      for(var i=0; i<datas.length; i++){
-        var _data = datas[i]
-        var cid = await this.store_data_in_infura2(JSON.stringify(_data), null, null)
-        if(cid == ''){
-          this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
-          return;
-        }else{
-          var e_cid = _data['type']+'_'+cid+'.in'
-          e_cids.push(e_cid)
-          cids.push(cid)
-        }
-      }
-      this.when_uploading_multiple_files_complete(e_cids, cids, datas)
-      this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
-    }
+    //   var files = []
+    //   for(var i=0; i<datas.length; i++){
+    //     var _data = structuredClone(datas[i])
+    //     var file_name = 'data'+i
+    //     _data['data'] = `https://${streamable_cid}.ipfs.w3s.link/${_data['name']}`
+    //     files.push(this.make_file(await this.encrypt_storage_data(JSON.stringify(_data)), file_name))
+    //   }
+    //   const directoryCid = await client.uploadDirectory(files)
+    //   var cid = directoryCid.toString()
+    //   var e_cids = []
+    //   var cids = []
+    //   for(var i=0; i<datas.length; i++){
+    //     var file_name = 'data'+i
+    //     var _data = datas[i]
+    //     const ecid = _data['type']+'_'+cid+'.w3'+','+file_name
+    //     e_cids.push(ecid)
+    //     cids.push(cid)
+    //   }
+    //   this.when_uploading_multiple_files_complete(e_cids, cids, datas)
+    //   this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
+    // }else{
+    //   //upload to chainsasfe
+    //   var e_cids = []
+    //   var cids = []
+    //   for(var i=0; i<datas.length; i++){
+    //     var _data = datas[i]
+    //     var cid = await this.store_data_in_infura2(JSON.stringify(_data), null, null)
+    //     if(cid == ''){
+    //       this.prompt_top_notification(this.getLocale()['1593bo']/* Something went wrong with the upload. */, 5000)
+    //       return;
+    //     }else{
+    //       var e_cid = _data['type']+'_'+cid+'.in'
+    //       e_cids.push(e_cid)
+    //       cids.push(cid)
+    //     }
+    //   }
+    //   this.when_uploading_multiple_files_complete(e_cids, cids, datas)
+    //   this.prompt_top_notification(this.getLocale()['1593bp']/* Upload Successful. */, 9000)
+    // }
   }
 
   upload_multiple_files_to_nitro_node = async (datas, type, nitro_object, node_details) => {
@@ -45799,8 +45959,12 @@ class App extends Component {
   async register_and_fetch_all_socket_data(){
     //register myself in jobs group
     this.socket.emit("join_chatroom", 'jobs');
+    await this.wait(1800)
     this.socket.emit("join_chatroom", 'posts');
-    this.socket.emit('join_chatroom', 'contracts')
+    await this.wait(1800)
+    this.socket.emit('join_chatroom', 'contracts');
+    await this.wait(1800)
+    this.socket.emit('join_chatroom', 'ether_coin_receipt')
     //listen for new jobs
     const me = this;
     this.socket.on('chatroom_message', ({userId, message, roomId, target, object_hash}) => {
@@ -45833,6 +45997,9 @@ class App extends Component {
         }
         if(message.type == 'call-message'){
           me.process_new_call_message(message, object_hash)
+        }
+        else if(message.type == 'ether_coin_receipt'){
+          me.process_ether_coin_send_transaction_message(message, object_hash, '', true)
         }
       }
     });
@@ -46429,6 +46596,22 @@ class App extends Component {
     const target = 'pre_purchase_request|'+to
     const secondary_target = 'pre_purchase_request|'+this.state.accounts[this.state.selected_e5].address
     this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_new_ether_or_coin_receipt(state_object){
+    const mail_message_object = await this.prepare_ether_coin_successful_send_message(state_object)
+
+    console.log('ether_coin_receipt', 'message', mail_message_object)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(mail_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone});
+
+    const room_id = 'ether_coin_receipt'
+    this.socket.emit("chatroom_message", {roomId: room_id, message: mail_message_object.message, target: room_id, object_hash: mail_message_object.object_hash});
+    
+    await this.wait(3000)
+    this.process_ether_coin_send_transaction_message(mail_message_object.message, mail_message_object.object_hash, '', true)
   }
 
   
@@ -47959,6 +48142,53 @@ class App extends Component {
     const data = await this.encrypt_storage_object(object_as_string, {})
     const message = {
       type: 'pre_purchase_request',
+      message_identifier: id,
+      author: author,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_ether_coin_successful_send_message(message_obj){
+    const id = this.make_number_id(12)
+    const signature_request = {
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'sender_address': message_obj['sender_address'],
+      'recipient_address': message_obj['recipient_address'],
+      'ether_id':message_obj['ether_id'],
+      'hash': message_obj['hash'],
+      'request_id': id,
+      'time': Date.now(),
+    }
+
+    const tags = [this.hash_data_with_randomizer(message_obj['sender_address'].toString().toLowerCase()), this.hash_data_with_randomizer(message_obj['recipient_address'].toString().toLowerCase())]
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(signature_request, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'ether_coin_receipt',
       message_identifier: id,
       author: author,
       id:id,
@@ -49553,7 +49783,7 @@ class App extends Component {
 
   async process_ether_coin_request_message(message, object_hash, from, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
       const index = clone.indexOf(message['message_identifier'])
@@ -49579,7 +49809,9 @@ class App extends Component {
       await this.handle_coin_ether_request_notifications(ipfs)
     }
 
-    this.set_coin_ether_request_event_in_notifications(ipfs, message, object_hash)
+    if(am_I_the_author == false){
+      this.set_coin_ether_request_event_in_notifications(ipfs, message, object_hash)
+    }
   }
 
   async handle_coin_ether_request_notifications(ipfs){
@@ -49607,7 +49839,11 @@ class App extends Component {
 
     var clone = structuredClone(this.state.notification_object)
     const request_clone_array = clone['ether_coin_request'] == null ? [] : clone['ether_coin_request'].slice()
-    request_clone_array.push(event)
+    const index = request_clone_array.findIndex(item => item['view']['data']['request_id'] == ipfs['request_id']);
+    // console.log('set_coin_ether_send_event_in_notifications', 'index', ipfs, index)
+    if(index == -1){
+      request_clone_array.push(event)
+    }
     clone['ether_coin_request'] = this.sortByAttributeDescending(request_clone_array, 'time')
     this.setState({notification_object: clone})
   }
@@ -49640,7 +49876,9 @@ class App extends Component {
       await this.handle_pre_purchase_request_notifications(ipfs)
     }
 
-    this.set_pre_purchase_request_event_in_notifications(ipfs, message, object_hash)
+    if(!am_I_the_author){
+      this.set_pre_purchase_request_event_in_notifications(ipfs, message, object_hash)
+    }
   }
 
   async handle_pre_purchase_request_notifications(ipfs){
@@ -49666,8 +49904,102 @@ class App extends Component {
 
     var clone = structuredClone(this.state.notification_object)
     const request_clone_array = clone['pre_purchase_request'] == null ? [] : clone['pre_purchase_request'].slice()
-    request_clone_array.push(event)
+    const index = request_clone_array.findIndex(item => item['view']['data']['request_id'] == ipfs['request_id']);
+    // console.log('set_coin_ether_send_event_in_notifications', 'index', ipfs, index)
+    if(index == -1){
+      request_clone_array.push(event)
+    }
     clone['pre_purchase_request'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
+  async process_ether_coin_send_transaction_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      // var me = this;
+      // setTimeout(function() {
+      //   me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      // }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    const sender_address = ipfs['sender_address']
+    const recipient_address = ipfs['recipient_address']
+    console.log('ether_coin_receipt', 'ipfs', ipfs)
+
+    var involved = false
+    Object.keys(this.state.coin_data).forEach(coin_id => {
+      const coin_data = this.state.coin_data[coin_id] || {}
+      const my_address = coin_data['address']
+      if(my_address == sender_address || my_address == recipient_address){
+        involved = true;
+      }
+    });
+
+    const my_ether_address = this.state.accounts['E25'].address
+    if(my_ether_address.toString().toLowerCase() == sender_address.toString().toLowerCase() || my_ether_address.toString().toLowerCase() == recipient_address.toString().toLowerCase()){
+      involved = true;
+    }
+
+    console.log('ether_coin_receipt', 'involved', involved)
+    if(involved == false){
+      return;
+    }
+
+    const received_coin_ether_requests_sends = structuredClone(this.state.received_coin_ether_sends)
+    if(received_coin_ether_requests_sends[ipfs['ether_id']] == null){
+      received_coin_ether_requests_sends[ipfs['ether_id']] = {}
+    }
+    received_coin_ether_requests_sends[ipfs['ether_id']][ipfs['request_id']] = ipfs
+    this.setState({received_coin_ether_sends: received_coin_ether_requests_sends})
+
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+      await this.handle_coin_ether_send_notifications(ipfs)
+    }
+
+    if(am_I_the_author == false){
+      this.set_coin_ether_send_event_in_notifications(ipfs, message, object_hash)
+    }
+  }
+
+  async handle_coin_ether_send_notifications(ipfs){
+    var sender_account = ipfs['sender_account']
+    var sender_account_e5 = ipfs['sender_account_e5']
+    var ether_id = ipfs['message_obj']['ether_id']
+    var prompt = this.getLocale()['1407be']/* 'Incoming receipt for % from $' */
+    const alias = await this.get_sender_title_text(sender_account, sender_account_e5)
+    prompt = prompt.replace('$', alias)
+    prompt = prompt.replace('%', ether_id)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_coin_ether_receipt', 'data':ipfs})
+  }
+
+  set_coin_ether_send_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: message.author, p2:0, p3:0, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['e5']
+    event['p'] = 0
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = ipfs['sender_account']
+    event['type'] = 'ether_coin_receipt'
+    event['event_type'] = 'ether_coin_receipt'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'ether_coin_receipt', 'p':'p2', 'time':'p6','block':'p7', 'sender':'p1', 'data':ipfs}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['ether_coin_receipt'] == null ? [] : clone['ether_coin_receipt'].slice()
+    const index = request_clone_array.findIndex(item => item['view']['data']['request_id'] == ipfs['request_id']);
+    // console.log('set_coin_ether_send_event_in_notifications', 'index', ipfs, index)
+    if(index == -1){
+      request_clone_array.push(event)
+    }
+    clone['ether_coin_receipt'] = this.sortByAttributeDescending(request_clone_array, 'time')
     this.setState({notification_object: clone})
   }
   
@@ -50085,6 +50417,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'pre_purchase_request'){
             await this.process_pre_purchase_request_message(object_data, object_hash, '', true)
+          }
+          else if(object_data['type'] == 'ether_coin_receipt'){
+            await this.process_ether_coin_send_transaction_message(object_data, object_hash, '', true)
           }
           await this.wait(300)
         }

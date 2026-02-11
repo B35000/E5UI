@@ -412,8 +412,8 @@ class home_page extends Component {
           ],
         }
 
-        obj[this.props.app_state.loc['1264aj']/* 'bills' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
+        obj[this.props.app_state.loc['1264ai']/* 'bills' */] = [
+            ['xor','',0], [this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
         ]
 
         obj[this.props.app_state.loc['1218']/* 'ends' */] = [
@@ -957,7 +957,7 @@ class home_page extends Component {
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '42px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
+                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '46px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
                       
                   </div>
 
@@ -1107,9 +1107,9 @@ class home_page extends Component {
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         const ether_coin_request = notification_object['ether_coin_request'] || []
+        const ether_coin_receipt = notification_object['ether_coin_receipt'] || []
         
-        
-        const all_events = token.concat(bill_request, signature, ether_coin_request)
+        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt)
         const me = this;
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)  && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['w'] / 1000)
@@ -1389,8 +1389,8 @@ class home_page extends Component {
 
 
 
-        obj[this.props.app_state.loc['1264aj']/* 'bills' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264aj']/* 'bills' */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+        obj[this.props.app_state.loc['1264ai']/* bills */] = [
+            ['xor','',0], [this.props.app_state.loc['1264ai']/* bills */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
 
         obj[this.props.app_state.loc['1218']/* 'ends' */] = [
@@ -1445,7 +1445,7 @@ class home_page extends Component {
       }
       else{
         var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
-        if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
+        if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264ai']/* bills */){
             return 'bills';
         }
         else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */ || this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
@@ -1724,8 +1724,8 @@ class home_page extends Component {
         else{
             //wallet
             selected_page = 'w'
-            if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
-                selected_page = this.props.app_state.loc['1264aj']/* 'bills' */
+            if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264ai']/* bills */){
+                selected_page = this.props.app_state.loc['1264ai']/* bills */
             }
             else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */){
                 selected_page = this.props.app_state.loc['1218']/* 'ends' */
@@ -1941,8 +1941,8 @@ class home_page extends Component {
             //wallet
             this.setState({wallet_page_tags_object: tag_group})
             selected_page = 'w'
-            if(tag_group['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
-                selected_page = this.props.app_state.loc['1264aj']/* 'bills' */
+            if(tag_group['i'].active == this.props.app_state.loc['1264ai']/* bills */){
+                selected_page = this.props.app_state.loc['1264ai']/* bills */
             }
             else if(tag_group['i'].active == this.props.app_state.loc['1218']/* 'ends' */){
                 selected_page = this.props.app_state.loc['1218']/* 'ends' */
@@ -3844,7 +3844,7 @@ class home_page extends Component {
         var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
         const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
 
-        if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1264aj']/* 'bills' */|| all != null){
+        if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1264ai']/* bills */|| all != null){
             return all_bills
         }
         else if(selected_option_name == this.props.app_state.loc['1264ak']/* 'received' */){
@@ -4902,7 +4902,7 @@ class home_page extends Component {
         else if(selected_page == this.props.app_state.loc['1264s']/* 'nitro' */){
             return this.get_all_sorted_objects(this.props.app_state.created_nitros)
         }
-        else if(selected_page == this.props.app_state.loc['1264aj']/* 'bills' */){
+        else if(selected_page == this.props.app_state.loc['1264ai']/* bills */){
             var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_bills)
             var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
             const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
@@ -5569,7 +5569,7 @@ class home_page extends Component {
         this.setState({selected_bill_item: object['e5_id']})
         if(ignore_set_details_data == null) this.set_detail_data();
         this.reset_post_detail_object()
-        this.add_to_tab(object['e5_id'], object['id'], 'w', this.props.app_state.loc['1264aj']/* 'bills' */)
+        this.add_to_tab(object['e5_id'], object['id'], 'w', this.props.app_state.loc['1264ai']/* bills */)
         this.props.perform_bill_object_payment_search(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -5632,7 +5632,7 @@ class home_page extends Component {
             var selected_item = this.state.wallet_page_tags_object['e'][2][0];
             selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
 
-            if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
+            if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264ai']/* bills */){
                 selected_tag = this.state.wallet_page_tags_object['i'].active
             }
             else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */){
@@ -5789,7 +5789,7 @@ class home_page extends Component {
 
                 emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.props.get_objects_from_socket_and_set_in_state.bind(this)}
 
-                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)}
+                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)}
                 />
             </div>
         )
@@ -6696,7 +6696,7 @@ class home_page extends Component {
                 return object['ipfs'].entered_title_text
             }
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264ai']/* bills */){
             var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_bills)
             var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
             const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
@@ -6756,7 +6756,7 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1264k']/* audioport */] = '🎧'
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = '📺'
         obj[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'
-        obj[this.props.app_state.loc['1264aj']/* 'bills' */] = '🧾'
+        obj[this.props.app_state.loc['1264ai']/* bills */] = '🧾'
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = '📊'
         return `${obj[item['selected_tag']]} ${item['selected_tag']}`
     }
@@ -6876,7 +6876,7 @@ class home_page extends Component {
                 }
             }
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264ai']/* bills */){
             var selected_item = this.state.selected_bill_item
             if(this.state.detail_selected_tag == tem['selected_tag']){
                 if(selected_item == tem['e5_id']){
@@ -6994,7 +6994,7 @@ class home_page extends Component {
         else if(tem['selected_tag'] == this.props.app_state.loc['1264s']/* 'nitro' */){
            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_nitro_item: tem['e5_id']})
         }
-        else if(tem['selected_tag'] == this.props.app_state.loc['1264aj']/* 'bills' */){
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264ai']/* bills */){
             var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_bills)
             var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_bills)
             const all_bills = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')

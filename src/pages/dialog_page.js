@@ -795,7 +795,7 @@ class DialogPage extends Component {
         return(
             <div style={{}}>
                 <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1407f']}{/* Confirmation */}</h3>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1393']/* 'Send Ether Confirmation' */, 'details':this.props.app_state.loc['1394']/* 'Confirm that you want to send Ether to the targeted recipient' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1393']/* 'Send Ether Confirmation' */, 'details':this.props.app_state.loc['1394']/* 'Confirm that you want to send Ether to the targeted recipient' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1395']/* Picked Amount In Ether and Wei */}</p>
@@ -804,10 +804,10 @@ class DialogPage extends Component {
                 </div>
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1396']/* 'Sender Wallet Address' */, 'details':this.get_account_address(e5), 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1396']/* 'Sender Wallet Address' */, 'details':this.get_account_address(e5), 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'l'})}
 
                 <div style={{height: 10}}/>
                 
@@ -1059,7 +1059,7 @@ class DialogPage extends Component {
         return(
             <div>
                 <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1407f']}{/* Confirmation */}</h3>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2941']/* 'Send Coin Confirmation' */, 'details':this.props.app_state.loc['2942']/* 'Confirm that you want to send the coin to the target recipient.' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2941']/* 'Send Coin Confirmation' */, 'details':this.props.app_state.loc['2942']/* 'Confirm that you want to send the coin to the target recipient.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
@@ -1076,15 +1076,15 @@ class DialogPage extends Component {
                 </div>
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1396']/* 'Sender Wallet Address' */, 'details':sender_address, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1396']/* 'Sender Wallet Address' */, 'details':sender_address, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'l'})}
 
                 {kill_wallet == true && (
                     <div>
                         <div style={{height: 10}}/>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1407n']/* 'Transfer and Kill Enabled.' */, 'details':this.props.app_state.loc['1407o']/* 'Your address will not be kept alive.'' */, 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1407n']/* 'Transfer and Kill Enabled.' */, 'details':this.props.app_state.loc['1407o']/* 'Your address will not be kept alive.'' */, 'size':'l'})}
                     </div>
                 )}
 
@@ -1154,7 +1154,7 @@ class DialogPage extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2953']/* 'Included Memo.' */, 'details':memo_text, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2953']/* 'Included Memo.' */, 'details':memo_text, 'size':'l'})}
                 </div>
             )
         }
@@ -10363,7 +10363,7 @@ return data['data']
                 {ipfs['message_obj']['ether_or_coin'] == 'ether' ? render_amount_in_ether_and_wei() : render_amount_in_coin_and_decimal()}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':recipient_address, 'details':this.props.app_state.loc['3055kb']/* 'Requested Recipient\'s Address.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':start_and_end(recipient_address), 'details':this.props.app_state.loc['3055kb']/* 'Requested Recipient\'s Address.' */, 'size':'l'})}
                 {memo_text != '' && ( <div style={{height: 10}}/> )}
 
                 {memo_text != '' && this.render_detail_item('3', {'title':memo_text, 'details':this.props.app_state.loc['3055kf']/* 'Requested Transaction Memo.' */, 'size':'l'})}
@@ -10384,7 +10384,7 @@ return data['data']
         if(account == this.props.app_state.user_account_id[e5]){
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
-            const bucket = this.get_all_sorted_objects_mappings(this.state.alias_bucket)
+            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
             var alias = (bucket[account] == null ? account : bucket[account])
             return alias
         }

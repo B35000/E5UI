@@ -85,6 +85,8 @@ class SuccessfulSend extends Component {
                 <div>
                     {this.render_content()}
                     {this.render_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -203,7 +205,6 @@ class SuccessfulSend extends Component {
         if(link != null){
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2802']/* Track Your Transaction. */,'details':this.props.app_state.loc['2803']/* You can track the status of your transaction from the chain blockexplorer. */, 'size':'l'})}
                     
                     <div style={{height: 10}}/>
@@ -529,6 +530,8 @@ class SuccessfulSend extends Component {
                 <div>
                     {this.render_coin_content()}
                     {this.render_coin_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -617,6 +620,7 @@ class SuccessfulSend extends Component {
 
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{'title':''+count, 'details':this.props.app_state.loc['2950']/* 'UTXOs consumed.' */,'size':'l'})}
+                    <div style={{height: 10}}/>
                 </div>
             )
         }
@@ -634,8 +638,6 @@ class SuccessfulSend extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2801']/* 'Copy Transaction Hash.' */, 'action':''})}
                 </div>
 
-                
-
                 {this.render_detail_item('0')}
 
                 {this.render_coin_blockexplorer_link()}
@@ -648,7 +650,6 @@ class SuccessfulSend extends Component {
         if(link != null){
             return(
                 <div>
-                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2802']/* Track Your Transaction. */,'details':this.props.app_state.loc['2803']/* You can track the status of your transaction from the chain blockexplorer. */, 'size':'l'})}
                     
                     <div style={{height: 10}}/>
@@ -674,7 +675,8 @@ class SuccessfulSend extends Component {
             return `https://litecoinspace.org/tx/${hash}`
         }
         else if(item['symbol'] == 'DOGE'){
-            return `https://blockexplorers.nownodes.io/dogecoin/tx/${hash}`
+            return `https://explorer.doged.io/tx/${hash}`
+            // return `https://blockexplorers.nownodes.io/dogecoin/tx/${hash}`
         }
         else if(item['symbol'] == 'DASH'){
             return `https://blockchair.com/dash/transaction/${hash}`

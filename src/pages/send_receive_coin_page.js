@@ -299,6 +299,8 @@ class SendReceiveCoinPage extends Component {
         if(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA'){
             return(
                 <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2954k']/* 'Include a Memo.' */, 'details':this.props.app_state.loc['2954l']/* 'You may optionally include a memo in the transaction.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2954']/* 'Memo (Optional)' */} when_text_input_field_changed={this.when_memo_text_input_field_changed.bind(this)} text={this.state.memo_text} theme={this.props.theme}/>
                 </div>
@@ -651,7 +653,7 @@ class SendReceiveCoinPage extends Component {
             set_fee = this.state.picked_sats_fee_amount
         }
 
-        const money_out = set_fee + transfer_amount
+        const money_out = bigInt(set_fee).plus(transfer_amount)
         const accounts_balance = data['balance']
 
         if(transfer_amount == 0 && kill_wallet != this.props.app_state.loc['1407k']/* 'transfer-all' */){
@@ -664,6 +666,7 @@ class SendReceiveCoinPage extends Component {
             this.props.notify(this.props.app_state.loc['2936']/* 'You can\'t include the minimum deposit in your transaction.' */, 4000)
         }
         else if(money_out > accounts_balance){
+            console.log('open_confirm_send', set_fee, money_out, accounts_balance)
             this.props.notify(this.props.app_state.loc['2937']/* 'You don\'t have enough coin to make that transaction.' */, 4000)
         }
         else if(!this.props.check_if_recipient_address_is_valid(recipient, item)){
@@ -800,6 +803,8 @@ class SendReceiveCoinPage extends Component {
             return(
                 <div>
                     {this.render_request_coin_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -808,6 +813,7 @@ class SendReceiveCoinPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_request_coin_data()}
+                        <div style={{height: 20}}/>
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -821,6 +827,7 @@ class SendReceiveCoinPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_request_coin_data()}
+                        <div style={{height: 20}}/>
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -864,7 +871,7 @@ class SendReceiveCoinPage extends Component {
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_coin_recipient_input_field_changed.bind(this)} text={this.state.request_coin_recipient_address} theme={this.props.theme}/>
 
 
-                {item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA' && (
+                {(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA') && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2954g']/* 'Transfer Memo.' */, 'details':this.props.app_state.loc['2954h']/* 'You may optionally include a required memo for the requested transfer.' */, 'size':'l'})}
@@ -875,6 +882,7 @@ class SendReceiveCoinPage extends Component {
                     </div>
                 )}
 
+                <div style={{height: 10}}/>
                 <div onClick={() => this.prompt_coin_request_from_target()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2954e']/* 'Request Coin' */, 'action':''})}
                 </div>
@@ -909,7 +917,7 @@ class SendReceiveCoinPage extends Component {
         else if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['1571']/* 'Please set your wallet first.' */, 3200);
         }
-        else if(!this.isValidAddress(recipient_address)){
+        else if(!this.props.check_if_recipient_address_is_valid(recipient_address, this.state.coin)){
             this.props.notify(this.props.app_state.loc['1407x']/* 'That recipient address is not valid.' */, 3200);
         }
         else if(request_coin_memo.length > 35){
@@ -920,8 +928,33 @@ class SendReceiveCoinPage extends Component {
             //picked_wei_amount -> picked_base_unit_amount
             //ether -> 'ether_or_coin'
             this.props.send_coin_request_message(request_ether_recipient, recipient_address, picked_wei_amount, recipient_e5, ether_id, request_coin_memo)
-            this.setState({request_coin_recipient:'', request_coin_recipient_address:''})
+            this.setState({request_coin_recipient:''})
         }
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
+    }
+
+    get_recipient_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
     }
 
 

@@ -286,7 +286,7 @@ class PostListSection extends Component {
                     </div>
                 )
             }
-            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264aj']/* 'bills' */){
+            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264ai']/* bills */){
                 return(
                     <div>
                         {this.render_bills_list_group()}
@@ -840,7 +840,7 @@ class PostListSection extends Component {
 
         object[this.props.app_state.loc['1218']/* 'ends' */] = this.props.app_state.created_tokens
         object[this.props.app_state.loc['1219']/* 'spends' */] = this.props.app_state.created_tokens
-        object[this.props.app_state.loc['1264aj']/* 'bills' */] = this.props.app_state.created_bills
+        object[this.props.app_state.loc['1264ai']/* bills */] = this.props.app_state.created_bills
 
         if(reload != null){
             // console.log('is_loading_object_data', 'load_contract_data', this.props.app_state.is_fetching_objects, active_page)

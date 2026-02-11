@@ -887,6 +887,8 @@ class SendReceiveEtherPage extends Component {
             return(
                 <div>
                     {this.render_request_ether_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -895,6 +897,7 @@ class SendReceiveEtherPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_request_ether_data()}
+                        <div style={{height: 20}}/>
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -908,6 +911,7 @@ class SendReceiveEtherPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_request_ether_data()}
+                        <div style={{height: 20}}/>
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -956,7 +960,7 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1407bb']/* 'Transfer Recipient.' */, 'details':this.props.app_state.loc['1407bc']/* 'The address you wish to receive the ether when the request is fulfilled.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_ether_recipient_input_field_changed.bind(this)} text={this.state.request_ether_recipient_address} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_request_ether_recipient_input_field_changed.bind(this)} text={this.state.request_ether_recipient_address} theme={this.props.theme}/>
                 <div style={{height: 20}}/>
 
                 <div onClick={() => this.prompt_ether_request_from_target()}>
@@ -997,7 +1001,7 @@ class SendReceiveEtherPage extends Component {
             //picked_wei_amount -> picked_base_unit_amount
             //ether -> 'ether_or_coin'
             this.props.send_ether_request_message(request_ether_recipient, recipient_address, picked_wei_amount, recipient_e5, ether_id)
-            this.setState({request_ether_recipient:'', request_ether_recipient_address:''})
+            this.setState({request_ether_recipient:'',})
         }
     }
 

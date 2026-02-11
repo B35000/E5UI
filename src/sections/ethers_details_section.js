@@ -42,6 +42,13 @@ function start_and_end(str) {
   return str;
 }
 
+function start_and_end2(str) {
+  if (str.length > 18) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class EthersDetailsSection extends Component {
     
     state = {
@@ -55,7 +62,7 @@ class EthersDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */, this.props.app_state.loc['2481d']/* 'requests' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */, this.props.app_state.loc['2481d']/* 'requests' */, this.props.app_state.loc['2481i']/* 'E5-Transfers ⚪' */],[1]
           ],
         }
     }
@@ -125,6 +132,13 @@ class EthersDetailsSection extends Component {
             return(
                 <div>
                     {this.render_ether_requests_section(item)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['2481i']/* 'E5-Transfers ⚪' */){
+            return(
+                <div>
+                    {this.render_ether_send_receipts_section(item)}
                 </div>
             )
         }
@@ -556,18 +570,18 @@ class EthersDetailsSection extends Component {
     }
 
 
-    get_gas_price_from_runs(e5){
-        var last_events = this.props.app_state.all_E5_runs[e5]
-        var sum = 0
-        if(last_events != null){
-            var last_check = last_events.length < 50 ? last_events.length : 50
-            for(var i=0; i<last_check; i++){
-                sum += last_events[i].returnValues.p7
-            }
-            sum = sum/last_check;
-        }
-        return sum
-    }
+    // get_gas_price_from_runs(e5){
+    //     var last_events = this.props.app_state.all_E5_runs[e5]
+    //     var sum = 0
+    //     if(last_events != null){
+    //         var last_check = last_events.length < 50 ? last_events.length : 50
+    //         for(var i=0; i<last_check; i++){
+    //             sum += last_events[i].returnValues.p7
+    //         }
+    //         sum = sum/last_check;
+    //     }
+    //     return sum
+    // }
 
     get_average_block_time_from_blocks(e5){
         var blocks = this.props.app_state.last_blocks[e5]== null ? [] : this.props.app_state.last_blocks[e5]        
@@ -1065,11 +1079,16 @@ class EthersDetailsSection extends Component {
     }
 
     get_requests(ether_item){
+        if(this.props.app_state.has_wallet_been_set == false){
+            return [];
+        }
         const id = ether_item['id']
         const data = this.props.app_state.received_coin_ether_requests[id] || {}
         const requets = [];
         Object.keys(data).forEach(request_id => {
-            requets.push(data[request_id])
+            if(data[request_id]['sender_account'] != this.props.app_state.user_account_id[data[request_id]['sender_account_e5']]){
+                requets.push(data[request_id])
+            }
         });
         return this.sortByAttributeDescending(requets, 'time')
     }
@@ -1089,11 +1108,11 @@ class EthersDetailsSection extends Component {
         const sender_account = ipfs['sender_account']
         const sender_account_e5 = ipfs['sender_account_e5']
         const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
-        const base_unit_amount = ipfs['message_obj']['picked_base_unit_amount']
+        const base_unit_amount = bigInt(ipfs['message_obj']['picked_base_unit_amount'])
         const decimal_amount = base_unit_amount / 10**18
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2481c']/* 'From $' */.replace('$', sender_account).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+', '+decimal_amount+' '+ipfs['message_obj']['ether_id'], 'size':'l', 'title_image': e5_image})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2481c']/* 'From $' */.replace('$', sender_account).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+' • '+decimal_amount+' '+ipfs['message_obj']['ether_id']+' • '+this.format_account_balance_figure(base_unit_amount)+' wei', 'size':'l', 'title_image': e5_image})}
             </div>
         )
     }
@@ -1101,6 +1120,105 @@ class EthersDetailsSection extends Component {
     when_request_item_clicked(ipfs, ether_item){
         this.props.show_dialog_bottomsheet(ipfs, 'view_coin_ether_request')
     }
+
+
+
+
+
+    render_ether_send_receipts_section(item){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2481g']/* 'Ether Sends And Receipts.' */, 'details':this.props.app_state.loc['2481h']/* 'All the Ether transfer recepits recorded in your account sent via E5.' */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_ether_send_receipts_items(item)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_ether_send_receipts_items(ether_item){
+        var middle = this.props.height-200;
+        var items = [].concat(this.get_send_receipts(ether_item))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}}>
+                                    {this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.map((item, index) => (
+                                <li style={{}} onClick={() => this.when_send_receipts_item_clicked(item, ether_item)}>
+                                    <div>
+                                        {this.render_send_receipts_item(item, ether_item)}
+                                        <div style={{height: 4}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_send_receipts(ether_item){
+        if(this.props.app_state.has_wallet_been_set == false){
+            return [];
+        }
+        const id = ether_item['id']
+        const data = this.props.app_state.received_coin_ether_sends[id] || {}
+        const requets = [];
+        Object.keys(data).forEach(request_id => {
+            requets.push(data[request_id])
+        });
+        return this.sortByAttributeDescending(requets, 'time').reverse()
+    }
+
+    render_send_receipts_item(ipfs, ether_item){
+        const time = ipfs['time']/1000
+        const my_address = this.props.app_state.accounts[ether_item['e5']].address
+        const sender_or_recipient_account = ipfs['sender_address'] == my_address ? ipfs['recipient_address'] : ipfs['sender_address'];
+        const base_unit_amount = bigInt(ipfs['hash']['tx'].value)
+        const decimal_amount = base_unit_amount / 10**18
+        const sender_or_receiver = ipfs['sender_address'] == my_address ? this.props.app_state.loc['2481e']/* 'To $, % ago.' */ :  this.props.app_state.loc['2481c']/* 'From $, % ago.' */
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':sender_or_receiver.replace('$', start_and_end2(sender_or_recipient_account)).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+' • '+decimal_amount+' '+ipfs['ether_id']+' • '+this.format_account_balance_figure(base_unit_amount)+' wei', 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_send_receipts_item_clicked(ipfs){
+        this.props.show_successful_send_bottomsheet(ipfs['hash'], false)
+    }
+
+
+
+
+
 
 
 

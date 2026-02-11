@@ -262,8 +262,9 @@ class HomepageSideBar extends Component {
         const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         const ether_coin_request = notification_object['ether_coin_request'] || []
+        const ether_coin_receipt = notification_object['ether_coin_receipt'] || []
 
-        const all_events = token.concat(bill_request, signature, ether_coin_request)
+        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {

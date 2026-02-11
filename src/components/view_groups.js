@@ -292,7 +292,13 @@ class ViewGroups extends Component {
                 details = '...'
             }
             const clean_text = this.mask_profane_words(details, false)
-            const parts = clean_text.split(' ');
+            let parts = []
+            try{
+                parts = clean_text.split(' ');
+            }catch(e){
+
+            }
+            // const parts = clean_text.split(' ');
             const leading_trailing_spaces = this.extract_leading_trailing_spaces(clean_text)
             const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 0px 0px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
             const footer = object_data['footer']
@@ -381,7 +387,7 @@ class ViewGroups extends Component {
               font = object_data['font'];
               textsize = object_data['textsize'];
               text = object_data['text'];
-              word_wrap_value = this.longest_word_length(object_data['text']) > 53 ? 'break-word' : 'normal'
+              word_wrap_value = this.longest_word_length(object_data['text']) > 44 ? 'break-word' : 'normal'
             }
 
             text = this.format_text_if_empty_or_null(text)
