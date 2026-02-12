@@ -117,7 +117,7 @@ class DialogPage extends Component {
 
         new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(), new_voice_call_number_id: make_number_id_str(15),
 
-        credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'',
+        credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'', dm_recipient:''
     };
 
 
@@ -587,6 +587,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_view_request_spend_prepurchase_credits_ui()}
+                </div>
+            )
+        }
+        else if(option == 'new_direct_message_chat'){
+            return(
+                <div>
+                    {this.render_new_direct_message_chat_ui()}
                 </div>
             )
         }
@@ -10696,6 +10703,173 @@ return data['data']
             this.props.open_dialog_bottomsheet()
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_new_direct_message_chat_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_new_direct_message_chat_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_new_direct_message_chat_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_new_direct_message_chat_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_new_direct_message_chat_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055kq']/* 'Target Recipient.' */, 'details':this.props.app_state.loc['3055kl']/* 'Specify the account you wish to send a direct message.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_dm_recipient_input_field_changed.bind(this)} text={this.state.dm_recipient} theme={this.props.theme}/>
+                {this.load_account_suggestions()}
+
+                <div style={{height:10}}/>
+                <div onClick={()=> this.make_new_direct_message_chat()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055kr']/* 'Start Chat.' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_dm_recipient_input_field_changed(text){
+        this.setState({dm_recipient: text})
+    }
+
+    load_account_suggestions(){
+        var items = [].concat(this.get_suggested_accounts())
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+            </div>
+        )
+    }
+
+    get_suggested_accounts(){
+        return this.get_account_suggestions()
+    }
+
+    get_account_suggestions(){
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5]
+        var return_array = []
+        contacts.forEach(contact => {
+            if(contact['id'].toString().includes(this.state.target_recipient)){
+                return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+            }
+        });
+        return_array = this.filter_and_add_other_accounts(this.state.target_recipient, return_array)
+
+        return return_array
+    }
+
+    filter_and_add_other_accounts(typed_name, return_array){
+        if(typed_name.length < 3){
+            return return_array
+        }
+        const added_aliases = []
+        return_array.forEach(item => {
+            added_aliases.push(item['label']['details'])
+        });
+
+        return return_array.concat(this.get_all_aliases(added_aliases, typed_name))
+    }
+
+    get_all_aliases(added_aliases, typed_name){
+        const aliases = []
+        // const e5s = Object.keys(this.props.app_state.alias_bucket)
+        // e5s.forEach(e5 => {
+        //     const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        //     accounts.forEach(account_id => {
+        //         const alias = this.props.app_state.alias_bucket[e5][account_id]
+        //         if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+        //             aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+        //         }
+        //     });
+        // });
+        const e5 = this.props.app_state.selected_e5
+        const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        accounts.forEach(account_id => {
+            const alias = this.props.app_state.alias_bucket[e5][account_id]
+            if(!added_aliases.includes(alias) && alias.toLowerCase().startsWith(typed_name.toLowerCase())){
+                aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+            }
+        });
+
+        return aliases
+    }
+
+    get_contact_alias(contact){
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
+    }
+
+    when_suggestion_clicked(item){
+        this.setState({dm_recipient: item['label']['details']})
+    }
+
+    async make_new_direct_message_chat(){
+        this.props.notify(this.props.app_state.loc['3055ks']/* 'Loading Chat...' */, 1200)
+        const recipient = this.state.dm_recipient.trim()
+        const recipient_id = await this.get_typed_alias_id(recipient)
+        const recipient_e5 = this.get_recipient_e5(recipient)
+
+        if(isNaN(recipient_id) || recipient_id =='' || parseInt(recipient_id) < 1001){
+            this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 3800)
+        }
+        else{
+            this.props.start_new_direct_message_chat(recipient_id, recipient_e5)
+        }
+    }
+
+
+
 
 
 

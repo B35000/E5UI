@@ -508,7 +508,7 @@ class SendReceiveCoinPage extends Component {
         if(item['symbol'] == 'AR'){
             var target = this.props.validate_arweave_address(this.state.recipient_address) ? this.state.recipient_address : '-zdLm14FOLtTWxTEVzhh2N9AGCnW_-O_6DIcLxgk-W0'
             var current_network_fees = await this.props.estimate_arweave_network_fees(target)
-            final_amount = parseInt(current_network_fees) * 1.5
+            final_amount = parseInt(current_network_fees)
         }
         return final_amount
     }
@@ -652,6 +652,9 @@ class SendReceiveCoinPage extends Component {
         if(this.state.picked_sats_fee_amount != 0){
             set_fee = this.state.picked_sats_fee_amount
         }
+
+        console.log('open_confirm_send','set_fee', set_fee)
+        console.log('open_confirm_send','transfer_amount', transfer_amount)
 
         const money_out = bigInt(set_fee).plus(transfer_amount)
         const accounts_balance = data['balance']

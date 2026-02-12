@@ -171,7 +171,7 @@ class ViewNotificationLogPage extends Component {
         else if(selected_item == this.props.app_state.loc['3067a']/* 'mail' */){
             return(
                 <div>
-                    {this.render_work_notifications(['mail','message'])}
+                    {this.render_work_notifications(['mail','message', 'direct_message'])}
                 </div>
             )
         }
@@ -399,6 +399,7 @@ class ViewNotificationLogPage extends Component {
             'follower_job': this.props.app_state.loc['3067ah'],/* '💼 $ posted a new job you could do.' */
             'call_request': this.props.app_state.loc['3067ar'],/* '📞 $ invited you to join a call.' */
             'pre_purchase_request': this.props.app_state.loc['3067at'],/* '💳 $ sent you a pre-purchase payment request.' */
+            'direct_message':this.props.app_state.loc['3067ax'],/* '💌 You received a new direct message from $' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -440,8 +441,9 @@ class ViewNotificationLogPage extends Component {
         const follower_job = notification_object['follower_job'] || [];
         const call_request = notification_object['call_request'] || [];
         const pre_purchase_request = notification_object['pre_purchase_request'] || []
+        const direct_message = notification_object['direct_message'] || []
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request, direct_message)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

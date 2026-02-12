@@ -20,9 +20,6 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
-// import Letter from './../assets/letter.png'; 
-// import E5EmptyIcon from './../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
@@ -55,7 +52,7 @@ function start_and_end(str) {
   return str;
 }
 
-class MailDetailsSection extends Component {
+class DirectMessageDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_mail_list_detail_tags_object: this.get_navigate_view_mail_list_detail_tags_object_tags(), entered_text:'', entered_image_objects:[],
@@ -68,29 +65,13 @@ class MailDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2510']/* 'data' */,this.props.app_state.loc['1674']/* 'activity' */],[1]
+              ['xor','',0], ['e', this.props.app_state.loc['1674']/* 'activity' */],[1]
           ],
         }
     }
 
     reset_tags(){
         this.setState({navigate_view_mail_list_detail_tags_object: this.get_navigate_view_mail_list_detail_tags_object_tags()})
-    }
-
-    componentDidMount(){
-        this.interval = setInterval(() => this.check_for_new_and_messages(), this.props.app_state.details_section_syncy_time);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
-    check_for_new_and_messages() {
-        if(this.props.selected_mail_item != null){
-            var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
-            if(object == null || object['ipfs'] == null) return;
-            this.props.get_mail_messages(object)
-        }
     }
 
     render(){
@@ -101,9 +82,8 @@ class MailDetailsSection extends Component {
         )
     }
 
-
     render_mail_list_detail(){
-        if(this.props.selected_mail_item == null){
+        if(this.props.selected_direct_message_item == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}
@@ -137,16 +117,20 @@ class MailDetailsSection extends Component {
         this.setState({navigate_view_mail_list_detail_tags_object: tag_obj})
     }
 
+    get_my_direct_message_objects(){
+        const messages = []
+        Object.keys(this.props.app_state.direct_messages).forEach(e5_account => {
+            messages.push(this.props.app_state.direct_messages[e5_account])
+        });
 
-    get_item_in_array(object_array, id){
-        var object = object_array.find(x => x['id'] === id);
-        return object
+        return messages;
     }
+
 
 
     render_mail_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_mail_list_detail_tags_object, this.state.navigate_view_mail_list_detail_tags_object['i'].active)
-        var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+        var object = this.get_item_in_array(this.get_my_direct_message_objects(), this.props.selected_direct_message_item);
         if(object == null){
             return(
                 <div>
@@ -156,17 +140,7 @@ class MailDetailsSection extends Component {
         }
 
         if(object!=null){
-            // if(this.props.screensize != 'l'){
-            //     return this.render_post_list_group_if_touch_screen(object)
-            // }
-            if(selected_item == this.props.app_state.loc['2510']/* 'data' */){
-                return(
-                    <div>
-                        {this.render_mail_main_details_section(object)}
-                    </div>
-                )
-            }
-            else if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
+            if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
                 return(
                     <div>
                         {this.render_mail_responses(object)}
@@ -176,492 +150,6 @@ class MailDetailsSection extends Component {
             }
         }
     }
-
-    render_post_list_group_if_touch_screen(object){
-        var pos = this.state.navigate_view_mail_list_detail_tags_object['e'][2][0] - 1
-        const handle_change = (value) => {
-            const tag_name = this.state.navigate_view_mail_list_detail_tags_object['e'][1][value+1]
-            const current_tag_group = this.state.navigate_view_mail_list_detail_tags_object['i'].active 
-            const first_tag = this.state.navigate_view_mail_list_detail_tags_object[current_tag_group][1][0]
-            
-            const clone = structuredClone(this.state.navigate_view_mail_list_detail_tags_object)
-            const tag_object_clone = this.bottom_tags.when_tag_button_clicked(0, first_tag, true, clone)
-            const tag_object_clone2 = this.bottom_tags.when_tag_button_clicked(value+1, tag_name, true, tag_object_clone)
-            var me = this;
-            setTimeout(function() {
-                me.setState({navigate_view_mail_list_detail_tags_object: tag_object_clone2})
-            }, (1 * 200));
-        }
-        return(
-            <div>
-                <ViewPager tag="main">
-                    <Frame className="frame">
-                        <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => handle_change(parseInt(e))} className="track">
-                            <View className="view">
-                                <div>
-                                    {this.render_mail_main_details_section(object)}
-                                </div>
-                            </View>
-                            <View className="view">
-                                <div>
-                                    {this.render_mail_responses(object)}
-                                </div>
-                            </View>
-                        </Track>
-                    </Frame>
-                </ViewPager>
-            </div>
-        )
-        
-    }
-
-    render_mail_main_details_section(object){
-        var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-55
-        var size = this.props.screensize
-       
-        // var object = this.get_mail_items()[this.props.selected_mail_item];
-        var item = this.get_mail_details_data(object)
-        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
-        return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'99%', height: he, padding:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('4', item['id'])}
-                    <div style={{height: 10}}/>
-                    {this.show_moderator_note_if_any(object)}
-                    {this.render_post_state(object)}
-                    <div onClick={() => this.add_to_contacts2(object)}>
-                        {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p2, object)), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
-                    </div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p1,object)), 'details':this.props.app_state.loc['888']/* 'Recipient' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', item['age'])}
-                    </div>
-                    {this.render_detail_item('0')}
-                    {this.render_item_data(items, object)}
-                    {this.render_item_images(object)}
-                    {this.render_pdf_files_if_any(object)}
-                    {this.render_zip_files_if_any(object)}
-
-                    <div style={{height: 10}}/>
-                    {this.render_markdown_if_any(object)}
-
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
-                </div>
-            </div>
-        )
-    }
-
-    show_moderator_note_if_any(object){
-        if(this.props.app_state.moderator_notes_by_my_following.length == 0  || this.props.app_state.user_account_id[object['e5']] == object['author']) return;
-        var note_to_apply = []
-        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
-            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
-            var hit_count = 0
-            for(var k=0; k<focused_note['keywords'].length; k++){
-                const keyword_target = focused_note['keywords'][k]
-                if(object['ipfs'].entered_title_text.includes(keyword_target)){
-                    hit_count ++
-                }
-                else if(this.get_senders_name(object['author'], object) == keyword_target || object['author'] == keyword_target){
-                    hit_count++
-                }
-                else if(object['ipfs'].entered_indexing_tags.includes(keyword_target)){
-                    hit_count ++
-                }
-                else{
-                    const matching_entered_text_objects = object['ipfs'].entered_text_objects.filter(text_object => text_object['text'].includes(keyword_target));
-                    
-                    if(matching_entered_text_objects.length > 0){
-                        hit_count ++
-                    }
-                    else if(object['ipfs'].markdown != null && object['ipfs'].markdown.includes(keyword_target)){
-                        hit_count++
-                    }
-                    else if(object['ipfs'].entered_genre_text != null && object['ipfs'].entered_genre_text.includes(keyword_target)){
-                        hit_count++
-                    }
-                    else if(object['ipfs'].entered_year_recorded_text != null && object['ipfs'].entered_year_recorded_text.includes(keyword_target)){
-                        hit_count++
-                    }
-                    else if(object['ipfs'].entered_author_text != null && object['ipfs'].entered_author_text.includes(keyword_target)){
-                        hit_count++
-                    }
-                    else if(object['ipfs'].entered_copyright_text != null && object['ipfs'].entered_copyright_text.includes(keyword_target)){
-                        hit_count++
-                    }
-                    else if(object['ipfs'].entered_comment_text != null && object['ipfs'].entered_comment_text.includes(keyword_target)){
-                        hit_count++
-                    }
-                    else{
-                        if(object['ipfs'].songs != null){
-                            const matching_songs = object['ipfs'].songs.filter(song => (song['song_title'].includes(keyword_target) || song['song_composer'].includes(keyword_target) || song['credits'].includes(keyword_target)));
-                            
-                            if(matching_songs.length > 0){
-                                hit_count ++
-                            }
-                        }
-                        else if(object['ipfs'].videos != null){
-                            const matching_videos = object['ipfs'].videos.filter(video => (video['video_title'].includes(keyword_target) || video['video_composer'].includes(keyword_target)));
-                            
-                            if(matching_videos.length > 0){
-                                hit_count ++
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)) && focused_note['visibility_end_time'] >= (Date.now()/1000)){
-                note_to_apply.push(focused_note)
-            }
-        }
-        if(note_to_apply.length != 0){
-            const identifier = object['e5_id']
-            const note_index = this.state.note_index == null || this.state.note_index[identifier] == null ? 0 : this.state.note_index[identifier];
-            const note_count_message = `(${note_index+1}/${note_to_apply.length})`
-            return(
-                <div>
-                    <div onClick={() => this.update_note_object_index(note_to_apply, identifier)}>
-                        {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* '⚠️ Moderator Note $' */.replace('$', note_count_message), 'details':note_to_apply[note_index]['message']})}
-                        {this.props.render_files_part(note_to_apply[note_index]['entered_file_objects'])}
-                    </div>
-                    <div style={{height:10}}/>
-                </div>
-            )
-        }
-    }
-
-    update_note_object_index(note_to_apply, identifier){
-        var clone = this.state.note_index == null ? {} : structuredClone(this.state.note_index)
-        if(clone[identifier] == null){
-            clone[identifier] = 0
-        }
-        if(clone[identifier] + 1 == note_to_apply.length){
-            clone[identifier] = 0
-        }
-        else{
-            clone[identifier] ++
-        }
-        this.setState({note_index: clone})
-    }
-
-    add_to_contacts2(object){
-        this.props.add_id_to_contacts(object['author'], object)
-    }
-
-    render_post_state(object){
-        const country_data = this.props.app_state.country_data
-        const object_country = object['ipfs'].device_country
-        const country_item_data = country_data.find(e => e.name === object_country)
-        if(country_item_data != null){
-            var obj = {'g':'🟢', 'r':'🔴', 'b':'🔵', 'y':'🟡', 'o':'🟠', 'p':'🟣'}
-            var country_color = obj[country_item_data.color[0]]
-            var title = country_item_data.code /* +' '+country_item_data.emoji */
-            var details = country_color+' '+country_item_data.call_code
-            return(
-                <div>
-                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
-                    <div style={{height:10}}/>
-                </div>
-            )
-        }
-    }
-
-    render_markdown_if_any(object){
-        var state = object['ipfs']
-        if(state.markdown != null && state.markdown != ''){
-            return(
-                <div>
-                    {this.render_detail_item('13', {'source':state.markdown})}
-                </div>
-            )
-        }
-    }
-
-    render_pdf_files_if_any(object){
-        var state = object['ipfs']
-        if(state.entered_pdf_objects != null && state.entered_pdf_objects.length > 0){
-            return(
-                <div>
-                    {this.render_pdfs_part(state.entered_pdf_objects)}
-                </div>
-            )
-        }
-    }
-
-    render_pdfs_part(entered_pdf_objects){
-        var items = [].concat(entered_pdf_objects)
-
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_pdf_item_clicked(item)}>
-                            {this.render_uploaded_file(item, index)}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-    when_uploaded_pdf_item_clicked(item){
-        this.props.when_pdf_file_opened(item)
-    }
-
-    render_uploaded_file(item, index){
-        var ecid_obj = this.get_cid_split(item)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null || this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] == null) return
-        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        //
-        var formatted_size = this.format_data_size(data['size'])
-        var fs = formatted_size['size']+' '+formatted_size['unit']
-        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
-        title = fs;
-        var details = start_and_end(data['name'])
-        var thumbnail = data['thumbnail']
-
-        return(
-            <div>
-                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%',})}
-            </div>
-        )
-    }
-
-    format_data_size(size){
-        if(bigInt(size).greater(bigInt(1024).pow(8))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
-        }
-        else if(bigInt(size).greater(bigInt(1024).pow(7))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
-        }
-        else if(bigInt(size).greater(bigInt(1024).pow(6))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
-        }
-        else if(bigInt(size).greater(bigInt(1024).pow(5))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
-        }
-        else if(size > (1024*1024*1024*1024)){
-            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
-        }
-        else if(size > (1024*1024*1024)){
-            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
-        }
-        else if(size > (1024*1024)){
-            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
-        }
-        else if(size > 1024){
-            return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
-        }
-        else{
-            return {'size':size, 'unit':'bytes'}
-        }
-    }
-
-    get_cid_split(ecid){
-        var split_cid_array = ecid.split('_');
-        var filetype = split_cid_array[0]
-        var cid_with_storage = split_cid_array[1]
-        var cid = cid_with_storage
-        var storage = 'ch'
-        if(cid_with_storage.includes('.')){
-            var split_cid_array2 = cid_with_storage.split('.')
-            cid = split_cid_array2[0]
-            storage = split_cid_array2[1]
-        }
-
-        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
-    }
-
-
-
-    render_zip_files_if_any(object){
-        var state = object['ipfs']
-        if(state.entered_zip_objects != null && state.entered_zip_objects.length > 0){
-            return(
-                <div>
-                    {this.render_zips_part(state.entered_zip_objects)}
-                </div>
-            )
-        }
-    }
-
-    render_zips_part(entered_zip_objects){
-        var items = [].concat(entered_zip_objects)
-
-        if(items.length == 0) return;
-        
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_zip_item_clicked(item)}>
-                            {this.render_uploaded_zip_file(item, index)}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-    render_uploaded_zip_file(item, index){
-        var ecid_obj = this.get_cid_split(item)
-        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null || this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] == null) return
-        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-        //
-        var formatted_size = this.format_data_size(data['size'])
-        var fs = formatted_size['size']+' '+formatted_size['unit']
-        var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
-        title = fs;
-        var details = start_and_end(data['name'])
-        var thumbnail = this.props.app_state.static_assets['zip_file']
-
-        return(
-            <div>
-                {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%',})}
-            </div>
-        )
-    }
-
-    when_uploaded_zip_item_clicked(item){
-        this.props.when_zip_file_opened(item)
-    }
-
-
-
-    render_selected_links(object){
-        if(object['ipfs'].added_links == null) return;
-        var items = [].concat(object['ipfs'].added_links).reverse()
-
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item, object)}>
-                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-    truncate(source, size) {
-        var firstLine = source.includes("\n") ? source.split("\n")[0] : source;
-        return firstLine.length > size ? firstLine.slice(0, size - 1) + "…" : firstLine;
-    }
-
-    get_title(item){
-        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
-        return `${obj[item['type']]} ${item_id}`
-    }
-
-
-    when_link_item_clicked(item, object){
-        this.props.open_e5_link(item, object)
-    }
-
-    get_senders_name(sender, object){
-        // var object = this.get_mail_items()[this.props.selected_mail_item];
-        if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return this.props.app_state.loc['1694']/* 'You' */
-        }else{
-            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
-            return alias
-        }
-    }
-
-    render_item_data(items, object){
-        var middle = this.props.height-200;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        if(items.length == 0){
-            items = [0, 1, 2]
-            return(
-                <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    {items.map((item, index) => (
-                        <div key={index}>
-                            {this.render_detail_item(item['type'], item['data'])} 
-                            <div style={{height:2}}/>
-                        </div>
-                    ))}
-                </div>
-            )
-        }
-    }
-
-    render_item_images(object){
-        var images_to_add = object['ipfs'].entered_image_objects
-        if(images_to_add.length == 0) return;
-        return(
-            <div>
-                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
-            </div>
-        )
-    }
-
-
-    get_mail_items(){
-        return this.props.get_mail_items('')
-    }
-
-
-
-    get_mail_details_data(object){
-        // var tags_to_use = [object['type']];
-        var tags = object['ipfs'] == null ? ['Mail'] : [].concat(object['ipfs'].entered_indexing_tags)
-        var final_tags = [].concat(tags)
-        var title = object['ipfs'] == null ? 'Mail ID' : object['ipfs'].entered_title_text
-        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
-        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
-        return {
-            'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'textsize':'14px', 'text':title, 'font':this.props.app_state.font},
-            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
-        }
-    }
-
-
-
 
 
 
@@ -731,22 +219,20 @@ class MailDetailsSection extends Component {
     }
 
     when_entered_text_input_field_changed(text){
+        var object = this.get_item_in_array(this.get_my_direct_message_objects(), this.props.selected_direct_message_item);
+       
         if(text.length > this.props.app_state.max_input_text_length){
-            var object =  this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
             this.show_add_comment_bottomsheet(object)
         }else{
             this.setState({entered_text: text})
-
-            var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
-            var recipients_e5 = object['author'] == this.props.app_state.user_account_id[object['ipfs']['e5']] ? object['ipfs']['recipients_e5'] : object['ipfs']['e5']
-
-            this.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5, true)
+            var recipients_e5 = object['account_e5']
+            this.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, true)
 
             var me = this;
             setTimeout(function() {
                 if(me.state.entered_text == text){
                     //done typing
-                    me.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5, false)
+                    me.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, false)
                 }
             }, (1 * 2000));
         }
@@ -782,7 +268,7 @@ class MailDetailsSection extends Component {
     }
 
     handleScroll = (event, object) => {
-        if(!this.is_auto_scrolling) this.has_user_scrolled[object['id']] = true
+        if(!this.is_auto_scrolling) this.has_user_scrolled[object['convo_id']] = true
     };
 
     render_focused_message(object){
@@ -807,17 +293,17 @@ class MailDetailsSection extends Component {
             )
         }
     }
-
+    
     show_add_comment_bottomsheet(object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object) : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'mail', null, this.state.entered_text)
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'direct_message', null, this.state.entered_text)
     }
 
     render_top_title(mail){
         // var mail = this.get_mail_items()[this.props.selected_mail_item];
-        var sender = this.get_account_alias(mail['sender'], mail)
-        var recipient = this.get_account_alias(mail['recipient'], mail)
+        var sender = this.props.app_state.loc['2785']/* 'You' */
+        var recipient = this.get_account_alias(mail['account_id'], mail['account_e5'])
         const online_text = this.is_recipient_online(mail) ? this.props.app_state.loc['2738bi']/* 'online' */ : null/* this.props.app_state.loc['2738bj'] *//* 'offline' */
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
@@ -828,8 +314,8 @@ class MailDetailsSection extends Component {
 
     is_recipient_online(object){
         const tracked_online_accounts = this.props.app_state.tracked_online_accounts
-        var recipients_e5 = object['author'] == this.props.app_state.user_account_id[object['ipfs']['e5']] ? object['ipfs']['recipients_e5'] : object['ipfs']['e5'];
-        const recipient = object['convo_with']
+        var recipients_e5 = object['account_e5']
+        const recipient = object['account_id']
         const e5_id = recipient+recipients_e5
 
         if(tracked_online_accounts[e5_id] == null){
@@ -840,8 +326,8 @@ class MailDetailsSection extends Component {
         }
     }
 
-    get_account_alias(sender, object){
-        if(sender == this.props.app_state.user_account_id[object['e5']]){
+    get_account_alias(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
             return this.props.app_state.loc['2785']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
@@ -862,7 +348,6 @@ class MailDetailsSection extends Component {
         }
     }
 
-
     render_sent_received_messages(object, he){
         // var middle = this.props.height-240;
         // if(this.get_focused_message(object) != null) middle = this.props.height-290
@@ -873,7 +358,7 @@ class MailDetailsSection extends Component {
         //     middle = this.props.height-100;
         // }
         var items = [].concat(this.get_convo_messages(object)).reverse()
-        var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
+        var stacked_items = []
         var final_items_without_divider = stacked_items.concat(items)
         var final_items = this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
 
@@ -886,7 +371,7 @@ class MailDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    {this.props.app_state.mail_messages[object['convo_id']] == null || this.props.app_state.socket_mail_messages[object['convo_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                    {this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>
@@ -967,7 +452,7 @@ class MailDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    {this.props.app_state.mail_messages[object['convo_id']] == null || this.props.app_state.socket_mail_messages[object['convo_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                    {this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>
@@ -1073,17 +558,6 @@ class MailDetailsSection extends Component {
         this.setState({focused_message: clone})
     }
 
-    // includes_function(array, item){
-    //     var return_value = false;
-    //     array.forEach(element => {
-    //         if(element['id'] == item['id']){
-    //             console.log('found clone: '+item['id'])
-    //             return_value = true
-    //         }
-    //     });
-    //     return return_value
-    // }
-
     unfocus_message(object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
         // var object = this.get_mail_items()[this.props.selected_mail_item];
@@ -1129,10 +603,6 @@ class MailDetailsSection extends Component {
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}
-                            swipeRight={{
-                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
-                            action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1509']/* 'mail-messages' */)
-                            }}
                             >
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
@@ -1156,7 +626,6 @@ class MailDetailsSection extends Component {
         }
         this.last_all_click_time = Date.now();
     }
-
 
     when_message_double_tapped(item){
         var message = item['message'];
@@ -1381,7 +850,7 @@ class MailDetailsSection extends Component {
         // console.log('mail_details_section','message', _item)
         if(focused_message_id == 0 || focused_message_id == null) return;
         // if(this.get_focused_message(object) != null) return;
-        var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
+        var message_items = this.get_convo_messages(object)
         var item = this.get_item_in_message_array(focused_message_id, message_items)
         // console.log('mail_details_section','focused message', focused_message_id, item)
         if(item == null) return;
@@ -1418,7 +887,7 @@ class MailDetailsSection extends Component {
     }
 
     get_then_render_my_awards(item, object){
-        var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
+        var message_items = this.get_convo_messages(object)
         var award_obj = {}
         message_items.forEach(message => {
             if(message['focused_message_id'] == item['message_id']){
@@ -1628,26 +1097,13 @@ class MailDetailsSection extends Component {
         }
     }
 
-    get_sender_title_text(item, object){
-        // var object = this.get_mail_items()[this.props.selected_mail_item];
+    get_sender_title_text(item){
         if(item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']]){
             return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
         }
-    }
-
-    get_all_sorted_objects_mappings(object){
-        var all_objects = {}
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            var all_objects_clone = structuredClone(all_objects)
-            all_objects = { ...all_objects_clone, ...e5_objects}
-        }
-
-        return all_objects
     }
 
     format_message(message){
@@ -1658,79 +1114,11 @@ class MailDetailsSection extends Component {
     }
     
     get_convo_messages(mail){
-        var convo_id = mail['convo_id']
-        const chain_messages = this.props.app_state.mail_messages[convo_id] == null ? [] : this.props.app_state.mail_messages[convo_id]
-        const socket_messages = this.props.app_state.socket_mail_messages[convo_id] == null ? [] : this.props.app_state.socket_mail_messages[convo_id]
-        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time').reverse()
-        return all_messages
-    }
-
-    // get_combined_created_mail(created_or_received){
-    //     var created_mail = []
-    //     var mail_activity = {}
-    //     var created_mail_obj = created_or_received == 'created_mail' ? this.props.app_state.created_mail : this.props.app_state.received_mail
-    //     for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-    //         var e5 = this.props.app_state.e5s['data'][i]
-    //         var e5_data = created_mail_obj[e5]
-
-    //         if(e5_data && e5_data[created_or_received] != null){
-    //             created_mail = created_mail.concat(e5_data[created_or_received])
-
-    //             var mail_activity_clone = structuredClone(mail_activity)
-    //             mail_activity = { ...mail_activity_clone, ...e5_data['mail_activity']}
-    //         }
-
-            
-    //     }
-
-    //     if(created_or_received == 'created_mail'){
-    //         return {'created_mail':created_mail, 'mail_activity':mail_activity}
-    //     }else{
-    //         return {'received_mail':created_mail, 'mail_activity':mail_activity}
-    //     }
-    // }
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (parseInt(a[attribute]) < parseInt(b[attribute])) {
-          return 1;
-          }
-          if (parseInt(a[attribute]) > parseInt(b[attribute])) {
-          return -1;
-          }
-          if(parseInt(a[attribute]) == parseInt(b[attribute])){
-              if(a['ipfs']['time'] < b['ipfs']['time']){
-                  return 1
-              }
-              if(a['ipfs']['time'] > b['ipfs']['time']){
-                  return -1
-              }
-          }
-          return 0;
-      });
-    }
-
-    get_stacked_items(mail){
-        // var mail = this.get_mail_items()[this.props.selected_mail_item];
-        var convo_id = mail['convo_id']
-
-        var stack = this.props.app_state.stack_items
-        var stacked_items = []
-        for(var i=0; i<stack.length; i++){
-            if(stack[i].type == 'mail-messages'){
-                for(var e=0; e<stack[i].messages_to_deliver.length; e++){
-                    var message_obj = stack[i].messages_to_deliver[e]
-                    if(message_obj.convo_id == convo_id){
-                        stacked_items.push(message_obj)
-                    }
-                }
-            }
-        }
-        return stacked_items
+        return this.sortByAttributeDescending(mail['messages'], 'time').reverse()
     }
 
     get_focused_message_replies(object){
-        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
+        var all_messages = this.get_convo_messages(object)
         var focused_message_message_id = this.get_focused_message_message_id(object)
         var replies = []
         for(var i=0; i<all_messages.length; i++){
@@ -1763,7 +1151,7 @@ class MailDetailsSection extends Component {
     }
 
     get_message_replies(item, object){
-        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
+        var all_messages = this.get_convo_messages(object)
         var replies = []
     
         for(var i=0; i<all_messages.length; i++){
@@ -1779,33 +1167,6 @@ class MailDetailsSection extends Component {
     get_focused_message(object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         return this.state.focused_message[object['id']]
-    }
-
-    render_image_picker(){
-        return(
-            <div>
-                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                    <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)}/>
-                </div>
-            </div>
-        )
-    }
-
-    /* called when images have been picked from picker */
-    when_image_gif_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    var image = ev.target.result
-                    this.add_image_to_stack(image)
-                }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
-            }
-            // var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
-        }
     }
 
     add_message_to_stack(mail){
@@ -1827,10 +1188,10 @@ class MailDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 3600)
         }else{
             var convo_id = mail['convo_id']
-            var recipients_e5 = mail['author'] == this.props.app_state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
+            var recipients_e5 = mail['account_e5']
 
-            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
-            this.props.add_mail_to_stack_object(tx)
+            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['account_e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':'', 'object':mail}
+            this.props.send_direct_message(tx)
 
             this.setState({entered_text:''})
             
@@ -1838,24 +1199,6 @@ class MailDetailsSection extends Component {
             // if (this.messagesEnd.current){
             //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             // }
-        }
-    }
-
-    add_image_to_stack(image){
-        var message = this.state.entered_text.trim()
-        var mail = this.get_mail_items()[this.props.selected_mail_item];
-        var convo_id = mail['convo_id']
-        var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message_id() : 0
-
-        var tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5']}
-        this.props.add_mail_to_stack_object(tx)
-
-        this.setState({entered_text:''})
-        this.props.notify('message added to stack', 600)
-
-        if (this.messagesEnd.current){
-            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
         }
     }
 
@@ -1906,12 +1249,117 @@ class MailDetailsSection extends Component {
         
         this.setState({focused_message: clone})
     }
+    
 
 
 
 
+
+
+
+
+
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (parseInt(a[attribute]) < parseInt(b[attribute])) {
+          return 1;
+          }
+          if (parseInt(a[attribute]) > parseInt(b[attribute])) {
+          return -1;
+          }
+          if(parseInt(a[attribute]) == parseInt(b[attribute])){
+              if(a['ipfs']['time'] < b['ipfs']['time']){
+                  return 1
+              }
+              if(a['ipfs']['time'] > b['ipfs']['time']){
+                  return -1
+              }
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+    format_data_size(size){
+        if(bigInt(size).greater(bigInt(1024).pow(8))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(7))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(6))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(5))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
+        }
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
+        }
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
+        }
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
+        }
+        else if(size > 1024){
+            return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
 
     
+    truncate(source, size) {
+        var firstLine = source.includes("\n") ? source.split("\n")[0] : source;
+        return firstLine.length > size ? firstLine.slice(0, size - 1) + "…" : firstLine;
+    }
+
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['convo_id'] === id);
+        return object
+    }
+
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
@@ -1985,16 +1433,9 @@ class MailDetailsSection extends Component {
             return num + this.props.app_state.loc['34'] + s;
         }
     }
-
-
-
-
-
-
-
 }
 
 
 
 
-export default MailDetailsSection;
+export default DirectMessageDetailsSection;

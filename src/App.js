@@ -1239,7 +1239,7 @@ class App extends Component {
   // }
 
   state = {
-    version:'5.0', os: getOS(),
+    version:'6.0', os: getOS(),
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -1347,7 +1347,7 @@ class App extends Component {
     
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
-    received_coin_ether_sends:{},
+    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[]
   };
 
   get_thread_pool_size(){
@@ -4042,6 +4042,8 @@ class App extends Component {
       my_data_items: this.fetch_my_personal_data_in_memory(),
       file_data: this.get_uploaded_file_data(),
       file_streaming_data: this.state.file_streaming_data,
+      direct_messages: this.state.direct_messages,
+      loaded_messages: this.state.loaded_messages,
     }
   }
 
@@ -4070,6 +4072,8 @@ class App extends Component {
       var all_cities = state.all_cities == null ? this.state.all_cities : state.all_cities
       var new_object_changes = state.new_object_changes == null ? this.state.new_object_changes : state.new_object_changes
       var my_data_items = state.my_data_items == null ? {} : state.my_data_items
+      var direct_messages = state.direct_messages
+      var loaded_messages = state.loaded_messages
 
       // if(cached_tracks != null){
       //   this.set_cached_tracks_data(cached_tracks)
@@ -4085,6 +4089,13 @@ class App extends Component {
       if(file_streaming_data != null){
         this.setState({file_streaming_data: file_streaming_data})
       }
+      if(loaded_messages != null){
+        this.setState({loaded_messages: loaded_messages})
+      }
+      if(direct_messages != null){
+        this.setState({direct_messages: direct_messages})
+      }
+      
 
       this.write_my_data_items_to_memory_for_faster_load_times(my_data_items)
       this.setState({all_cities: all_cities, new_object_changes: new_object_changes})
@@ -6286,7 +6297,7 @@ class App extends Component {
 
           get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)} start_object_file_viewcount_fetch={this.start_object_file_viewcount_fetch.bind(this)}
 
-          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)}
+          get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.send_direct_message.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -15521,6 +15532,9 @@ class App extends Component {
     else if(page == 'call'){
       this.open_add_comment_bottomsheet(tx)
     }
+    else if(page == 'direct_message'){
+      this.send_direct_message(tx)
+    }
 
     const clone = this.state.stacked_message_ids.slice()
     clone.push({'e5':tx['sender_e5'], 'id':tx['message_id']})
@@ -16589,7 +16603,7 @@ class App extends Component {
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
         send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
 
-        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)}
+        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)}
         />
       </div>
     )
@@ -16676,6 +16690,7 @@ class App extends Component {
       'view_coin_ether_request':650,
       'prompt_spend_prepurchase_credits':700,
       'view_pre_purchase_request':570,
+      'new_direct_message_chat':350,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17887,6 +17902,25 @@ class App extends Component {
     }
     await this.wait(500)
     this.send_receive_coin_page.current?.setState({picked_sats_amount: ipfs['message_obj']['picked_base_unit_amount'], recipient_address: ipfs['message_obj']['recipient_address'], memo_text: ipfs['message_obj']['memo_text']})
+  }
+
+  async start_new_direct_message_chat(account_id, account_e5){
+    const their_address = await this.get_recipient_address(account_id, account_e5)
+    const e5_account_id = account_e5+':'+account_id;
+    const obj = {
+      'convo_id': their_address,
+      'account_id':account_id,
+      'account_e5':account_e5,
+      'e5_account_id':e5_account_id,
+      'address':their_address,
+      'messages':[],
+    }
+    const clone = structuredClone(this.state.direct_messages)
+    clone[e5_account_id] = obj;
+    this.setState({direct_messages: clone})
+    this.open_dialog_bottomsheet();
+
+    this.homepage.current?.when_direct_message_object_item_clicked(obj)
   }
 
 
@@ -21163,12 +21197,38 @@ class App extends Component {
       this.show_successful_send_bottomsheet(data['hash'], false)
       return;
     }
-    
+    else if(event_type == 'direct_message'){
+      const convo_id = event.returnValues.p5
+      this.open_direct_messages_convo(convo_id)
+      this.open_view_notification_log_bottomsheet()
+      return;
+    }
 
     var id = obj['notification_id']
     this.show_dialog_bottomsheet(obj, id)
   }
 
+
+  open_direct_messages_convo(convo_id){
+    var object = this.get_direct_message_item_in_array(this.get_my_direct_message_objects(), convo_id);
+    if(object != null){
+      this.homepage.current?.when_direct_message_object_item_clicked(object, 'ignore')
+    }
+  }
+
+  get_my_direct_message_objects(){
+    const messages = []
+    Object.keys(this.state.direct_messages).forEach(e5_account => {
+      messages.push(this.state.direct_messages[e5_account])
+    });
+
+    return messages;
+  }
+
+  get_direct_message_item_in_array(object_array, id){
+    var object = object_array.find(x => x['convo_id'] === id);
+    return object
+  }
 
 
 
@@ -22670,6 +22730,10 @@ class App extends Component {
   handle_onclick_data_if_any(onClickData){
     if(onClickData != null){
       var id = onClickData['notification_id']
+      if(id == 'view_direct_message'){
+        this.open_direct_messages_convo(onClickData['data']['event'].returnValues.p5)
+        return;
+      }
       if(this.state.successful_send_bottomsheet == false){
         if(id == 'view_coin_ether_receipt'){
           this.show_successful_send_bottomsheet(onClickData['data']['hash'], false)
@@ -22984,7 +23048,8 @@ class App extends Component {
         const clone = structuredClone(this.state.previous_notification_objects)
         this.setState({notification_object: clone, previous_notification_objects: {}})
       }else{
-        this.setState({last_notification_view_time: {'?':0, 'e':0, 'w':0}, previous_notification_objects: {}})
+        //changed addresses from previous cache
+        this.setState({last_notification_view_time: {'?':0, 'e':0, 'w':0}, previous_notification_objects: {}, direct_messages:{}, loaded_messages:[]})
       }
     }
 
@@ -23243,16 +23308,17 @@ class App extends Component {
   }
 
   update_coin_balances = async (coin, should_update_all) => {
-    if(this.state.account_seed == '') return;
+    if(this.state.coin_data['BTC'] == null) return;
     var coin_data = this.state.coin_data
     if(!should_update_all){
       if(this.update_time == null) this.update_time = {}
-      if(this.update_time[coin] == null) this.update_time[coin] = 0
-      if(Date.now() - this.update_time[coin] < (30*1000)){
-        return;
-      }
+      if(this.update_time[coin] != null){
+        if(Date.now() - this.update_time[coin] < (30*1000)){
+          return;
+        }
+      }      
       this.update_time[coin] = Date.now()
-      this.prompt_top_notification(this.getLocale()['2927g']/* Refreshing Wallet... */, 800)
+      this.prompt_top_notification(this.getLocale()['2927n']/* Refreshing Wallet... */, 1200)
     }
     if(coin == 'FIL' || should_update_all) coin_data = await this.update_filecoin_wallet_balance(coin_data);
     if(coin == 'BTC' || should_update_all) coin_data = await this.update_bitcoin_balance(coin_data);
@@ -46058,6 +46124,9 @@ class App extends Component {
       else if(message['type'] == 'pre_purchase_request'){
         me.process_pre_purchase_request_message(message, object_hash, from, true)
       }
+      else if(message['type'] == 'direct_message'){
+        me.process_new_direct_message_received(message, object_hash, from, true)
+      }
     });
     this.socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -46612,6 +46681,22 @@ class App extends Component {
     
     await this.wait(3000)
     this.process_ether_coin_send_transaction_message(mail_message_object.message, mail_message_object.object_hash, '', true)
+  }
+
+  async send_direct_message(state_object){
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
+    const mail_message_object = await this.prepare_direct_mail_message_object_message(state_object)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(mail_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(state_object['recipient'], state_object['recipients_e5'])
+
+    const target = 'direct_message|'+to
+    const secondary_target = 'direct_message|'+this.state.accounts[this.state.selected_e5].address
+
+    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   
@@ -48206,6 +48291,54 @@ class App extends Component {
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
   }
+
+
+
+
+
+
+  async prepare_direct_mail_message_object_message(state_object){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const encrypted_object = await this.get_encrypted_mail_message(state_object, state_object['recipient'])
+    const object_as_string = JSON.stringify(encrypted_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    var context = this.state.selected_e5 == state_object['e5'] ? 32 : 33
+    const message = {
+      type: 'direct_message',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      id: state_object.convo_id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      recipient_unique_crosschain_identifier: await this.get_unique_crosschain_identifier_number(state_object['recipient'], state_object['recipients_e5']),
+      context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  
 
   
 
@@ -49972,7 +50105,7 @@ class App extends Component {
   async handle_coin_ether_send_notifications(ipfs){
     var sender_account = ipfs['sender_account']
     var sender_account_e5 = ipfs['sender_account_e5']
-    var ether_id = ipfs['message_obj']['ether_id']
+    var ether_id = ipfs['ether_id']
     var prompt = this.getLocale()['1407be']/* 'Incoming receipt for % from $' */
     const alias = await this.get_sender_title_text(sender_account, sender_account_e5)
     prompt = prompt.replace('$', alias)
@@ -50002,7 +50135,112 @@ class App extends Component {
     clone['ether_coin_receipt'] = this.sortByAttributeDescending(request_clone_array, 'time')
     this.setState({notification_object: clone})
   }
+
+  async process_new_direct_message_received(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash || this.state.loaded_messages.includes(object_hash)) return;
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const account = this.state.user_account_id[message['e5']]
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = from;
+      const sender_acc = message.author
+      const convo_id = id;
+      const cid = object_hash;
+
+      const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
+      if(ipfs_obj != null && ipfs != ipfs_obj){
+        const all_mail_clone = structuredClone(this.state.direct_messages)
+        if(all_mail_clone[convo_id] == null){
+          const e5_account_id = e5+':'+sender_acc;
+          all_mail_clone[convo_id] = {
+            'convo_id': from,
+            'account_id':sender_acc,
+            'account_e5':e5,
+            'e5_account_id':e5_account_id,
+            'address':from,
+            'messages':[],
+          }
+        }
+        ipfs_obj['time'] = event.returnValues.p6
+      
+        const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
+        event.returnValues.p1 = (recipient)
+        const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
+        const type  = event.returnValues.p2 == account ? 'sent': 'received'
+        const convo_with = event.returnValues.p2 == account ? recipient : event.returnValues.p2
+        
+        const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':type, 'time':parseInt(event.returnValues.p6), 'convo_with':convo_with, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
+        
+        const includes = all_mail_clone[convo_id]['messages'].find(e => e['id'] === obj['id'])
+        if(includes == null){
+          all_mail_clone[convo_id]['messages'].push(obj);
+          all_mail_clone[convo_id]['messages'] = this.sortByAttributeDescending(all_mail_clone[convo_id]['messages'], 'time').reverse()
+          this.fetch_uploaded_files_for_object(ipfs_obj)
+
+          const loaded_messages_clone = this.state.loaded_messages.slice()
+          loaded_messages_clone.push(object_hash)
+
+          this.setState({direct_messages: all_mail_clone, loaded_messages: loaded_messages_clone})
+
+          
+
+
+          if(!am_I_the_author){
+            if(message.time > (Date.now()/1000) - (3*60)){
+              event['e5'] = e5
+              this.handle_direct_messages_notifications(event)
+            }
+            this.set_direct_mail_message_event_in_notifications(event, e5);
+          }
+        }
+      }
+    }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
+  }
   
+  async handle_direct_messages_notifications(event){
+    var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+    var prompt = this.getLocale()['2738ch']/* 'Incoming direct messages from $' */
+    prompt = prompt.replace('$', alias)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_direct_message','event':event, 'type':'direct_message', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'})
+  }
+
+  set_direct_mail_message_event_in_notifications(event, e5){
+    event['e5'] = e5
+    event['p'] = event.returnValues.p5
+    event['time'] = event.returnValues.p6
+    event['block'] = event.returnValues.p7
+    event['sender'] = event.returnValues.p2
+    event['type'] = 'direct_message'
+    event['event_type'] = 'direct_message'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'direct_message', 'p':'p5', 'time':'p6','block':'p7', 'sender':'p2'}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['direct_message'] == null ? [] : clone['direct_message'].slice()
+    request_clone_array.push(event)
+    clone['direct_message'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
 
 
 
@@ -50420,6 +50658,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'ether_coin_receipt'){
             await this.process_ether_coin_send_transaction_message(object_data, object_hash, '', true)
+          }
+          else if(object_data['type'] == 'direct_message'){
+            await this.process_new_direct_message_received(object_data, object_hash, '', true)
           }
           await this.wait(300)
         }

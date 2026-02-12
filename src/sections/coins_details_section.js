@@ -571,7 +571,7 @@ class CoinsDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['2927']/* Wait first, the wallet is pending.' */, 2800)
         }
         else{
-            this.props.notify(this.props.app_state.loc['2927n']/* Refreshing your wallet...' */, 2000)
+            // this.props.notify(this.props.app_state.loc['2927n']/* Refreshing your wallet...' */, 2000)
             this.props.update_coin_balances(item['symbol'], false)
         }
         

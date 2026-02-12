@@ -334,7 +334,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
           ]
         obj[this.props.app_state.loc['1201']/* 'mail' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */, /* this.props.app_state.loc['1264f'] *//* 'mail-notifications' */], [1],[1]
+            ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */, this.props.app_state.loc['1264bo']/* 'direct-message 💬' */, /* this.props.app_state.loc['1264f'] *//* 'mail-notifications' */], [1],[1]
         ]
         obj[this.props.app_state.loc['1264s']/* 'nitro' */] = [
             ['xor','e',1], [this.props.app_state.loc['1264s']/* 'nitro' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1264t']/* 'bought' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
@@ -1061,8 +1061,9 @@ class home_page extends Component {
         const follower_job = notification_object['follower_job'] || [];
         const call_request = notification_object['call_request'] || []
         const pre_purchase_request = notification_object['pre_purchase_request'] || []
+        const direct_message = notification_object['direct_message'] || [];
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request, direct_message)
 
         const me = this;
         const filtered_events = all_events.filter(function (event) {
@@ -1486,7 +1487,12 @@ class home_page extends Component {
         if(button_target == 'bills'){
             this.props.show_view_contextual_transfer_bottomsheet('bills')
         }else{
-            this.props.open_new_object(button_target);
+            if(button_target == '5' && this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active) == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+                this.props.show_dialog_bottomsheet({}, 'new_direct_message_chat')
+            }
+            else{
+                this.props.open_new_object(button_target);
+            }
         }
       }
       else if(button_target == 'e'){
@@ -2231,7 +2237,9 @@ class home_page extends Component {
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
-                if(this.work_list_section.current != null){
+                if(selected_item == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+                    this.work_list_section.current?.set_direct_mail_list(scroll_pos)
+                }else{
                     this.work_list_section.current?.set_mail_list(scroll_pos)
                 }
             }
@@ -2376,7 +2384,11 @@ class home_page extends Component {
             }
             else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
                 if(this.work_list_section.current != null){
-                    this.work_list_section.current?.set_mail_list(scroll_pos, true)
+                    if(selected_item == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+                        this.work_list_section.current?.set_direct_mail_list(scroll_pos, true)
+                    }else{
+                        this.work_list_section.current?.set_mail_list(scroll_pos, true)
+                    }
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
@@ -4723,7 +4735,8 @@ class home_page extends Component {
         // if(this.props.app_state.my_preferred_nitro == '') return false;
         if(this.state.page == '?'){
             var selected_item = this.state.work_page_tags_object['i'].active
-            if(selected_item == 'e'){
+            var selected_tag = this.get_selected_item(this.state.work_page_tags_object, selected_item)
+            if(selected_item == 'e' || selected_tag == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
                 return false
             }
             else return true
@@ -4928,7 +4941,7 @@ class home_page extends Component {
         return(
             <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.render_top_notification.bind(this)}
             
-            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)} when_audio_item_clicked={this.when_audio_item_clicked.bind(this)} when_video_item_clicked={this.when_video_item_clicked.bind(this)} when_nitro_item_clicked={this.when_nitro_item_clicked.bind(this)} when_bill_item_clicked={this.when_bill_item_clicked.bind(this)} when_poll_item_clicked={this.when_poll_item_clicked.bind(this)}
+            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)} when_audio_item_clicked={this.when_audio_item_clicked.bind(this)} when_video_item_clicked={this.when_video_item_clicked.bind(this)} when_nitro_item_clicked={this.when_nitro_item_clicked.bind(this)} when_bill_item_clicked={this.when_bill_item_clicked.bind(this)} when_poll_item_clicked={this.when_poll_item_clicked.bind(this)} when_direct_message_object_item_clicked={this.when_direct_message_object_item_clicked.bind(this)}
 
             theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} when_view_image_clicked={this.when_view_image_clicked.bind(this)}
             
@@ -4951,9 +4964,18 @@ class home_page extends Component {
             get_spend_token_items={this.get_spend_token_items.bind(this)} get_end_token_items={this.get_end_token_items.bind(this)} update_scroll_position2={this.update_scroll_position2.bind(this)}
 
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
-            current_load_time={this.state.current_load_time}
+            current_load_time={this.state.current_load_time} 
             />
         )
+    }
+
+    when_direct_message_object_item_clicked(object, ignore_set_details_data){
+        this.setState({selected_direct_message_item: object['convo_id']})
+        if(ignore_set_details_data == null) this.set_detail_data();
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_ether_object_clicked(index, id){
@@ -5624,6 +5646,11 @@ class home_page extends Component {
         var selected_tag = ''
         if(selected_page == '?'){
             selected_tag = this.state.work_page_tags_object['i'].active
+            
+            const selected_item = this.state.work_page_tags_object[this.state.work_page_tags_object['i'].active][2][0]
+            if(this.state.work_page_tags_object[this.state.work_page_tags_object['i'].active][1][selected_item] == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+                selected_tag = this.props.app_state.loc['1264bo']/* 'direct-message 💬' */
+            }
         }
         else if(selected_page == 'e'){
             selected_tag = this.state.explore_page_tags_object['i'].active
@@ -5789,7 +5816,7 @@ class home_page extends Component {
 
                 emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.props.get_objects_from_socket_and_set_in_state.bind(this)}
 
-                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)}
+                start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.props.send_direct_message.bind(this)}
                 />
             </div>
         )

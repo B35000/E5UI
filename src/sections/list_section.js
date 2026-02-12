@@ -68,6 +68,7 @@ class PostListSection extends Component {
         typed_search_coin_id:'',
         screen_width:0,
         current_load_time:this.props.current_load_time,
+        typed_search_dm_account_id:'',
     };
 
 
@@ -162,9 +163,15 @@ class PostListSection extends Component {
                             {this.render_my_notifications(this.props.app_state.loc['1264f']/* 'mail-notifications' */)}
                         </div>
                     )
+                }else if(selected_item == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+                    return(
+                        <div>
+                            {this.render_my_direct_messages()}
+                        </div>
+                    )
                 }
                 return(
-                <div>{this.render_mail_list_group()}</div>
+                    <div>{this.render_mail_list_group()}</div>
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
@@ -346,6 +353,7 @@ class PostListSection extends Component {
         this.proposal_list = React.createRef();
         this.subscription_list = React.createRef();
         this.mail_list = React.createRef();
+        this.direct_messages_list = React.createRef();
 
         this.e5_list = React.createRef();
         this.searched_account_list = React.createRef();
@@ -600,6 +608,11 @@ class PostListSection extends Component {
     set_mail_list(pos, smooth){
         if(smooth == null || smooth == false) this.mail_list.current?.scrollTo(0, pos);
         else this.mail_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+    }
+
+    set_direct_mail_list(pos, smooth){
+        if(smooth == null || smooth == false) this.direct_messages_list.current?.scrollTo(0, pos);
+        else this.direct_messages_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
     }
 
 
@@ -1844,6 +1857,9 @@ class PostListSection extends Component {
 
 
 
+
+
+
     render_contractor_list_group(){
         var background_color = this.props.theme['card_background_color']
         var middle = this.props.height
@@ -1964,6 +1980,167 @@ class PostListSection extends Component {
         setTimeout(() => this.props.when_contractor_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
         
     }
+
+
+
+
+
+
+
+
+    render_my_direct_messages(){
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        const items = this.get_my_direct_message_objects()
+        var x = this.props.app_state.os == 'iOS' ? 60 : 53
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div>
+                    <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509w']/* 'Filter Account or Alias...' */} when_text_input_field_changed={this.when_typed_search_dm_account_id_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_dm_account_id} theme={this.props.theme} />
+                    </div>
+                    <div style={{overflow: 'auto', maxHeight: middle-x}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {this.show_mail_message_if_wallet_not_set()}
+                            {items.map((item, index) => (
+                                <div>
+                                    {this.render_small_empty_object()}
+                                    <div style={{height: 4}}/>
+                                </div>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        else{
+            var padding = '2px';
+            return ( 
+                <div>
+                    <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509w']/* 'Filter Account or Alias...' */} when_text_input_field_changed={this.when_typed_search_dm_account_id_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_dm_account_id} theme={this.props.theme} />
+                    </div>
+                    <div ref={this.direct_messages_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-x}}>
+                        <Virtuoso
+                            style={{ height: middle }}
+                            totalCount={items.length}
+                            itemContent={(index) => {
+                                const item = items[index];
+                                return (
+                                    <div>
+                                        <AnimatePresence initial={true}>
+                                            <motion.div key={item['convo_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            style={{'padding': padding}}>
+                                                {this.render_direct_message_object(item, index)}
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                );
+                            }}
+                        />
+                    </div>
+                </div>
+                
+            );
+        }
+    }
+
+    when_typed_search_dm_account_id_input_field_changed(text){
+        this.setState({typed_search_dm_account_id: text})
+    }
+
+    get_my_direct_message_objects(){
+        if(this.props.app_state.has_wallet_been_set == false){
+            return [];
+        }
+        const messages = []
+        Object.keys(this.props.app_state.direct_messages).forEach(e5_account => {
+            messages.push(this.props.app_state.direct_messages[e5_account])
+        });
+
+        return this.filter_by_searched_account_id_or_name(this.filter_messages_for_blocked_authors(messages));
+    }
+
+    filter_by_searched_account_id_or_name(messages){
+        const search = this.state.typed_search_dm_account_id.trim();
+
+        if(search == ''){
+            return messages;
+        }
+
+        const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        return messages.filter((message) => {
+            return (search == message['account_id'] || bucket[search] == message['account_id'])
+        })
+    }
+
+    render_direct_message_object(object, index){
+        const e5_image = this.props.app_state.e5s[object['account_e5']].e5_img
+        const alias = this.get_account_alias(object['account_id'], object['account_e5'])
+        const most_recent_message = object['messages'][object['messages'].length - 1]
+        const most_recent_message_text = most_recent_message == null ? '...' : this.shorten_message_item(most_recent_message['ipfs']['message']);
+        const time = most_recent_message != null ? most_recent_message['time'] : null
+        const time_text = time == null ? null : ''+(new Date(time*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
+        return(
+            <div onClick={() => this.when_direct_message_object_item_clicked(index, object)}>
+                {this.render_detail_item('3', {'title':object['account_id']+' • '+alias, 'details':most_recent_message_text, 'size':'l', 'title_image':e5_image, 'footer':time_text})}
+            </div>
+        )
+    }
+
+    get_account_alias(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['2785']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? this.props.app_state.loc['3055ko']/* 'Alias Unknown.' */ : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    when_direct_message_object_item_clicked(index, object){
+        this.props.when_direct_message_object_item_clicked(object)
+    }
+
+    shorten_message_item(message){
+        var return_val = message
+        if(message.length > 23){
+            return_val = message.substring(0, 23).concat('...');
+        }
+        return return_val
+    }
+
+    filter_messages_for_blocked_authors(objects){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        return objects.filter(function (object) {
+            return (!blocked_accounts.includes(object['author']) && !this.props.app_state.blocked_accounts_data.includes(object['author']+object['e5']))
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

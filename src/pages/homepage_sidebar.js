@@ -216,8 +216,9 @@ class HomepageSideBar extends Component {
         const follower_job = notification_object['follower_job'] || [];
         const call_request = notification_object['call_request'] || []
         const pre_purchase_request = notification_object['pre_purchase_request'] || []
+        const direct_message = notification_object['direct_message'] || [];
         
-        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request)
+        const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request, direct_message)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {
