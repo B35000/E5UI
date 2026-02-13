@@ -1411,7 +1411,7 @@ class App extends Component {
         end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true
       },
       'E25':{
-        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link'], 
+        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link', 'https://0xrpc.io/etc'], 
         token:'ETC',
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
@@ -1419,7 +1419,7 @@ class App extends Component {
         end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:true,
       },
       'E35':{
-        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link'],
+        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link', 'https://0xrpc.io/etc'],
         token:'ETC',
         e5_address:''/* '0x4c124f6C90fa3F12A9b6b837B89832E2E460e731' */,
         first_block:19614310, end_image:end35_image/* 'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq' */, spend_image:spend35_image/* 'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, iteration:400_000, url:0, active:false, e5_img:E5_E35_image/* 'https://nftstorage.link/ipfs/bafkreicte43xko2kmxgdp4pxmxtxal3mxef2bqwhqah3f47gpnocpqhur4' */,
@@ -6298,6 +6298,8 @@ class App extends Component {
           get_contractor_availability_status={this.get_contractor_availability_status.bind(this)} emit_contractor_availability_notification={this.emit_contractor_availability_notification.bind(this)} get_storefront_order_status={this.get_storefront_order_status.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} show_view_purchase_credits={this.show_view_purchase_credits.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} get_objects_from_socket_and_set_in_state={this.get_objects_from_socket_and_set_in_state.bind(this)} start_object_file_viewcount_fetch={this.start_object_file_viewcount_fetch.bind(this)}
 
           get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.send_direct_message.bind(this)}
+
+          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -16690,7 +16692,7 @@ class App extends Component {
       'view_coin_ether_request':650,
       'prompt_spend_prepurchase_credits':700,
       'view_pre_purchase_request':570,
-      'new_direct_message_chat':350,
+      'new_direct_message_chat':310,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17914,6 +17916,7 @@ class App extends Component {
       'e5_account_id':e5_account_id,
       'address':their_address,
       'messages':[],
+      'most_recent':parseInt(Date.now()/1000),
     }
     const clone = structuredClone(this.state.direct_messages)
     clone[e5_account_id] = obj;
@@ -22779,9 +22782,12 @@ class App extends Component {
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     await this.check_and_set_default_rpc()
+    await this.wait(500)
     await this.update_nitro_privacy_signature(false)
     await this.wait(500)
     await this.load_root_config()
+    await this.wait(500)
+    await this.check_and_set_default_rpc()
     await this.wait(500)
     await this.load_coin_and_externals_data()
     await this.wait(500)
@@ -22859,9 +22865,12 @@ class App extends Component {
     const web3 = new Web3(web3_url);
 
     var is_conn = await web3.eth.net.isListening()
-    if(!is_conn){
+    var blockNumber = await web3.eth.getBlockNumber()
+    console.log('check_and_set_default_rpc', 'blockNumber', blockNumber)
+    if(!is_conn || blockNumber == null || blockNumber == 0){
       const clone = structuredClone(this.state.e5s)
       clone[e5].url ++
+      if(e5 == 'E25') clone['E35'].url ++;
       if(clone[e5].url < clone[e5].web3.length){
         this.setState({e5s: clone})
         await this.wait(1500)
@@ -25879,6 +25888,8 @@ class App extends Component {
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var root_data_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: {p1/* target_id */: 24/* 24(dialer admin registry) */, p2/* context */:account/* sender_acc_id */} }, (error, events) => {})
+
+    console.log('load_root_config', 'root_data_events', root_data_events)
 
     if(root_data_events.length > 0){
       var latest_event = root_data_events[root_data_events.length - 1];
@@ -41271,7 +41282,7 @@ class App extends Component {
   }
 
   fetch_my_personal_data_in_memory(){
-    if(this.gateway_traffic_cache == null) return {}
+    if(this.gateway_traffic_cache == null || this.state.accounts['E25'] == null) return {}
     const cached_keys = Object.keys(this.gateway_traffic_cache)
     const my_address_signature = this.hash_data_with_randomizer(this.state.accounts['E25'].address)
     const my_personal_data = {}
@@ -42674,6 +42685,14 @@ class App extends Component {
     });
 
     return events
+  }
+
+  async set_direct_messages_read_receipts(mail){
+    var convo_id = mail['convo_id']
+    var recipients_e5 = mail['account_e5']
+
+    this.get_and_set_account_online_status(mail['account_id'], recipients_e5)
+    this.emit_new_read_receipts_notification(convo_id, mail['account_id'], recipients_e5)
   }
 
   get_mail_messages = async (mail) => {
@@ -45218,6 +45237,7 @@ class App extends Component {
       var data = await response.text();
       var obj = JSON.parse(data);
       var success = obj.success
+      console.log('load_nitro_directory_details', 'directory data', link, obj)
       if(success == true){
         return obj.directory
       }
@@ -50156,35 +50176,36 @@ class App extends Component {
     const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
-      const e5 = message.e5;
-      const id = from;
-      const sender_acc = message.author
-      const convo_id = id;
-      const cid = object_hash;
+      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
 
-      const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
-
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
       if(ipfs_obj != null && ipfs != ipfs_obj){
+        const e5 = message.e5;
+        const id = am_I_the_author == true ? ipfs_obj['convo_id'] : from;
+        const sender_acc = message.author
+        const convo_id = id;
+        const cid = object_hash;
+
+        const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+      
+        ipfs_obj['time'] = event.returnValues.p6
+        const recipient = ipfs_obj['convo_id']
+        event.returnValues.p1 = ipfs_obj['recipient']
+        const recipient_e5 = ipfs_obj['recipients_e5'];
+        const type  = am_I_the_author == true ? 'sent': 'received'
+        const convo_with = am_I_the_author == true ? recipient : event.returnValues.p2
+
         const all_mail_clone = structuredClone(this.state.direct_messages)
         if(all_mail_clone[convo_id] == null){
-          const e5_account_id = e5+':'+sender_acc;
+          const e5_account_id = recipient_e5+':'+convo_with;
           all_mail_clone[convo_id] = {
-            'convo_id': from,
-            'account_id':sender_acc,
-            'account_e5':e5,
+            'convo_id': convo_id,
+            'account_id':convo_with,
+            'account_e5':recipient_e5,
             'e5_account_id':e5_account_id,
-            'address':from,
+            'address':convo_id,
             'messages':[],
           }
         }
-        ipfs_obj['time'] = event.returnValues.p6
-      
-        const recipient = ipfs_obj['recipient'] || ipfs_obj['target_recipient']
-        event.returnValues.p1 = (recipient)
-        const recipient_e5 = ipfs_obj['type'] == null ? ipfs_obj['recipients_e5'] : ipfs_obj['e5'];
-        const type  = event.returnValues.p2 == account ? 'sent': 'received'
-        const convo_with = event.returnValues.p2 == account ? recipient : event.returnValues.p2
         
         const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':type, 'time':parseInt(event.returnValues.p6), 'convo_with':convo_with, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
         
@@ -50192,15 +50213,13 @@ class App extends Component {
         if(includes == null){
           all_mail_clone[convo_id]['messages'].push(obj);
           all_mail_clone[convo_id]['messages'] = this.sortByAttributeDescending(all_mail_clone[convo_id]['messages'], 'time').reverse()
+          all_mail_clone[convo_id]['most_recent'] = all_mail_clone[convo_id]['messages'][all_mail_clone[convo_id]['messages'].length - 1]['time']
           this.fetch_uploaded_files_for_object(ipfs_obj)
 
           const loaded_messages_clone = this.state.loaded_messages.slice()
           loaded_messages_clone.push(object_hash)
 
           this.setState({direct_messages: all_mail_clone, loaded_messages: loaded_messages_clone})
-
-          
-
 
           if(!am_I_the_author){
             if(message.time > (Date.now()/1000) - (3*60)){

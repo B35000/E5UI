@@ -1177,7 +1177,6 @@ class DirectMessageDetailsSection extends Component {
         console.log('-------------------add_message_to_stack----------------------')
         const focused_message = this.get_focused_message(mail)
         console.log(focused_message)
-        console.log('mail objects e5', mail['ipfs']['recipients_e5'])
         var focused_message_id = focused_message != null ? focused_message['ipfs']['message_id'] : 0
         // if(focused_message_id == null){
         //     focused_message_id = focused_message['ipfs']['message_id']
@@ -1190,7 +1189,7 @@ class DirectMessageDetailsSection extends Component {
             var convo_id = mail['convo_id']
             var recipients_e5 = mail['account_e5']
 
-            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['account_e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':'', 'object':mail}
+            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['account_e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
             this.props.send_direct_message(tx)
 
             this.setState({entered_text:''})

@@ -10801,11 +10801,11 @@ return data['data']
         var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5]
         var return_array = []
         contacts.forEach(contact => {
-            if(contact['id'].toString().includes(this.state.target_recipient)){
+            if(contact['id'].toString().includes(this.state.dm_recipient)){
                 return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
             }
         });
-        return_array = this.filter_and_add_other_accounts(this.state.target_recipient, return_array)
+        return_array = this.filter_and_add_other_accounts(this.state.dm_recipient, return_array)
 
         return return_array
     }

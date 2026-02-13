@@ -1994,7 +1994,7 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        const items = this.get_my_direct_message_objects()
+        var items = this.get_my_direct_message_objects()
         var x = this.props.app_state.os == 'iOS' ? 60 : 53
         if(items.length == 0){
             items = ['0','1'];
@@ -2062,7 +2062,28 @@ class PostListSection extends Component {
             messages.push(this.props.app_state.direct_messages[e5_account])
         });
 
-        return this.filter_by_searched_account_id_or_name(this.filter_messages_for_blocked_authors(messages));
+        return this.append_divider_between_old_messages_and_new_ones(this.filter_by_searched_account_id_or_name(this.filter_messages_for_blocked_authors(this.sortByAttributeDescending(messages, 'most_recent'))));
+    }
+
+    append_divider_between_old_messages_and_new_ones(items){
+        if(items.length == 0) return [];
+        const last_login_time = this.props.app_state.last_login_time
+        const newElement = 'e';
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        items.forEach((obj, i) => {
+            const diff = Math.abs(obj['most_recent'] - last_login_time);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIndex = i;
+            }
+        });
+        if(closestIndex == 0){
+            return items
+        }
+        const clone = items.slice()
+        clone.splice(closestIndex + 1, 0, newElement);
+        return clone;
     }
 
     filter_by_searched_account_id_or_name(messages){
@@ -2079,15 +2100,32 @@ class PostListSection extends Component {
     }
 
     render_direct_message_object(object, index){
+        if(object == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['2117w']/* new */})}
+                </div>
+            )
+        }
         const e5_image = this.props.app_state.e5s[object['account_e5']].e5_img
         const alias = this.get_account_alias(object['account_id'], object['account_e5'])
         const most_recent_message = object['messages'][object['messages'].length - 1]
         const most_recent_message_text = most_recent_message == null ? '...' : this.shorten_message_item(most_recent_message['ipfs']['message']);
+        let arrow = ''
+        if(most_recent_message != null){
+            const most_recent_message_sender = most_recent_message['ipfs']['sender']
+            const me_using_correct_e5 = this.props.app_state.user_account_id[most_recent_message['ipfs']['my_preferred_e5']]
+            if(me_using_correct_e5 == most_recent_message_sender){
+                arrow = '⤴︎ '
+            }else{
+                arrow = '⤵︎ '
+            }
+        }
         const time = most_recent_message != null ? most_recent_message['time'] : null
         const time_text = time == null ? null : ''+(new Date(time*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
         return(
             <div onClick={() => this.when_direct_message_object_item_clicked(index, object)}>
-                {this.render_detail_item('3', {'title':object['account_id']+' • '+alias, 'details':most_recent_message_text, 'size':'l', 'title_image':e5_image, 'footer':time_text})}
+                {this.render_detail_item('3', {'title':object['account_id']+' • '+alias, 'details':arrow+most_recent_message_text, 'size':'l', 'title_image':e5_image, 'footer':time_text})}
             </div>
         )
     }
@@ -2107,8 +2145,8 @@ class PostListSection extends Component {
 
     shorten_message_item(message){
         var return_val = message
-        if(message.length > 23){
-            return_val = message.substring(0, 23).concat('...');
+        if(message.length > 53){
+            return_val = message.substring(0, 53).concat('...');
         }
         return return_val
     }
@@ -2122,7 +2160,7 @@ class PostListSection extends Component {
             }
         });
 
-        return objects.filter(function (object) {
+        return objects.filter((object) => {
             return (!blocked_accounts.includes(object['author']) && !this.props.app_state.blocked_accounts_data.includes(object['author']+object['e5']))
         })
     }

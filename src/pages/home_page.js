@@ -1488,7 +1488,11 @@ class home_page extends Component {
             this.props.show_view_contextual_transfer_bottomsheet('bills')
         }else{
             if(button_target == '5' && this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active) == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
-                this.props.show_dialog_bottomsheet({}, 'new_direct_message_chat')
+                if(!this.props.app_state.has_wallet_been_set){
+                    this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+                }else {
+                    this.props.show_dialog_bottomsheet({}, 'new_direct_message_chat')
+                }
             }
             else{
                 this.props.open_new_object(button_target);
@@ -4975,6 +4979,7 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.set_direct_messages_read_receipts()
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
@@ -5757,7 +5762,7 @@ class home_page extends Component {
                 {this.render_page_tabs()}
                 <PostDetailSection ref={this.detail_section} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} detail_page={this.state.detail_page} detail_selected_tag={this.state.detail_selected_tag}
 
-                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item} selected_audio_item={this.state.selected_audio_item} selected_video_item={this.state.selected_video_item} selected_nitro_item={this.state.selected_nitro_item} selected_bill_item={this.state.selected_bill_item} selected_poll_item={this.state.selected_poll_item}
+                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item} selected_audio_item={this.state.selected_audio_item} selected_video_item={this.state.selected_video_item} selected_nitro_item={this.state.selected_nitro_item} selected_bill_item={this.state.selected_bill_item} selected_poll_item={this.state.selected_poll_item} selected_direct_message_item={this.state.selected_direct_message_item}
 
                 height={h} screensize={this.props.screensize} width={width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.render_top_notification.bind(this)}
                 
