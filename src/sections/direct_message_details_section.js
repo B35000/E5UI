@@ -65,7 +65,7 @@ class DirectMessageDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e', this.props.app_state.loc['1674']/* 'activity' */],[1]
+              ['xor','',0], ['e', this.props.app_state.loc['1674']/* 'activity' */, this.props.app_state.loc['2513c']/* 'media 📂' */],[1]
           ],
         }
     }
@@ -126,8 +126,6 @@ class DirectMessageDetailsSection extends Component {
         return messages;
     }
 
-
-
     render_mail_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_mail_list_detail_tags_object, this.state.navigate_view_mail_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_my_direct_message_objects(), this.props.selected_direct_message_item);
@@ -148,7 +146,299 @@ class DirectMessageDetailsSection extends Component {
                 )
                 
             }
+            else if(selected_item == this.props.app_state.loc['2513c']/* 'media 📂' */){
+                return(
+                    <div>
+                        {this.render_messages_media(object)}
+                    </div>
+                )
+            }
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_messages_media(object){
+        const messages = this.get_convo_messages(object).slice().reverse()
+        const media_files = this.get_messages_media_files(messages)
+        var he = this.props.height-47
+        var size = this.props.screensize
+
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        {this.render_files_top_title(object)}
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'0px 5px 0px 5px'}}>
+                            {this.render_file_items(object, media_files, he)}
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        )
+    }
+
+    render_files_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2513a']/* 'Shared Media.' */, 'details':this.props.app_state.loc['2513b']/* 'All the shared media files including images are shown below.' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    get_messages_media_files(messages){
+        const file_cids = []
+        messages.forEach(item_arg => {
+            const message = item_arg['ipfs'];
+            if(message.type == 'image'){
+                if(message['image-data'] != null && message['image-data']['images'] != null && message['image-data']['images'].length > 0){
+                    const image_object = message['image-data']['images']
+                    image_object.forEach(image_cid => {
+                        if(!file_cids.includes(image_cid)){
+                            file_cids.push(image_cid)
+                        }
+                    });
+                }
+                if(message['pdf-data'] != null && message['pdf-data'].length > 0){
+                    message['pdf-data'].forEach(pdf => {
+                        if(!file_cids.includes(pdf)){
+                            file_cids.push(pdf)
+                        }
+                    });
+                }
+
+            }
+        });
+
+        const file_ecid_objects = []
+        file_cids.forEach(cid => {
+            const data = this.get_cid_split(cid)
+            file_ecid_objects.push(data)
+        });
+
+        return file_ecid_objects
+    }
+
+    render_file_items(object, items, he){
+        var middle = he - 100
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <Virtuoso
+                        style={{ height: middle-50 }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['full']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': '0px'}}>
+                                            {this.render_uploaded_file(item, index)}
+                                            <div style={{height:5}}/>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
+                </div>
+            )
+        }
+    }
+
+    is_file_available(file){
+        if(file == null) return true;
+        var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted == false)
+        return is_file_available
+    }
+
+    render_uploaded_file(ecid_obj, index){
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return;
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        var opacity = 1.0
+
+        if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+            opacity = 0.4
+        }
+        if(data != null){
+            if(data['type'] == 'image'){
+                var img = data['data']
+                if(data['nitro'] != null && !this.is_file_available(data['hash'])){
+                    img = this.props.app_state.static_assets['empty_image']
+                }
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var details = data['name']
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'15%', 'image_width':'auto'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'audio'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                
+                var view_count = this.get_file_view_count(data)
+                var view_count_message = ''
+                if(view_count > 0){
+                    var views_text = this.props.app_state.loc['2509n']/* views */
+                    if(view_count == 1){
+                        views_text = this.props.app_state.loc['2509o']/* view */
+                    }
+                    view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+                }
+                details = details + view_count_message
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = encodeURI(data['data'])
+                var font_size = ['15px', '12px', 19];
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+
+                var view_count = this.get_file_view_count(data)
+                var view_count_message = ''
+                if(view_count > 0){
+                    var views_text = this.props.app_state.loc['2509n']/* views */
+                    if(view_count == 1){
+                        views_text = this.props.app_state.loc['2509o']/* view */
+                    }
+                    view_count_message = ` • ${number_with_commas(view_count)} ${views_text}`
+                }
+                details = details + view_count_message
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = data['thumbnail']
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = this.props.app_state.static_assets['zip_file']
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'lyric'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = this.props.app_state.static_assets['lyric_icon']
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var details = data['name']
+                var thumbnail = this.props.app_state.static_assets['subtitle_icon']
+                return(
+                    <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+        }
+    }
+
+    get_file_view_count(data){
+        var file = data['hash']
+        var stream_data = this.props.app_state.file_streaming_data[file]
+        if(stream_data != null){
+            return stream_data.files_view_count
+        }
+        return 0
+    }
+
+    when_file_clicked(ecid_obj){
+        this.props.when_file_tapped(ecid_obj)
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
 
@@ -351,7 +641,7 @@ class DirectMessageDetailsSection extends Component {
     render_sent_received_messages(object, he){
         // var middle = this.props.height-240;
         // if(this.get_focused_message(object) != null) middle = this.props.height-290
-        var middle = he - 135
+        var middle = he - 100
         // if(this.get_focused_message(object) != null) middle = he - 185
         // var size = this.props.size;
         // if(size == 'm'){
@@ -384,12 +674,12 @@ class DirectMessageDetailsSection extends Component {
         else{
             return(
                 <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', height: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items, object, middle-50)}
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_messages(final_items, object, middle)}
                         {this.render_bubble_if_typing(object)}
                         {this.render_last_opened_time(object)}
                         {/* <div ref={this.messagesEnd} style={{display:'none'}}/> */}
-                    </ul>
+                    </div>
                 </div>
             )
         }
@@ -639,7 +929,7 @@ class DirectMessageDetailsSection extends Component {
 
     is_message_expired(item){
         const includes = this.props.app_state.stacked_message_ids.find(e => e['id'] === item['message_id'])
-        if(item['expiry_time'] != null && (Date.now()/1000) > (item['time']+item['expiry_time']) && includes == null){
+        if(item['expiry_time'] != null && item['expiry_time'] != 0 && (Date.now()/1000) > (parseInt(item['time'])+parseInt(item['expiry_time'])) && includes == null){
             return true;
         }
         return false;

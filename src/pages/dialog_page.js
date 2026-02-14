@@ -2186,7 +2186,8 @@ return data['data']
             var name = data['name']
             // var link = data['data'].startsWith('http') ? encodeURI(data['data']) : ''
             var hash = data['hash']
-            const am_i_author = this.props.app_state.uploaded_data_cids.includes(ecid_obj['full']);
+            // const am_i_author = this.props.app_state.uploaded_data_cids.includes(ecid_obj['full']);
+            const am_i_author = data['author'] == this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address)
 
             var location = data['nitro'] == null ? this.props.app_state.loc['1593ew']/* arweave */ : this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */
 

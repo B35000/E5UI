@@ -69,6 +69,7 @@ class PostListSection extends Component {
         screen_width:0,
         current_load_time:this.props.current_load_time,
         typed_search_dm_account_id:'',
+        typed_watch_account_input:'',
     };
 
 
@@ -163,10 +164,18 @@ class PostListSection extends Component {
                             {this.render_my_notifications(this.props.app_state.loc['1264f']/* 'mail-notifications' */)}
                         </div>
                     )
-                }else if(selected_item == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+                }
+                else if(selected_item == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
                     return(
                         <div>
                             {this.render_my_direct_messages()}
+                        </div>
+                    )
+                }
+                else if(selected_item == this.props.app_state.loc['1593kn']/* 'calls ☎️' */){
+                    return(
+                        <div>
+                            {this.render_group_calls_parts()}
                         </div>
                     )
                 }
@@ -202,6 +211,13 @@ class PostListSection extends Component {
                     return(
                         <div>
                             {this.render_search_user_data()}
+                        </div>
+                    )
+                }
+                else if(selected_item == this.props.app_state.loc['1593x']/* 'Watch 👁️' */){
+                    return(
+                        <div>
+                            {this.render_watched_account_ui()}
                         </div>
                     )
                 }
@@ -2123,9 +2139,11 @@ class PostListSection extends Component {
         }
         const time = most_recent_message != null ? most_recent_message['time'] : null
         const time_text = time == null ? null : ''+(new Date(time*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
+
+        const alias_text = alias == this.props.app_state.loc['3055ko']/* 'Alias Unknown.' */ ? '' : ' • '+alias
         return(
             <div onClick={() => this.when_direct_message_object_item_clicked(index, object)}>
-                {this.render_detail_item('3', {'title':object['account_id']+' • '+alias, 'details':arrow+most_recent_message_text, 'size':'l', 'title_image':e5_image, 'footer':time_text})}
+                {this.render_detail_item('3', {'title':object['account_id']+alias_text, 'details':arrow+most_recent_message_text, 'size':'l', 'title_image':e5_image, 'footer':time_text})}
             </div>
         )
     }
@@ -2164,6 +2182,225 @@ class PostListSection extends Component {
             return (!blocked_accounts.includes(object['author']) && !this.props.app_state.blocked_accounts_data.includes(object['author']+object['e5']))
         })
     }
+
+
+
+
+
+
+
+
+    render_group_calls_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ko']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593kp']/* 'Start or enter an online voice call with someone or some people on E5. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_now_calling_message_if_any()}
+                <div style={{'width':'97%', 'padding':'0px 0px 0px 10px'}}>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                            <div style={{'padding': '0px 10px 0px 10px'}} onClick={() => this.start_voice_call()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                            <div style={{'padding': '0px 10px 0px 10px'}} onClick={() => this.enter_voice_call()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_call_history()}
+            </div>
+        )
+    }
+
+    render_now_calling_message_if_any(){
+        if(this.props.app_state.current_call_password != null){
+            return(
+                <div onClick={() => this.props.show_view_call_interface()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3091bi']/* '📞 Youre on a call. */, 'details':this.props.app_state.loc['3091bj']/* 'Tap this to resume it in its page. */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    start_voice_call(){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        else if(this.props.app_state.current_call_password != null){
+            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({}, 'start_voice_call')
+    }
+
+    enter_voice_call(){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        else if(this.props.app_state.current_call_password != null){
+            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({}, 'enter_voice_call')
+    }
+
+    render_call_history(){
+        var items = this.get_call_invites()
+        var middle = this.props.height-115
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-210;
+        }
+        else if(size == 'm'){
+            middle = this.props.height-135
+        }
+        if(items.length == 0){
+            items = [0,1,2]
+            return(
+                <div style={{}}>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '2px 5px 2px 5px'}}>
+                            {this.props.app_state.pre_launch_fetch_loading == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                        </div>
+                    ))}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <Virtuoso
+                            style={{ height: middle}}
+                            totalCount={items.length}
+                            itemContent={(index) => {
+                                const item = items[index];
+                                return (
+                                    <div>
+                                        <AnimatePresence initial={true}>
+                                            <motion.div key={item['call_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            style={{}}>
+                                                {this.render_invite_item(item)}
+                                                <div style={{height:4}}/>
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                );
+                            }}
+                        />
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_call_invites(){
+        const invites = Object.keys(this.props.app_state.call_invites)
+        const invite_objects = []
+        invites.forEach(item => {
+            invite_objects.push(this.props.app_state.call_invites[item])
+        });
+        return this.sortByAttributeDescending(invite_objects, 'time')
+    }
+
+    render_invite_item(item){
+        const formatted_call_id = (str) => {
+            if(str.startsWith('e')){
+                return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8, 12)+ " " + str.slice(12);
+            }else{
+                return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
+            }
+        }
+        const data = item;
+        const participants_count = this.props.app_state.room_participants_count[data['call_id']] || 0
+        const footer = formatted_call_id(data['call_id']) + ' • ' + this.props.app_state.loc['1593kx']/* '$ participants' */.replace('$', number_with_commas(participants_count))
+        const title_image = this.props.app_state.e5s[data['sender_account_e5']].e5_img
+        const title = data['sender_account'] + this.get_sender_title_text2(data['sender_account'], data['sender_account_e5'])
+        const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */
+        return(
+            <div onClick={() => this.enter_voice_call_from_list(data)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer, 'title_image':title_image})}
+            </div>
+        )
+    }
+
+    get_sender_title_text2(account, e5){
+        if(account == this.props.app_state.user_account_id[e5]){
+            return ' • ' +this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (bucket[account] == null ? ' • '+this.props.app_state.loc['2871']/* Alias Unknown. */ : ' • ' +bucket[account])
+            return alias
+        }
+    }
+
+    enter_voice_call_from_list(data){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        else if(this.props.app_state.current_call_password != null){
+            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
+    }
+
+    render_small_empty_object(){
+        return(
+            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 10px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                </div>
+            </div>
+        );
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
+
+
+
 
 
 
@@ -2683,6 +2920,260 @@ class PostListSection extends Component {
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
+    }
+
+
+
+
+
+
+
+
+
+    render_watched_account_ui(){
+        return(
+            <div>
+                <div style={{ 'margin': '0px 5px 10px 5px'}}>
+                    <div className="row" style={{width:'100%'}}>
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['1593u']/* 'Name or Account ID...' */} when_text_input_field_changed={this.when_watch_account_input_field_changed.bind(this)} text={this.state.typed_watch_account_input} theme={this.props.theme} />
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                            <div onClick={()=>this.watch()}>
+                                <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                    <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {this.render_watched_accounts()}
+                <div style={{height:10}}/>
+                {this.render_incoming_transactions_data()}
+            </div>
+        )
+    }
+
+    render_watched_accounts(){
+        var items = [].concat(this.props.app_state.watched_account_ids)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_included_account_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:127, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    format_count(view_count){
+        if(view_count > 1_000_000_000){
+            var val = (view_count/1_000_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}B`
+        } 
+        else if(view_count > 1_000_000){
+            var val = (view_count/1_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}M`
+        }
+        else if(view_count > 1_000){
+            var val = (view_count/1_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}K`
+        }
+        else {
+            return view_count
+        }
+    }
+
+    render_included_account_item(account_id){
+        const e5 = account_id.split(':')[0]
+        const account = account_id.split(':')[1]
+        const alias = this.get_sender_title_text(account, e5)
+        const title = alias == account ? account+' • '+this.props.app_state.loc['3055ht']/* 'Unknown.' */ : account + ' • ' + alias
+        var event_count = this.format_count(this.get_accounts_transaction_count(account, e5).length)
+        if(event_count == 0){
+            event_count = '000'
+        }
+
+        const details = this.props.app_state.loc['2509x']/* '$ events' */.replace('$', event_count)
+        return(
+            <div onClick={() => this.when_included_account_clicked(account_id)}>
+                {this.render_detail_item('8', {'title':title, 'details':details, 'image':this.props.app_state.e5s[e5].e5_img , 'size':'s'})}
+                {this.render_line_if_selected(account_id)}
+            </div>
+        )
+    }
+
+    render_line_if_selected(account_id){
+        if(this.state.selected_watched_account_id == account_id){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_included_account_clicked(account_id){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            if(me.state.selected_watched_account_id == account_id){
+                me.setState({selected_watched_account_id: null})
+            }else{
+                me.setState({selected_watched_account_id: account_id})
+            }
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.props.set_watched_account_id(account_id)
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
+    }
+
+    get_accounts_transaction_count(account, e5){
+        return this.props.app_state.watched_account_data.filter((event) => {
+            return (parseInt(event.returnValues.p2) == parseInt(account) || parseInt(event.returnValues.p3) == parseInt(account)) && event['e5'] == e5
+        })
+    }
+
+    render_incoming_transactions_data(){
+        var items = this.filter_searched_account_results()
+        var middle = this.props.height-90
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-185;
+        }
+        else if(size == 'm'){
+            middle = this.props.height-110
+        }
+        if(items == null){
+            items = []
+        }
+        middle -= (this.state.selected_watched_account_id == null ? 0 : 4)
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        <Virtuoso
+                            style={{ height: middle }}
+                            totalCount={items.length}
+                            itemContent={(index) => {
+                                const item = items[index];
+                                return (
+                                    <div>
+                                        <AnimatePresence initial={true}>
+                                            <motion.div key={item.returnValues.p5.toString()}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            style={{}}>
+                                                {this.render_notification_item2(item, index)}
+                                                <div style={{height:4}}/>
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                );
+                            }}
+                        />
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    filter_searched_account_results(){
+        const account_id = this.state.selected_watched_account_id
+        if(account_id == null) return this.props.app_state.watched_account_data;
+        const e5 = account_id.split(':')[0]
+        const account = account_id.split(':')[1]
+        return this.get_accounts_transaction_count(account, e5)
+    }
+
+    render_notification_item2(item, index){
+        var sender = item.returnValues.p2
+        var recipient = item.returnValues.p3
+        var amount = item.returnValues.p4
+        var depth = item.returnValues.p7
+        var exchange = item.returnValues.p1
+        var timestamp = item.returnValues.p5
+        var e5 = item['e5']
+        return(
+            <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
+                {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent $ ' */.replace('$', this.get_senders_name_or_you(recipient, item['e5']))+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_watch_account_input_field_changed(text){
+        this.setState({typed_watch_account_input: text})
+    }
+
+    async watch(){
+        var text = this.state.typed_watch_account_input.trim()
+        const name_id = await this.get_typed_alias_id(text)
+        const name_e5 = this.get_recipient_e5(text)
+        if(!isNaN(name_id) && parseInt(name_id) > 1000 &&  name_id != ''){
+            const e5_id = name_e5 +':'+name_id;
+            this.props.set_watched_account_id(e5_id)
+            this.setState({typed_watch_account_input:''})
+            this.props.notify(this.props.app_state.loc['1593z']/* 'Watching the account...' */, 2000)
+        }
+    }
+
+    get_recipient_e5(recipient){
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
     }
 
 
@@ -6144,7 +6635,28 @@ return data['data']
 
 
 
-
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     format_account_balance_figure(amount){
         if(amount == null){

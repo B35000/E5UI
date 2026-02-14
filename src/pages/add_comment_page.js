@@ -612,13 +612,26 @@ class AddCommentPage extends Component {
         if(this.state.page == 'mail'){
             var object = this.state.object
             var recipients_e5 = object['author'] == this.props.app_state.user_account_id[object['ipfs']['e5']] ? object['ipfs']['recipients_e5'] : object['ipfs']['e5']
-            this.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5)
+            this.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5, true)
 
             var me = this;
             setTimeout(function() {
                 if(me.state.entered_text == text){
                     //done typing
                     me.props.emit_new_chat_typing_notification(object['convo_id'], object['convo_with'], recipients_e5, false)
+                }
+            }, (1 * 2000));
+        }
+        else if(this.state.page == 'direct_message'){
+            var object = this.state.object
+            var recipients_e5 = object['account_e5']
+            this.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, true)
+
+            var me = this;
+            setTimeout(function() {
+                if(me.state.entered_text == text){
+                    //done typing
+                    me.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, false)
                 }
             }, (1 * 2000));
         }
@@ -668,10 +681,10 @@ class AddCommentPage extends Component {
     }
 
     render_media_pickers_if_valid(){
-        const accepted = ['channel', 'mail', 'post']
+        const accepted = ['channel', 'mail', 'post', 'direct_message']
         if(!accepted.includes(this.state.page)) return;
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 10px','padding': '0px 0px 0px 0px', width: '99%'}}>
+            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 10px','padding': '0px 0px 0px 0px', width: '70%'}}>
                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px', 'margin':'0px 10px 0px 0px'}}>
                     <img alt="" src={this.props.app_state.static_assets['music_file_button']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute', 'border-radius': '50%'}} onClick={() => this.props.show_pick_file_bottomsheet('audio', 'create_audio_pick_audio_file', 10**16)}/>
                 </div>
@@ -1132,7 +1145,7 @@ class AddCommentPage extends Component {
 
     render_expiry_time_picker(){
         const page = this.state.page
-        const accepted_pages = ['mail', 'channel']
+        const accepted_pages = ['mail', 'channel', 'direct_message']
 
         if(!accepted_pages.includes(page)){
             const size = this.props.app_state.size
@@ -1385,7 +1398,7 @@ class AddCommentPage extends Component {
         else if(page == 'direct_message'){
             var mail = object;
             var convo_id = mail['convo_id']
-            var recipients_e5 = mail['account_id']
+            var recipients_e5 = mail['account_e5']
 
             tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['account_e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions, 'expiry_time':expiry_time}
         }

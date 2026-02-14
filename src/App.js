@@ -1294,7 +1294,7 @@ class App extends Component {
     
     load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, load_audio_metrics:{}, load_video_metrics:{}, load_nitro_metrics:{}, load_poll_metrics:{},
 
-    frozen_unfrozen_account_balance_data:{}, watched_account_data:null, watched_account_id:'',
+    frozen_unfrozen_account_balance_data:{}, watched_account_data:[], watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
 
     number_board:[], clip_number:"0", dialog_size: 400, account_post_history:{}, account_message_history:{}, comment_size: 600, has_account_been_loaded_from_storage:false, show_stack:true,
@@ -1347,7 +1347,7 @@ class App extends Component {
     
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
-    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[]
+    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[]
   };
 
   get_thread_pool_size(){
@@ -4044,6 +4044,7 @@ class App extends Component {
       file_streaming_data: this.state.file_streaming_data,
       direct_messages: this.state.direct_messages,
       loaded_messages: this.state.loaded_messages,
+      all_message_files: this.get_all_my_message_media_file_data(),
     }
   }
 
@@ -4074,6 +4075,7 @@ class App extends Component {
       var my_data_items = state.my_data_items == null ? {} : state.my_data_items
       var direct_messages = state.direct_messages
       var loaded_messages = state.loaded_messages
+      var all_message_files = state.all_message_files
 
       // if(cached_tracks != null){
       //   this.set_cached_tracks_data(cached_tracks)
@@ -4094,6 +4096,9 @@ class App extends Component {
       }
       if(direct_messages != null){
         this.setState({direct_messages: direct_messages})
+      }
+      if(all_message_files != null){
+        this.set_my_message_media_file_data(all_message_files)
       }
       
 
@@ -4525,6 +4530,76 @@ class App extends Component {
       }
     });
     this.setState({uploaded_data: uploaded_data_clone, uploaded_data_cids: cids})
+  }
+
+
+  get_all_my_message_media_file_data(){
+    const chats = []
+    Object.keys(this.state.direct_messages).forEach(e5_account => {
+      chats.push(this.state.direct_messages[e5_account])
+    });
+
+    const all_message_files = {}
+    chats.forEach(chat_obj => {
+      const chat_messages = chat_obj['messages']
+      const media_files = this.get_messages_media_files(chat_messages)
+      Object.assign(all_message_files, media_files);
+    });
+
+    return all_message_files
+  }
+
+  get_messages_media_files(messages){
+    const file_cids = []
+    messages.forEach(item_arg => {
+      const message = item_arg['ipfs'];
+      if(message.type == 'image'){
+        if(message['image-data'] != null && message['image-data']['images'] != null && message['image-data']['images'].length > 0){
+          const image_object = message['image-data']['images']
+          image_object.forEach(image_cid => {
+            if(!file_cids.includes(image_cid)){
+              file_cids.push(image_cid)
+            }
+          });
+        }
+        if(message['pdf-data'] != null && message['pdf-data'].length > 0){
+          message['pdf-data'].forEach(pdf => {
+            if(!file_cids.includes(pdf)){
+              file_cids.push(pdf)
+            }
+          });
+        }
+      }
+    });
+
+    const file_ecid_objects = {}
+    file_cids.forEach(cid => {
+      const ecid_obj = this.get_cid_split(cid)
+      if(this.state.uploaded_data[ecid_obj['filetype']] != null && this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] != null){
+        const file_data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        file_ecid_objects[ecid_obj['full']] = file_data
+      }
+    });
+
+    return file_ecid_objects
+  }
+
+  set_my_message_media_file_data(all_message_files){
+    const uploaded_data_clone = structuredClone(this.state.uploaded_data)
+    // const uploaded_data_cids_clone = this.state.uploaded_data_cids.slice()
+
+    Object.keys(all_message_files).forEach(cid => {
+      const ecid_obj = this.get_cid_split(cid)
+      if(uploaded_data_clone[ecid_obj['filetype']] == null){
+        uploaded_data_clone[ecid_obj['filetype']] = {}
+      }
+      uploaded_data_clone[ecid_obj['filetype']][ecid_obj['full']] = all_message_files[cid]
+      // if(!uploaded_data_cids_clone.includes(cid)){
+      //   uploaded_data_cids_clone.push(cid)
+      // }
+    });
+
+    this.setState({uploaded_data: uploaded_data_clone, /* uploaded_data_cids: uploaded_data_cids_clone */});
   }
 
 
@@ -5337,7 +5412,7 @@ class App extends Component {
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
-        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'#dddddd', 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5380,7 +5455,7 @@ class App extends Component {
     else if(theme == this.getLocale()['1418']/* 'dark' */){
       return{
         'name':this.getLocale()['1418']/* 'dark' */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444',/* 'button_color':'#444444' */ 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1', 'linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(68, 68, 68, 0.9)',/* 'button_color':'#444444' */ 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1', 'linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
 
@@ -5425,7 +5500,7 @@ class App extends Component {
     else if(theme == this.getLocale()['2740']/* midnight */){
       return{
         'name':this.getLocale()['2740']/* midnight */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#1a1a1a',/* 'button_color':'#171717' */ 'button_color':'linear-gradient(135deg, #171717,rgb(43, 43, 43))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#171717' */ 'button_color':'linear-gradient(135deg, #171717,rgb(43, 43, 43))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5470,7 +5545,7 @@ class App extends Component {
     else if(theme == this.getLocale()['2741']/* green */){
       return{
         'name':this.getLocale()['2741']/* green */,
-        'bar_shadow':'#bcffdd','bar_color':'#03a003', 'bar_background_color':'rgb(185, 247, 198,.9)','nav_bar_color':'#1a1a1a',/* 'button_color':'#171717' */ 'button_color': 'linear-gradient(135deg, #171717,rgb(40, 39, 39))', 'button_text_color':'#04e504', 'line_color':'#01c601','linebar_background_color':'rgb(185, 247, 198,.9)',
+        'bar_shadow':'#bcffdd','bar_color':'#03a003', 'bar_background_color':'rgb(185, 247, 198,.9)','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#171717' */ 'button_color': 'linear-gradient(135deg, #171717,rgb(40, 39, 39))', 'button_text_color':'#04e504', 'line_color':'#01c601','linebar_background_color':'rgb(185, 247, 198,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#212821','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5518,7 +5593,7 @@ class App extends Component {
     if(theme == this.getLocale()['3056']/* 'light-green' */){
       return{
         'name':this.getLocale()['3056']/* 'light-green' */,
-        'bar_shadow':'#c5e8d6','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'#dddddd', /* 'button_color':'#01c601' */'button_color': 'linear-gradient(135deg, #01c601,rgb(31, 244, 31))', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#c5e8d6','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'rgba(221, 221, 221, 0.9)', /* 'button_color':'#01c601' */'button_color': 'linear-gradient(135deg, #01c601,rgb(31, 244, 31))', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5565,7 +5640,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3057']/* 'red' */){
       return{
         'name':this.getLocale()['3057']/* 'red' */,
-        'bar_shadow':'#f9aeae','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'#1a1a1a',/* 'button_color':'#0c0c0c' */ 'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)',
+        'bar_shadow':'#f9aeae','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#0c0c0c' */ 'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1717','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5613,7 +5688,7 @@ class App extends Component {
     if(theme == this.getLocale()['3058']/* 'light-red' */){
       return{
         'name':this.getLocale()['3058']/* 'light-red' */,
-        'bar_shadow':'#f9d1d1','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'#dddddd', 'button_color':/* '#c60b01' */'linear-gradient(135deg, #c60b01,rgb(237, 41, 31))', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#f9d1d1','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#c60b01' */'linear-gradient(135deg, #c60b01,rgb(237, 41, 31))', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5660,7 +5735,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3059']/* 'blue' */){
       return{
         'name':this.getLocale()['3059']/* 'blue' */,
-        'bar_shadow':'#aeb8f9','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'#1a1a1a',/* 'button_color':'#0c0c0c' */'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)',
+        'bar_shadow':'#aeb8f9','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#0c0c0c' */'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#17171c','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5708,7 +5783,7 @@ class App extends Component {
     if(theme == this.getLocale()['3060']/* 'light-blue' */){
       return{
         'name':this.getLocale()['3060']/* 'light-blue' */,
-        'bar_shadow':'#bce4ff','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'#dddddd', 'button_color':/* '#0181c6' */'linear-gradient(135deg, #0181c6,rgb(30, 155, 222))', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#bce4ff','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#0181c6' */'linear-gradient(135deg, #0181c6,rgb(30, 155, 222))', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5755,7 +5830,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3061']/* 'yellow' */){
       return{
         'name':this.getLocale()['3061']/* 'yellow' */,
-        'bar_shadow':'#f9f8ae','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'#1a1a1a','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6',
+        'bar_shadow':'#f9f8ae','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'rgba(26, 26, 26, 0.9)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b1c17','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5803,7 +5878,7 @@ class App extends Component {
     if(theme == this.getLocale()['3062']/* 'light-yellow' */){
       return{
         'name':this.getLocale()['3062']/* 'light-yellow' */,
-        'bar_shadow':'#fdffbc','bar_color':'#9ba003', 'bar_background_color':'#e2e2cc','nav_bar_color':'#dddddd', 'button_color':/* '#9ba003' */'linear-gradient(135deg, #9ba003,rgb(204, 211, 24))', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#fdffbc','bar_color':'#9ba003', 'bar_background_color':'#e2e2cc','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#9ba003' */'linear-gradient(135deg, #9ba003,rgb(204, 211, 24))', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5850,7 +5925,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3063']/* 'pink' */){
       return{
         'name':this.getLocale()['3063']/* 'pink' */,
-        'bar_shadow':'#ecaef9','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'#1a1a1a','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9',
+        'bar_shadow':'#ecaef9','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'rgba(26, 26, 26, 0.9)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b171c','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5898,7 +5973,7 @@ class App extends Component {
     if(theme == this.getLocale()['3064']/* 'light-pink' */){
       return{
         'name':this.getLocale()['3064']/* 'light-pink' */,
-        'bar_shadow':'#ecbcff','bar_color':'#8e03a0', 'bar_background_color':'#decce2','nav_bar_color':'#dddddd', 'button_color':/* '#af01c6' */'linear-gradient(135deg, #af01c6,rgb(216, 37, 239))', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#ecbcff','bar_color':'#8e03a0', 'bar_background_color':'#decce2','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#af01c6' */'linear-gradient(135deg, #af01c6,rgb(216, 37, 239))', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5945,7 +6020,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3065']/* 'orange' */){
       return{
         'name':this.getLocale()['3065']/* 'orange' */,
-        'bar_shadow':'#f9d1ae','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'#1a1a1a','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6',
+        'bar_shadow':'#f9d1ae','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'rgba(26, 26, 26, 0.9)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1a17','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5993,7 +6068,7 @@ class App extends Component {
     if(theme == this.getLocale()['3066']/* 'light-orange' */){
       return{
         'name':this.getLocale()['3066']/* 'light-orange' */,
-        'bar_shadow':'#ffe2bc','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'#dddddd', 'button_color':/* '#c67b01' */'linear-gradient(135deg, #c67b01,rgb(235, 160, 39))', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#ffe2bc','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#c67b01' */'linear-gradient(135deg, #c67b01,rgb(235, 160, 39))', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -6299,7 +6374,7 @@ class App extends Component {
 
           get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.send_direct_message.bind(this)}
 
-          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)}
+          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -8872,10 +8947,17 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  set_watched_account_id(account){
-    this.setState({watched_account_id: account})
+  set_watched_account_id(e5_account){
+    const watched_account_ids_clone= this.state.watched_account_ids.slice()
+    const index = watched_account_ids_clone.indexOf(e5_account)
+    if(index != -1){
+      watched_account_ids_clone.splice(index, 1)
+    }else{
+      watched_account_ids_clone.push(e5_account)
+    }
+    this.setState({watched_account_ids: watched_account_ids_clone})
     var me = this;
-    setTimeout(function() {
+    setTimeout(() => {
       this.update_watched_account_data()
     }, (1 * 1000));
     
@@ -15535,6 +15617,7 @@ class App extends Component {
       this.open_add_comment_bottomsheet(tx)
     }
     else if(page == 'direct_message'){
+      this.open_add_comment_bottomsheet()
       this.send_direct_message(tx)
     }
 
@@ -16170,7 +16253,7 @@ class App extends Component {
     for(var i=0; i<items.length; i++){
       var url = items[i]
       const web3 = new Web3(url);
-      var is_conn = await web3.eth.net.isListening()
+      var is_conn = true;
       if(is_conn){
         var now = Date.now()
         await web3.eth.getBlockNumber()
@@ -16605,7 +16688,7 @@ class App extends Component {
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
         send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
 
-        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)}
+        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
         />
       </div>
     )
@@ -17261,25 +17344,19 @@ class App extends Component {
 
   verify_file = async (ecid_obj) => {
     this.prompt_top_notification(this.getLocale()['3055ca']/* 'Verifying the file...' */, 5500)
-    var file_link = this.get_file_data(ecid_obj)
-    var valid_known_hash = this.get_file_known_hash(ecid_obj)
+    const url = await this.construct_encrypted_link_from_ecid(ecid_obj['full'], '', '')
     try {
-      if(file_link == null || valid_known_hash == null){
-        console.log('file_link or valid_known_hash is null', file_link, valid_known_hash)
-        throw new Error("file_link or valid_known_hash is null");
-      }
-      // Fetch the zip as a blob
-      const response = await fetch(file_link);
+      // Fetch the image as a blob
+      const response = await fetch(url);
       if (!response.ok) {
+        console.log('apppage', 'verify_file', response)
         throw new Error("Failed to fetch image");
       }
-      const blob = await response.blob();
-      // Create a temporary object URL
-      const objectUrl = URL.createObjectURL(blob);
-      
-      var valid_hash = await this.get_valid_data_hash(objectUrl, true)
-      if(valid_hash != valid_known_hash){
-        console.log('apppage','Data has beeen tampered with, reverting', valid_hash, valid_known_hash)
+      const buffer = await response.arrayBuffer()
+      const data_as_uint_array = new Uint8Array(buffer)
+
+      const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, this.get_file_hash(ecid_obj['full']))
+      if(is_file_valid == false){
         this.prompt_top_notification(this.getLocale()['3055cc']/* 'Your data might have been tampered with.' */, 7500)
       }else{
         this.prompt_top_notification(this.getLocale()['3055cd']/* 'File verified.' */, 4500)
@@ -17288,7 +17365,6 @@ class App extends Component {
         this.setState({verified_file_statuses: clone})
       }
 
-      URL.revokeObjectURL(objectUrl);
     } catch (error) {
       this.prompt_top_notification(this.getLocale()['3055cb']/* 'Something went wrong.' */, 4500)
     }
@@ -17919,11 +17995,12 @@ class App extends Component {
       'most_recent':parseInt(Date.now()/1000),
     }
     const clone = structuredClone(this.state.direct_messages)
-    clone[e5_account_id] = obj;
+    if(clone[their_address] == null) clone[their_address] = obj;
     this.setState({direct_messages: clone})
     this.open_dialog_bottomsheet();
 
-    this.homepage.current?.when_direct_message_object_item_clicked(obj)
+    await this.wait(300)
+    this.open_direct_messages_convo(their_address)
   }
 
 
@@ -19274,7 +19351,6 @@ class App extends Component {
 
   load_decrypted_image_file = async (image) => {
     const url = await this.construct_encrypted_link_from_ecid(image, 'image', 'full_image')
-    console.log('apppage', 'load_decrypted_image_file', 'loading link', image)
     try {
       // Fetch the image as a blob
       const response = await fetch(url);
@@ -19289,6 +19365,7 @@ class App extends Component {
       const password = password_mimetype_data.password
       const mime_type = password_mimetype_data.mime_type
       const data_as_uint_array = new Uint8Array(buffer)
+
       const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, this.get_file_hash(image))
       if(is_file_valid == false){
         console.log('apppage', 'load_decrypted_image_file', 'file failed validation test')
@@ -19299,6 +19376,12 @@ class App extends Component {
     } catch (error) {
       console.error("Error downloading the image:", error);
     }
+  }
+
+  is_supplied_file_valid = async (encryptedBuffer, valid_hash) => {
+    const decrypted_buffer = this.process_encrypted_file(encryptedBuffer)
+    const extension = await this.get_valid_data_hash_from_uint_8_array(decrypted_buffer, false)
+    return extension == valid_hash;
   }
 
   get_valid_data_hash_from_uint_8_array = async (data) => {
@@ -19323,28 +19406,24 @@ class App extends Component {
 
 
   construct_encrypted_link_from_ecid = async (ecid, type, id) => {
-    if(!ecid.startsWith(type)) return ecid
+    // if(!ecid.startsWith(type)) return ecid
     var ecid_obj = this.get_cid_split2(ecid)
     if(this.state.uploaded_data[ecid_obj['filetype']] == null) return '';
     var data = this.state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
     if(data == null) return '';
 
-    if(!data[id].endsWith('/eee')){
-      return data[id]
-    }
-    var raw_link = data[id]
-    const nitro_url = data['data_deconstructed'][0]
-    const content_type = data['data_deconstructed'][1]
-    const nitro_cid2 = data['data_deconstructed'][2]
-    const file = nitro_cid2/* +'.'+content_type */
+    return await this.construct_encrypted_link_from_ecid_object(data, 'data')
 
-    return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
-    
-    // raw_link.replace(
-    //   `/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, 
-    //   `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
-    // );
-    // return raw_link
+    // if(!data[id].endsWith('/eee')){
+    //   return data[id]
+    // }
+    // var raw_link = data[id]
+    // const nitro_url = data['data_deconstructed'][0]
+    // const content_type = data['data_deconstructed'][1]
+    // const nitro_cid2 = data['data_deconstructed'][2]
+    // const file = nitro_cid2/* +'.'+content_type */
+
+    // return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
   }
 
   get_image_from_file(ecid){
@@ -22864,10 +22943,9 @@ class App extends Component {
     const web3_url = this.get_web3_url_from_e5(e5)
     const web3 = new Web3(web3_url);
 
-    var is_conn = await web3.eth.net.isListening()
     var blockNumber = await web3.eth.getBlockNumber()
     console.log('check_and_set_default_rpc', 'blockNumber', blockNumber)
-    if(!is_conn || blockNumber == null || blockNumber == 0){
+    if(blockNumber == null || blockNumber == 0){
       const clone = structuredClone(this.state.e5s)
       clone[e5].url ++
       if(e5 == 'E25') clone['E35'].url ++;
@@ -25871,23 +25949,52 @@ class App extends Component {
     }
   }
 
-  load_root_config = async () => {
+  async load_root_data_events(){
+    var requested_contract = 'E52'
     const e5 = root_e5
     const account = root_account
-    const web3_url = this.get_web3_url_from_e5(e5)
-    const web3 = new Web3(web3_url);
-    const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = this.state.e5s[e5].e5_address
-    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+    var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':'e4', 'filter':{p1/* target_id */: 24/* 24(dialer admin registry) */, p2/* context */:account/* sender_acc_id */}}
+    
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    const params = new URLSearchParams({
+      arg_string:JSON.stringify({requests:[event_request]}),
+    });
+    var request = `${beacon_node}/events/e?${params.toString()}`
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('apppage',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var object_data = await response.text();
+      var obj = JSON.parse(object_data);
+      return obj['data'][0];
+    }
+    catch(e){
+      console.log('apppage',e)
+      return []
+    }
+  }
 
-    var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: this.get_first_block(e5), toBlock: this.get_first_block(e5)+20 }, (error, events) => {})
-    var contract_addresses = contract_addresses_events[0].returnValues.p5
+  load_root_config = async () => {
+    // const e5 = root_e5
+    // const account = root_account
+    // const web3_url = this.get_web3_url_from_e5(e5)
+    // const web3 = new Web3(web3_url);
+    // const contractArtifact = require('./contract_abis/E5.json');
+    // const contractAddress = this.state.e5s[e5].e5_address
+    // const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = contract_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    // var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: this.get_first_block(e5), toBlock: this.get_first_block(e5)+20 }, (error, events) => {})
+    // var contract_addresses = contract_addresses_events[0].returnValues.p5
 
-    var root_data_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: {p1/* target_id */: 24/* 24(dialer admin registry) */, p2/* context */:account/* sender_acc_id */} }, (error, events) => {})
+    // const E52contractArtifact = require('./contract_abis/E52.json');
+    // const E52_address = contract_addresses[1];
+    // const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    // var root_data_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: {p1/* target_id */: 24/* 24(dialer admin registry) */, p2/* context */:account/* sender_acc_id */} }, (error, events) => {})
+    
+    var root_data_events = await this.load_root_data_events()
 
     console.log('load_root_config', 'root_data_events', root_data_events)
 
@@ -39671,10 +39778,10 @@ class App extends Component {
       const buffer = await response.arrayBuffer()
       const mime_type = this.get_file_mimetype(cid_data['extension'])
       const data_as_uint_array = new Uint8Array(buffer)
-      const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, cid_data['hash'])
-      if(is_file_valid == false){
-        return null
-      }
+      // const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, cid_data['hash'])
+      // if(is_file_valid == false){
+      //   return null
+      // }
       
       if(is_lyric == true){
         const plaintext = await this.decrypt_text_file(data_as_uint_array, password, mime_type, 'e', false)
@@ -40660,12 +40767,6 @@ class App extends Component {
     // Create a Blob from the binary data
     const blob = new Blob([binaryData], { type: mimeType });
     return new File([blob], file_name, { type: mimeType });
-  }
-
-  is_supplied_file_valid = async (encryptedBuffer, valid_hash) => {
-    const decrypted_buffer = this.process_encrypted_file(encryptedBuffer)
-    const extension = await this.get_valid_data_hash_from_uint_8_array(decrypted_buffer, false)
-    return extension == valid_hash;
   }
 
 
@@ -44841,13 +44942,31 @@ class App extends Component {
   }
 
   update_watched_account_data(){
-    var watched_account = this.state.watched_account_id
-    if(watched_account != ''){
-      this.get_watched_account_data(watched_account, this.state.selected_e5)
+    var watched_account_ids = this.state.watched_account_ids
+    if(watched_account_ids.length != 0){
+      const object_data = this.sort_watched_accounts_by_e5s(watched_account_ids)
+      Object.keys(object_data).forEach(e5 => {
+        const accounts = object_data[e5]
+        this.get_watched_account_data(accounts, e5)
+      });
     }
   }
 
-  get_watched_account_data = async (id, e5) => {
+  sort_watched_accounts_by_e5s(watched_account_ids){
+    const obj = {}
+    watched_account_ids.forEach(account_id => {
+      const e5 = account_id.split(':')[0]
+      const account = account_id.split(':')[1]
+      if(obj[e5] == null){
+        obj[e5] = []
+      }
+      obj[e5].push(parseInt(account))
+    });
+
+    return obj
+  }
+
+  get_watched_account_data = async (ids, e5) => {
     var all_unsorted_events = {}
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
@@ -44858,20 +44977,21 @@ class App extends Component {
     var difference = this.state.e5s[e5].notification_blocks == null ? 10_000 : this.state.e5s[e5].notification_blocks
     var start = current_block_number == 0 ? 0 : current_block_number - difference
     if(start < 0) start = 0;
-    var all_received_events = await H52contractInstance.getPastEvents('e1', { filter: { p3/* receiver */: id }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+    var all_received_events = await H52contractInstance.getPastEvents('e1', { filter: { p3/* receiver */: ids }, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
 
     all_unsorted_events[e5] = all_received_events
 
-    var previous_notifs = []
+    var previous_notifs = this.state.watched_account_data.slice()
     for(const e5 in all_unsorted_events){
       if(all_unsorted_events.hasOwnProperty(e5)){
         all_unsorted_events[e5].forEach(event => {
           event['e5'] = e5
+          event['time'] = parseInt(event.returnValues.p5)
           previous_notifs.push(event)
         });
       }
     }
-    this.setState({watched_account_data: previous_notifs.reverse()})
+    this.setState({watched_account_data: this.sortByAttributeDescending(previous_notifs, 'time')})
   }
 
 
@@ -49739,7 +49859,7 @@ class App extends Component {
         const clone = structuredClone(this.state.call_invites)
         clone[ipfs_message['call_id']] = ipfs_message
         this.setState({call_invites: clone})
-        // console.log('process_new_call_invite_message', clone)
+        console.log('process_new_call_invite_message', clone)
 
         if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
           this.handle_call_invite_notifications(ipfs_message)
