@@ -70,6 +70,7 @@ class PostListSection extends Component {
         current_load_time:this.props.current_load_time,
         typed_search_dm_account_id:'',
         typed_watch_account_input:'',
+        search_identifier:'',
     };
 
 
@@ -280,7 +281,14 @@ class PostListSection extends Component {
         else if(selected_page == 'w'){
             var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
 
-            if(selected_option_name == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_option_name == 'e'){
+            if(selected_option_name == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_option_name == 'e'){
+                return(
+                    <div>
+                        {this.render_coins_list_group()}
+                    </div>
+                )
+            }
+            else if(selected_option_name == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
                 return(
                 <div>{this.render_ethers_list_group()}</div>
                 )
@@ -302,17 +310,17 @@ class PostListSection extends Component {
                     </div>
                 )
             }
-            else if(selected_option_name == this.props.app_state.loc['1264j']/* 'coins 🪙' */){
-                return(
-                    <div>
-                        {this.render_coins_list_group()}
-                    </div>
-                )
-            }
             else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264ai']/* bills */){
                 return(
                     <div>
                         {this.render_bills_list_group()}
+                    </div>
+                )
+            }
+            else if(selected_option_name == this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */){
+                return(
+                    <div>
+                        {this.render_contextual_transfers_data()}
                     </div>
                 )
             }
@@ -6626,6 +6634,251 @@ return data['data']
 
     when_pay_all_bills_tapped(items){
         this.props.show_dialog_bottomsheet({'objects':items }, 'confirm_pay_bill')
+    }
+
+
+
+
+
+
+
+    render_contextual_transfers_data(){
+        return(
+            <div>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_search_identifier_input_field_changed.bind(this)} text={this.state.search_identifier} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.perform_verify_itransfer_search()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_watched_identifiers()}
+                <div style={{height:10}}/>
+                {this.load_itransfer_search_results()}
+            </div>
+        )
+    }
+
+    when_search_identifier_input_field_changed(text){
+        this.setState({search_identifier: text})
+    }
+
+    perform_verify_itransfer_search(){
+        var identifier = this.state.search_identifier.trim()
+        
+        if(identifier == ''){
+            this.props.notify(this.props.app_state.loc['3068o']/* 'You need to set an identifier first.' */, 6000)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(identifier) || /\p{Emoji}/u.test(identifier)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['1593gn']/* 'Listening for current iTransfers..' */, 4000)
+            this.props.set_contextual_transfer_identifier(identifier)
+            if(this.state.selected_watched_itransfer_identifier == null){
+                this.setState({selected_watched_itransfer_identifier: identifier})
+            }
+        }
+    }
+
+    load_itransfer_search_results(){
+        var middle = this.props.height-90
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-185;
+        }
+        else if(size == 'm'){
+            middle = this.props.height-110
+        }
+        if(items == null){
+            items = []
+        }
+        middle -= (this.state.selected_watched_itransfer_identifier == null ? 0 : 4)
+
+        var items = [].concat(this.load_itransfer_result_items(this.state.selected_watched_itransfer_identifier))
+        if(items.length == 0){
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true}>
+                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        style={{}}>
+                                            {this.render_itransfer_item(item)}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            );
+                        }}
+                    />
+                </div>
+            )
+        }
+    }
+
+    render_itransfer_item(item){
+        var alias = this.get_senders_name_or_you2(item['account'], item['e5'])
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%', 'image':this.props.app_state.e5s[item['e5']].e5_img},)}
+                <div style={{height: 3}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 3}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'margin':'0px 0px 0px 5px'}}>
+                        {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+                    </div>
+
+                    {item['transfers'].map((transfer, index) => (
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
+                        </div>
+                    ))}
+                </div>
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    get_senders_name_or_you2(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? this.props.app_state.loc['1591']/* Unknown */ : bucket[sender])
+        return alias
+    }
+
+    load_itransfer_result_items(key){
+        if(key == null) return []
+        var selected_e5 = this.props.app_state.selected_e5
+        var object = this.props.app_state.stack_contextual_transfer_data[key]
+        if(object == null) return []
+
+        var blocks = Object.keys(object)
+        var object_array = []
+        blocks.forEach(block => {
+            var sender_accounts = Object.keys(object[block])
+            sender_accounts.forEach(account => {
+                var transfer_data = this.process_transfers(object[block][account])
+                var time = object[block][account][0].returnValues.p5/* timestamp */
+                object_array.push({'account':account, 'block':block, 'transfers':transfer_data.final_transfers, 'time':time, 'e5':transfer_data.e5 || selected_e5})
+            });
+        });
+
+        return this.sortByAttributeDescending(object_array, 'time')
+    }
+
+    process_transfers(transfers){
+        var obj = {}
+        var e5 = null;
+        transfers.forEach(transfer => {
+            var exchange = transfer.returnValues.p1
+            var amount = transfer.returnValues.p4/* amount */
+            var depth = transfer.returnValues.p7/* depth */
+            if(obj[exchange] == null){
+                obj[exchange] = bigInt('0')
+            }
+            var actual_amount = this.get_actual_number(amount, depth)
+            obj[exchange] = bigInt(obj[exchange]).plus(bigInt(actual_amount))
+            e5 = transfer['e5']
+        });
+
+        var exchange_transfers = Object.keys(obj)
+        var final_transfers = []
+        exchange_transfers.forEach(key => {
+            final_transfers.push({'amount':obj[key], 'exchange':key})
+        });
+
+        return { final_transfers, e5 }
+    }
+
+    render_watched_identifiers(){
+        var items = [].concat(this.props.app_state.tracked_contextual_transfer_identifiers)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_included_identifier_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_included_identifier_item(item){
+        const title = start_and_end(item)
+        var event_count = this.format_count(this.load_itransfer_result_items(item).length)
+        if(event_count == 0){
+            event_count = '000'
+        }
+        const details = this.props.app_state.loc['2509x']/* '$ events' */.replace('$', event_count)
+        return(
+            <div onClick={() => this.when_included_identifier_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+                {this.render_line_if_selected2(item)}
+            </div>
+        )
+    }
+
+    render_line_if_selected2(item){
+        if(this.state.selected_watched_itransfer_identifier == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_included_identifier_clicked(identifier){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            me.props.set_contextual_transfer_identifier(identifier)
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.setState({selected_watched_itransfer_identifier: identifier})
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
     }
 
 

@@ -91,7 +91,7 @@ class HomepageSideBar extends Component {
     render_metrics_section(h){
         return(
             <div>
-                <div style={{'padding':'10px 10px 10px 10px', 'margin':'0px 0px 0px 5px', 'background-color':this.props.theme['card_background_color'],'border-radius': '15px', height:h, 'overflow-y': 'auto',}}>
+                <div style={{'padding':'10px 10px 10px 10px', 'margin':'0px 0px 0px 5px', 'background-color':this.props.theme['card_background_color'],'border-radius': '15px', height:h, 'overflow-y': 'auto', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
 
                     {this.render_now_calling_message_if_any()}
                     

@@ -1347,7 +1347,7 @@ class App extends Component {
     
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
-    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[]
+    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[]
   };
 
   get_thread_pool_size(){
@@ -5412,15 +5412,15 @@ class App extends Component {
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
-        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#393e46','secondary_text_color':'grey', 
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#f2f2f2','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
-        'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
+        'navbar_button_selected_color':'rgb(255, 253, 253)','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgba(225, 225, 225,.4)','card_shadow_color':'#DCDCDC',
+        'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)','synchronizer_loading_highlight_color':'rgb(206, 206, 206)',
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
         
@@ -5455,15 +5455,15 @@ class App extends Component {
     else if(theme == this.getLocale()['1418']/* 'dark' */){
       return{
         'name':this.getLocale()['1418']/* 'dark' */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(68, 68, 68, 0.9)',/* 'button_color':'#444444' */ 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1', 'linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(68, 68, 68, 0.3)',/* 'button_color':'#444444' */ 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1', 'linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
 
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
-        'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'rgb(69, 68, 68)',
+        'navbar_button_selected_color':'#545454','card_background_color':'rgba(51, 51, 51,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
+        'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'rgb(69, 68, 68)', 'synchronizer_loading_highlight_color':'rgb(208, 205, 205)',
 
         'view_group_card_item_background':'#292929','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
 
@@ -5500,15 +5500,15 @@ class App extends Component {
     else if(theme == this.getLocale()['2740']/* midnight */){
       return{
         'name':this.getLocale()['2740']/* midnight */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#171717' */ 'button_color':'linear-gradient(135deg, #171717,rgb(43, 43, 43))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#171717' */ 'button_color':'linear-gradient(135deg, #171717,rgb(43, 43, 43))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#333333','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
-        'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(42, 41, 41)',
+        'navbar_button_selected_color':'#333333','card_background_color':'rgba(20, 20, 20,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
+        'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(42, 41, 41)', 'synchronizer_loading_highlight_color':'rgb(214, 214, 214)',
 
         'view_group_card_item_background':'#1a1a1a','tag_background_color':'#303030', 'indexed_tag_background':'#242424', 'tag_shadow':'#303030', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #1a1a1a,rgb(52, 51, 51))',
 
@@ -5545,17 +5545,17 @@ class App extends Component {
     else if(theme == this.getLocale()['2741']/* green */){
       return{
         'name':this.getLocale()['2741']/* green */,
-        'bar_shadow':'#bcffdd','bar_color':'#03a003', 'bar_background_color':'rgb(185, 247, 198,.9)','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#171717' */ 'button_color': 'linear-gradient(135deg, #171717,rgb(40, 39, 39))', 'button_text_color':'#04e504', 'line_color':'#01c601','linebar_background_color':'rgb(185, 247, 198,.9)',
+        'bar_shadow':'rgb(14, 48, 21)','bar_color':'#03a003', 'bar_background_color':'rgb(185, 247, 198)','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#171717' */ 'button_color': 'linear-gradient(135deg, #171717,rgb(29, 48, 11))', 'button_text_color':'#04e504', 'line_color':'#01c601','linebar_background_color':'rgb(185, 247, 198,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#212821','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#04e504', 'secondary_text_color':'#02f902',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#203f00','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'#013f01', 'navbar_text_shadow_color':'#5bc15b',
-        'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
+        'navbar_button_selected_color':'#203f00','card_background_color':'rgba(12, 38, 8, 0.8)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'rgb(14, 48, 21)', 'navbar_text_shadow_color':'#5bc15b',
+        'loading_base_color':'rgb(12, 38, 8)','loading_highlight_color':'rgb(43, 95, 43)', 'synchronizer_loading_highlight_color':'rgb(77, 188, 77)',
 
-        'view_group_card_item_background':'#13190c','tag_background_color':'#203f00', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2', 'view_group_card_item_background2':'linear-gradient(135deg, #13190c,rgb(32, 43, 20))',
+        'view_group_card_item_background':'#13190c','tag_background_color':'rgb(29, 48, 11)', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2', 'view_group_card_item_background2':'linear-gradient(135deg,rgb(12, 25, 12),rgb(29, 57, 26))',
 
         'chart_color':'#01c601','chart_background_color':'#141e0a', 'chart_color2':'rgb(77, 255, 77)',
 
@@ -5593,14 +5593,14 @@ class App extends Component {
     if(theme == this.getLocale()['3056']/* 'light-green' */){
       return{
         'name':this.getLocale()['3056']/* 'light-green' */,
-        'bar_shadow':'#c5e8d6','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'rgba(221, 221, 221, 0.9)', /* 'button_color':'#01c601' */'button_color': 'linear-gradient(135deg, #01c601,rgb(31, 244, 31))', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(158, 214, 171)','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'rgba(221, 221, 221, 0.05)', /* 'button_color':'#01c601' */'button_color': 'linear-gradient(135deg, #01c601,rgb(31, 244, 31))', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#029302','secondary_text_color':'#03a003',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#c5e8d6', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
+        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgba(184, 225, 182, 0.6)','card_shadow_color':'rgb(158, 214, 171)', 'loading_base_color':'#d4e2cc','loading_highlight_color':'rgb(89, 197, 89)',
         
         'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #d4e2cc,rgb(196, 209, 189))',
         
@@ -5640,17 +5640,17 @@ class App extends Component {
     else if(theme == this.getLocale()['3057']/* 'red' */){
       return{
         'name':this.getLocale()['3057']/* 'red' */,
-        'bar_shadow':'#f9aeae','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#0c0c0c' */ 'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)',
+        'bar_shadow':'rgb(48, 14, 14)','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#0c0c0c' */ 'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(51, 18, 14))', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1717','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#f70404', 'secondary_text_color':'#f43535',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#332020','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'#3f0101',
-        'navbar_text_shadow_color':'#511616', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
+        'navbar_button_selected_color':'#332020','card_background_color':'rgba(37, 6, 6, 0.8)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'rgb(48, 14, 14)',
+        'navbar_text_shadow_color':'#511616', 'loading_base_color':'rgb(37, 6, 6)','loading_highlight_color':'rgb(58, 19, 19)', 'synchronizer_loading_highlight_color':'rgb(188, 77, 77)',
 
-        'view_group_card_item_background':'#190c0c','tag_background_color':'#3f0600', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a', 'view_group_card_item_background2':'linear-gradient(135deg, #190c0c,rgb(38, 18, 18))',
+        'view_group_card_item_background':'#190c0c','tag_background_color':'rgb(51, 18, 14)', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a', 'view_group_card_item_background2':'linear-gradient(135deg, #190c0c,rgb(38, 18, 18))',
 
         'chart_color':'#f70404','chart_background_color':'#190c0c', 'chart_color2':'rgb(252, 122, 122)',
 
@@ -5688,14 +5688,14 @@ class App extends Component {
     if(theme == this.getLocale()['3058']/* 'light-red' */){
       return{
         'name':this.getLocale()['3058']/* 'light-red' */,
-        'bar_shadow':'#f9d1d1','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#c60b01' */'linear-gradient(135deg, #c60b01,rgb(237, 41, 31))', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(214, 158, 158)','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#c60b01' */'linear-gradient(135deg, #c60b01,rgb(237, 41, 31))', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#930101','secondary_text_color':'#a00803',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9d1d1', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
+        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgba(222, 174, 174, 0.6)','card_shadow_color':'rgb(214, 158, 158)', 'loading_base_color':'#e2cdcc','loading_highlight_color':'rgb(181, 90, 86)',
         
         'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2cdcc,rgb(211, 192, 191))',
         
@@ -5735,17 +5735,17 @@ class App extends Component {
     else if(theme == this.getLocale()['3059']/* 'blue' */){
       return{
         'name':this.getLocale()['3059']/* 'blue' */,
-        'bar_shadow':'#aeb8f9','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'rgba(26, 26, 26, 0.9)',/* 'button_color':'#0c0c0c' */'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)',
+        'bar_shadow':'rgb(14, 28, 48)','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#0c0c0c' */'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(13, 28, 43))', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#17171c','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#0079ff', 'secondary_text_color':'#2587f7',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#202c33','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'#183651',
-        'navbar_text_shadow_color':'#171651', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
+        'navbar_button_selected_color':'#202c33','card_background_color':'rgba(6, 24, 42, 0.8)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'rgb(14, 28, 48)',
+        'navbar_text_shadow_color':'#171651', 'loading_base_color':'rgb(6, 24, 42)','loading_highlight_color':'rgb(19, 43, 58)', 'synchronizer_loading_highlight_color':'rgb(77, 144, 188)',
 
-        'view_group_card_item_background':'#0d0c19','tag_background_color':'#13293d', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7', 'view_group_card_item_background2':'linear-gradient(135deg, #0d0c19,rgb(27, 24, 51))',
+        'view_group_card_item_background':'#0d0c19','tag_background_color':'rgb(13, 28, 43)', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7', 'view_group_card_item_background2':'linear-gradient(135deg, #0d0c19,rgb(27, 24, 51))',
 
         'chart_color':'#0079ff','chart_background_color':'#0d0c19', 'chart_color2':'rgb(99, 171, 253)',
 
@@ -5783,14 +5783,14 @@ class App extends Component {
     if(theme == this.getLocale()['3060']/* 'light-blue' */){
       return{
         'name':this.getLocale()['3060']/* 'light-blue' */,
-        'bar_shadow':'#bce4ff','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#0181c6' */'linear-gradient(135deg, #0181c6,rgb(30, 155, 222))', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(158, 178, 214)','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#0181c6' */'linear-gradient(135deg, #0181c6,rgb(30, 155, 222))', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#017493','secondary_text_color':'#0374a0',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#d1ebf9', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
+        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgba(175, 195, 223, 0.6)','card_shadow_color':'rgb(158, 178, 214)', 'loading_base_color':'rgb(200, 214, 219)','loading_highlight_color':'rgb(89, 160, 188)',
         
         'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #ccdce2,rgb(187, 203, 209))',
         
@@ -5830,17 +5830,17 @@ class App extends Component {
     else if(theme == this.getLocale()['3061']/* 'yellow' */){
       return{
         'name':this.getLocale()['3061']/* 'yellow' */,
-        'bar_shadow':'#f9f8ae','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'rgba(26, 26, 26, 0.9)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6',
+        'bar_shadow':'rgb(46, 48, 14)','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg, #0c0c0c, #202100)', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b1c17','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#efec4c', 'secondary_text_color':'#efea58',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#333220','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'#505118',
-        'navbar_text_shadow_color':'#505116', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
+        'navbar_button_selected_color':'#333220','card_background_color':'rgba(36, 37, 6, 0.8)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'rgb(46, 48, 14)',
+        'navbar_text_shadow_color':'#505116', 'loading_base_color':'rgb(36, 37, 6)','loading_highlight_color':'rgb(118, 118, 50)', 'synchronizer_loading_highlight_color':'rgb(188, 182, 77)',
 
-        'view_group_card_item_background':'#19190c','tag_background_color':'#7c7a26', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a', 'view_group_card_item_background2':'linear-gradient(135deg, #19190c,rgb(43, 43, 21))',
+        'view_group_card_item_background':'#19190c','tag_background_color':'rgb(68, 67, 20)', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a', 'view_group_card_item_background2':'linear-gradient(135deg, #19190c,rgb(43, 43, 21))',
 
         'chart_color':'#f3f704','chart_background_color':'#19190c', 'chart_color2':'rgb(255, 255, 255)',
 
@@ -5878,14 +5878,14 @@ class App extends Component {
     if(theme == this.getLocale()['3062']/* 'light-yellow' */){
       return{
         'name':this.getLocale()['3062']/* 'light-yellow' */,
-        'bar_shadow':'#fdffbc','bar_color':'#9ba003', 'bar_background_color':'#e2e2cc','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#9ba003' */'linear-gradient(135deg, #9ba003,rgb(204, 211, 24))', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(211, 214, 158)','bar_color':'#9ba003', 'bar_background_color':'rgb(221, 221, 197)','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#9ba003' */'linear-gradient(135deg, #9ba003,rgb(204, 211, 24))', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#757701','secondary_text_color':'#9ba003',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
+        'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgba(216, 217, 182, 0.6)','card_shadow_color':'rgb(211, 214, 158)', 'loading_base_color':'rgb(221, 221, 197)','loading_highlight_color':'rgb(200, 202, 119)',
         
         'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2e2cc,rgb(208, 208, 187))',
         
@@ -5925,17 +5925,17 @@ class App extends Component {
     else if(theme == this.getLocale()['3063']/* 'pink' */){
       return{
         'name':this.getLocale()['3063']/* 'pink' */,
-        'bar_shadow':'#ecaef9','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'rgba(26, 26, 26, 0.9)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9',
+        'bar_shadow':'rgb(37, 14, 48)','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg,rgb(21, 21, 21),rgb(46, 0, 61))', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b171c','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#c94cef', 'secondary_text_color':'#e058ef',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#312033','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#e058ef','secondary_navbar_text_color':'#c94cef','card_shadow_color':'#491851',
-        'navbar_text_shadow_color':'#481651', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
+        'navbar_button_selected_color':'#312033','card_background_color':'rgba(30, 11, 35, 0.8)', 'primary_navbar_text_color':'#e058ef','secondary_navbar_text_color':'#c94cef','card_shadow_color':'rgb(37, 14, 48)',
+        'navbar_text_shadow_color':'#481651', 'loading_base_color':'rgb(30, 11, 35)','loading_highlight_color':'rgb(122, 49, 130)', 'synchronizer_loading_highlight_color':'rgb(131, 77, 188)',
 
-        'view_group_card_item_background':'#160c19','tag_background_color':'#6a267c', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7', 'view_group_card_item_background2':'linear-gradient(135deg, #160c19,rgb(39, 21, 44))',
+        'view_group_card_item_background':'#160c19','tag_background_color':'rgb(59, 19, 70)', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7', 'view_group_card_item_background2':'linear-gradient(135deg, #160c19,rgb(39, 21, 44))',
 
         'chart_color':'#e704f7','chart_background_color':'#160c19', 'chart_color2':'rgb(244, 133, 251)',
 
@@ -5973,14 +5973,14 @@ class App extends Component {
     if(theme == this.getLocale()['3064']/* 'light-pink' */){
       return{
         'name':this.getLocale()['3064']/* 'light-pink' */,
-        'bar_shadow':'#ecbcff','bar_color':'#8e03a0', 'bar_background_color':'#decce2','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#af01c6' */'linear-gradient(135deg, #af01c6,rgb(216, 37, 239))', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(210, 158, 214)','bar_color':'#8e03a0', 'bar_background_color':'rgb(215, 196, 219)','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#af01c6' */'linear-gradient(135deg, #af01c6,rgb(216, 37, 239))', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#930191','secondary_text_color':'#8e03a0',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f2d1f9', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
+        'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgba(223, 186, 223, 0.6)','card_shadow_color':'rgb(210, 158, 214)', 'loading_base_color':'rgb(215, 196, 219)','loading_highlight_color':'rgb(183, 107, 193)',
         
         'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #decce2,rgb(206, 188, 209))',
         
@@ -6020,17 +6020,17 @@ class App extends Component {
     else if(theme == this.getLocale()['3065']/* 'orange' */){
       return{
         'name':this.getLocale()['3065']/* 'orange' */,
-        'bar_shadow':'#f9d1ae','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'rgba(26, 26, 26, 0.9)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(39, 39, 39))', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6',
+        'bar_shadow':'rgb(48, 35, 14)','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(62, 45, 20))', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1a17','send_receive_ether_overlay_shadow':'#303030',
 
         'primary_text_color':'#efa04c', 'secondary_text_color':'#efb358',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#332c20','card_background_color':'rgb(20, 20, 20,.9)', 'primary_navbar_text_color':'#efb358','secondary_navbar_text_color':'#efa04c','card_shadow_color':'#513a18',
-        'navbar_text_shadow_color':'#513d16', 'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(41, 42, 41)',
+        'navbar_button_selected_color':'#332c20','card_background_color':'rgba(48, 31, 10, 0.8)', 'primary_navbar_text_color':'#efb358','secondary_navbar_text_color':'#efa04c','card_shadow_color':'rgb(48, 35, 14)',
+        'navbar_text_shadow_color':'#513d16', 'loading_base_color':'rgb(48, 31, 10)','loading_highlight_color':'rgb(128, 84, 40)', 'synchronizer_loading_highlight_color':'rgb(188, 134, 77)',
 
-        'view_group_card_item_background':'#19130c','tag_background_color':'#7c5326', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a', 'view_group_card_item_background2':'linear-gradient(135deg, #19130c,rgb(43, 32, 20))',
+        'view_group_card_item_background':'#19130c','tag_background_color':'rgb(70, 45, 20)', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a', 'view_group_card_item_background2':'linear-gradient(135deg, #19130c,rgb(43, 32, 20))',
 
         'chart_color':'#f78204','chart_background_color':'#19130c', 'chart_color2':'rgb(242, 185, 125)',
 
@@ -6068,14 +6068,14 @@ class App extends Component {
     if(theme == this.getLocale()['3066']/* 'light-orange' */){
       return{
         'name':this.getLocale()['3066']/* 'light-orange' */,
-        'bar_shadow':'#ffe2bc','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'rgba(221, 221, 221, 0.9)', 'button_color':/* '#c67b01' */'linear-gradient(135deg, #c67b01,rgb(235, 160, 39))', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(214, 193, 158)','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#c67b01' */'linear-gradient(135deg, #c67b01,rgb(235, 160, 39))', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#935b01','secondary_text_color':'#a05403',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#f9ebd1', 'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)',
+        'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgba(223, 205, 186, 0.6)','card_shadow_color':'rgb(214, 193, 158)', 'loading_base_color':'rgb(226, 215, 204)','loading_highlight_color':'rgb(200, 152, 102)',
         
         'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2d7cc,rgb(200, 190, 180))',
         
@@ -6374,7 +6374,7 @@ class App extends Component {
 
           get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.send_direct_message.bind(this)}
 
-          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)}
+          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)}
         />
         {this.render_homepage_toast()}
       </div>
@@ -9368,7 +9368,14 @@ class App extends Component {
   }
 
   set_contextual_transfer_identifier(id){
-    this.setState({tracked_contextual_transfer_identifier: id, tracked_contextual_transfer_e5: this.state.selected_e5})
+    const clone = this.state.tracked_contextual_transfer_identifiers.slice()
+    const index = clone.indexOf(id)
+    if(index == -1){
+      clone.push(id)
+    }else{
+      clone.splice(index, 1)
+    }
+    this.setState({tracked_contextual_transfer_identifiers: clone})
     var me = this;
     setTimeout(function() {
       this.update_contextual_transfer_account_data()
@@ -44884,11 +44891,15 @@ class App extends Component {
 
 
 
-  update_contextual_transfer_account_data(){
-    var tracked_contextual_transfer_identifier = this.state.tracked_contextual_transfer_identifier
-    if(tracked_contextual_transfer_identifier != ''){
-      this.get_contextual_transfer_data(tracked_contextual_transfer_identifier, this.state.selected_e5)
-    }
+  update_contextual_transfer_account_data(){    
+    this.state.tracked_contextual_transfer_identifiers.forEach(id => {
+      for(var i=0; i<this.state.e5s['data'].length; i++){
+        const e5 = this.state.e5s['data'][i]
+        if(this.state.e5s[e5].e5_address != ''){
+          this.get_contextual_transfer_data(id, e5)
+        }
+      }
+    });
   }
 
   get_contextual_transfer_data = async (identifier, e5) => {
@@ -44930,6 +44941,7 @@ class App extends Component {
           if(iTransfer_objects[block][transfer_sender] == null){
             iTransfer_objects[block][transfer_sender] = []
           }
+          transfer['e5'] = e5;
           iTransfer_objects[block][transfer_sender].push(transfer)
         }
       });

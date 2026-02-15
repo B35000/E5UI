@@ -377,7 +377,7 @@ class home_page extends Component {
         }
 
         obj[this.props.app_state.loc['1212']/* 'E5s' */] = [
-              ['xor','',0], [this.props.app_state.loc['1212']/* 'E5s' */,this.props.app_state.loc['1220']/* 'info ℹ️' */,this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */,], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1212']/* 'E5s' */,this.props.app_state.loc['1220']/* 'info ℹ️' */,this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */,], [1],[1]
           ]
         obj[this.props.app_state.loc['1213']/* 'posts' */] = [
               ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following 👥' */, this.props.app_state.loc['1264ah']/* 'tag-targeted 🎯' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned 📌' */], [1],[1]
@@ -408,7 +408,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */],[1]
           ],
         }
 
@@ -535,7 +535,7 @@ class home_page extends Component {
                 return(
                     <div>
                         <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -553,7 +553,7 @@ class home_page extends Component {
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                         </div>
@@ -570,7 +570,7 @@ class home_page extends Component {
                                 {this.render_metrics_section((middle+55))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -589,7 +589,7 @@ class home_page extends Component {
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                             
@@ -667,7 +667,7 @@ class home_page extends Component {
                         {this.render_post_list_group(size, h+10)}
                     </div>
 
-                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
@@ -676,7 +676,7 @@ class home_page extends Component {
         }else{
             return(
                 <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['send_receive_ether_background_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
@@ -1453,12 +1453,15 @@ class home_page extends Component {
         else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1218']/* 'ends' */ || this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
             return '8';
         }
+        else if(selected_item == this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */){
+            return 'iTransfer'
+        }
 
-        var data = {'ends ☝️':'8','spends 🫰':'8'};
-        data[this.props.app_state.loc['1218']/* ends ☝️ */] = '8'
-        data[this.props.app_state.loc['1219']/* spends 🫰 */] = '8'
-        if(data[selected_item] == null) return ''
-        return data[selected_item];
+        // var data = {'ends ☝️':'8','spends 🫰':'8'};
+        // data[this.props.app_state.loc['1218']/* ends ☝️ */] = '8'
+        // data[this.props.app_state.loc['1219']/* spends 🫰 */] = '8'
+        // if(data[selected_item] == null) return ''
+        // return data[selected_item];
       }
     }
 
@@ -1487,7 +1490,11 @@ class home_page extends Component {
       if(button_target != '' && button_target != 'e'){
         if(button_target == 'bills'){
             this.props.show_view_contextual_transfer_bottomsheet('bills')
-        }else{
+        }
+        else if(button_target == 'iTransfer'){
+            this.props.show_view_contextual_transfer_bottomsheet('')
+        }
+        else{
             if(button_target == '5' && this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active) == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
                 if(!this.props.app_state.has_wallet_been_set){
                     this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
@@ -1965,7 +1972,7 @@ class home_page extends Component {
 
         var id = this.get_page_id()
         
-        if(is_selecting_same_tag == true && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */ && selected_page != this.props.app_state.loc['1212']/* 'E5s' */){
+        if(is_selecting_same_tag == true && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */ && selected_page != this.props.app_state.loc['1212']/* 'E5s' */ && clicked_tag_name != this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */ && clicked_tag_name != this.props.app_state.loc['1264bo']/* 'direct-message 💬' */ && clicked_tag_name != this.props.app_state.loc['1593kn']/* 'calls ☎️' */ && clicked_tag_name != this.props.app_state.loc['1593x']/* 'Watch 👁️' */){
             this.props.show_dialog_bottomsheet({'id':id, 'selected_page':selected_page}, 'home_page_view_options')
             return;
         }
@@ -4971,7 +4978,7 @@ class home_page extends Component {
             get_spend_token_items={this.get_spend_token_items.bind(this)} get_end_token_items={this.get_end_token_items.bind(this)} update_scroll_position2={this.update_scroll_position2.bind(this)}
 
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
-            current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+            current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
             />
         )
     }

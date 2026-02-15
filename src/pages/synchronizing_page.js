@@ -153,6 +153,7 @@ class synchronizing_page extends Component {
         var bar_shadow = this.props.theme['bar_shadow'];
         var bar_color = this.props.theme['bar_color']
         var bar_background = this.props.theme['bar_background_color']
+        var loading_highlight_color = this.props.theme['synchronizer_loading_highlight_color']
         var height = 5;
         var progress = this.props.sync_progress+'%'
         if(this.props.sync_progress >100){
@@ -171,7 +172,7 @@ class synchronizing_page extends Component {
             };
             return(
                 <div style={{height: height, width: "100%", 'margin':'0px 0px 4px 0px', overflow: 'hidden', 'box-shadow': '0px 0px 2px 1px '+bar_shadow, borderRadius: '5px',}}>
-                    <SkeletonTheme borderRadius={'5px'} baseColor={bar_background} highlightColor={'rgb(184, 183, 183)'}>
+                    <SkeletonTheme borderRadius={'5px'} baseColor={bar_background} highlightColor={loading_highlight_color/* 'rgb(184, 183, 183)' */}>
                         <Skeleton style={styles.skeletonBox}/>
                     </SkeletonTheme>
                 </div>
