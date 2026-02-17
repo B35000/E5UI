@@ -1153,6 +1153,11 @@ class ConfigureNitroNodePage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -1161,7 +1166,7 @@ class ConfigureNitroNodePage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.delete_rpc_url(index)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '2px'}}>
                                             {this.render_detail_item('4', {'text':item, 'textsize':'11px', 'font':this.props.app_state.font})}
                                         </li>
@@ -1791,6 +1796,11 @@ class ConfigureNitroNodePage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px','list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
@@ -1799,7 +1809,7 @@ class ConfigureNitroNodePage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.when_amount_clicked(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
                                             <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.selected_e5+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
                                                 {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.selected_e5+item['exchange']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
@@ -2637,7 +2647,7 @@ class ConfigureNitroNodePage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

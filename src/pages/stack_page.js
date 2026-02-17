@@ -2576,13 +2576,18 @@ class StackPage extends Component {
             var item = this.props.app_state.queue[this.props.app_state.pos]
             return(
                 <div>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dz']/* Stop */}</p>,
                             action: () => this.props.close_audio_pip()
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                            <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                 {this.render_song_item(item)}
                             </div>
                         </SwipeableListItem>
@@ -13736,14 +13741,20 @@ class StackPage extends Component {
     render_wallet_settings_part(){
         var size = this.props.size
         var w = size == 's' ? '95%' : '99%'
+
+        const when_seed_input_title_tapped = () => {
+            this.seed_word_input?.change_text_area_type()
+        }
         return(
             <div style={{'padding': '0px 0px 0px 0px'}}>
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Type a word then click \'e\' to add it, or tap the word to remove it. Also, double tap the text area to unmask.' */, 'size':'l'})}
+                <div onClick={() => when_seed_input_title_tapped()}>
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Type a word then click \'e\' to add it, or tap the word to remove it. Also, double tap the text area to unmask.' */, 'size':'l'})}
+                </div>
                 <div style={{height: 10}}/>
                 
                 <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} adjust_height={false} theme={this.props.theme} type={'password'}/>
+                        <TextInput ref={(el) => (this.seed_word_input = el)} font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} adjust_height={false} theme={this.props.theme} type={'password'}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
@@ -14083,6 +14094,11 @@ class StackPage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -14091,7 +14107,7 @@ class StackPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.props.remove_account_from_contacts(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
                                             {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id'], item['e5']), 'details':''+item['address'], 'size':'l'})}
                                         </li>
@@ -14255,6 +14271,11 @@ class StackPage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -14263,7 +14284,7 @@ class StackPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.props.remove_account_from_blocked_accounts(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color' ]*/}}>
                                         <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
                                             {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id'], item['e5']), 'details':''+item['address'], 'size':'s'})}
                                         </li>
@@ -14536,6 +14557,11 @@ class StackPage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
@@ -14548,7 +14574,7 @@ class StackPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2750']/* Release */}</p>,
                                     action: () =>this.unreserve_alias(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '2px'}} onClick={()=> this.transfer_alias(item)}>
                                             {this.render_detail_item('3', {'title':''+item['alias'], 'details':this.props.app_state.loc['1593']/* 'Reserved ' */+this.get_time_difference(item['event'].returnValues.p6)+' ago', 'size':'s'})}
                                         </li>
@@ -18521,6 +18547,11 @@ class StackPage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -18529,7 +18560,7 @@ class StackPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dm']/* Unfollow */}</p>,
                                     action: () =>this.props.remove_followed_account(item, index)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '2px'}}>
                                             {this.render_followed_account_item(item)}
                                         </li>
@@ -18674,6 +18705,11 @@ class StackPage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -18682,7 +18718,7 @@ class StackPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dy']/* Uncensor */}</p>,
                                     action: () =>this.props.uncensor_keyword(item, index)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '2px'}}>
                                             {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':item})}
                                         </li>
@@ -18980,6 +19016,11 @@ class StackPage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -18993,7 +19034,7 @@ class StackPage extends Component {
                                         action: () =>this.edit_moderator_note(item, index)
                                     }}
                                     >
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '2px'}}>
                                             {this.render_moderator_note_item(item)}
                                         </li>
@@ -19518,7 +19559,7 @@ class StackPage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

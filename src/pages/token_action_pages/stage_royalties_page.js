@@ -842,7 +842,7 @@ class StageRoyaltiesPage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

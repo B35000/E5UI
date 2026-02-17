@@ -60,6 +60,10 @@ textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
+.swipeable-list-item__content {
+  background-color: transparent !important;
+}
+
 /* .react-view-pager {
   touch-action: pan-x;
   overscroll-behavior: contain;

@@ -218,6 +218,11 @@ class ForceExitPage extends Component {
         }else{
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
@@ -226,7 +231,7 @@ class ForceExitPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.when_force_exit_value_clicked(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
                                             <div style={{height:5}}/>
                                             {this.render_detail_item('3', {'title':this.props.app_state.loc['59']+item, 'details':this.props.app_state.loc['60']+this.state.contract_item['id'], 'size':'s'})}
@@ -411,7 +416,7 @@ class ForceExitPage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

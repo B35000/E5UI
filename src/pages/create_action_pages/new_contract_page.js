@@ -1602,7 +1602,7 @@ class NewContractPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.when_moderator_account_clicked(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
                                             {this.render_detail_item('3', {'title':''+item, 'details':this.props.app_state.loc['153'], 'size':'l'})}
                                         </li>
@@ -1779,7 +1779,7 @@ class NewContractPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.when_interactible_account_clicked(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
                                             {this.render_detail_item('3', {'title':this.props.app_state.loc['158']+item['id'], 'details':this.props.app_state.loc['159']+(new Date(item['timestamp']*1000)), 'size':'l'})}
                                         </li>
@@ -2049,7 +2049,7 @@ class NewContractPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.when_amount_clicked(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
                                             <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
                                                 {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
@@ -2368,7 +2368,7 @@ class NewContractPage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

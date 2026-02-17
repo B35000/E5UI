@@ -535,7 +535,7 @@ class home_page extends Component {
                 return(
                     <div>
                         <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -553,7 +553,7 @@ class home_page extends Component {
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                         </div>
@@ -570,7 +570,7 @@ class home_page extends Component {
                                 {this.render_metrics_section((middle+55))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
 
@@ -589,7 +589,7 @@ class home_page extends Component {
                                 {this.render_post_list_group(size, (middle+133))}
                             </div>
                             
-                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                            <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle+55), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color']}}>
                                 {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
                             </div>
                             
@@ -4985,7 +4985,9 @@ class home_page extends Component {
 
     when_direct_message_object_item_clicked(object, ignore_set_details_data){
         this.setState({selected_direct_message_item: object['convo_id']})
-        if(ignore_set_details_data == null) this.set_detail_data();
+        if(ignore_set_details_data == null){
+            this.set_detail_data();
+        }
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -7446,7 +7448,7 @@ class home_page extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

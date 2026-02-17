@@ -4740,6 +4740,11 @@ return data['data']
         }else{
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {stacked_items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -4750,7 +4755,7 @@ return data['data']
                                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                             action: () => this.delete_message_item(item)
                                             }}>
-                                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                                            <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item)}</div>
                                         </SwipeableListItem>
                                     </SwipeableList>
                                     <div style={{height:3}}/>
@@ -5304,6 +5309,11 @@ return data['data']
 
         return (
             <div style={{overflow: 'auto', maxHeight: middle}}>
+                <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items_to_deliver.map((item, index) => (
                         <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -5313,7 +5323,7 @@ return data['data']
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () => this.props.delete_bag_item(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_picked_variants_for_each(item)}</div>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_picked_variants_for_each(item)}</div>
                                 </SwipeableListItem>
                             </SwipeableList>
                             
@@ -5618,7 +5628,13 @@ return data['data']
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1955']/* 'Collected Signatures' */, 'details':this.props.app_state.loc['1956']/* 'Below are the collected signatures from your direct purchases' */, 'size':'l'})}
                     <div style={{height:10}}/>
+                    
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                         {items.map((item, index) => (
                             <li style={{'padding': '3px 0px 3px 0px'}}>
                                 <SwipeableList>
@@ -5627,7 +5643,7 @@ return data['data']
                                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                             action: () => this.delete_collected_signature(item)
                                             }}>
-                                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_fulfilment_item(item)}</div>
+                                            <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_fulfilment_item(item)}</div>
                                         </SwipeableListItem>
                                     </SwipeableList>
                             </li>
@@ -8546,7 +8562,7 @@ return data['data']
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

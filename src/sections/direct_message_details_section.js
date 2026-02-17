@@ -632,7 +632,7 @@ class DirectMessageDetailsSection extends Component {
     }
 
     componentDidUpdate(){
-        var has_scrolled = this.has_user_scrolled[this.props.selected_mail_item]
+        var has_scrolled = this.has_user_scrolled[this.props.selected_direct_message_item]
         if(has_scrolled == null){
             this.scroll_to_bottom()
         }
@@ -759,6 +759,9 @@ class DirectMessageDetailsSection extends Component {
                         style={{ height: middle }}
                         totalCount={items.length}
                         initialTopMostItemIndex={items.length-1}
+                        rangeChanged={(range) => {
+                            this.handleScroll('event', object)
+                        }}
                         itemContent={(index) => {
                             const item = reversed_items[index]
                             const ref_item = index == items.length - 1 ? this.messagesEnd : null;
@@ -887,16 +890,21 @@ class DirectMessageDetailsSection extends Component {
         }
         return(
             <div>
+                {/* <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style> */}
                 <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
-                            action: () => this.focus_message(item, object)
-                            }}
-                            >
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
+                    <SwipeableListItem
+                        swipeLeft={{
+                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
+                        action: () => this.focus_message(item, object)
+                        }}
+                        >
+                        <div style={{width:'100%', }}>{this.render_stack_message_item(item, object)}</div>
+                    </SwipeableListItem>
+                </SwipeableList>
             </div>
         )
     }
@@ -960,14 +968,16 @@ class DirectMessageDetailsSection extends Component {
         var text = this.format_message(item['message'], object)
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
+
+        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']] ? '0px 7px 7px 0px': '7px'
         return(
             <div>
-                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
-                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], object)} >{this.get_sender_title_text(item, object)}</p>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], {'e5':item['my_preferred_e5']})} >{this.get_sender_title_text(item, object)}</p>
                                 </div>
                                 <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
@@ -1692,7 +1702,7 @@ class DirectMessageDetailsSection extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

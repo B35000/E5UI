@@ -469,6 +469,10 @@ class SuccessfulSend extends Component {
             return `https://explorer.sophon.xyz/tx/${hash}`
         }else if(e5 == 'E1295'){
             return `https://pacific-explorer.manta.network/tx/${hash}`
+        }else if(e5 == 'E1305'){
+            return `https://filscan.io/message/${hash}`
+        }else if(e5 == 'E1315'){
+            return `https://monadvision.com/tx/${hash}`
         }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
@@ -819,7 +823,7 @@ class SuccessfulSend extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

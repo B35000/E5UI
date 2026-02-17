@@ -1186,19 +1186,31 @@ class SendReceiveEtherPage extends Component {
 
 
 
-    open_confirmation_dialog_box = () => {
+    open_confirmation_dialog_box = async () => {
+        var recipient_address = this.state.recipient_address.trim()
+        const recipient_account = await this.get_typed_alias_id(recipient_address)
+        const recipient_e5 = this.get_recipient_e5(recipient_address)
+
+        if(!isNaN(recipient_account) && recipient_account !='' && parseInt(recipient_account) > 1001){
+            //its an account, find its address
+            const address = await this.get_recipient_address(recipient_account, recipient_e5)
+            if(address != '0x0000000000000000000000000000000000000000'){
+                recipient_address = address;
+            }
+        }
+
         if(this.state.picked_wei_amount == 0){
             this.props.notify(this.props.app_state.loc['1406']/* 'Please set a valid amount.' */, 4500)
         }
         // else if(this.state.picked_wei_gas_price == 0){
         //     this.props.notify('please set a valid gas price', 500)
         // }
-        else if(!this.isValidAddress(this.state.recipient_address)){
+        else if(!this.isValidAddress(recipient_address)){
             this.props.notify(this.props.app_state.loc['1407']/* 'Please set a valid recipient.' */, 4500)
         }
         else{
             // this.setState({confirmation_dialog_box: true}) 
-            this.props.show_dialog_bottomsheet({'picked_wei_amount':this.state.picked_wei_amount, 'e5':this.state.ether['e5'], 'recipient_address':this.state.recipient_address}, 'confirm_send_ether_dialog')
+            this.props.show_dialog_bottomsheet({'picked_wei_amount':this.state.picked_wei_amount, 'e5':this.state.ether['e5'], 'recipient_address':recipient_address}, 'confirm_send_ether_dialog')
         }
        
     };

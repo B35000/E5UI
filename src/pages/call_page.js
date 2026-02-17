@@ -1207,6 +1207,11 @@ class CallPage extends Component {
         
         return(
             <div>
+                <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                 <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
@@ -1218,7 +1223,7 @@ class CallPage extends Component {
                             action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1505']/* 'job-request-messages' */)
                             }}
                             >
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
             </div>
@@ -1271,10 +1276,11 @@ class CallPage extends Component {
         var text = this.format_message(item['message'])
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
+        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? '0px 7px 7px 0px': '7px'
         return(
             <div>
-                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': '0px 0px 0px 0px'}}>
-                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': '0px 0px 0px 0px'}}>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
@@ -2085,7 +2091,7 @@ class CallPage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

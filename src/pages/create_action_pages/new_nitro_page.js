@@ -1028,7 +1028,7 @@ class NewNitroPage extends Component {
                                 content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
                                 action: () => this.delete_text_item(item)
                                 }}>
-                                <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
+                                <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
                                     {this.render_text_or_banner_if_any(item, index)}
                                 </li></div>
                             </SwipeableListItem>
@@ -1584,7 +1584,7 @@ class NewNitroPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.when_pdf_clicked(item, index)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <div style={{'margin':'3px 0px 3px 0px'}}>
                                             {this.render_uploaded_file(item, index)}
                                         </div>
@@ -1761,7 +1761,7 @@ class NewNitroPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.when_zip_clicked(item, index)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <div style={{'margin':'3px 0px 3px 0px'}}>
                                             {this.render_uploaded_zip_file(item, index)}
                                         </div>
@@ -2094,7 +2094,7 @@ class NewNitroPage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

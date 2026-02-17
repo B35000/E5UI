@@ -504,6 +504,7 @@ import sonic_logo from './assets/sonic.png'
 import kaia_logo from './assets/kaia.png'
 import manta_logo from './assets/manta.png'
 import filecoin_evm_logo from './assets/filecoin_evm.png'
+import monad_logo from  './assets/monad.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -1347,7 +1348,7 @@ class App extends Component {
     
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
-    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[]
+    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false,
   };
 
   get_thread_pool_size(){
@@ -1400,7 +1401,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -2204,6 +2205,12 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
       },
+      'E1315':{
+        web3:['https://rpc3.monad.xyz', 'https://rpc1.monad.xyz', 'https://monad-mainnet.drpc.org'],
+        token:'MON',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:monad_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+      },
     }
   }
 
@@ -2368,6 +2375,7 @@ class App extends Component {
       this.get_token('SOPH', 'Sophon', 'E1285'),
       this.get_token('MAETH', 'Manta Pacific', 'E1295'),
       this.get_token('FIL', 'Filecoin EVM', 'E1305'),
+      this.get_token('MON', 'Monad', 'E1315')
     ]
 
     return list
@@ -2485,7 +2493,7 @@ class App extends Component {
 
   get_time_diff(diff){
     if(diff < 60){//less than 1 min
-        var num = diff
+        var num = parseInt(diff)
         var s = num > 1 ? 's': '';
         return num+ this.getLocale()['29']
     }
@@ -3616,6 +3624,9 @@ class App extends Component {
     // }, (40 * 1000));
 
     // this.test_nft_storage()
+
+    const isSupported = typeof RTCRtpSender !== 'undefined' && 'createEncodedStreams' in RTCRtpSender.prototype;
+    this.setState({ isEncryptionSupported: isSupported });
   }
 
   start_everything = async () => {
@@ -3838,13 +3849,12 @@ class App extends Component {
         me.interval5 = setInterval(() => me.background_run(), obj2[me.state.auto_run]);
       }
       me.interval6 = setInterval(() => me.update_nitro_privacy_signature(), 200_000)
-      me.interval7 = setInterval(() => me.load_and_notify_flash2(), 720_000)
+      me.interval7 = setInterval(() => me.load_and_notify_flash2(), 300_000)
       me.interval8 = setInterval(() => me.load_and_notify_flash3(), 270_000)
     }, (1 * 100));
     
     this.schedule_audio_pip_visibility_because_of_inactivity()
   }
-
 
   lengthInUtf8Bytes(str) {
     // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -7073,7 +7083,7 @@ class App extends Component {
                     <Sheet.Content>
                         <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                           <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
-                          start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)}
+                          start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
                           />
                       </div>
                     </Sheet.Content>
@@ -7087,7 +7097,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
               <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
-              start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)}
+              start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
               />
           </div>
       </SwipeableBottomSheet>
@@ -21299,24 +21309,11 @@ class App extends Component {
 
 
   open_direct_messages_convo(convo_id){
-    var object = this.get_direct_message_item_in_array(this.get_my_direct_message_objects(), convo_id);
+    const object = this.state.direct_messages[convo_id]
     if(object != null){
       this.homepage.current?.when_direct_message_object_item_clicked(object, 'ignore')
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.props.app_state.loc['1264bo']/* 'direct-message 💬' */})
     }
-  }
-
-  get_my_direct_message_objects(){
-    const messages = []
-    Object.keys(this.state.direct_messages).forEach(e5_account => {
-      messages.push(this.state.direct_messages[e5_account])
-    });
-
-    return messages;
-  }
-
-  get_direct_message_item_in_array(object_array, id){
-    var object = object_array.find(x => x['convo_id'] === id);
-    return object
   }
 
 
@@ -22896,7 +22893,6 @@ class App extends Component {
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
-      this.set_up_connection_listeners()
       if(this.state.accounts[this.state.selected_e5] != null){
         var me = this
         setTimeout(function() {
@@ -25364,7 +25360,6 @@ class App extends Component {
 
     // if(set_wallet == true){
     //   await this.load_and_notify_flash()
-    //   // await this.load_and_notify_flash2()
     // }
   }
 
@@ -35832,13 +35827,9 @@ class App extends Component {
   }
 
   load_and_notify_flash2 = async () => {
-    // if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account() || this.load_and_notify_flash2_running == true) return;
-  
-    // this.load_and_notify_flash2_running = true;
-    
-
-    // await this.wait(3000)
-    // this.load_and_notify_flash2_running = false;
+    if(this.state.current_call_id == null && this.state.has_wallet_been_set == true){
+      // this.set_up_socket_connection_and_initialize_listeners(0)
+    }
   }
 
   load_and_notify_flash3 = async () => {
@@ -46044,47 +46035,6 @@ class App extends Component {
 
 
 
-  set_up_connection_listeners(){
-    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
-    if(this.state.beacon_chain_url != ''){
-      beacon_node = this.state.beacon_chain_url;
-    }
-    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
-      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
-    }
-
-    if (this.socket2) {
-      this.socket2.disconnect();
-    }
-
-    this.socket2 = io(beacon_node, {
-      transports: ['websocket'],
-      reconnection: true, 
-      reconnectionAttempts: 10000000, 
-      reconnectionDelay: 10_000
-    });
-
-    this.socket2.on('connect', () => {
-      if(this.is_device_online != null){
-        this.setState({is_device_online: true})
-        // this.prompt_top_notification(this.getLocale()['2738bh']/* Youre back online.' */, 3000)
-        this.resume_call()
-      }
-      this.is_device_online = true;
-      
-    });
-
-    this.socket2.on('disconnect', () => {
-      // this.prompt_top_notification(this.getLocale()['2738bm']/* Youve gone offline.' */, 3000)
-      this.is_device_online = false;
-      this.setState({is_device_online: false})
-    });
-
-    const isSupported = typeof RTCRtpSender !== 'undefined' && 'createEncodedStreams' in RTCRtpSender.prototype;
-    
-    this.setState({ isEncryptionSupported: isSupported });
-  }
-
   async set_up_socket_connection_and_initialize_listeners(attempts){
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != ''){
@@ -46094,37 +46044,63 @@ class App extends Component {
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
 
-    this.disconnect_socket_if_connected()
-    await this.wait(200)
-    this.socket = io(beacon_node, {
+    this.disconnect_socket_if_connected()    
+    await this.wait(1000)
+
+    const socket = io(beacon_node, {
       transports: ['websocket'],
       reconnection: true, 
       reconnectionAttempts: 10000000, 
-      reconnectionDelay: 30_000
+      reconnectionDelay: 1_000,
+      reconnectionDelayMax: 5_000,
+      randomizationFactor: 0.5,
+      pingInterval: 20_000,
+      pingTimeout: 20_000,
     });
 
     const me = this;
-    this.socket.on('connect', () => {
-      me.setState({ my_socket_id: me.socket.id })
-      me.register_account_in_socket(beacon_node)
+    socket.on('connect', () => {
+      me.setState({ my_socket_id: socket.id })
+      me.register_account_in_socket(beacon_node, socket)
     });
-    this.socket.on('register_status', ({success, time, reason, userId}) => {
+
+    socket.on('register_status', ({success, time, reason, userId}) => {
       if(success == true){
-        console.log('apppage','socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'socket registration successful!')
+        console.log('apppage','socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'socket registration successful!', userId)
         me.setState({ socket_online: true, socket_userId: userId })
-        me.register_and_fetch_all_socket_data()
+        me.register_user_in_rooms(socket);
+
+        if(this.is_device_online != null){
+          this.setState({is_device_online: true})
+          this.resume_call()
+        }
+        this.is_device_online = true;
       }else{
         console.log('apppage', 'socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'failed to register in socket', reason)
-        if(attempts < 2){
-          me.set_up_socket_connection_and_initialize_listeners(attempts+1)
-        }
+        me.register_account_in_socket(beacon_node, socket)
       }
     });
+
+    socket.on("disconnect", (reason) => {
+      console.log('apppage', 'socket_connection', 'socketio', "Disconnected:", reason);
+      this.setState({socket_connetcted: false, is_device_online: false})
+      this.is_device_online = false;
+    });
+
+    socket.on("reconnect", () => {
+      console.log('apppage', 'socket_connection', 'socketio', "RECONNECTED");
+      me.setState({ my_socket_id: socket.id })
+      me.register_account_in_socket(beacon_node, socket)
+    });
+
+    this.register_room_listeners(socket)
+
+    this.setState({socket: socket})
   }
 
   disconnect_socket_if_connected(){
-    if (this.socket) {
-      this.socket.disconnect();
+    if (this.state.socket) {
+      this.state.socket.disconnect();
     }
 
     if (this.pitchProcessor) {
@@ -46143,10 +46119,14 @@ class App extends Component {
     if (this.recordingTimer) {
       clearInterval(this.recordingTimer);
     }
+
+    if(this.indexer_ping_interval != null) clearInterval(this.indexer_ping_interval);
   }
 
-  async register_account_in_socket(beacon_node){
+  async register_account_in_socket(beacon_node, socket){
     const e5 = this.state.selected_e5
+    await this.update_nitro_privacy_signature(false)
+    await this.wait(300)
     const app_signature = await this.fetch_nitro_privacy_signature(beacon_node)
     const signature_object = await this.get_signature_for_registering_in_socket(e5)
     const register_object = {
@@ -46156,7 +46136,7 @@ class App extends Component {
       privacy_signature: app_signature, 
       e5: e5,
     }
-    this.socket.emit("register", register_object);
+    socket.emit("register", register_object);
   }
 
   async get_signature_for_registering_in_socket(e5){
@@ -46174,18 +46154,29 @@ class App extends Component {
     }
   }
 
-  async register_and_fetch_all_socket_data(){
+  async register_user_in_rooms(socket){
     //register myself in jobs group
-    this.socket.emit("join_chatroom", 'jobs');
+    socket.emit("join_chatroom", 'jobs');
     await this.wait(1800)
-    this.socket.emit("join_chatroom", 'posts');
+    socket.emit("join_chatroom", 'posts');
     await this.wait(1800)
-    this.socket.emit('join_chatroom', 'contracts');
+    socket.emit('join_chatroom', 'contracts');
     await this.wait(1800)
-    this.socket.emit('join_chatroom', 'ether_coin_receipt')
-    //listen for new jobs
+    socket.emit('join_chatroom', 'ether_coin_receipt')
+    await this.wait(1800)
+
+    for(var i=0; i<this.state.active_rooms.length; i++){
+      const room = this.state.active_rooms[i];
+      socket.emit('join_chatroom', room)
+      await this.wait(1800)
+    }
+
+    this.setState({socket_connetcted: true})
+  }
+
+  async register_room_listeners(socket){
     const me = this;
-    this.socket.on('chatroom_message', ({userId, message, roomId, target, object_hash}) => {
+    socket.on('chatroom_message', ({userId, message, roomId, target, object_hash}) => {
       if(roomId == 'jobs' && message.type == 'object'){
         me.process_new_job_received(message, object_hash)
       }
@@ -46221,7 +46212,7 @@ class App extends Component {
         }
       }
     });
-    this.socket.on('send_message', ({from, message, target, object_hash}) => {
+    socket.on('send_message', ({from, message, target, object_hash}) => {
       if(message['type'] == 'mail'){
         me.process_new_mail_received(message, object_hash, from, true)
       }
@@ -46280,16 +46271,62 @@ class App extends Component {
         me.process_new_direct_message_received(message, object_hash, from, true)
       }
     });
-    this.socket.on('user_joined_chatroom', ({userId, roomId}) => {
+    socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
         this.when_account_comes_online_or_offline(userId, true)
       }
     });
-    this.socket.on('user_left', ({userId, roomId}) => {
+    socket.on('user_left', ({userId, roomId}) => {
       if(roomId == 'jobs'){
         this.when_account_comes_online_or_offline(userId, false)
       }
     });
+  }
+
+  async reconnect_socket_if_unconnected(){
+    const socket = this.state.socket;
+    if (!socket) {
+      await this.set_up_socket_connection_and_initialize_listeners(0);
+      return;
+    }
+
+    if (!socket.connected) {
+      socket.connect();
+      await new Promise(resolve =>
+        socket.once("connect", resolve)
+      );
+    }
+
+    // Wait for your app-level initialization
+    if (!this.state.socket_connetcted) {
+      await new Promise(resolve => {
+        const checkReady = () => {
+          if (this.state.socket_connetcted) {
+            resolve();
+          } else {
+            setTimeout(checkReady, 100);
+          }
+        };
+        checkReady();
+      });
+    }
+
+    if(this.last_emit_time != null){
+      await new Promise(resolve => {
+        const checkEmitReady = () => {
+          if (Date.now() - this.last_emit_time > 900) {
+            resolve();
+          } else {
+            setTimeout(checkEmitReady, 100);
+          }
+        };
+        checkEmitReady();
+      });
+    }
+
+    this.last_emit_time = Date.now()
+
+    console.log('apppage', 'socket_connection', 'socketio', "socket ready:", socket.connected, this.state.socket_connetcted );
   }
 
 
@@ -46364,7 +46401,8 @@ class App extends Component {
 
     const broadcasat_object = {roomId: roomId, message: job_message_object.message, target: job_message_object.target, object_hash: job_message_object.object_hash}
 
-    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
 
     await this.wait(3000)
 
@@ -46397,8 +46435,8 @@ class App extends Component {
     const send_message_object = {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target }
 
     console.log('socket_stuff', send_message_object)
-
-    this.socket.emit("send_message", send_message_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", send_message_object);
   }
 
   async emit_new_job_request_message(state_object){
@@ -46412,7 +46450,8 @@ class App extends Component {
     const to = await this.get_recipient_address(state_object['target_recipient'], state_object['sender_e5'])
     const target = 'job_request_mail|'+state_object['id']+to
     const secondary_target = 'job_request_mail|'+state_object['id']+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: job_request_message_object.message, target: target, object_hash: job_request_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: job_request_message_object.message, target: target, object_hash: job_request_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_new_channel_message(state_object){
@@ -46425,7 +46464,8 @@ class App extends Component {
 
     const channel_e5_id = state_object['id']+state_object['e5']
 
-    this.socket.emit("chatroom_message", {roomId: channel_e5_id, message: channel_message_object.message, target: channel_e5_id, object_hash: channel_message_object.object_hash});
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: channel_e5_id, message: channel_message_object.message, target: channel_e5_id, object_hash: channel_message_object.object_hash});
 
     await this.wait(3000)
     this.process_new_channel_message(channel_message_object.message, channel_message_object.object_hash)
@@ -46441,7 +46481,8 @@ class App extends Component {
 
     const object_e5_id = state_object['id']+state_object['e5']
 
-    this.socket.emit("chatroom_message", {roomId: object_e5_id, message: comment_message_object.message, target: object_e5_id, object_hash: comment_message_object.object_hash});
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: object_e5_id, message: comment_message_object.message, target: object_e5_id, object_hash: comment_message_object.object_hash});
 
     await this.wait(3000)
     this.process_new_comment_message(comment_message_object.message, comment_message_object.object_hash)
@@ -46459,7 +46500,8 @@ class App extends Component {
     const to = await this.get_recipient_address(state_object.recipient, state_object.e5)
     const target = 'bill|'+to
     const secondary_target = 'bill|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: bill_message_object.message, target: target, object_hash: bill_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: bill_message_object.message, target: target, object_hash: bill_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_new_job_application(state_object, show_job_after_broadcast){
@@ -46474,12 +46516,14 @@ class App extends Component {
     const to = await this.get_recipient_address(state_object.job_item['author'], state_object.job_item['e5'])
     const target = 'job_application|'+state_object.job_item['e5_id']+'|'+to
     const secondary_target = 'job_application|'+state_object.job_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
 
     await this.wait(10000)
     const target2 = 'job_application|'+to
     const secondary_target2 = 'job_application|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_bag_application(state_object, show_job_after_broadcast){
@@ -46495,12 +46539,14 @@ class App extends Component {
     const target = 'bag_application|'+state_object.bag_item['e5_id']+'|'+to
     const secondary_target = 'bag_application|'+state_object.bag_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
     const emit_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
-    this.socket.emit("send_message", emit_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", emit_object);
 
     await this.wait(10000)
     const target2 = 'bag_application|'+to
     const secondary_target2 = 'bag_application|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_contractor_job_request_application(state_object, show_job_after_broadcast){
@@ -46517,13 +46563,15 @@ class App extends Component {
     const target = 'contractor_job_request|'+state_object.contractor_item['e5_id']+'|'+to
     const secondary_target = 'contractor_job_request|'+state_object.contractor_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
     const emit_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
-    this.socket.emit("send_message", emit_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", emit_object);
 
 
     await this.wait(10000)
     const target2 = 'contractor_job_request|'+to
     const secondary_target2 = 'contractor_job_request|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_contractor_accept_job_request(state_object, show_job_after_broadcast){
@@ -46538,7 +46586,8 @@ class App extends Component {
 
     const target = 'contractor_accept_job_request|'+to
     const secondary_target = 'contractor_accept_job_request|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
 
   }
 
@@ -46556,12 +46605,14 @@ class App extends Component {
     const target = 'storefront_order|'+state_object.storefront_item['e5_id']+'|'+to
     const secondary_target = 'storefront_order|'+state_object.storefront_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
     const emit_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
-    this.socket.emit("send_message", emit_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", emit_object);
 
 
     const target2 = 'storefront_order|'+to
     const secondary_target2 = 'storefront_order|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_signature_request(state_object, target_recipient_address, order_storefront){
@@ -46575,11 +46626,13 @@ class App extends Component {
     const to = target_recipient_address
     const target = 'signature_request|'+order_storefront['e5_id']+'|'+to
     const secondary_target = 'signature_request|'+order_storefront['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
 
     const target2 = 'signature_request|'+to
     const secondary_target2 = 'signature_request|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target2, object_hash: mail_message_object.object_hash, secondary_target: secondary_target2 });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target2, object_hash: mail_message_object.object_hash, secondary_target: secondary_target2 });
   }
 
   async emit_new_signature_response(state_object, signature_request, signature_data, order_storefront){
@@ -46593,7 +46646,8 @@ class App extends Component {
     const to = signature_request['sender_address']
     const target = 'signature_response|'+order_storefront['e5_id']+'|'+to
     const secondary_target = 'signature_response|'+order_storefront['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_new_chat_typing_notification(convo_id, recipient_id, recipient_e5, keyboard_active){
@@ -46615,7 +46669,8 @@ class App extends Component {
     const target = 'typing|'+convo_id+'|'+to
     const secondary_target = 'typing|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
     
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_new_read_receipts_notification(convo_id, recipient_id, recipient_e5){
@@ -46637,7 +46692,8 @@ class App extends Component {
     const target = 'read_receipts|'+convo_id+'|'+to
     const secondary_target = 'read_receipts|'+convo_id+'|'+this.state.accounts[this.state.selected_e5].address
     
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_new_open_signature_response(signature_request, signature_data){
@@ -46670,7 +46726,8 @@ class App extends Component {
     // const to = signature_request['sender_address']
     // const target = 'open_signature_response|'+to
     // const secondary_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
-    // this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    // this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
 
   }
 
@@ -46685,7 +46742,8 @@ class App extends Component {
     const target = 'contractor_availability|'+object['e5_id']
     const broadcasat_object = {roomId: 'jobs', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
 
-    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
     await this.wait(3000)
 
     await this.process_new_contractor_availability_update(availability_object.message, availability_object.object_hash)
@@ -46702,7 +46760,8 @@ class App extends Component {
     const target = 'storefront_order_status|'+object['e5_id']+'|'+item['purchase_identifier']
     const broadcasat_object = {roomId: 'posts', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
 
-    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
     await this.wait(3000)
 
     await this.process_new_storefront_order_status_update(availability_object.message, availability_object.object_hash)
@@ -46728,7 +46787,8 @@ class App extends Component {
       
       const message_object = {to: to, message: invite_object.message, target: target, object_hash: invite_object.object_hash, secondary_target: secondary_target }
       console.log('socket_stuff', message_object)
-      this.socket.emit("send_message", message_object);
+      await this.reconnect_socket_if_unconnected()
+      this.state.socket.emit("send_message", message_object);
 
       await this.wait(1900)
     }
@@ -46736,7 +46796,8 @@ class App extends Component {
     const hash_message = await this.get_password_hash_message(call_id, call_password)
     const target = 'call_metadata|'+call_id
     const broadcasat_object = {roomId: call_id, message: hash_message.message, target: target, object_hash: hash_message.object_hash}
-    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
     await this.wait(1900)
 
     this.prompt_top_notification(this.getLocale()['3055ii']/* 'Invites sent.' */, 1900)
@@ -46752,7 +46813,8 @@ class App extends Component {
 
     const room_id = this.state.current_call_id
 
-    this.socket.emit("chatroom_message", {roomId: room_id, message: call_message_object.message, target: room_id, object_hash: call_message_object.object_hash});
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: call_message_object.message, target: room_id, object_hash: call_message_object.object_hash});
 
     await this.wait(3000)
     this.process_new_call_message(call_message_object.message, call_message_object.object_hash)
@@ -46768,7 +46830,8 @@ class App extends Component {
 
     const room_id = 'contracts';
     const target = 'pre_purchase|'+contract_object['e5_id'];
-    this.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: target, object_hash: message_object.object_hash});
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: target, object_hash: message_object.object_hash});
 
     await this.wait(3000)
     this.process_prepurchase_message(message_object.message, message_object.object_hash)
@@ -46785,7 +46848,8 @@ class App extends Component {
     const target = 'blocked_account'
     const broadcasat_object = {roomId: 'jobs', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
 
-    this.socket.emit("chatroom_message", broadcasat_object);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
     await this.wait(3000)
 
     await this.process_new_blocked_account_message_update(availability_object.message, availability_object.object_hash)
@@ -46802,7 +46866,8 @@ class App extends Component {
     const to = await this.get_recipient_address(state_object.request_ether_coin_recipient, state_object.recipient_e5)
     const target = 'ether_coin_request|'+to
     const secondary_target = 'ether_coin_request|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_pre_purchase_request_transaction(amount, contract_object, note, request_recipient, recipient_e5){
@@ -46816,7 +46881,8 @@ class App extends Component {
     const to = await this.get_recipient_address(request_recipient, recipient_e5)
     const target = 'pre_purchase_request|'+to
     const secondary_target = 'pre_purchase_request|'+this.state.accounts[this.state.selected_e5].address
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   async emit_new_ether_or_coin_receipt(state_object){
@@ -46829,7 +46895,8 @@ class App extends Component {
     this.setState({broadcast_stack: clone});
 
     const room_id = 'ether_coin_receipt'
-    this.socket.emit("chatroom_message", {roomId: room_id, message: mail_message_object.message, target: room_id, object_hash: mail_message_object.object_hash});
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: mail_message_object.message, target: room_id, object_hash: mail_message_object.object_hash});
     
     await this.wait(3000)
     this.process_ether_coin_send_transaction_message(mail_message_object.message, mail_message_object.object_hash, '', true)
@@ -46848,7 +46915,8 @@ class App extends Component {
     const target = 'direct_message|'+to
     const secondary_target = 'direct_message|'+this.state.accounts[this.state.selected_e5].address
 
-    this.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
   }
 
   
@@ -46860,19 +46928,20 @@ class App extends Component {
 
 
 
-  enter_chatroom_if_socket_enabled(object_e5_id){
-    if(this.socket){
+  async enter_chatroom_if_socket_enabled(object_e5_id){
+    if(this.state.socket){
       const clone = this.state.active_rooms.slice()
       if(!clone.includes(object_e5_id)){
         clone.push(object_e5_id)
         this.setState({active_rooms: clone})
-        this.socket.emit("join_chatroom", object_e5_id);
+        await this.reconnect_socket_if_unconnected()
+        this.state.socket.emit("join_chatroom", object_e5_id);
       }
     }
   }
 
   enter_chatroom_if_socket_enabled_without_emitting(object_e5_id){
-    if(this.socket){
+    if(this.state.socket){
       const clone = this.state.active_rooms.slice()
       if(!clone.includes(object_e5_id)){
         clone.push(object_e5_id)
@@ -46881,14 +46950,15 @@ class App extends Component {
     }
   }
 
-  exit_chatroom_if_socket_enabled(object_e5_id){
-    if(this.socket){
+  async exit_chatroom_if_socket_enabled(object_e5_id){
+    if(this.state.socket){
       const clone = this.state.active_rooms.slice()
       const index = clone.indexOf(object_e5_id)
       if(index != -1){
         clone.splice(index, 1)
         this.setState({active_rooms: clone})
-        this.socket.emit("leave_room", object_e5_id);
+        await this.reconnect_socket_if_unconnected()
+        this.state.socket.emit("leave_room", object_e5_id);
       }
     }
   }
@@ -46961,6 +47031,7 @@ class App extends Component {
       type: 'object',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47017,6 +47088,7 @@ class App extends Component {
       type: 'mail',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47089,6 +47161,7 @@ class App extends Component {
       type: 'mail-message',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id: state_object.convo_id,
       recipient: recipient,
       tags: tags,
@@ -47133,6 +47206,7 @@ class App extends Component {
       type: 'job-request-message',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id: message_obj['id']/* job_request_id */,
       recipient: recipient,
       tags: tags,
@@ -47197,6 +47271,7 @@ class App extends Component {
       type: 'channel-message',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id: message_obj['id']/* job_request_id */,
       recipient: recipient,
       tags: tags,
@@ -47266,6 +47341,7 @@ class App extends Component {
       type: 'comment_message',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id: message_obj['id'],
       recipient: recipient,
       tags: tags,
@@ -47307,6 +47383,7 @@ class App extends Component {
       type: 'bill',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47383,6 +47460,7 @@ class App extends Component {
       type: 'job_application',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47454,6 +47532,7 @@ class App extends Component {
       type: 'bag_application',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47509,6 +47588,7 @@ class App extends Component {
       type: 'contractor_job_request',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47567,6 +47647,7 @@ class App extends Component {
       type: 'contractor_accept_job_request',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47641,6 +47722,7 @@ class App extends Component {
       type: 'storefront_order',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47753,6 +47835,7 @@ class App extends Component {
       type: 'signature_request',
       message_identifier: id,
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47804,6 +47887,7 @@ class App extends Component {
       type: 'signature_response',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47852,6 +47936,7 @@ class App extends Component {
       type: 'typing',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47896,6 +47981,7 @@ class App extends Component {
       type: 'read_receipts',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -47949,6 +48035,7 @@ class App extends Component {
     //   type: 'open_signature_response',
     //   message_identifier: this.make_number_id(12),
     //   author: author,
+    //   author_address: this.state.accounts[e5].address,
     //   id:id,
     //   recipient: recipient,
     //   tags: tags,
@@ -47985,6 +48072,7 @@ class App extends Component {
       type: 'contractor_availability',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient:recipient,
       tags: tags,
@@ -48027,6 +48115,7 @@ class App extends Component {
       type: 'storefront_order_status',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -48084,6 +48173,7 @@ class App extends Component {
       type: 'call_invite',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -48180,6 +48270,7 @@ class App extends Component {
       type: 'call-message',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id: message_obj['id'],
       recipient: recipient,
       tags: tags,
@@ -48238,6 +48329,7 @@ class App extends Component {
       type: 'pre_purchase_transaction',
       message_identifier: id,
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -48286,6 +48378,7 @@ class App extends Component {
       type: 'blocked_account',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient:recipient,
       tags: tags,
@@ -48332,6 +48425,7 @@ class App extends Component {
       type: 'ether_coin_request',
       message_identifier: id,
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -48381,6 +48475,7 @@ class App extends Component {
       type: 'pre_purchase_request',
       message_identifier: id,
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -48428,6 +48523,7 @@ class App extends Component {
       type: 'ether_coin_receipt',
       message_identifier: id,
       author: author,
+      author_address: this.state.accounts[e5].address,
       id:id,
       recipient: recipient,
       tags: tags,
@@ -48457,7 +48553,7 @@ class App extends Component {
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
-    const recipient = ''
+    const recipient = await this.get_recipient_address(state_object['recipient'], state_object['e5'])
     const channeling = ''
     const lan = ''
     const state = ''
@@ -48472,6 +48568,7 @@ class App extends Component {
       type: 'direct_message',
       message_identifier: this.make_number_id(12),
       author: author,
+      author_address: this.state.accounts[e5].address,
       id: state_object.convo_id,
       recipient: recipient,
       tags: tags,
@@ -49850,9 +49947,10 @@ class App extends Component {
     }
   }
 
-  async process_new_call_invite_message(message, object_hash, from, add_to_notifications){
+  async process_new_call_invite_message(message, object_hash, from_arg, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
     const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
@@ -50066,8 +50164,9 @@ class App extends Component {
     this.setState({blocked_accounts_data: blocked_accounts_data_clone})
   }
 
-  async process_ether_coin_request_message(message, object_hash, from, add_to_notifications){
+  async process_ether_coin_request_message(message, object_hash, from_arg, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
@@ -50133,9 +50232,10 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_pre_purchase_request_message(message, object_hash, from, add_to_notifications){
+  async process_pre_purchase_request_message(message, object_hash, from_arg, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
       const index = clone.indexOf(message['message_identifier'])
@@ -50198,8 +50298,9 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_ether_coin_send_transaction_message(message, object_hash, from, add_to_notifications){
+  async process_ether_coin_send_transaction_message(message, object_hash, from_arg, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash) return;
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
@@ -50288,8 +50389,9 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_direct_message_received(message, object_hash, from, add_to_notifications){
+  async process_new_direct_message_received(message, object_hash, from_arg, add_to_notifications){
     if(this.hash_message_for_id(message) != object_hash || this.state.loaded_messages.includes(object_hash)) return;
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
@@ -50311,20 +50413,21 @@ class App extends Component {
       const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
 
       if(ipfs_obj != null && ipfs != ipfs_obj){
+        const recipient_address = message['recipient'] == '' ? await this.get_recipient_address(ipfs_obj['recipient'], ipfs_obj['recipients_e5']) : message['recipient']
         const e5 = message.e5;
-        const id = am_I_the_author == true ? ipfs_obj['convo_id'] : from;
+        const id = am_I_the_author == true ? recipient_address : from;
         const sender_acc = message.author
         const convo_id = id;
         const cid = object_hash;
 
+        console.log('process_new_direct_message_received', convo_id, ipfs_obj)
         const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
       
         ipfs_obj['time'] = event.returnValues.p6
-        const recipient = ipfs_obj['convo_id']
         event.returnValues.p1 = ipfs_obj['recipient']
         const recipient_e5 = ipfs_obj['recipients_e5'];
         const type  = am_I_the_author == true ? 'sent': 'received'
-        const convo_with = am_I_the_author == true ? recipient : event.returnValues.p2
+        const convo_with = am_I_the_author == true ? event.returnValues.p1 : event.returnValues.p2
 
         const all_mail_clone = structuredClone(this.state.direct_messages)
         if(all_mail_clone[convo_id] == null){
@@ -50339,7 +50442,7 @@ class App extends Component {
           }
         }
         
-        const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':type, 'time':parseInt(event.returnValues.p6), 'convo_with':convo_with, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
+        const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':type, 'time':parseInt(event.returnValues.p6), 'convo_with':convo_with, 'sender':event.returnValues.p2, 'recipient':event.returnValues.p1, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid}
         
         const includes = all_mail_clone[convo_id]['messages'].find(e => e['id'] === obj['id'])
         if(includes == null){
@@ -50741,44 +50844,44 @@ class App extends Component {
             }, (1 * 500));
           }
           else if(target_entry == 'bill|'+this.state.accounts[this.state.selected_e5].address){
-            await this.process_new_bill_message(object_data, object_hash, null, false)
+            await this.process_new_bill_message(object_data, object_hash, object_data['author_address'], false)
           }
           else if(target_entry == 'mail|'+this.state.accounts[this.state.selected_e5].address){
-            await this.process_new_mail_received(object_data, object_hash, null, false)
+            await this.process_new_mail_received(object_data, object_hash, object_data['author_address'], false)
           }
           else if(target_entry.startsWith('job_application|')){
             console.log('socket_stuff','loaded a job application item', object_data)
-            await this.process_new_job_application_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_job_application_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry.startsWith('bag_application|')){
-            await this.process_new_bag_application_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_bag_application_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry.startsWith('contractor_job_request|')){
-            await this.process_new_contractor_job_request_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_contractor_job_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
-            await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry.startsWith('storefront_order|')){
-            await this.process_new_storefront_order_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_storefront_order_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry.startsWith('signature_request|')){
-            await this.process_new_signature_request_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_signature_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry.startsWith('signature_response|')){
-            await this.process_new_signature_response_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_signature_response_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry.startsWith('typing|')){
-            await this.process_new_typing_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_typing_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(target_entry.startsWith('read_receipts|')){
-            await this.process_new_read_receipts_message(object_data, object_hash, null, false, application_responses)
+            await this.process_new_read_receipts_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           else if(object_data['type'] == 'open_signature_request'){
-            await this.process_new_open_signature_request_message(object_data, object_hash, null, true)
+            await this.process_new_open_signature_request_message(object_data, object_hash, object_data['author_address'], true)
           }
           else if(object_data['type'] == 'open_signature_response'){
-            await this.process_new_open_signature_response_message(object_data, object_hash, null, true)
+            await this.process_new_open_signature_response_message(object_data, object_hash, object_data['author_address'], true)
           }
           else if(object_data['type'] == 'contractor_availability'){
             await this.process_new_contractor_availability_update(object_data, object_hash)
@@ -50787,7 +50890,7 @@ class App extends Component {
             await this.process_new_storefront_order_status_update(object_data, object_hash)
           }
           else if(object_data['type'] == 'call_invite'){
-            await this.process_new_call_invite_message(object_data, object_hash, null, true)
+            await this.process_new_call_invite_message(object_data, object_hash, object_data['author_address'], true)
           }
           else if(object_data['type'] == 'call_metadata'){
             await this.process_new_call_metadata_for_entering_call(object_data, object_hash)
@@ -50802,16 +50905,16 @@ class App extends Component {
             await this.process_new_blocked_account_message_update(object_data, object_hash)
           }
           else if(object_data['type'] == 'ether_coin_request'){
-            await this.process_ether_coin_request_message(object_data, object_hash, '', true)
+            await this.process_ether_coin_request_message(object_data, object_hash, object_data['author_address'], true)
           }
           else if(object_data['type'] == 'pre_purchase_request'){
-            await this.process_pre_purchase_request_message(object_data, object_hash, '', true)
+            await this.process_pre_purchase_request_message(object_data, object_hash, object_data['author_address'], true)
           }
           else if(object_data['type'] == 'ether_coin_receipt'){
-            await this.process_ether_coin_send_transaction_message(object_data, object_hash, '', true)
+            await this.process_ether_coin_send_transaction_message(object_data, object_hash, object_data['author_address'], true)
           }
           else if(object_data['type'] == 'direct_message'){
-            await this.process_new_direct_message_received(object_data, object_hash, '', true)
+            await this.process_new_direct_message_received(object_data, object_hash, object_data['author_address'], true)
           }
           await this.wait(300)
         }
@@ -50987,7 +51090,8 @@ class App extends Component {
     this.setState({current_call_id: call_id, current_call_password: call_password, call_join_time: call_start_time})
     
     const join_room_obj = { roomId: call_id }
-    this.socket.emit("join_room", join_room_obj);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("join_room", join_room_obj);
 
     this.open_dialog_bottomsheet()
     if(this.state.view_notification_log_bottomsheet == true){
@@ -51016,7 +51120,8 @@ class App extends Component {
       this.setState({peers: []})
       await this.wait(200)
       const join_room_obj = { roomId: this.state.current_call_id }
-      this.socket.emit("join_room", join_room_obj);
+      await this.reconnect_socket_if_unconnected()
+      this.state.socket.emit("join_room", join_room_obj);
     }
   }
 
@@ -51033,7 +51138,7 @@ class App extends Component {
     this.remoteStreams = new Map();
     delete this.recordedBlob
 
-    this.socket.on("signal", ({ from, data }) => {
+    this.state.socket.on("signal", ({ from, data }) => {
       console.log('socket_stuff','Received signal from:', from, 'Signal type:', data.type);
       const peerObj = this.state.peers.find((p) => p.peerId === from);
       if (peerObj) {
@@ -51043,7 +51148,7 @@ class App extends Component {
       }
     });
 
-    this.socket.on("user_joined", async ({userId, roomId}) => {
+    this.state.socket.on("user_joined", async ({userId, roomId}) => {
       console.log(`User ${userId} joined - creating initiator peer`);
       if (!this.state.processedStream) {
         console.warn('socket_stuff','user joined but we have no processed stream yet, delaying peer creation');
@@ -51065,11 +51170,11 @@ class App extends Component {
       await this.set_caller_details_in_state(userId, this.state.current_call_id, true)
     });
 
-    this.socket.on("user_in_room", ({userId, roomId}) => {
+    this.state.socket.on("user_in_room", ({userId, roomId}) => {
       console.log('socket_stuff',`User ${userId} already in room - waiting for their offer`);
     });
 
-    this.socket.on("offer_received", async ({ from, signal }) => {
+    this.state.socket.on("offer_received", async ({ from, signal }) => {
       console.log('socket_stuff',`Received offer from ${from} - creating receiver peer`);
 
       if (!this.state.processedStream) {
@@ -51095,7 +51200,7 @@ class App extends Component {
       await this.set_caller_details_in_state(from, this.state.current_call_id, false)
     });
 
-    this.socket.on("user_left", async ({userId, roomId}) => {
+    this.state.socket.on("user_left", async ({userId, roomId}) => {
       console.log('socket_stuff',`User ${userId} left`);
       const clone = this.state.peers.filter((p) => p.peerId !== userId);
       this.setState({ peers: clone });
@@ -51217,7 +51322,7 @@ class App extends Component {
 
     peer.on("signal", (signal) => {
       console.log('socket_stuff',`Sending ${signal.type} signal to ${userToSignal}`);
-      this.socket.emit("signal", {
+      this.state.socket.emit("signal", {
         to: userToSignal,
         data: signal,
         isInitiator: isInitiator,
@@ -51261,11 +51366,11 @@ class App extends Component {
     this.open_view_call_interface_bottomsheet()
     await this.wait(1000)
     this.stopRecording();
-    this.socket.on("signal", ({ from, data }) => {});
-    this.socket.on("user_joined", async ({userId, roomId}) => {});
-    this.socket.on("user_in_room", ({userId, roomId}) => {});
-    this.socket.on("offer_received", ({ from, signal }) => {});
-    this.socket.on("user_left", ({userId, roomId}) => {});
+    this.state.socket.on("signal", ({ from, data }) => {});
+    this.state.socket.on("user_joined", async ({userId, roomId}) => {});
+    this.state.socket.on("user_in_room", ({userId, roomId}) => {});
+    this.state.socket.on("offer_received", ({ from, signal }) => {});
+    this.state.socket.on("user_left", ({userId, roomId}) => {});
 
     if (this.pitchProcessor) {
       this.pitchProcessor.cleanup();
@@ -51286,7 +51391,8 @@ class App extends Component {
     this.encryptor = null;
 
     const current_room = this.state.current_call_id+''
-    this.socket.emit("leave_room", current_room);
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("leave_room", current_room);
 
     if(this.count_up_interval){
       clearInterval(this.count_up_interval)
@@ -51310,11 +51416,11 @@ class App extends Component {
   }
 
   leave_call2(){
-    this.socket.on("signal", ({ from, data }) => {});
-    this.socket.on("user_joined", async ({userId, roomId}) => {});
-    this.socket.on("user_in_room", ({userId, roomId}) => {});
-    this.socket.on("offer_received", ({ from, signal }) => {});
-    this.socket.on("user_left", ({userId, roomId}) => {});
+    this.state.socket.on("signal", ({ from, data }) => {});
+    this.state.socket.on("user_joined", async ({userId, roomId}) => {});
+    this.state.socket.on("user_in_room", ({userId, roomId}) => {});
+    this.state.socket.on("offer_received", ({ from, signal }) => {});
+    this.state.socket.on("user_left", ({userId, roomId}) => {});
 
     if (this.pitchProcessor) {
       this.pitchProcessor.cleanup();

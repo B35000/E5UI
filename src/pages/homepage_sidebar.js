@@ -364,13 +364,18 @@ class HomepageSideBar extends Component {
             var item = this.props.app_state.queue[this.props.app_state.pos]
             return(
                 <div>
+                    <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
                     <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1593dz']/* Stop */}</p>,
                             action: () => this.props.close_audio_pip()
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['card_background_color']}}>
+                            <div style={{width:'100%', /* 'background-color':this.props.theme['card_background_color'] */}}>
                                 {this.render_song_item(item)}
                             </div>
                         </SwipeableListItem>
@@ -2555,7 +2560,7 @@ class HomepageSideBar extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

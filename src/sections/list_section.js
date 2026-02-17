@@ -2086,7 +2086,7 @@ class PostListSection extends Component {
             messages.push(this.props.app_state.direct_messages[e5_account])
         });
 
-        return this.append_divider_between_old_messages_and_new_ones(this.filter_by_searched_account_id_or_name(this.filter_messages_for_blocked_authors(this.sortByAttributeDescending(messages, 'most_recent'))));
+        return this.append_divider_between_old_messages_and_new_ones(this.filter_by_searched_account_id_or_name(this.filter_messages_for_blocked_authors(this.sortByAttributeDescending(messages, 'most_recent').slice().reverse())));
     }
 
     append_divider_between_old_messages_and_new_ones(items){
@@ -2173,6 +2173,9 @@ class PostListSection extends Component {
         var return_val = message
         if(message.length > 53){
             return_val = message.substring(0, 53).concat('...');
+        }
+        if(return_val.includes('\n')){
+            return_val = return_val.substring(0, return_val.indexOf('\n')).concat('...')
         }
         return return_val
     }
@@ -7049,7 +7052,7 @@ return data['data']
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }

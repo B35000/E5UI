@@ -413,7 +413,7 @@ class ModifySubscriptionPage extends Component {
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () => this.when_added_modify_item_clicked(item)
                                     }}>
-                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
                                             {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['861f']/* 'Modify Target' */, 'size':'l'})}
                                             <div style={{height:5}}/>
@@ -791,7 +791,7 @@ class ModifySubscriptionPage extends Component {
 
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            var num = diff
+            var num = parseInt(diff)
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }
