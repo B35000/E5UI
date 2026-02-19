@@ -147,6 +147,7 @@ class StackPage extends Component {
         get_floating_close_button_object:this.get_floating_close_button_object(), get_floating_close_button_position_object:this.get_floating_close_button_position_object(),
         get_page_background_object:this.get_page_background_object(),
         get_chain_or_indexer_option_object:this.get_chain_or_indexer_option_object(),
+        get_rounded_edges_option_tags_object: this.get_rounded_edges_option_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
@@ -1345,7 +1346,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [this.get_chain_or_indexer_option()]
             ],
         };
     }
@@ -1359,6 +1360,35 @@ class StackPage extends Component {
 
     set_chain_or_indexer_option(){
         this.setState({get_chain_or_indexer_option_object: this.get_chain_or_indexer_option_object(),})
+    }
+
+
+
+
+
+
+
+
+    get_rounded_edges_option_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593li']/* 'sharp' */, this.props.app_state.loc['1593lj']/* 'rounded' */], [this.get_rounded_edges_option()]
+            ],
+        };
+    }
+
+    get_rounded_edges_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593li']/* 'sharp' */] = 1
+        obj[this.props.app_state.loc['1593lj']/* 'rounded' */] = 2
+        return obj[this.props.app_state.rounded_edges]
+    }
+
+    set_rounded_edges_option(){
+        this.setState({get_rounded_edges_option_tags_object: this.get_rounded_edges_option_tags_object(),})
     }
 
 
@@ -11854,6 +11884,19 @@ class StackPage extends Component {
                             {this.render_detail_item('0')}
                         </div>
                     )}
+
+
+
+                    {this.does_title_details_contain_searched_text('1593lg', '1593lh') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593lg']/* 'Bottomsheet Rounded Edges' */, 'details':this.props.app_state.loc['1593lh']/* 'If set to rounded, the edges of bottomsheets will be visible and curved.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rounded_edges_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_rounded_edges_option_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
                 </div>
             </div>
         )
@@ -13287,6 +13330,12 @@ class StackPage extends Component {
         this.setState({get_chain_or_indexer_option_object: tag_obj})
         var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_chain_or_indexer_setting_changed(selected_item)
+    }
+
+    when_get_rounded_edges_option_tags_object_updated(tag_obj){
+        this.setState({get_rounded_edges_option_tags_object: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        this.props.when_rounded_edges_option_changed(selected_item)
     }
     
 

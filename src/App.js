@@ -720,6 +720,7 @@ import * as naughtyWords from 'naughty-words';
 import { CardanoWeb3, utils as cardano_web3_utils } from "cardano-web3-js/browser"
 import SimplePeer from "simple-peer";
 import * as Tone from 'tone';
+import { Drawer } from 'vaul';
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -786,7 +787,7 @@ function clone(obj) {
 }
 
 function getOS() {
-  // return 'iOS'
+  return 'macOS'
   if(iOS()) return 'iOS'
   const userAgent = window.navigator.userAgent,
       platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
@@ -1251,7 +1252,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -4003,7 +4004,8 @@ class App extends Component {
 
       message_comment_fulfilment: this.state.message_comment_fulfilment,
       last_notification_view_time: this.state.last_notification_view_time,
-      notification_object: this.state.notification_object
+      notification_object: this.state.notification_object,
+      rounded_edges: this.state.rounded_edges,
     }
   }
 
@@ -4237,6 +4239,7 @@ class App extends Component {
       var message_comment_fulfilment = state.message_comment_fulfilment || this.state.message_comment_fulfilment
       var last_notification_view_time = state.last_notification_view_time || this.state.last_notification_view_time
       var notification_object = state.notification_object || this.state.notification_object;
+      var rounded_edges = state.rounded_edges || this.state.rounded_edges;
 
       this.setState({
         theme: theme,
@@ -4323,6 +4326,7 @@ class App extends Component {
         last_notification_view_time: last_notification_view_time,
         last_address: last_address,
         previous_notification_objects: notification_object,
+        rounded_edges: rounded_edges,
       })
       var me = this;
       setTimeout(function() {
@@ -4382,6 +4386,7 @@ class App extends Component {
       me.stack_page.current?.set_floating_close_button_position_object()
       me.stack_page.current?.set_page_background_object()
       me.stack_page.current?.set_chain_or_indexer_option()
+      me.stack_page.current?.set_rounded_edges_option()
     }, (1 * 1000));
   }
 
@@ -6177,7 +6182,6 @@ class App extends Component {
           {this.render_close_button()}
           {this.render_audio_pip()}
           {this.render_page()}
-          {this.render_synchronizing_bottomsheet()}
 
           {this.render_send_receive_ether_bottomsheet()}
           {this.render_stack_bottomsheet()}
@@ -6267,9 +6271,11 @@ class App extends Component {
           {this.render_add_comment_bottomsheet()}
           {this.render_pick_file_bottomsheet()}
           {this.render_view_number_bottomsheet()}
-          
+
+          {this.render_synchronizing_bottomsheet()}
           
           {this.render_toast_container()}
+          {this.render_ios_page_toast_container()}
           <audio ref={this.localStream} autoPlay muted />
         </div>
       );
@@ -6278,19 +6284,18 @@ class App extends Component {
 
   render_toast_container(){
     const os = getOS()
-    const container_id = os != 'iOS' ? 'id' : 'id2'
+    const container_id = 'id'
     return(
-      <div>
-        <ToastContainer limit={3} containerId={container_id}/>
-      </div>
+      <ToastContainer limit={3} containerId={container_id}/>
     )
-    // if(os != 'iOS' || this.state.syncronizing_page_bottomsheet == true){
-    //   return(
-    //     <div>
-    //       <ToastContainer limit={3} containerId="id"/>
-    //     </div>
-    //   )
-    // }
+  }
+
+  render_ios_page_toast_container(){
+    const os = getOS()
+    const container_id = 'id2'
+    return(
+      <ToastContainer limit={3} containerId={container_id}/>
+    )
   }
 
   render_page(){
@@ -6386,20 +6391,11 @@ class App extends Component {
 
           set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)}
         />
-        {this.render_homepage_toast()}
+
+        {this.render_toast_container()}
+        {this.render_ios_page_toast_container()}
       </div>
     )
-  }
-
-  render_homepage_toast(){
-    var os = getOS()
-    if(os == 'iOS' && this.state.stack_bottomsheet == false){
-      return(
-        <div>
-          <ToastContainer limit={3} containerId="id2"/>
-        </div>
-      )
-    }
   }
 
   set_cookies_after_stack_action(stack_items, should_keep_stack_open){
@@ -6917,6 +6913,24 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  renderBottomSheet(view, open, onOpenChange, height) {
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? 0 : 10;
+    const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? '0px' : '15px';
+    return(
+      <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)}>
+        <Drawer.Portal>
+          <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
+          <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
+            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+              {view}
+            </div>
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
+    )
+  }
+
 
 
 
@@ -6928,22 +6942,7 @@ class App extends Component {
     var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
     var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
     var os = getOS()
-    // if(os == 'iOS'){
-    //     return(
-    //         <Sheet isOpen={this.state.syncronizing_page_bottomsheet} onClose={this.open_syncronizing_page_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-    //             <Sheet.Container>
-    //                 <Sheet.Content>
-    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-    //                       <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-    //                       />
-    //                   </div>
-    //                 </Sheet.Content>
-    //                 <ToastContainer limit={3} containerId="id2"/>
-    //             </Sheet.Container>
-    //             <Sheet.Backdrop onTap={()=> this.when_synchronizing_page_top_part_tapped()}/>
-    //         </Sheet>
-    //     )
-    // }
+
     return(
       <SwipeableBottomSheet /* marginBottom={50} */ overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'30'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
           <div style={{ height: this.state.height-50, 'background-color': background_color, 'margin': '0px 0px 0px 0px', 'padding':'10px 10px 0px 10px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text2(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
@@ -7076,32 +7075,42 @@ class App extends Component {
     var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.send_receive_bottomsheet} onClose={this.open_send_receive_ether_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
-                          start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
-                          />
-                      </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_send_receive_ether_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-              <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
-              start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
-              />
-          </div>
-      </SwipeableBottomSheet>
+
+    return this.renderBottomSheet(
+      <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
+      start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
+      />,
+      this.state.send_receive_bottomsheet,
+      this.open_send_receive_ether_bottomsheet,
+      this.state.height-70
     )
+    
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.send_receive_bottomsheet} onClose={this.open_send_receive_ether_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
+    //                       start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
+    //                       />
+    //                   </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_send_receive_ether_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //           <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
+    //           start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
+    //           />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_send_receive_ether_bottomsheet(){
@@ -7215,24 +7224,31 @@ class App extends Component {
     var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
     var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.send_receive_coin_bottomsheet} onClose={this.open_send_receive_coin_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_send_receive_coin_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_send_receive_coin_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_coin_bottomsheet.bind(this)} open={this.state.send_receive_coin_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
-        {this.render_send_receive_coin_element()}
-      </SwipeableBottomSheet>
+
+    return this.renderBottomSheet(
+      this.render_send_receive_coin_element(),
+      this.state.send_receive_coin_bottomsheet,
+      this.open_send_receive_coin_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.send_receive_coin_bottomsheet} onClose={this.open_send_receive_coin_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_send_receive_coin_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_send_receive_coin_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_coin_bottomsheet.bind(this)} open={this.state.send_receive_coin_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
+    //     {this.render_send_receive_coin_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_send_receive_coin_element(){
@@ -8399,28 +8415,35 @@ class App extends Component {
     var size = this.getScreenSize();
     var os = getOS()
 
-    if(os == 'iOS'){
-      return(
-        <Sheet isOpen={this.state.stack_bottomsheet} onClose={this.open_stack_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-            <Sheet.Container>
-                <Sheet.Content>
-                    <div style={{ height: this.state.height-34, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                        {this.render_stack_item(size)}
-                    </div>
-                </Sheet.Content>
-                <ToastContainer limit={3} containerId="id2"/>
-            </Sheet.Container>
-            <Sheet.Backdrop onTap={()=> this.open_stack_bottomsheet()}/>
-        </Sheet>
-      )
-    }
-    return(
-      <SwipeableBottomSheet /* overflowHeight={0} */ marginBottom={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: (this.state.stack_bottomsheet == false ? 0 : this.state.height-60), 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-              {this.render_stack_item(size)}
-          </div>
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_stack_item(size),
+      this.state.stack_bottomsheet,
+      this.open_stack_bottomsheet,
+      this.state.height-70
     )
+
+    // if(os == 'iOS'){
+    //   return(
+    //     <Sheet isOpen={this.state.stack_bottomsheet} onClose={this.open_stack_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //         <Sheet.Container>
+    //             <Sheet.Content>
+    //                 <div style={{ height: this.state.height-34, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                     {this.render_stack_item(size)}
+    //                 </div>
+    //             </Sheet.Content>
+    //             {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //         </Sheet.Container>
+    //         <Sheet.Backdrop onTap={()=> this.open_stack_bottomsheet()}/>
+    //     </Sheet>
+    //   )
+    // }
+    // return(
+    //   <SwipeableBottomSheet /* overflowHeight={0} */ marginBottom={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: (this.state.stack_bottomsheet == false ? 0 : this.state.height-60), 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //           {this.render_stack_item(size)}
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_stack_item(size){
@@ -8447,6 +8470,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)}
       />
     )
   }
@@ -9504,6 +9528,14 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  when_rounded_edges_option_changed(item){
+    this.setState({rounded_edges: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
 
 
 
@@ -9947,28 +9979,36 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.wiki_bottomsheet} onClose={this.open_wiki_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}> 
-                          <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_wiki_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_wiki_bottomsheet.bind(this)} open={this.state.wiki_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}> 
-            <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width}  theme={this.state.theme} />
-          </div>
-      </SwipeableBottomSheet>
+
+    return this.renderBottomSheet(
+      <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width}  theme={this.state.theme} />,
+      this.state.wiki_bottomsheet,
+      this.open_wiki_bottomsheet,
+      this.state.height-70
     )
+
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.wiki_bottomsheet} onClose={this.open_wiki_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}> 
+    //                       <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_wiki_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_wiki_bottomsheet.bind(this)} open={this.state.wiki_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}> 
+    //         <WikiPage ref={this.wiki_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width}  theme={this.state.theme} />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_wiki_bottomsheet(){
@@ -10020,28 +10060,35 @@ class App extends Component {
     if(this.state.new_object_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.new_object_bottomsheet} onClose={this.open_new_object_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          {this.render_create_object_ui()}
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_new_object_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_object_bottomsheet.bind(this)} open={this.state.new_object_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            {this.render_create_object_ui()}
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_create_object_ui(),
+      this.state.new_object_bottomsheet,
+      this.open_new_object_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.new_object_bottomsheet} onClose={this.open_new_object_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       {this.render_create_object_ui()}
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_new_object_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_object_bottomsheet.bind(this)} open={this.state.new_object_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         {this.render_create_object_ui()}
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_new_object_bottomsheet(){
@@ -10488,31 +10535,40 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_token_bottomsheet} onClose={this.open_edit_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditTokenPage ref={this.edit_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}  get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_token_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_token_bottomsheet.bind(this)} open={this.state.edit_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditTokenPage ref={this.edit_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+    
+    return this.renderBottomSheet(
+      <EditTokenPage ref={this.edit_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
             
-            />
-          </div>
-      </SwipeableBottomSheet>
+      />,
+      this.state.edit_token_bottomsheet,
+      this.open_edit_token_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_token_bottomsheet} onClose={this.open_edit_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <EditTokenPage ref={this.edit_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}  get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_token_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_token_bottomsheet.bind(this)} open={this.state.edit_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <EditTokenPage ref={this.edit_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+            
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_edit_token_bottomsheet(){
@@ -10568,32 +10624,41 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_channel_bottomsheet} onClose={this.open_edit_channel_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-                          search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_channel_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_channel_bottomsheet.bind(this)} open={this.state.edit_channel_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-            
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+          
+      />,
+      this.state.edit_channel_bottomsheet,
+      this.open_edit_channel_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_channel_bottomsheet} onClose={this.open_edit_channel_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+    //                       search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_channel_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_channel_bottomsheet.bind(this)} open={this.state.edit_channel_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <EditChannelPage ref={this.edit_channel_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} search_for_object={this.search_for_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+            
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_edit_channel_bottomsheet(){
@@ -10653,30 +10718,37 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_contractor_bottomsheet} onClose={this.open_edit_contractor_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-                          /> 
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_contractor_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_contractor_bottomsheet.bind(this)} open={this.state.edit_contractor_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      />,
+      this.state.edit_contractor_bottomsheet,
+      this.open_edit_contractor_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_contractor_bottomsheet} onClose={this.open_edit_contractor_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //                       /> 
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_contractor_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_contractor_bottomsheet.bind(this)} open={this.state.edit_contractor_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+            
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_edit_contractor_bottomsheet(){
@@ -10734,6 +10806,14 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
+    
+    return this.renderBottomSheet(
+      <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      />,
+      this.state.edit_job_bottomsheet,
+      this.open_edit_job_bottomsheet,
+      this.state.height-70
+    )
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.edit_job_bottomsheet} onClose={this.open_edit_job_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
@@ -10744,7 +10824,7 @@ class App extends Component {
                           />
                         </div>
                     </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
+                    {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
                 </Sheet.Container>
                 <Sheet.Backdrop onTap={()=> this.open_edit_job_bottomsheet()}/>
             </Sheet>
@@ -10753,8 +10833,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_job_bottomsheet.bind(this)} open={this.state.edit_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-            />
+            
           </div>
       </SwipeableBottomSheet>
     )
@@ -10815,30 +10894,37 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-      return(
-          <Sheet isOpen={this.state.edit_post_bottomsheet} onClose={this.open_edit_post_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-              <Sheet.Container>
-                  <Sheet.Content>
-                      <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                        <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-                        />
-                      </div>
-                  </Sheet.Content>
-                  <ToastContainer limit={3} containerId="id2"/>
-              </Sheet.Container>
-              <Sheet.Backdrop onTap={()=> this.open_edit_post_bottomsheet()}/>
-          </Sheet>
-      )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_post_bottomsheet.bind(this)} open={this.state.edit_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      />,
+      this.state.edit_post_bottomsheet,
+      this.open_edit_post_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //   return(
+    //       <Sheet isOpen={this.state.edit_post_bottomsheet} onClose={this.open_edit_post_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //           <Sheet.Container>
+    //               <Sheet.Content>
+    //                   <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                     <EditPostPage ref={this.edit_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //                     />
+    //                   </div>
+    //               </Sheet.Content>
+    //               {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //           </Sheet.Container>
+    //           <Sheet.Backdrop onTap={()=> this.open_edit_post_bottomsheet()}/>
+    //       </Sheet>
+    //   )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_post_bottomsheet.bind(this)} open={this.state.edit_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+            
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_edit_post_bottomsheet(){
@@ -10895,32 +10981,41 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_storefront_bottomsheet} onClose={this.open_edit_storefront_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-                          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_storefront_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_storefront_bottomsheet.bind(this)} open={this.state.edit_storefront_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-            get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+      get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      />,
+      this.state.edit_storefront_bottomsheet,
+      this.open_edit_storefront_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_storefront_bottomsheet} onClose={this.open_edit_storefront_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+    //                       get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_storefront_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_storefront_bottomsheet.bind(this)} open={this.state.edit_storefront_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+    //         get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_edit_storefront_bottomsheet(){
@@ -10979,30 +11074,38 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_proposal_bottomsheet} onClose={this.open_edit_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_proposal_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_proposal_bottomsheet.bind(this)} open={this.state.edit_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      />,
+      this.state.edit_proposal_bottomsheet,
+      this.open_edit_proposal_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_proposal_bottomsheet} onClose={this.open_edit_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_proposal_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_proposal_bottomsheet.bind(this)} open={this.state.edit_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <EditProposalPage ref={this.edit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_edit_proposal_bottomsheet(){
@@ -11057,24 +11160,31 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_audiopost_bottomsheet} onClose={this.open_edit_audiopost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_edit_audio_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_audiopost_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_audiopost_bottomsheet.bind(this)} open={this.state.edit_audiopost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_edit_audio_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_edit_audio_element(),
+      this.state.edit_audiopost_bottomsheet,
+      this.open_edit_audiopost_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_audiopost_bottomsheet} onClose={this.open_edit_audiopost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_edit_audio_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_audiopost_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_audiopost_bottomsheet.bind(this)} open={this.state.edit_audiopost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_edit_audio_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_edit_audio_element(){
@@ -11154,24 +11264,31 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_videopost_bottomsheet} onClose={this.open_edit_videopost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_edit_video_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_videopost_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_videopost_bottomsheet.bind(this)} open={this.state.edit_videopost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_edit_video_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_edit_video_element(),
+      this.state.edit_videopost_bottomsheet,
+      this.open_edit_videopost_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_videopost_bottomsheet} onClose={this.open_edit_videopost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_edit_video_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_videopost_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_videopost_bottomsheet.bind(this)} open={this.state.edit_videopost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_edit_video_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_edit_video_element(){
@@ -11241,24 +11358,31 @@ class App extends Component {
   render_edit_nitropost_object_bottomsheet(){
     if(this.state.edit_nitropost_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_nitropost_bottomsheet} onClose={this.open_edit_nitropost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_edit_nitropost_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_nitropost_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_nitropost_bottomsheet.bind(this)} open={this.state.edit_nitropost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_edit_nitropost_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_edit_nitropost_element(),
+      this.state.edit_nitropost_bottomsheet,
+      this.open_edit_nitropost_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_nitropost_bottomsheet} onClose={this.open_edit_nitropost_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_edit_nitropost_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_nitropost_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_nitropost_bottomsheet.bind(this)} open={this.state.edit_nitropost_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_edit_nitropost_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_edit_nitropost_element(){
@@ -11323,24 +11447,31 @@ class App extends Component {
   render_edit_poll_object_bottomsheet(){
     if(this.state.edit_poll_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_poll_bottomsheet} onClose={this.open_edit_poll_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_edit_poll_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_poll_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_poll_bottomsheet.bind(this)} open={this.state.edit_poll_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_edit_poll_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_edit_poll_element(),
+      this.state.edit_poll_bottomsheet,
+      this.open_edit_poll_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_poll_bottomsheet} onClose={this.open_edit_poll_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_edit_poll_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_poll_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_edit_poll_bottomsheet.bind(this)} open={this.state.edit_poll_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_edit_poll_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_edit_poll_element(){
@@ -11479,28 +11610,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.mint_token_bottomsheet} onClose={this.open_mint_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_mint_token_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_mint_token_bottomsheet.bind(this)} open={this.state.mint_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>,
+      this.state.mint_token_bottomsheet,
+      this.open_mint_token_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.mint_token_bottomsheet} onClose={this.open_mint_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_mint_token_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_mint_token_bottomsheet.bind(this)} open={this.state.mint_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_mint_token_bottomsheet(){
@@ -11570,32 +11708,40 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.transfer_token_bottomsheet} onClose={this.open_transfer_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-                          set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_transfer_token_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_transfer_token_bottomsheet.bind(this)} open={this.state.transfer_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-            
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}     
+      />,
+      this.state.transfer_token_bottomsheet,
+      this.open_transfer_token_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.transfer_token_bottomsheet} onClose={this.open_transfer_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //                       set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_transfer_token_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_transfer_token_bottomsheet.bind(this)} open={this.state.transfer_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+            
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_transfer_token_bottomsheet(){
@@ -11664,28 +11810,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.enter_contract_bottomsheet} onClose={this.open_enter_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EnterContractPage ref={this.enter_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_enter_contract_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_enter_contract_bottomsheet.bind(this)} open={this.state.enter_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <EnterContractPage ref={this.enter_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <EnterContractPage ref={this.enter_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>,
+      this.state.enter_contract_bottomsheet,
+      this.open_enter_contract_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.enter_contract_bottomsheet} onClose={this.open_enter_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <EnterContractPage ref={this.enter_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_enter_contract_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_enter_contract_bottomsheet.bind(this)} open={this.state.enter_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <EnterContractPage ref={this.enter_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} enter_contract={this.enter_contract.bind(this)} accept_job_without_entering_contract={this.accept_job_without_entering_contract.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_enter_contract_bottomsheet(){
@@ -11769,28 +11922,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.extend_contract_bottomsheet} onClose={this.open_extend_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ExtendContractPage ref={this.extend_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} extend_contract={this.extend_contract.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_extend_contract_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_extend_contract_bottomsheet.bind(this)} open={this.state.extend_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ExtendContractPage ref={this.extend_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} extend_contract={this.extend_contract.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ExtendContractPage ref={this.extend_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} extend_contract={this.extend_contract.bind(this)}/>,
+      this.state.extend_contract_bottomsheet,
+      this.open_extend_contract_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.extend_contract_bottomsheet} onClose={this.open_extend_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ExtendContractPage ref={this.extend_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} extend_contract={this.extend_contract.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_extend_contract_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_extend_contract_bottomsheet.bind(this)} open={this.state.extend_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ExtendContractPage ref={this.extend_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} extend_contract={this.extend_contract.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_extend_contract_bottomsheet(){
@@ -11859,28 +12019,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.exit_contract_bottomsheet} onClose={this.open_exit_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ExitContractPage ref={this.exit_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} exit_contract={this.exit_contract.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_exit_contract_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_exit_contract_bottomsheet.bind(this)} open={this.state.exit_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ExitContractPage ref={this.exit_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} exit_contract={this.exit_contract.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ExitContractPage ref={this.exit_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} exit_contract={this.exit_contract.bind(this)}/>,
+      this.state.exit_contract_bottomsheet,
+      this.open_exit_contract_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.exit_contract_bottomsheet} onClose={this.open_exit_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ExitContractPage ref={this.exit_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} exit_contract={this.exit_contract.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_exit_contract_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_exit_contract_bottomsheet.bind(this)} open={this.state.exit_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ExitContractPage ref={this.exit_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} exit_contract={this.exit_contract.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_exit_contract_bottomsheet(){
@@ -11940,31 +12107,40 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.new_proposal_bottomsheet} onClose={this.open_new_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_new_proposal_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_proposal_bottomsheet.bind(this)} open={this.state.new_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
-            update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
+      update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      />,
+      this.state.new_proposal_bottomsheet,
+      this.open_new_proposal_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.new_proposal_bottomsheet} onClose={this.open_new_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_new_proposal_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_proposal_bottomsheet.bind(this)} open={this.state.new_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
+    //         update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_new_proposal_bottomsheet(){
@@ -12036,28 +12212,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.vote_proposal_bottomsheet} onClose={this.open_vote_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <VoteProposalPage ref={this.vote_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_vote_proposal_action_to_stack={this.add_vote_proposal_action_to_stack.bind(this)} />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_vote_proposal_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_vote_proposal_bottomsheet.bind(this)} open={this.state.vote_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <VoteProposalPage ref={this.vote_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_vote_proposal_action_to_stack={this.add_vote_proposal_action_to_stack.bind(this)} />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <VoteProposalPage ref={this.vote_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_vote_proposal_action_to_stack={this.add_vote_proposal_action_to_stack.bind(this)} />,
+      this.state.vote_proposal_bottomsheet,
+      this.open_vote_proposal_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.vote_proposal_bottomsheet} onClose={this.open_vote_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <VoteProposalPage ref={this.vote_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_vote_proposal_action_to_stack={this.add_vote_proposal_action_to_stack.bind(this)} />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_vote_proposal_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_vote_proposal_bottomsheet.bind(this)} open={this.state.vote_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <VoteProposalPage ref={this.vote_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_vote_proposal_action_to_stack={this.add_vote_proposal_action_to_stack.bind(this)} />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_vote_proposal_bottomsheet(){
@@ -12128,28 +12311,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.submit_proposal_bottomsheet} onClose={this.open_submit_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <SubmitProposalPage ref={this.submit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_submit_proposal_action_to_stack={this.add_submit_proposal_action_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_submit_proposal_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_submit_proposal_bottomsheet.bind(this)} open={this.state.submit_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <SubmitProposalPage ref={this.submit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_submit_proposal_action_to_stack={this.add_submit_proposal_action_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <SubmitProposalPage ref={this.submit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_submit_proposal_action_to_stack={this.add_submit_proposal_action_to_stack.bind(this)}/>,
+      this.state.submit_proposal_bottomsheet,
+      this.open_submit_proposal_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.submit_proposal_bottomsheet} onClose={this.open_submit_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <SubmitProposalPage ref={this.submit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_submit_proposal_action_to_stack={this.add_submit_proposal_action_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_submit_proposal_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_submit_proposal_bottomsheet.bind(this)} open={this.state.submit_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <SubmitProposalPage ref={this.submit_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_submit_proposal_action_to_stack={this.add_submit_proposal_action_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_submit_proposal_bottomsheet(){
@@ -12216,28 +12406,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.pay_subscription_bottomsheet} onClose={this.open_pay_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_pay_subscription_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_pay_subscription_bottomsheet.bind(this)} open={this.state.pay_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>,
+      this.state.pay_subscription_bottomsheet,
+      this.open_pay_subscription_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.pay_subscription_bottomsheet} onClose={this.open_pay_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_pay_subscription_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_pay_subscription_bottomsheet.bind(this)} open={this.state.pay_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_pay_subscription_bottomsheet(){
@@ -12308,28 +12505,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.cancel_subscription_bottomsheet} onClose={this.open_cancel_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <CancelSubscriptionPage ref={this.cancel_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_cancel_subscription_to_stack={this.add_cancel_subscription_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_cancel_subscription_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_cancel_subscription_bottomsheet.bind(this)} open={this.state.cancel_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <CancelSubscriptionPage ref={this.cancel_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_cancel_subscription_to_stack={this.add_cancel_subscription_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <CancelSubscriptionPage ref={this.cancel_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_cancel_subscription_to_stack={this.add_cancel_subscription_to_stack.bind(this)}/>,
+      this.state.cancel_subscription_bottomsheet,
+      this.open_cancel_subscription_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.cancel_subscription_bottomsheet} onClose={this.open_cancel_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <CancelSubscriptionPage ref={this.cancel_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_cancel_subscription_to_stack={this.add_cancel_subscription_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_cancel_subscription_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_cancel_subscription_bottomsheet.bind(this)} open={this.state.cancel_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <CancelSubscriptionPage ref={this.cancel_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_cancel_subscription_to_stack={this.add_cancel_subscription_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_cancel_subscription_bottomsheet(){
@@ -12403,28 +12607,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.collect_subscription_bottomsheet} onClose={this.open_collect_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <CollectSubscriptionPage ref={this.collect_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_collect_subscription_to_stack={this.add_collect_subscription_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_collect_subscription_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_collect_subscription_bottomsheet.bind(this)} open={this.state.collect_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <CollectSubscriptionPage ref={this.collect_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_collect_subscription_to_stack={this.add_collect_subscription_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_stack_item(),
+      this.state.collect_subscription_bottomsheet,
+      this.open_collect_subscription_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.collect_subscription_bottomsheet} onClose={this.open_collect_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <CollectSubscriptionPage ref={this.collect_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_collect_subscription_to_stack={this.add_collect_subscription_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_collect_subscription_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_collect_subscription_bottomsheet.bind(this)} open={this.state.collect_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <CollectSubscriptionPage ref={this.collect_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_collect_subscription_to_stack={this.add_collect_subscription_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_collect_subscription_bottomsheet(){
@@ -12497,28 +12708,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.modify_subscription_bottomsheet} onClose={this.open_modify_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ModifySubscriptionPage ref={this.modify_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_subscription_to_stack={this.add_modify_subscription_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_modify_subscription_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_modify_subscription_bottomsheet.bind(this)} open={this.state.modify_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ModifySubscriptionPage ref={this.modify_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_subscription_to_stack={this.add_modify_subscription_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ModifySubscriptionPage ref={this.modify_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_subscription_to_stack={this.add_modify_subscription_to_stack.bind(this)}/>,
+      this.state.modify_subscription_bottomsheet,
+      this.open_modify_subscription_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.modify_subscription_bottomsheet} onClose={this.open_modify_subscription_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ModifySubscriptionPage ref={this.modify_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_subscription_to_stack={this.add_modify_subscription_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_modify_subscription_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_modify_subscription_bottomsheet.bind(this)} open={this.state.modify_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ModifySubscriptionPage ref={this.modify_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_subscription_to_stack={this.add_modify_subscription_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_modify_subscription_bottomsheet(){
@@ -12590,28 +12808,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.modify_contract_bottomsheet} onClose={this.open_modify_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ModifyContractPage ref={this.modify_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_contract_to_stack={this.add_modify_contract_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_modify_contract_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_modify_contract_bottomsheet.bind(this)} open={this.state.modify_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ModifyContractPage ref={this.modify_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_contract_to_stack={this.add_modify_contract_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ModifyContractPage ref={this.modify_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_contract_to_stack={this.add_modify_contract_to_stack.bind(this)}/>,
+      this.state.modify_contract_bottomsheet,
+      this.open_modify_contract_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.modify_contract_bottomsheet} onClose={this.open_modify_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ModifyContractPage ref={this.modify_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_contract_to_stack={this.add_modify_contract_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_modify_contract_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_modify_contract_bottomsheet.bind(this)} open={this.state.modify_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ModifyContractPage ref={this.modify_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_contract_to_stack={this.add_modify_contract_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_modify_contract_bottomsheet(){
@@ -12683,28 +12908,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.modify_token_bottomsheet} onClose={this.open_modify_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ModifyTokenPage ref={this.modify_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_token_to_stack={this.add_modify_token_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_modify_token_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_modify_token_bottomsheet.bind(this)} open={this.state.modify_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ModifyTokenPage ref={this.modify_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_token_to_stack={this.add_modify_token_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ModifyTokenPage ref={this.modify_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_token_to_stack={this.add_modify_token_to_stack.bind(this)}/>,
+      this.state.modify_token_bottomsheet,
+      this.open_modify_token_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.modify_token_bottomsheet} onClose={this.open_modify_token_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ModifyTokenPage ref={this.modify_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_token_to_stack={this.add_modify_token_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_modify_token_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_modify_token_bottomsheet.bind(this)} open={this.state.modify_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ModifyTokenPage ref={this.modify_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_modify_token_to_stack={this.add_modify_token_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_modify_token_bottomsheet(){
@@ -12776,28 +13008,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.exchange_transfer_bottomsheet} onClose={this.open_exchange_transfer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ExchangeTransferPage ref={this.exchange_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_exchange_transfer_to_stack={this.add_exchange_transfer_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_exchange_transfer_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_exchange_transfer_bottomsheet.bind(this)} open={this.state.exchange_transfer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ExchangeTransferPage ref={this.exchange_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_exchange_transfer_to_stack={this.add_exchange_transfer_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ExchangeTransferPage ref={this.exchange_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_exchange_transfer_to_stack={this.add_exchange_transfer_to_stack.bind(this)}/>,
+      this.state.exchange_transfer_bottomsheet,
+      this.open_exchange_transfer_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.exchange_transfer_bottomsheet} onClose={this.open_exchange_transfer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ExchangeTransferPage ref={this.exchange_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_exchange_transfer_to_stack={this.add_exchange_transfer_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_exchange_transfer_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_exchange_transfer_bottomsheet.bind(this)} open={this.state.exchange_transfer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ExchangeTransferPage ref={this.exchange_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_exchange_transfer_to_stack={this.add_exchange_transfer_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_exchange_transfer_bottomsheet(){
@@ -12869,28 +13108,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.force_exit_bottomsheet} onClose={this.open_force_exit_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ForceExitPage ref={this.force_exit_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_force_exit_to_stack={this.add_force_exit_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_force_exit_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_force_exit_bottomsheet.bind(this)} open={this.state.force_exit_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ForceExitPage ref={this.force_exit_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_force_exit_to_stack={this.add_force_exit_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ForceExitPage ref={this.force_exit_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_force_exit_to_stack={this.add_force_exit_to_stack.bind(this)}/>,
+      this.state.force_exit_bottomsheet,
+      this.open_force_exit_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.force_exit_bottomsheet} onClose={this.open_force_exit_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ForceExitPage ref={this.force_exit_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_force_exit_to_stack={this.add_force_exit_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_force_exit_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_force_exit_bottomsheet.bind(this)} open={this.state.force_exit_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ForceExitPage ref={this.force_exit_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_force_exit_to_stack={this.add_force_exit_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_force_exit_bottomsheet(){
@@ -12963,28 +13209,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.archive_proposal_bottomsheet} onClose={this.open_archive_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ArchiveProposalPage ref={this.archive_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_archive_proposal_action_to_stack={this.add_archive_proposal_action_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_archive_proposal_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_archive_proposal_bottomsheet.bind(this)} open={this.state.archive_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ArchiveProposalPage ref={this.archive_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_archive_proposal_action_to_stack={this.add_archive_proposal_action_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ArchiveProposalPage ref={this.archive_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_archive_proposal_action_to_stack={this.add_archive_proposal_action_to_stack.bind(this)}/>,
+      this.state.archive_proposal_bottomsheet,
+      this.open_archive_proposal_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.archive_proposal_bottomsheet} onClose={this.open_archive_proposal_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ArchiveProposalPage ref={this.archive_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_archive_proposal_action_to_stack={this.add_archive_proposal_action_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_archive_proposal_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_archive_proposal_bottomsheet.bind(this)} open={this.state.archive_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ArchiveProposalPage ref={this.archive_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_archive_proposal_action_to_stack={this.add_archive_proposal_action_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_archive_proposal_bottomsheet(){
@@ -13054,28 +13307,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.freeze_unfreeze_bottomsheet} onClose={this.open_freeze_unfreeze_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <FreezeUnfreezePage ref={this.freeze_unfreeze_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_freeze_unfreeze_to_stack={this.add_freeze_unfreeze_to_stack.bind(this)} get_account_frozen_unfroozen_balance={this.get_account_frozen_unfroozen_balance.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_freeze_unfreeze_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_freeze_unfreeze_bottomsheet.bind(this)} open={this.state.freeze_unfreeze_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <FreezeUnfreezePage ref={this.freeze_unfreeze_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_freeze_unfreeze_to_stack={this.add_freeze_unfreeze_to_stack.bind(this)} get_account_frozen_unfroozen_balance={this.get_account_frozen_unfroozen_balance.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <FreezeUnfreezePage ref={this.freeze_unfreeze_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_freeze_unfreeze_to_stack={this.add_freeze_unfreeze_to_stack.bind(this)} get_account_frozen_unfroozen_balance={this.get_account_frozen_unfroozen_balance.bind(this)}/>,
+      this.state.freeze_unfreeze_bottomsheet,
+      this.open_freeze_unfreeze_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.freeze_unfreeze_bottomsheet} onClose={this.open_freeze_unfreeze_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <FreezeUnfreezePage ref={this.freeze_unfreeze_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_freeze_unfreeze_to_stack={this.add_freeze_unfreeze_to_stack.bind(this)} get_account_frozen_unfroozen_balance={this.get_account_frozen_unfroozen_balance.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_freeze_unfreeze_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_freeze_unfreeze_bottomsheet.bind(this)} open={this.state.freeze_unfreeze_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <FreezeUnfreezePage ref={this.freeze_unfreeze_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_freeze_unfreeze_to_stack={this.add_freeze_unfreeze_to_stack.bind(this)} get_account_frozen_unfroozen_balance={this.get_account_frozen_unfroozen_balance.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_freeze_unfreeze_bottomsheet(){
@@ -13193,28 +13453,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.authmint_bottomsheet} onClose={this.open_authmint_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <AuthMintPage ref={this.authmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_authmint_to_stack={this.add_authmint_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_authmint_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_authmint_bottomsheet.bind(this)} open={this.state.authmint_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <AuthMintPage ref={this.authmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_authmint_to_stack={this.add_authmint_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <AuthMintPage ref={this.authmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_authmint_to_stack={this.add_authmint_to_stack.bind(this)}/>,
+      this.state.authmint_bottomsheet,
+      this.open_authmint_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.authmint_bottomsheet} onClose={this.open_authmint_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <AuthMintPage ref={this.authmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_authmint_to_stack={this.add_authmint_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_authmint_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_authmint_bottomsheet.bind(this)} open={this.state.authmint_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <AuthMintPage ref={this.authmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_authmint_to_stack={this.add_authmint_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_authmint_bottomsheet(){
@@ -13286,28 +13553,34 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.moderator_bottomsheet} onClose={this.open_moderator_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ModeratorPage ref={this.moderator_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_moderator_to_stack={this.add_moderator_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_moderator_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_moderator_bottomsheet.bind(this)} open={this.state.moderator_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ModeratorPage ref={this.moderator_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_moderator_to_stack={this.add_moderator_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      <ModeratorPage ref={this.moderator_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_moderator_to_stack={this.add_moderator_to_stack.bind(this)}/>,
+      this.state.moderator_bottomsheet,
+      this.open_moderator_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.moderator_bottomsheet} onClose={this.open_moderator_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ModeratorPage ref={this.moderator_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_moderator_to_stack={this.add_moderator_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_moderator_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_moderator_bottomsheet.bind(this)} open={this.state.moderator_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ModeratorPage ref={this.moderator_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_moderator_to_stack={this.add_moderator_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_moderator_bottomsheet(){
@@ -13378,31 +13651,38 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.respond_to_job_bottomsheet} onClose={this.open_respond_to_job_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_respond_to_job_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_respond_to_job_bottomsheet.bind(this)} open={this.state.respond_to_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-            
-            />
-          </div>
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}     
+      />,
+      this.state.respond_to_job_bottomsheet,
+      this.open_respond_to_job_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.respond_to_job_bottomsheet} onClose={this.open_respond_to_job_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_respond_to_job_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_respond_to_job_bottomsheet.bind(this)} open={this.state.respond_to_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <RespondToJobPage ref={this.respond_to_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_job_to_stack={this.add_respond_to_job_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+            
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_respond_to_job_bottomsheet(){
@@ -13480,32 +13760,40 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_application_contract_bottomsheet} onClose={this.open_view_application_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-                          when_file_link_tapped={this.when_file_link_tapped.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_application_contract_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_application_contract_bottomsheet.bind(this)} open={this.state.view_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-            when_file_link_tapped={this.when_file_link_tapped.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+      when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+      />,
+      this.state.view_application_contract_bottomsheet,
+      this.open_view_application_contract_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_application_contract_bottomsheet} onClose={this.open_view_application_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //                       when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_application_contract_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_application_contract_bottomsheet.bind(this)} open={this.state.view_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //         when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_view_application_contract_bottomsheet(){
@@ -13581,24 +13869,33 @@ class App extends Component {
   render_view_transaction_bottomsheet(){
     if(this.state.view_transaction_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_transaction_bottomsheet} onClose={this.open_view_transaction_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_view_transaction_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_transaction_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_transaction_element()}
-      </SwipeableBottomSheet>
+    var size = this.getScreenSize();
+    return this.renderBottomSheet(
+      <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} 
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+      />,
+      this.state.view_transaction_bottomsheet,
+      this.open_view_transaction_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_transaction_bottomsheet} onClose={this.open_view_transaction_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_view_transaction_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_transaction_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_transaction_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_transaction_element(){
@@ -13651,7 +13948,6 @@ class App extends Component {
     
 
   }
-
 
   delete_transaction(item){
     var stack_clone = this.state.stack_items.slice()
@@ -14292,28 +14588,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_transaction_log_bottomsheet} onClose={this.open_view_transaction_log_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ViewTransactionLogPage ref={this.view_transaction_log_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_transaction_log_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_log_bottomsheet.bind(this)} open={this.state.view_transaction_log_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewTransactionLogPage ref={this.view_transaction_log_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ViewTransactionLogPage ref={this.view_transaction_log_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>,
+      this.state.view_transaction_log_bottomsheet,
+      this.open_view_transaction_log_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_transaction_log_bottomsheet} onClose={this.open_view_transaction_log_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ViewTransactionLogPage ref={this.view_transaction_log_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_transaction_log_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_log_bottomsheet.bind(this)} open={this.state.view_transaction_log_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ViewTransactionLogPage ref={this.view_transaction_log_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_view_transaction_log_bottomsheet(){
@@ -14368,30 +14671,38 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.add_to_bag_bottomsheet} onClose={this.open_add_to_bag_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_add_to_bag_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_to_bag_bottomsheet.bind(this)} open={this.state.add_to_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+      />,
+      this.state.add_to_bag_bottomsheet,
+      this.open_add_to_bag_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.add_to_bag_bottomsheet} onClose={this.open_add_to_bag_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_add_to_bag_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_to_bag_bottomsheet.bind(this)} open={this.state.add_to_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_add_to_bag_bottomsheet(){
@@ -14480,32 +14791,41 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.fulfil_bag_bottomsheet} onClose={this.open_fulfil_bag_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-                          emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_fulfil_bag_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_fulfil_bag_bottomsheet.bind(this)} open={this.state.fulfil_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-            emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+      emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+      />,
+      this.state.fulfil_bag_bottomsheet,
+      this.open_fulfil_bag_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.fulfil_bag_bottomsheet} onClose={this.open_fulfil_bag_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //                       emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_fulfil_bag_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_fulfil_bag_bottomsheet.bind(this)} open={this.state.fulfil_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //         emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_fulfil_bag_bottomsheet(){
@@ -14577,32 +14897,41 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_bag_application_contract_bottomsheet} onClose={this.open_view_bag_application_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-                          when_file_link_tapped={this.when_file_link_tapped.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_bag_application_contract_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_bag_application_contract_bottomsheet.bind(this)} open={this.state.view_bag_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-            when_file_link_tapped={this.when_file_link_tapped.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+      when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+      />,
+      this.state.view_bag_application_contract_bottomsheet,
+      this.open_view_bag_application_contract_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_bag_application_contract_bottomsheet} onClose={this.open_view_bag_application_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //                       when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_bag_application_contract_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_bag_application_contract_bottomsheet.bind(this)} open={this.state.view_bag_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //         when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_view_bag_application_contract_bottomsheet(){
@@ -14680,30 +15009,38 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.direct_purchase_bottomsheet} onClose={this.open_direct_purchase_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <DirectPurchasePage ref={this.direct_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_direct_purchase_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_direct_purchase_bottomsheet.bind(this)} open={this.state.direct_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <DirectPurchasePage ref={this.direct_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <DirectPurchasePage ref={this.direct_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+      />,
+      this.state.direct_purchase_bottomsheet,
+      this.open_direct_purchase_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.direct_purchase_bottomsheet} onClose={this.open_direct_purchase_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <DirectPurchasePage ref={this.direct_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_direct_purchase_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_direct_purchase_bottomsheet.bind(this)} open={this.state.direct_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <DirectPurchasePage ref={this.direct_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_direct_purchase_bottomsheet(){
@@ -14772,32 +15109,41 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.clear_purchase_bottomsheet} onClose={this.open_clear_purchase_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-34, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                            <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} emit_new_signature_request={this.emit_new_signature_request.bind(this)} emit_new_signature_response={this.emit_new_signature_response.bind(this)}
-                            
-                            />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_clear_purchase_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_clear_purchase_bottomsheet.bind(this)} open={this.state.clear_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-            emit_new_signature_request={this.emit_new_signature_request.bind(this)} emit_new_signature_response={this.emit_new_signature_response.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+      emit_new_signature_request={this.emit_new_signature_request.bind(this)} emit_new_signature_response={this.emit_new_signature_response.bind(this)}
+      />,
+      this.state.clear_purchase_bottomsheet,
+      this.open_clear_purchase_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.clear_purchase_bottomsheet} onClose={this.open_clear_purchase_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-34, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                         <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} emit_new_signature_request={this.emit_new_signature_request.bind(this)} emit_new_signature_response={this.emit_new_signature_response.bind(this)}
+                            
+    //                         />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_clear_purchase_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_clear_purchase_bottomsheet.bind(this)} open={this.state.clear_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //         emit_new_signature_request={this.emit_new_signature_request.bind(this)} emit_new_signature_response={this.emit_new_signature_response.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_clear_purchase_bottomsheet(){
@@ -14908,32 +15254,40 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.send_job_request_bottomsheet} onClose={this.open_send_job_request_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-                          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
-                          show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_send_job_request_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_job_request_bottomsheet.bind(this)} open={this.state.send_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+      />,
+      this.state.send_job_request_bottomsheet,
+      this.open_send_job_request_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.send_job_request_bottomsheet} onClose={this.open_send_job_request_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+    //                       get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}
+    //                       show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_send_job_request_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_job_request_bottomsheet.bind(this)} open={this.state.send_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_send_job_request_bottomsheet(){
@@ -15006,32 +15360,39 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_job_request_bottomsheet} onClose={this.open_view_job_request_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}
-                          when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_job_request_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
-            
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
+      />,
+      this.state.view_job_request_bottomsheet,
+      this.open_view_job_request_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_job_request_bottomsheet} onClose={this.open_view_job_request_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)}
+    //                       when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_job_request_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_view_job_request_bottomsheet(){
@@ -15131,32 +15492,41 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_job_request_contract_bottomsheet} onClose={this.open_view_job_request_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-                          when_file_link_tapped={this.when_file_link_tapped.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_job_request_contract_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_contract_bottomsheet.bind(this)} open={this.state.view_job_request_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-            when_file_link_tapped={this.when_file_link_tapped.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+      when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+      />,
+      this.state.view_job_request_contract_bottomsheet,
+      this.open_view_job_request_contract_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_job_request_contract_bottomsheet} onClose={this.open_view_job_request_contract_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //                       when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_job_request_contract_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_contract_bottomsheet.bind(this)} open={this.state.view_job_request_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+    //         when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_view_job_request_contract_bottomsheet(){
@@ -15242,28 +15612,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.withdraw_ether_bottomsheet} onClose={this.open_withdraw_ether_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_withdraw_ether_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_withdraw_ether_bottomsheet.bind(this)} open={this.state.withdraw_ether_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>,
+      this.state.withdraw_ether_bottomsheet,
+      this.open_withdraw_ether_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.withdraw_ether_bottomsheet} onClose={this.open_withdraw_ether_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_withdraw_ether_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_withdraw_ether_bottomsheet.bind(this)} open={this.state.withdraw_ether_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <WithdrawEtherPage ref={this.withdraw_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} withdraw_ether_to_address={this.withdraw_ether_to_address.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_withdraw_ether_bottomsheet(){
@@ -15378,28 +15755,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.give_award_bottomsheet} onClose={this.open_give_award_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <GiveAwardPage ref={this.give_award_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_give_award_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_give_award_bottomsheet.bind(this)} open={this.state.give_award_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <GiveAwardPage ref={this.give_award_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <GiveAwardPage ref={this.give_award_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>,
+      this.state.give_award_bottomsheet,
+      this.open_give_award_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.give_award_bottomsheet} onClose={this.open_give_award_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <GiveAwardPage ref={this.give_award_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_give_award_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_give_award_bottomsheet.bind(this)} open={this.state.give_award_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <GiveAwardPage ref={this.give_award_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_give_award_bottomsheet(){
@@ -15495,30 +15879,38 @@ class App extends Component {
     var size = this.getScreenSize();
     var os = getOS()
     var h = this.state.comment_size
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.add_comment_bottomsheet} onClose={this.open_add_comment_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_add_comment_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_comment_bottomsheet.bind(this)} open={this.state.add_comment_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
-            />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
+      />,
+      this.state.add_comment_bottomsheet,
+      this.open_add_comment_bottomsheet,
+      h
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.add_comment_bottomsheet} onClose={this.open_add_comment_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_add_comment_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_comment_bottomsheet.bind(this)} open={this.state.add_comment_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_add_comment_bottomsheet(){
@@ -15686,28 +16078,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.depthmint_bottomsheet} onClose={this.open_depthmint_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <DepthMintPage ref={this.depthmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_depthmint_to_stack={this.add_depthmint_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_depthmint_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_depthmint_bottomsheet.bind(this)} open={this.state.depthmint_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <DepthMintPage ref={this.depthmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_depthmint_to_stack={this.add_depthmint_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <DepthMintPage ref={this.depthmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_depthmint_to_stack={this.add_depthmint_to_stack.bind(this)}/>,
+      this.state.depthmint_bottomsheet,
+      this.open_depthmint_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.depthmint_bottomsheet} onClose={this.open_depthmint_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <DepthMintPage ref={this.depthmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_depthmint_to_stack={this.add_depthmint_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_depthmint_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_depthmint_bottomsheet.bind(this)} open={this.state.depthmint_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <DepthMintPage ref={this.depthmint_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_depthmint_to_stack={this.add_depthmint_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_depthmint_bottomsheet(){
@@ -15781,28 +16180,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.stage_royalties_bottomsheet} onClose={this.open_stage_royalties_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <StageRoyaltiesPage ref={this.stage_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_stage_royalties_to_stack={this.add_stage_royalties_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_stage_royalties_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_stage_royalties_bottomsheet.bind(this)} open={this.state.stage_royalties_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <StageRoyaltiesPage ref={this.stage_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_stage_royalties_to_stack={this.add_stage_royalties_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <StageRoyaltiesPage ref={this.stage_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_stage_royalties_to_stack={this.add_stage_royalties_to_stack.bind(this)}/>,
+      this.state.stage_royalties_bottomsheet,
+      this.open_stage_royalties_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.stage_royalties_bottomsheet} onClose={this.open_stage_royalties_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <StageRoyaltiesPage ref={this.stage_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_stage_royalties_to_stack={this.add_stage_royalties_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_stage_royalties_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_stage_royalties_bottomsheet.bind(this)} open={this.state.stage_royalties_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <StageRoyaltiesPage ref={this.stage_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_stage_royalties_to_stack={this.add_stage_royalties_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_stage_royalties_bottomsheet(){
@@ -15877,28 +16283,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_staged_royalties_bottomsheet} onClose={this.open_view_staged_royalties_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_staged_royalties_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_staged_royalties_bottomsheet.bind(this)} open={this.state.view_staged_royalties_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+   
+    return this.renderBottomSheet(
+      this.render_view_transaction_element(),
+      this.state.view_staged_royalties_bottomsheet,
+      this.open_view_staged_royalties_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_staged_royalties_bottomsheet} onClose={this.open_view_staged_royalties_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_staged_royalties_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_staged_royalties_bottomsheet.bind(this)} open={this.state.view_staged_royalties_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_view_staged_royalties_bottomsheet(){
@@ -15995,32 +16408,39 @@ class App extends Component {
     if(this.state.searched_account_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
-    var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.searched_account_bottomsheet} onClose={this.open_searched_account_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_searched_account_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_searched_account_bottomsheet.bind(this)} open={this.state.searched_account_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
-            
-            />
-          </div>
-      </SwipeableBottomSheet>
+    var os = getOS();
+    
+    return this.renderBottomSheet(
+      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
+      />,
+      this.state.searched_account_bottomsheet,
+      this.open_searched_account_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.searched_account_bottomsheet} onClose={this.open_searched_account_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_searched_account_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_searched_account_bottomsheet.bind(this)} open={this.state.searched_account_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
+    //         />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_searched_account_bottomsheet(){
@@ -16176,28 +16596,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.rpc_settings_bottomsheet} onClose={this.open_rpc_settings_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <RPCSettingsPage ref={this.rpc_settings_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_rpc_url={this.add_rpc_url.bind(this)} when_rpc_tapped={this.when_rpc_tapped.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_rpc_settings_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_rpc_settings_bottomsheet.bind(this)} open={this.state.rpc_settings_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <RPCSettingsPage ref={this.rpc_settings_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_rpc_url={this.add_rpc_url.bind(this)} when_rpc_tapped={this.when_rpc_tapped.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <RPCSettingsPage ref={this.rpc_settings_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_rpc_url={this.add_rpc_url.bind(this)} when_rpc_tapped={this.when_rpc_tapped.bind(this)}/>,
+      this.state.rpc_settings_bottomsheet,
+      this.open_rpc_settings_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.rpc_settings_bottomsheet} onClose={this.open_rpc_settings_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <RPCSettingsPage ref={this.rpc_settings_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_rpc_url={this.add_rpc_url.bind(this)} when_rpc_tapped={this.when_rpc_tapped.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_rpc_settings_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_rpc_settings_bottomsheet.bind(this)} open={this.state.rpc_settings_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <RPCSettingsPage ref={this.rpc_settings_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_rpc_url={this.add_rpc_url.bind(this)} when_rpc_tapped={this.when_rpc_tapped.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_rpc_settings_bottomsheet(){
@@ -16304,28 +16731,35 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.confirm_run_bottomsheet} onClose={this.open_confirm_run_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_confirm_run_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_confirm_run_bottomsheet.bind(this)} open={this.state.confirm_run_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)}/>,
+      this.state.confirm_run_bottomsheet,
+      this.open_confirm_run_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.confirm_run_bottomsheet} onClose={this.open_confirm_run_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_confirm_run_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_confirm_run_bottomsheet.bind(this)} open={this.state.confirm_run_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_confirm_run_bottomsheet(){
@@ -16389,30 +16823,37 @@ class App extends Component {
     var size = this.getScreenSize();
     var os = getOS()
     var h = 600
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.successful_send_bottomsheet} onClose={this.open_successful_send_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-                       'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_successful_send_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_successful_send_bottomsheet.bind(this)} open={this.state.successful_send_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-         'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>,
+      this.state.successful_send_bottomsheet,
+      this.open_successful_send_bottomsheet,
+      h
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.successful_send_bottomsheet} onClose={this.open_successful_send_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+    //                    'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_successful_send_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_successful_send_bottomsheet.bind(this)} open={this.state.successful_send_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+    //      'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_successful_send_bottomsheet(){
@@ -16488,28 +16929,35 @@ class App extends Component {
     var size = this.getScreenSize();
     var os = getOS()
     var h = 300
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_number_bottomsheet} onClose={this.open_view_number_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <ViewNumber ref={this.view_number_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_number_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_number_bottomsheet.bind(this)} open={this.state.view_number_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <ViewNumber ref={this.view_number_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)} />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <ViewNumber ref={this.view_number_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)} />,
+      this.state.view_number_bottomsheet,
+      this.open_view_number_bottomsheet,
+      h
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_number_bottomsheet} onClose={this.open_view_number_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <ViewNumber ref={this.view_number_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_number_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_number_bottomsheet.bind(this)} open={this.state.view_number_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <ViewNumber ref={this.view_number_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)} />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_view_number_bottomsheet(){
@@ -16667,33 +17115,39 @@ class App extends Component {
 
   render_dialog_bottomsheet(){
     if(this.state.dialog_bottomsheet2 != true) return;
-    
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.dialog_bottomsheet} onClose={this.open_dialog_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_dialog_element()}
-                    </Sheet.Content>
-                    {/* <ToastContainer limit={3} containerId="id2"/> */}
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_dialog_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialog_bottomsheet.bind(this)} open={this.state.dialog_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_dialog_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_dialog_element(),
+      this.state.dialog_bottomsheet,
+      this.open_dialog_bottomsheet,
+      this.state.dialog_size
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.dialog_bottomsheet} onClose={this.open_dialog_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_dialog_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_dialog_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialog_bottomsheet.bind(this)} open={this.state.dialog_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_dialog_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_dialog_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.dialog_size, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <DialogPage ref={this.dialog_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} clear_stack={this.clear_stack.bind(this)} open_delete_action={this.open_delete_action.bind(this)} when_withdraw_ether_confirmation_received={this.when_withdraw_ether_confirmation_received.bind(this)} send_ether_to_target_confirmation={this.send_ether_to_target_confirmation.bind(this)} send_coin_to_target={this.send_coin_to_target.bind(this)} play_next_clicked={this.play_next_clicked.bind(this)} play_last_clicked={this.play_last_clicked.bind(this)} add_to_playlist={this.add_to_playlist.bind(this)} when_remove_from_playlist={this.when_remove_from_playlist.bind(this)} delete_playlist={this.delete_playlist.bind(this)} add_song_to_cache={this.add_song_to_cache.bind(this)} upload_file_to_arweave_confirmed={this.upload_file_to_arweave_confirmed.bind(this)} delete_file={this.delete_file.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} open_dialog_bottomsheet={this.open_dialog_bottomsheet.bind(this)} 
         when_notification_object_clicked={this.when_notification_object_clicked.bind(this)} get_my_entire_public_key={this.get_my_entire_public_key.bind(this)} when_link_object_clicked={this.when_link_object_clicked.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)} when_block_contact_selected={this.when_block_contact_selected.bind(this)} when_add_to_contact_selected={this.when_add_to_contact_selected.bind(this)} when_view_account_details_selected={this.when_view_account_details_selected.bind(this)} add_bill_payments_to_stack={this.add_bill_payments_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_file_type_to_select_is_selected={this.when_file_type_to_select_is_selected.bind(this)} verify_file={this.verify_file.bind(this)} when_scroll_to_top_section={this.when_scroll_to_top_section.bind(this)} when_reload_section={this.when_reload_section.bind(this)} add_creator_payouts_to_stack={this.add_creator_payouts_to_stack.bind(this)} upload_file_to_nitro_confirmed={this.upload_file_to_nitro_confirmed.bind(this)} add_nitro_renewal_transaction_to_stack={this.add_nitro_renewal_transaction_to_stack.bind(this)} add_buy_album_transaction_to_stack_from_dialog_page={this.add_buy_album_transaction_to_stack_from_dialog_page.bind(this)} 
         delete_nitro_file={this.delete_nitro_file.bind(this)} set_new_wallet={this.set_new_wallet.bind(this)} 
@@ -18036,30 +18490,37 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.pay_upcoming_subscriptions_bottomsheet} onClose={this.open_pay_upcoming_subscriptions_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-                       'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
-                        </div>
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_pay_upcoming_subscriptions_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_pay_upcoming_subscriptions_bottomsheet.bind(this)} open={this.state.pay_upcoming_subscriptions_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-         'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-            <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
-          </div>
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />,
+      this.state.pay_upcoming_subscriptions_bottomsheet,
+      this.open_pay_upcoming_subscriptions_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.pay_upcoming_subscriptions_bottomsheet} onClose={this.open_pay_upcoming_subscriptions_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+    //                    'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}/>
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_pay_upcoming_subscriptions_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_pay_upcoming_subscriptions_bottomsheet.bind(this)} open={this.state.pay_upcoming_subscriptions_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+    //      'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //         <PayUpcomingSubscriptions ref={this.pay_upcoming_subscriptions_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_upcoming_subscriptions_to_stack={this.add_pay_upcoming_subscriptions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_pay_upcoming_subscriptions_bottomsheet(){
@@ -18124,31 +18585,38 @@ class App extends Component {
   render_pick_file_bottomsheet(){
     if(this.state.pick_file_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.pick_file_bottomsheet} onClose={this.open_pick_file_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_pick_file_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_pick_file_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_pick_file_bottomsheet.bind(this)} open={this.state.pick_file_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_pick_file_element()}
-      </SwipeableBottomSheet>
+   
+    return this.renderBottomSheet(
+      this.render_pick_file_element(),
+      this.state.pick_file_bottomsheet,
+      this.open_pick_file_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.pick_file_bottomsheet} onClose={this.open_pick_file_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_pick_file_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_pick_file_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_pick_file_bottomsheet.bind(this)} open={this.state.pick_file_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_pick_file_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_pick_file_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <PickFilePage ref={this.pick_file_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} return_selected_files={this.return_selected_files.bind(this)} default_nitro_option={default_nitro_option} 
             load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} 
             encrypt_data_string={this.encrypt_data_string.bind(this)} 
@@ -18405,32 +18873,39 @@ class App extends Component {
 
   render_buy_album_bottomsheet(){
     if(this.state.buy_album_bottomsheet2 != true) return;
-    var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.buy_album_bottomsheet} onClose={this.open_buy_album_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_buy_album_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_buy_album_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_album_bottomsheet.bind(this)} open={this.state.buy_album_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_buy_album_element()}
-      </SwipeableBottomSheet>
+    var os = getOS();
+    
+    return this.renderBottomSheet(
+      this.render_buy_album_element(),
+      this.state.buy_album_bottomsheet,
+      this.open_buy_album_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.buy_album_bottomsheet} onClose={this.open_buy_album_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_buy_album_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_buy_album_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_album_bottomsheet.bind(this)} open={this.state.buy_album_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_buy_album_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_buy_album_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <BuyAlbumPage ref={this.buy_album_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_buy_album_transaction_to_stack={this.add_buy_album_transaction_to_stack.bind(this)}/>
       </div>
     )
@@ -18500,31 +18975,38 @@ class App extends Component {
   render_buy_video_bottomsheet(){
     if(this.state.buy_video_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.buy_video_bottomsheet} onClose={this.open_buy_video_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_buy_video_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_buy_video_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_video_bottomsheet.bind(this)} open={this.state.buy_video_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_buy_video_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_buy_video_element(),
+      this.state.buy_video_bottomsheet,
+      this.open_buy_video_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.buy_video_bottomsheet} onClose={this.open_buy_video_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_buy_video_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_buy_video_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_video_bottomsheet.bind(this)} open={this.state.buy_video_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_buy_video_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_buy_video_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <BuyVideoPage ref={this.buy_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_buy_video_transaction_to_stack={this.add_buy_video_transaction_to_stack.bind(this)}/>
       </div>
     )
@@ -18600,24 +19082,31 @@ class App extends Component {
   render_buy_nitro_storage_bottomsheet(){
     if(this.state.buy_nitro_storage_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.buy_nitro_storage_bottomsheet} onClose={this.open_buy_nitro_storage_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_buy_nitro_storage_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_buy_nitro_storage_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_nitro_storage_bottomsheet.bind(this)} open={this.state.buy_nitro_storage_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_buy_nitro_storage_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_buy_nitro_storage_element(),
+      this.state.buy_nitro_storage_bottomsheet,
+      this.open_buy_nitro_storage_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.buy_nitro_storage_bottomsheet} onClose={this.open_buy_nitro_storage_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_buy_nitro_storage_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_buy_nitro_storage_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_buy_nitro_storage_bottomsheet.bind(this)} open={this.state.buy_nitro_storage_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_buy_nitro_storage_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_buy_nitro_storage_element(){
@@ -18625,8 +19114,8 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div>
-        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-         'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+        <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+         'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <BuyNitroPage ref={this.buy_nitro_storage_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_nitro_storage_to_stack={this.add_buy_nitro_storage_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} />
         </div>
       </div>
@@ -18701,24 +19190,31 @@ class App extends Component {
   render_configure_nitro_node_bottomsheet(){
     if(this.state.configure_nitro_node_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.configure_nitro_node_bottomsheet} onClose={this.open_configure_nitro_node_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_configure_nitro_node_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_configure_nitro_node_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_configure_nitro_node_bottomsheet.bind(this)} open={this.state.configure_nitro_node_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_configure_nitro_node_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_configure_nitro_node_element(),
+      this.state.configure_nitro_node_bottomsheet,
+      this.open_configure_nitro_node_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.configure_nitro_node_bottomsheet} onClose={this.open_configure_nitro_node_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_configure_nitro_node_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_configure_nitro_node_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_configure_nitro_node_bottomsheet.bind(this)} open={this.state.configure_nitro_node_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_configure_nitro_node_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_configure_nitro_node_element(){
@@ -18726,8 +19222,8 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div>
-        <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
-         'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+        <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
+         'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <ConfigureNitroNodePage ref={this.configure_nitro_node_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} boot_nitro_node={this.boot_nitro_node.bind(this)} restore_nitro_node={this.restore_nitro_node.bind(this)} isValidE5Address={this.isValidE5Address.bind(this)} boot_new_e5={this.boot_new_e5.bind(this)} delete_e5_from_node={this.delete_e5_from_node.bind(this)} change_iteration_in_node={this.change_iteration_in_node.bind(this)} change_gateway={this.change_gateway.bind(this)} update_web3_provider_in_node={this.update_web3_provider_in_node.bind(this)} boot_storage={this.boot_storage.bind(this)} update_storage_config={this.update_storage_config.bind(this)} back_up_node={this.back_up_node.bind(this)}
             decrypt_storage_data_using_key={this.decrypt_storage_data_using_key.bind(this)} update_dialer_provider_in_node={this.update_dialer_provider_in_node.bind(this)}
             />
@@ -19244,7 +19740,7 @@ class App extends Component {
                           {this.render_view_image_element()}
                         </div>
                     </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
+                    {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
                 </Sheet.Container>
                 <Sheet.Backdrop onTap={()=> this.open_view_image_bottomsheet()}/>
             </Sheet>
@@ -19690,7 +20186,7 @@ class App extends Component {
                     <Sheet.Content>
                         {this.render_view_pdf_element()}
                     </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
+                    {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
                 </Sheet.Container>
                 <Sheet.Backdrop onTap={()=> this.open_view_pdf_bottomsheet()}/>
             </Sheet>
@@ -20427,31 +20923,38 @@ class App extends Component {
   render_full_audio_bottomsheet(){
     if(this.state.full_audio_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.full_audio_bottomsheet} onClose={this.open_full_audio_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_full_audio_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_full_audio_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_full_audio_bottomsheet.bind(this)} open={this.state.full_audio_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_full_audio_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_full_audio_element(),
+      this.state.full_audio_bottomsheet,
+      this.open_full_audio_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.full_audio_bottomsheet} onClose={this.open_full_audio_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_full_audio_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_full_audio_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_full_audio_bottomsheet.bind(this)} open={this.state.full_audio_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_full_audio_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_full_audio_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <FullAudioPage ref={this.full_audio_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} play_pause={this.play_pause.bind(this)} play_previous={this.play_previous.bind(this)} play_next={this.play_next.bind(this)} skip_to={this.skip_to.bind(this)} update_time={this.update_time.bind(this)} repeat_current_song={this.repeat_current_song.bind(this)} shuffle_songs_in_pip={this.shuffle_songs_in_pip.bind(this)} open_purchase_album_ui={this.show_buy_album_bottomsheet.bind(this)} restart_song={this.restart_song.bind(this)}
             
             />
@@ -20578,31 +21081,38 @@ class App extends Component {
   render_add_to_playlist_bottomsheet(){
     if(this.state.add_to_playlist_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.add_to_playlist_bottomsheet} onClose={this.open_add_to_playlist_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_add_to_playlist_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_add_to_playlist_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_add_to_playlist_bottomsheet.bind(this)} open={this.state.add_to_playlist_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_add_to_playlist_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_add_to_playlist_element(),
+      this.state.add_to_playlist_bottomsheet,
+      this.open_add_to_playlist_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.add_to_playlist_bottomsheet} onClose={this.open_add_to_playlist_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_add_to_playlist_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_add_to_playlist_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_add_to_playlist_bottomsheet.bind(this)} open={this.state.add_to_playlist_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_add_to_playlist_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_add_to_playlist_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <AddToPlaylist ref={this.add_to_playlist_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
             create_new_playlist_with_song={this.create_new_playlist_with_song.bind(this)} add_song_to_existing_playlist={this.add_song_to_existing_playlist.bind(this)}
             />
@@ -20695,24 +21205,31 @@ class App extends Component {
   render_full_video_bottomsheet(){
     if(this.state.full_video_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.full_video_bottomsheet} onClose={this.open_full_video_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_full_video_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_full_video_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_full_video_bottomsheet.bind(this)} open={this.state.full_video_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_full_video_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_full_video_element(),
+      this.state.full_video_bottomsheet,
+      this.open_full_video_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.full_video_bottomsheet} onClose={this.open_full_video_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_full_video_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_full_video_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_full_video_bottomsheet.bind(this)} open={this.state.full_video_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_full_video_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_full_video_element(){
@@ -20720,7 +21237,7 @@ class App extends Component {
     var size = this.getScreenSize();
     var height = this.state.full_video_window_height == 0 ? (this.state.height-90) : (this.state.full_video_window_height + 20)
     return(
-      <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <FullVideoPage ref={this.full_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
             update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
             construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)}
@@ -20924,31 +21441,38 @@ class App extends Component {
   render_dialer_bottomsheet(){
     if(this.state.dialer_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.dialer_bottomsheet} onClose={this.open_dialer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        {this.render_dialer_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_dialer_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialer_bottomsheet.bind(this)} open={this.state.dialer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_dialer_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_dialer_element(),
+      this.state.dialer_bottomsheet,
+      this.open_dialer_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.dialer_bottomsheet} onClose={this.open_dialer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     {this.render_dialer_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_dialer_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_dialer_bottomsheet.bind(this)} open={this.state.dialer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_dialer_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_dialer_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <DialerPage ref={this.dialer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_dialer_admin_config_update_object_to_stack={this.add_dialer_admin_config_update_object_to_stack.bind(this)} test_entered_link_data={this.test_entered_link_data.bind(this)} test_and_return_language_override_data={this.test_and_return_language_override_data.bind(this)} is_valid_ether_address={this.is_valid_ether_address.bind(this)}
         />
       </div>
@@ -21120,31 +21644,38 @@ class App extends Component {
   render_view_notification_log_bottomsheet(){
     if(this.state.view_notification_log_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_notification_log_bottomsheet} onClose={this.open_view_notification_log_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_notification_log_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_notification_log_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_notification_log_bottomsheet.bind(this)} open={this.state.view_notification_log_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_notification_log_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_view_notification_log_element(),
+      this.state.view_notification_log_bottomsheet,
+      this.open_view_notification_log_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_notification_log_bottomsheet} onClose={this.open_view_notification_log_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_notification_log_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_notification_log_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_notification_log_bottomsheet.bind(this)} open={this.state.view_notification_log_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_notification_log_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_notification_log_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <ViewNotificationLogPage ref={this.view_notification_log_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_event_clicked={this.when_event_clicked.bind(this)}
         
         />
@@ -21307,7 +21838,6 @@ class App extends Component {
     this.show_dialog_bottomsheet(obj, id)
   }
 
-
   open_direct_messages_convo(convo_id){
     const object = this.state.direct_messages[convo_id]
     if(object != null){
@@ -21330,31 +21860,38 @@ class App extends Component {
   render_view_contextual_transfer_bottomsheet(){
     if(this.state.view_contextual_transfer_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_contextual_transfer_bottomsheet} onClose={this.open_view_contextual_transfer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_contextual_transfer_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_contextual_transfer_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_contextual_transfer_bottomsheet.bind(this)} open={this.state.view_contextual_transfer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_contextual_transfer_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_view_contextual_transfer_element(),
+      this.state.view_contextual_transfer_bottomsheet,
+      this.open_view_contextual_transfer_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_contextual_transfer_bottomsheet} onClose={this.open_view_contextual_transfer_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_contextual_transfer_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_contextual_transfer_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_contextual_transfer_bottomsheet.bind(this)} open={this.state.view_contextual_transfer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_contextual_transfer_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_contextual_transfer_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <ContextualTransferPage ref={this.view_contextual_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_itransfer_transaction_to_stack={this.add_itransfer_transaction_to_stack.bind(this)} add_bill_transaction_to_stack={this.add_bill_transaction_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
         set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
         />
@@ -21508,31 +22045,38 @@ class App extends Component {
   render_view_vote_poll_bottomsheet(){
     if(this.state.view_vote_poll_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_vote_poll_bottomsheet} onClose={this.open_view_vote_poll_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_vote_poll_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_vote_poll_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_vote_poll_bottomsheet.bind(this)} open={this.state.view_vote_poll_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_vote_poll_element()}
-      </SwipeableBottomSheet>
+    
+    return this.renderBottomSheet(
+      this.render_view_vote_poll_element(),
+      this.state.view_vote_poll_bottomsheet,
+      this.open_view_vote_poll_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_vote_poll_bottomsheet} onClose={this.open_view_vote_poll_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_vote_poll_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_vote_poll_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_vote_poll_bottomsheet.bind(this)} open={this.state.view_vote_poll_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_vote_poll_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_vote_poll_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <VotePollPage ref={this.view_vote_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_poll_vote_transaction_to_stack={this.add_poll_vote_transaction_to_stack.bind(this)} 
         />
       </div>
@@ -21610,31 +22154,37 @@ class App extends Component {
   render_view_calculate_poll_result_bottomsheet(){
     if(this.state.view_calculate_poll_result_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_calculate_poll_result_bottomsheet} onClose={this.open_view_calculate_poll_result_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_calculate_poll_result_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_calculate_poll_result_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_calculate_poll_result_bottomsheet.bind(this)} open={this.state.view_calculate_poll_result_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_calculate_poll_result_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_view_calculate_poll_result_element(),
+      this.state.view_calculate_poll_result_bottomsheet,
+      this.open_view_calculate_poll_result_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_calculate_poll_result_bottomsheet} onClose={this.open_view_calculate_poll_result_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_calculate_poll_result_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_calculate_poll_result_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_calculate_poll_result_bottomsheet.bind(this)} open={this.state.view_calculate_poll_result_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_calculate_poll_result_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_calculate_poll_result_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <CalculatePollResultPage ref={this.view_calculate_poll_result_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_poll_result_transaction_to_stack={this.add_poll_result_transaction_to_stack.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} count_poll_votes_and_post_results={this.count_poll_votes_and_post_results.bind(this)}
         />
       </div>
@@ -21776,31 +22326,37 @@ class App extends Component {
   render_view_stage_creator_payout_result_bottomsheet(){
     if(this.state.view_stage_creator_payout_result_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_stage_creator_payout_result_bottomsheet} onClose={this.open_view_stage_creator_payout_result_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_stage_creator_payout_result_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_stage_creator_payout_result_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_stage_creator_payout_result_bottomsheet.bind(this)} open={this.state.view_stage_creator_payout_result_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_stage_creator_payout_result_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_view_stage_creator_payout_result_element(),
+      this.state.view_stage_creator_payout_result_bottomsheet,
+      this.open_view_stage_creator_payout_result_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_stage_creator_payout_result_bottomsheet} onClose={this.open_view_stage_creator_payout_result_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_stage_creator_payout_result_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_stage_creator_payout_result_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_stage_creator_payout_result_bottomsheet.bind(this)} open={this.state.view_stage_creator_payout_result_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_stage_creator_payout_result_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_stage_creator_payout_result_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <StageCreatorPayoutPage ref={this.view_stage_creator_payout_result_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_staging_result_transaction_to_stack={this.add_staging_result_transaction_to_stack.bind(this)} calcualte_creator_payouts={this.calcualte_creator_payouts.bind(this)}
         />
       </div>
@@ -21949,31 +22505,37 @@ class App extends Component {
   render_view_bid_in_auction_bottomsheet(){
     if(this.state.view_bid_in_auction_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_bid_in_auction_bottomsheet} onClose={this.open_view_bid_in_auction_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_bid_in_auction_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_bid_in_auction_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_bid_in_auction_bottomsheet.bind(this)} open={this.state.view_bid_in_auction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_bid_in_auction_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_view_bid_in_auction_element(),
+      this.state.view_bid_in_auction_bottomsheet,
+      this.open_view_bid_in_auction_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_bid_in_auction_bottomsheet} onClose={this.open_view_bid_in_auction_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_bid_in_auction_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_bid_in_auction_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_bid_in_auction_bottomsheet.bind(this)} open={this.state.view_bid_in_auction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_bid_in_auction_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_bid_in_auction_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <BidInAuctionPage ref={this.view_bid_in_auction_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_bid_in_auction_transaction_to_stack={this.add_bid_in_auction_transaction_to_stack.bind(this)} show_images={this.show_images.bind(this)}
         />
       </div>
@@ -22050,31 +22612,37 @@ class App extends Component {
   render_fulfil_auction_bid_bottomsheet(){
     if(this.state.fulfil_auction_bid_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.fulfil_auction_bid_bottomsheet} onClose={this.open_fulfil_auction_bid_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_fulfil_auction_bid_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_fulfil_auction_bid_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_fulfil_auction_bid_bottomsheet.bind(this)} open={this.state.fulfil_auction_bid_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_fulfil_auction_bid_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_fulfil_auction_bid_element(),
+      this.state.fulfil_auction_bid_bottomsheet,
+      this.open_fulfil_auction_bid_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.fulfil_auction_bid_bottomsheet} onClose={this.open_fulfil_auction_bid_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_fulfil_auction_bid_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_fulfil_auction_bid_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_fulfil_auction_bid_bottomsheet.bind(this)} open={this.state.fulfil_auction_bid_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_fulfil_auction_bid_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_fulfil_auction_bid_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <FulfilAuctionBidPage ref={this.fulfil_auction_bid_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_fulfil_bids_in_auction_to_stack={this.add_fulfil_bids_in_auction_to_stack.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
         />
       </div>
@@ -22154,31 +22722,37 @@ class App extends Component {
   render_view_iframe_link_bottomsheet(){
     if(this.state.view_iframe_link_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_iframe_link_bottomsheet} onClose={this.open_view_iframe_link_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_iframe_link_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_iframe_link_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_iframe_link_bottomsheet.bind(this)} open={this.state.view_iframe_link_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_iframe_link_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_view_iframe_link_element(),
+      this.state.view_iframe_link_bottomsheet,
+      this.open_view_iframe_link_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_iframe_link_bottomsheet} onClose={this.open_view_iframe_link_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_iframe_link_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_iframe_link_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_iframe_link_bottomsheet.bind(this)} open={this.state.view_iframe_link_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_iframe_link_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_iframe_link_element(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <OpenedIframeLinkPage ref={this.view_iframe_link_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} 
         />
       </div>
@@ -22353,24 +22927,30 @@ class App extends Component {
   render_set_map_location_bottomsheet(){
     if(this.state.set_map_location_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-      return(
-        <Sheet isOpen={this.state.set_map_location_bottomsheet} onClose={this.open_set_map_location_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-            <Sheet.Container>
-                <Sheet.Content>
-                  {this.render_set_map_location_element()}
-                </Sheet.Content>
-                <ToastContainer limit={3} containerId="id2"/>
-            </Sheet.Container>
-            <Sheet.Backdrop onTap={()=> this.open_set_map_location_bottomsheet()}/>
-        </Sheet>
-      )
-    }
-    return(
-      <SwipeableBottomSheet swipeableViewsProps={{ disabled: true }} overflowHeight={0} marginTop={0} onChange={this.open_set_map_location_bottomsheet.bind(this)} open={this.state.set_map_location_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_set_map_location_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_set_map_location_element(),
+      this.state.set_map_location_bottomsheet,
+      this.open_set_map_location_bottomsheet,
+      this.state.height-120
     )
+    // if(os == 'iOS'){
+    //   return(
+    //     <Sheet isOpen={this.state.set_map_location_bottomsheet} onClose={this.open_set_map_location_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //         <Sheet.Container>
+    //             <Sheet.Content>
+    //               {this.render_set_map_location_element()}
+    //             </Sheet.Content>
+    //             {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //         </Sheet.Container>
+    //         <Sheet.Backdrop onTap={()=> this.open_set_map_location_bottomsheet()}/>
+    //     </Sheet>
+    //   )
+    // }
+    // return(
+    //   <SwipeableBottomSheet swipeableViewsProps={{ disabled: true }} overflowHeight={0} marginTop={0} onChange={this.open_set_map_location_bottomsheet.bind(this)} open={this.state.set_map_location_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_set_map_location_element()}
+    //   </SwipeableBottomSheet>
+    // )
     
   }
 
@@ -22379,7 +22959,7 @@ class App extends Component {
     var size = this.getScreenSize();
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
-      <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <LocationMapInput ref={this.set_map_location_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} return_pins={this.return_pins.bind(this)}
         />
       </div>
@@ -22458,24 +23038,30 @@ class App extends Component {
   render_view_map_location_pins_bottomsheet(){
     if(this.state.view_map_location_pins_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-      return(
-        <Sheet isOpen={this.state.view_map_location_pins_bottomsheet} onClose={this.open_view_map_location_pins_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-          <Sheet.Container>
-            <Sheet.Content>
-              {this.render_view_map_location_pins_element()}
-            </Sheet.Content>
-            <ToastContainer limit={3} containerId="id2"/>
-          </Sheet.Container>
-          <Sheet.Backdrop onTap={()=> this.open_view_map_location_pins_bottomsheet()}/>
-        </Sheet>
-      )
-    }
-    return(
-      <SwipeableBottomSheet swipeableViewsProps={{ disabled: true }} overflowHeight={0} marginTop={0} onChange={this.open_view_map_location_pins_bottomsheet.bind(this)} open={this.state.view_map_location_pins_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-        {this.render_view_map_location_pins_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_view_map_location_pins_element(),
+      this.state.view_map_location_pins_bottomsheet,
+      this.open_view_map_location_pins_bottomsheet,
+      this.state.height-120
     )
+    // if(os == 'iOS'){
+    //   return(
+    //     <Sheet isOpen={this.state.view_map_location_pins_bottomsheet} onClose={this.open_view_map_location_pins_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //       <Sheet.Container>
+    //         <Sheet.Content>
+    //           {this.render_view_map_location_pins_element()}
+    //         </Sheet.Content>
+    //         {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //       </Sheet.Container>
+    //       <Sheet.Backdrop onTap={()=> this.open_view_map_location_pins_bottomsheet()}/>
+    //     </Sheet>
+    //   )
+    // }
+    // return(
+    //   <SwipeableBottomSheet swipeableViewsProps={{ disabled: true }} overflowHeight={0} marginTop={0} onChange={this.open_view_map_location_pins_bottomsheet.bind(this)} open={this.state.view_map_location_pins_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //     {this.render_view_map_location_pins_element()}
+    //   </SwipeableBottomSheet>
+    // )
     
   }
 
@@ -22484,7 +23070,7 @@ class App extends Component {
     var size = this.getScreenSize();
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
-      <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <ViewObjectLocations ref={this.view_map_location_pins_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
         />
       </div>
@@ -22545,24 +23131,30 @@ class App extends Component {
   render_view_call_interface_bottomsheet(){
     if(this.state.view_call_interface_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_call_interface_bottomsheet} onClose={this.open_view_call_interface_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_call_interface_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_call_interface_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_call_interface_bottomsheet.bind(this)} open={this.state.view_call_interface_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_call_interface_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_view_call_interface_element(),
+      this.state.view_call_interface_bottomsheet,
+      this.open_view_call_interface_bottomsheet,
+      this.state.height-120
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_call_interface_bottomsheet} onClose={this.open_view_call_interface_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_call_interface_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_call_interface_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_call_interface_bottomsheet.bind(this)} open={this.state.view_call_interface_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_call_interface_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_call_interface_element(){
@@ -22570,7 +23162,7 @@ class App extends Component {
     var size = this.getScreenSize();
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
-      <div style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call_confirmation={this.leave_call_confirmation.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)}
         />
       </div>
@@ -22637,24 +23229,30 @@ class App extends Component {
   render_view_purchase_credits_bottomsheet(){
     if(this.state.view_purchase_credits_bottomsheet2 != true) return;
     var os = getOS()
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.view_purchase_credits_bottomsheet} onClose={this.open_view_purchase_credits_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                      {this.render_view_purchase_credits_element()}
-                    </Sheet.Content>
-                    <ToastContainer limit={3} containerId="id2"/>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_view_purchase_credits_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_purchase_credits_bottomsheet.bind(this)} open={this.state.view_purchase_credits_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          {this.render_view_purchase_credits_element()}
-      </SwipeableBottomSheet>
+    return this.renderBottomSheet(
+      this.render_view_purchase_credits_element(),
+      this.state.view_purchase_credits_bottomsheet,
+      this.open_view_purchase_credits_bottomsheet,
+      this.state.height-70
     )
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.view_purchase_credits_bottomsheet} onClose={this.open_view_purchase_credits_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                   {this.render_view_purchase_credits_element()}
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_view_purchase_credits_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_purchase_credits_bottomsheet.bind(this)} open={this.state.view_purchase_credits_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       {this.render_view_purchase_credits_element()}
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   render_view_purchase_credits_element(){
@@ -22662,7 +23260,7 @@ class App extends Component {
     var size = this.getScreenSize();
     // const minus = this.state.os == 'iOS' ? 90 : 90;
     return(
-      <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+      <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <PurchaseCreditsPage ref={this.view_purchase_credits_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_purchase_credits_transaction_to_stack={this.add_purchase_credits_transaction_to_stack.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)}
         />
       </div>

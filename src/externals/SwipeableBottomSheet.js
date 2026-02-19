@@ -17,9 +17,18 @@ class SwipeableBottomSheet extends Component {
 
 		this.state = {
 			open: props.defaultOpen,
-			height: window.innerHeight
+			height: window.innerHeight,
+			disableSwipe: false
 		};
 	};
+
+	onBodyScroll(e) {
+        // Disable swipe-to-close when user has scrolled down inside the sheet
+        const scrolledDown = e.target.scrollTop > 0;
+        if (scrolledDown !== this.state.disableSwipe) {
+            this.setState({ disableSwipe: scrolledDown });
+        }
+    }
 
 	onHeightChange(height){
 		this.setState({ height });
@@ -27,6 +36,9 @@ class SwipeableBottomSheet extends Component {
 
 	onChangeIndex(index){
 		const open = index === 1;
+		if (!open) {
+			this.setState({ disableSwipe: false });  // reset on close
+		}
 		if(this.props.open === undefined){
 			this.setState({ open });
 		}
@@ -47,7 +59,7 @@ class SwipeableBottomSheet extends Component {
 
 
 	render() {
-
+		const { disableSwipe } = this.state;
 		const { overflowHeight, fullScreen, marginTop, open, topShadow, shadowTip, overlay, swipeableViewsProps, scrollTopAtClose } = this.props;
 
 		const hiddenWhenClosed = overflowHeight === 0;
@@ -94,6 +106,8 @@ class SwipeableBottomSheet extends Component {
 					backgroundColor: 'white',
 					height: fullScreen ? maxHeight : 'initial',
 					maxHeight: maxHeight,
+					WebkitOverflowScrolling: 'touch',
+                     overscrollBehavior: 'contain',
 					...this.props.bodyStyle
 				}
 			},
@@ -138,6 +152,7 @@ class SwipeableBottomSheet extends Component {
 					index={index}
 					axis="y"
 					enableMouseEvents
+					disabled={disableSwipe}
 					onChangeIndex={this.onChangeIndex}
 					{...this.props.swipeableViewsProps}
 					onTransitionEnd={this.onTransitionEnd}
@@ -149,6 +164,7 @@ class SwipeableBottomSheet extends Component {
 						ref={elt => this.bodyElt = elt}
 						style={styles.swiper.body}
 						className={`ReactSwipeableBottomSheet--${isOpen ? 'open' : 'closed'}`}
+						onScroll={this.onBodyScroll} 
 					>
 						{this.props.children}
 					</div>
