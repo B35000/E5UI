@@ -1407,7 +1407,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px'}}>
                 <Tags ref={c => this.top_tags = c} font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 5px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(this.props.os == 'iOS' ? 85 : 120), maxWidth: this.props.app_state.width}}>
+                <div style={{'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 5px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(135), maxWidth: this.props.app_state.width}}>
                     {this.render_everything()}
                 </div>
             </div>
@@ -18007,12 +18007,13 @@ class StackPage extends Component {
 
 
     render_renew_nitro_file_uploads_button(){
+        if(this.props.app_state.has_wallet_been_set == false) return;
         const files_to_be_renewed_data = this.fetch_files_to_be_renewed()
         const files_to_be_renewed = files_to_be_renewed_data.files_to_renew
         const space_used = files_to_be_renewed_data.total_spaces_used
         const total_streaming_spaces_used = files_to_be_renewed_data.total_streaming_spaces_used
         const current_month = new Date().getMonth()
-        if(Object.keys(files_to_be_renewed).length == 0 || current_month > 5 && !this.is_space_legible_for_renewal(space_used)){
+        if((Object.keys(files_to_be_renewed).length == 0 || current_month > 5) && !this.is_space_legible_for_renewal(space_used)){
             return;
         }
         return(

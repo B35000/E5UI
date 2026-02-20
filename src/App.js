@@ -5429,7 +5429,7 @@ class App extends Component {
         'name':this.getLocale()['1417']/* 'light' */,
         'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
         
-        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'rgb(241, 241, 241)','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
         'primary_text_color':'#393e46','secondary_text_color':'grey', 
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
@@ -6392,8 +6392,8 @@ class App extends Component {
           set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)}
         />
 
-        {this.render_toast_container()}
-        {this.render_ios_page_toast_container()}
+        {/* {this.render_toast_container()}
+        {this.render_ios_page_toast_container()} */}
       </div>
     )
   }
@@ -6922,7 +6922,7 @@ class App extends Component {
         <Drawer.Portal>
           <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
           <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
-            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)"}}>
               {view}
             </div>
           </Drawer.Content>
@@ -21842,7 +21842,7 @@ class App extends Component {
     const object = this.state.direct_messages[convo_id]
     if(object != null){
       this.homepage.current?.when_direct_message_object_item_clicked(object, 'ignore')
-      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.props.app_state.loc['1264bo']/* 'direct-message 💬' */})
+      this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1264bo']/* 'direct-message 💬' */})
     }
   }
 

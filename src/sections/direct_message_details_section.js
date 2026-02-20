@@ -1494,7 +1494,7 @@ class DirectMessageDetailsSection extends Component {
 
             this.setState({entered_text:''})
             
-
+            this.scroll_to_bottom()
             // if (this.messagesEnd.current){
             //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             // }
