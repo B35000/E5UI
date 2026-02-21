@@ -1349,7 +1349,7 @@ class App extends Component {
     
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
-    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false,
+    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false,
   };
 
   get_thread_pool_size(){
@@ -5439,7 +5439,7 @@ class App extends Component {
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
         
-        'chart_color':'#FCFCFC','chart_background_color':'#D5D5D5', 'chart_color2':'rgb(170, 170, 170)',
+        'chart_color2':'#FCFCFC','chart_background_color':'#D5D5D5', 'chart_color':'rgb(170, 170, 170)',
   
         'number_picker_label_color':'#D5D5D5','number_picker_label_shadow':'#c9c9c9',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
@@ -6389,7 +6389,7 @@ class App extends Component {
 
           get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.send_direct_message.bind(this)}
 
-          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)}
+          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -31792,6 +31792,11 @@ class App extends Component {
 
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items, pre_launch_data={}, extra_data={}) => {
     var created_token_events = extra_data['created_object_events_mapping'] != null ? extra_data['created_object_events_mapping'][e5] : (pre_launch_data[e5] != null ? pre_launch_data[e5]['exchange_objects_data']['created_object_events'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}))
+
+    if(created_token_events.length == 0){
+      created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+    }
+    
     var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
 
     console.log('get_token_data','token events to load', created_token_events)
@@ -31851,7 +31856,7 @@ class App extends Component {
     var exchange_accounts = [account, account]
     for(var i=0; i<created_token_events.length; i++){
       var id = created_token_events[i].returnValues.p1
-      created_tokens.push(id)
+      created_tokens.push(parseInt(id))
       created_token_depths.push(0)
       exchange_accounts.push(account)
     }
@@ -31938,7 +31943,8 @@ class App extends Component {
 
     var load_pos = this.state.sliced_object_load_count
     for(var i=0; i<created_tokens.length; i++){
-      var tokens_data = all_data[created_tokens[i]] == null ? ((created_tokens[i] == 3 || created_tokens[i] == 5) ? null : await this.fetch_objects_data(created_tokens[i], web3, e5, contract_addresses)) : all_data[created_tokens[i]]
+      const token_id = created_tokens[i]
+      var tokens_data = all_data[token_id] == null ? ((token_id == 3 || token_id == 5) ? null : await this.fetch_objects_data(token_id, web3, e5, contract_addresses)) : all_data[token_id]
       var event = i>1 ? created_token_events[i-2]: null
 
       var depth_values = []
@@ -31951,8 +31957,8 @@ class App extends Component {
 
       // var balance = token_balances[i]
       // var token_balance_data = token_balances_data[i]
-      var balance = balance_obj[created_tokens[i]]['token_balance']
-      var token_balance_data = balance_obj[created_tokens[i]]['token_balance_data']
+      var balance = balance_obj[token_id]['token_balance']
+      var token_balance_data = balance_obj[token_id]['token_balance_data']
 
       var exchanges_depth = 0
       if(tokens_data != null){
@@ -31970,33 +31976,33 @@ class App extends Component {
       if(tokens_data != null && tokens_data.token_image != null && tokens_data.token_image.startsWith('image')) this.fetch_uploaded_data_from_ipfs([tokens_data.token_image], false, keys);
       
       if(tokens_data != null){
-        token_thumbnail_directory[created_tokens[i]] = tokens_data.token_image
+        token_thumbnail_directory[token_id] = tokens_data.token_image
         if(tokens_data.image_bundle != null){
           const uploaded_data_clone = structuredClone(this.state.uploaded_data)
           uploaded_data_clone[tokens_data.token_image] = tokens_data.image_bundle
           this.setState({uploaded_data: uploaded_data_clone})
         }
       }
-      else if(created_tokens[i] == 3){
-        token_thumbnail_directory[created_tokens[i]] = this.state.e5s[e5].end_image
+      else if(token_id == 3){
+        token_thumbnail_directory[token_id] = this.state.e5s[e5].end_image
       }
-      else if(created_tokens[i] == 5){
-        token_thumbnail_directory[created_tokens[i]] = this.state.e5s[e5].spend_image
+      else if(token_id == 5){
+        token_thumbnail_directory[token_id] = this.state.e5s[e5].spend_image
       }
 
       if(exchanges_depth != 0){
-        end_tokens.push(created_tokens[i])
+        end_tokens.push(token_id)
       }
 
-      const spend_balance = (tokens_data != null && tokens_data.token_type == 'e') ? e_token_balance_data[created_tokens[i]] : 0
+      const spend_balance = (tokens_data != null && tokens_data.token_type == 'e') ? e_token_balance_data[token_id] : 0
         
       var token_obj = {
-        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':created_tokens[i]+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length, 'spend_balance':spend_balance, 'object_type':'token'
+        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length, 'spend_balance':spend_balance, 'object_type':'token'
       }
 
-      if(this.homepage.current?.state.selected_end_item == created_tokens[i]+e5 || this.homepage.current?.state.selected_spend_item == created_tokens[i]+e5){
+      if(this.homepage.current?.state.selected_end_item == token_id+e5 || this.homepage.current?.state.selected_spend_item == token_id+e5){
         // the token is being viewed
-        const previous_obj = this.state.created_tokens[e5].find(e => e['e5_id'] == created_tokens[i]+e5)
+        const previous_obj = this.state.created_tokens[e5].find(e => e['e5_id'] == token_id+e5)
         if(previous_obj != null){
           token_obj['exchanges_balances'] = previous_obj['exchanges_balances']
           token_obj['moderators'] = previous_obj['moderators']
@@ -32012,19 +32018,18 @@ class App extends Component {
         }
       }
 
-      if(tokens_data != null || (created_tokens[i] == 3 || created_tokens[i] == 5)){
+      if(tokens_data != null || (token_id == 3 || token_id == 5)){
         const index = created_token_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']);
         if(index != -1){
           created_token_object_data[index] = token_obj
         }else{
           created_token_object_data.push(token_obj)
         }
-        created_token_object_mapping[created_tokens[i]] = token_obj
+        created_token_object_mapping[token_id] = token_obj
       }
       
       var token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
       var token_title = tokens_data == null ? 'tokens' : tokens_data.entered_title_text
-      var token_id = created_tokens[i]
 
       if(token_id == 3){
         token_name = this.getLocale()['3078']/* END */
@@ -44324,7 +44329,9 @@ class App extends Component {
 
     console.log('apppage', 'tag_price_data', tag_price_data)
 
-    const processed_data = this.process_tag_price_data(tag_price_data)
+    const processed_tag_data = await this.process_tag_price_data(tag_price_data)
+    const processed_data = processed_tag_data.return_data;
+    const similar_tags = processed_tag_data.decrypted_other_tags;
     const tag_price_data_clone = structuredClone(this.state.tag_price_data)
     const hash_keyord_mapping_clone = structuredClone(this.state.hash_keyord_mapping_data)
 
@@ -44373,6 +44380,7 @@ class App extends Component {
     const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'tag_prices')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
 
     try{
+      
       const response = await fetch(request, body);
       if (!response.ok) {
         console.log('datas', 'tag_prices',response)
@@ -44394,8 +44402,9 @@ class App extends Component {
     }
   }
 
-  process_tag_price_data(data){
+  async process_tag_price_data(data){
     const return_data = {}
+    const similar_tags = []
     Object.keys(data).forEach(time => {
       Object.keys(data[time]).forEach(item_type => {
         Object.keys(data[time][item_type]).forEach(item_lan => {
@@ -44407,6 +44416,12 @@ class App extends Component {
                     return_data[tag] = []
                   }
                   const tag_data = data[time][item_type][item_lan][tag][item_state][e5][identifier]
+                  const other_tags = tag_data['other_tags']
+                  other_tags.forEach(tag_item => {
+                    if(!similar_tags.includes(tag_item)){
+                      similar_tags.push(tag_item)
+                    }
+                  });
                   const entry = {time, item_type, item_lan, item_state, e5, identifier, tag_data}
                   return_data[tag].push(entry)
                 });
@@ -44416,6 +44431,150 @@ class App extends Component {
         });
       });
     });
+    const decrypted_other_tags = []
+    for(var i=0; i<similar_tags.length; i++){
+      decrypted_other_tags.push(await this.decryptTag(similar_tags[i], process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+    }
+    return { return_data, decrypted_other_tags }
+  }
+
+  get_searched_tag_price_data_for_search = async (tag) => {
+    this.setState({is_searching_tag_price_data: true})
+    const payment_tags = [tag]
+
+    const keywords = []
+    const keywords_mapping = {}
+    const hash_keyord_mapping = {}
+    for(var te=0; te<payment_tags.length; te++){
+      const word = payment_tags[te]
+      const hash_word = await this.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+      keywords.push(hash_word)
+      if(this.state.tag_price_data[hash_word] == null){
+        keywords_mapping[hash_word] = word
+        hash_keyord_mapping[word] = hash_word
+      }
+    }
+
+    if(keywords.length == 0){
+      this.setState({is_searching_tag_price_data: false})
+      return;
+    }
+
+
+    const filter_type = ''
+    const filter_languages = [/* this.state.device_language */]
+    const filter_states = [/* this.hash_data_with_randomizer(this.state.device_country) */]
+    const filter_e5s = []
+    const end_time = Date.now()
+    const start_time = Date.now() - (70*7*24*60*60*1000)
+
+    const tag_price_data = await this.get_tag_price_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_e5s, false);
+
+    const filter_object_types = []
+    const end_time2 = Date.now()
+    const start_time2 = Date.now() - (70*7*24*60*60*1000)
+    const tag_trend_data = await this.get_tag_trends_data(keywords, end_time2, start_time2, filter_type, filter_languages, filter_states, filter_object_types, false)
+
+    const processed_trend_data = await this.get_process_tag_trend_data(tag_trend_data)
+    const processed_tag_data = await this.process_tag_price_data(tag_price_data)
+
+    const processed_data = processed_tag_data.return_data;
+    const similar_tags = processed_tag_data.decrypted_other_tags;
+
+    const tag_price_data_clone = structuredClone(this.state.tag_price_data)
+    const hash_keyord_mapping_clone = structuredClone(this.state.hash_keyord_mapping_data)
+    const similar_tags_clone = structuredClone(this.state.similar_searched_tags_data)
+    const tag_trend_data_clone = structuredClone(this.state.tag_trend_data)
+
+    Object.keys(processed_data).forEach(hash_word => {
+      tag_price_data_clone[keywords_mapping[hash_word]] = processed_data[hash_word]
+    });
+
+    Object.keys(hash_keyord_mapping).forEach(word => {
+      hash_keyord_mapping_clone[word] = hash_keyord_mapping[word]
+    });
+
+    similar_tags_clone[tag] = similar_tags
+    tag_trend_data_clone[tag] = processed_trend_data
+
+    this.setState({tag_price_data: tag_price_data_clone, hash_keyord_mapping_data: hash_keyord_mapping_clone, similar_searched_tags_data: similar_tags_clone, tag_trend_data: tag_trend_data_clone})
+
+    this.setState({is_searching_tag_price_data: false})
+  }
+
+  get_tag_trends_data = async (keywords, end_time=(Date.now()), start_time=(Date.now() - (52*7*24*60*60*1000)), filter_type, filter_languages, filter_states, filter_object_types=[], updated_signature=false) => {
+    console.log('tag_prices', 'trends', 'beginning trend search...')
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+    
+    const arg_obj = {
+      keywords: keywords,
+      filter_type: filter_type,
+      filter_languages: filter_languages,
+      filter_states: filter_states,
+      filter_object_types:filter_object_types,
+      end_time,/* the newest entry to include */
+      start_time,/* the oldest entry to include */
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'trends')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      console.log('tag_prices', 'trends', 'performing fetch...', request)
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log('datas', 'tag_prices',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('tag_prices', 'trends', keywords, obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.get_tag_trends_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_object_types, true)
+      }
+      var target_data = obj['trends']
+      return target_data
+    }
+    catch(e){
+      console.log('apppage', 'tag_prices', 'trends', 'something went wrong with tag_prices', e)
+    }
+  }
+
+  async get_process_tag_trend_data(data){
+    const return_data = []
+    Object.keys(data).forEach(time => {
+      Object.keys(data[time]).forEach(item_type => {
+        Object.keys(data[time][item_type]).forEach(item_lan => {
+          Object.keys(data[time][item_type][item_lan]).forEach(tag => {
+            Object.keys(data[time][item_type][item_lan][tag]).forEach(item_state => {
+              Object.keys(data[time][item_type][item_lan][tag][item_state]).forEach(object_type => {
+                //item_type: uploads & views
+                const hits = data[time][item_type][item_lan][tag][item_state][object_type]['hits']
+                const entry = {time:parseInt(time), item_type, item_lan, item_state, object_type, hits, tag}
+                return_data.push(entry)
+              });
+            });
+          });
+        });
+      });
+    });
+
     return return_data
   }
 

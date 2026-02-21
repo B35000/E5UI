@@ -5709,7 +5709,7 @@ class StackPage extends Component {
                     }
 
                     payment_tag_index_objects.push({
-                        'tags':all_final_elements, 'amounts':amounts, 'time':Date.now(), 'lan':this.props.app_state.device_language, 'state': this.props.hash_data_with_randomizer(object['ipfs'].device_country || this.props.app_state.device_country), 'type':object['object_type'], 'e5_id':object['e5_id'], 'e5':object['e5'], 'sender':this.props.app_state.user_account_id[object['e5']], 'recipient_account':object['e5']+':'+object['author'], 'identifier': txs[i].identifier, 'obligations':{}
+                        'tags':all_final_elements, 'amounts':amounts, 'time':Date.now(), 'lan':this.props.app_state.device_language, 'state': this.props.hash_data_with_randomizer(object['ipfs'].device_country), 'type':object['object_type'], 'e5_id':object['e5_id'], 'e5':object['e5'], 'sender':this.props.app_state.user_account_id[object['e5']], 'recipient_account':object['e5']+':'+object['author'], 'identifier': txs[i].identifier, 'obligations':{}
                     })
                 }
                 else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
@@ -6146,7 +6146,7 @@ class StackPage extends Component {
                     }
 
                     payment_tag_index_objects.push({
-                        'tags':all_final_elements, 'amounts':amounts, 'time':Date.now(), 'lan':this.props.app_state.device_language, 'state': this.props.hash_data_with_randomizer(object['ipfs'].device_country || this.props.app_state.device_country), 'type':object['object_type'], 'e5_id':object['e5_id'], 'e5':object['e5'], 'sender':this.props.app_state.user_account_id[object['e5']], 'recipient_account':object['e5']+':'+object['author'], 'identifier': txs[i].identifier, 'obligations':{}
+                        'tags':all_final_elements, 'amounts':amounts, 'time':Date.now(), 'lan':this.props.app_state.device_language, 'state': this.props.hash_data_with_randomizer(object['ipfs'].device_country), 'type':object['object_type'], 'e5_id':object['e5_id'], 'e5':object['e5'], 'sender':this.props.app_state.user_account_id[object['e5']], 'recipient_account':object['e5']+':'+object['author'], 'identifier': txs[i].identifier, 'obligations':{}
                     })
 
                     ipfs_index_object[txs[i].id] = tags_payment_data

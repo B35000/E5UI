@@ -19,6 +19,7 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups';
 import TextInput from './../components/text_input';
+import Tags from './../components/tags';
 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
@@ -71,6 +72,10 @@ class PostListSection extends Component {
         typed_search_dm_account_id:'',
         typed_watch_account_input:'',
         search_identifier:'',
+        typed_search_tag:'',
+        tag_search_history:[],
+        selected_time_filter_chart_tags_object:this.selected_time_filter_chart_tags_object(),
+        selected_time_filter_chart_tags_object2: this.selected_time_filter_chart_tags_object(),
     };
 
 
@@ -219,6 +224,13 @@ class PostListSection extends Component {
                     return(
                         <div>
                             {this.render_watched_account_ui()}
+                        </div>
+                    )
+                }
+                else if(selected_item == this.props.app_state.loc['1264bp']/* 'indexed-data 🔎' */){
+                    return(
+                        <div>
+                            {this.render_indexed_data_search_ui()}
                         </div>
                     )
                 }
@@ -3186,6 +3198,674 @@ class PostListSection extends Component {
         }
         return recipients_e5
     }
+
+
+
+
+
+
+
+
+
+
+    render_indexed_data_search_ui(){
+        return(
+            <div>
+                <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509y']/* Search a tag...' */} when_text_input_field_changed={this.when_tag_text_input_field_changed.bind(this)} text={this.state.typed_search_tag} adjust_height={false} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_index_search()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_searched_tags()}
+                <div style={{height: 10}}/>
+                {this.render_indexed_data_search_results()}
+            </div>
+        )
+    }
+
+    when_tag_text_input_field_changed(text){
+        this.setState({typed_search_tag: text})
+    }
+
+    perform_index_search(){
+        const typed_word = this.state.typed_search_tag.trim().toLowerCase()
+
+        if(typed_word == ''){
+            this.props.notify(this.props.app_state.loc['128'], 1400)
+        }
+        else if(this.hasWhiteSpace(typed_word)){
+            this.props.notify(this.props.app_state.loc['129'], 1400)
+        }
+        else if(typed_word.length > this.props.app_state.tag_size){
+            this.props.notify(this.props.app_state.loc['130'], 1400)
+        }
+        else if(typed_word.length < 3){
+            this.props.notify(this.props.app_state.loc['131'], 1400)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word)){
+            this.props.notify(this.props.app_state.loc['162m']/* You cant use special characters. */, 4400)
+        }
+        else{
+            this.start_search_with_word(typed_word)
+        }
+    }
+
+    start_search_with_word(typed_word){
+        this.props.get_searched_tag_price_data_for_search(typed_word)
+        this.props.notify(this.props.app_state.loc['2509bc']/* Searching... */, 2400)
+        
+        const history_clone = this.state.tag_search_history.slice()
+        if(!history_clone.includes(typed_word)){
+            history_clone.push(typed_word)
+        }
+        this.setState({typed_search_tag: '', tag_search_history: history_clone, selected_searched_tag: typed_word})
+    }
+
+    hasWhiteSpace(s) {
+        return s.indexOf(' ') >= 0;
+    }
+
+    render_searched_tags(){
+        var items = [].concat(this.state.tag_search_history)
+        
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            const tag = this.state.selected_searched_tag
+            const similar_tags = this.props.app_state.similar_searched_tags_data[tag] || []
+            const similar_tags_filtered = similar_tags.filter((tag) => {
+                return (!this.state.tag_search_history.includes(tag))
+            });
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_searched_tag_item(item)}
+                            </li>
+                        ))}
+                        {similar_tags_filtered.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_similar_searched_tag_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_searched_tag_item(tag){
+        const title = tag
+        const similar_tags = this.props.app_state.similar_searched_tags_data[tag] || []
+        var similar_count = this.format_count(similar_tags.length)
+        if(similar_count == 0){
+            similar_count = '000'
+        }
+        const details = this.props.app_state.loc['2509bb']/* '$ similar' */.replace('$', similar_count)
+        return(
+            <div onClick={() => this.when_searched_tag_clicked(tag)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+                {this.render_line_if_selected3(tag)}
+            </div>
+        )
+    }
+
+    render_similar_searched_tag_item(tag){
+        const title = tag
+        const details = this.props.app_state.loc['2509bk']/* 'suggested' */
+        return(
+            <div style={{opacity:0.6}} onClick={() => this.start_search_with_word(tag)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+                {this.render_line_if_selected3(tag)}
+            </div>
+        )
+    }
+
+    render_line_if_selected3(tag){
+        if(this.state.selected_searched_tag == tag){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_searched_tag_clicked(tag){
+        this.setState({selected_searched_tag: tag})
+    }
+
+
+
+    render_indexed_data_search_results(){
+        var middle = this.props.height-100
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-195;
+        }
+        else if(size == 'm'){
+            middle = this.props.height-120
+        }
+        const tag = this.state.selected_searched_tag
+        return(
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                {this.props.app_state.is_searching_tag_price_data == true && (
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )}
+                {this.props.app_state.is_searching_tag_price_data == false && (
+                    <div>
+                        {this.render_selected_tag_trend_data()}
+                        {this.render_selected_tag_data()}
+                    </div>
+                )}
+
+                {(tag == null || (this.props.app_state.tag_price_data[tag] != null && this.props.app_state.tag_price_data[tag].length == 0 && this.props.app_state.tag_trend_data[tag] != null && this.props.app_state.tag_trend_data[tag].length == 0)) && (
+                    <div>
+                        {this.render_empty_object()}
+                    </div>
+                )}
+                
+            </div>
+        )
+    }
+
+    render_selected_tag_data(){
+        const tag = this.state.selected_searched_tag
+        if(this.props.app_state.tag_price_data[tag] != null && this.props.app_state.tag_price_data[tag].length > 0){
+            const price_data = this.props.app_state.tag_price_data[tag]
+            const unfiltered_sorted_price_data = this.sortByAttributeDescending(price_data, 'time').reverse()
+            const filter_time = this.get_filter_end_time(this.state.selected_time_filter_chart_tags_object)
+            const sorted_price_data = unfiltered_sorted_price_data.filter(function (price_hit) {
+                return (price_hit['time'] > filter_time)
+            });
+            const { used_token_ids, used_token_price_data, used_tokens_max, used_tokens_min } = this.get_tags_used_tokens_and_price_data(sorted_price_data, this.props.app_state.selected_e5)
+
+            const selected_token_pos = this.get_selected_token()
+            const selected_token = used_token_ids[selected_token_pos]
+
+            const new_dps = this.get_transaction_tag_data_points(used_token_price_data, selected_token, used_tokens_max)
+            const selected_e5 = this.state.selected_search_e5 || this.props.app_state.selected_e5
+
+            const largest = used_tokens_max[selected_token]
+            const smallest = used_tokens_min[selected_token]
+            const average = bigInt(largest).plus(smallest).divide(2)
+
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2507e']/* 'Price Distribution.' */, 'details':this.props.app_state.loc['2507f']/* `A chart containing hits at certain price points for your selected tag.` */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.load_preferred_e5_ui()}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('6', {'final_data_points':new_dps.new_dps, 'y_axis_units':' '+this.props.app_state.loc['2507i']/* hits */})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_used_tokens(used_token_ids, selected_e5, selected_token)}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cg']/* 'Y-Axis: ' */+this.props.app_state.loc['2507h']/* Transaction Hits */, 'details':this.props.app_state.loc['2507g']/* 'X-Axis: Price' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bl']/* 'Largest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':largest, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
+                        {this.render_detail_item('2', {'style':'l','title': this.props.app_state.loc['2509bl']/* 'Largest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'subtitle':this.format_power_figure(largest), 'barwidth':this.calculate_bar_width(largest), 'number':this.format_account_balance_figure(largest), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token] })}
+                    </div>
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bm']/* 'Smallest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':smallest, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
+                        {this.render_detail_item('2', {'style':'l','title': this.props.app_state.loc['2509bm']/* 'Smallest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'subtitle':this.format_power_figure(smallest), 'barwidth':this.calculate_bar_width(smallest), 'number':this.format_account_balance_figure(smallest), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token] })}
+                    </div>
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bn']/* 'Average $ Amount Used.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':average, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
+                        {this.render_detail_item('2', {'style':'l','title': this.props.app_state.loc['2509bn']/* 'Average $ Amount Used.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'subtitle':this.format_power_figure(average), 'barwidth':this.calculate_bar_width(average), 'number':this.format_account_balance_figure(average), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token] })}
+                    </div>
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    when_selected_time_filter_chart_tags_object_updated(tag_obj){
+        this.setState({selected_time_filter_chart_tags_object: tag_obj})
+    }
+
+    get_filter_end_time(selected_time_filter_chart_tags_object){
+        var selected_item = this.get_selected_item(selected_time_filter_chart_tags_object, selected_time_filter_chart_tags_object['i'].active)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+
+        return Date.now() - (filter_value * 1000)
+    }
+
+    selected_time_filter_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+        };
+    }
+
+    get_tags_used_tokens_and_price_data(sorted_price_data, filter_e5){
+        const used_token_ids = []
+        const used_token_price_data = {}
+        const used_tokens_max = {}
+        const used_tokens_min = {}
+        const sorted_price_data_to_use = sorted_price_data.filter(function (data_point) {
+            return (data_point['e5'] == filter_e5)
+        });
+        sorted_price_data_to_use.forEach(data_point => {
+            const tag_data = data_point['tag_data']
+            const amounts = tag_data['amounts']
+            amounts.forEach(item => {
+                const exchange_id = item['id']
+                const amount = item['amount']
+                if(!used_token_ids.includes(exchange_id)){
+                    used_token_ids.push(exchange_id) 
+                    used_tokens_max[exchange_id] = 0 
+                    used_tokens_min[exchange_id] = 0 
+                }
+                if(used_token_price_data[exchange_id] == null){
+                    used_token_price_data[exchange_id] = []
+                }
+                used_token_price_data[exchange_id].push(amount)
+                if(bigInt(used_tokens_max[exchange_id]).lesser(amount)){
+                    used_tokens_max[exchange_id] = bigInt(amount)
+                }
+                if(bigInt(used_tokens_min[exchange_id]).greater(amount) || used_tokens_min[exchange_id] == 0){
+                    used_tokens_min[exchange_id] = bigInt(amount)
+                }
+            });
+        });
+
+        return { used_token_ids, used_token_price_data, used_tokens_max, used_tokens_min }
+    }
+
+    get_selected_token(){
+        return this.state.selected_token_tag || 0
+    }
+
+    get_transaction_tag_data_points(used_token_price_data, selected_token, used_tokens_max){
+        const data = []
+        const price_datapoints = used_token_price_data[selected_token]
+        const used_token_max = used_tokens_max[selected_token]
+        const price_datapoint_object = {}
+        price_datapoints.forEach(data_item => {
+            const step = bigInt(used_token_max).divide(1000).plus(1)
+            const final_item = bigInt(data_item).divide(step).multiply(step)
+            if(price_datapoint_object[final_item] == null){
+                price_datapoint_object[final_item] = 0
+            }
+            price_datapoint_object[final_item]++
+        });
+        const price_data = Object.keys(price_datapoint_object)
+        const price_datapoint_object_as_list = []
+        price_data.forEach(price_target_set => {
+            price_datapoint_object_as_list.push({'price': price_target_set, 'count': price_datapoint_object[price_target_set]})
+        });
+
+        const sorted_price_datapoint_object_as_list = this.sortByAttributeDescending(price_datapoint_object_as_list, 'price').reverse()
+
+        var diff2 = 0.001
+        data.push(diff2)
+        while(diff2 < sorted_price_datapoint_object_as_list[0]['count']){
+            diff2 = (data[data.length-1])*1.001
+            data.push(diff2)
+        }
+
+        for(var i=0; i<sorted_price_datapoint_object_as_list.length; i++){
+            const focused_item = sorted_price_datapoint_object_as_list[i]['count']
+            data.push(focused_item)
+
+            if(i==sorted_price_datapoint_object_as_list.length-1){
+                var diff = sorted_price_datapoint_object_as_list[i]['count']
+                while(diff > 0.0001){
+                    diff = data[data.length-1]*0.999
+                    data.push(diff)
+                }
+            }
+            else{
+                var diff = sorted_price_datapoint_object_as_list[i+1]['count'] - sorted_price_datapoint_object_as_list[i]['count']
+                while(diff > 0.0001){
+                    diff = data[data.length-1]*0.999
+                    data.push(diff)
+                }
+            }
+        }
+
+        const starting_price = bigInt(sorted_price_datapoint_object_as_list[0]['price']).minus(bigInt(sorted_price_datapoint_object_as_list[0]['price']).divide(10000))
+
+        const ending_price = bigInt(sorted_price_datapoint_object_as_list[sorted_price_datapoint_object_as_list.length - 1]['price']).divide(10000).plus(bigInt(sorted_price_datapoint_object_as_list[sorted_price_datapoint_object_as_list.length - 1]['price']))
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var largest = 0;
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200 && xVal < 100 && (factor * (xVal+1)) < data.length){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = sum / (slice.length)
+                original_y_val = result;
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if((largest) < (yVal)){
+                largest = (yVal)
+            }
+            var indicator = Math.round(yVal) +' '+ this.props.app_state.loc['2507i']/* 'hits' */
+            if(yVal != null && !isNaN(yVal)){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+
+        const new_dps = []
+        const diff_price = ending_price.minus(starting_price)
+        const time_chunk_period = diff_price.divide(dps.length - 1);
+        const token_symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]
+        dps.forEach((dp, index) => {
+            const period_of_x = starting_price.plus(bigInt(dp.x).times(time_chunk_period))
+            const final_x = this.format_account_balance_figure_minimized(period_of_x) /* + ' '+token_symbol */
+            const new_label = dp['indexLabel'] == null ? null : dp['indexLabel']
+            
+            if(this.props.app_state.graph_type == 2){
+                if(index % 3 == 0 || new_label != null){
+                    new_dps.push({x: final_x, y: dp.y, label: new_label})
+                }
+            }else{
+                new_dps.push({x: final_x, y: dp.y, label: new_label})
+            }
+        });
+
+        return { new_dps }
+    }
+
+    render_used_tokens(items, e5, selected_token){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_used_token_item(item, e5, index, selected_token)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_used_token_item(item, e5, index, selected_token){
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item]
+        const details = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]
+        const image = this.props.app_state.token_thumbnail_directory[e5][item]
+        if(item == selected_token){
+            return(
+                <div onClick={() => this.when_used_token_clicked(item, e5, index)}>
+                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.when_used_token_clicked(item, e5, index)}>
+                {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+            </div>
+        )
+    }
+
+    when_used_token_clicked(item, e5, index){
+        this.setState({selected_token_tag: index})
+    }
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    load_preferred_e5_ui(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        if(this.state.selected_search_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked(item){
+        this.setState({selected_search_e5: item})
+    }
+
+    render_selected_tag_trend_data(){
+        const tag = this.state.selected_searched_tag
+        if(this.props.app_state.tag_trend_data[tag] != null && this.props.app_state.tag_trend_data[tag].length > 0){
+            const trend_data = this.props.app_state.tag_trend_data[tag]
+            const sorted_trend_data = this.sortByAttributeDescending(trend_data, 'time').reverse()//from least recent to most recent
+
+            const upload_data = sorted_trend_data.filter(function (trend_hit) {
+                return (trend_hit['item_type'] == 'uploads')
+            });
+            const search_data = sorted_trend_data.filter(function (trend_hit) {
+                return (trend_hit['item_type'] == 'views')
+            });
+
+            const filter_time = this.get_filter_end_time(this.state.selected_time_filter_chart_tags_object2)
+            const upload_data_filtered = upload_data.filter(function (trend_hit) {
+                return (trend_hit['time'] > filter_time)
+            });
+            const search_data_filtered = search_data.filter(function (trend_hit) {
+                return (trend_hit['time'] > filter_time)
+            });
+
+            const upload_data_dps = this.get_upload_data_datapoints(upload_data_filtered)
+            const search_data_dps = this.get_upload_data_datapoints(search_data_filtered)
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2509bd']/* 'Upload Hits' */, 'details':this.props.app_state.loc['2509be']/* 'Chart containing the average upload rates for objects using that tag.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':upload_data_dps.dps, 'start_time': upload_data_dps.starting_time, 'end_time':upload_data_dps.ending_time})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2509bf']/* 'Y-Axis: Upload Hits.' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2509bg']/* 'Search Hits.' */, 'details':this.props.app_state.loc['2509bh']/* 'Chart containing the average search hits for objects using that tag.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':search_data_dps.dps, 'start_time': search_data_dps.starting_time, 'end_time':search_data_dps.ending_time})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2509bi']/* 'Y-Axis: Search Hits.' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_time_filter_chart_tags_object2} tag_size={'l'} when_tags_updated={this.when_selected_time_filter_chart_tags_object_updated2.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    when_selected_time_filter_chart_tags_object_updated2(tag_obj){
+        this.setState({selected_time_filter_chart_tags_object2: tag_obj})
+    }
+
+    get_upload_data_datapoints(upload_data){
+        var data = []
+        for(var i=0; i<upload_data.length; i++){
+            const focused_item = upload_data[i]['hits']
+            data.push(focused_item)
+
+            if(i==upload_data.length-1){
+                var diff = Date.now() - upload_data[i]['time']
+                for(var t=0; t<diff; t+=230000){
+                    data.push(data[data.length-1]*0.999)      
+                }
+            }
+            else{
+                var diff = upload_data[i+1]['time'] - upload_data[i]['time']
+                for(var t=0; t<diff; t+=230000){
+                    data.push(data[data.length-1]*0.999)      
+                }
+            }
+        }
+
+        // console.log('get_upload_data_datapoints', data)
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var largest = 0;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = isNaN(parseInt(sum / slice.length)) ? 0 : parseInt(sum / slice.length)
+                original_y_val = result
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if(yVal > largest){
+                largest = yVal
+            }
+            // console.log('get_upload_data_datapoints', factor, xVal, original_y_val)
+            if(yVal != null){
+                var indicator = number_with_commas(original_y_val)+' '+this.props.app_state.loc['2509bj']/* requests */
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            } 
+        }
+
+        const chart_starting_time = upload_data[0]['time']
+        const chart_ending_time = Date.now()
+
+        return { dps, largest, starting_time: chart_starting_time, ending_time: chart_ending_time }
+    }
+
+
 
 
 
@@ -7103,6 +7783,19 @@ return data['data']
             last_two_digits = num.toString().slice(0, 2);
         }
         return last_two_digits+'%'
+    }
+
+    format_account_balance_figure_minimized(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 6
+            return number_with_commas(amount.toString().substring(0, 6)) +'e'+power
+        }
+        
     }
 
 

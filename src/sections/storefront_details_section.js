@@ -3304,14 +3304,15 @@ class StorefrontDetailsSection extends Component {
 
         const sorted_price_datapoint_object_as_list = this.sortByAttributeDescending(price_datapoint_object_as_list, 'price').reverse()
 
-        var diff = 0
-        while(diff < sorted_price_datapoint_object_as_list[0]['count']){
-            diff += (data[data.length-1] || 0.001)*1.001
-            data.push(diff)
+        var diff2 = 0.001
+        data.push(diff2)
+        while(diff2 < sorted_price_datapoint_object_as_list[0]['count']){
+            diff2 = (data[data.length-1])*1.001
+            data.push(diff2)
         }
 
         for(var i=0; i<sorted_price_datapoint_object_as_list.length; i++){
-            const focused_item = sorted_price_datapoint_object_as_list[i]
+            const focused_item = sorted_price_datapoint_object_as_list[i]['count']
             data.push(focused_item)
 
             if(i==sorted_price_datapoint_object_as_list.length-1){

@@ -675,7 +675,7 @@ class DirectMessageDetailsSection extends Component {
             return(
                 <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', height: middle}}>
                     <div style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(final_items, object, middle)}
+                        {this.render_messages(final_items, object, middle-10)}
                         {this.render_bubble_if_typing(object)}
                         {this.render_last_opened_time(object)}
                         {/* <div ref={this.messagesEnd} style={{display:'none'}}/> */}

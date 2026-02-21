@@ -378,7 +378,7 @@ class home_page extends Component {
         }
 
         obj[this.props.app_state.loc['1212']/* 'E5s' */] = [
-            ['xor','',0], [this.props.app_state.loc['1212']/* 'E5s' */,this.props.app_state.loc['1220']/* 'info ℹ️' */,this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */,], [1],[1]
+            ['xor','',0], [this.props.app_state.loc['1212']/* 'E5s' */,this.props.app_state.loc['1220']/* 'info ℹ️' */,this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */, this.props.app_state.loc['1264bp']/* 'indexed-data 🔎' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1213']/* 'posts' */] = [
               ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following 👥' */, this.props.app_state.loc['1264ah']/* 'tag-targeted 🎯' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned 📌' */], [1],[1]
@@ -712,7 +712,7 @@ class home_page extends Component {
     }
 
     renderBottomSheet(view, open, onOpenChange, height) {
-        var background_color = this.state.theme['send_receive_ether_background_color'];
+        var background_color = this.props.theme['send_receive_ether_background_color'];
         const padding = this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10;
         const radius = this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? '0px' : '15px';
         return(
@@ -2041,7 +2041,7 @@ class home_page extends Component {
 
         var id = this.get_page_id()
         
-        if(is_selecting_same_tag == true && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */ && selected_page != this.props.app_state.loc['1212']/* 'E5s' */ && clicked_tag_name != this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */ && clicked_tag_name != this.props.app_state.loc['1264bo']/* 'direct-message 💬' */ && clicked_tag_name != this.props.app_state.loc['1593kn']/* 'calls ☎️' */ && clicked_tag_name != this.props.app_state.loc['1593x']/* 'Watch 👁️' */){
+        if(is_selecting_same_tag == true && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */ && selected_page != this.props.app_state.loc['1212']/* 'E5s' */ && clicked_tag_name != this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */ && clicked_tag_name != this.props.app_state.loc['1264bo']/* 'direct-message 💬' */ && clicked_tag_name != this.props.app_state.loc['1593kn']/* 'calls ☎️' */ && clicked_tag_name != this.props.app_state.loc['1593x']/* 'Watch 👁️' */ && clicked_tag_name != this.props.app_state.loc['1264bp']/* 'indexed-data 🔎' */){
             this.props.show_dialog_bottomsheet({'id':id, 'selected_page':selected_page}, 'home_page_view_options')
             return;
         }
@@ -5048,6 +5048,8 @@ class home_page extends Component {
 
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
             current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
+
+            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)}
             />
         )
     }
