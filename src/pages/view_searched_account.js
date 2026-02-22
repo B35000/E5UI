@@ -635,6 +635,8 @@ class SearchedAccountPage extends Component {
         var item = this.state.searched_account
         var ether_balance = item['ether_balance']
         var e5 = item['e5']
+        const id = item['id']
+
         var e5_img = this.props.app_state.e5s[e5].end_image
         var alias = item['alias']
 
@@ -646,6 +648,9 @@ class SearchedAccountPage extends Component {
 
         var address = item['address']
         var run_data = item['run_data']
+
+        const account_id = e5+':'+id
+        
         return(
             <div>
                 {this.render_detail_item('3', {'title':alias, 'details':item['id'], 'size':'l'})}
@@ -655,6 +660,8 @@ class SearchedAccountPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1714']/* 'Address' */, 'details':(address), 'size':'l'})}
                 </div>
                 <div style={{height: 10}}/>
+
+                {this.render_followers(account_id)}
 
                 <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1716']/* 'Ether Balance in Wei' */, 'number':ether_balance, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1715']/* 'Ether Balance in Ether' */, 'subtitle': this.format_power_figure(ether_balance/10**18), 'barwidth': this.calculate_bar_width(ether_balance/10**18), 'number': (ether_balance/10**18), 'barcolor': '', 'relativepower': 'ether', })}
@@ -695,6 +702,53 @@ class SearchedAccountPage extends Component {
 
             </div>
         )
+    }
+
+    render_followers(account_id){
+        const extra_data = this.props.app_state.object_extra_data[account_id]
+        if(extra_data != null){
+            var follow_total = 0
+            if(extra_data['follow_account'] != null){
+                follow_total += extra_data['follow_account']['all_hits']
+            }
+            if(extra_data['unfollow_account'] != null){
+                follow_total -= extra_data['unfollow_account']['all_hits']
+            }
+            if(follow_total < 0){
+                follow_total = 0
+            }
+
+            if(follow_total > 1){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':number_with_commas(follow_total), 'details':this.props.app_state.loc['2509dc']/* 'Followers.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )
+            }
+        }
+
+    }
+
+    format_count(view_count){
+        if(view_count > 1_000_000_000){
+            var val = (view_count/1_000_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}B`
+        } 
+        else if(view_count > 1_000_000){
+            var val = (view_count/1_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}M`
+        }
+        else if(view_count > 1_000){
+            var val = (view_count/1_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}K`
+        }
+        else {
+            return view_count
+        }
     }
 
     render_end_to_spend_use_ratio(){

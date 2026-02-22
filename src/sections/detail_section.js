@@ -620,9 +620,18 @@ class PostDetailSection extends Component {
     }
 
     render_object_view_count_message(hits, e5_id){
+        const details = this.get_object_views_text(e5_id)
+        const title = this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', number_with_commas(hits))
+        if(details == ''){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':title, 'textsize':'13px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', number_with_commas(hits)), 'details':this.get_object_views_text(e5_id), 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
     }
@@ -661,6 +670,27 @@ class PostDetailSection extends Component {
             return return_text
         }else{
             return 
+        }
+    }
+
+    format_count(view_count){
+        if(view_count > 1_000_000_000){
+            var val = (view_count/1_000_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}B`
+        } 
+        else if(view_count > 1_000_000){
+            var val = (view_count/1_000_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}M`
+        }
+        else if(view_count > 1_000){
+            var val = (view_count/1_000).toFixed(1)
+            if(val > 10) val = val.toFixed(0)
+            return `${val}K`
+        }
+        else {
+            return view_count
         }
     }
 

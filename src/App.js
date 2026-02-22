@@ -6723,11 +6723,13 @@ class App extends Component {
         clone.splice(pos, 1)
         this.setState({followed_accounts: clone, should_update_followed_accounts: true})
         this.prompt_top_notification(this.getLocale()['1593do']/* 'Account removed from your following list.' */, 2300)
+        this.emit_comment_record_object_event([follow_id], 'unfollow_account')
       }
     }else{
       clone.push(follow_id)
       this.setState({followed_accounts: clone, should_update_followed_accounts: true})
       this.prompt_top_notification(this.getLocale()['a2527bs']/* 'You are now following that account.' */, 2300)
+      this.emit_comment_record_object_event([follow_id], 'follow_account')
     }
     var me = this;
     setTimeout(function() {
@@ -45834,6 +45836,8 @@ class App extends Component {
           var token_balances_and_data = await this.get_balance_from_multiple_exchanges(interacted_exchanges, id, H52contractInstance, interacted_exchanges_depths, e5)
           var token_balances = token_balances_and_data['bal']
 
+          await this.fetch_and_set_loaded_object_views(e5+':'+id)
+
           var searched_accounts_exchange_interactions_data = await this.load_searched_accounts_exchange_interactions_data(id, e5)
 
           var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances, 'searched_accounts_exchange_interactions_data': searched_accounts_exchange_interactions_data, 'typed_search':typed_search,
@@ -45990,7 +45994,7 @@ class App extends Component {
 
 
 
-  update_contextual_transfer_account_data(){    
+  update_contextual_transfer_account_data(){
     this.state.tracked_contextual_transfer_identifiers.forEach(id => {
       for(var i=0; i<this.state.e5s['data'].length; i++){
         const e5 = this.state.e5s['data'][i]

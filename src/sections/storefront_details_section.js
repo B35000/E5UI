@@ -583,7 +583,7 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     <div onClick={() => this.when_object_views_clicked(e5_id)}>
-                        {this.render_object_view_count_message(hits, e5_id)}
+                        {this.props.render_object_view_count_message(hits, e5_id)}
                     </div>
                     <div style={{height: 10}}/>
                     {this.render_object_views_chart_if_enabled(e5_id)}
