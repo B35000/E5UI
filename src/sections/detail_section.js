@@ -66,7 +66,7 @@ function start_and_end(str) {
 class PostDetailSection extends Component {
     
     state = {
-        selected: 0, animate: false
+        selected: 0, animate: false, selected_extra_data_chart_tags_object:{}, selected_time_filter_chart_tags_object2:{}
     };
 
     componentDidUpdate(prevProps){
@@ -131,7 +131,7 @@ class PostDetailSection extends Component {
             var selected_tag = this.props.detail_selected_tag
             if(selected_tag == this.props.app_state.loc['1196']/* 'jobs' */ || selected_tag == 'e' || selected_tag == null){
                 return(
-                    <JobDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_job_post_item={this.props.selected_job_post_item} work_page_tags_object={this.props.work_page_tags_object} viewed_jobs={this.props.viewed_jobs} show_images={this.props.show_images.bind(this)} open_respond_to_job_ui={this.props.open_respond_to_job_ui.bind(this)} view_application_contract={this.props.view_application_contract.bind(this)} add_job_message_to_stack_object={this.props.add_job_message_to_stack_object.bind(this)} notify={this.props.notify.bind(this)} get_job_items={this.props.get_job_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_job={this.props.pin_job.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} block_post={this.props.block_post.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_stop_words={this.get_stop_words.bind(this)}
+                    <JobDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_job_post_item={this.props.selected_job_post_item} work_page_tags_object={this.props.work_page_tags_object} viewed_jobs={this.props.viewed_jobs} show_images={this.props.show_images.bind(this)} open_respond_to_job_ui={this.props.open_respond_to_job_ui.bind(this)} view_application_contract={this.props.view_application_contract.bind(this)} add_job_message_to_stack_object={this.props.add_job_message_to_stack_object.bind(this)} notify={this.props.notify.bind(this)} get_job_items={this.props.get_job_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_job={this.props.pin_job.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} block_post={this.props.block_post.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_stop_words={this.get_stop_words.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -142,14 +142,14 @@ class PostDetailSection extends Component {
                     open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} 
                     open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} 
                     work_page_tags_object={this.props.work_page_tags_object} 
-                    viewed_contracts={this.props.viewed_contracts} open_new_proposal_ui={this.props.open_new_proposal_ui.bind(this)} open_modify_contract_ui={this.props.open_modify_contract_ui.bind(this)} open_force_exit_ui={this.props.open_force_exit_ui.bind(this)} open_archive_proposal_ui={this.props.open_archive_proposal_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_contract_items={this.props.get_contract_items.bind(this)} get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} pin_contract={this.props.pin_contract.bind(this)} view_number={this.props.view_number.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)} notify={this.props.notify.bind(this)} get_objects_from_socket_and_set_in_state={this.props.get_objects_from_socket_and_set_in_state.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)}
+                    viewed_contracts={this.props.viewed_contracts} open_new_proposal_ui={this.props.open_new_proposal_ui.bind(this)} open_modify_contract_ui={this.props.open_modify_contract_ui.bind(this)} open_force_exit_ui={this.props.open_force_exit_ui.bind(this)} open_archive_proposal_ui={this.props.open_archive_proposal_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_contract_items={this.props.get_contract_items.bind(this)} get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} pin_contract={this.props.pin_contract.bind(this)} view_number={this.props.view_number.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_view_purchase_credits={this.props.show_view_purchase_credits.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_recipient_address={this.props.get_recipient_address.bind(this)} calculate_credit_balance={this.props.calculate_credit_balance.bind(this)} notify={this.props.notify.bind(this)} get_objects_from_socket_and_set_in_state={this.props.get_objects_from_socket_and_set_in_state.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1199']/* 'proposals' */ ){
                 return(
                     <ProposalDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} show_images={this.props.show_images.bind(this)} selected_proposal_item={this.props.selected_proposal_item} viewed_proposals={this.props.viewed_proposals} work_page_tags_object={this.props.work_page_tags_object} open_vote_proposal_ui={this.props.open_vote_proposal_ui.bind(this)} open_sumbit_proposal_ui={this.props.open_sumbit_proposal_ui.bind(this)} open_archive_proposal_ui={this.props.open_archive_proposal_ui.bind(this)} add_proposal_message_to_stack_object={this.props.add_proposal_message_to_stack_object.bind(this)} notify={this.props.notify.bind(this)} get_proposal_items={this.props.get_proposal_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} pin_proposal={this.props.pin_proposal.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)}
-                    get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+                    get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -157,13 +157,13 @@ class PostDetailSection extends Component {
                 return(
                     <SubscriptionDetailsSection ref={this.curent_post_section} app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} notify={this.props.notify.bind(this)}
                     selected_subscription_item={this.props.selected_subscription_item} work_page_tags_object={this.props.work_page_tags_object} viewed_subscriptions={this.props.viewed_subscriptions} open_pay_subscription_ui={this.props.open_pay_subscription_ui.bind(this)} open_cancel_subscription_ui={this.props.open_cancel_subscription_ui.bind(this)} open_collect_subscription_ui={this.props.open_collect_subscription_ui.bind(this)} open_modify_subscription_ui={this.props.open_modify_subscription_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_subscription_items={this.props.get_subscription_items.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} pin_subscription={this.props.pin_subscription.bind(this)} view_number={this.props.view_number.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)}
-                    get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+                    get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1264s']/* 'nitro' */){
                 return(
-                    <NitroDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_nitro_item={this.props.selected_nitro_item} viewed_nitros={this.props.viewed_nitros} work_page_tags_object={this.props.work_page_tags_object} show_images={this.props.show_images.bind(this)} add_nitro_reply_to_stack={this.props.add_nitro_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_nitro_items={this.props.get_nitro_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_nitro={this.props.pin_nitro.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} show_buy_nitro_storage_bottomsheet={this.props.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.props.show_configure_nitro_node_bottomsheet.bind(this)} load_my_account_storage_info={this.props.load_my_account_storage_info.bind(this)} open_pay_subscription_ui={this.props.open_pay_subscription_ui.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} connect_to_node={this.props.connect_to_node.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} render_files_part={this.render_files_part.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+                    <NitroDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_nitro_item={this.props.selected_nitro_item} viewed_nitros={this.props.viewed_nitros} work_page_tags_object={this.props.work_page_tags_object} show_images={this.props.show_images.bind(this)} add_nitro_reply_to_stack={this.props.add_nitro_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_nitro_items={this.props.get_nitro_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_nitro={this.props.pin_nitro.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} show_buy_nitro_storage_bottomsheet={this.props.show_buy_nitro_storage_bottomsheet.bind(this)} show_configure_nitro_node_bottomsheet={this.props.show_configure_nitro_node_bottomsheet.bind(this)} load_my_account_storage_info={this.props.load_my_account_storage_info.bind(this)} open_pay_subscription_ui={this.props.open_pay_subscription_ui.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} connect_to_node={this.props.connect_to_node.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} get_nitro_purchases={this.props.get_nitro_purchases.bind(this)} render_files_part={this.render_files_part.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_nitro_log_stream_data={this.props.get_nitro_log_stream_data.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -183,7 +183,7 @@ class PostDetailSection extends Component {
             else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
                 return(
                     <ContractorDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_contractor_item={this.props.selected_contractor_item} work_page_tags_object={this.props.work_page_tags_object} viewed_contractors={this.props.viewed_contractors} show_images={this.props.show_images.bind(this)}  notify={this.props.notify.bind(this)} open_send_job_request_ui={this.props.open_send_job_request_ui.bind(this)} open_view_job_request_ui={this.props.open_view_job_request_ui} open_view_contract_ui={this.props.open_view_contract_ui.bind(this)} get_contractor_items={this.props.get_contractor_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} pin_contractor={this.props.pin_contractor.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} block_post={this.props.block_post.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}
-                    follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_stop_words={this.get_stop_words.bind(this)}
+                    follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} emit_contractor_availability_notification={this.props.emit_contractor_availability_notification.bind(this)} get_stop_words={this.get_stop_words.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -193,21 +193,21 @@ class PostDetailSection extends Component {
             if(selected_tag == this.props.app_state.loc['1212']/* 'E5s' */ || selected_tag == 'e' || selected_tag == null){
                 return(
                     <E5DetailsSection ref={this.curent_post_section} app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} notify={this.props.notify.bind(this)} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)} get_e5_data={this.props.get_e5_data.bind(this)} view_number={this.props.view_number.bind(this)} hash_data_with_specific_e5={this.props.hash_data_with_specific_e5.bind(this)}
-                    render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+                    render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} 
                     />
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1213']/* 'posts' */ ){
                 return(
                     <PostsDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_post_item={this.props.selected_post_item} viewed_posts={this.props.viewed_posts} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_post_items={this.props.get_post_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.props.open_award_ui.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_post={this.props.pin_post.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} block_post={this.props.block_post.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}
-                    follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_post={this.props.repost_post.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+                    follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_post={this.props.repost_post.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1214']/* 'channels' */ ){
                 return(
                     <ChannelDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_channel_item={this.props.selected_channel_item} viewed_channels={this.props.viewed_channels} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_channel_items={this.props.get_channel_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} pin_channel={this.props.pin_channel.bind(this)} get_channel_event_data={this.props.get_channel_event_data.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}
-                    follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} open_stage_creator_ui={this.props.open_stage_creator_ui.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} when_file_tapped={this.props.when_file_tapped.bind(this)}
+                    follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} open_stage_creator_ui={this.props.open_stage_creator_ui.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_current_channel_creator_payout_info_if_possible={this.props.get_current_channel_creator_payout_info_if_possible.bind(this)} play_individual_track={this.props.play_individual_track.bind(this)} play_individual_video={this.props.play_individual_video.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} when_file_tapped={this.props.when_file_tapped.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -218,14 +218,14 @@ class PostDetailSection extends Component {
                     open_participate_in_auction={this.props.open_participate_in_auction.bind(this)}
                     get_direct_purchase_events={this.props.get_direct_purchase_events.bind(this)}
                     get_storefront_auction_bids={this.props.get_storefront_auction_bids.bind(this)}
-                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} get_stop_words={this.get_stop_words.bind(this)}
+                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} get_stop_words={this.get_stop_words.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1216']/* 'bags' */){
                 return(
                     <BagDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bag_item={this.props.selected_bag_item} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} viewed_bags={this.props.viewed_bags} open_fulfil_bag_request={this.props.open_fulfil_bag_request.bind(this)} view_bag_application_contract={this.props.view_bag_application_contract.bind(this)} add_bag_message_to_stack_object={this.props.add_bag_message_to_stack_object.bind(this)} get_bag_items={this.props.get_bag_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_bag={this.props.pin_bag.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)}
-                    get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_stop_words={this.get_stop_words.bind(this)} export_order={this.props.export_order.bind(this)}
+                    get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_stop_words={this.get_stop_words.bind(this)} export_order={this.props.export_order.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -233,7 +233,7 @@ class PostDetailSection extends Component {
                 return(
                     <AudioDetailSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_audio_item={this.props.selected_audio_item} viewed_audios={this.props.viewed_audios} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} add_audio_reply_to_stack={this.props.add_audio_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_audio_items={this.props.get_audio_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.props.open_award_ui.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_audio={this.props.pin_audio.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} open_purchase_album_ui={this.props.open_purchase_album_ui.bind(this)} play_song={this.props.play_song.bind(this)} 
                     get_page_id={this.props.get_page_id.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} play_song_in_playlist={this.props.play_song_in_playlist.bind(this)} update_order_of_songs_in_playlist={this.props.update_order_of_songs_in_playlist.bind(this)} download_playlist={this.props.download_playlist.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} block_post={this.props.block_post.bind(this)} when_discography_audio_item_clicked={this.props.when_discography_audio_item_clicked.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_audiopost={this.props.repost_audiopost.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} 
-                    start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)}
+                    start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -241,14 +241,14 @@ class PostDetailSection extends Component {
                 return(
                     <VideoDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_video_item={this.props.selected_video_item} viewed_videos={this.props.viewed_videos} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} add_video_reply_to_stack={this.props.add_video_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)} get_video_items={this.props.get_video_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.props.open_award_ui.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)} pin_video={this.props.pin_video.bind(this)} view_number={this.props.view_number.bind(this)} delete_message_from_stack={this.props.delete_message_from_stack.bind(this)} open_purchase_video_ui={this.props.open_purchase_video_ui.bind(this)} play_video={this.props.play_video.bind(this)} get_page_id={this.props.get_page_id.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} 
                     block_post={this.props.block_post.bind(this)} when_discography_video_item_clicked={this.props.when_discography_video_item_clicked.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)} follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} repost_videopost={this.props.repost_videopost.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} 
-                    start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)}
+                    start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)}
                     />
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1264ao']/* 'polls' */){
                 return(
                     <PollDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_poll_item={this.props.selected_poll_item} viewed_polls={this.props.viewed_polls} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)}  notify={this.props.notify.bind(this)} get_poll_items={this.props.get_poll_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} pin_poll={this.props.pin_poll.bind(this)} view_number={this.props.view_number.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}  when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} open_vote_in_poll_ui={this.props.open_vote_in_poll_ui.bind(this)} show_view_calculate_poll_result_bottomsheet={this.props.show_view_calculate_poll_result_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)}
-                    select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)}
+                    select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
@@ -276,14 +276,14 @@ class PostDetailSection extends Component {
                 return(
                     <EndDetailsSection ref={this.curent_post_section} app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_end_item={this.props.selected_end_item} open_mint_burn_token_ui={this.props.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.props.open_transfer_ui.bind(this)} open_modify_token_ui={this.props.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.props.open_exchange_transfers_ui.bind(this)} open_freeze_unfreeze_ui={this.props.open_freeze_unfreeze_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_exchange_tokens={this.props.get_exchange_tokens.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} show_depthmint_bottomsheet={this.props.show_depthmint_bottomsheet.bind(this)} view_number={this.props.view_number.bind(this)} open_royalty_staging_ui={this.props.open_royalty_staging_ui.bind(this)} view_royalty_staging={this.props.view_royalty_staging.bind(this)}
                     load_exchanges_royalty_event_data={this.props.load_exchanges_royalty_event_data.bind(this)}
-                    load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} pin_token={this.props.pin_token.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} notify={this.props.notify.bind(this)} 
+                    load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)} pin_token={this.props.pin_token.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} notify={this.props.notify.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
             else if(selected_option_name == this.props.app_state.loc['1219']/* 'spends' */ ){
                 return(
                     <SpendDetailSection ref={this.curent_post_section} app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_spend_item={this.props.selected_spend_item} open_mint_burn_token_ui={this.props.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.props.open_transfer_ui.bind(this)} open_modify_token_ui={this.props.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.props.open_exchange_transfers_ui.bind(this)} open_freeze_unfreeze_ui={this.props.open_freeze_unfreeze_ui.bind(this)} open_authmint_ui={this.props.open_authmint_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} get_exchange_tokens={this.props.get_exchange_tokens.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} view_number={this.props.view_number.bind(this)}
-                    pin_token={this.props.pin_token.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} notify={this.props.notify.bind(this)} 
+                    pin_token={this.props.pin_token.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} notify={this.props.notify.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
 
                     />
                 )
@@ -554,6 +554,278 @@ class PostDetailSection extends Component {
     }
 
 
+    get_upload_data_datapoints(upload_data){
+        var data = []
+        for(var i=0; i<upload_data.length; i++){
+            const focused_item = upload_data[i]['hits']
+            data.push(focused_item)
+
+            if(i==upload_data.length-1){
+                var diff = Date.now() - upload_data[i]['time']
+                for(var t=0; t<diff; t+=230000){
+                    data.push(data[data.length-1]*0.999)      
+                }
+            }
+            else{
+                var diff = upload_data[i+1]['time'] - upload_data[i]['time']
+                for(var t=0; t<diff; t+=230000){
+                    data.push(data[data.length-1]*0.999)      
+                }
+            }
+        }
+
+        // console.log('get_upload_data_datapoints', data)
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var largest = 0;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = isNaN(parseInt(sum / slice.length)) ? 0 : parseInt(sum / slice.length)
+                original_y_val = result
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if(yVal > largest){
+                largest = yVal
+            }
+            // console.log('get_upload_data_datapoints', factor, xVal, original_y_val)
+            if(yVal != null){
+                var indicator = number_with_commas(original_y_val)+' '+this.props.app_state.loc['2509bj']/* requests */
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            } 
+        }
+
+        const chart_starting_time = upload_data[0]['time']
+        const chart_ending_time = Date.now()
+
+        return { dps, largest, starting_time: chart_starting_time, ending_time: chart_ending_time }
+    }
+
+    render_object_view_count_message(hits, e5_id){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', number_with_commas(hits)), 'details':this.get_object_views_text(e5_id), 'size':'l'})}
+            </div>
+        )
+    }
+
+    get_object_views_text(e5_id){
+        const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
+        const extra_data = this.props.app_state.object_extra_data[e5_id]
+        if(hits > 1){
+            var return_text = ''
+            if(extra_data != null){
+                if(extra_data['object_comments'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits']));
+                }
+                if(extra_data['job_application_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bq']/* '$ applications' */.replace('$', this.format_count(extra_data['job_application_events']['all_hits']));
+                }
+                if(extra_data['contractor_job_request_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['contractor_job_request_events']['all_hits']));
+                }
+                if(extra_data['direct_purchase_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['direct_purchase_events']['all_hits']));
+                }
+                if(extra_data['award_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bt']/* '$ awards' */.replace('$', this.format_count(extra_data['award_events']['all_hits']));
+                }
+                if(extra_data['purchase_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['purchase_events']['all_hits']));
+                }
+                if(extra_data['auction_bid_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bu']/* '$ bids' */.replace('$', this.format_count(extra_data['auction_bid_events']['all_hits']));
+                }
+                if(extra_data['storefront_order_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits']));
+                }
+            }
+            return return_text
+        }else{
+            return 
+        }
+    }
+
+
+
+
+
+    render_object_metadata_if_exists(e5_id){
+        const extra_data = this.props.app_state.object_extra_data[e5_id]
+        if(extra_data != null){
+            const targets = Object.keys(extra_data)
+            const mapping_object = {
+                'object_comments':this.props.app_state.loc['2509bw']/* comments */,
+                'job_application_events':this.props.app_state.loc['2509bx']/* applications */,
+                'contractor_job_request_events':this.props.app_state.loc['2509by']/* contractor-requests 👷 */,
+                'direct_purchase_events':this.props.app_state.loc['2509bz']/* direct-purchase 🛍️ */,
+                'award_events':this.props.app_state.loc['2509ca']/* awards */,
+                'purchase_events':this.props.app_state.loc['2509cb']/* purchase 📼 */,
+                'auction_bid_events':this.props.app_state.loc['2509cc']/* bids */,
+                'storefront_order_events':this.props.app_state.loc['2509cd']/* rders 📦 */
+            }
+
+            const available_items = ['e']
+            targets.forEach(item => {
+                available_items.push(mapping_object[item])
+            });
+
+            const selected_extra_data_chart_tags_object = this.state.selected_extra_data_chart_tags_object[e5_id] || this.selected_extra_data_chart_tags_object(available_items)
+
+            const selected_tag = this.get_selected_item(selected_extra_data_chart_tags_object, 'e')
+            const selected_item = Object.keys(mapping_object).find(k => mapping_object[k] == selected_tag );
+
+            const view_data = extra_data[selected_item]['entries']
+            const sorted_view_data = this.sortByAttributeDescending(view_data, 'time').reverse()//from least recent to most recent
+
+            const time_filter_tags_object = this.state.selected_time_filter_chart_tags_object2[e5_id] || this.selected_time_filter_chart_tags_object()
+
+            const filter_time = this.get_filter_end_time(time_filter_tags_object)
+            const upload_data_filtered = sorted_view_data.filter(function (trend_hit) {
+                return (trend_hit['time'] > filter_time)
+            });
+            const upload_data_dps = this.get_upload_data_datapoints(upload_data_filtered)
+
+            const mapping_object2 = {
+                'object_comments':{
+                    'title':this.props.app_state.loc['2509ce']/* Post Comments */, 
+                    'details':this.props.app_state.loc['2509cf']/* Chart containing the comments made over time. */,
+                    'y_axis':this.props.app_state.loc['2509cg']/* Post Comments */
+                },
+                'job_application_events':{
+                    'title':this.props.app_state.loc['2509ch']/* Post Applications */, 
+                    'details':this.props.app_state.loc['2509ci']/* 'Chart containing the applications made over time.' */,
+                    'y_axis':this.props.app_state.loc['2509cj']/* Y-Axis: Applications */
+                },
+                'contractor_job_request_events':{
+                    'title':this.props.app_state.loc['2509ck']/* Contractor Job Requests */, 
+                    'details':this.props.app_state.loc['2509cl']/* Chart containing the job requests sent to the contractor over time. */,
+                    'y_axis':this.props.app_state.loc['2509cm']/* Y-Axis: Requests */
+                },
+                'direct_purchase_events':{
+                    'title':this.props.app_state.loc['2509cn']/* Direct Purchases. */, 
+                    'details':this.props.app_state.loc['2509co']/* Chart containing the direct purchases made over time. */,
+                    'y_axis':this.props.app_state.loc['2509cp']/* Y-Axis: Purchases. */
+                },
+                'award_events':{
+                    'title':this.props.app_state.loc['2509cq']/* Post Awards. */, 
+                    'details':this.props.app_state.loc['2509cr']/* Chart containing the awards sent to the post\'s author overtime. */,
+                    'y_axis':this.props.app_state.loc['2509cs']/* Y-Axis: Awards. */
+                },
+                'purchase_events':{
+                    'title':this.props.app_state.loc['2509ct']/* Media Purchases */, 
+                    'details':this.props.app_state.loc['2509cu']/* 'Chart containing the purchases made for the post over time' */,
+                    'y_axis':this.props.app_state.loc['2509cv']/* Y-Axis: Purchases */
+                },
+                'auction_bid_events':{
+                    'title':this.props.app_state.loc['2509cw']/* Auction Bids. */, 
+                    'details':this.props.app_state.loc['2509cx']/* Chart containing the number of bids made overtime. */,
+                    'y_axis':this.props.app_state.loc['2509cy']/* Y-Axis: Bids */
+                },
+                'storefront_order_events':{
+                    'title':this.props.app_state.loc['2509cz']/* Storefront Orders. */, 
+                    'details':this.props.app_state.loc['2509da']/* Chart containing the orders sent to the storefront overtime. */,
+                    'y_axis':this.props.app_state.loc['2509db']/* Y-Axis: Orders. */
+                }
+            }
+
+            const selected_text_details = mapping_object2[selected_item]
+
+            return(
+                <div>
+                    <Tags font={this.props.app_state.font} page_tags_object={selected_extra_data_chart_tags_object} tag_size={'l'} when_tags_updated={(tag_obj)=> this.when_selected_extra_data_chart_tags_object_updated(tag_obj, e5_id)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('3', {'title':selected_text_details['title'], 'details':selected_text_details['details'], 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':upload_data_dps.dps, 'start_time': upload_data_dps.starting_time, 'end_time':upload_data_dps.ending_time})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':selected_text_details['y_axis'], 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    <Tags font={this.props.app_state.font} page_tags_object={time_filter_tags_object} tag_size={'l'} when_tags_updated={(tag_obj) => this.when_selected_time_filter_chart_tags_object_updated2(tag_obj, e5_id)} theme={this.props.theme}/>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    when_selected_extra_data_chart_tags_object_updated(tag_obj, e5_id){
+        const clone = structuredClone(this.state.selected_extra_data_chart_tags_object)
+        clone[e5_id] = tag_obj
+        this.setState({selected_extra_data_chart_tags_object: clone})
+    }
+
+    selected_extra_data_chart_tags_object(available_items){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], available_items, [1]
+            ],
+        };
+    }
+
+    when_selected_time_filter_chart_tags_object_updated2(tag_obj, e5_id){
+        const clone = structuredClone(this.state.selected_time_filter_chart_tags_object2)
+        clone[e5_id] = tag_obj
+        this.setState({selected_time_filter_chart_tags_object2: clone})
+    }
+
+    selected_time_filter_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+        };
+    }
+
+    get_filter_end_time(selected_time_filter_chart_tags_object){
+        var selected_item = this.get_selected_item(selected_time_filter_chart_tags_object, selected_time_filter_chart_tags_object['i'].active)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+
+        return Date.now() - (filter_value * 1000)
+    }
 
 
 
@@ -562,6 +834,24 @@ class PostDetailSection extends Component {
 
 
 
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

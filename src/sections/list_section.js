@@ -114,6 +114,17 @@ class PostListSection extends Component {
         }
     }
 
+    selected_time_filter_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+        };
+    }
+
 
     render(){
         return(
@@ -1060,7 +1071,7 @@ class PostListSection extends Component {
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':title_space+id_to_show+sender+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
+            'id':{'title':title_space+id_to_show+sender+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':'• '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px'}
         }
@@ -1119,6 +1130,43 @@ class PostListSection extends Component {
 
 
         return is_object_blocked_for_sender
+    }
+
+    get_object_views_text(e5_id){
+        const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
+        const extra_data = this.props.app_state.object_extra_data[e5_id]
+        if(hits > 1){
+            var return_text = this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', this.format_count(hits));
+            if(extra_data != null){
+                if(extra_data['object_comments'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits']));
+                }
+                if(extra_data['job_application_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bq']/* '$ applications' */.replace('$', this.format_count(extra_data['job_application_events']['all_hits']));
+                }
+                if(extra_data['contractor_job_request_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['contractor_job_request_events']['all_hits']));
+                }
+                if(extra_data['direct_purchase_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['direct_purchase_events']['all_hits']));
+                }
+                if(extra_data['award_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bt']/* '$ awards' */.replace('$', this.format_count(extra_data['award_events']['all_hits']));
+                }
+                if(extra_data['purchase_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['purchase_events']['all_hits']));
+                }
+                if(extra_data['auction_bid_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bu']/* '$ bids' */.replace('$', this.format_count(extra_data['auction_bid_events']['all_hits']));
+                }
+                if(extra_data['storefront_order_events'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits']));
+                }
+            }
+            return return_text
+        }else{
+            return 
+        }
     }
 
 
@@ -1420,7 +1468,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p4, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
@@ -1549,7 +1597,7 @@ class PostListSection extends Component {
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image}
         }
@@ -1703,7 +1751,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
@@ -2003,7 +2051,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
@@ -2939,7 +2987,7 @@ class PostListSection extends Component {
         var time = item['event'] == null ? 0 : item['event'].returnValues.p4
         return{
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
-            'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
+            'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'footer':this.get_object_views_text(object['e5_id'])},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -3479,17 +3527,6 @@ class PostListSection extends Component {
         }
 
         return Date.now() - (filter_value * 1000)
-    }
-
-    selected_time_filter_chart_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
-            ],
-        };
     }
 
     get_tags_used_tokens_and_price_data(sorted_price_data, filter_e5){
@@ -4315,7 +4352,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
@@ -4496,7 +4533,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
@@ -4705,7 +4742,7 @@ class PostListSection extends Component {
         var sender = this.get_senders_name(object['event'].returnValues.p5, object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
         }
@@ -4929,7 +4966,7 @@ class PostListSection extends Component {
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
+            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'footer':this.get_object_views_text(object['e5_id'])},
             // 'id_with_image':{'title':number_with_commas(object['id']), 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
             'min':{'details':'• '+number_with_commas(object['id']), 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
@@ -6969,7 +7006,7 @@ return data['data']
 
         return{
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
-            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':''},
+            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id'])},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':''}

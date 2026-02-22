@@ -71,7 +71,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067ag']/* 'post-following' */, this.props.app_state.loc['3067x']/* 'explore-comments' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067ag']/* 'post-following' */, this.props.app_state.loc['3067x']/* 'explore-comments' */, this.props.app_state.loc['3067bb']/* 'promoted 📢' */], [0]
                 ],
             };
         }
@@ -265,6 +265,13 @@ class ViewNotificationLogPage extends Component {
             return(
                 <div>
                     {this.render_explore_notifications(['follower_post', 'follower_audio', 'follower_video', 'follower_poll', 'follower_bag'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3067bb']/* 'promoted 📢' */){
+            return(
+                <div>
+                    {this.render_explore_notifications(['promoted_post'])}
                 </div>
             )
         }
@@ -551,10 +558,17 @@ class ViewNotificationLogPage extends Component {
             'follower_video':this.props.app_state.loc['3067ak'],/* '🎞️ $ posted a new videopost for you to watch.' */
             'follower_poll':this.props.app_state.loc['3067al'],/* '🗳️ $ posted a new poll for you to participate in.' */
             'follower_bag':this.props.app_state.loc['3067am'],/* '🛍️ $ posted a new bag for you to fulfil.' */
+            'promoted_post': this.props.app_state.loc['3067ay'],/* '📣 $ promoted a post for you to see.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
-        const message = obj[event_type]
+        var message = obj[event_type]
+        if(event_type == 'promoted_post' && item.returnValues.p5 == 'audio'){
+            message = this.props.app_state.loc['3067ba']/* '📣 $ promoted a audiopost for you to see.' */
+        }
+        else if(event_type == 'promoted_post' && item.returnValues.p5 == 'video'){
+            message = this.props.app_state.loc['3067az']/* '📣 $ promoted a videopost for you to see.' */
+        }
         const processed_message = message.replace('$', sender_alias_or_account)
         const timestamp = item['time']
         const e5 = item['e5']
@@ -585,8 +599,9 @@ class ViewNotificationLogPage extends Component {
         const follower_video = notification_object['follower_video'] || [];
         const follower_poll = notification_object['follower_poll'] || [];
         const follower_bag = notification_object['follower_bag'] || [];
+        const promoted_post = notification_object['promoted_post'] || [];
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

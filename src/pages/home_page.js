@@ -1142,8 +1142,9 @@ class home_page extends Component {
         const follower_video = notification_object['follower_video'] || [];
         const follower_poll = notification_object['follower_poll'] || [];
         const follower_bag = notification_object['follower_bag'] || [];
+        const promoted_post = notification_object['promoted_post'] || [];
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post)
 
         const me = this
         const filtered_events = all_events.filter(function (event) {
@@ -5117,6 +5118,8 @@ class home_page extends Component {
         this.props.get_moderator_event_data(id, e5)
         this.props.load_exchanges_royalty_event_data(id, e5)
         this.props.load_exchanges_royalty_payout_event_data(id, e5)
+        this.props.emit_view_object_event(id+e5)
+        this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     when_spends_object_clicked(index, id, e5, object, ignore_set_details_data){
@@ -5139,6 +5142,8 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
         this.props.get_exchange_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
+        this.props.emit_view_object_event(id+e5)
+        this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     when_E5_item_clicked(index, id){
@@ -5181,9 +5186,11 @@ class home_page extends Component {
         await this.props.get_object_censored_keywords_and_accounts(object)
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
-    when_contract_item_clicked(index, id, e5, ignore_set_details_data, object){
+    async when_contract_item_clicked(index, id, e5, ignore_set_details_data, object){
         this.setState({selected_contract_item: id+e5})
         this.record_viewed_item(id+e5)
         this.props.set_extra_contract_data(object)
@@ -5206,9 +5213,11 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
-    when_subscription_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_subscription_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.props.set_extra_subsctiption_data(object)
         this.record_viewed_item(id+e5)
         this.setState({selected_subscription_item: id+e5})
@@ -5230,6 +5239,8 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     when_post_item_clicked(index, id, e5, is_post_nsfw, object, ignore_set_details_data){
@@ -5244,7 +5255,7 @@ class home_page extends Component {
         }
     }
 
-    open_post(index, id, e5, object, ignore_set_details_data){
+    async open_post(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_post_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -5266,9 +5277,11 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
-    when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_channel_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -5294,9 +5307,11 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
-    when_proposal_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_proposal_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_proposal_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
@@ -5319,6 +5334,8 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     when_mail_item_clicked(index, id, object, ignore_set_details_data){
@@ -5359,6 +5376,8 @@ class home_page extends Component {
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
         this.update_audio_video_recommended_items(this.props.app_state.loc['1215']/* 'storefront' */, object['e5_id'])
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     async when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -5385,6 +5404,8 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         await this.props.load_bag_storefront_items(object)
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     get_bag_stores(object){
@@ -5421,6 +5442,8 @@ class home_page extends Component {
         await this.props.get_object_censored_keywords_and_accounts(object)
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     async when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -5449,7 +5472,8 @@ class home_page extends Component {
         await this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
 
         await this.update_audio_video_recommended_items(this.props.app_state.loc['1264k']/* 'audioport' */, object['e5_id'])
-        
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     when_playlist_selected(song, index){
@@ -5558,7 +5582,7 @@ class home_page extends Component {
         }
     }
 
-    open_video(index, id, e5, object, ignore_set_details_data){
+    async open_video(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_video_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -5585,6 +5609,8 @@ class home_page extends Component {
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
 
         this.update_audio_video_recommended_items(this.props.app_state.loc['1264p']/* 'videoport' */, object['e5_id'])
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     play_videopost_from_list_section = async (object) => {
@@ -5648,7 +5674,7 @@ class home_page extends Component {
         return false
     }
 
-    when_nitro_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_nitro_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_nitro_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -5673,6 +5699,8 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
     when_bill_item_clicked(object, ignore_set_details_data){
@@ -5687,7 +5715,7 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
-    when_poll_item_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_poll_item_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_poll_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -5707,6 +5735,8 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(id+e5)
+        await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
 

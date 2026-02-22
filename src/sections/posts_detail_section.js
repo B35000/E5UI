@@ -281,6 +281,7 @@ class PostsDetailsSection extends Component {
                         {this.render_detail_item('3', item['id'])}
                     </div>
                     <div style={{height: 10}}/>
+                    {this.render_object_views(object)}
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
                     <div onClick={() => this.add_to_contacts2(object)}>
@@ -325,6 +326,103 @@ class PostsDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_object_views(object){
+        const e5_id = object['e5_id']
+        const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
+        if(hits > 1){
+            return(
+                <div>
+                    <div onClick={() => this.when_object_views_clicked(e5_id)}>
+                        {this.render_object_view_count_message(hits, e5_id)}
+                    </div>
+                    <div style={{height: 10}}/>
+                    {this.render_object_views_chart_if_enabled(e5_id)}
+                </div>
+            )
+        }
+    }
+
+    when_object_views_clicked(e5_id){
+        const clone = (this.state.viewed_objects_views_full || []).slice()
+        const pos = clone.indexOf(e5_id)
+        if(pos == -1){
+            clone.push(e5_id)
+        }
+        else {
+            clone.splice(pos, 1)
+        }
+        this.setState({viewed_objects_views_full: clone})
+    }
+
+    render_object_views_chart_if_enabled(e5_id){
+        if(this.state.viewed_objects_views_full != null && this.state.viewed_objects_views_full.includes(e5_id)){
+            const view_data = this.props.app_state.object_view_data[e5_id]['entries']
+            const sorted_view_data = this.sortByAttributeDescending(view_data, 'time').reverse()//from least recent to most recent
+            const time_filter_tags_object = this.state.selected_time_filter_chart_tags_object2 || this.selected_time_filter_chart_tags_object()
+            const filter_time = this.get_filter_end_time(time_filter_tags_object)
+            const upload_data_filtered = sorted_view_data.filter(function (trend_hit) {
+                return (trend_hit['time'] > filter_time)
+            });
+            const upload_data_dps = this.props.get_upload_data_datapoints(upload_data_filtered)
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527cm']/* 'Post Views.' */, 'details':this.props.app_state.loc['a2527cn']/* 'Chart containing the post\'s views over time.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':upload_data_dps.dps, 'start_time': upload_data_dps.starting_time, 'end_time':upload_data_dps.ending_time})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527co']/* 'Y-Axis: Views' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    <Tags font={this.props.app_state.font} page_tags_object={time_filter_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_time_filter_chart_tags_object_updated2.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+                    {this.props.render_object_metadata_if_exists(e5_id)}
+                </div>
+            )
+        }
+    }
+
+    when_selected_time_filter_chart_tags_object_updated2(tag_obj){
+        this.setState({selected_time_filter_chart_tags_object2: tag_obj})
+    }
+
+    selected_time_filter_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+        };
+    }
+
+    get_filter_end_time(selected_time_filter_chart_tags_object){
+        var selected_item = this.get_selected_item(selected_time_filter_chart_tags_object, selected_time_filter_chart_tags_object['i'].active)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+
+        return Date.now() - (filter_value * 1000)
     }
 
     copy_id_to_clipboard(object){
@@ -486,10 +584,10 @@ class PostsDetailsSection extends Component {
         var title = this.props.app_state.loc['2526c']/* 'Repost Post.' */
         var details = this.props.app_state.loc['2526d']/*  Add this post to your promoted list. */
 
-        if(clone['post'].includes(object['e5_id'])){
-            title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
-            details = this.props.app_state.loc['2526e']/*  Remove this post from your promoted list. */
-        }
+        // if(clone['post'].includes(object['e5_id'])){
+        //     title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
+        //     details = this.props.app_state.loc['2526e']/*  Remove this post from your promoted list. */
+        // }
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['event'].returnValues.p5 == my_account) return;
 

@@ -246,8 +246,9 @@ class HomepageSideBar extends Component {
         const follower_video = notification_object['follower_video'] || [];
         const follower_poll = notification_object['follower_poll'] || [];
         const follower_bag = notification_object['follower_bag'] || [];
+        const promoted_post = notification_object['promoted_post'] || [];
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {

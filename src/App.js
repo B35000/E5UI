@@ -1349,7 +1349,7 @@ class App extends Component {
     
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
-    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false,
+    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}
   };
 
   get_thread_pool_size(){
@@ -6389,7 +6389,7 @@ class App extends Component {
 
           get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.send_direct_message.bind(this)}
 
-          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)}
+          set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)} emit_view_object_event={this.emit_view_object_event.bind(this)} fetch_and_set_loaded_object_views={this.fetch_and_set_loaded_object_views.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -6684,13 +6684,18 @@ class App extends Component {
   }
 
   block_post(object){
+    if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
+      this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
+      return;
+    }
+    this.emit_block_post(object)
     var clone = this.state.posts_blocked_by_me.slice()
     if(clone.includes(object['e5_id'])){
-      var index = clone.indexOf(object['e5_id'])
-      clone.splice(index, 1)
-      this.prompt_top_notification(this.getLocale()['3054cx']/* 'Post unblocked.' */, 1800)
+      // var index = clone.indexOf(object['e5_id'])
+      // clone.splice(index, 1)
+      // this.prompt_top_notification(this.getLocale()['3054cx']/* 'Post unblocked.' */, 1800)
     }else{
-      this.prompt_top_notification(this.getLocale()['3054cw']/* 'Post added to your blocked list.' */, 1900)
+      // this.prompt_top_notification(this.getLocale()['3054cw']/* 'Post added to your blocked list.' */, 1900)
       clone.push(object['e5_id'])
     }
     this.setState({posts_blocked_by_me: clone, should_update_posts_blocked_by_me:true})
@@ -6747,13 +6752,14 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
     }
+    this.emit_repost_post(object, 'audio')
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['audio'].includes(object['e5_id'])){
-      var index = clone['audio'].indexOf(object['e5_id'])
-      clone['audio'].splice(index, 1)
-      this.prompt_top_notification(this.getLocale()['a2527bw']/* 'Audiopost Removed.' */, 1800)
+      // var index = clone['audio'].indexOf(object['e5_id'])
+      // clone['audio'].splice(index, 1)
+      // this.prompt_top_notification(this.getLocale()['a2527bw']/* 'Audiopost Removed.' */, 1800)
     }else{
-      this.prompt_top_notification(this.getLocale()['a2527bv']/* 'Audiopost Added.' */, 1900)
+      // this.prompt_top_notification(this.getLocale()['a2527bv']/* 'Audiopost Added.' */, 1900)
       clone['audio'].push(object['e5_id'])
     }
     this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
@@ -6768,13 +6774,14 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
     }
+    this.emit_repost_post(object, 'video')
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['video'].includes(object['e5_id'])){
-      var index = clone['video'].indexOf(object['e5_id'])
-      clone['video'].splice(index, 1)
-      this.prompt_top_notification(this.getLocale()['b2527r']/* 'Videopost Removed.' */, 1800)
+      // var index = clone['video'].indexOf(object['e5_id'])
+      // clone['video'].splice(index, 1)
+      // this.prompt_top_notification(this.getLocale()['b2527r']/* 'Videopost Removed.' */, 1800)
     }else{
-      this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
+      // this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
       clone['video'].push(object['e5_id'])
     }
     this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
@@ -6789,13 +6796,15 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
     }
+    this.emit_repost_post(object, 'post')
+
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['post'].includes(object['e5_id'])){
-      var index = clone['post'].indexOf(object['e5_id'])
-      clone['post'].splice(index, 1)
-      this.prompt_top_notification(this.getLocale()['b2527r']/* 'Videopost Removed.' */, 1800)
+      // var index = clone['post'].indexOf(object['e5_id'])
+      // clone['post'].splice(index, 1)
+      // this.prompt_top_notification(this.getLocale()['b2527r']/* 'Videopost Removed.' */, 1800)
     }else{
-      this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
+      // this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
       clone['post'].push(object['e5_id'])
     }
     this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
@@ -9757,17 +9766,115 @@ class App extends Component {
     this.setState({delete_pos_array_data: clone})
   }
 
-  delete_stack_items(delete_pos_array){
-    var stack = this.state.stack_items.slice()
-    var new_stack = []
+  async delete_stack_items(delete_pos_array){
+    const stack = this.state.stack_items.slice()
+    const new_stack = []
+    const comment_record_e5_ids = []
+    const job_response_e5_ids = []
+    const contractor_job_request_e5_ids = []
+    const direct_purchase_e5_ids = []
+    const award_e5_ids = []
+    const buy_album_e5_ids = []
+    const buy_video_e5_ids = []
+    const auction_bid_e5_ids = []
     for(var i=0; i<stack.length; i++){
       if(!delete_pos_array.includes(i)){
         new_stack.push(stack[i])
+      }else{
+        //this transaction was run
+        if(
+          stack[i].type == this.props.app_state.loc['1511']/* 'post-messages' */ ||
+          stack[i].type == this.props.app_state.loc['1514']/* 'job-messages' */ ||
+          stack[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */ ||
+          stack[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */ ||
+          stack[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */ ||
+          stack[i].type == this.props.app_state.loc['1593cc']/* 'audio-messages' */ ||
+          stack[i].type == this.props.app_state.loc['1593ct']/* 'video-messages' */ ||
+          stack[i].type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */
+        ){
+          const t = stack[i]
+          for(var m=0; m<t.messages_to_deliver.length; m++){
+            const object_e5_id = t.messages_to_deliver[m]['id']+t.messages_to_deliver[m]['e5']
+            comment_record_e5_ids.push(object_e5_id)
+          }
+        }
+        else if(stack[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
+          const t = stack[i]
+          job_response_e5_ids.push(t.job_item['e5_id'])
+        }
+        else if(stack[i].type == this.props.app_state.loc['1497']/* 'bag-response' */){
+          const t = stack[i]
+          job_response_e5_ids.push(t.bag_item['e5_id'])
+        }
+        else if(stack[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
+          const t = stack[i]
+          contractor_job_request_e5_ids.push(t.contractor_item['e5_id'])
+        }
+        else if(stack[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+          const t = stack[i]
+          direct_purchase_e5_ids.push(t.storefront_item['e5_id'])
+        }
+        else if(stack[i].type == this.props.app_state.loc['1155']/* 'award' */){
+          const t = stack[i]
+          award_e5_ids.push(t.post_item['e5_id'])
+        }
+        else if(stack[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
+          const t = stack[i]
+          buy_album_e5_ids.push(t.album['e5_id'])
+        }
+        else if(stack[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+          const t = stack[i]
+          buy_video_e5_ids.push(t.videopost['e5_id'])
+        }
+        else if(stack[i].type == this.props.app_state.loc['3076']/* 'auction-bid' */){
+          const t = stack[i]
+          auction_bid_e5_ids.push(t.storefront_item['e5_id'])
+        }
       }
     }
 
     this.setState({stack_items: new_stack})
     this.set_cookies_after_stack_action(new_stack)
+    
+    if(comment_record_e5_ids.length > 0){
+      this.emit_comment_record_object_event(comment_record_e5_ids, 'object_comments');
+      await this.wait(1000)
+    }
+
+    if(job_response_e5_ids.length > 0){
+      this.emit_comment_record_object_event(job_response_e5_ids, 'job_application_events');
+      await this.wait(1000)
+    } 
+
+    if(contractor_job_request_e5_ids.length > 0){
+      this.emit_comment_record_object_event(contractor_job_request_e5_ids, 'contractor_job_request_events');
+      await this.wait(1000)
+    } 
+
+    if(direct_purchase_e5_ids.length > 0){
+      this.emit_comment_record_object_event(direct_purchase_e5_ids, 'direct_purchase_events');
+      await this.wait(1000)
+    } 
+    
+    if(award_e5_ids.length > 0){
+      this.emit_comment_record_object_event(award_e5_ids, 'award_events');
+      await this.wait(1000)
+    } 
+
+    if(buy_album_e5_ids.length > 0){
+      this.emit_comment_record_object_event(buy_album_e5_ids, 'purchase_events');
+      await this.wait(1000)
+    }
+
+    if(buy_video_e5_ids.length > 0){
+      this.emit_comment_record_object_event(buy_video_e5_ids, 'purchase_events');
+      await this.wait(1000)
+    }
+
+    if(auction_bid_e5_ids.length > 0){
+      this.emit_comment_record_object_event(auction_bid_e5_ids, 'auction_bid_events');
+      await this.wait(1000)
+    }
   }
 
   view_transaction(tx, index){
@@ -17614,6 +17721,24 @@ class App extends Component {
       this.homepage.current?.when_poll_item_clicked(index, object['id'], object['e5'], object, 'ignore')
       this.homepage.current?.reset_post_detail_object()
     }
+    else if(type == 'promoted_post'){
+      const object_type = event.returnValues.p5
+      if(object_type == 'post'){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1213']/* 'posts' */})
+        this.homepage.current?.when_post_item_clicked(index, object['id'], object['e5'], post_nsfw, object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(object_type == 'audio'){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264k']/* 'audioport' */})
+        this.homepage.current?.when_audio_item_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else if(object_type == 'video'){
+        this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264p']/* 'videoport' */})
+        this.homepage.current?.when_video_item_clicked(index, object['id'], object['e5'], post_nsfw, object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+    }
 
     this.open_dialog_bottomsheet()
     if(this.state.view_notification_log_bottomsheet == true){
@@ -21833,6 +21958,26 @@ class App extends Component {
       this.open_view_notification_log_bottomsheet()
       return;
     }
+    else if(event_type == 'promoted_post'){
+      const object_type = event.returnValues.p5
+      const event_object_id = parseInt(event.returnValues.p1)
+      const id_types_array_object = {}
+      if(object_type == 'video'){
+        const id_type = 20/* 20(video_object) */
+        id_types_array_object[id_type] = [event_object_id]
+      }
+      else if(object_type == 'post'){
+        const id_type = 18/* 18(post object) */
+        id_types_array_object[id_type] = [event_object_id]
+      }
+      else if(object_type == 'audio'){
+        const id_type = 19/* 19(audio_object) */
+        id_types_array_object[id_type] = [event_object_id]
+      }
+      console.log('when_event_clicked', 'id_types_array_object', id_types_array_object)
+      this.start_loading_objects_in_background(id_types_array_object)
+    }
+    
 
     var id = obj['notification_id']
     this.show_dialog_bottomsheet(obj, id)
@@ -23975,7 +24120,7 @@ class App extends Component {
     const target_array = []
     target_array.push(this.hash_data_with_randomizer(address.toString().toLowerCase()))
     await this.wait(700)
-    await this.get_objects_from_socket_and_set_in_state(['ether_coin_receipt'], target_array, [])
+    await this.get_objects_from_socket_and_set_in_state(['ether_coin_receipt'], target_array, [], Date.now() - (72*7*24*60*60*1000), (36*7*24*60*60*1000), [], '')
   }
 
   get_formatted_seed(seed){
@@ -29014,7 +29159,10 @@ class App extends Component {
   }
 
   load_blocked_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
-    var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
+    var accounts_to_load = this.filter_followed_accounts_by_e52(e5)
+    await this.get_objects_from_socket_and_set_in_state(['blocked'], [], [], Date.now() - (72*7*24*60*60*1000), (36*7*24*60*60*1000), accounts_to_load, e5)
+    return;
+
     var followed_accounts_blocked_posts_events_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:9})
 
     var followed_accounts_blocked_posts_events_data = followed_accounts_blocked_posts_events_data.filter(function (event) {
@@ -29072,6 +29220,27 @@ class App extends Component {
       if(item_e5 == e5){
         accepted_ids.push(parseInt(account))
       }
+    }
+    if(!accepted_ids.includes(root_account) && e5 == root_e5){
+      accepted_ids.push(root_account)
+    }
+    return accepted_ids
+  }
+
+  filter_followed_accounts_by_e52(e5){
+    var loaded_followed_accounts = this.state.followed_accounts
+    var accepted_ids = []
+    for(var i=0; i<loaded_followed_accounts.length; i++){
+      var item = loaded_followed_accounts[i]
+      var split_account_array = item.split(':')
+      var item_e5 = split_account_array[0]
+      var account = split_account_array[1]
+      if(item_e5 == e5){
+        accepted_ids.push(account)
+      }
+    }
+    if(!accepted_ids.includes(root_account.toString()) && e5 == root_e5){
+      accepted_ids.push(root_account.toString())
     }
     return accepted_ids
   }
@@ -29198,6 +29367,7 @@ class App extends Component {
 
   load_my_promoted_posts = async (web3, E52contractInstance, e5, account, pre_loaded_events) => {
     if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
+    return;
     var my_promoted_posts_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:12})
 
     if(my_promoted_posts_event_data.length > 0){
@@ -29234,7 +29404,11 @@ class App extends Component {
   }
 
   load_promoted_posts = async (web3, E52contractInstance, e5, account) => {
-    var accounts_to_load = this.filter_followed_accounts_by_e5(e5)
+    var accounts_to_load = this.filter_followed_accounts_by_e52(e5)
+
+    // console.log('load_promoted_posts', 'accounts_to_load', accounts_to_load)
+    await this.get_objects_from_socket_and_set_in_state(['repost'], [], [], Date.now() - (72*7*24*60*60*1000), (36*7*24*60*60*1000), accounts_to_load, e5)
+    return;
 
     var followed_accounts_promoted_posts_events_data = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:12})
 
@@ -30458,6 +30632,48 @@ class App extends Component {
 
 
   
+  set_object_view_data_in_memory(data){
+    const set_data = structuredClone(this.state.object_view_data)
+    const set_extra_data = structuredClone(this.state.object_extra_data)
+    Object.keys(data).forEach(time => {
+      Object.keys(data[time]).forEach(item_type => {
+        Object.keys(data[time][item_type]).forEach(item_lan => {
+          Object.keys(data[time][item_type][item_lan]).forEach(tag => {
+            Object.keys(data[time][item_type][item_lan][tag]).forEach(item_state => {
+              Object.keys(data[time][item_type][item_lan][tag][item_state]).forEach(object_type => {
+                //item_type: uploads & views
+                const hits = data[time][item_type][item_lan][tag][item_state][object_type]['hits']
+                const entry = {time:parseInt(time), item_type, item_lan, item_state, object_type, hits, tag}
+                if(item_type == 'object_views'){
+                  set_data[tag] = {'all_hits':0, 'entries':[]}
+                  set_data[tag]['all_hits'] += hits;
+                  set_data[tag]['entries'].push(entry)
+                }else{
+                  set_extra_data[tag] = {};
+                  set_extra_data[tag][item_type] = {'all_hits':0, 'entries':[]}
+                  set_extra_data[tag][item_type]['all_hits'] += hits;
+                  set_extra_data[tag][item_type]['entries'].push(entry)
+                }
+              });
+            });
+          });
+        });
+      });
+    });
+
+    this.setState({object_view_data: set_data, object_extra_data: set_extra_data})
+  }
+
+  async fetch_and_set_loaded_object_views(ids, e5){
+    const end_time = Date.now()
+    const start_time = 1771762377000
+    const keywords = []
+    ids.forEach(id => {
+      keywords.push(id+e5)
+    });
+    const view_data = await this.get_tag_trends_data(keywords, end_time, start_time, '', [], [], [], false)
+    this.set_object_view_data_in_memory(view_data)
+  }
 
   get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items, return_created_object_events_only=false, all_return_data={}) => {
     var created_subscription_events = null
@@ -30593,6 +30809,14 @@ class App extends Component {
     var created_subscription_object_data = this.state.created_subscriptions[e5] == null ? [] : this.state.created_subscriptions[e5].slice()
     var created_subscription_object_mapping = this.state.created_subscription_object_mapping[e5] == null ? {} : structuredClone(this.state.created_subscription_object_mapping[e5])
     var is_first_time = this.state.created_subscriptions[e5] == null
+
+
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }else{
+      await this.fetch_and_set_loaded_object_views(created_subscriptions.slice(0, 53), e5)
+    }
     
 
     var account_as_list = []
@@ -30666,6 +30890,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(created_subscriptions.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
         load_pos += this.state.sliced_object_load_increment_count
 
@@ -30674,6 +30899,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(created_subscriptions.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_subscription_events.slice(i+1, i+this.state.event_load_chunk_size), 'p3')
@@ -31082,7 +31308,12 @@ class App extends Component {
     var created_contract_mapping = this.state.created_contract_mapping[e5] == null ? {} : structuredClone(this.state.created_contract_mapping[e5])
     var is_first_time = this.state.created_contracts[e5].length <= 1 ? true : false
 
-
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }else{
+      await this.fetch_and_set_loaded_object_views(created_contracts.slice(0, this.state.sliced_object_load_count), e5)
+    }
 
     // var account_as_list = []
     // for(var i=0; i<created_contracts.length; i++){
@@ -31161,6 +31392,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(created_contracts.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(created_contracts.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_contract_events.slice(i+1, end), 'p3')
@@ -31170,6 +31402,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(created_contracts.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(created_contracts.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_contract_events.slice(i+1, i+this.state.event_load_chunk_size), 'p3')
@@ -31581,6 +31814,14 @@ class App extends Component {
     // var consensus_data = await G52contractInstance.methods.f266(my_proposal_ids, [], 0).call((error, result) => {});
     var is_first_time = this.state.my_proposals[e5] == null
 
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(my_proposal_ids.slice(0, this.state.sliced_object_load_count), e5)
+    }
+
 
     // var all_exchanges_in_list = []
     // var depths = []
@@ -31681,6 +31922,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(my_proposal_ids.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(my_proposals_events.slice(i+1, end), 'p4')
@@ -31690,6 +31932,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(my_proposal_ids.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(my_proposals_events.slice(i+1, i+this.state.event_load_chunk_size), 'p4')
@@ -31937,6 +32180,14 @@ class App extends Component {
     token_symbol_directory['wei'] = 0
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
 
+    if(Object.keys(pre_launch_data).length != 0){
+      const object_view_data = pre_launch_data[e5]['exchange_objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(created_tokens.slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     var starter = exchanges_to_load_first.length > 53 ? exchanges_to_load_first.length+2 : 53;
     const all_return_data_loaded_event_count = created_tokens.slice(0, starter).length
     var all_data = await this.fetch_multiple_objects_data(created_tokens.slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, pre_launch_data, 'exchange_objects_data')
@@ -32081,6 +32332,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(created_tokens.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(created_tokens.slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'exchange_objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_token_events.slice(i+1, end), 'p3')
@@ -32090,6 +32342,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(created_tokens.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(created_tokens.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_token_events.slice(i+1, i+this.state.event_load_chunk_size), 'p3')
@@ -32570,6 +32823,14 @@ class App extends Component {
     var created_posts = this.state.created_posts[e5] == null ? [] : this.state.created_posts[e5].slice()
     var is_first_time = this.state.created_posts[e5] == null
 
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count).length
     // console.log('get_post_data', 'starting ids', this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count))
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -32614,6 +32875,7 @@ class App extends Component {
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         // console.log('get_post_data', 'slice', created_post_events.slice(i+1, end))
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_post_events.slice(i+1, end), 'p5')
@@ -32625,6 +32887,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_post_events.slice(i+1, i+this.state.event_load_chunk_size), 'p5')
@@ -32701,6 +32964,15 @@ class App extends Component {
     var created_channel = this.state.created_channels[e5] == null ? [] : this.state.created_channels[e5].slice()
     var is_first_time = this.state.created_channels[e5] == null
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_channel_events).slice(0, this.state.max_post_bulk_load_count).length
+
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_channel_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
     var load_pos = this.state.sliced_object_load_count
 
@@ -32765,6 +33037,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_channel_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_channel_events.slice(i+1, end), 'p5')
@@ -32774,6 +33047,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_channel_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_channel_events.slice(i+1, i+this.state.event_load_chunk_size), 'p5')
@@ -32896,6 +33170,14 @@ class App extends Component {
     var my_job_ids = []
     var is_first_time = this.state.created_jobs[e5] == null
 
+    if(Object.keys(pre_launch_data).length != 0){
+      const object_view_data = pre_launch_data[e5]['job_objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_job_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_job_events).slice(0, this.state.max_post_bulk_load_count).length
     // console.log('apppage', 'fetch_multiple_objects_data', 'starting fetch_multiple_objects_data...', pre_launch_data)
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, pre_launch_data, 'job_objects_data')
@@ -32957,6 +33239,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_job_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'job_objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_job_events.slice(i+1, end), 'p5')
@@ -32966,6 +33249,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_job_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_job_events.slice(i+1, i+this.state.event_load_chunk_size), 'p5')
@@ -33313,6 +33597,14 @@ class App extends Component {
     const my_stores = []
     var is_first_time = this.state.created_stores[e5] == null
 
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_store_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_store_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
     var load_pos = this.state.sliced_object_load_count
@@ -33376,6 +33668,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_store_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_store_events.slice(i+1, end), 'p5')
@@ -33385,6 +33678,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_store_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_store_events.slice(i+1, i+this.state.event_load_chunk_size), 'p5')
@@ -33500,6 +33794,14 @@ class App extends Component {
     var my_created_bag_ids =  []
     var is_first_time = this.state.created_bags[e5] == null
 
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events3(created_bag_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     const all_return_data_loaded_event_count = this.get_ids_from_events3(created_bag_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
     var load_pos = this.state.sliced_object_load_count
@@ -33576,6 +33878,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events3(created_bag_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_bag_events.slice(i+1, end), 'p3')
@@ -33585,6 +33888,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events3(created_bag_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_bag_events.slice(i+1, i+this.state.event_load_chunk_size), 'p3')
@@ -33746,6 +34050,15 @@ class App extends Component {
     var my_contractor_posts = []
     var is_first_time = this.state.created_contractors[e5] == null
 
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_contractor_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+    
+
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_contractor_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
     var load_pos = this.state.sliced_object_load_count
@@ -33816,6 +34129,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_contractor_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_contractor_events.slice(i+1, end), 'p5')
@@ -33825,6 +34139,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_contractor_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_contractor_events.slice(i+1, i+this.state.event_load_chunk_size), 'p5')
@@ -33914,6 +34229,14 @@ class App extends Component {
     var created_audio_mappings = this.state.created_audio_mappings[e5] == null ? {} : structuredClone(this.state.created_audio_mappings[e5])
     var is_first_time = this.state.created_audios[e5] == null
     is_first_time = true
+
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_audio_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_audio_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -34103,6 +34426,14 @@ class App extends Component {
     var my_acquired_videos = this.state.my_acquired_videos.slice()
     var is_first_time = this.state.created_videos[e5] == null
     is_first_time = true
+
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_video_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
 
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_video_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -34347,6 +34678,14 @@ class App extends Component {
     var is_first_time = this.state.created_nitros[e5] == null
     is_first_time = true
 
+    if(Object.keys(pre_launch_data).length != 0){
+      const object_view_data = pre_launch_data[e5]['nitro_objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_nitro_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_nitro_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, pre_launch_data, 'nitro_objects_data')
     var load_pos = this.state.sliced_object_load_count
@@ -34415,6 +34754,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_nitro_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'nitro_objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_nitro_events.slice(i+1, end), 'p5')
@@ -34424,6 +34764,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_nitro_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_nitro_events.slice(i+1, i+this.state.event_load_chunk_size), 'p5')
@@ -34523,6 +34864,14 @@ class App extends Component {
     var created_posts = this.state.created_polls[e5] == null ? [] : this.state.created_polls[e5].slice()
     var is_first_time = this.state.created_polls[e5] == null
 
+    if(Object.keys(all_return_data).length != 0){
+      const object_view_data = all_return_data[e5]['objects_data']['view_data']
+      this.set_object_view_data_in_memory(object_view_data)
+    }
+    else{
+      await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count), e5)
+    }
+
     const all_return_data_loaded_event_count = this.get_ids_from_events(created_post_events).slice(0, this.state.max_post_bulk_load_count).length
     var all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(0, this.state.sliced_object_load_count), web3, e5, contract_addresses, all_return_data, 'objects_data')
     var load_pos = this.state.sliced_object_load_count
@@ -34558,6 +34907,7 @@ class App extends Component {
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
         const alias_accounts = this.get_event_account_ids(created_post_events.slice(i+1, end), 'p5')
@@ -34567,6 +34917,7 @@ class App extends Component {
       }else
       if(i+1 >= load_pos){
         await this.wait(1000)
+        await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
         const alias_accounts = this.get_event_account_ids(created_post_events.slice(i+1, i+this.state.event_load_chunk_size), 'p5')
@@ -46919,7 +47270,11 @@ class App extends Component {
     await this.wait(1800)
     socket.emit('join_chatroom', 'contracts');
     await this.wait(1800)
-    socket.emit('join_chatroom', 'ether_coin_receipt')
+    socket.emit('join_chatroom', 'ether_coin_receipt');
+    await this.wait(1800)
+    socket.emit('join_chatroom', 'repost');
+    await this.wait(1800)
+    socket.emit('join_chatroom', 'object_views');
     await this.wait(1800)
 
     for(var i=0; i<this.state.active_rooms.length; i++){
@@ -46929,6 +47284,13 @@ class App extends Component {
     }
 
     this.setState({socket_connetcted: true})
+    await this.wait(400)
+
+    if(this.state.queued_objects_to_emit_view.length > 0){
+      this.emit_view_object_events(this.state.queued_objects_to_emit_view)
+      await this.wait(1300)
+    }
+    this.setState({queued_objects_to_emit_view: []})
   }
 
   async register_room_listeners(socket){
@@ -46966,6 +47328,12 @@ class App extends Component {
         }
         else if(message.type == 'ether_coin_receipt'){
           me.process_ether_coin_send_transaction_message(message, object_hash, '', true)
+        }
+        else if(message.type == 'repost'){
+          me.process_repost_message(message, object_hash)
+        }
+        else if(message.type == 'blocked'){
+          me.process_blocked_message(message, object_hash)
         }
       }
     });
@@ -47243,6 +47611,7 @@ class App extends Component {
 
     await this.wait(3000)
     this.process_new_comment_message(comment_message_object.message, comment_message_object.object_hash)
+    this.emit_comment_record_object_event([object_e5_id], 'object_comments')
   }
 
   async emit_new_bill_confirmed(state_object, show_job_after_broadcast){
@@ -47276,11 +47645,14 @@ class App extends Component {
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
 
-    await this.wait(10000)
+    await this.wait(1000)
     const target2 = 'job_application|'+to
     const secondary_target2 = 'job_application|'+this.state.accounts[this.state.selected_e5].address
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([state_object.job_item['e5_id']], 'job_application_events')
   }
 
   async emit_new_bag_application(state_object, show_job_after_broadcast){
@@ -47299,11 +47671,14 @@ class App extends Component {
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", emit_object);
 
-    await this.wait(10000)
+    await this.wait(1000)
     const target2 = 'bag_application|'+to
     const secondary_target2 = 'bag_application|'+this.state.accounts[this.state.selected_e5].address
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([state_object.bag_item['e5_id']], 'job_application_events')
   }
 
   async emit_new_contractor_job_request_application(state_object, show_job_after_broadcast){
@@ -47324,11 +47699,15 @@ class App extends Component {
     this.state.socket.emit("send_message", emit_object);
 
 
-    await this.wait(10000)
+    await this.wait(1000)
     const target2 = 'contractor_job_request|'+to
     const secondary_target2 = 'contractor_job_request|'+this.state.accounts[this.state.selected_e5].address
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([state_object.contractor_item['e5_id']], 'contractor_job_request_events')
   }
 
   async emit_new_contractor_accept_job_request(state_object, show_job_after_broadcast){
@@ -47370,6 +47749,9 @@ class App extends Component {
     const secondary_target2 = 'storefront_order|'+this.state.accounts[this.state.selected_e5].address
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([state_object.storefront_item['e5_id']], 'storefront_order_events')
   }
 
   async emit_new_signature_request(state_object, target_recipient_address, order_storefront){
@@ -47674,6 +48056,94 @@ class App extends Component {
 
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_repost_post(object, object_type){
+    this.prompt_top_notification(this.getLocale()['b2527w']/* 'Reposting...' */, 1900)
+    const message_object = await this.prepare_new_repost_message(object, object_type)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const room_id = 'repost'
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+
+    await this.wait(3000)
+    this.process_repost_message(message_object.message, message_object.object_hash)
+  }
+
+  async emit_block_post(object, object_type){
+    this.prompt_top_notification(this.getLocale()['b2527x']/* 'Blocking post....' */, 1900)
+    const message_object = await this.prepare_new_block_message(object, object_type)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const room_id = 'repost'
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+
+    await this.wait(3000)
+    this.process_blocked_message(message_object.message, message_object.object_hash)
+  }
+
+  async emit_view_object_event(object_e5_id){
+    const viewed_objects_clone = this.state.viewed_objects.slice()
+    if(viewed_objects_clone.includes(object_e5_id)){
+      return;
+    }else{
+      viewed_objects_clone.push(object_e5_id)
+      this.setState({viewed_objects: viewed_objects_clone})
+    }
+    if(this.state.socket_connetcted == false){
+      const queued_objects = this.state.queued_objects_to_emit_view.slice()
+      if(!queued_objects.includes(object_e5_id)) queued_objects.push(object_e5_id);
+      this.setState({queued_objects_to_emit_view: queued_objects})
+      return;
+    }
+    const message_object = await this.prepare_new_view_message(object_e5_id)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const room_id = 'object_views'
+
+    await this.reconnect_socket_if_unconnected()
+    // console.log('emit_view_object_event', 'emitting object views...')
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+  }
+
+  async emit_view_object_events(object_e5_ids){
+    const message_object = await this.prepare_new_view_messages(object_e5_ids)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const room_id = 'object_views'
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+  }
+
+  async emit_comment_record_object_event(object_e5_ids, record_type){
+    const message_object = await this.prepare_new_comment_record_message(object_e5_ids, record_type)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const room_id = 'object_views'
+
+    await this.reconnect_socket_if_unconnected()
+    // console.log('emit_view_object_event', 'emitting object views...')
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
   }
 
   
@@ -49343,6 +49813,206 @@ class App extends Component {
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
   }
+
+  async prepare_new_repost_message(object, object_type){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+    const data = ''
+    const context = object['id']
+    const message = {
+      type: 'repost',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: object['id'],
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      object_e5: object['e5'],
+      object_type,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_new_block_message(object){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+    const data = ''
+    const context = object['id']
+    const message = {
+      type: 'blocked',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: object['id'],
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      object_e5: object['e5'],
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+
+
+
+
+
+
+
+  async prepare_new_view_message(object_e5_id){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+    const data = ''
+    const context = 0
+    const message = {
+      type: 'object_views',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: 0,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      record_view: true,
+      record_type:'object_views',
+      record_id: [object_e5_id]
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_new_view_messages(object_e5_ids){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+    const data = ''
+    const context = 0
+    const message = {
+      type: 'object_views',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: 0,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      record_view: true,
+      record_type:'object_views',
+      record_id: object_e5_ids
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_new_comment_record_message(object_e5_ids, record_type){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+    const data = ''
+    const context = 0
+    const message = {
+      type: record_type,
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: 0,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      record_view: true,
+      record_type: record_type,
+      record_id: object_e5_ids
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+  
 
   
 
@@ -51177,7 +51847,7 @@ class App extends Component {
         const convo_id = id;
         const cid = object_hash;
 
-        console.log('process_new_direct_message_received', convo_id, ipfs_obj)
+        // console.log('process_new_direct_message_received', convo_id, ipfs_obj)
         const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
       
         ipfs_obj['time'] = event.returnValues.p6
@@ -51253,6 +51923,134 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
+  async process_repost_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const promoted_object_id = message['id']
+    const promoted_object_e5 = message['object_e5']
+    const object_type = message['object_type']
+    const e5_id = promoted_object_id+promoted_object_e5
+    const e5 = message['e5']
+    const author = message['author']
+    const following_accounts = this.filter_followed_accounts_by_e52(e5)
+
+    // console.log('process_repost_message', promoted_object_id, author, following_accounts)
+    
+    if(!following_accounts.includes(author)) return;
+
+    const clone = structuredClone(this.state.posts_reposted_by_my_following)
+    if(!clone[object_type].includes(e5_id)){
+      clone[object_type].push(e5_id)
+    }
+
+    this.setState({posts_reposted_by_my_following: clone})
+
+    const event = {returnValues:{p1:promoted_object_id, p2:author, p3:message.context, p4:object_hash, p5:object_type, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    if(!am_I_the_author){
+      if(message.time > (Date.now()/1000) - (3*60)){
+        event['e5'] = e5
+        this.handle_promoted_post_notifications(event)
+      }
+      this.set_promoted_post_message_event_in_notifications(event, e5);
+    }
+  }
+
+  async handle_promoted_post_notifications(event){
+    var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+    var prompt = this.getLocale()['2738ci']/* '$ promoted a new post to you.' */
+    if(event.returnValues.p5 == 'video'){
+      prompt = this.getLocale()['2738ck']/* '$ promoted a new videopost to you.' */
+    }
+    else if(event.returnValues.p5 == 'audio'){
+      prompt = this.getLocale()['2738cj']/* '$ promoted a new audiopost to you.' */
+    }
+    prompt = prompt.replace('$', alias)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','event':event, 'type':'promoted_post', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+
+    const object_type = event.returnValues.p5
+    const event_object_id = parseInt(event.returnValues.p1)
+    const id_types_array_object = {}
+    if(object_type == 'video'){
+      const id_type = 20/* 20(video_object) */
+      id_types_array_object[id_type] = [event_object_id]
+    }
+    else if(object_type == 'post'){
+      const id_type = 18/* 18(post object) */
+      id_types_array_object[id_type] = [event_object_id]
+    }
+    else if(object_type == 'audio'){
+      const id_type = 19/* 19(audio_object) */
+      id_types_array_object[id_type] = [event_object_id]
+    }
+    this.start_loading_objects_in_background(id_types_array_object)
+  }
+
+  set_promoted_post_message_event_in_notifications(event, e5){
+    event['e5'] = e5
+    event['p'] = event.returnValues.p1
+    event['time'] = event.returnValues.p6
+    event['block'] = event.returnValues.p7
+    event['sender'] = event.returnValues.p2
+    event['type'] = 'promoted_post'
+    event['event_type'] = 'promoted_post'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'promoted_post', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['promoted_post'] == null ? [] : clone['promoted_post'].slice()
+    request_clone_array.push(event)
+    clone['promoted_post'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
+  async process_blocked_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+
+    const promoted_object_id = message['id']
+    const promoted_object_e5 = message['object_e5']
+    const e5_id = promoted_object_id+promoted_object_e5
+    const e5 = message['e5']
+    const author = message['author']
+    const following_accounts = this.filter_followed_accounts_by_e5(e5)
+    
+    if(!following_accounts.includes(author)) return;
+
+    const clone = this.state.posts_blocked_by_my_following.slice()
+    if(!clone.includes(e5_id)){
+      clone.push(e5_id)
+    }
+
+    this.setState({posts_blocked_by_my_following: clone})
+  }
 
 
 
@@ -51265,7 +52063,8 @@ class App extends Component {
 
 
 
-  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0, filter_authors=[]) => {
+
+  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0, filter_authors=[], target_e5='E25') => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -51285,7 +52084,7 @@ class App extends Component {
       filter_recipients:[],
       all_tags_present:[],
       channeling:'',
-      target_e5:'',
+      target_e5: target_e5,
       target_lan:'',
       target_state:'',
       size_limit_in_kbs,
@@ -51543,13 +52342,13 @@ class App extends Component {
     return event
   }
 
-  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000)), default_load_step=(35*7*24*60*60*1000)){
+  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000)), default_load_step=(35*7*24*60*60*1000), authors=[], target_e5=''){
     const load_step = absolute_load_limit == 0 ? Date.now()-1000 : (default_load_step)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     
     while(absolute_load_limit < current_filter_end_time){
-      const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), filter_tags)
+      const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), filter_tags, false, 0, authors, target_e5)
       if(socket_data == null){
         current_filter_end_time -= load_step
         current_filter_start_time -= load_step
@@ -51672,6 +52471,12 @@ class App extends Component {
           }
           else if(object_data['type'] == 'direct_message'){
             await this.process_new_direct_message_received(object_data, object_hash, object_data['author_address'], true)
+          }
+          else if(object_data['type'] == 'repost'){
+            await this.process_repost_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'blocked'){
+            await this.process_blocked_message(object_data, object_hash)
           }
           await this.wait(300)
         }
