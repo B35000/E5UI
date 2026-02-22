@@ -1138,6 +1138,9 @@ class PostListSection extends Component {
         if(hits > 1){
             var return_text = this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', this.format_count(hits));
             if(extra_data != null){
+                if(extra_data['repost_object_event'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509dd']/* '$ reposts' */.replace('$', this.format_count(extra_data['repost_object_event']['all_hits']));
+                }
                 if(extra_data['object_comments'] != null){
                     return_text = return_text+ ' • '+ this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits']));
                 }
@@ -1162,6 +1165,8 @@ class PostListSection extends Component {
                 if(extra_data['storefront_order_events'] != null){
                     return_text = return_text+ ' • '+ this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits']));
                 }
+                
+                
             }
             return return_text
         }else{

@@ -6723,13 +6723,26 @@ class App extends Component {
         clone.splice(pos, 1)
         this.setState({followed_accounts: clone, should_update_followed_accounts: true})
         this.prompt_top_notification(this.getLocale()['1593do']/* 'Account removed from your following list.' */, 2300)
-        this.emit_comment_record_object_event([follow_id], 'unfollow_account')
+
+        const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+        if(follow_unfollow_stack_clone['unfollow'] == null){
+          follow_unfollow_stack_clone['unfollow'] = []
+        }
+        follow_unfollow_stack_clone['unfollow'].push(follow_id)
+        this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
+        // this.emit_comment_record_object_event([follow_id], 'unfollow_account')
       }
     }else{
       clone.push(follow_id)
       this.setState({followed_accounts: clone, should_update_followed_accounts: true})
       this.prompt_top_notification(this.getLocale()['a2527bs']/* 'You are now following that account.' */, 2300)
-      this.emit_comment_record_object_event([follow_id], 'follow_account')
+      const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+      if(follow_unfollow_stack_clone['follow'] == null){
+        follow_unfollow_stack_clone['follow'] = []
+      }
+      follow_unfollow_stack_clone['follow'].push(follow_id)
+      this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
+      // this.emit_comment_record_object_event([follow_id], 'follow_account')
     }
     var me = this;
     setTimeout(function() {
@@ -6749,7 +6762,7 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  repost_audiopost(object){
+  async repost_audiopost(object){
     if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
@@ -6769,9 +6782,12 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
   }
 
-  repost_videopost(object){
+  async repost_videopost(object){
     if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
@@ -6791,9 +6807,12 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
   }
 
-  repost_post(object){
+  async repost_post(object){
     if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage){
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
@@ -6814,6 +6833,9 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
   }
 
   when_file_link_tapped(ecid){
@@ -9876,6 +9898,22 @@ class App extends Component {
     if(auction_bid_e5_ids.length > 0){
       this.emit_comment_record_object_event(auction_bid_e5_ids, 'auction_bid_events');
       await this.wait(1000)
+    } 
+
+    if(this.state.follow_unfollow_stack['follow'] != null && this.state.follow_unfollow_stack['follow'].length > 0){
+      this.emit_comment_record_object_event(this.state.follow_unfollow_stack['follow'], 'follow_account')
+      await this.wait(1000)
+      const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+      follow_unfollow_stack_clone['follow'] = []
+      this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
+    }
+
+    if(this.state.follow_unfollow_stack['unfollow'] != null && this.state.follow_unfollow_stack['unfollow'].length > 0){
+      this.emit_comment_record_object_event(this.state.follow_unfollow_stack['unfollow'], 'unfollow_account')
+      await this.wait(1000)
+      const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+      follow_unfollow_stack_clone['unfollow'] = []
+      this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
     }
   }
 

@@ -642,6 +642,9 @@ class PostDetailSection extends Component {
         if(hits > 1){
             var return_text = ''
             if(extra_data != null){
+                if(extra_data['repost_object_event'] != null){
+                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509dd']/* '$ reposts' */.replace('$', this.format_count(extra_data['repost_object_event']['all_hits']));
+                }
                 if(extra_data['object_comments'] != null){
                     return_text = return_text+ ' • '+ this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits']));
                 }
@@ -710,7 +713,8 @@ class PostDetailSection extends Component {
                 'award_events':this.props.app_state.loc['2509ca']/* awards */,
                 'purchase_events':this.props.app_state.loc['2509cb']/* purchase 📼 */,
                 'auction_bid_events':this.props.app_state.loc['2509cc']/* bids */,
-                'storefront_order_events':this.props.app_state.loc['2509cd']/* rders 📦 */
+                'storefront_order_events':this.props.app_state.loc['2509cd']/* orders 📦 */,
+                'repost_object_event':this.props.app_state.loc['2509de']/* reposts 🔄 */
             }
 
             const available_items = ['e']
@@ -774,6 +778,11 @@ class PostDetailSection extends Component {
                     'title':this.props.app_state.loc['2509cz']/* Storefront Orders. */, 
                     'details':this.props.app_state.loc['2509da']/* Chart containing the orders sent to the storefront overtime. */,
                     'y_axis':this.props.app_state.loc['2509db']/* Y-Axis: Orders. */
+                },
+                'repost_object_event':{
+                    'title':this.props.app_state.loc['2509df']/* Post Reposts */, 
+                    'details':this.props.app_state.loc['2509dg']/* Chart containing the number of reposts made by users over time. */,
+                    'y_axis':this.props.app_state.loc['2509dh']/* Y-Axis: Reposts. */
                 }
             }
 
