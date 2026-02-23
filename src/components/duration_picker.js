@@ -20,6 +20,7 @@ import React, { Component } from 'react';
 import Tags from './tags';
 import Slider from './slider'
 import ViewGroups from './view_groups'
+import { motion, AnimatePresence } from "framer-motion";
 // import E5EmptyIcon3 from './../assets/e5empty_icon.png';
 
 var bigInt = require("big-integer");
@@ -87,9 +88,13 @@ class DurationPicker extends Component {
 
     render_number_label_item(background_color, shadow_color, pos, number, width){
       return(
-        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_number_label_item_clicked(pos)}>
-            <p style={{'color': this.get_text_color(pos), 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
-        </button>
+        <AnimatePresence initial={true}>
+            <motion.div key={'label'+pos} initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_number_label_item_clicked(pos)}>
+                    <p style={{'color': this.get_text_color(pos), 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
+                </button>
+            </motion.div>
+        </AnimatePresence>
       );
     }
 

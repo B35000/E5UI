@@ -1073,7 +1073,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+id_to_show+sender+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -1135,35 +1135,42 @@ class PostListSection extends Component {
     get_object_views_text(e5_id){
         const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
         const extra_data = this.props.app_state.object_extra_data[e5_id]
-        if(hits > 1){
+        const process_return_text = (text) => {
+                if(text == ''){
+                    return text;
+                }else{
+                    return text + ' • ';
+                }
+            }
+        if(hits > 0){
             var return_text = this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', this.format_count(hits));
             if(extra_data != null){
                 if(extra_data['repost_object_event'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509dd']/* '$ reposts' */.replace('$', this.format_count(extra_data['repost_object_event']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509dd']/* '$ reposts' */.replace('$', this.format_count(extra_data['repost_object_event']['all_hits']));
                 }
                 if(extra_data['object_comments'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits']));
                 }
                 if(extra_data['job_application_events'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bq']/* '$ applications' */.replace('$', this.format_count(extra_data['job_application_events']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bq']/* '$ applications' */.replace('$', this.format_count(extra_data['job_application_events']['all_hits']));
                 }
                 if(extra_data['contractor_job_request_events'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['contractor_job_request_events']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['contractor_job_request_events']['all_hits']));
                 }
                 if(extra_data['direct_purchase_events'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['direct_purchase_events']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['direct_purchase_events']['all_hits']));
                 }
                 if(extra_data['award_events'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bt']/* '$ awards' */.replace('$', this.format_count(extra_data['award_events']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bt']/* '$ awards' */.replace('$', this.format_count(extra_data['award_events']['all_hits']));
                 }
                 if(extra_data['purchase_events'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['purchase_events']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['purchase_events']['all_hits']));
                 }
                 if(extra_data['auction_bid_events'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bu']/* '$ bids' */.replace('$', this.format_count(extra_data['auction_bid_events']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bu']/* '$ bids' */.replace('$', this.format_count(extra_data['auction_bid_events']['all_hits']));
                 }
                 if(extra_data['storefront_order_events'] != null){
-                    return_text = return_text+ ' • '+ this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits']));
+                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits']));
                 }
                 
                 
@@ -1475,7 +1482,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -1604,7 +1611,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image}
+            'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image, 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -1758,7 +1765,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -2058,7 +2065,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -4172,9 +4179,9 @@ class PostListSection extends Component {
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':title_space+id_to_show+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
+            'id':{'title':title_space+id_to_show+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
-            'min':{'details':'• '+objectid+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+objectid+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -4359,7 +4366,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -4540,7 +4547,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -4749,7 +4756,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -4974,7 +4981,7 @@ class PostListSection extends Component {
             'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'footer':this.get_object_views_text(object['e5_id'])},
             // 'id_with_image':{'title':number_with_commas(object['id']), 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
-            'min':{'details':'• '+number_with_commas(object['id']), 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px'}
+            'min':{'details':'• '+number_with_commas(object['id']), 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -5847,9 +5854,9 @@ return data['data']
         var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object},
+            'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
-            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object}
+            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -6392,9 +6399,9 @@ return data['data']
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object)},
+            'id':{'title':author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
-            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object)}
+            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -7014,7 +7021,7 @@ return data['data']
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id'])},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':''}
+            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id'])}
         }
     }
 

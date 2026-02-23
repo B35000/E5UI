@@ -738,10 +738,15 @@ class VideoDetailsSection extends Component {
         var title = this.props.app_state.loc['b2527o']/* 'Repost Videopost.' */
         var details = this.props.app_state.loc['b2527p']/*  Add this videopost to your promoted list. */
         
-        // if(reposted_posts['video'].includes(object['e5_id'])){
-        //     title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
-        //     details = this.props.app_state.loc['b2527q']/*  Remove this videopost from your promoted list. */
-        // }
+        if(reposted_posts['video'].includes(object['e5_id'])){
+            return;
+            // title = this.props.app_state.loc['a2527bx']/* 'Remove Repost.' */
+            // details = this.props.app_state.loc['b2527q']/*  Remove this videopost from your promoted list. */
+        }
+
+        if(this.props.app_state.is_loading_repost_and_following_data == true || (this.props.app_state.emit_record_data[object['e5_id']] != null || this.props.app_state.emit_record_data[object['e5_id']] > 0)){
+            return;
+        }
 
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['event'].returnValues.p5 == my_account) return;

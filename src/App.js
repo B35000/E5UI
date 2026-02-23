@@ -1349,7 +1349,7 @@ class App extends Component {
     
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
-    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}
+    received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
   };
 
   get_thread_pool_size(){
@@ -3607,7 +3607,7 @@ class App extends Component {
     this.resize();
 
     /* var me = this;
-    setTimeout(function() {
+    setTimeout(() => {
   
     }, (1 * 500)); */
 
@@ -6710,8 +6710,14 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['a2527br']/* 'First set your wallet.' */, 6300)
       return;
     }
+
+    if(this.state.is_loading_repost_and_following_data == true){
+      this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
+      return;
+    }
     var follow_id = e5 + ':' + account
     var clone = this.state.followed_accounts.slice()
+
     if(clone.includes(follow_id)){
       //were removing the account
       if(primary_following.includes(follow_id) && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == null)){
@@ -6724,25 +6730,25 @@ class App extends Component {
         this.setState({followed_accounts: clone, should_update_followed_accounts: true})
         this.prompt_top_notification(this.getLocale()['1593do']/* 'Account removed from your following list.' */, 2300)
 
-        const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
-        if(follow_unfollow_stack_clone['unfollow'] == null){
-          follow_unfollow_stack_clone['unfollow'] = []
-        }
-        follow_unfollow_stack_clone['unfollow'].push(follow_id)
-        this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
-        // this.emit_comment_record_object_event([follow_id], 'unfollow_account')
+        // const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+        // if(follow_unfollow_stack_clone['unfollow'] == null){
+        //   follow_unfollow_stack_clone['unfollow'] = []
+        // }
+        // follow_unfollow_stack_clone['unfollow'].push(follow_id)
+        // this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
       }
+      if(this.state.emit_record_data[follow_id] != null && this.state.emit_record_data[follow_id] > 0) this.emit_comment_record_object_event([follow_id], 'unfollow_account');
     }else{
       clone.push(follow_id)
       this.setState({followed_accounts: clone, should_update_followed_accounts: true})
       this.prompt_top_notification(this.getLocale()['a2527bs']/* 'You are now following that account.' */, 2300)
-      const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
-      if(follow_unfollow_stack_clone['follow'] == null){
-        follow_unfollow_stack_clone['follow'] = []
-      }
-      follow_unfollow_stack_clone['follow'].push(follow_id)
-      this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
-      // this.emit_comment_record_object_event([follow_id], 'follow_account')
+      // const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+      // if(follow_unfollow_stack_clone['follow'] == null){
+      //   follow_unfollow_stack_clone['follow'] = []
+      // }
+      // follow_unfollow_stack_clone['follow'].push(follow_id)
+      // this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
+      if(this.state.emit_record_data[follow_id] == null || this.state.emit_record_data[follow_id] < 1) this.emit_comment_record_object_event([follow_id], 'follow_account');
     }
     var me = this;
     setTimeout(function() {
@@ -6767,7 +6773,10 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
     }
-    this.emit_repost_post(object, 'audio')
+    if(this.state.is_loading_repost_and_following_data == true){
+      this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
+      return;
+    }
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['audio'].includes(object['e5_id'])){
       // var index = clone['audio'].indexOf(object['e5_id'])
@@ -6776,6 +6785,10 @@ class App extends Component {
     }else{
       // this.prompt_top_notification(this.getLocale()['a2527bv']/* 'Audiopost Added.' */, 1900)
       clone['audio'].push(object['e5_id'])
+      this.emit_repost_post(object, 'audio')
+
+      await this.wait(1000)
+      if(this.state.emit_record_data[object['e5_id']] == null || this.state.emit_record_data[object['e5_id']] < 1) this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event');
     }
     this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
     var me = this;
@@ -6783,8 +6796,7 @@ class App extends Component {
       me.set_cookies()
     }, (1 * 1000));
 
-    await this.wait(1000)
-    this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
+    
   }
 
   async repost_videopost(object){
@@ -6792,7 +6804,10 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
     }
-    this.emit_repost_post(object, 'video')
+    if(this.state.is_loading_repost_and_following_data == true){
+      this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
+      return;
+    }
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['video'].includes(object['e5_id'])){
       // var index = clone['video'].indexOf(object['e5_id'])
@@ -6801,6 +6816,10 @@ class App extends Component {
     }else{
       // this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
       clone['video'].push(object['e5_id'])
+      this.emit_repost_post(object, 'video')
+
+      await this.wait(1000)
+      if(this.state.emit_record_data[object['e5_id']] == null || this.state.emit_record_data[object['e5_id']] < 1) this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
     }
     this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
     var me = this;
@@ -6808,8 +6827,7 @@ class App extends Component {
       me.set_cookies()
     }, (1 * 1000));
 
-    await this.wait(1000)
-    this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
+    
   }
 
   async repost_post(object){
@@ -6817,8 +6835,10 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['a2527p']/* 'You need to set your account first.' */, 5000)
       return;
     }
-    this.emit_repost_post(object, 'post')
-
+    if(this.state.is_loading_repost_and_following_data == true){
+      this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
+      return;
+    }
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['post'].includes(object['e5_id'])){
       // var index = clone['post'].indexOf(object['e5_id'])
@@ -6827,6 +6847,10 @@ class App extends Component {
     }else{
       // this.prompt_top_notification(this.getLocale()['b2527s']/* 'Videopost Added.' */, 1900)
       clone['post'].push(object['e5_id'])
+      this.emit_repost_post(object, 'post')
+
+      await this.wait(1000)
+      if(this.state.emit_record_data[object['e5_id']] == null || this.state.emit_record_data[object['e5_id']] < 1) this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
     }
     this.setState({posts_reposted_by_me: clone, should_update_posts_reposted_by_me:true})
     var me = this;
@@ -6834,8 +6858,7 @@ class App extends Component {
       me.set_cookies()
     }, (1 * 1000));
 
-    await this.wait(1000)
-    this.emit_comment_record_object_event([object['e5_id']], 'repost_object_event')
+    
   }
 
   when_file_link_tapped(ecid){
@@ -9900,21 +9923,21 @@ class App extends Component {
       await this.wait(1000)
     } 
 
-    if(this.state.follow_unfollow_stack['follow'] != null && this.state.follow_unfollow_stack['follow'].length > 0){
-      this.emit_comment_record_object_event(this.state.follow_unfollow_stack['follow'], 'follow_account')
-      await this.wait(1000)
-      const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
-      follow_unfollow_stack_clone['follow'] = []
-      this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
-    }
+    // if(this.state.follow_unfollow_stack['follow'] != null && this.state.follow_unfollow_stack['follow'].length > 0){
+    //   this.emit_comment_record_object_event(this.state.follow_unfollow_stack['follow'], 'follow_account')
+    //   await this.wait(1000)
+    //   const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+    //   follow_unfollow_stack_clone['follow'] = []
+    //   this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
+    // }
 
-    if(this.state.follow_unfollow_stack['unfollow'] != null && this.state.follow_unfollow_stack['unfollow'].length > 0){
-      this.emit_comment_record_object_event(this.state.follow_unfollow_stack['unfollow'], 'unfollow_account')
-      await this.wait(1000)
-      const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
-      follow_unfollow_stack_clone['unfollow'] = []
-      this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
-    }
+    // if(this.state.follow_unfollow_stack['unfollow'] != null && this.state.follow_unfollow_stack['unfollow'].length > 0){
+    //   this.emit_comment_record_object_event(this.state.follow_unfollow_stack['unfollow'], 'unfollow_account')
+    //   await this.wait(1000)
+    //   const follow_unfollow_stack_clone = structuredClone(this.state.follow_unfollow_stack)
+    //   follow_unfollow_stack_clone['unfollow'] = []
+    //   this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
+    // }
   }
 
   view_transaction(tx, index){
@@ -27962,15 +27985,26 @@ class App extends Component {
         await this.load_and_notify_flash()
       }
 
-      const load_signature_data = async () => {
-        this.setState({loading_open_socket_signature_request_response_data: true})
-        const signature_request_target = 'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
-        const signature_response_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
-        const call_invites_target = 'call_invites|'+this.state.accounts[this.state.selected_e5].address
-        await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target, call_invites_target],[],[])
-        this.setState({loading_open_socket_signature_request_response_data: false})
-      }
+      // const load_signature_data = async () => {
+        // this.setState({loading_open_socket_signature_request_response_data: true})
+        // const signature_request_target = 'open_signature_request|'+this.state.accounts[this.state.selected_e5].address
+        // const signature_response_target = 'open_signature_response|'+this.state.accounts[this.state.selected_e5].address
+        // const call_invites_target = 'call_invites|'+this.state.accounts[this.state.selected_e5].address
+        // await this.get_objects_from_socket_and_set_in_state([signature_request_target, signature_response_target, call_invites_target],[],[])
+        // this.setState({loading_open_socket_signature_request_response_data: false})
+      // }
       // await load_signature_data()
+
+      const load_repost_and_following_data = async () => {
+        this.setState({is_loading_repost_and_following_data: true})
+
+        const targets = ['follow_account', 'unfollow_account', 'repost_object_event', 'object_views']
+        //targets: any, filter_tags: any, application_responses?: any[], absolute_load_limit?: number, default_load_step?: number, authors?: any[], target_e5?: string
+        await this.get_objects_from_socket_and_set_in_state(targets,[],[], 1771762377000, (36*7*24*60*60*1000), [account], e5)
+
+        this.setState({is_loading_repost_and_following_data: false})
+      }
+      await load_repost_and_following_data()
     }
 
     // this.get_total_supply_of_ether(e5)
@@ -47328,11 +47362,13 @@ class App extends Component {
     this.setState({socket_connetcted: true})
     await this.wait(400)
 
-    if(this.state.queued_objects_to_emit_view.length > 0){
-      this.emit_view_object_events(this.state.queued_objects_to_emit_view)
-      await this.wait(1300)
-    }
-    this.setState({queued_objects_to_emit_view: []})
+    setTimeout(async () => {
+      if(this.state.queued_objects_to_emit_view.length > 0){
+        this.emit_view_object_events(this.state.queued_objects_to_emit_view)
+        await this.wait(1300)
+      }
+      this.setState({queued_objects_to_emit_view: []})
+    }, (90_000)); 
   }
 
   async register_room_listeners(socket){
@@ -47376,6 +47412,18 @@ class App extends Component {
         }
         else if(message.type == 'blocked'){
           me.process_blocked_message(message, object_hash)
+        }
+        else if(message.type == 'follow_account'){
+          me.process_follow_account_message(message, object_hash)
+        }
+        else if(message.type == 'unfollow_account'){
+          me.process_unfollow_account_message(message, object_hash)
+        }
+        else if(message.type == 'repost_object_event'){
+          me.process_repost_object_event_message(message, object_hash)
+        }
+        else if(message.type == 'object_views'){
+          me.process_object_views_message(message, object_hash)
         }
       }
     });
@@ -48136,7 +48184,7 @@ class App extends Component {
 
   async emit_view_object_event(object_e5_id){
     const viewed_objects_clone = this.state.viewed_objects.slice()
-    if(viewed_objects_clone.includes(object_e5_id)){
+    if(viewed_objects_clone.includes(object_e5_id) || this.state.emit_record_data_view[object_e5_id] != null){
       return;
     }else{
       viewed_objects_clone.push(object_e5_id)
@@ -48162,7 +48210,13 @@ class App extends Component {
   }
 
   async emit_view_object_events(object_e5_ids){
-    const message_object = await this.prepare_new_view_messages(object_e5_ids)
+    const ids = object_e5_ids.filter((id) => {
+      return (this.state.emit_record_data_view[id] == null)
+    })
+    if(ids.length == 0){
+      return;
+    }
+    const message_object = await this.prepare_new_view_messages(ids)
 
     const clone = this.state.broadcast_stack.slice()
     clone.push(message_object.message.message_identifier)
@@ -48185,7 +48239,18 @@ class App extends Component {
 
     await this.reconnect_socket_if_unconnected()
     // console.log('emit_view_object_event', 'emitting object views...')
-    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: record_type, object_hash: message_object.object_hash});
+
+    await this.wait(1000)
+    if(message_object.message.type == 'follow_account'){
+      this.process_follow_account_message(message_object.message, message_object.object_hash)
+    }
+    else if(message_object.message.type == 'unfollow_account'){
+      this.process_unfollow_account_message(message_object.message, message_object.object_hash)
+    }
+    else if(message_object.message.type == 'repost_object_event'){
+      this.process_repost_object_event_message(message_object.message, message_object.object_hash)
+    }
   }
 
   
@@ -52094,6 +52159,66 @@ class App extends Component {
     this.setState({posts_blocked_by_my_following: clone})
   }
 
+  async process_follow_account_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+
+    if(am_I_the_author == true){
+      const account_id = message['record_id']
+      const clone = structuredClone(this.state.emit_record_data)
+      if(clone[account_id] == null){
+        clone[account_id] = 0
+      }
+      clone[account_id]++
+      this.setState({emit_record_data: clone})
+    }
+  }
+
+  async process_unfollow_account_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+
+    if(am_I_the_author == true){
+      const account_id = message['record_id']
+      const clone = structuredClone(this.state.emit_record_data)
+      if(clone[account_id] == null){
+        clone[account_id] = 0
+      }
+      clone[account_id]--
+      this.setState({emit_record_data: clone})
+    }
+  }
+
+  async process_repost_object_event_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+
+    if(am_I_the_author == true){
+      const account_id = message['record_id']
+      const clone = structuredClone(this.state.emit_record_data)
+      if(clone[account_id] == null){
+        clone[account_id] = 0
+      }
+      clone[account_id]++
+      this.setState({emit_record_data: clone})
+    }
+  }
+
+  async process_object_views_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+
+    if(am_I_the_author == true){
+      const account_id = message['record_id']
+      const clone = structuredClone(this.state.emit_record_data_view)
+      if(clone[account_id] == null){
+        clone[account_id] = 0
+      }
+      clone[account_id]++
+      this.setState({emit_record_data_view: clone})
+    }
+  }
+
 
 
 
@@ -52519,6 +52644,18 @@ class App extends Component {
           }
           else if(object_data['type'] == 'blocked'){
             await this.process_blocked_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'follow_account'){
+            await this.process_follow_account_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'unfollow_account'){
+            await this.process_unfollow_account_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'repost_object_event'){
+            await this.process_repost_object_event_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'object_views'){
+            await this.process_object_views_message(object_data, object_hash)
           }
           await this.wait(300)
         }
