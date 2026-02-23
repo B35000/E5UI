@@ -5480,7 +5480,7 @@ class App extends Component {
         'navbar_button_selected_color':'#545454','card_background_color':'rgba(51, 51, 51,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
         'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'rgb(69, 68, 68)', 'synchronizer_loading_highlight_color':'rgb(208, 205, 205)',
 
-        'view_group_card_item_background':'#292929','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
+        'view_group_card_item_background':'#292929','tag_background_color':'rgb(54, 53, 53)', 'indexed_tag_background':'rgb(38, 38, 38)', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
 
         'chart_color':'#333333','chart_background_color':'#232323', 'chart_color2':'rgb(100, 100, 100)',
 
@@ -6715,6 +6715,12 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
       return;
     }
+
+    if(!this.do_i_have_an_account()){
+      this.prompt_top_notification(this.getLocale()['2738cm']/* 'First make a transaction on e.' */, 3300)
+      return;
+    }
+
     var follow_id = e5 + ':' + account
     var clone = this.state.followed_accounts.slice()
 
@@ -6777,6 +6783,10 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
       return;
     }
+    if(!this.do_i_have_an_account()){
+      this.prompt_top_notification(this.getLocale()['2738cm']/* 'First make a transaction on e.' */, 3300)
+      return;
+    }
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['audio'].includes(object['e5_id'])){
       // var index = clone['audio'].indexOf(object['e5_id'])
@@ -6808,6 +6818,10 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
       return;
     }
+    if(!this.do_i_have_an_account()){
+      this.prompt_top_notification(this.getLocale()['2738cm']/* 'First make a transaction on e.' */, 3300)
+      return;
+    }
     var clone = structuredClone(this.state.posts_reposted_by_me)
     if(clone['video'].includes(object['e5_id'])){
       // var index = clone['video'].indexOf(object['e5_id'])
@@ -6837,6 +6851,10 @@ class App extends Component {
     }
     if(this.state.is_loading_repost_and_following_data == true){
       this.prompt_top_notification(this.getLocale()['2738cl']/* 'Wait for e to finish synching.' */, 3300)
+      return;
+    }
+    if(!this.do_i_have_an_account()){
+      this.prompt_top_notification(this.getLocale()['2738cm']/* 'First make a transaction on e.' */, 3300)
       return;
     }
     var clone = structuredClone(this.state.posts_reposted_by_me)
@@ -17417,6 +17435,7 @@ class App extends Component {
       'prompt_spend_prepurchase_credits':700,
       'view_pre_purchase_request':570,
       'new_direct_message_chat':310,
+      'view_poll_markdown_details':550,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -30719,14 +30738,26 @@ class App extends Component {
                 const hits = data[time][item_type][item_lan][tag][item_state][object_type]['hits']
                 const entry = {time:parseInt(time), item_type, item_lan, item_state, object_type, hits, tag}
                 if(item_type == 'object_views'){
-                  set_data[tag] = {'all_hits':0, 'entries':[]}
-                  set_data[tag]['all_hits'] += hits;
-                  set_data[tag]['entries'].push(entry)
+                  if(set_data[tag] == null){
+                    set_data[tag] = {'all_hits':0, 'entries':[], 'times':[]}
+                  }
+                  if(!set_data[tag]['times'].includes(time)){
+                    set_data[tag]['all_hits'] += hits;
+                    set_data[tag]['entries'].push(entry)
+                    set_data[tag]['times'].push(time)
+                  }
                 }else{
-                  set_extra_data[tag] = {};
-                  set_extra_data[tag][item_type] = {'all_hits':0, 'entries':[]}
-                  set_extra_data[tag][item_type]['all_hits'] += hits;
-                  set_extra_data[tag][item_type]['entries'].push(entry)
+                  if(set_extra_data[tag] == null){
+                    set_extra_data[tag] = {};
+                  }
+                  if(set_extra_data[tag][item_type] == null){
+                    set_extra_data[tag][item_type] = {'all_hits':0, 'entries':[], 'times':[]}
+                  }
+                  if(!set_extra_data[tag][item_type]['times'].includes(time)){
+                    set_extra_data[tag][item_type]['all_hits'] += hits;
+                    set_extra_data[tag][item_type]['entries'].push(entry)
+                    set_extra_data[tag][item_type]['times'].push(time)
+                  }
                 }
               });
             });
@@ -50180,6 +50211,8 @@ class App extends Component {
         created_jobs_mapping_clone[e5] = created_job_mappings
 
         this.setState({socket_created_jobs: created_jobs_clone, created_job_mappings: created_jobs_mapping_clone })
+
+        this.fetch_and_set_loaded_object_views([job['e5_id']], e5)
         // if(am_I_the_author == true){
         //   await this.wait(300)
         //   this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
@@ -50238,6 +50271,8 @@ class App extends Component {
         const created_posts_clone = structuredClone(this.state.socket_created_posts)
         created_posts_clone[e5] = created_posts
         this.setState({socket_created_posts: created_posts_clone });
+
+        this.fetch_and_set_loaded_object_views([obj['e5_id']], e5)
 
         // if(am_I_the_author == true){
         //   await this.wait(300)

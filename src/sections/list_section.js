@@ -1135,47 +1135,50 @@ class PostListSection extends Component {
     get_object_views_text(e5_id){
         const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
         const extra_data = this.props.app_state.object_extra_data[e5_id]
-        const process_return_text = (text) => {
-                if(text == ''){
-                    return text;
-                }else{
-                    return text + ' • ';
-                }
-            }
+        console.log('get_object_views_text', 'extra_data', e5_id, extra_data)
         if(hits > 0){
-            var return_text = this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', this.format_count(hits));
+            const return_text = []
+            return_text.push(this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', this.format_count(hits)))
             if(extra_data != null){
                 if(extra_data['repost_object_event'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509dd']/* '$ reposts' */.replace('$', this.format_count(extra_data['repost_object_event']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509dd']/* '$ reposts' */.replace('$', this.format_count(extra_data['repost_object_event']['all_hits'])));
+                    // console.log('get_object_views_text', 'repost_object_event', return_text)
                 }
                 if(extra_data['object_comments'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509bp']/* '$ comments' */.replace('$', this.format_count(extra_data['object_comments']['all_hits'])));
+                    // console.log('get_object_views_text', 'object_comments', return_text)
                 }
                 if(extra_data['job_application_events'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bq']/* '$ applications' */.replace('$', this.format_count(extra_data['job_application_events']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509bq']/* '$ applications' */.replace('$', this.format_count(extra_data['job_application_events']['all_hits'])));
+                    // console.log('get_object_views_text', 'job_application_events', return_text)
                 }
                 if(extra_data['contractor_job_request_events'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['contractor_job_request_events']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['contractor_job_request_events']['all_hits'])));
+                    // console.log('get_object_views_text', 'contractor_job_request_events', return_text)
                 }
                 if(extra_data['direct_purchase_events'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['direct_purchase_events']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['direct_purchase_events']['all_hits'])));
+                    // console.log('get_object_views_text', 'direct_purchase_events', return_text)
                 }
                 if(extra_data['award_events'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bt']/* '$ awards' */.replace('$', this.format_count(extra_data['award_events']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509bt']/* '$ awards' */.replace('$', this.format_count(extra_data['award_events']['all_hits'])));
+                    // console.log('get_object_views_text', 'award_events', return_text)
                 }
                 if(extra_data['purchase_events'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['purchase_events']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509bs']/* '$ purchases' */.replace('$', this.format_count(extra_data['purchase_events']['all_hits'])));
+                    // console.log('get_object_views_text', 'purchase_events', return_text)
                 }
                 if(extra_data['auction_bid_events'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bu']/* '$ bids' */.replace('$', this.format_count(extra_data['auction_bid_events']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509bu']/* '$ bids' */.replace('$', this.format_count(extra_data['auction_bid_events']['all_hits'])));
+                    // console.log('get_object_views_text', 'auction_bid_events', return_text)
                 }
                 if(extra_data['storefront_order_events'] != null){
-                    return_text = process_return_text(return_text) + this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits']));
+                    return_text.push(this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits'])));
+                    // console.log('get_object_views_text', 'storefront_order_events', return_text)
                 }
-                
-                
             }
-            return return_text
+            const result_string = return_text.join(' • ')
+            return result_string
         }else{
             return 
         }

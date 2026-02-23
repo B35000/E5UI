@@ -390,7 +390,7 @@ class NitroDetailsSection extends Component {
     render_object_views(object){
         const e5_id = object['e5_id']
         const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
-        if(hits > 1){
+        if(hits > 0){
             return(
                 <div>
                     <div onClick={() => this.when_object_views_clicked(e5_id)}>

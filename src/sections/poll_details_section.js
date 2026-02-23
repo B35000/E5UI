@@ -49,7 +49,7 @@ function start_and_end(str) {
 class PollDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(),
+        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), selected_candidates_object:{}
     };
 
     reset_tags(){
@@ -62,7 +62,7 @@ class PollDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['3072']/* 'results' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['3072be']/* 'candidates 🤵‍♀️' */,this.props.app_state.loc['3072']/* 'results' */],[1]
           ],
         }
     }
@@ -145,6 +145,13 @@ class PollDetailsSection extends Component {
                     {this.render_poll_results_section(object)}
                 </div>
             )  
+        }
+        else if(selected_item == this.props.app_state.loc['3072be']/* 'candidates 🤵‍♀️' */){
+            return(
+                <div>
+                    {this.render_poll_candidates_section(object)}
+                </div>
+            )
         }
     }
 
@@ -266,7 +273,7 @@ class PollDetailsSection extends Component {
     render_object_views(object){
         const e5_id = object['e5_id']
         const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
-        if(hits > 1){
+        if(hits > 0){
             return(
                 <div>
                     <div onClick={() => this.when_object_views_clicked(e5_id)}>
@@ -1262,6 +1269,89 @@ class PollDetailsSection extends Component {
         this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'poll_results')
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_poll_candidates_section(object){
+        var he = this.props.height-47
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div style={{padding:'5px 5px 5px 5px'}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3072bf']/* 'Poll Candidates.' */, 'details':this.props.app_state.loc['3072bg']/* All the choices in the poll. */, 'size':'l'})} 
+                        </div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                        <div style={{padding:'5px 10px 5px 10px'}}>
+                            {this.render_poll_candidates_items(object)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_poll_candidates_items(object){
+        var middle = this.props.height-200;
+        const items = object['ipfs'].candidates
+        return(
+            <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <div>
+                        {items.map((item, index) => (
+                            <li style={{}} onClick={() => this.when_poll_candidate_item_clicked(item, object)}>
+                                <div>
+                                    {this.render_poll_candidate_item(item, object)}
+                                    <div style={{height: 5}}/>
+                                </div>
+                            </li>
+                        ))}    
+                    </div>
+                </ul>
+            </div>
+        )
+    }
+
+    when_poll_candidate_item_clicked(item, object){
+        if(item['markdown'] != null && item['markdown'] != ''){
+            this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_poll_markdown_details')
+        }
+        // const selected_candidates_object = structuredClone(this.state.selected_candidates_object)
+        // selected_candidates_object[object['e5_id']] = item['id']
+        // this.setState({selected_candidates_object: selected_candidates_object})
+    }
+
+    render_poll_candidate_item(item, object){
+        const title = item['name']
+        const details = this.props.app_state.loc['3072bh']/* 'Identifier: $' */.replace('$', item['id'])
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':details, 'title':title, 'size':'l'})}
+                {this.render_markdown_for_candidte_if_selected(item, object)}
+            </div>
+        )
+    }
+
+    render_markdown_for_candidte_if_selected(item, object){
+        if(this.state.selected_candidates_object[object['e5_id']] == item['id'] && item['markdown'] != null && item['markdown'] != ''){
+            return(
+                <div>
+                    <div style={{height: 2}}/>
+                    {this.render_detail_item('13', {'source':item['markdown']})}
+                </div>
+            )
+        }
+    }
 
 
 

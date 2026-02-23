@@ -88,7 +88,7 @@ class NewPollPage extends Component {
 
         winner_count:1, candidate:'', candidates:[], poll_e5s:[this.props.app_state.selected_e5], viewers:[], randomizer: Math.random() + 0.001, get_changeable_vote_tags_object:this.get_changeable_vote_tags_object(),
 
-        viewer:'',
+        viewer:'', candidate_markdown:''
     };
 
 
@@ -2520,6 +2520,8 @@ class NewPollPage extends Component {
         if(size == 's'){
             return(
                 <div>
+                    {this.render_targeted_winners_picker_ui()}
+                    {this.render_detail_item('0')}
                     {this.render_pick_candidates_parts()}
                 </div>
             )
@@ -2531,6 +2533,8 @@ class NewPollPage extends Component {
                         {this.render_pick_candidates_parts()}
                     </div>
                     <div className="col-6" >
+                        {this.render_targeted_winners_picker_ui()}
+                        <div style={{height:10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2544,6 +2548,8 @@ class NewPollPage extends Component {
                         {this.render_pick_candidates_parts()}
                     </div>
                     <div className="col-5" >
+                        {this.render_targeted_winners_picker_ui()}
+                        <div style={{height:10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -2553,6 +2559,32 @@ class NewPollPage extends Component {
     }
 
     render_pick_candidates_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311bl']/* Poll Candidates. */, 'details':this.props.app_state.loc['c311bm']/* Specify the candidates for the poll. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311bn']/* Name... */} when_text_input_field_changed={this.when_candidate_input_field_changed.bind(this)} text={this.state.candidate} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cu']/* Candidate Details */, 'details':this.props.app_state.loc['c311cw']/* You can optionally specify some details about the candidate.. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_markdown_preview_or_editor_object} tag_size={'l'} when_tags_updated={this.when_get_markdown_preview_or_editor_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_preview_or_editor_option_ui2()}
+                <div style={{height:10}}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_candidate_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311bo']/* Add Candidate. */, 'action':''})}
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_added_candidates()}
+            </div>
+        )
+    }
+
+    render_targeted_winners_picker_ui(){
         var winner_text = this.state.winner_count == 0 ? '000' : this.state.winner_count
         return(
             <div>
@@ -2564,22 +2596,84 @@ class NewPollPage extends Component {
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_winner_count.bind(this)} theme={this.props.theme} power_limit={9} pick_with_text_area={true} text_area_hint={'1'}/>
 
                 {this.show_consensus_type_message()}
-
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311bl']/* Poll Candidates. */, 'details':this.props.app_state.loc['c311bm']/* Specify the candidates for the poll. */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311bn']/* Name... */} when_text_input_field_changed={this.when_candidate_input_field_changed.bind(this)} text={this.state.candidate} theme={this.props.theme}/>
-
-                <div style={{height: 10}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_candidate_button_tapped()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311bo']/* Add Candidate. */, 'action':''})}
-                </div>
-                <div style={{height: 10}}/>
-                {this.render_added_candidates()}
             </div>
         )
+    }
+
+    render_preview_or_editor_option_ui2(){
+        var selected_item = this.get_selected_item(this.state.get_markdown_preview_or_editor_object, this.state.get_markdown_preview_or_editor_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['a311bt']/* 'Editor' */){
+            return(
+                <div>
+                    <div style={{'margin':'0px 0px 0px 10px'}}>
+                        <TextInput height={200} placeholder={this.props.app_state.loc['c311cx']/* 'Candidate's Details in Markdown...' */} when_text_input_field_changed={this.when_candidate_markdown_field_changed.bind(this)} text={this.state.candidate_markdown} theme={this.props.theme}/>
+                    </div>
+                    {this.render_markdown_shortcut_list2()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bu']/* 'preview' */){
+            return(
+                <div>
+                    {this.render_markdown_or_empty2()}
+                </div>
+            )
+        }
+    }
+
+    render_markdown_or_empty2(){
+        if(this.state.candidate_markdown.trim() == ''){
+            return(
+                <div>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':this.state.candidate_markdown})}
+                </div>
+            )
+        }
+    }
+
+    when_candidate_markdown_field_changed(text){
+        this.setState({candidate_markdown: text})
+    }
+
+    render_markdown_shortcut_list2(){
+        var items = [
+            {'title':this.props.app_state.loc['a311ca']/* 'Headings' */, 'details':'# H1 \n## H2 \n### H3', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cd']/* 'Bold' */, 'details':'**bold text**', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ce']/* 'Italic' */, 'details':'*italicized text*', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cf']/* 'Blockquote' */, 'details':'> blockquote', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cg']/* 'Ordered List' */, 'details':'1. First item \n2. Second item \n3. Third item', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ch']/* 'Unordered List' */, 'details':'- First item \n- Second item \n- Third item', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ci']/* 'Code' */, 'details':'`code`', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cj']/* 'Horizontal rule' */, 'details':'---', 'size':'l'},
+            {'title':this.props.app_state.loc['a311ck']/* 'Link' */, 'details':'[title](https://www.example.com)', 'size':'l'},
+            {'title':this.props.app_state.loc['a311cl']/* 'Image' */, 'details':'![alt text](image.jpg)', 'size':'l'},
+        ]
+
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_markdown_shortcut_clicked2(item['details'])}>
+                                {this.render_detail_item('3', item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    when_markdown_shortcut_clicked2(text){
+        this.setState({candidate_markdown: this.state.candidate_markdown+'\n'+text})
     }
 
     show_consensus_type_message(){
@@ -2605,8 +2699,9 @@ class NewPollPage extends Component {
     }
 
     when_add_candidate_button_tapped(){
-        var candidate = this.state.candidate.trim()
-        const includes = this.state.candidates.find(e => e['name'] === candidate)
+        const candidate = this.state.candidate.trim()
+        const candidate_markdown = this.state.candidate_markdown.trim()
+        const includes = this.state.candidates.find(e => e['name'].toLowerCase() === candidate.toLowerCase())
         
         var id = makeid(2)
         while(this.state.candidates.find(e => e['id'] === id) != null){
@@ -2616,9 +2711,9 @@ class NewPollPage extends Component {
         if(candidate == ''){
             this.props.notify(this.props.app_state.loc['128'], 1400)
         }
-        else if(this.hasWhiteSpace(candidate)){
-            this.props.notify(this.props.app_state.loc['129'], 1400)
-        }
+        // else if(this.hasWhiteSpace(candidate)){
+        //     this.props.notify(this.props.app_state.loc['129'], 1400)
+        // }
         else if(candidate.length < 3){
             this.props.notify(this.props.app_state.loc['c311bp']/* 'That name is too short.' */, 1400)
         }
@@ -2630,8 +2725,8 @@ class NewPollPage extends Component {
         }
         else{
             var clone = this.state.candidates.slice()
-            clone.push({'name': candidate, 'id':id})
-            this.setState({candidates: clone, candidate:''})
+            clone.push({'name': candidate, 'id':id, 'markdown': candidate_markdown})
+            this.setState({candidates: clone, candidate:'', candidate_markdown:''})
         }
     }
 
