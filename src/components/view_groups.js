@@ -475,6 +475,10 @@ class ViewGroups extends Component {
             var default_chart_color = this.props.theme['chart_color'];
             var default_chart_color2 = this.props.theme['chart_color2'].trim();
             var chart_background_color = this.props.theme['chart_background_color'];
+
+            const tooltip_background_color = this.props.theme['messsage_reply_background'];
+            const tooltip_text_color = this.props.theme['primary_text_color'];
+            const tooltip_text_color_secondary = this.props.theme['secondary_text_color'];
             
             var start_time = object_data != null && object_data['start_time'] != null ? object_data['start_time'] : Date.now() - (1000*60*60*24*7*72)
             var end_time = object_data != null && object_data['end_time'] != null ? object_data['end_time'] : Date.now()
@@ -552,22 +556,100 @@ class ViewGroups extends Component {
                 };
             };
 
-            const getChartOptions = () => {
+            // const getChartOptions = () => {
+            //     const config = { ...defaultConfig };
+                
+            //     return {
+            //         responsive: true,
+            //         maintainAspectRatio: false,
+            //         plugins: {
+            //             legend: {
+            //                 display: false, // No legend
+            //             },
+            //             title: {
+            //                 display: false, // No title
+            //             },
+            //             tooltip: {
+            //                 enabled: false
+            //             },
+            //         },
+            //         scales: {
+            //             x: {
+            //                 display: true,
+            //                 grid: {
+            //                     display: true,
+            //                     color: config.gridColor,
+            //                     lineWidth: config.gridLineWidth,
+            //                 },
+            //                 ticks: {
+            //                     maxTicksLimit: config.x_axis_label_count,
+            //                     color: config.labelFontColor,
+            //                     font: {
+            //                         size: config.labelFontSizeX,
+            //                     },
+            //                 },
+            //             },
+            //             y: {
+            //                 type: chart_type,
+            //                 display: config.display_y_axis_labels,
+            //                 afterDataLimits: (scale) => {
+            //                     // Add 10% padding to the top
+            //                     const range = scale.max - scale.min;
+            //                     scale.max = scale.max + (range * 0.01);
+            //                     // Optionally add padding to bottom too
+            //                     // scale.min = scale.min - (range * 0.1);
+            //                 },
+            //                 grid: {
+            //                     display: true,
+            //                     color: config.gridColor,
+            //                     lineWidth: config.gridLineWidth,
+            //                 },
+            //                 ticks: {
+            //                     maxTicksLimit: config.y_axis_label_count,
+            //                     color: config.labelFontColor,
+            //                     font: {
+            //                         size: config.labelFontSizeY,
+            //                     },
+            //                     callback: function(value, index, ticks) {
+            //                         if(value.toString().includes('.')){
+            //                             return ((value * scale).toFixed(4)).toString()+y_axis_units
+            //                         }
+            //                         const final_value = bigInt(value).multiply(scale)
+            //                         if(bigInt(final_value).lesser(bigInt(1_000_000))){
+            //                             return number_with_commas(final_value.toString())+y_axis_units
+            //                         }else{
+            //                             const main = final_value.toString().slice(0, 3)
+            //                             const rest = final_value.toString().slice(3)
+            //                             var power = rest.length
+            //                             return number_with_commas(main) +'e'+power+y_axis_units
+            //                         }
+            //                     }
+            //                 },
+            //             },
+            //         },
+            //         elements: {
+            //             point: {
+            //                 hoverBackgroundColor: config.chartColor,
+            //             },
+            //         },
+            //         interaction: {
+            //             mode: 'nearest',
+            //             axis: 'x',
+            //             intersect: false,
+            //         },
+            //     };
+            // };
+
+            const getChartOptions2 = () => {
                 const config = { ...defaultConfig };
                 
                 return {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false, // No legend
-                        },
-                        title: {
-                            display: false, // No title
-                        },
-                        tooltip: {
-                            enabled: false
-                        },
+                        legend: { display: false },
+                        title: { display: false },
+                        tooltip: { enabled: false }, // keep disabled — we draw custom
                     },
                     scales: {
                         x: {
@@ -580,20 +662,15 @@ class ViewGroups extends Component {
                             ticks: {
                                 maxTicksLimit: config.x_axis_label_count,
                                 color: config.labelFontColor,
-                                font: {
-                                    size: config.labelFontSizeX,
-                                },
+                                font: { size: config.labelFontSizeX },
                             },
                         },
                         y: {
                             type: chart_type,
                             display: config.display_y_axis_labels,
                             afterDataLimits: (scale) => {
-                                // Add 10% padding to the top
                                 const range = scale.max - scale.min;
                                 scale.max = scale.max + (range * 0.01);
-                                // Optionally add padding to bottom too
-                                // scale.min = scale.min - (range * 0.1);
                             },
                             grid: {
                                 display: true,
@@ -603,30 +680,26 @@ class ViewGroups extends Component {
                             ticks: {
                                 maxTicksLimit: config.y_axis_label_count,
                                 color: config.labelFontColor,
-                                font: {
-                                    size: config.labelFontSizeY,
-                                },
+                                font: { size: config.labelFontSizeY },
                                 callback: function(value, index, ticks) {
-                                    if(value.toString().includes('.')){
-                                        return ((value * scale).toFixed(4)).toString()+y_axis_units
+                                    if (value.toString().includes('.')) {
+                                        return ((value * scale).toFixed(4)).toString() + y_axis_units;
                                     }
-                                    const final_value = bigInt(value).multiply(scale)
-                                    if(bigInt(final_value).lesser(bigInt(1_000_000))){
-                                        return number_with_commas(final_value.toString())+y_axis_units
-                                    }else{
-                                        const main = final_value.toString().slice(0, 3)
-                                        const rest = final_value.toString().slice(3)
-                                        var power = rest.length
-                                        return number_with_commas(main) +'e'+power+y_axis_units
+                                    const final_value = bigInt(value).multiply(scale);
+                                    if (bigInt(final_value).lesser(bigInt(1_000_000))) {
+                                        return number_with_commas(final_value.toString()) + y_axis_units;
+                                    } else {
+                                        const main = final_value.toString().slice(0, 3);
+                                        const rest = final_value.toString().slice(3);
+                                        const power = rest.length;
+                                        return number_with_commas(main) + 'e' + power + y_axis_units;
                                     }
                                 }
                             },
                         },
                     },
                     elements: {
-                        point: {
-                            hoverBackgroundColor: config.chartColor,
-                        },
+                        point: { hoverBackgroundColor: config.chartColor },
                     },
                     interaction: {
                         mode: 'nearest',
@@ -665,10 +738,177 @@ class ViewGroups extends Component {
                 };
             };
 
+            const getTooltipPlugin = () => {
+                const config = { ...defaultConfig };
+
+                return {
+                    id: 'touchTooltip',
+                    afterEvent: (chart, args) => {
+                        const event = args.event;
+                        // handle both mouse and touch
+                        if (!['mousemove', 'touchstart', 'touchmove', 'mouseout', 'touchend'].includes(event.type)) return;
+
+                        if (['mouseout', 'touchend'].includes(event.type)) {
+                            chart._activeTooltipIndex = null;
+                            chart.draw();
+                            return;
+                        }
+
+                        const points = chart.getElementsAtEventForMode(
+                            // synthetic event object Chart.js expects
+                            { native: event.native || event, x: event.x, y: event.y },
+                            'nearest',
+                            { intersect: false, axis: 'x' },
+                            false
+                        );
+
+                        if (points.length > 0) {
+                            chart._activeTooltipIndex = points[0].index;
+                        } else {
+                            chart._activeTooltipIndex = null;
+                        }
+                        chart.draw(); // redraw to trigger afterDatasetsDraw
+                    },
+
+                    afterDatasetsDraw: (chart) => {
+                        const index = chart._activeTooltipIndex;
+                        if (index == null) return;
+
+                        const ctx = chart.ctx;
+                        const meta = chart.getDatasetMeta(0);
+                        const point = meta.data[index];
+                        if (!point) return;
+
+                        const dataPoint = config.data[index];
+                        const chartArea = chart.chartArea;
+
+                        // --- Crosshair vertical line ---
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(point.x, chartArea.top);
+                        ctx.lineTo(point.x, chartArea.bottom);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = config.chartColor;
+                        ctx.setLineDash([4, 4]);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+
+                        // --- Dot on line ---
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                        ctx.fillStyle = config.chartColor;
+                        ctx.fill();
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = tooltip_text_color;
+                        ctx.stroke();
+                        ctx.restore();
+
+                        // --- Tooltip box ---
+                        const padding = 10;
+                        const lineHeight = 11;
+                        const tooltipWidth = 70;
+                        const tooltipHeight = padding * 2 + lineHeight * 2;
+
+                        // Format the Y value (reuse your existing formatting logic)
+                        const rawY = dataPoint.y;
+                        let formattedY;
+                        if (rawY.toString().includes('.')) {
+                            formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
+                        } else {
+                            const final_value = bigInt(rawY).multiply(scale);
+                            if (bigInt(final_value).lesser(bigInt(1_000_000))) {
+                                formattedY = number_with_commas(final_value.toString()) + y_axis_units;
+                            } else {
+                                const main = final_value.toString().slice(0, 3);
+                                const rest = final_value.toString().slice(3);
+                                formattedY = number_with_commas(main) + 'e' + rest.length + y_axis_units;
+                            }
+                        }
+
+                        const labelText = dataPoint.x;   // X axis label (date/time/etc)
+                        const valueText = formattedY;
+
+                        // Smart positioning: flip left if near right edge
+                        let tooltipX = point.x + 12;
+                        if (tooltipX + tooltipWidth > chartArea.right) {
+                            tooltipX = point.x - tooltipWidth - 12;
+                        }
+                        let tooltipY = point.y - tooltipHeight / 2;
+                        if (tooltipY < chartArea.top) tooltipY = chartArea.top + 4;
+                        if (tooltipY + tooltipHeight > chartArea.bottom) tooltipY = chartArea.bottom - tooltipHeight - 4;
+
+                        // Draw rounded rect background
+                        ctx.save();
+                        ctx.beginPath();
+                        const radius = 8;
+                        ctx.moveTo(tooltipX + radius, tooltipY);
+                        ctx.lineTo(tooltipX + tooltipWidth - radius, tooltipY);
+                        ctx.quadraticCurveTo(tooltipX + tooltipWidth, tooltipY, tooltipX + tooltipWidth, tooltipY + radius);
+                        ctx.lineTo(tooltipX + tooltipWidth, tooltipY + tooltipHeight - radius);
+                        ctx.quadraticCurveTo(tooltipX + tooltipWidth, tooltipY + tooltipHeight, tooltipX + tooltipWidth - radius, tooltipY + tooltipHeight);
+                        ctx.lineTo(tooltipX + radius, tooltipY + tooltipHeight);
+                        ctx.quadraticCurveTo(tooltipX, tooltipY + tooltipHeight, tooltipX, tooltipY + tooltipHeight - radius);
+                        ctx.lineTo(tooltipX, tooltipY + radius);
+                        ctx.quadraticCurveTo(tooltipX, tooltipY, tooltipX + radius, tooltipY);
+                        ctx.closePath();
+                        ctx.fillStyle = tooltip_background_color;
+                        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                        ctx.shadowBlur = 8;
+                        ctx.fill();
+                        ctx.restore();
+
+                        // Draw label text (secondary color — e.g. date)
+                        ctx.save();
+                        ctx.fillStyle = tooltip_text_color_secondary;
+                        ctx.font = `8px Arial`;
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'top';
+                        ctx.fillText(labelText, tooltipX + padding, tooltipY + padding);
+                        ctx.restore();
+
+                        // Draw value text (primary color — e.g. price)
+                        ctx.save();
+                        ctx.fillStyle = tooltip_text_color;
+                        ctx.font = `bold 11px Arial`;
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'top';
+                        ctx.fillText(valueText, tooltipX + padding, tooltipY + padding + lineHeight);
+                        ctx.restore();
+                    },
+                };
+            };
+
             return(
-                <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': chart_background_color, height:260, 'border-radius': border_radius}}>
+                <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': chart_background_color, height:260, 'border-radius': border_radius}}
+                onMouseMove={(e) => {
+                    if (this.chart?.current) {
+                        const nativeEvent = e.nativeEvent;
+                        this.chart.current.canvas.dispatchEvent(new MouseEvent('mousemove', nativeEvent));
+                    }
+                }}
+                onMouseLeave={() => {
+                    if (this.chart?.current) {
+                        this.chart.current.canvas.dispatchEvent(new MouseEvent('mouseout', {}));
+                    }
+                }}
+                onTouchStart={(e) => {
+                    if (this.chart?.current) {
+                        this.chart.current.canvas.dispatchEvent(new TouchEvent('touchstart', { touches: e.nativeEvent.touches }));
+                    }
+                }}
+                onTouchMove={(e) => {
+                    if (this.chart?.current) {
+                        this.chart.current.canvas.dispatchEvent(new TouchEvent('touchmove', { touches: e.nativeEvent.touches }));
+                    }
+                }}
+                onTouchEnd={() => {
+                    if (this.chart?.current) {
+                        this.chart.current.canvas.dispatchEvent(new TouchEvent('touchend', {}));
+                    }
+                }}
+                >
                     <div style={{'padding':'0px 0px 10px 0px', height: 'calc(100% - 1px)', position: 'relative'}}>
-                        <Line ref={this.chart} data={getChartData()} options={getChartOptions()} plugins={[getIndexLabelPlugin()]} />
+                        <Line ref={this.chart} data={getChartData()} options={getChartOptions2()} plugins={[getIndexLabelPlugin(), getTooltipPlugin()]} />
                     </div>
                 </div>
             )
@@ -1005,7 +1245,10 @@ class ViewGroups extends Component {
 
         const dataPoints = object_data != null && object_data['final_data_points'] != null ? object_data['final_data_points'] : (object_data != null ? 
             this.format_generated_data_points(object_data['dataPoints'], parseInt(start_time), parseInt(end_time)) : 
-            this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time)))
+            this.format_generated_data_points(this.generateDataPoints(23), parseInt(start_time), parseInt(end_time)));
+
+        const scale = object_data != null && object_data['scale'] != null ? object_data['scale'] : 1
+        const y_axis_units = object_data != null && object_data['y_axis_units'] != null ? object_data['y_axis_units'] : ''
 
         const defaultConfig = {
             gridColor: this.props.theme['line_color'],
@@ -1048,8 +1291,152 @@ class ViewGroups extends Component {
             };
         };
 
-        this.chart.current.config.plugins.splice(0, 1)
-        this.chart.current.config.plugins.push(getIndexLabelPlugin())
+        const tooltip_background_color = this.props.theme['messsage_reply_background'];
+        const tooltip_text_color = this.props.theme['primary_text_color'];
+        const tooltip_text_color_secondary = this.props.theme['secondary_text_color'];
+
+        const getTooltipPlugin = () => {
+            const config = { ...defaultConfig };
+
+            return {
+                id: 'touchTooltip',
+                afterEvent: (chart, args) => {
+                    const event = args.event;
+                    // handle both mouse and touch
+                    if (!['mousemove', 'touchstart', 'touchmove', 'mouseout', 'touchend'].includes(event.type)) return;
+
+                    if (['mouseout', 'touchend'].includes(event.type)) {
+                        chart._activeTooltipIndex = null;
+                        chart.draw();
+                        return;
+                    }
+
+                    const points = chart.getElementsAtEventForMode(
+                        // synthetic event object Chart.js expects
+                        { native: event.native || event, x: event.x, y: event.y },
+                        'nearest',
+                        { intersect: false, axis: 'x' },
+                        false
+                    );
+
+                    if (points.length > 0) {
+                        chart._activeTooltipIndex = points[0].index;
+                    } else {
+                        chart._activeTooltipIndex = null;
+                    }
+                    chart.draw(); // redraw to trigger afterDatasetsDraw
+                },
+
+                afterDatasetsDraw: (chart) => {
+                    const index = chart._activeTooltipIndex;
+                    if (index == null) return;
+
+                    const ctx = chart.ctx;
+                    const meta = chart.getDatasetMeta(0);
+                    const point = meta.data[index];
+                    if (!point) return;
+
+                    const dataPoint = config.data[index];
+                    const chartArea = chart.chartArea;
+
+                    // --- Crosshair vertical line ---
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(point.x, chartArea.top);
+                    ctx.lineTo(point.x, chartArea.bottom);
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = config.chartColor;
+                    ctx.setLineDash([4, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // --- Dot on line ---
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = config.chartColor;
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = tooltip_text_color;
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // --- Tooltip box ---
+                    const padding = 10;
+                    const lineHeight = 11;
+                    const tooltipWidth = 70;
+                    const tooltipHeight = padding * 2 + lineHeight * 2;
+
+                    // Format the Y value (reuse your existing formatting logic)
+                    const rawY = dataPoint.y;
+                    let formattedY;
+                    if (rawY.toString().includes('.')) {
+                        formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
+                    } else {
+                        const final_value = bigInt(rawY).multiply(scale);
+                        if (bigInt(final_value).lesser(bigInt(1_000_000))) {
+                            formattedY = number_with_commas(final_value.toString()) + y_axis_units;
+                        } else {
+                            const main = final_value.toString().slice(0, 3);
+                            const rest = final_value.toString().slice(3);
+                            formattedY = number_with_commas(main) + 'e' + rest.length + y_axis_units;
+                        }
+                    }
+
+                    const labelText = dataPoint.x;   // X axis label (date/time/etc)
+                    const valueText = formattedY;
+
+                    // Smart positioning: flip left if near right edge
+                    let tooltipX = point.x + 12;
+                    if (tooltipX + tooltipWidth > chartArea.right) {
+                        tooltipX = point.x - tooltipWidth - 12;
+                    }
+                    let tooltipY = point.y - tooltipHeight / 2;
+                    if (tooltipY < chartArea.top) tooltipY = chartArea.top + 4;
+                    if (tooltipY + tooltipHeight > chartArea.bottom) tooltipY = chartArea.bottom - tooltipHeight - 4;
+
+                    // Draw rounded rect background
+                    ctx.save();
+                    ctx.beginPath();
+                    const radius = 8;
+                    ctx.moveTo(tooltipX + radius, tooltipY);
+                    ctx.lineTo(tooltipX + tooltipWidth - radius, tooltipY);
+                    ctx.quadraticCurveTo(tooltipX + tooltipWidth, tooltipY, tooltipX + tooltipWidth, tooltipY + radius);
+                    ctx.lineTo(tooltipX + tooltipWidth, tooltipY + tooltipHeight - radius);
+                    ctx.quadraticCurveTo(tooltipX + tooltipWidth, tooltipY + tooltipHeight, tooltipX + tooltipWidth - radius, tooltipY + tooltipHeight);
+                    ctx.lineTo(tooltipX + radius, tooltipY + tooltipHeight);
+                    ctx.quadraticCurveTo(tooltipX, tooltipY + tooltipHeight, tooltipX, tooltipY + tooltipHeight - radius);
+                    ctx.lineTo(tooltipX, tooltipY + radius);
+                    ctx.quadraticCurveTo(tooltipX, tooltipY, tooltipX + radius, tooltipY);
+                    ctx.closePath();
+                    ctx.fillStyle = tooltip_background_color;
+                    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                    ctx.restore();
+
+                    // Draw label text (secondary color — e.g. date)
+                    ctx.save();
+                    ctx.fillStyle = tooltip_text_color_secondary;
+                    ctx.font = `8px Arial`;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText(labelText, tooltipX + padding, tooltipY + padding);
+                    ctx.restore();
+
+                    // Draw value text (primary color — e.g. price)
+                    ctx.save();
+                    ctx.fillStyle = tooltip_text_color;
+                    ctx.font = `bold 11px Arial`;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText(valueText, tooltipX + padding, tooltipY + padding + lineHeight);
+                    ctx.restore();
+                },
+            };
+        };
+
+        this.chart.current.config.plugins.splice(0, 2)
+        this.chart.current.config.plugins.push(getIndexLabelPlugin(), getTooltipPlugin())
         this.chart.current.update();
     }
 
