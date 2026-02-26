@@ -2083,7 +2083,7 @@ class StorefrontDetailsSection extends Component {
             var image = images[0];
             return(
                 <div onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
-                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})}
                     <div style={{height:3}}/>
                     {this.render_detail_item('9', {'images':images, 'pos':0})}
                 </div>
@@ -2092,7 +2092,7 @@ class StorefrontDetailsSection extends Component {
             var image = this.props.app_state.static_assets['empty_image']
             return(
                 <div onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
-                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})}
                 </div>
             )
         }

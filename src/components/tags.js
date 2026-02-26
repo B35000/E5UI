@@ -122,13 +122,11 @@ class tags extends Component {
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': '8px', height:'40px'}}>
                     <ul ref={this.myRef} onScroll={event => this.handleScroll(event)} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none', '-webkit-overflow-scrolling': 'touch'}}>
-                        <AnimatePresence initial={true}>
-                            {active_tags.map((item, index) => (
-                                <motion.li key={'tag'+item+index} /* initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} */ onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
-                                    {this.render_tag_button(index,selected,item,tag_size, this.getBadgeCount(item, index))}
-                                </motion.li>
-                            ))}
-                        </AnimatePresence>
+                        {active_tags.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
+                                {this.render_tag(index,selected,item,tag_size, this.getBadgeCount(item, index))}
+                            </li>
+                        ))}
                   </ul>
             </div>
         );
@@ -196,6 +194,16 @@ class tags extends Component {
     //         );
     //     }
     // }
+
+    render_tag(index, selected, item, tag_size, badgeCount = null){
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'tag'+item+index} /* initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} */ onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}>
+                    {this.render_tag_button(index, selected, item, tag_size, badgeCount)}
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
 
     /* renders the tag button item with optional notification badge */
     render_tag_button(index, selected, text, tag_size, badgeCount = null){

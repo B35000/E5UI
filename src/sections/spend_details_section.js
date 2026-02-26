@@ -582,10 +582,11 @@ class SpendDetailSection extends Component {
                                     {index == 50 && this.render_last_swap_transaction_count(selected_object)}
                                     {index == 51 && this.render_last_entered_contracts_count(selected_object)}
 
+                                    
 
-                                    {index == 52 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2562']/* 'Make a token transfer to a specified account' */, 'title':this.props.app_state.loc['2563']/* '💸 Transfer' */})}
+                                    {index == 52 && this.render_mint_dump_token_button(selected_object, item)}
 
-                                    {index == 53 && this.render_mint_dump_token_button(selected_object, item)}
+                                    {index == 53 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2562']/* 'Make a token transfer to a specified account' */, 'title':this.props.app_state.loc['2563']/* '💸 Transfer' */})}
 
                                     {index == 54 && (
                                         <div>

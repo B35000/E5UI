@@ -106,7 +106,7 @@ class VideoDetailsSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
             ],
         };
     }
@@ -2221,7 +2221,7 @@ class VideoDetailsSection extends Component {
         var timestamp_datapoints = this.filter_time_events(Object.keys(memory_stats_data), this.state.time_chart_tags_object, true)
         for(var i=0; i<timestamp_datapoints.length; i++){
             const focused_item = parseFloat(memory_stats_data[timestamp_datapoints[i]])
-            data.push(focused_item)
+            data.push(focused_item/(1024*1024))
 
             if(i==timestamp_datapoints.length-1){
                 var diff = Date.now()/1000 - timestamp_datapoints[i]

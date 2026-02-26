@@ -2288,7 +2288,7 @@ class App extends Component {
       this.get_token('MNT', 'Mantle', 'E385'),
       this.get_token('PLS', 'Pulse Chain', 'E395'),
       this.get_token('CANTO', 'Canto', 'E405'),
-      this.get_token('EOS', 'EOS EVM', 'E415'),
+      this.get_token('EOS', 'EOS EVM', 'E415', true),
       this.get_token('IOTX', 'IoTeX', 'E425'),
       this.get_token('SGB', 'Songbird Canary', 'E435'),
       this.get_token('ULX', 'Ultron Mainnet', 'E445'),
@@ -26100,10 +26100,9 @@ class App extends Component {
   check_if_beacon_node_is_online = async () => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
-    const nitro_link_directory = await this.load_nitro_directory_details(beacon_node)
-    var request = `${beacon_node}/${nitro_link_directory['marco']}`
-    // console.log('apppage', 'check_if_beacon_node_is_online', request)
     try{
+      const nitro_link_directory = await this.load_nitro_directory_details(beacon_node)
+      var request = `${beacon_node}/${nitro_link_directory['marco']}`
       const response = await fetch(request);
       if (!response.ok) {
         console.log(response)
