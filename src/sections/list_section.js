@@ -1135,7 +1135,7 @@ class PostListSection extends Component {
     get_object_views_text(e5_id){
         const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
         const extra_data = this.props.app_state.object_extra_data[e5_id]
-        console.log('get_object_views_text', 'extra_data', e5_id, extra_data)
+        // console.log('get_object_views_text', 'extra_data', e5_id, extra_data)
         if(hits > 0){
             const return_text = []
             return_text.push(this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', this.format_count(hits)))

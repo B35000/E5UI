@@ -31,7 +31,13 @@ const hidePreloader = () => {
   if (el) el.style.display = "none";
 };
 
-// window.addEventListener("load", hidePreloader);
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {}
+  console.error = () => {}
+  console.debug = () => {}
+  console.warn = () => {}
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render( <App onReady={hidePreloader}/> );
 

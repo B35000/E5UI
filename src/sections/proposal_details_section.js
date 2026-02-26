@@ -824,11 +824,11 @@ class ProposalDetailsSection extends Component {
         var now = Date.now()/1000
         var proposal_exipry_time = object['data'][1][1/* <1>proposal_expiry_time */]
 
-        if(object['event'].returnValues.p4 == my_account && now < proposal_exipry_time){//<--------issue! should be p3
+        if(object['event'].returnValues.p4 == my_account && now < proposal_exipry_time){//<--------issue! should be p3; EDIT: found the issue in the smart contract, unordered event parameters.
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2258a']/* 'Edit Token Post' */, 'details':this.props.app_state.loc['2258b']/* 'Change the basic details for your Token Post' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2258a']/* '✏️ Edit Proposal' */, 'details':this.props.app_state.loc['2258b']/* 'Change the basic details for your Proposal' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2373']/* 'Perform Action' */, 'action':''})}
@@ -961,7 +961,7 @@ class ProposalDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2531']/* 'Pin the proposal to your feed' */, 'title':this.props.app_state.loc['2532']/* 'Pin Proposal' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2531']/* 'Pin the proposal to your feed' */, 'title':this.props.app_state.loc['2532']/* '📌 Pin Proposal' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_proposal_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2533']/* 'Pin/Unpin Proposal' */, 'action':''},)}
@@ -996,7 +996,7 @@ class ProposalDetailsSection extends Component {
                 return(
                     <div>
                         {this.render_detail_item('0')}
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2258c']/* 'Expired Entry Time.' */, 'details':this.props.app_state.loc['2258d']/* 'Youre time in the contract this proposal belongs to has expired and you need to enter it again.' */, 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2258c']/* '⌛ Expired Entry Time.' */, 'details':this.props.app_state.loc['2258d']/* 'Youre time in the contract this proposal belongs to has expired and you need to enter it again.' */, 'size':'l'})}
                         <div style={{height:10}}/>
                         <div onClick={()=>this.props.when_e5_link_tapped(object['data'][1][5/* <5>target_contract_authority */])}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['2258e']/* 'Open Contract' */, 'action':''})}
@@ -1007,7 +1007,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2534']/* 'Vote in Proposal' */, 'details':this.props.app_state.loc['2535']/* 'Cast a vote in this proposal and collect some bounty.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2534']/* '🗳️ Vote in Proposal' */, 'details':this.props.app_state.loc['2535']/* 'Cast a vote in this proposal and collect some bounty.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_vote_proposal_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2536']/* 'Vote Proposal' */, 'action':''})}
@@ -1037,7 +1037,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2537']/* 'Submit Proposal' */, 'details':this.props.app_state.loc['2538']/* 'Submit the proposal to perform its actions' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2537']/* '✔ Submit Proposal' */, 'details':this.props.app_state.loc['2538']/* 'Submit the proposal to perform its actions' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_sumbit_proposal_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2537']/* 'Submit Proposal' */, 'action':''})}
@@ -1106,7 +1106,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2547']/* 'Archive Proposal' */, 'details':this.props.app_state.loc['2548']/* 'Delete the proposals data to free up space in the blockchain' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2547']/* '🗄️ Archive Proposal' */, 'details':this.props.app_state.loc['2548']/* 'Delete the proposals data to free up space in the blockchain' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_archive_proposal_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2547']/* 'Archive Proposal' */, 'action':''})}

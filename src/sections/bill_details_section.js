@@ -515,7 +515,7 @@ class BillDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3071d']/* 'Pin the Bill to  your feed.' */, 'title':this.props.app_state.loc['3071c']/* 'Pin Bill' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3071d']/* 'Pin the Bill to  your feed.' */, 'title':this.props.app_state.loc['3071c']/* '📌 Pin Bill' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_post_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3071c']/* 'Pin/Unpin Bill' */, 'action':''},)}

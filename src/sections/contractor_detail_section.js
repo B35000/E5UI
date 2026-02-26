@@ -579,7 +579,7 @@ class ContractorDetailsSection extends Component {
         if(object['event'].returnValues.p5 != my_account){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2219']/* 'Send Job Request' */, 'details':this.props.app_state.loc['2220']/* 'Send a job request to the contractor to do a job for you' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2219']/* '📝 Send Job Request' */, 'details':this.props.app_state.loc['2220']/* 'Send a job request to the contractor to do a job for you' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_job_request_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2221']/* 'Send Request' */, 'action':''})}
@@ -639,7 +639,7 @@ class ContractorDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527bh']/* 'Block Post. */, 'details':this.props.app_state.loc['c2527bi']/* 'Block this post from being viewed by your followers.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527bh']/* '🚫 Block Post. */, 'details':this.props.app_state.loc['c2527bi']/* 'Block this post from being viewed by your followers.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div onClick={()=>this.block_post(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527bj']/* 'Block' */, 'action':''})}
@@ -1049,7 +1049,7 @@ class ContractorDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2222']/* 'Pin the contractor to your feed' */, 'title':this.props.app_state.loc['2223']/* 'Pin Contractor' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2222']/* 'Pin the contractor to your feed' */, 'title':this.props.app_state.loc['2223']/* '📌 Pin Contractor' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_contractor_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2224']/* 'Pin/Unpin Contractor' */, 'action':''},)}
@@ -1105,7 +1105,7 @@ class ContractorDetailsSection extends Component {
         if(object['event'].returnValues.p5 == my_account){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2225']/* 'Edit Contractor Post' */, 'details':this.props.app_state.loc['2226']/* 'Change the basic details for your Contractor Post' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2225']/* '✏️ Edit Contractor Post' */, 'details':this.props.app_state.loc['2226']/* 'Change the basic details for your Contractor Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_edit_contractor_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2227']/* 'Perform Action' */, 'action':''})}

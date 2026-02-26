@@ -139,7 +139,7 @@ class StorefrontDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2642cn']/* 'variants 🎒' */, this.props.app_state.loc['2030']/* 'activity' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */],[1]
           ],
           'direct-purchases':[
               ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
@@ -345,6 +345,13 @@ class StorefrontDetailsSection extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['2642cn']/* 'variants 🎒' */){
+            return(
+                <div>
+                    {this.render_variants_section(object)}
+                </div>
+            )
+        }
     }
 
     render_post_list_group_if_touch_screen(object){
@@ -537,10 +544,10 @@ class StorefrontDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
                     
-                    {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']/* ' variants' */, 'details':this.props.app_state.loc['2613']/* 'To choose from.' */, 'size':'l'})}
+                    {/* {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']' variants', 'details':this.props.app_state.loc['2613']'To choose from.' , 'size':'l'})}
                     <div style={{height: 5}}/>
                     {this.render_item_variants(object, composition_type)} 
-                    <div style={{height: 10}}/>
+                    <div style={{height: 10}}/> */}
                     {this.render_chatroom_enabled_message(object)}
                     {this.render_out_of_stock_message_if_any(object)}   
 
@@ -564,8 +571,6 @@ class StorefrontDetailsSection extends Component {
                     {this.render_pin_storefront_button(object)}
 
                     {this.render_block_post_button(object)}
-
-                    
 
                     {this.render_follow_unfollow_author_button(object)}
                     
@@ -1460,7 +1465,7 @@ class StorefrontDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2614']/* 'Pin the storefront item to your feed.' */, 'title':this.props.app_state.loc['2615']/* 'Pin Item' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2614']/* 'Pin the storefront item to your feed.' */, 'title':this.props.app_state.loc['2615']/* '📌 Pin Item' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_item_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2616']/* 'Pin/Unpin Item' */, 'action':''},)}
@@ -1531,7 +1536,7 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2625']/* 'Add the item to your shopping bag.' */, 'title':this.props.app_state.loc['2626']/* 'Add to Bag' */})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2625']/* 'Add the item to your shopping bag.' */, 'title':this.props.app_state.loc['2626']/* '✚ Add to Bag' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.open_add_to_bag(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2626']/* 'Add to Bag' */, 'action':''},)}
@@ -1559,7 +1564,7 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2627']/* 'Purchase the item directly from the seller.' */, 'title':this.props.app_state.loc['2628']/* 'Direct Purchase' */})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2627']/* 'Purchase the item directly from the seller.' */, 'title':this.props.app_state.loc['2628']/* '🛒 Direct Purchase' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.open_direct_purchase(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2629']/* 'Purchase' */, 'action':''},)}
@@ -1596,7 +1601,7 @@ class StorefrontDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2642v']/* 'Export Direct Purchase Info.' */, 'details':this.props.app_state.loc['2642w']/* 'Export all the direct purchase information from a certain date and time.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2642v']/* '↓ Export Direct Purchase Info.' */, 'details':this.props.app_state.loc['2642w']/* 'Export all the direct purchase information from a certain date and time.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_export_direct_purchase_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2642x']/* 'Export' */, 'action':''})}
@@ -1751,7 +1756,7 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2642j']/* 'Participate in the auction and cast your bid for an item.' */, 'title':this.props.app_state.loc['2642i']/* 'Bid for Item' */})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2642j']/* 'Participate in the auction and cast your bid for an item.' */, 'title':this.props.app_state.loc['2642i']/* '🙋‍♂️ Bid for Item' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.props.open_participate_in_auction(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2642k']/* 'Bid' */, 'action':''},)}
@@ -1776,7 +1781,7 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2642s']/* 'Youve won some of the auction items, so you should fulfil them through direct transfers.' */, 'title':this.props.app_state.loc['2642r']/* 'Fulfil Bids.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2642s']/* 'Youve won some of the auction items, so you should fulfil them through direct transfers.' */, 'title':this.props.app_state.loc['2642r']/* '💵 Fulfil Bids.' */})}
                     <div style={{height:5}}/>
                     {this.render_winning_item_variants(object, my_winning_bids)}
                     <div style={{height:5}}/>
@@ -2018,6 +2023,97 @@ class StorefrontDetailsSection extends Component {
         }
 
         return { dps, starting_time }
+    }
+
+
+
+
+
+
+
+
+    render_variants_section(object){
+        var he = this.props.height-45
+        var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
+
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_storefront_variants_top_title(object)}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_storefront_item_variants(object, composition_type)}
+                </div>
+            </div>
+        )
+    }
+
+    render_storefront_variants_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2642cm']/* 'Storefront Variants.' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_storefront_item_variants(object, composition_type){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(object['ipfs'].variants)
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px 5px 2px 5px'}}>
+                            <div key={index}>
+                                {this.render_variant_item(item, composition_type, object)}
+                            </div>
+                        </li> 
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_variant_item(variant_in_store, composition_type, object){
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            const images = variant_in_store['image_data']['data']['images']
+            var image = images[0];
+            return(
+                <div onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                    <div style={{height:3}}/>
+                    {this.render_detail_item('9', {'images':images, 'pos':0})}
+                </div>
+            )
+        }else{
+            var image = this.props.app_state.static_assets['empty_image']
+            return(
+                <div onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                </div>
+            )
+        }
+    }
+
+    when_variant_item_clicked(variant, object){
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1/* 'in-stock' */ : this.get_selected_item2(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+
+        var sale_type = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
+
+        var bags_enabled = object['ipfs'].get_purchase_through_bags_tags_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_purchase_through_bags_tags_object, 'e')
+
+        if(sale_type == 2){
+            return;
+        }
+        
+        if(item_in_stock == 1/* 'in-stock' */ && bags_enabled == 1){
+            this.props.open_add_to_bag(object, variant)
+        }else{
+            this.props.notify(this.props.app_state.loc['2642co']/* 'That variant is not available for your bag.' */, 3000);
+        }
     }
 
 

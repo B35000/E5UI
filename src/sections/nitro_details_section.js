@@ -869,7 +869,7 @@ class NitroDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['c2527a']/* 'Pin the Audiopost to  your feed.' */, 'title':this.props.app_state.loc['c2527b']/* 'Pin Nitropost' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['c2527a']/* 'Pin the Audiopost to  your feed.' */, 'title':this.props.app_state.loc['c2527b']/* '📌 Pin Nitropost' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_post_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527c']/* 'Pin/Unpin Nitropost' */, 'action':''},)}
@@ -974,7 +974,7 @@ class NitroDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527d']/* Edit Indexed Nitropost' */, 'details':this.props.app_state.loc['c2527e']/* 'Change the basic details for your Indexed Nitropost' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527d']/* ✏️ Edit Indexed Nitropost' */, 'details':this.props.app_state.loc['c2527e']/* 'Change the basic details for your Indexed Nitropost' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
@@ -1018,7 +1018,7 @@ class NitroDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527br']/* Connect with Node.' */, 'details':this.props.app_state.loc['c2527bs']/* 'Load all your content via this node.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527br']/* 🔌 Connect with Node.' */, 'details':this.props.app_state.loc['c2527bs']/* 'Load all your content via this node.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.props.connect_to_node(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
@@ -1414,7 +1414,7 @@ class NitroDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['c2527ba']/* 'Buy storage' */, 'details':this.props.app_state.loc['c2527bb']/* 'Acquire storage from the provider in their respective node.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['c2527ba']/* '🏷️ Buy storage' */, 'details':this.props.app_state.loc['c2527bb']/* 'Acquire storage from the provider in their respective node.' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.buy_storage(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527ba']/* 'Buy Storage' */, 'action':''},)}
@@ -1437,7 +1437,7 @@ class NitroDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['c2527bc']/* 'Configure Node.' */, 'details':this.props.app_state.loc['c2527bd']/* 'Configure your nitro node directly from E5.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['c2527bc']/* '🛠️ Configure Node.' */, 'details':this.props.app_state.loc['c2527bd']/* 'Configure your nitro node directly from E5.' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.configure_node(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['c2527be']/* 'configure' */, 'action':''},)}

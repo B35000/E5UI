@@ -573,7 +573,7 @@ class EndDetailSection extends Component {
                                     {index == 51 && this.render_buy_sell_token_button(selected_object, item)}
                                     
                                     
-                                    {index == 52 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2346']/* 'Transfer some tokens to  a specified account' */, 'title':this.props.app_state.loc['2347']/* 'Transfer' */})}
+                                    {index == 52 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2346']/* 'Transfer some tokens to  a specified account' */, 'title':this.props.app_state.loc['2347']/* '💸 Transfer' */})}
                                     {index == 52 && (<div style={{height:10}}/>)}
                                     {index == 53 && (
                                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'number':selected_object['balance'], 'relativepower':symbol})}>
@@ -846,7 +846,7 @@ class EndDetailSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2447r']/* Pin the exchange to your feed' */, 'title':this.props.app_state.loc['2447s']/* 'Pin Exchange' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2447r']/* Pin the exchange to your feed' */, 'title':this.props.app_state.loc['2447s']/* '📌 Pin Exchange' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_exchange_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2447t']/* 'Pin/Unpin Exchange' */, 'action':''},)}
@@ -1341,7 +1341,7 @@ class EndDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2361']/* 'Modify Token' */, 'details':this.props.app_state.loc['2362']/* 'Modify the configuration of the exchange directly.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2361']/* '🛠️ Modify Token' */, 'details':this.props.app_state.loc['2362']/* 'Modify the configuration of the exchange directly.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_modify_token_ui(object)}>
                         {this.render_detail_item('5', {'text':'Modify Exchange', 'action':''})}
@@ -1360,7 +1360,7 @@ class EndDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2363']/* 'Exchange Transfer' */, 'details':this.props.app_state.loc['2364']/* 'Transfer tokens from the exchanges account to a specified target.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2363']/* '🏦 Exchange Transfer' */, 'details':this.props.app_state.loc['2364']/* 'Transfer tokens from the exchanges account to a specified target.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_buy_token_uis(object)}
                     <div style={{height:10}}/>
@@ -1381,7 +1381,7 @@ class EndDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2366']/* 'Freeze/Unfreeze Tokens' */, 'details':this.props.app_state.loc['2367']/* 'Freeze or unfreeze a given accounts balance.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2366']/* '❄️ Freeze/Unfreeze Tokens' */, 'details':this.props.app_state.loc['2367']/* 'Freeze or unfreeze a given accounts balance.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_freeze_unfreeze_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2368']/* 'Freeze/Unfreeze' */, 'action':''})}
@@ -1399,7 +1399,7 @@ class EndDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2369']/* 'Perform Moderator Actions' */, 'details':this.props.app_state.loc['2406']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2369']/* '👮 Perform Moderator Actions' */, 'details':this.props.app_state.loc['2406']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_moderator_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2370']/* 'Perform Action' */, 'action':''})}
@@ -1424,7 +1424,7 @@ class EndDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447b']/* 'Stage Royalties.' */, 'details':this.props.app_state.loc['2447c']/* 'Stage payouts to the token-holders.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447b']/* '🏟️ Stage Royalties.' */, 'details':this.props.app_state.loc['2447c']/* 'Stage payouts to the token-holders.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_royalty_staging_page(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2370']/* 'Perform Action' */, 'action':''})}
@@ -1444,7 +1444,7 @@ class EndDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2371']/* 'Edit Token Post' */, 'details':this.props.app_state.loc['2372']/* 'Change the basic details for your Token Post' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2371']/* '✏️ Edit Token Post' */, 'details':this.props.app_state.loc['2372']/* 'Change the basic details for your Token Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_token_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2373']/* 'Perform Action' */, 'action':''})}
@@ -1826,7 +1826,7 @@ class EndDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2384']/* 'Depth-Mint Tokens' */, 'details':this.props.app_state.loc['2385']/* 'Mint your token from outside its exchange.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2384']/* '🌿 Depth-Mint Tokens' */, 'details':this.props.app_state.loc['2385']/* 'Mint your token from outside its exchange.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_depth_mint_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2386']/* 'Depth-Mint' */, 'action':''})}

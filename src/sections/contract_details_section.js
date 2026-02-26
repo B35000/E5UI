@@ -937,7 +937,7 @@ class ContractDetailsSection extends Component {
             return(
                 <div>
                     <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2142']/* 'Enter a contract to participate in its consensus' */, 'title': this.props.app_state.loc['2143']/* 'Enter Contract' */ })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2142']/* 'Enter a contract to participate in its consensus' */, 'title': this.props.app_state.loc['2143']/* '↪ Enter Contract' */ })}
                     <div style={{ height: 10 }} />
 
                     <div onClick={() => this.open_enter_contract_ui(object)}>
@@ -962,7 +962,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2145']/* 'Max Extend Enter Contract Limit' */, 'title': this.get_time_diff(contract_config[2]) })}
                     <div style={{ height: 10 }} />
 
-                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2146']/* 'Extend your stay in the contract' */, 'title': this.props.app_state.loc['2147']/* 'Extend Stay' */ })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2146']/* 'Extend your stay in the contract' */, 'title': this.props.app_state.loc['2147']/* '↔ Extend Stay' */ })}
                     <div style={{ height: 10 }} />
 
                     <div onClick={() => this.open_extend_contract_ui(object)}>
@@ -983,7 +983,7 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2149']/* 'Send a proposal to the contract to perform a specified action' */, 'title': this.props.app_state.loc['2150']/* 'Send Proposal' */ })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2149']/* 'Send a proposal to the contract to perform a specified action' */, 'title': this.props.app_state.loc['2150']/* '🧎‍♂️ Send Proposal' */ })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_new_proposal_ui(object)}>
                         {this.render_detail_item('5', { 'text': this.props.app_state.loc['2151']/* 'Send' */, 'action': '' },)}
@@ -1007,7 +1007,7 @@ class ContractDetailsSection extends Component {
                 return (
                     <div>
                         {this.render_detail_item('0')}
-                        {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2152']/* 'Send a proposal to the contract to perform a specified action.' */, 'title': this.props.app_state.loc['2158']/* 'Send Proposal' */ })}
+                        {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2152']/* 'Send a proposal to the contract to perform a specified action.' */, 'title': this.props.app_state.loc['2158']/* '🧎‍♂️ Send Proposal' */ })}
                         <div style={{ height: 10 }} />
                         <div onClick={() => this.open_new_proposal_ui(object)}>
                             {this.render_detail_item('5', { 'text': this.props.app_state.loc['2151']/* 'Send' */, 'action': '' },)}
@@ -1021,13 +1021,13 @@ class ContractDetailsSection extends Component {
     show_exit_contract_action(object) {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
-        var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        // var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
         if (expiry_time_in_seconds != 0) {
             return (
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2159']/* 'Exit from the contract and no longer participate in its consensus' */, 'title': this.props.app_state.loc['2160']/* 'Exit Contract' */ })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2159']/* 'Exit from the contract and no longer participate in its consensus' */, 'title': this.props.app_state.loc['2160']/* '➜] Exit Contract' */ })}
                     <div style={{ height: 10 }} />
 
                     <div onClick={() => this.open_exit_contract_ui(object)}>
@@ -1077,7 +1077,7 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2166']/* 'Modify Contract' */, 'details': this.props.app_state.loc['2167']/* 'Modify the configuration of the contract directly.' */, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2166']/* '🛠️ Modify Contract' */, 'details': this.props.app_state.loc['2167']/* 'Modify the configuration of the contract directly.' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_modify_contract_ui(object)}>
                         {this.render_detail_item('5', { 'text': this.props.app_state.loc['2166']/* 'Modify Contract' */, 'action': '' })}
@@ -1096,7 +1096,7 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2168']/* 'Force Exit Accounts' */, 'details': this.props.app_state.loc['2169']/* 'Remove an account from the contract directly.' */, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2168']/* '🚪 Force Exit Accounts' */, 'details': this.props.app_state.loc['2169']/* 'Remove an account from the contract directly.' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_force_exit_ui(object)}>
                         {this.render_detail_item('5', { 'text': this.props.app_state.loc['2168']/* 'Force Exit Accounts' */, 'action': '' })}
@@ -1113,7 +1113,7 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2170']/* 'Archive Contract' */, 'details': this.props.app_state.loc['2171']/* Delete the contracts data to free up space in the blockchain' */, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2170']/* '🗄️ Archive Contract' */, 'details': this.props.app_state.loc['2171']/* Delete the contracts data to free up space in the blockchain' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_archive_contract_ui(object)}>
                         {this.render_detail_item('5', { 'text': this.props.app_state.loc['2170']/* 'Archive Contract' */, 'action': '' })}
@@ -1132,7 +1132,7 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2172']/* 'Perform Moderator Actions' */, 'details': this.props.app_state.loc['2173']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2172']/* '👮 Perform Moderator Actions' */, 'details': this.props.app_state.loc['2173']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_moderator_ui(object)}>
                         {this.render_detail_item('5', { 'text': this.props.app_state.loc['2174']/* 'Perform Action' */, 'action': '' })}
@@ -1151,7 +1151,7 @@ class ContractDetailsSection extends Component {
                     <div>
                         {this.render_detail_item('0')}
 
-                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214j']/* 'Purchase Pre-purchase Credits.' */, 'details': this.props.app_state.loc['2214k']/* 'Purchase spend credits for use in pre-purchase transactions in indexers.' */, 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214j']/* '💳 Purchase Pre-purchase Credits.' */, 'details': this.props.app_state.loc['2214k']/* 'Purchase spend credits for use in pre-purchase transactions in indexers.' */, 'size': 'l' })}
                         
                         <div style={{ height: 10 }} />
                         <div onClick={() => this.open_purchase_credits(object)}>
@@ -1210,7 +1210,7 @@ class ContractDetailsSection extends Component {
                     <div>
                         {this.render_detail_item('0')}
 
-                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214l']/* 'Spend Pre-purchase Credits' */, 'details': this.props.app_state.loc['2214m']/* 'Spend purchased credits at a vendor belonging to this pre-purchase contract owner.' */, 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214l']/* '💸 Spend Pre-purchase Credits' */, 'details': this.props.app_state.loc['2214m']/* 'Spend purchased credits at a vendor belonging to this pre-purchase contract owner.' */, 'size': 'l' })}
                         <div style={{ height: 10 }} />
 
                         {this.props.app_state.is_loading_prepurchase_balance[object['e5_id']] == true && (
@@ -1247,7 +1247,7 @@ class ContractDetailsSection extends Component {
                     <div>
                         {this.render_detail_item('0')}
 
-                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214s']/* 'Export Pre-purchase Transactions.' */, 'details': this.props.app_state.loc['2214t']/* 'Export all the pre-purchase transactions into a local file on your device.' */, 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214s']/* '↓ Export Pre-purchase Transactions.' */, 'details': this.props.app_state.loc['2214t']/* 'Export all the pre-purchase transactions into a local file on your device.' */, 'size': 'l' })}
                         
                         <div style={{ height: 10 }} />
                         <div onClick={() => this.open_export_transactions(object)}>
@@ -1269,7 +1269,7 @@ class ContractDetailsSection extends Component {
                     <div>
                         {this.render_detail_item('0')}
 
-                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214be']/* 'Prompt Pre-purchase Transaction' */, 'details': this.props.app_state.loc['2214bf']/* 'Prompt a pre-purchase transaction targeting a specific account.' */, 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214be']/* '👨‍💻 Prompt Pre-purchase Transaction' */, 'details': this.props.app_state.loc['2214bf']/* 'Prompt a pre-purchase transaction targeting a specific account.' */, 'size': 'l' })}
                         <div style={{ height: 10 }} />
                         <div onClick={() => this.open_prompt_spend_purchase_credits(object)}>
                             {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214bg']/* 'Prompt Spend' */, 'action': '' })}

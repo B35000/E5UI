@@ -334,7 +334,7 @@ class E5DetailsSection extends Component {
                                     {index == 37 && (
                                         <div>
                                             <div style={{height:10}}/>
-                                            {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2241']/* 'Withdraw your Ether to a specified address' */, 'title':this.props.app_state.loc['2242']/* 'Withdraw Ether' */})}
+                                            {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2241']/* 'Withdraw your Ether to a specified address' */, 'title':this.props.app_state.loc['2242']/* '💱 Withdraw Ether' */})}
                                             <div style={{height:10}}/>
                                             <div onClick={()=>this.open_withdraw_ether_ui(obj)}>
                                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['2243']/* 'Withdraw' */, 'action':''})}

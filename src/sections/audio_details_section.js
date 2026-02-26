@@ -509,11 +509,11 @@ class AudioDetailSection extends Component {
                     <div style={{height: 10}}/>
 
 
-                    {this.render_detail_item('3', item['reply_count'])}
+                    {/* {this.render_detail_item('3', item['reply_count'])}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', item['award_count'])}
-                    <div style={{height: 10}}/>
+                    <div style={{height: 10}}/> */}
 
                     {this.render_album_sales_data(object, item)}
 
@@ -896,7 +896,7 @@ class AudioDetailSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bp']/* 'Unfollow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Stop showing posts made by this author in my following feed.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bp']/* '💔 Unfollow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Stop showing posts made by this author in my following feed.' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.props.follow_unfollow_post_author(author_id, object['e5'])}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bp']/* 'Unfollow Post Author' */, 'action':''},)}
@@ -907,7 +907,7 @@ class AudioDetailSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bn']/* 'Follow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Show posts made by this author in my following feed.' */})}
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bn']/* '💗 Follow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Show posts made by this author in my following feed.' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.props.follow_unfollow_post_author(author_id, object['e5']) }>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bn']/* 'Follow Post Author' */, 'action':''},)}
@@ -1682,17 +1682,17 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527q']/* 'Play Album' */, 'details':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527q']/* '▶️ Play Album' */, 'details':this.props.app_state.loc['a2527r']/* 'Play all the tracks in this audiopost.' */})}
                 <div style={{height:10}}/>
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         <div onClick={()=> this.play_album(object)}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527q']/* 'Play Album.' */, 'action':''},)}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527q']/* '▶️ Play Album.' */, 'action':''},)}
                         </div>
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         <div onClick={()=> this.shuffle_album(object)}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527s']/* 'Shuffle Album' */, 'action':''},)}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527s']/* '🔀 Shuffle Album' */, 'action':''},)}
                         </div>
                     </div>
                 </div>
@@ -1727,7 +1727,7 @@ return data['data']
 
     render_buy_album_button(object){
         var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
-        var title = this.props.app_state.loc['a2527e']/* 'Buy' */+ ' '+listing_type
+        var title = this.props.app_state.loc['a2527e']/* '🏷️ Buy' */+ ' '+listing_type
         return(
             <div>
                 {this.render_detail_item('0')}

@@ -261,14 +261,14 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('3', item['block_time'])}
                     {this.render_detail_item('0')}
                     
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* 'Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* '💸 Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_receive_ether_bottomsheet(item)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2459']/* 'Send/Receive' */, 'action': ''})}
                     </div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2460']/* 'Node Settings' */, 'details':this.props.app_state.loc['2461']/* 'Change the remote procedure call (RPC) provider setting for making your transactions.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2460']/* '⚙️ Node Settings' */, 'details':this.props.app_state.loc['2461']/* 'Change the remote procedure call (RPC) provider setting for making your transactions.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_rpc_settings(item)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2462']/* 'Open' */, 'action': ''})}

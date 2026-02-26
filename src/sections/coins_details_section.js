@@ -255,7 +255,7 @@ class CoinsDetailsSection extends Component {
 
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2924']/* 'Send/Receive ' */+item['symbol'], 'details':this.props.app_state.loc['2925']/* 'Send or receive the coin from a specified account.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2924']/* '💵 Send/Receive ' */+item['symbol'], 'details':this.props.app_state.loc['2925']/* 'Send or receive the coin from a specified account.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_receive_coin_page(item)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2459']/* 'Send/Receive' */, 'action': ''})}

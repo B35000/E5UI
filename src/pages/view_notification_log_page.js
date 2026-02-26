@@ -678,7 +678,7 @@ class ViewNotificationLogPage extends Component {
             var e5 = item['e5']
             return(
                 <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
-                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3067bc']/* '💸 $ sent you % &' */.replace('$', this.get_senders_name_or_you(sender, item['e5'])).replace('%', this.format_account_balance_figure(this.get_actual_number(amount, depth))).replace('&', this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]), 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
                 </div>
             )
         }

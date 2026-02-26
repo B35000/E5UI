@@ -750,7 +750,7 @@ class SubscriptionDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2657']/* Cancel Subscription' */, 'details':this.props.app_state.loc['2658']/* 'Cancel your subscription payment and receive your tokens back' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2657']/* 🔙 Cancel Subscription' */, 'details':this.props.app_state.loc['2658']/* 'Cancel your subscription payment and receive your tokens back' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_cancel_subscription_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2657']/* 'Cancel Subscription' */, 'action':''})}
@@ -770,7 +770,7 @@ class SubscriptionDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2659']/* 'Collect Subscription' */, 'details':this.props.app_state.loc['2660']/* 'Collect the subscription payments from the subscription account' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2659']/* '🤲 Collect Subscription' */, 'details':this.props.app_state.loc['2660']/* 'Collect the subscription payments from the subscription account' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_collect_subscription_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2659']/* 'Collect Subscription' */, 'action':''})}
@@ -790,7 +790,7 @@ class SubscriptionDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2661']/* 'Modify Subscription' */, 'details':this.props.app_state.loc['2662']/* 'Modify the configuration of the subscription.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2661']/* '🛠️ Modify Subscription' */, 'details':this.props.app_state.loc['2662']/* 'Modify the configuration of the subscription.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_modify_subscription_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2661']/* 'Modify Subscription' */, 'action':''})}
@@ -809,7 +809,7 @@ class SubscriptionDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2663']/* 'Perform Moderator Actions' */, 'details':this.props.app_state.loc['2664']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2663']/* '👮 Perform Moderator Actions' */, 'details':this.props.app_state.loc['2664']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_moderator_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2665']/* 'Perform Action' */, 'action':''})}

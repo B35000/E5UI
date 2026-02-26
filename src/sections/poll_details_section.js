@@ -1048,7 +1048,7 @@ class PollDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3072f']/* Edit Indexed Poll' */, 'details':this.props.app_state.loc['3072g']/* 'Change the basic details for your Indexed Poll' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3072f']/* ✏️ Edit Indexed Poll' */, 'details':this.props.app_state.loc['3072g']/* 'Change the basic details for your Indexed Poll' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}

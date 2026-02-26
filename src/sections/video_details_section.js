@@ -397,14 +397,14 @@ class VideoDetailsSection extends Component {
                     {this.render_markdown_if_any(object)}
 
 
-                    {this.render_detail_item('3', item['reply_count'])}
+                    {/* {this.render_detail_item('3', item['reply_count'])}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', item['award_count'])}
                     <div style={{height: 10}}/>
 
                     {this.render_video_sales_data(object, item)}
-                    <div style={{height: 10}}/>
+                    <div style={{height: 10}}/> */}
 
                     {this.render_stream_charts_if_exists(object)}
 
@@ -1082,7 +1082,7 @@ class VideoDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1306e']/* 'Pin the Audiopost to  your feed.' */, 'title':this.props.app_state.loc['1306d']/* 'Pin Videopost' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1306e']/* 'Pin the Audiopost to  your feed.' */, 'title':this.props.app_state.loc['1306d']/* '📌 Pin Videopost' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_post_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1306f']/* 'Pin/Unpin Videopost' */, 'action':''},)}
@@ -1345,7 +1345,7 @@ class VideoDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['b2527a']/* 'Play Videopost' */, 'details':this.props.app_state.loc['b2527b']/* 'Play all the videos in this videopost.' */})}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['b2527a']/* '▶️ Play Videopost' */, 'details':this.props.app_state.loc['b2527b']/* 'Play all the videos in this videopost.' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.play_album(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['b2527a']/* 'Play Videopost.' */, 'action':''},)}
@@ -1386,7 +1386,7 @@ class VideoDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['b2527c']/* Edit Indexed Videopost' */, 'details':this.props.app_state.loc['b2527d']/* 'Change the basic details for your Indexed Videopost' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['b2527c']/* ✏️ Edit Indexed Videopost' */, 'details':this.props.app_state.loc['b2527d']/* 'Change the basic details for your Indexed Videopost' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
@@ -1408,7 +1408,7 @@ class VideoDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2521']/* 'Give Award' */, 'details':this.props.app_state.loc['2522']/* `Send a tip to the post's author` */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2521']/* '🎖️ Give Award' */, 'details':this.props.app_state.loc['2522']/* `Send a tip to the post's author` */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_award_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2523']/* 'Send Award' */, 'action':''})}
@@ -1426,7 +1426,7 @@ class VideoDetailsSection extends Component {
 
     render_buy_album_button(object){
         var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
-        var title = this.props.app_state.loc['a2527e']/* 'Buy' */+ ' '+listing_type
+        var title = this.props.app_state.loc['a2527e']/* '🏷️ Buy' */+ ' '+listing_type
         return(
             <div>
                 {this.render_detail_item('0')}

@@ -334,12 +334,12 @@ class JobDetailsSection extends Component {
                     </div>
                     <div style={{height: 10}}/>
 
-                    {responses > 0 && (
+                    {/* {responses > 0 && (
                         <div>
-                            {this.render_detail_item('4', {'text':number_with_commas(responses)+this.props.app_state.loc['2509c']/* ' responses' */, 'textsize':'14px', 'font':'Sans-serif'})}
+                            {this.render_detail_item('4', {'text':number_with_commas(responses)+this.props.app_state.loc['2509c'], 'textsize':'14px', 'font':'Sans-serif'})}
                             <div style={{height: 10}}/>
                         </div>
-                    )}
+                    )} */}
                     
                     {this.render_taken_down_message_if_post_is_down(object)}
                     {this.render_message_if_blocked_by_sender(object)}
@@ -927,7 +927,7 @@ class JobDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2487']/* 'Pin the job to your feed' */, 'title':this.props.app_state.loc['2488']/* 'Pin Job' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2487']/* 'Pin the job to your feed' */, 'title':this.props.app_state.loc['2488']/* '📌 Pin Job' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_job_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2489']/* 'Pin/Unpin Job' */, 'action':''},)}
@@ -1005,7 +1005,7 @@ class JobDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2490']/* 'Edit Job Post' */, 'details':this.props.app_state.loc['2491']/* 'Change the basic details for your Job Post' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2490']/* '✏️ Edit Job Post' */, 'details':this.props.app_state.loc['2491']/* 'Change the basic details for your Job Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2492']/* 'Perform Action' */, 'action':''})}
@@ -1021,7 +1021,7 @@ class JobDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2484']/* 'Apply for the job' */, 'details':this.props.app_state.loc['2485']/* 'Respond to the ad with a contract and apply for the job' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2484']/* '📝 Apply for the job' */, 'details':this.props.app_state.loc['2485']/* 'Respond to the ad with a contract and apply for the job' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_respond_to_job_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2486']/* 'Apply' */, 'action':''})}

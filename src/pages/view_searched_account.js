@@ -663,6 +663,9 @@ class SearchedAccountPage extends Component {
 
                 {this.render_followers(account_id)}
 
+                {this.render_follow_unfollow_author_button(id, e5)}
+                <div style={{height: 10}}/>
+                
                 <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1716']/* 'Ether Balance in Wei' */, 'number':ether_balance, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1715']/* 'Ether Balance in Ether' */, 'subtitle': this.format_power_figure(ether_balance/10**18), 'barwidth': this.calculate_bar_width(ether_balance/10**18), 'number': (ether_balance/10**18), 'barcolor': '', 'relativepower': 'ether', })}
                     
@@ -702,6 +705,33 @@ class SearchedAccountPage extends Component {
 
             </div>
         )
+    }
+
+    render_follow_unfollow_author_button(author_id, e5){
+        var follow_id = e5 + ':' + author_id
+        var followed_accounts = this.props.app_state.followed_accounts
+
+        if(followed_accounts.includes(follow_id)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bp']/* '💔 Unfollow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Stop showing posts made by this author in my following feed.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.props.follow_unfollow_post_author(author_id, e5)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bp']/* 'Unfollow Post Author' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['a2527bn']/* '💗 Follow Post Author' */, 'details':this.props.app_state.loc['a2527bo']/* 'Show posts made by this author in my following feed.' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.props.follow_unfollow_post_author(author_id, e5) }>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['a2527bn']/* 'Follow Post Author' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_followers(account_id){

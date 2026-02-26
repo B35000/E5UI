@@ -721,6 +721,8 @@ import { CardanoWeb3, utils as cardano_web3_utils } from "cardano-web3-js/browse
 import SimplePeer from "simple-peer";
 import * as Tone from 'tone';
 import { Drawer } from 'vaul';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -1369,8 +1371,8 @@ class App extends Component {
       'expand_icon':expand_icon,
       'close_pip':close_pip,
       'empty_image':empty_image,
-      'all_cities':'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/'
-      /* 'https://bafybeiaibwpsdgbgc25p6ynw23ru5z2gmetphqctwtbvltegh6wv7s56sy.ipfs.w3s.link/' */,
+      'all_cities': 'https://bafybeia7eskmjltilomaguof27yxwbyrf2ofns34dp5xqhdjbkuwmmjzqu.ipfs.w3s.link/',
+      /* 'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/' */
       'download_icon':download_icon,
       'zoom_in_icon':zoom_in_icon,
       'zoom_out_icon':zoom_out_icon,
@@ -3634,7 +3636,7 @@ class App extends Component {
     // this.test_beacon_node()
     // this.test_infura()
     // this.test_key_hasher()
-    // this.fetch_filter_and_export_my_coins()
+    // this.fetch_filter_and_export_all_my_cities()
     this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
 
     await this.load_cookies();
@@ -3690,6 +3692,41 @@ class App extends Component {
     }
     catch(e){
       console.log('apppage', e)
+    }
+  }
+
+  fetch_filter_and_export_all_my_cities = async () => {
+    var request = 'https://gateway.pinata.cloud/ipfs/bafybeibmzrgod36lnaoth7wh65ypcb5u4ofdaebhhwaq4l5terch4vodby'
+
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('fetch_filter_and_export_all_my_cities', 'apppage', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      const data_array = obj['data']
+      const final_object = {}
+      data_array.forEach(city_item => {
+        const country = city_item['country'];
+        if(final_object[country] == null){
+          final_object[country] = {'data':[]};
+        }
+        final_object[country]['data'].push(city_item)
+      });
+
+      const zip = new JSZip();
+      Object.keys(final_object).forEach((country_code) => {
+        const countryData = final_object[country_code]
+        zip.file(`${country_code}.json`, JSON.stringify(countryData, null, 2));
+      });
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, 'country_city_data.zip');
+    }
+    catch(e){
+      console.log('fetch_filter_and_export_all_my_cities', 'apppage', e)
     }
   }
 
@@ -14920,12 +14957,15 @@ class App extends Component {
     }
   }
 
-  show_add_to_bag_bottomsheet(item){
+  show_add_to_bag_bottomsheet(item, variant){
     this.open_add_to_bag_bottomsheet()
     var me = this;
     setTimeout(function() {
       if(me.add_to_bag_page.current != null){
         me.add_to_bag_page.current.set_transaction(item)
+        if(variant != null){
+          me.add_to_bag_page.current.setState({selected_variant: variant})
+        }
       }
     }, (1 * 500));
     
@@ -16599,7 +16639,7 @@ class App extends Component {
     var os = getOS();
     
     return this.renderBottomSheet(
-      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)}
+      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)}
       />,
       this.state.searched_account_bottomsheet,
       this.open_searched_account_bottomsheet,
@@ -20237,22 +20277,24 @@ class App extends Component {
       // Fetch the image as a blob
       const response = await fetch(img);
       if (!response.ok) {
-          throw new Error("Failed to fetch image");
+        throw new Error("Failed to fetch image");
       }
       const blob = await response.blob();
-      // Create a temporary object URL
-      const objectUrl = URL.createObjectURL(blob);
+      saveAs(blob, name);
 
-      // Create and click the download link
-      const a = document.createElement("a");
-      a.href = objectUrl;
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
+      // // Create a temporary object URL
+      // const objectUrl = URL.createObjectURL(blob);
 
-      // Clean up
-      document.body.removeChild(a);
-      URL.revokeObjectURL(objectUrl);
+      // // Create and click the download link
+      // const a = document.createElement("a");
+      // a.href = objectUrl;
+      // a.download = name;
+      // document.body.appendChild(a);
+      // a.click();
+
+      // // Clean up
+      // document.body.removeChild(a);
+      // URL.revokeObjectURL(objectUrl);
     } catch (error) {
       console.error("Error downloading the image:", error);
     }
@@ -20596,15 +20638,16 @@ class App extends Component {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
+      saveAs(blob, name);
 
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = `${name}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
+      // const blobUrl = URL.createObjectURL(blob);
+      // const link = document.createElement("a");
+      // link.href = blobUrl;
+      // link.download = `${name}`;
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+      // URL.revokeObjectURL(blobUrl);
     }else{
       this.download_pdf_from_url(base64Data, name)
     }
@@ -20619,18 +20662,20 @@ class App extends Component {
       }
 
       const blob = await response.blob();
-      // Create a temporary object URL
-      const objectUrl = URL.createObjectURL(blob);
-      // Create and click the download link
-      const a = document.createElement("a");
-      a.href = objectUrl;
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
+      saveAs(blob, name);
 
-      // Clean up
-      document.body.removeChild(a);
-      URL.revokeObjectURL(objectUrl);
+      // // Create a temporary object URL
+      // const objectUrl = URL.createObjectURL(blob);
+      // // Create and click the download link
+      // const a = document.createElement("a");
+      // a.href = objectUrl;
+      // a.download = name;
+      // document.body.appendChild(a);
+      // a.click();
+
+      // // Clean up
+      // document.body.removeChild(a);
+      // URL.revokeObjectURL(objectUrl);
     } catch (error) {
       console.error("Error downloading the image:", error);
     }
@@ -23710,11 +23755,11 @@ class App extends Component {
         this.prompt_top_notification(this.getLocale()['2738al']/* 'e cant seem to access your general location info.' */, (35*60*1000))
         return;
       }
+      this.set_document_title(this.state.document_title)
  
-      this.load_cities_data()
+      await this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
 
-      this.set_document_title(this.state.document_title)
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
@@ -26240,6 +26285,7 @@ class App extends Component {
       }
       if(obj.all_return_data != null){
         this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [])
+        this.set_socket_entries_in_memory(obj.all_return_data['socket_view_objects_data'], [])
       }
       return obj;
     }
@@ -27334,25 +27380,18 @@ class App extends Component {
   }
 
   load_cities_data = async () => {
-    // if(cities != null){
-    //   await this.load_cities_data_from_file()
-    //   return;
-    // }
-    // if(this.state.all_cities.length > 0) return;
-
-    var request = this.state.static_assets['all_cities']
-    // if(!this.is_address_set(address)) return {}
+    const my_country_code = this.get_country_code(this.state.device_country)
+    const request = this.state.static_assets['all_cities']
+    const final_request = `${request}/${my_country_code}.json`
     try{
-      const response = await fetch(request);
+      const response = await fetch(final_request);
       if (!response.ok) {
-        console.log('something went wrong:',response)
-        // throw new Error(`Failed to retrieve data. Status: ${response}`);
-        return
+        console.log('cities_loader','something went wrong:',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var json_obj = JSON.parse(data);
+      var json_obj = JSON.parse(data)['data'];
       var storage_obj = []
-      var my_country_code = this.get_country_code(this.state.device_country)
       for(var i=0; i<json_obj.length; i++){
         var city = json_obj[i]['name'].toLowerCase()
         var country = json_obj[i]['country']
@@ -27367,8 +27406,7 @@ class App extends Component {
       this.setState({all_cities: storage_obj})
     }
     catch(e){
-      console.log('apppage', e)
-      
+      console.log('apppage','cities_loader', e)
     }
   }
 
@@ -28014,16 +28052,16 @@ class App extends Component {
       // }
       // await load_signature_data()
 
-      const load_repost_and_following_data = async () => {
-        this.setState({is_loading_repost_and_following_data: true})
+      // const load_repost_and_following_data = async () => {
+      //   this.setState({is_loading_repost_and_following_data: true})
 
-        const targets = ['follow_account', 'unfollow_account', 'repost_object_event', 'object_views']
-        //targets: any, filter_tags: any, application_responses?: any[], absolute_load_limit?: number, default_load_step?: number, authors?: any[], target_e5?: string
-        await this.get_objects_from_socket_and_set_in_state(targets,[],[], 1771762377000, (36*7*24*60*60*1000), [account], e5)
+      //   const targets = ['follow_account', 'unfollow_account', 'repost_object_event', 'object_views']
+      //   //targets: any, filter_tags: any, application_responses?: any[], absolute_load_limit?: number, default_load_step?: number, authors?: any[], target_e5?: string
+      //   await this.get_objects_from_socket_and_set_in_state(targets,[],[], 1771762377000, (36*7*24*60*60*1000), [this.state.accounts[e5].address], e5)
 
-        this.setState({is_loading_repost_and_following_data: false})
-      }
-      await load_repost_and_following_data()
+      //   this.setState({is_loading_repost_and_following_data: false})
+      // }
+      // await load_repost_and_following_data()
     }
 
     // this.get_total_supply_of_ether(e5)
@@ -50040,7 +50078,7 @@ class App extends Component {
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
     const block_number = await web3.eth.getBlockNumber()
 
-    const author = this.state.user_account_id[this.state.selected_e5]
+    const author = this.state.accounts[this.state.selected_e5].address
     const e5 = this.state.selected_e5
     const recipient = ''
     const channeling = ''
@@ -50079,7 +50117,7 @@ class App extends Component {
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
     const block_number = await web3.eth.getBlockNumber()
 
-    const author = this.state.user_account_id[this.state.selected_e5]
+    const author = this.state.accounts[this.state.selected_e5].address
     const e5 = this.state.selected_e5
     const recipient = ''
     const channeling = ''
@@ -50118,7 +50156,7 @@ class App extends Component {
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
     const block_number = await web3.eth.getBlockNumber()
 
-    const author = this.state.user_account_id[this.state.selected_e5]
+    const author = this.state.accounts[this.state.selected_e5].address
     const e5 = this.state.selected_e5
     const recipient = ''
     const channeling = ''
@@ -52196,7 +52234,7 @@ class App extends Component {
 
   async process_follow_account_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author']
 
     if(am_I_the_author == true){
       const account_id = message['record_id']
@@ -52211,7 +52249,7 @@ class App extends Component {
 
   async process_unfollow_account_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author']
 
     if(am_I_the_author == true){
       const account_id = message['record_id']
@@ -52226,7 +52264,7 @@ class App extends Component {
 
   async process_repost_object_event_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author']
 
     if(am_I_the_author == true){
       const account_id = message['record_id']
@@ -52241,7 +52279,7 @@ class App extends Component {
 
   async process_object_views_message(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author']
 
     if(am_I_the_author == true){
       const account_id = message['record_id']

@@ -615,7 +615,7 @@ class BagDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2031']/* 'Pin the bag for future reference.' */, 'title':this.props.app_state.loc['2032']/* 'Pin the Bag Order.' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2031']/* 'Pin the bag for future reference.' */, 'title':this.props.app_state.loc['2032']/* '📌 Pin the Bag Order.' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_bag_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2042']/* 'Pin/Unpin Bag' */, 'action':''},)}
@@ -632,7 +632,7 @@ class BagDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2064r']/* 'Export a file containing the details of the order in JSON format.' */, 'title':this.props.app_state.loc['2064q']/* 'Export Order.' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2064r']/* 'Export a file containing the details of the order in JSON format.' */, 'title':this.props.app_state.loc['2064q']/* '↓ Export Order.' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.props.export_order(object, this.get_delivery_location_data_if_allowed(object))}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2064s']/* 'Export Bag' */, 'action':''},)}

@@ -893,7 +893,7 @@ class ChannelDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2076']/* 'Pin the channel to your feed' */, 'title':this.props.app_state.loc['2077']/* 'Pin Channel' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2076']/* 'Pin the channel to your feed' */, 'title':this.props.app_state.loc['2077']/* '📌 Pin Channel' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_channel_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2078']/* 'Pin/Unpin Channel' */, 'action':''},)}
@@ -989,7 +989,7 @@ class ChannelDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2082']/* 'Edit Channel Post' */, 'details':this.props.app_state.loc['2083']/* 'Change the basic details for your Channel' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2082']/* '✏️ Edit Channel Post' */, 'details':this.props.app_state.loc['2083']/* 'Change the basic details for your Channel' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_edit_channel_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2084']/* 'Edit' */, 'action':''})}

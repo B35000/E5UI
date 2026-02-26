@@ -304,10 +304,9 @@ class PostsDetailsSection extends Component {
 
                     {this.render_markdown_if_any(object)}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', item['reply_count'])}
-
-                    {this.render_award_count_if_not_anonymous(item, object)}
+                    {/* {this.render_detail_item('0')} */}
+                    {/* {this.render_detail_item('3', item['reply_count'])} */}
+                    {/* {this.render_award_count_if_not_anonymous(item, object)} */}
 
                     {this.render_edit_object_button(object)}
 
@@ -581,7 +580,7 @@ class PostsDetailsSection extends Component {
 
     render_repost_post_ui(object){
         var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
-        var title = this.props.app_state.loc['2526c']/* 'Repost Post.' */
+        var title = this.props.app_state.loc['2526c']/* '🔄 Repost Post.' */
         var details = this.props.app_state.loc['2526d']/*  Add this post to your promoted list. */
 
         if(clone['post'].includes(object['e5_id'])){
@@ -940,7 +939,7 @@ class PostsDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2515']/* Pin the post to your feed' */, 'title':this.props.app_state.loc['2516']/* 'Pin Post' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2515']/* Pin the post to your feed' */, 'title':this.props.app_state.loc['2516']/* '📌 Pin Post' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_post_clicked(object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2517']/* 'Pin/Unpin Post' */, 'action':''},)}
@@ -1055,7 +1054,7 @@ class PostsDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2518']/* Edit Indexed Post' */, 'details':this.props.app_state.loc['2519']/* 'Change the basic details for your Indexed Post' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2518']/* ✏️ Edit Indexed Post' */, 'details':this.props.app_state.loc['2519']/* 'Change the basic details for your Indexed Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
@@ -1082,7 +1081,7 @@ class PostsDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2521']/* 'Give Award' */, 'details':this.props.app_state.loc['2522']/* `Send a tip to the post's author` */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2521']/* '🎖️ Give Award' */, 'details':this.props.app_state.loc['2522']/* `Send a tip to the post's author` */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_award_ui(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2523']/* 'Send Award' */, 'action':''})}
