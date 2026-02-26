@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.1dcc41c5.css",
-    "main.js": "/static/js/main.933ee9d6.js",
+    "main.js": "/static/js/main.a3729dff.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -79,6 +79,7 @@
     "static/media/job_icon_darkpink.png": "/static/media/job_icon_darkpink.8be35208911555c87ba6.png",
     "static/media/ComicSans.ttf": "/static/media/ComicSans.3198d266c6629f0b7ce0.ttf",
     "static/media/tutorial_image_navigate_back.png": "/static/media/tutorial_image_navigate_back.f1de295ffb71e7f98066.png",
+    "static/media/filecoin_evm.png": "/static/media/filecoin_evm.b40a4e57141f5b336fd2.png",
     "static/media/tutorial_image_navigation_buttons.png": "/static/media/tutorial_image_navigation_buttons.1b5fa5cc48d4cb752650.png",
     "static/media/alert_icon_darkyellow.png": "/static/media/alert_icon_darkyellow.db39d682b561451e32d5.png",
     "static/media/alert_icon_orange.png": "/static/media/alert_icon_orange.1af5687b05608b6dba64.png",
@@ -432,7 +433,6 @@
     "static/media/pause_icon_darkblue.png": "/static/media/pause_icon_darkblue.d8f00da01ef648074876.png",
     "static/media/linea.png": "/static/media/linea.cd0ae92fe6ef6da94a6f.png",
     "static/media/pause_icon_darkpink.png": "/static/media/pause_icon_darkpink.90523658cee13d271b50.png",
-    "static/media/filecoin_evm.png": "/static/media/filecoin_evm.d0f347e9a8fb8fa82cab.png",
     "static/media/letter.png": "/static/media/letter.0ed8625c19055ed06b21.png",
     "static/media/mind.png": "/static/media/mind.ad403c5709197756fd13.png",
     "static/media/add_text_dark.png": "/static/media/add_text_dark.7fb0adba2c554169387a.png",
@@ -471,6 +471,6 @@
   },
   "entrypoints": [
     "static/css/main.1dcc41c5.css",
-    "static/js/main.933ee9d6.js"
+    "static/js/main.a3729dff.js"
   ]
 }
