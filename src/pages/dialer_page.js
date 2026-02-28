@@ -88,7 +88,7 @@ class DialerPage extends Component {
         get_manual_disable_beacon_node_override_object:this.get_manual_disable_beacon_node_override_object(), typed_notification_blocks_input:'',
         get_ether_e5_softwrite_object:this.get_ether_e5_softwrite_object(), get_document_title_object:this.get_document_title_object(),
 
-        keyword_text:''
+        keyword_text:'', typed_country_contract_obligation_e5_id:'', default_obligation_contract_ids:{}
     };
 
 
@@ -538,8 +538,39 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
                 <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_media_activation_age_limit.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
 
+
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4', {'text':'Set a country\'s default obligations contract account.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Set the contract e5_id'} when_text_input_field_changed={this.when_country_contract_obligation_input_field_changed.bind(this)} text={this.state.typed_country_contract_obligation_e5_id} theme={this.props.theme}/>
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Search filter country'} when_text_input_field_changed={this.when_country_input_field_changed.bind(this)} text={this.state.typed_country_name} theme={this.props.theme}/>
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_countries_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_obligation_country_selected'})}
+                <div style={{height:15}}/>
+
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.set_default_obligation_contract_for_country()}>
+                    {this.render_detail_item('5', { 'text': 'Set Contract.', 'action': '' })}
+                </div>
+
+                <div style={{ height: 10 }} />
+                {this.render_detail_item('4', {'text':'The default obligation configurations. Tap to delete one.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                
+                <div style={{height:10}}/>
+                {this.set_default_obligation_contract_for_country()}
+
             </div>
         )
+    }
+
+    when_country_contract_obligation_input_field_changed(text){
+        this.setState({typed_country_contract_obligation_e5_id: text})
     }
 
     when_get_document_title_object_updated(tag_obj){
@@ -630,6 +661,70 @@ class DialerPage extends Component {
     round_off(number){
         return (Math.round(number * 100) / 100)
     }
+
+    when_obligation_country_selected(tag, pos){
+        if(tag != 'e'){
+            this.setState({typed_country_name: tag})
+        }
+    }
+
+    set_default_obligation_contract_for_country(){
+        const contract_e5_id = this.state.typed_country_contract_obligation_e5_id.trim()
+        const country_name = this.state.typed_country_name.trim()
+
+        const clone = structuredClone(this.state.default_obligation_contract_ids)
+        clone[country_name] = contract_e5_id
+        this.setState({default_obligation_contract_ids: clone})
+    }
+
+    render_country_obligation_contracts(){
+        const all_items = [].concat(Object.keys(this.state.default_obligation_contract_ids))
+        const items = all_items.filter((item_country) => {
+            return (item_country.startsWith(this.state.typed_country_name))
+        })
+        const items2 = [1, 2]
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_obligation_configuration_item(item)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_obligation_configuration_item(item){
+        const contract_e5_id = this.state.default_obligation_contract_ids[item]
+        const contract_id = contract_e5_id.split('E')[0]
+        const contract_e5 = 'E'+contract_e5_id.split('E')[1]
+        const details = contract_id
+        const title = item
+        return(
+            <div onClick={() => this.when_obligation_configuration_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':''+details, 'size':'l', 'title_image':this.props.app_state.e5s[contract_e5].e5_img, 'footer':contract_e5})}
+            </div>
+        )
+    }
+
+    when_obligation_configuration_item_clicked(item){
+        const clone = structuredClone(this.state.default_obligation_contract_ids)
+        delete clone[item]
+        this.setState({default_obligation_contract_ids: clone})
+    }
+
+
+
+
 
     render_admin_content2(){
         return(
@@ -2624,7 +2719,7 @@ class DialerPage extends Component {
                 <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_dialer_country_selected={this.when_dialer_country_selected.bind(this)}
                 when_dialer_included_country_selected={this.when_dialer_included_country_selected.bind(this)} when_dialer_dark_emblem_country_selected={this.when_dialer_dark_emblem_country_selected.bind(this)} when_add_translation_language_tapped={this.when_add_translation_language_tapped.bind(this)} when_spend_country_selected={this.when_spend_country_selected.bind(this)} when_spend_included_country_selected={this.when_spend_included_country_selected.bind(this)}
                 when_typed_moderator_country_selected={this.when_typed_moderator_country_selected.bind(this)}
-
+                when_obligation_country_selected={this.when_obligation_country_selected.bind(this)}
                 />
             </div>
         )

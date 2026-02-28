@@ -1017,7 +1017,7 @@ class JobDetailsSection extends Component {
 
     render_apply_for_job_button(object){
         var my_account = this.props.app_state.user_account_id[object['e5']]
-        if(object['event'].returnValues.p5 != my_account){
+        if(object['event'].returnValues.p5 != my_account && this.is_object_still_keyword_valid(object)){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1034,6 +1034,37 @@ class JobDetailsSection extends Component {
     open_basic_edit_object_ui(object){
         // var object = this.get_job_items()[this.props.selected_job_post_item];
         this.props.open_edit_object('0', object)
+    }
+
+    is_object_still_keyword_valid(object){
+        let is_valid = true;
+        if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].markdown)){
+            is_valid = false;
+        }
+        if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].entered_title_text)){
+            is_valid = false;
+        }
+        object['ipfs'].entered_indexing_tags.forEach(tag => {
+            if(this.props.does_entered_text_contain_reserved_keywords(tag)){
+                is_valid = false;
+            }
+        });
+        object['ipfs'].entered_objects.forEach(object => {
+            const type = object['type']
+            if(type == '11'){
+                const text = object['data']['caption']['text']
+                if(this.props.does_entered_text_contain_reserved_keywords(text)){
+                    is_valid = false;
+                }
+            }else{
+                const text = object['data']['text']
+                if(this.props.does_entered_text_contain_reserved_keywords(text)){
+                    is_valid = false;
+                }
+            }
+        });
+
+        return is_valid
     }
 
 

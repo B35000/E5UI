@@ -359,6 +359,7 @@ class NewContractorPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_contains_keyword_if_title_contains_reserved_keyword(this.state.entered_title_text)}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['256']})}
@@ -376,6 +377,7 @@ class NewContractorPage extends Component {
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_contains_keyword_if_title_contains_reserved_keyword(this.state.entered_tag_text)}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
@@ -398,6 +400,25 @@ class NewContractorPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    render_contains_keyword_if_title_contains_reserved_keyword(entered_text){
+        const all_reserved_keywords = this.props.get_accounts_reserved_keywords()
+        const words_to_check = entered_text.toLowerCase().split(' ')
+        const foundWords = all_reserved_keywords.filter(word => words_to_check.includes(word));
+        if(foundWords.length == 0){
+            return;
+        }
+        return(
+            <div>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['284bl']/* The following words have been reserved: $ */.replace('$', foundWords.join(', '))})}
+            </div>
+        )
+    }
+
+    does_entered_text_contain_reserved_keywords(entered_text){
+        const regex_to_test = this.props.get_accounts_reserved_keywords(true)
+        return regex_to_test.test(entered_text.toLowerCase());
     }
 
     when_get_take_down_option(tag_group){
@@ -435,6 +456,9 @@ class NewContractorPage extends Component {
         }
         else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word)){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else if(this.does_entered_text_contain_reserved_keywords(typed_word)){
+            this.props.notify(this.props.app_state.loc['284bm']/* That word is reserved. */, 4400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
@@ -633,6 +657,7 @@ class NewContractorPage extends Component {
                 <div style={{height:10}}/> */}
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                {this.render_contains_keyword_if_title_contains_reserved_keyword(this.state.entered_text)}
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
@@ -688,7 +713,11 @@ class NewContractorPage extends Component {
 
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128'], 1400)
-        }else{
+        }
+        else if(this.does_entered_text_contain_reserved_keywords(typed_word)){
+            this.props.notify(this.props.app_state.loc['284bn']/* You cant use reserved words. */, 4400)
+        }
+        else{
             var entered_text = this.get_edited_text_object()
             if(this.state.edit_text_item_pos != -1){
                 this.finish_editing_text_item(entered_text)
@@ -849,6 +878,10 @@ class NewContractorPage extends Component {
     }
 
     add_banner_to_object(image){
+        if(this.does_entered_text_contain_reserved_keywords(this.state.entered_text)){
+            this.props.notify(this.props.app_state.loc['284bn']/* You cant use reserved words. */, 4400)
+            return;
+        }
         var entered_text = this.get_edited_text_object()
         entered_text['textsize'] = '10px'
         var obj = {'image':this.get_image_from_file(image), 'caption':entered_text}
@@ -858,6 +891,10 @@ class NewContractorPage extends Component {
     }
 
     update_banner_in_object(image, index){
+        if(this.does_entered_text_contain_reserved_keywords(this.state.entered_text)){
+            this.props.notify(this.props.app_state.loc['284bn']/* You cant use reserved words. */, 4400)
+            return;
+        }
         var entered_text = this.get_edited_text_object()
         entered_text['textsize'] = '10px'
         var obj = {'image':image, 'caption':entered_text}
@@ -1952,7 +1989,7 @@ return data['data']
                         <div style={{'margin':'0px 0px 0px 10px'}}>
                             <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
                         </div>
-
+                        {this.render_contains_keyword_if_title_contains_reserved_keyword(this.state.markdown)}
                         {this.render_markdown_shortcut_list()}
                     </div>
                     <div className="col-6" >
@@ -2006,7 +2043,7 @@ return data['data']
                     <div style={{'margin':'0px 0px 0px 10px'}}>
                         <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
                     </div>
-
+                    {this.render_contains_keyword_if_title_contains_reserved_keyword(this.state.markdown)}
                     {this.render_markdown_shortcut_list()}
                 </div>
             )
@@ -2584,6 +2621,9 @@ return data['data']
         }
         else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
             this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
+        else if(this.does_entered_text_contain_reserved_keywords(title) || this.does_entered_text_contain_reserved_keywords(this.state.markdown)){
+            this.props.notify(this.props.app_state.loc['284bn']/* You cant use reserved words. */, 4400)
         }
         else{
             

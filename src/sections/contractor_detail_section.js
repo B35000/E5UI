@@ -317,6 +317,37 @@ class ContractorDetailsSection extends Component {
         )
     }
 
+    is_object_still_keyword_valid(object){
+        let is_valid = true;
+        if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].markdown)){
+            is_valid = false;
+        }
+        if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].entered_title_text)){
+            is_valid = false;
+        }
+        object['ipfs'].entered_indexing_tags.forEach(tag => {
+            if(this.props.does_entered_text_contain_reserved_keywords(tag)){
+                is_valid = false;
+            }
+        });
+        object['ipfs'].entered_objects.forEach(object => {
+            const type = object['type']
+            if(type == '11'){
+                const text = object['data']['caption']['text']
+                if(this.props.does_entered_text_contain_reserved_keywords(text)){
+                    is_valid = false;
+                }
+            }else{
+                const text = object['data']['text']
+                if(this.props.does_entered_text_contain_reserved_keywords(text)){
+                    is_valid = false;
+                }
+            }
+        });
+
+        return is_valid
+    }
+
     render_object_views(object){
         const e5_id = object['e5_id']
         const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
@@ -576,7 +607,7 @@ class ContractorDetailsSection extends Component {
     render_send_job_button(object){
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
-        if(object['event'].returnValues.p5 != my_account){
+        if(object['event'].returnValues.p5 != my_account && this.is_object_still_keyword_valid(object)){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2219']/* '📝 Send Job Request' */, 'details':this.props.app_state.loc['2220']/* 'Send a job request to the contractor to do a job for you' */, 'size':'l'})}

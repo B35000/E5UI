@@ -743,7 +743,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 var bigInt = require("big-integer");
 var primary_following = ['E25:1002']
 const root_e5 = 'E25'
-const root_account = 1002
+const root_account = [1002, 1804]
 const default_nitro_option = '1479E25'
 // const originalConsole = { ...console };
 
@@ -1354,7 +1354,7 @@ class App extends Component {
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
 
-    obligation_subscriptions:{},
+    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:''
   };
 
   get_thread_pool_size(){
@@ -6434,7 +6434,7 @@ class App extends Component {
 
           set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)} emit_view_object_event={this.emit_view_object_event.bind(this)} fetch_and_set_loaded_object_views={this.fetch_and_set_loaded_object_views.bind(this)}
 
-          show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)}
+          show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -9893,14 +9893,14 @@ class App extends Component {
       }else{
         //this transaction was run
         if(
-          stack[i].type == this.props.app_state.loc['1511']/* 'post-messages' */ ||
-          stack[i].type == this.props.app_state.loc['1514']/* 'job-messages' */ ||
-          stack[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */ ||
-          stack[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */ ||
-          stack[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */ ||
-          stack[i].type == this.props.app_state.loc['1593cc']/* 'audio-messages' */ ||
-          stack[i].type == this.props.app_state.loc['1593ct']/* 'video-messages' */ ||
-          stack[i].type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */
+          stack[i].type == this.getLocale()['1511']/* 'post-messages' */ ||
+          stack[i].type == this.getLocale()['1514']/* 'job-messages' */ ||
+          stack[i].type == this.getLocale()['1515']/* 'proposal-messages' */ ||
+          stack[i].type == this.getLocale()['1501']/* 'bag-messages' */ ||
+          stack[i].type == this.getLocale()['1502']/* 'storefront-messages' */ ||
+          stack[i].type == this.getLocale()['1593cc']/* 'audio-messages' */ ||
+          stack[i].type == this.getLocale()['1593ct']/* 'video-messages' */ ||
+          stack[i].type == this.getLocale()['1593cu']/* 'nitro-messages' */
         ){
           const t = stack[i]
           for(var m=0; m<t.messages_to_deliver.length; m++){
@@ -9908,35 +9908,35 @@ class App extends Component {
             comment_record_e5_ids.push(object_e5_id)
           }
         }
-        else if(stack[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
+        else if(stack[i].type == this.getLocale()['1512']/* 'job-response' */){
           const t = stack[i]
           job_response_e5_ids.push(t.job_item['e5_id'])
         }
-        else if(stack[i].type == this.props.app_state.loc['1497']/* 'bag-response' */){
+        else if(stack[i].type == this.getLocale()['1497']/* 'bag-response' */){
           const t = stack[i]
           job_response_e5_ids.push(t.bag_item['e5_id'])
         }
-        else if(stack[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
+        else if(stack[i].type == this.getLocale()['1363']/* 'job-request' */){
           const t = stack[i]
           contractor_job_request_e5_ids.push(t.contractor_item['e5_id'])
         }
-        else if(stack[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+        else if(stack[i].type == this.getLocale()['1499']/* 'direct-purchase' */){
           const t = stack[i]
           direct_purchase_e5_ids.push(t.storefront_item['e5_id'])
         }
-        else if(stack[i].type == this.props.app_state.loc['1155']/* 'award' */){
+        else if(stack[i].type == this.getLocale()['1155']/* 'award' */){
           const t = stack[i]
           award_e5_ids.push(t.post_item['e5_id'])
         }
-        else if(stack[i].type == this.props.app_state.loc['2962']/* 'buy-album' */){
+        else if(stack[i].type == this.getLocale()['2962']/* 'buy-album' */){
           const t = stack[i]
           buy_album_e5_ids.push(t.album['e5_id'])
         }
-        else if(stack[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+        else if(stack[i].type == this.getLocale()['a2962a']/* 'buy-video' */){
           const t = stack[i]
           buy_video_e5_ids.push(t.videopost['e5_id'])
         }
-        else if(stack[i].type == this.props.app_state.loc['3076']/* 'auction-bid' */){
+        else if(stack[i].type == this.getLocale()['3076']/* 'auction-bid' */){
           const t = stack[i]
           auction_bid_e5_ids.push(t.storefront_item['e5_id'])
         }
@@ -10001,6 +10001,16 @@ class App extends Component {
     //   follow_unfollow_stack_clone['unfollow'] = []
     //   this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
     // }
+
+    if(
+      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] == null ||
+      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] == null || 
+      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length == 0
+    ){
+      const default_obligation_e5_id = '2'+this.state.selected_e5;
+      this.emit_subscribe_to_obligation_event(default_obligation_e5_id)
+      await this.wait(1000)
+    }
   }
 
   view_transaction(tx, index){
@@ -10400,7 +10410,7 @@ class App extends Component {
       return(
         <div>
           <NewJobPage ref={this.new_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)}
           />
         </div>
       )
@@ -10443,7 +10453,7 @@ class App extends Component {
     else if(target == '4'/* storefront */){
       return(
         <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)}
         />
       )
     }
@@ -10457,7 +10467,7 @@ class App extends Component {
     else if(target == '9'/* contractors */){
       return(
         <NewContractorPage ref={this.new_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)}
         />
       );
     }
@@ -10751,6 +10761,38 @@ class App extends Component {
     return true
   }
 
+  get_accounts_reserved_keywords(regex=false){
+    if(this.state.reserved_words_regex != null && regex == true){
+      return this.state.reserved_words_regex
+    }
+
+    let reserved_keywords = []
+    if(this.state.default_obligation_contract != ''){
+      const default_obligation_contract_object = this.state.my_contract_obligation_subscription_data[this.state.default_obligation_contract]
+      const default_obligation_contract_object_reserved_keywords = default_obligation_contract_object['ipfs'].reserved_keywords
+      reserved_keywords = reserved_keywords.concat(default_obligation_contract_object_reserved_keywords)
+    }
+    if(
+      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] != null &&
+      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
+      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
+    ){
+      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].forEach(subscribed_obligation_contract_id => {
+        const subscribed_obligation_contract_object = this.state.my_contract_obligation_subscription_data[subscribed_obligation_contract_id]
+        const subscribed_obligation_contract_object_reserved_keywords = subscribed_obligation_contract_object['ipfs'].reserved_keywords
+        reserved_keywords = reserved_keywords.concat(subscribed_obligation_contract_object_reserved_keywords)
+      });
+    }
+
+    if(regex == true){
+      const wordRegex = new RegExp('\\b(' + reserved_keywords.join('|') + ')\\b', 'i');
+      this.setState({reserved_words_regex: wordRegex})
+      return wordRegex
+    }
+
+    return reserved_keywords
+  }
+
   
 
 
@@ -10953,7 +10995,7 @@ class App extends Component {
     var os = getOS()
     
     return this.renderBottomSheet(
-      <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)}
       />,
       this.state.edit_contractor_bottomsheet,
       this.open_edit_contractor_bottomsheet,
@@ -11041,35 +11083,35 @@ class App extends Component {
     var os = getOS()
     
     return this.renderBottomSheet(
-      <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)}
       />,
       this.state.edit_job_bottomsheet,
       this.open_edit_job_bottomsheet,
       this.state.height-70
     )
-    if(os == 'iOS'){
-        return(
-            <Sheet isOpen={this.state.edit_job_bottomsheet} onClose={this.open_edit_job_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-                <Sheet.Container>
-                    <Sheet.Content>
-                        <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                          <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
-                          />
-                        </div>
-                    </Sheet.Content>
-                    {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={()=> this.open_edit_job_bottomsheet()}/>
-            </Sheet>
-        )
-    }
-    return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_job_bottomsheet.bind(this)} open={this.state.edit_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    // if(os == 'iOS'){
+    //     return(
+    //         <Sheet isOpen={this.state.edit_job_bottomsheet} onClose={this.open_edit_job_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
+    //             <Sheet.Container>
+    //                 <Sheet.Content>
+    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
+    //                       <EditJobPage ref={this.edit_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+    //                       />
+    //                     </div>
+    //                 </Sheet.Content>
+    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
+    //             </Sheet.Container>
+    //             <Sheet.Backdrop onTap={()=> this.open_edit_job_bottomsheet()}/>
+    //         </Sheet>
+    //     )
+    // }
+    // return(
+    //   <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_job_bottomsheet.bind(this)} open={this.state.edit_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
             
-          </div>
-      </SwipeableBottomSheet>
-    )
+    //       </div>
+    //   </SwipeableBottomSheet>
+    // )
   }
 
   open_edit_job_bottomsheet(){
@@ -11217,7 +11259,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-      get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)}
       />,
       this.state.edit_storefront_bottomsheet,
       this.open_edit_storefront_bottomsheet,
@@ -21777,7 +21819,7 @@ class App extends Component {
 
   show_dialer_bottomsheet(){
     const my_id = this.state.user_account_id[root_e5]
-    if(my_id != root_account || this.state.selected_e5 != root_e5){
+    if(!root_account.includes(my_id) || this.state.selected_e5 != root_e5){
       return;
     }
     this.open_dialer_bottomsheet()
@@ -26939,7 +26981,7 @@ class App extends Component {
   async load_root_data_events(){
     var requested_contract = 'E52'
     const e5 = root_e5
-    const account = root_account
+    const account = this.process_array_for_indexer_query(root_account)
     var event_request = {'requested_e5':e5, 'requested_contract':requested_contract, 'requested_event_id':'e4', 'filter':{p1/* target_id */: 24/* 24(dialer admin registry) */, p2/* context */:account/* sender_acc_id */}}
     
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
@@ -27043,6 +27085,10 @@ class App extends Component {
         const allWords = Object.values(naughtyWords).flat();
         const censored_keywords_by_my_following = this.state.censored_keywords_by_my_following.slice().concat(censored_keywords, allWords)
 
+        const default_obligation_contract_ids = root_data.default_obligation_contract_ids
+        const my_state = this.get_location_info().userCountry
+        const default_obligation_contract = default_obligation_contract_ids[my_state] || ''
+
         const my_language = this.get_language() == null ? 'en' : this.get_language()
         if(my_language != 'en' && all_locales[my_language] != null){
           const language_obj = await this.load_json_object_from_url(all_locales[my_language])
@@ -27096,6 +27142,8 @@ class App extends Component {
           media_activation_tx_limit: media_activation_tx_limit,
           media_activation_age_limit: media_activation_age_limit,
           censored_keywords_by_my_following: censored_keywords_by_my_following,
+          default_obligation_contract_ids: default_obligation_contract_ids,
+          default_obligation_contract: default_obligation_contract,
         })
         primary_following = primary_following.concat(my_moderators)
 
@@ -27116,6 +27164,10 @@ class App extends Component {
             delete me.reset_token_image_data
           }
         }, (1 * 500));
+
+        if(default_obligation_contract != ''){
+          await this.load_my_accounts_obligation_data([default_obligation_contract])
+        }
       }
     }
   }
@@ -28153,6 +28205,13 @@ class App extends Component {
       }
 
       if(e5 == 'E25'){
+        if(
+          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] != null &&
+          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
+          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
+        ){
+          await this.load_my_accounts_obligation_data(this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'])
+        }
         await this.load_and_notify_flash()
       }
 
@@ -28574,10 +28633,6 @@ class App extends Component {
     // console.log('apppage','alias_data', 'set alias bucket and owners:', alias_bucket, alias_owners)
     await this.wait(300)
     this.is_resolving_alias_data = false;
-  }
-
-  process_array_for_indexer_query(arr){
-    return '$$:'+arr.join("|");
   }
 
   filter_existing_alias_accounts(e5, accounts){
@@ -29466,9 +29521,12 @@ class App extends Component {
         accepted_ids.push(parseInt(account))
       }
     }
-    if(!accepted_ids.includes(root_account) && e5 == root_e5){
-      accepted_ids.push(root_account)
-    }
+    root_account.forEach(account => {
+      if(!accepted_ids.includes(account) && e5 == root_e5){
+        accepted_ids.push(account)
+      }
+    });
+    
     return accepted_ids
   }
 
@@ -29484,9 +29542,11 @@ class App extends Component {
         accepted_ids.push(account)
       }
     }
-    if(!accepted_ids.includes(root_account.toString()) && e5 == root_e5){
-      accepted_ids.push(root_account.toString())
-    }
+    root_account.forEach(account => {
+      if(!accepted_ids.includes(account) && e5 == root_e5){
+        accepted_ids.push(account)
+      }
+    });
     return accepted_ids
   }
 
@@ -35483,6 +35543,76 @@ class App extends Component {
     }
 
     return id
+  }
+
+  async load_my_accounts_obligation_data(contract_e5_ids){
+    const all_queries = []
+    const contract_e5_data = {}
+    contract_e5_ids.forEach(e5_id => {
+      const id = e5_id.split('E')[0];
+      const contract_e5 = 'E'+e5_id.split('E')[1];
+      if(contract_e5_data[contract_e5] == null){
+        contract_e5_data[contract_e5] = []
+      }
+      contract_e5_data[contract_e5].push(id)
+    });
+    const e5s_used = Object.keys(contract_e5_data)
+    for(var i=0; i<e5s_used.length; i++){
+      const e5 = e5s_used[i]
+      const e5_address = this.state.e5s[e5].e5_address;
+      if(e5_address != ''){
+        var web3_url = this.get_web3_url_from_e5(e5)
+        const web3 = new Web3(web3_url);
+        const contract_addresses = this.state.addresses[e5]
+
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = contract_addresses[1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        const ids = contract_e5_data[e5]
+        all_queries.push([web3, E52contractInstance, 'e4', e5, {p1/* target_id */:this.process_array_for_indexer_query(ids), p3/* context */:65/* 65(public_contract_obligation_configuration) */}])
+      }
+    }
+
+    const all_loaded_events = (await this.load_multiple_events_from_nitro(all_queries)).all_events
+    const contract_e5_id_mapping_data = {}
+    for(var i=0; i<e5s_used.length; i++){
+      const e5 = e5s_used[i];
+      const e5s_events = all_loaded_events[i];
+      const contract_event_mapping = {}
+      const loaded_contract_ids = []
+      e5s_events.forEach(event => {
+        const contract_id = event.returnValues.p1/* target */
+        if(contract_event_mapping[contract_id] == null){
+          contract_event_mapping[contract_id] = []
+          loaded_contract_ids.push(contract_id)
+        }
+        contract_event_mapping[contract_id].push(event)
+      });
+      loaded_contract_ids.forEach(contract_id => {
+        const loaded_events = contract_event_mapping[contract_id];
+        const latest_event = loaded_events[loaded_events.length-1]
+        contract_e5_id_mapping_data[contract_id+e5] = latest_event
+      });
+    }
+
+    const obligation_configuration_events = []
+    const obligation_contract_e5_ids = []
+    Object.keys(contract_e5_id_mapping_data).forEach(contract_e5_id => {
+      obligation_contract_e5_ids.push(contract_e5_id)
+      obligation_configuration_events.push(contract_e5_id_mapping_data[contract_e5_id])
+    });
+    await this.fetch_multiple_cids_from_nitro(obligation_configuration_events, 0, 'p4')
+    const my_contract_obligation_subscription_data_clone = structuredClone(this.state.my_contract_obligation_subscription_data)
+    for(var i=0; i<obligation_configuration_events.length; i++){
+      const event = obligation_configuration_events[i]
+      const contract_e5_id = obligation_contract_e5_ids[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      my_contract_obligation_subscription_data_clone[contract_e5_id] = {'event':event, 'ipfs':ipfs, 'time':event.returnValues.p6/* timestamp */}
+    }
+
+    this.setState({my_contract_obligation_subscription_data: my_contract_obligation_subscription_data_clone})
   }
 
 
@@ -48482,6 +48612,8 @@ class App extends Component {
 
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+
+    await this.load_my_accounts_obligation_data([object_e5_id])
   }
 
   
@@ -53787,6 +53919,10 @@ class App extends Component {
     
     // Return as string
     return new TextDecoder().decode(decrypted);
+  }
+
+  process_array_for_indexer_query(arr){
+    return '$$:'+arr.join("|");
   }
 
   //node_modules/react-scripts/config/webpack.config.js

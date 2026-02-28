@@ -1532,7 +1532,7 @@ class StorefrontDetailsSection extends Component {
             return;
         }
         
-        if(item_in_stock == 1/* 'in-stock' */ && bags_enabled == 1){
+        if(item_in_stock == 1/* 'in-stock' */ && bags_enabled == 1 && this.is_object_still_keyword_valid(object)){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1560,7 +1560,7 @@ class StorefrontDetailsSection extends Component {
             return;
         }
 
-        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */ && object['event'].returnValues.p5 != my_account.toString()){
+        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */ && object['event'].returnValues.p5 != my_account.toString() && this.is_object_still_keyword_valid(object)){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1752,7 +1752,7 @@ class StorefrontDetailsSection extends Component {
         var bids = this.props.app_state.storefront_auction_bids[object['e5_id']]
         if(bids == null) return
 
-        if(object['event'].returnValues.p5 != my_account.toString() && object['ipfs'].auction_expiry_time > Date.now()/1000){
+        if(object['event'].returnValues.p5 != my_account.toString() && object['ipfs'].auction_expiry_time > Date.now()/1000 && this.is_object_still_keyword_valid(object)){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1777,7 +1777,7 @@ class StorefrontDetailsSection extends Component {
         const my_winning_bids = this.get_my_winning_bids(object)
         if(my_winning_bids.length == 0) return
 
-        if(object['ipfs'].auction_expiry_time < Date.now()/1000){
+        if(object['ipfs'].auction_expiry_time < Date.now()/1000 && this.is_object_still_keyword_valid(object)){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1871,6 +1871,37 @@ class StorefrontDetailsSection extends Component {
             'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'l', 'title':this.props.app_state.loc['2633']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
         }
+    }
+
+    is_object_still_keyword_valid(object){
+        let is_valid = true;
+        if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].markdown)){
+            is_valid = false;
+        }
+        if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].entered_title_text)){
+            is_valid = false;
+        }
+        object['ipfs'].entered_indexing_tags.forEach(tag => {
+            if(this.props.does_entered_text_contain_reserved_keywords(tag)){
+                is_valid = false;
+            }
+        });
+        object['ipfs'].entered_objects.forEach(object => {
+            const type = object['type']
+            if(type == '11'){
+                const text = object['data']['caption']['text']
+                if(this.props.does_entered_text_contain_reserved_keywords(text)){
+                    is_valid = false;
+                }
+            }else{
+                const text = object['data']['text']
+                if(this.props.does_entered_text_contain_reserved_keywords(text)){
+                    is_valid = false;
+                }
+            }
+        });
+
+        return is_valid
     }
 
 
