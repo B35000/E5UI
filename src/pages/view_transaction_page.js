@@ -963,6 +963,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['3093']/* 'configure-obligations' */){
+                return(
+                    <div>
+                        {this.render_configure_obligations()}
+                    </div>
+                )
+            }
         }
     }
 
@@ -8457,6 +8464,187 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+    render_configure_obligations(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const date_object = this.get_deadline_date_object(transaction_item.deadline_datetime)
+        const work_keyword_count = Object.keys(transaction_item.work_keywords).length
+        const explore_keyword_count = Object.keys(transaction_item.explore_keywords).length
+        const locale = navigator.language || navigator.userLanguage || 'en-US'
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_contract(transaction_item)}
+                <div style={{ height:15 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':''+(date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })), 'details':this.props.app_state.loc['3093eg']/* 'Deadline Date.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093ea']/* 'Targeted Work Keywords' */, 'subtitle':this.format_power_figure(work_keyword_count), 'barwidth':this.get_number_width(work_keyword_count), 'number':`${this.format_account_balance_figure(work_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093eb']/* 'Targeted Explore Keywords' */, 'subtitle':this.format_power_figure(explore_keyword_count), 'barwidth':this.get_number_width(explore_keyword_count), 'number':`${this.format_account_balance_figure(explore_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                {this.render_general_obligation_configuration(transaction_item)}
+            </div>
+        )
+    }
+
+    get_deadline_date_object(deadline_datetime){
+        const day = deadline_datetime.split(':')[0]
+        const month = deadline_datetime.split(':')[1]
+        const year = new Date().getFullYear()
+        return new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`)  
+    }
+
+    render_contract(transaction_item){
+        const object = transaction_item.contract
+        const item = this.format_contract_item(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+    }
+
+    format_contract_item(object){
+        var main_contract_tags = ['Contract', 'main', object['e5'] ]
+        var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var object_id = number_with_commas(object['id'])
+        var id_text = '• '+object_id
+        if(object['id'] == 2) id_text = '• '+'Main Contract'
+        var sender = object['event'].returnValues.p3
+        var number = number_with_commas(age)
+        var barwidth = this.get_number_width(age)
+        var relativepower = this.get_time_difference(time)
+        
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, }
+        }
+    }
+
+    render_general_obligation_configuration(transaction_item){
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_job_contractor_income_obligation), 'details':this.props.app_state.loc['3093p']/* 'Default Job Contractor Income Obligation' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_enter_contract_obligation), 'details':this.props.app_state.loc['3093s']/* 'Enter Contract Obligation' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_spend_contract_obligation), 'details':this.props.app_state.loc['3093v']/* 'Spend Contract Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_proposal_bounty_obligation), 'details':this.props.app_state.loc['3093y']/* 'Proposal Bounty Obligation' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_storage_purchase_renewal_obligation), 'details':this.props.app_state.loc['3093bb']/* 'Storage Purchase and Renewal Obligation' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_subscription_purchase_obligation), 'details':this.props.app_state.loc['3093bf']/* 'Subscription Purchase Obligation' */, 'size':'l'})}
+                    </li>
+
+
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        <div style={{height:'100%', width:1, 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 10px 3px 10px'}}/>
+                    </li>
+
+
+
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_award_payment_obligation), 'details':this.props.app_state.loc['3093cb']/* 'Default Award Payment Obligation' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_direct_purchase_obligation), 'details':this.props.app_state.loc['3093ce']/* 'Direct Purchase Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_fulfilled_bags_obligation), 'details':this.props.app_state.loc['3093ch']/* 'Fulfilled Bags Obligation' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_audiopost_purchase_obligation), 'details':this.props.app_state.loc['3093ck']/* 'Audiopost Purchase Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_videopost_purchase_obligation), 'details':this.props.app_state.loc['3093cn']/* 'Videopost Purchase Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_creator_group_payout_obligation), 'details':this.props.app_state.loc['3093cq']/* 'Creator Group Payout Obligation.' */, 'size':'l'})}
+                    </li>
+
+
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        <div style={{height:'100%', width:1, 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 10px 3px 10px'}}/>
+                    </li>
+
+
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_direct_transfer_obligation), 'details':this.props.app_state.loc['3093cz']/* 'Direct Transfer Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_iTransfer_obligation), 'details':this.props.app_state.loc['3093dc']/* 'iTransfer Obligation' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_bill_payment_obligation), 'details':this.props.app_state.loc['3093df']/* 'Bill Fulfilment Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_token_acquisition_obligation), 'details':this.props.app_state.loc['3093di']/* 'Token Acquisition Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_token_remarket_obligation), 'details':this.props.app_state.loc['3093ed']/* 'Token Remarket Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_royalty_payout_obligation), 'details':this.props.app_state.loc['3093dn']/* 'Royalty Payout Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_liquidity_deposit_withdraw_obligation), 'details':this.props.app_state.loc['3093dq']/* 'Liquidity Deposit Withdraw Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']/* 'Trust Fee Obligation.' */, 'size':'l'})}
+                    </li>
+                </ul>
+            </div>
+        )
+    }
 
 
 

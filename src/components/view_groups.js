@@ -315,6 +315,9 @@ class ViewGroups extends Component {
                 const subtitle = object_data != null && object_data['subtitle'] == null ? '' : object_data['subtitle']
                 const subdetails = object_data != null && object_data['subdetails'] == null ? '' : object_data['subdetails']
 
+                if(footer != null){
+                    font_size[3] += 10; 
+                }
                 return(
                     <div>
                         <AnimatePresence initial={true}>
@@ -555,90 +558,6 @@ class ViewGroups extends Component {
                     ],
                 };
             };
-
-            // const getChartOptions = () => {
-            //     const config = { ...defaultConfig };
-                
-            //     return {
-            //         responsive: true,
-            //         maintainAspectRatio: false,
-            //         plugins: {
-            //             legend: {
-            //                 display: false, // No legend
-            //             },
-            //             title: {
-            //                 display: false, // No title
-            //             },
-            //             tooltip: {
-            //                 enabled: false
-            //             },
-            //         },
-            //         scales: {
-            //             x: {
-            //                 display: true,
-            //                 grid: {
-            //                     display: true,
-            //                     color: config.gridColor,
-            //                     lineWidth: config.gridLineWidth,
-            //                 },
-            //                 ticks: {
-            //                     maxTicksLimit: config.x_axis_label_count,
-            //                     color: config.labelFontColor,
-            //                     font: {
-            //                         size: config.labelFontSizeX,
-            //                     },
-            //                 },
-            //             },
-            //             y: {
-            //                 type: chart_type,
-            //                 display: config.display_y_axis_labels,
-            //                 afterDataLimits: (scale) => {
-            //                     // Add 10% padding to the top
-            //                     const range = scale.max - scale.min;
-            //                     scale.max = scale.max + (range * 0.01);
-            //                     // Optionally add padding to bottom too
-            //                     // scale.min = scale.min - (range * 0.1);
-            //                 },
-            //                 grid: {
-            //                     display: true,
-            //                     color: config.gridColor,
-            //                     lineWidth: config.gridLineWidth,
-            //                 },
-            //                 ticks: {
-            //                     maxTicksLimit: config.y_axis_label_count,
-            //                     color: config.labelFontColor,
-            //                     font: {
-            //                         size: config.labelFontSizeY,
-            //                     },
-            //                     callback: function(value, index, ticks) {
-            //                         if(value.toString().includes('.')){
-            //                             return ((value * scale).toFixed(4)).toString()+y_axis_units
-            //                         }
-            //                         const final_value = bigInt(value).multiply(scale)
-            //                         if(bigInt(final_value).lesser(bigInt(1_000_000))){
-            //                             return number_with_commas(final_value.toString())+y_axis_units
-            //                         }else{
-            //                             const main = final_value.toString().slice(0, 3)
-            //                             const rest = final_value.toString().slice(3)
-            //                             var power = rest.length
-            //                             return number_with_commas(main) +'e'+power+y_axis_units
-            //                         }
-            //                     }
-            //                 },
-            //             },
-            //         },
-            //         elements: {
-            //             point: {
-            //                 hoverBackgroundColor: config.chartColor,
-            //             },
-            //         },
-            //         interaction: {
-            //             mode: 'nearest',
-            //             axis: 'x',
-            //             intersect: false,
-            //         },
-            //     };
-            // };
 
             const getChartOptions2 = () => {
                 const config = { ...defaultConfig };

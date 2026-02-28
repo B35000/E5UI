@@ -510,6 +510,11 @@ class NewContractPage extends Component {
                 <div onClick={()=>this.preset_life_contract()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['179'], 'details':this.props.app_state.loc['180'], 'size':'l'})}
                 </div>
+
+                <div onClick={()=>this.preset_public_contract()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['252d']/* 🌐 Public Contract */, 'details':this.props.app_state.loc['252e']/* A contract representing shared consensus for a public institution or shared organization. */, 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
                 
                 {this.get_contract_type() == 'workgroup' && (
                     <div>
@@ -753,6 +758,56 @@ class NewContractPage extends Component {
 
     }
 
+    preset_public_contract(is_checking_type){
+        var end_mint_limit = this.get_mint_limit(3)
+        var spend_mint_limit = this.get_mint_limit(5)
+
+        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
+
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [2] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [2] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
+        var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
+
+        var set_object = {
+            new_contract_type_tags_object: contract_type,
+            default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
+            max_extend_enter_contract_limit: (60*60*24*7*5),/* 1/2 year */
+            default_minimum_end_vote_bounty_amount: bigInt('0'),
+            default_proposal_expiry_duration_limit: (60*60*24), /* 1 day */
+            max_enter_contract_duration: (60*60*24*7*53*2),/* 1 year */
+
+            auto_wait_tags_object:auto_wait,
+            default_minimum_spend_vote_bounty_amount:bigInt('0'),
+            proposal_modify_expiry_duration_limit: 0, /* 0 hrs */
+            can_modify_contract_as_moderator: can_modify_contrac_as_mod,
+            can_extend_enter_contract_at_any_time: can_extend_enter_contract_at_any_time,
+            maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7*2),/* 2 weeks */
+            bounty_limit_type:bounty_limit_type,
+            contract_force_exit_enabled: force_exit_enabled,
+            price_data:price, default_consensus_majority_limit: bigInt('100e16')
+        }
+
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['181'], 2500)
+        }
+    }
+
 
 
     get_contract_type(){
@@ -767,6 +822,9 @@ class NewContractPage extends Component {
         }
         else if(this.preset_life_contract(true) == true){
             return 'life'
+        }
+        else if(this.preset_public_contract(true) == true){
+            return 'public'
         }
         else{
             return 'custom'

@@ -687,6 +687,7 @@ import LocationMapInput from './pages/location_map_input'
 import ViewObjectLocations from './pages/view_object_location_pins'
 import CallPage from './pages/call_page'
 import PurchaseCreditsPage from './pages/purchase_credits_page'
+import ConfigureObligationsPage from './pages/configure_obligations_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -1248,7 +1249,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -3577,6 +3578,7 @@ class App extends Component {
     this.view_call_interface_page = React.createRef();
     this.localStream = React.createRef();
     this.view_purchase_credits_page = React.createRef();
+    this.view_configure_obligations_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6297,6 +6299,8 @@ class App extends Component {
           {this.render_fulfil_auction_bid_bottomsheet()}
           {this.render_view_purchase_credits_bottomsheet()}
           {this.render_view_call_interface_bottomsheet()}
+          {this.render_view_configure_obligations_element()}
+
 
           {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -6427,6 +6431,8 @@ class App extends Component {
           get_tag_price_data_for_object={this.get_tag_price_data_for_object.bind(this)} load_objects={this.load_objects.bind(this)} export_order={this.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.send_direct_message.bind(this)}
 
           set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)} emit_view_object_event={this.emit_view_object_event.bind(this)} fetch_and_set_loaded_object_views={this.fetch_and_set_loaded_object_views.bind(this)}
+
+          show_view_configure_obligations={this.show_view_configure_obligations.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -14718,6 +14724,15 @@ class App extends Component {
       setTimeout(function() {
         if(me.view_purchase_credits_page.current != null){
           me.view_purchase_credits_page.current?.setState(tx)
+        }
+      }, (1 * 500));
+    }
+    else if(tx.type == this.getLocale()['3093']/* 'configure-obligations' */){
+      this.open_view_configure_obligations_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.view_configure_obligations_page.current != null){
+          me.view_configure_obligations_page.current?.setState(tx)
         }
       }, (1 * 500));
     }
@@ -23577,6 +23592,99 @@ class App extends Component {
   }
 
   add_purchase_credits_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_view_configure_obligations_bottomsheet(){
+    if(this.state.view_configure_obligations_bottomsheet2 != true) return;
+    var os = getOS()
+    return this.renderBottomSheet(
+      this.render_view_configure_obligations_element(),
+      this.state.view_configure_obligations_bottomsheet,
+      this.open_view_configure_obligations_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  render_view_configure_obligations_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div>
+        <ConfigureObligationsPage ref={this.view_configure_obligations_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+        add_configure_obligations_transaction_to_stack={this.add_configure_obligations_transaction_to_stack.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_view_configure_obligations_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_configure_obligations_bottomsheet')
+    if(this.state.view_configure_obligations_bottomsheet == true){
+      //closing
+      this.view_configure_obligations_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_configure_obligations_bottomsheet: !this.state.view_configure_obligations_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_configure_obligations_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_configure_obligations_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_configure_obligations_bottomsheet: !me.state.view_configure_obligations_bottomsheet});
+
+          if(me.view_configure_obligations_bottomsheet != null){
+            // me.view_transaction_page.current?.setState(me.view_configure_obligations_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_configure_obligations(object){
+    this.open_view_configure_obligations_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_configure_obligations_page.current != null){
+        me.view_configure_obligations_page.current.set_data(object)
+      }
+    }, (1 * 500));
+  }
+
+  add_configure_obligations_transaction_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
     var edit_id = -1
     for(var i=0; i<stack_clone.length; i++){

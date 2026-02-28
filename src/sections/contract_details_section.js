@@ -515,6 +515,8 @@ class ContractDetailsSection extends Component {
 
                                     {index == 38 && this.render_auth_modify_button(object)}
 
+                                    {index == 38 && this.render_configure_obligation_configuration_button(object)}
+
                                     {index == 39 && this.render_force_exit_button(object)}
 
                                     {index == 40 && this.render_moderator_button(object)}
@@ -744,6 +746,7 @@ class ContractDetailsSection extends Component {
                 'personal':this.props.app_state.loc['175'],
                 'work':this.props.app_state.loc['177'],
                 'life':this.props.app_state.loc['179'],
+                'public':this.props.app_state.loc['252d']/* 🌐 Public Contract */,
                 'custom':this.props.app_state.loc['2214g'],
             }
             const title = this.props.app_state.loc['2214h']/* 'Contract Type.' */
@@ -1070,9 +1073,13 @@ class ContractDetailsSection extends Component {
 
     render_auth_modify_button(object) {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
-        var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id[object['e5']]
-        if (object['id'] != 2 && object['event'].returnValues.p3 == my_account && contract_config[28/* can_modify_contract_as_moderator */] == 1) {
+        const contract_config = object['data'][1]
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+
+        const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
+        const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
+
+        if (object['id'] != 2 && ((object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true) || object['moderators'].includes(my_account)) && contract_config[28/* can_modify_contract_as_moderator */] == 1) {
             return (
                 <div>
                     {this.render_detail_item('0')}
@@ -1085,6 +1092,30 @@ class ContractDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_configure_obligation_configuration_button(object){
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+        const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
+        const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
+        const contract_type = object['ipfs'].contract_type || 'custom'
+
+        if( object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214bl']/* '⚖️ Configure Obligations' */, 'details': this.props.app_state.loc['2214bk']/* 'Set the obligation configuration for the contract.' */, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.configure_obligations(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214bm']/* 'Configure.' */, 'action': '' })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    configure_obligations(object){
+        this.props.show_view_configure_obligations(object)
     }
 
     render_force_exit_button(object) {
