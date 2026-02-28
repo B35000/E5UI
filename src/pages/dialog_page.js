@@ -117,7 +117,9 @@ class DialogPage extends Component {
 
         new_call_recepients:[], call_receiver_account_id:'', call_password:'', call_identifier:'',enter_call_password:'', get_record_call_tags_object:this.get_record_call_tags_object(), new_voice_call_number_id: make_number_id_str(15),
 
-        credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'', dm_recipient:''
+        credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'', dm_recipient:'',
+
+        targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(),
     };
 
 
@@ -175,6 +177,17 @@ class DialogPage extends Component {
             },
             'e':[
                 ['or','',0], ['e',this.props.app_state.loc['3091bn']/* 'record' */], [0]
+            ],
+        };
+    }
+
+    get_obligation_keyword_filter_tags_object(){
+        return {
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */, this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */], [0]
             ],
         };
     }
@@ -601,6 +614,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.view_poll_markdown_details_ui()}
+                </div>
+            )
+        }
+        else if(option == 'view_obligation_configuration_item'){
+            return(
+                <div>
+                    {this.render_view_obligation_configuration_item_ui()}
                 </div>
             )
         }
@@ -11011,6 +11031,255 @@ return data['data']
             </div>
         )
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_view_obligation_configuration_item_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_obligation_configuration_item_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_keyword_search()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_obligation_configuration_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_keyword_search()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_obligation_configuration_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_keyword_search()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_obligation_configuration_item_data(){
+        const item = this.state.data['item']
+        const contract = this.state.data['object']
+        const item_obligation_configuration = item['ipfs']
+
+        const date_object = this.get_deadline_date_object(item_obligation_configuration.deadline_datetime)
+        const work_keyword_count = Object.keys(item_obligation_configuration.work_keywords).length
+        const explore_keyword_count = Object.keys(item_obligation_configuration.explore_keywords).length
+        const locale = navigator.language || navigator.userLanguage || 'en-US'
+
+        return(
+            <div>
+                {this.render_contract(contract)}
+                <div style={{ height:15 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':''+(date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })), 'details':this.props.app_state.loc['3093eg']/* 'Deadline Date.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093ea']/* 'Targeted Work Keywords' */, 'subtitle':this.format_power_figure(work_keyword_count), 'barwidth':this.get_number_width(work_keyword_count), 'number':`${this.format_account_balance_figure(work_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093eb']/* 'Targeted Explore Keywords' */, 'subtitle':this.format_power_figure(explore_keyword_count), 'barwidth':this.get_number_width(explore_keyword_count), 'number':`${this.format_account_balance_figure(explore_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_job_contractor_income_obligation), 'details':this.props.app_state.loc['3093p']/* 'Default Job Contractor Income Obligation' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_enter_contract_obligation), 'details':this.props.app_state.loc['3093s']/* 'Enter Contract Obligation' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_spend_contract_obligation), 'details':this.props.app_state.loc['3093v']/* 'Spend Contract Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_proposal_bounty_obligation), 'details':this.props.app_state.loc['3093y']/* 'Proposal Bounty Obligation' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_storage_purchase_renewal_obligation), 'details':this.props.app_state.loc['3093bb']/* 'Storage Purchase and Renewal Obligation' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_subscription_purchase_obligation), 'details':this.props.app_state.loc['3093bf']/* 'Subscription Purchase Obligation' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_award_payment_obligation), 'details':this.props.app_state.loc['3093cb']/* 'Default Award Payment Obligation' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_direct_purchase_obligation), 'details':this.props.app_state.loc['3093ce']/* 'Direct Purchase Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_fulfilled_bags_obligation), 'details':this.props.app_state.loc['3093ch']/* 'Fulfilled Bags Obligation' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_audiopost_purchase_obligation), 'details':this.props.app_state.loc['3093ck']/* 'Audiopost Purchase Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_videopost_purchase_obligation), 'details':this.props.app_state.loc['3093cn']/* 'Videopost Purchase Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_creator_group_payout_obligation), 'details':this.props.app_state.loc['3093cq']/* 'Creator Group Payout Obligation.' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_direct_transfer_obligation), 'details':this.props.app_state.loc['3093cz']/* 'Direct Transfer Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_iTransfer_obligation), 'details':this.props.app_state.loc['3093dc']/* 'iTransfer Obligation' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_bill_payment_obligation), 'details':this.props.app_state.loc['3093df']/* 'Bill Fulfilment Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_token_acquisition_obligation), 'details':this.props.app_state.loc['3093di']/* 'Token Acquisition Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_token_remarket_obligation), 'details':this.props.app_state.loc['3093ed']/* 'Token Remarket Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_royalty_payout_obligation), 'details':this.props.app_state.loc['3093dn']/* 'Royalty Payout Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_liquidity_deposit_withdraw_obligation), 'details':this.props.app_state.loc['3093dq']/* 'Liquidity Deposit Withdraw Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']/* 'Trust Fee Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    render_contract(object){
+        const item = this.format_contract_item(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+    }
+
+    render_keyword_search(){
+        const item = this.state.data['item']
+        const item_obligation_configuration = item['ipfs']
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055kt']/* 'Filter Targeted Keywords.' */, 'details': this.props.app_state.loc['3055ku']/* 'Filter and search for a targeted keyword in the configuration.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3093bl']/* 'Keyword...' */} when_text_input_field_changed={this.when_targeted_obligation_keyword_input_field_changed.bind(this)} text={this.state.targeted_obligation_keyword} theme={this.props.theme}/>
+                <div style={{ height:10 }}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_obligation_keyword_filter_tags_object} tag_size={'l'} when_tags_updated={this.when_get_obligation_keyword_filter_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_set_obligation_keywords(item_obligation_configuration)}
+            </div>
+        )
+    }
+
+    when_get_obligation_keyword_filter_tags_object_updated(tag_obj){
+        this.setState({get_obligation_keyword_filter_tags_object: tag_obj})
+    }
+
+    when_targeted_obligation_keyword_input_field_changed(text){
+        this.setState({targeted_obligation_keyword: text})
+    }
+
+    render_set_obligation_keywords(item_obligation_configuration){
+        const all_keywords = {}
+        const selected_item = this.get_selected_item(this.state.get_obligation_keyword_filter_tags_object, 'e')
+        if(selected_item == this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */){
+            Object.assign(all_keywords, item_obligation_configuration.work_keywords)
+        }
+        else if(selected_item == this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */){
+            Object.assign(all_keywords, item_obligation_configuration.explore_keywords)
+        }
+        
+        const all_items = [].concat(Object.keys(this.state.all_keywords))
+        const items = all_items.filter((keyword) => {
+            return (keyword.startsWith(this.state.targeted_obligation_keyword.toLowerCase()) || this.state.targeted_obligation_keyword == '')
+        }).slice(0, 15)
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        return(
+            <div style={{}}>
+                <div style={{ 'padding': '0px 5px 0px 5px'}}>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '2px 5px 2px 5px'}}>
+                            <div key={index}>
+                                <div style={{}}>
+                                    {this.render_target_item(item, all_keywords)}
+                                </div>
+                            </div>
+                        </div> 
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    render_target_item(item, all_keywords){
+        const object = all_keywords[item]
+        const proportion = object['proportion']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.format_proportion(proportion), 'details':item, 'size':'l'})}
+            </div>
+        )
+    }
+    
 
 
 

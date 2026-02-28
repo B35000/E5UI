@@ -56,7 +56,7 @@ function makeid(length) {
 class ConfigureObligationsPage extends Component {
     
     state = {
-        selected: 0, contract: null, id: makeid(8), type:this.props.app_state.loc['3093']/* 'configure-obligations' */, entered_indexing_tags:[this.props.app_state.loc['3093a']/* 'configure' */, this.props.app_state.loc['3093b']/* 'change' */,this.props.app_state.loc['3093c']/* 'obligations' */], 
+        selected: 0, contract: null, id: makeid(8), type: this.props.app_state.loc['3093']/* 'configure-obligations' */, entered_indexing_tags:[this.props.app_state.loc['3093a']/* 'configure' */, this.props.app_state.loc['3093b']/* 'change' */,this.props.app_state.loc['3093c']/* 'obligations' */], 
         get_configure_obligations_title_tags_object:this.get_configure_obligations_title_tags_object(),
 
         default_job_contractor_income_obligation:0, default_enter_contract_obligation:0, default_spend_contract_obligation:0, default_proposal_bounty_obligation:0, default_storage_purchase_renewal_obligation:0, default_subscription_purchase_obligation:0,
@@ -66,7 +66,9 @@ class ConfigureObligationsPage extends Component {
 
         default_direct_transfer_obligation:0, default_iTransfer_obligation:0, default_bill_payment_obligation:0, default_token_acquisition_obligation:0, default_token_remarket_obligation:0, default_royalty_payout_obligation:0, default_liquidity_deposit_withdraw_obligation:0, default_trust_fee_obligation:0,
 
-        default_keyword_combination:0, deadline_datetime:'1:0'
+        default_keyword_combination:0, deadline_datetime:'1:0',
+
+        reserved_keyword:'', reserved_keywords:[],
     };
 
     get_configure_obligations_title_tags_object(){
@@ -75,7 +77,7 @@ class ConfigureObligationsPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' *//* , this.props.app_state.loc['3093e'] *//* 'obligation-children ↪️' *//* , this.props.app_state.loc['3093be'] *//* 'reserved-keywords ®' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' *//* , this.props.app_state.loc['3093e'] *//* 'obligation-children ↪️' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */], [0]
             ],
         };
 
@@ -86,6 +88,8 @@ class ConfigureObligationsPage extends Component {
         obj[this.props.app_state.loc['3093f']/* 'explore-obligations' */] = [
             ['xor','',0], ['e',this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
         ]
+
+        return obj
     }
 
 
@@ -246,6 +250,9 @@ class ConfigureObligationsPage extends Component {
                 <div style={{ height:10 }}/>
 
                 {this.render_contract()}
+                
+                <div style={{ height:15 }}/>
+                {this.render_restore_from_previous_data()}
 
                 {this.render_detail_item('0')}
                 
@@ -424,6 +431,66 @@ class ConfigureObligationsPage extends Component {
         )
     }
 
+    render_restore_from_previous_data(){
+        const contract = this.state.contract
+        const items = [].concat(this.sortByAttributeDescending(contract['obligation_configurations'], 'time'))
+        const items2 = [0, 1]
+        return(
+            <div>
+                
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093eh']/* 'Restore Previous Setting' */, 'details': this.props.app_state.loc['3093ei']/* 'You may optionally restore a previous configuration from your history.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_obligation_configuration_item(item)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_obligation_configuration_item(item){
+        const time = item['time']
+        const details = (new Date(time*1000).toLocaleString())
+        const title = this.props.app_state.loc['2214bp']/* 'As of $' */.replace('$', this.get_time_diff((Date.now()/1000) - (parseInt(time))))
+        return(
+            <div onClick={() => this.when_obligation_configuration_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':''+details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_obligation_configuration_item_clicked(item){
+        const contract = this.state.contract;
+        const new_state = {}
+        Object.assign(new_state, item['ipfs'])
+        new_state.contract = contract;
+        this.setState(new_state)
+        this.props.notify(this.props.app_state.loc['3093ej']/* 'Configuration set from history item.' */, 6000)
+    }
 
 
 
@@ -664,15 +731,15 @@ class ConfigureObligationsPage extends Component {
     }
 
     add_work_keyword_obligation(){
-        const keyword = this.state.targeted_work_keyword.trim()
+        const keyword = this.state.targeted_work_keyword.trim().toLowerCase()
         const proportion = this.state.default_work_keyword_obligation
 
         if(keyword == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
         }
-        else if(this.hasWhiteSpace(keyword)){
-            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
-        }
+        // else if(this.hasWhiteSpace(keyword)){
+        //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
+        // }
         else if(keyword.length > this.props.app_state.tag_size){
             this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
         }
@@ -993,15 +1060,15 @@ class ConfigureObligationsPage extends Component {
     }
 
     add_explore_keyword_obligation(){
-        const keyword = this.state.targeted_explore_keyword.trim()
+        const keyword = this.state.targeted_explore_keyword.trim().toLowerCase()
         const proportion = this.state.default_explore_keyword_obligation
 
         if(keyword == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
         }
-        else if(this.hasWhiteSpace(keyword)){
-            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
-        }
+        // else if(this.hasWhiteSpace(keyword)){
+        //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
+        // }
         else if(keyword.length > this.props.app_state.tag_size){
             this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
         }
@@ -1262,6 +1329,8 @@ class ConfigureObligationsPage extends Component {
                 <div>
                     {this.render_reserved_keywords_data()}
                     {this.render_detail_item('0')}
+                    {this.render_set_reserved_keywords()}
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -1275,7 +1344,7 @@ class ConfigureObligationsPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_set_reserved_keywords()}
                     </div>
                 </div>
                 
@@ -1290,7 +1359,7 @@ class ConfigureObligationsPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_set_reserved_keywords()}
                     </div>
                 </div>
             )
@@ -1298,10 +1367,104 @@ class ConfigureObligationsPage extends Component {
     }
 
     render_reserved_keywords_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ek']/* 'Reserve Keywords.' */, 'details': this.props.app_state.loc['3093el']/* 'Reserve keywords from being used in the work and explore sections.' */, 'size': 'l' })}
 
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3093em']/* 'These reservations will only be applied in the jobs, contractors and storefront section.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+                <div style={{ height:10 }}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3093bl']/* 'Keyword...' */} when_text_input_field_changed={this.when_reserved_keyword_input_field_changed.bind(this)} text={this.state.reserved_keyword} theme={this.props.theme}/>
+
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.add_reserved_keyword_obligation()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3093bo']/* 'Add Keyword' */, 'action': '' })}
+                </div>
+            </div>
+        )
     }
 
+    when_reserved_keyword_input_field_changed(text){
+        this.setState({reserved_keyword: text})
+    }
 
+    add_reserved_keyword_obligation(){
+        const keyword = this.state.reserved_keyword.trim().toLowerCase()
+
+        if(keyword == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
+        }
+        // else if(this.hasWhiteSpace(keyword)){
+        //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
+        // }
+        else if(keyword.length > this.props.app_state.tag_size){
+            this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else if(this.state.reserved_keywords.includes(keyword)){
+            this.props.notify(this.props.app_state.loc['3093en']/* 'Youve already reserved that keyword' */, 5400)
+        }
+        else{
+            const clone = this.state.reserved_keywords.slice()
+            clone.push(keyword)
+            this.setState({reserved_keywords: clone, reserved_keyword: ''})
+        }
+    }
+
+    render_set_reserved_keywords(){
+        const all_items = [].concat(this.state.reserved_keywords)
+        const items = all_items.filter((keyword) => {
+            return (keyword.startsWith(this.state.reserved_keyword.toLowerCase()) || this.state.reserved_keyword == '')
+        }).slice(0, 15)
+
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bu']/* 'Added Keywords' */, 'details': this.props.app_state.loc['3093eo']/* 'When you reserve a keyword, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bu']/* 'Added Keywords' */, 'details': this.props.app_state.loc['3093ep']/* 'All the keywords reserved for the two sections.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
+                                        action: () =>this.when_reserved_keyword_target_clicked(item)
+                                        }}>
+                                        <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                            {this.render_target_item(item)}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    when_reserved_keyword_target_clicked(item){
+        const clone = this.state.reserved_keywords.slice()
+        const index = clone.indexOf(item)
+        if(index != -1){
+            clone.splice(index, 1)
+        }
+        this.setState({reserved_keywords: clone})
+    }
 
 
 

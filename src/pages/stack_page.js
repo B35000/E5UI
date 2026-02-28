@@ -4746,6 +4746,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3093']/* 'configure-obligations' */){
+                    var obj = await this.format_configure_obligations_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(obj.str)
+                    adds.push([])
+                    ints.push(obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -6151,6 +6158,12 @@ class StackPage extends Component {
 
                     ipfs_index_object[txs[i].id] = tags_payment_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':tags_payment_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3093']/* 'configure-obligations' */){
+                    const obligation_configuration_data = structuredClone(txs[i])
+                    delete obligation_configuration_data.contract
+                    ipfs_index_object[txs[i].id] = obligation_configuration_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
                 }
             }
         }
@@ -10340,6 +10353,30 @@ class StackPage extends Component {
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
+    format_configure_obligations_object = async (t, calculate_gas, ipfs_index) =>{
+        const contract_id = t.contract['id']
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [contract_id], [23],/* target */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = 65
+        var int_data = 0
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
     }
 
     

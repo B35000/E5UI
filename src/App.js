@@ -1353,6 +1353,8 @@ class App extends Component {
     notification_object_events:{'job': [], 'subscription':[], 'contract':[], 'proposal':[], 'exchange':[], 'bag':[], 'post':[], 'channel':[], 'store':[], 'contractor':[], 'audio':[], 'video':[], 'nitro':[], 'poll':[], }, previous_notification_objects:{}, received_coin_ether_requests:{}, received_pre_purchase_request:{}, pre_purchase_prompt_data:{},
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
+
+    obligation_subscriptions:{},
   };
 
   get_thread_pool_size(){
@@ -6432,7 +6434,7 @@ class App extends Component {
 
           set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)} emit_view_object_event={this.emit_view_object_event.bind(this)} fetch_and_set_loaded_object_views={this.fetch_and_set_loaded_object_views.bind(this)}
 
-          show_view_configure_obligations={this.show_view_configure_obligations.bind(this)}
+          show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -17491,6 +17493,7 @@ class App extends Component {
       'view_pre_purchase_request':570,
       'new_direct_message_chat':310,
       'view_poll_markdown_details':550,
+      'view_obligation_configuration_item':650
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -23636,7 +23639,6 @@ class App extends Component {
   }
 
   render_view_configure_obligations_element(){
-    var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
       <div>
@@ -23679,7 +23681,12 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       if(me.view_configure_obligations_page.current != null){
+        if(object['obligation_configurations'].length > 0){
+          const latest_configuration = this.sortByAttributeDescending(object['obligation_configurations'], 'time')[0]
+          me.view_configure_obligations_page.current.setState(latest_configuration)
+        }
         me.view_configure_obligations_page.current.set_data(object)
+
       }
     }, (1 * 500));
   }
@@ -31723,6 +31730,8 @@ class App extends Component {
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:30/* 30(contract_prepurchase_credits_sale) */, p3/* context */:id, p4/* string_data */:my_address}],
       [web3, H52contractInstance, 'e1', e5, {p1/* exchange */:5, p3/* receiver */:id}],
       [web3, H52contractInstance, 'e5', e5, {p2/* awward_receiver */:id, p4/* metadata */:my_address}],
+
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:id, p3/* context */:65/* 65(public_contract_obligation_configuration) */}],
     ]
     var all_events = (await this.load_multiple_events_from_nitro(event_params)).all_events
     var entered_accounts = all_events[0]
@@ -31771,6 +31780,18 @@ class App extends Component {
     var my_blocked_time_value =/*  await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_contracts
 
 
+    const obligation_configuration_events = all_events[5]
+    const configurations = []
+    await this.fetch_multiple_cids_from_nitro(obligation_configuration_events, 0, 'p4')
+    for(var i=0; i<obligation_configuration_events.length; i++){
+      const event = obligation_configuration_events[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      const configuration_object = {'event':event, 'ipfs':ipfs, 'time':event.returnValues.p6/* timestamp */}
+      configurations.push(configuration_object)
+    }
+
+
     object['end_balance'] = end_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['spend_balance'] = spend_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['participants'] = contract_entered_accounts
@@ -31780,6 +31801,7 @@ class App extends Component {
     object['access_rights_enabled'] = interactible_checker_status_values[i]
     object['my_interactable_time_value'] = my_interactable_time_value[i][0] 
     object['my_blocked_time_value'] = my_blocked_time_value[i][0]
+    object['obligation_configurations'] = configurations
     object['hidden'] = false
 
 
@@ -47528,6 +47550,8 @@ class App extends Component {
     await this.wait(1800)
     socket.emit('join_chatroom', 'object_views');
     await this.wait(1800)
+    socket.emit('join_chatroom', 'obligation_subscription')
+    await this.wait(1800)
 
     for(var i=0; i<this.state.active_rooms.length; i++){
       const room = this.state.active_rooms[i];
@@ -48427,6 +48451,37 @@ class App extends Component {
     else if(message_object.message.type == 'repost_object_event'){
       this.process_repost_object_event_message(message_object.message, message_object.object_hash)
     }
+  }
+
+  async emit_subscribe_to_obligation_event(object_e5_id){
+    const my_object = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] || {}
+    const my_data = my_object['data'] || []
+    const obligation_subscriptions_array_clone = my_data.slice()
+    const obligation_subscriptions_clone = structuredClone(this.state.obligation_subscriptions)
+    if(obligation_subscriptions_array_clone.includes(object_e5_id)){
+      const index = obligation_subscriptions_array_clone.indexOf(object_e5_id)
+      obligation_subscriptions_array_clone.splice(index, 1)
+      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
+        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now()}
+      }
+      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
+      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+      this.prompt_top_notification(this.getLocale()['2738cn']/* 'Removing obligation subscription... */, 1900)
+    }else{
+      obligation_subscriptions_array_clone.push(object_e5_id)
+      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
+        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now()}
+      }
+      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
+      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+      this.prompt_top_notification(this.getLocale()['2738co']/* 'Adding obligation subscription... */, 1900)
+    }
+    const message_object = await this.prepare_obligation_subscription_object_message(obligation_subscriptions_array_clone)
+
+    const room_id = 'obligation_subscription'
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
   }
 
   
@@ -50291,6 +50346,47 @@ class App extends Component {
       record_view: true,
       record_type: record_type,
       record_id: object_e5_ids
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_obligation_subscription_object_message(obligation_subscriptions_array_clone){
+    const message_obj = { 'obligation_subscriptions':obligation_subscriptions_array_clone, }
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = 0
+    const message = {
+      type: 'obligation_subscription',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: 0,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -52399,6 +52495,43 @@ class App extends Component {
     }
   }
 
+  async process_obligation_subscriptions_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author_address']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const time = message['time']
+      const obligation_subscriptions = ipfs['obligation_subscriptions']
+      const obligation_subscriptions_clone = structuredClone(this.state.obligation_subscriptions)
+      if(obligation_subscriptions_clone[message['author_address']] == null){
+        obligation_subscriptions_clone[message['author_address']] = { 'data':[], 'time':0 }
+      }
+
+      if(obligation_subscriptions_clone[message['author_address']]['time'] < time){
+        //loading a more recent version
+        obligation_subscriptions_clone[message['author_address']]['time'] = time
+        obligation_subscriptions_clone[message['author_address']]['data'] = obligation_subscriptions
+
+        this.setState({obligation_subscriptions: obligation_subscriptions_clone})
+      }
+    }
+  }
+
 
 
 
@@ -52836,6 +52969,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'object_views'){
             await this.process_object_views_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'obligation_subscription'){
+            await this.process_obligation_subscriptions_message(object_data, object_hash)
           }
           await this.wait(300)
         }

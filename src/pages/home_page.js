@@ -5936,7 +5936,7 @@ class home_page extends Component {
 
                 start_object_file_viewcount_fetch={this.props.start_object_file_viewcount_fetch.bind(this)} export_order={this.props.export_order.bind(this)} load_prepurchase_balance_for_prompt={this.props.load_prepurchase_balance_for_prompt.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)} send_direct_message={this.props.send_direct_message.bind(this)} when_file_tapped={this.props.when_file_tapped.bind(this)}
 
-                show_view_configure_obligations={this.props.show_view_configure_obligations.bind(this)}
+                show_view_configure_obligations={this.props.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.props.emit_subscribe_to_obligation_event.bind(this)}
                 />
             </div>
         )

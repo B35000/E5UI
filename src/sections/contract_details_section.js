@@ -68,7 +68,7 @@ class ContractDetailsSection extends Component {
                 active: 'e',
             },
             'e': [
-                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */, this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */], [1]
+                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */, this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */, this.props.app_state.loc['2214bq']/* 'obligation-configurations 🏛️' */], [1]
             ],
             'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
@@ -274,6 +274,13 @@ class ContractDetailsSection extends Component {
                 return(
                     <div key={selected_item}>
                         {this.render_prepurchase_requests_section(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == this.props.app_state.loc['2214bq']/* 'obligation-configurations 🏛️' */){
+                return(
+                    <div key={selected_item}>
+                        {this.render_obligation_configuration_history_section(object)}
                     </div>
                 )
             }
@@ -516,6 +523,8 @@ class ContractDetailsSection extends Component {
                                     {index == 38 && this.render_auth_modify_button(object)}
 
                                     {index == 38 && this.render_configure_obligation_configuration_button(object)}
+
+                                    {index == 39 && this.render_subscribe_to_contracts_obligations_button(object)}
 
                                     {index == 39 && this.render_force_exit_button(object)}
 
@@ -1079,7 +1088,7 @@ class ContractDetailsSection extends Component {
         const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
         const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
 
-        if (object['id'] != 2 && ((object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true) || object['moderators'].includes(my_account)) && contract_config[28/* can_modify_contract_as_moderator */] == 1) {
+        if (object['id'] != 2 && object['hidden'] == false && ((object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true) || object['moderators'].includes(my_account)) && contract_config[28/* can_modify_contract_as_moderator */] == 1) {
             return (
                 <div>
                     {this.render_detail_item('0')}
@@ -1116,6 +1125,37 @@ class ContractDetailsSection extends Component {
 
     configure_obligations(object){
         this.props.show_view_configure_obligations(object)
+    }
+
+    render_subscribe_to_contracts_obligations_button(object){
+        if(object['obligation_configurations'] != null && object['obligation_configurations'].length > 0){
+            const my_object = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] || {}
+            const my_data = my_object['data'] || []
+
+            var title = this.props.app_state.loc['2214br']/* '✮ Subscribe To Public Contract.' */
+            var details = this.props.app_state.loc['2214bs']/* 'Subscribe to the public contract and fulfil its obligations for you.' */
+            var button = this.props.app_state.loc['2214bt']/* 'Subscribe' */
+            
+            if(my_data.includes(object['e5_id'])){
+                title = this.props.app_state.loc['2214bu']/* '☆ Unsubscribe From the Public Contract.' */
+                details = this.props.app_state.loc['2214bv']/* 'Unsubscribe from the public contract and stop fulfilling its obligations.' */
+                button = this.props.app_state.loc['2214bw']/* 'Unsubscribe' */
+            }
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'title': title, 'details': details, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.subscribe_to_obligation(object)}>
+                        {this.render_detail_item('5', { 'text': button, 'action': '' })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    subscribe_to_obligation(object){
+        this.props.emit_subscribe_to_obligation_event(object['e5_id'])
     }
 
     render_force_exit_button(object) {
@@ -2150,6 +2190,77 @@ class ContractDetailsSection extends Component {
 
 
 
+    render_obligation_configuration_history_section(object){
+        var he = this.props.height-45
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div style={{padding:'5px 5px 5px 5px'}}>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2214bn']/* 'Obligation Configuration History.' */, 'details':this.props.app_state.loc['2214bo']/* 'A ledger of the contract\'s obligation configuration is shown below.' */, 'size':'l'})} 
+                    </div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_obligation_configuration_history_items(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_obligation_configuration_history_items(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.sortByAttributeDescending(object['obligation_configurations'], 'time'))
+        if(items.length == 0){
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px 5px 2px 5px'}}>
+                            <div key={index}>
+                                {this.render_obligation_configuration_item(item, object)}
+                            </div>
+                        </li> 
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_obligation_configuration_item(item, object){
+        const time = item['time']
+        const details = (new Date(time*1000).toLocaleString())
+        const title = this.props.app_state.loc['2214bp']/* 'As of $' */.replace('$', this.get_time_diff((Date.now()/1000) - (parseInt(time))))
+        return(
+            <div onClick={() => this.when_obligation_configuration_item_clicked(item, object)}>
+                {this.render_detail_item('3', {'title':title, 'details':''+details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_obligation_configuration_item_clicked(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_obligation_configuration_item')
+    }
 
 
 
@@ -2157,6 +2268,17 @@ class ContractDetailsSection extends Component {
 
 
 
+
+
+
+
+
+
+
+
+
+
+    //----------------------------------------LOGS-----------------------------------------
 
     render_create_proposal_logs(object) {
         var he = this.props.height - 45
