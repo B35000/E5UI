@@ -358,8 +358,7 @@ class JobDetailsSection extends Component {
 
                     {this.render_detail_item('0')}
                     {this.render_job_location_info(object)}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2482']/* 'Job Offers' */, 'details':this.props.app_state.loc['2483']/* 'The amounts they are offering for the job.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
+                    
                     {this.render_price_amounts(object)}
 
                     {this.render_object_tag_price_info(object)}
@@ -1000,7 +999,10 @@ class JobDetailsSection extends Component {
 
         const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
 
-        if(object['event'].returnValues.p5 == my_account && !is_socket_job){
+        const extra_data = this.props.app_state.object_extra_data[object['e5_id']] || {}
+        const applications_exist = extra_data['job_application_events'] != null
+
+        if(object['event'].returnValues.p5 == my_account && !is_socket_job && !applications_exist){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1193,6 +1195,8 @@ class JobDetailsSection extends Component {
             items = [0, 1, 2]
             return(
                 <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2482']/* 'Job Offers' */, 'details':this.props.app_state.loc['2483']/* 'The amounts they are offering for the job.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
                     <div style={{overflow: 'auto'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
@@ -1211,6 +1215,8 @@ class JobDetailsSection extends Component {
         }
         return(
             <div style={{}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2482']/* 'Job Offers' */, 'details':this.props.app_state.loc['2483']/* 'The amounts they are offering for the job.' */, 'size':'l'})}
+                <div style={{height:10}}/>
                 <div style={{'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <div style={{'padding': '3px 0px 3px 0px'}}>

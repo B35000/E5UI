@@ -59,7 +59,7 @@ class ConfigureObligationsPage extends Component {
         selected: 0, contract: null, id: makeid(8), type: this.props.app_state.loc['3093']/* 'configure-obligations' */, entered_indexing_tags:[this.props.app_state.loc['3093a']/* 'configure' */, this.props.app_state.loc['3093b']/* 'change' */,this.props.app_state.loc['3093c']/* 'obligations' */], 
         get_configure_obligations_title_tags_object:this.get_configure_obligations_title_tags_object(),
 
-        default_job_contractor_income_obligation:0, default_enter_contract_obligation:0, default_spend_contract_obligation:0, default_proposal_bounty_obligation:0, default_storage_purchase_renewal_obligation:0, default_subscription_purchase_obligation:0,
+        default_job_contractor_income_obligation:0, default_enter_contract_obligation:0, default_spend_contract_obligation:0, default_proposal_bounty_obligation:0, default_storage_purchase_renewal_obligation:0, default_subscription_purchase_obligation:0, default_purchase_contract_credits_obligation:0,
         targeted_work_keyword:'', default_work_keyword_obligation:0, work_keywords:{},
 
         default_award_payment_obligation:0, default_direct_purchase_obligation:0, default_fulfilled_bags_obligation:0, default_audiopost_purchase_obligation:0, default_videopost_purchase_obligation:0, targeted_explore_keyword: '', default_explore_keyword_obligation:0, explore_keywords:{},
@@ -380,6 +380,9 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_enter_contract_obligation), 'details':this.props.app_state.loc['3093s']/* 'Enter Contract Obligation' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_purchase_contract_credits_obligation), 'details':this.props.app_state.loc['3093fe']/* 'Purchase Contract Credits Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_spend_contract_obligation), 'details':this.props.app_state.loc['3093v']/* 'Spend Contract Obligation.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -435,6 +438,7 @@ class ConfigureObligationsPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']/* 'Trust Fee Obligation.' */, 'size':'l'})}
                 <div style={{height:10}}/>
+                
             </div>
         )
     }
@@ -578,6 +582,16 @@ class ConfigureObligationsPage extends Component {
 
 
 
+                
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fc']/* 'Purchase Contract Credits.' */, 'details': this.props.app_state.loc['3093fd']/* 'The default obligation for all actions involving purchase of contract credits.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_purchase_contract_credits_obligation), 'details':this.props.app_state.loc['3093fe']/* 'Purchase Contract Credits Obligation.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_purchase_contract_credits_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+                {this.render_detail_item('0')}
+
+
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093t']/* 'Spend Contract.' */, 'details': this.props.app_state.loc['3093u']/* 'The default obligation for all actions involving spending contracts.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
@@ -646,6 +660,10 @@ class ConfigureObligationsPage extends Component {
 
     when_default_subscription_purchase_obligation_proportion(number){
         this.setState({default_subscription_purchase_obligation: number})
+    }
+
+    when_default_purchase_contract_credits_obligation_proportion(number){
+        this.setState({default_purchase_contract_credits_obligation: number})
     }
 
 
@@ -1732,6 +1750,7 @@ class ConfigureObligationsPage extends Component {
         if(
             this.state.default_job_contractor_income_obligation > bigInt('51e16') ||
             this.state.default_enter_contract_obligation > bigInt('51e16') ||
+            this.state.default_purchase_contract_credits_obligation > bigInt('51e16') ||
             this.state.default_spend_contract_obligation > bigInt('51e16') ||
             this.state.default_proposal_bounty_obligation > bigInt('51e16') ||
             this.state.default_storage_purchase_renewal_obligation > bigInt('51e16') ||

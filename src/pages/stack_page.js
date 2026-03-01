@@ -5538,7 +5538,12 @@ class StackPage extends Component {
         this.setState({stack_size_in_bytes: stack_size_data_clone})
 
         const ipfs_index_object = {'version':this.props.app_state.version, 'color':this.get_device_color()}
-        const obj = {'version':this.props.app_state.version, 'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address), 'color':this.get_device_color(), 'tags':{'color':this.get_device_color()}}
+        const obj = {
+            'version':this.props.app_state.version, 
+            'author':this.props.hash_data_with_randomizer(this.props.app_state.accounts['E25'].address), 
+            'color':this.get_device_color(), 
+            'tags':{'color':this.get_device_color()}
+        }
         const ipfs_index_array = []
         console.log('stack_page_ipfs', 'initial object data', ipfs_index_object)
         const pushed_txs = []
@@ -6420,6 +6425,182 @@ class StackPage extends Component {
             ipfs_index_array.push({'id':'locations', 'data':data})
         }
 
+
+
+        //obligation records
+        load_targets_obligation_data
+        let obligation_inclusive = false;
+        const obligation_object = { 'data':[], }
+        for(var i=0; i<txs.length; i++){
+            const tx = txs[i]
+            if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5){
+                if(tx.type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                    obligation_inclusive = true;
+
+                }
+                else if(tx.type == this.props.app_state.loc['1018']/* 'transfer' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['1']/* 'enter-contract' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['312']/* 'proposal' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['783']/* 'submit' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['862']/* 'pay-subscription' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['907']/* 'exchange-transfer' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(
+                    tx.type == this.props.app_state.loc['1509']/* 'mail-messages' */ ||
+                    tx.type == this.props.app_state.loc['1510']/* 'channel-messages' */ ||
+                    tx.type == this.props.app_state.loc['1511']/* 'post-messages' */ ||
+                    tx.type == this.props.app_state.loc['1514']/* 'job-messages' */ ||
+                    tx.type == this.props.app_state.loc['1515']/* 'proposal-messages' */ ||
+                    tx.type == this.props.app_state.loc['1501']/* 'bag-messages' */ ||
+                    tx.type == this.props.app_state.loc['1502']/* 'storefront-messages' */ ||
+                    tx.type == this.props.app_state.loc['1505']/* 'job-request-messages' */ ||
+                    tx.type == this.props.app_state.loc['1593cc']/* 'audio-messages' */ || 
+                    tx.type == this.props.app_state.loc['1593ct']/* 'video-messages' */ || 
+                    tx.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */
+                ){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['1155']/* 'award' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['2846']/* stage-royalty */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['2962']/* 'buy-album' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['a2962a']/* 'buy-video' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['3031']/* 'buy-storage' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['3068ac']/* 'iTransfer' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['3071j']/* 'bill-payment' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['3075w']/* 'stage-creator-payout' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['3055df']/* 'nitro-renewal' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['3077']/* 'fulfil-bids' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['2642bm']/* 'order-payment' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['3092']/* 'purchase-credits' */){
+                    obligation_inclusive = true;
+                    
+                }
+                else if(tx.type == this.props.app_state.loc['1632o']/* 'finish-payment' */){
+                    obligation_inclusive = true;
+                    const object = tx.object
+                    const amount_data = tx.price_data
+                    const final_object_value_transfer_data = []
+                    amount_data.forEach(price_item => {
+                        final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
+                    });
+                    const object_texts = []
+                    object_texts.push(object['ipfs'].markdown)
+                    object_texts.push(object['ipfs'].entered_title_text)
+                    object['ipfs'].entered_indexing_tags.forEach(tag => {
+                        object_texts.push(tag)
+                    });
+                    object['ipfs'].entered_objects.forEach(text_object => {
+                        const type = text_object['type']
+                        const text = type == '11' ? text_object['data']['caption']['text'] : text_object['data']['text'];
+                        object_texts.push(text)
+                    });
+
+                    await this.props.load_targets_obligation_data([object['id']], object['e5'])
+                    const object_author = object['author'];
+                    const address_key = this.props.app_state.author_address_mapping[object['e5']][object_author]
+                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    if(authors_obligation_contracts.length > 0){
+                        const obligation_list = { 'id': tx.type }
+                        authors_obligation_contracts.forEach(contract => {
+                            const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
+                            const keywords = object['object_type'] == 'storefront' ? configuration['ipfs'].explore_keywords : configuration['ipfs'].work_keywords
+                            const default_keyword_combination = configuration['ipfs'].default_keyword_combination;
+                            const default_obligation_proportion = object['object_type'] == 'storefront' ? configuration[ipfs].default_fulfilled_bags_obligation : configuration[ipfs].default_job_contractor_income_obligation
+                            const hits = []
+                            const hits_proportion_mapping = {}
+                            object_texts.forEach(text_to_check => {
+                                const words_to_check = text_to_check.toLowerCase().split(' ');
+                                words_to_check.forEach(word => {
+                                    if(keywords[word] != null && !hits.includes(word)){
+                                        hits.push(word)
+                                        hits_proportion_mapping[word] = keywords[word]['proportion']
+                                    }
+                                });
+                            });
+                            if(hits.length > 0){
+                                const top = Object.entries(hits_proportion_mapping)
+                                    .sort(([, valueA], [, valueB]) => parseInt(valueB) - parseInt(valueA)).slice(0, default_keyword_combination);
+                                const top_hits_proportion_mapping = Object.fromEntries(top);
+                                obligation_list[contract] = {
+                                    'proportions':Object.values(top_hits_proportion_mapping),
+                                    'transfers':final_object_value_transfer_data
+                                }
+                            }else{
+                                obligation_list[contract] = {
+                                    'proportions':[default_obligation_proportion],
+                                    'transfers':final_object_value_transfer_data
+                                }
+                            }
+                        });
+                        obligation_object['data'].push(obligation_list)
+                    }
+                }
+                else if(tx.type == this.props.app_state.loc['3094']/* 'exchange-deposit' */){
+                    obligation_inclusive = true;
+                    
+                }
+            }
+        }
+        obj['tags']['obligation_data'] = obligation_object;
 
         
         ipfs_index_array.forEach(item => {

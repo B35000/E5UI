@@ -1355,7 +1355,7 @@ class App extends Component {
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
 
-    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:''
+    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}
   };
 
   get_thread_pool_size(){
@@ -8592,7 +8592,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)}
       />
     )
   }
@@ -10005,15 +10005,6 @@ class App extends Component {
     //   this.setState({follow_unfollow_stack: follow_unfollow_stack_clone})
     // }
 
-    if(
-      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] == null ||
-      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] == null || 
-      this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length == 0
-    ){
-      const default_obligation_e5_id = '2'+this.state.selected_e5;
-      this.emit_subscribe_to_obligation_event(default_obligation_e5_id)
-      await this.wait(1000)
-    }
   }
 
   view_transaction(tx, index){
@@ -10208,6 +10199,65 @@ class App extends Component {
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
     }
+  }
+
+  load_targets_obligation_data = async (target_ids_arg, e5) => {
+    let target_ids = target_ids_arg.slice()
+    if(this.state.author_address_mapping[e5] != null){
+      target_ids = target_ids_arg.filter((target) => {
+        return (this.state.author_address_mapping[e5][target] == null)
+      })
+    }
+    if(target_ids.length == 0){
+      return;
+    }
+    
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const contract_addresses = this.state.addresses[e5]
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    const object_types = await E52contractInstance.methods.f134(target_ids).call((error, result) => {});
+
+    const accounts = []
+    const object_ids = []
+    object_types.forEach((type, index) => {
+      const corresponding_target = target_ids[index]
+      if(type != 0){
+        object_ids.push(corresponding_target)
+      }else{
+        accounts.push(corresponding_target)
+      }
+    });
+
+    const object_authors = object_ids.length > 0 ? await E52contractInstance.methods.f132(object_ids).call((error, result) => {}) : [];
+
+    const all_authors = object_authors.concat(accounts)
+
+    await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], 1771762377000, (36*7*24*60*60*1000), [], e5, all_authors);
+
+    await this.wait(500)
+
+    const contracts_to_load = []
+    const author_address_mapping_clone = structuredClone(this.state.author_address_mapping)
+    if(author_address_mapping_clone[e5] == null){
+      author_address_mapping_clone[e5] = {}
+    }
+    all_authors.forEach(author_target => {
+      const address_key = Object.keys(this.state.obligation_subscriptions).find(key => this.state.obligation_subscriptions[key]['user_account_id'].includes(author_target));
+      if(address_key != undefined){
+        author_address_mapping_clone[e5][author_target] = address_key
+        const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
+        obligation_contracts.forEach(contract_e5_id => {
+          if(!contracts_to_load.includes(contract_e5_id) && this.state.my_contract_obligation_subscription_data[contract_e5_id] == null){
+            contracts_to_load.push(contract_e5_id)
+          }
+        });
+      }
+    });
+    await this.load_my_accounts_obligation_data(contracts_to_load);
+    this.setState({author_address_mapping: author_address_mapping_clone})
+    await this.wait(500);
   }
 
 
@@ -10770,11 +10820,11 @@ class App extends Component {
     }
 
     let reserved_keywords = []
-    if(this.state.default_obligation_contract != ''){
-      const default_obligation_contract_object = this.state.my_contract_obligation_subscription_data[this.state.default_obligation_contract]
-      const default_obligation_contract_object_reserved_keywords = default_obligation_contract_object['ipfs'].reserved_keywords
-      reserved_keywords = reserved_keywords.concat(default_obligation_contract_object_reserved_keywords)
-    }
+    // if(this.state.default_obligation_contract != ''){
+    //   const default_obligation_contract_object = this.state.my_contract_obligation_subscription_data[this.state.default_obligation_contract]
+    //   const default_obligation_contract_object_reserved_keywords = default_obligation_contract_object['ipfs'].reserved_keywords
+    //   reserved_keywords = reserved_keywords.concat(default_obligation_contract_object_reserved_keywords)
+    // }
     if(
       this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] != null &&
       this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
@@ -28302,6 +28352,10 @@ class App extends Component {
           this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
         ){
           await this.load_my_accounts_obligation_data(this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'])
+        }else{
+          this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
+          await this.wait(500)
+          await this.emit_update_subscriptions_for_obligations_event()
         }
         await this.load_and_notify_flash()
       }
@@ -48686,7 +48740,7 @@ class App extends Component {
       const index = obligation_subscriptions_array_clone.indexOf(object_e5_id)
       obligation_subscriptions_array_clone.splice(index, 1)
       if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
-        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now()}
+        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now(), 'user_account_id':this.state.user_account_id}
       }
       obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
       this.setState({obligation_subscriptions: obligation_subscriptions_clone })
@@ -48708,6 +48762,41 @@ class App extends Component {
     this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
 
     await this.load_my_accounts_obligation_data([object_e5_id])
+  }
+
+  async emit_update_subscriptions_for_obligations_event(){
+    const my_object = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] || {}
+    const my_data = my_object['data'] || []
+    const obligation_subscriptions_array_clone = my_data.slice()
+
+    const message_object = await this.prepare_obligation_subscription_object_message(obligation_subscriptions_array_clone)
+
+    const room_id = 'obligation_subscription'
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+  }
+
+  add_my_default_subscription_to_my_obligation_list(object_e5_id){
+    const my_object = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] || {}
+    const my_data = my_object['data'] || []
+    const obligation_subscriptions_array_clone = my_data.slice()
+    const obligation_subscriptions_clone = structuredClone(this.state.obligation_subscriptions)
+    if(obligation_subscriptions_array_clone.includes(object_e5_id)){
+      const index = obligation_subscriptions_array_clone.indexOf(object_e5_id)
+      obligation_subscriptions_array_clone.splice(index, 1)
+      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
+        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now(), 'user_account_id':this.state.user_account_id}
+      }
+      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
+      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+    }else{
+      obligation_subscriptions_array_clone.push(object_e5_id)
+      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
+        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now()}
+      }
+      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
+      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+    }
   }
 
   
@@ -50578,7 +50667,10 @@ class App extends Component {
   }
 
   async prepare_obligation_subscription_object_message(obligation_subscriptions_array_clone){
-    const message_obj = { 'obligation_subscriptions':obligation_subscriptions_array_clone, }
+    const message_obj = {
+      'obligation_subscriptions':obligation_subscriptions_array_clone, 
+      'my_accounts': this.state.user_account_id
+    }
     const tags = []
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
@@ -50586,7 +50678,7 @@ class App extends Component {
 
     const author = this.state.accounts[this.state.selected_e5].address
     const e5 = this.state.selected_e5
-    const recipient = ''
+    const recipient = this.state.user_account_id[this.state.selected_e5]
     const channeling = ''
     const lan = ''
     const state = ''
@@ -52745,7 +52837,11 @@ class App extends Component {
       const obligation_subscriptions = ipfs['obligation_subscriptions']
       const obligation_subscriptions_clone = structuredClone(this.state.obligation_subscriptions)
       if(obligation_subscriptions_clone[message['author_address']] == null){
-        obligation_subscriptions_clone[message['author_address']] = { 'data':[], 'time':0 }
+        obligation_subscriptions_clone[message['author_address']] = { 
+          'data':[], 
+          'time':0, 
+          'user_account_id':ipfs['my_accounts'] 
+        }
       }
 
       if(obligation_subscriptions_clone[message['author_address']]['time'] < time){
@@ -52770,7 +52866,7 @@ class App extends Component {
 
 
 
-  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0, filter_authors=[], target_e5='E25') => {
+  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0, filter_authors=[], target_e5='E25', recipients=[]) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -52787,7 +52883,7 @@ class App extends Component {
       filter_start_time,/* the newest entry to include */
       filter_tags,
       filter_authors,
-      filter_recipients:[],
+      filter_recipients: recipients,
       all_tags_present:[],
       channeling:'',
       target_e5: target_e5,
@@ -53048,13 +53144,13 @@ class App extends Component {
     return event
   }
 
-  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000)), default_load_step=(35*7*24*60*60*1000), authors=[], target_e5=''){
+  async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000)), default_load_step=(35*7*24*60*60*1000), authors=[], target_e5='', recipients=[]){
     const load_step = absolute_load_limit == 0 ? Date.now()-1000 : (default_load_step)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
     
     while(absolute_load_limit < current_filter_end_time){
-      const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), filter_tags, false, 0, authors, target_e5)
+      const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), filter_tags, false, 0, authors, target_e5, recipients)
       if(socket_data == null){
         current_filter_end_time -= load_step
         current_filter_start_time -= load_step

@@ -8580,6 +8580,9 @@ return data['data']
                         {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_enter_contract_obligation), 'details':this.props.app_state.loc['3093s']/* 'Enter Contract Obligation' */, 'size':'l'})}
                     </li>
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_purchase_contract_credits_obligation), 'details':this.props.app_state.loc['3093fe']/* 'Purchase Contract Credits Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                         {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_spend_contract_obligation), 'details':this.props.app_state.loc['3093v']/* 'Spend Contract Obligation.' */, 'size':'l'})}
                     </li>
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
