@@ -674,7 +674,7 @@ class FulfilBagPage extends Component {
         )
     }
 
-   get_suggested_tokens(){
+    get_suggested_tokens(){
         var items = [
             {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.state.e5, 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].end_image, 'img_size':30}},
             {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.state.e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].spend_image, 'img_size':30}},

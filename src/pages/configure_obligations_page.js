@@ -69,6 +69,8 @@ class ConfigureObligationsPage extends Component {
         default_keyword_combination:0, deadline_datetime:'1:0',
 
         reserved_keyword:'', reserved_keywords:[],
+
+        selected_e5: this.props.app_state.selected_e5, typed_contract_account:'', contract_beneficiaries:{}
     };
 
     get_configure_obligations_title_tags_object(){
@@ -77,7 +79,7 @@ class ConfigureObligationsPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' *//* , this.props.app_state.loc['3093e'] *//* 'obligation-children ↪️' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' *//* , this.props.app_state.loc['3093e'] *//* 'obligation-children ↪️' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */, this.props.app_state.loc['3093er']/* 'beneficiaries 🔗' */], [0]
             ],
         };
 
@@ -177,17 +179,24 @@ class ConfigureObligationsPage extends Component {
                 </div>
             )
         }
-        else if(active == 'e' && selected_item == this.props.app_state.loc['3093e']/* 'obligation-children ↪️' */){
-            return(
-                <div>
+        // else if(active == 'e' && selected_item == this.props.app_state.loc['3093e']/* 'obligation-children ↪️' */){
+        //     return(
+        //         <div>
                     
-                </div>
-            )
-        }
+        //         </div>
+        //     )
+        // }
         else if(active == 'e' && selected_item == this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */){
             return(
                 <div>
                     {this.render_reserved_keywords_ui()}
+                </div>
+            )
+        }
+        else if(active == 'e' && selected_item == this.props.app_state.loc['3093er']/* 'beneficiaries 🔗' */){
+            return(
+                <div>
+                    {this.render_contract_beneficiaries_ui()}
                 </div>
             )
         }
@@ -249,7 +258,7 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['3093dw']/* 'General Settings.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{ height:10 }}/>
 
-                {this.render_contract()}
+                {this.render_contract(this.state.contract)}
                 
                 <div style={{ height:15 }}/>
                 {this.render_restore_from_previous_data()}
@@ -306,8 +315,7 @@ class ConfigureObligationsPage extends Component {
         this.setState({default_keyword_combination: number})
     }
 
-    render_contract(){
-        const object = this.state.contract
+    render_contract(object){
         const item = this.format_contract_item(object)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -1472,6 +1480,253 @@ class ConfigureObligationsPage extends Component {
 
 
 
+    render_contract_beneficiaries_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_contract_beneficiaries_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_beneficiaries()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_beneficiaries_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_beneficiaries()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_beneficiaries_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_beneficiaries()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_contract_beneficiaries_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ek']/* 'Reserve Keywords.' */, 'details': this.props.app_state.loc['3093es']/* 'Specify obligation fulfilments for payments made in the other E5s.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.load_e5_selector_ui()}
+                <div style={{ height:10 }}/>
+
+                <div className="row">
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['3093et']/* 'Contract Account...' */} when_text_input_field_changed={this.when_typed_contract_account_input_field_changed.bind(this)} text={this.state.typed_contract_account} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.search_contract_id()}>
+                        <div className="text-end" style={{'padding': '5px 10px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+
+                {this.render_searched_contracts()}
+            </div>
+        )
+    }
+
+    when_typed_contract_account_input_field_changed(text){
+        this.setState({typed_contract_account: text})
+    }
+
+    load_e5_selector_ui(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        const opacity = this.state.contract_beneficiaries[item] == null ? 1.0 : 0.5
+        if(this.state.selected_e5 == item){
+            return(
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked(item){
+        this.setState({selected_e5: item})
+    }
+
+    async search_contract_id(){
+        const typed_contract_account = this.state.typed_contract_account.trim()
+        const selected_e5 = this.state.selected_e5
+        const typed_contract_e5_id = typed_contract_account+selected_e5
+
+        if(isNaN(typed_contract_account) || parseInt(typed_contract_account) < 1001){
+            this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+        }
+        else if(typed_contract_e5_id == this.state.contract['e5_id']){
+            this.props.notify(this.props.app_state.loc['3093ev']/* 'That account is the default.' */)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['3093ew']/* 'Searching...' */)
+            const type = await this.props.load_obligation_contract(typed_contract_account, selected_e5)
+            this.setState({searched_contract_e5_id: typed_contract_e5_id})
+            
+            if(type != 30/* contract_object */){
+                this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+            }
+        }
+    }
+
+    render_searched_contract(){
+        const all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+        const searched_contract_e5_id = this.state.searched_contract_e5_id;
+        const matching_contract = all_contracts.filter((object) => {
+            return (object['e5_id'] == searched_contract_e5_id)
+        })
+        if(matching_contract.length == 0){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div onClick={() => this.when_searched_contract_clicked(matching_contract[0])}>
+                    {this.render_contract(matching_contract[0])}
+                </div>
+            )
+        }
+    }
+
+    when_searched_contract_clicked(object){
+        const contract_type = object['ipfs'].contract_type || 'custom'
+        if(object['e5_id'] == this.state.contract['e5_id']){
+            this.props.notify(this.props.app_state.loc['3093ex']/* 'You cant set that contract.' */, 4400);
+        }
+        else if(contract_type != 'public'){
+            this.props.notify(this.props.app_state.loc['3093ey']/* 'only public contracts are allowed.' */, 4400);
+        }
+        else{
+            const clone = structuredClone(this.state.contract_beneficiaries)
+            clone[object['e5']] = object['e5_id']
+            this.setState({contract_beneficiaries: clone})
+        }
+        
+    }
+
+    render_set_beneficiaries(){
+        const items = Object.keys(this.state.contract_beneficiaries)
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ez']/* 'Added Beneficiaries.' */, 'details': this.props.app_state.loc['3093fa']/* 'When you set a contract beneficiary, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ez']/* 'Added Beneficiaries' */, 'details': this.props.app_state.loc['3093fb']/* 'All the contract beneficiaries set for the obligations fulfilments on other E5s.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
+                                        action: () =>this.when_beneficiary_item_clicked(item)
+                                        }}>
+                                        <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                            {this.render_contract(this.get_contract_object(this.state.contract_beneficiaries[item], item))}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    get_contract_object(item, e5){
+        const all_contracts = this.props.app_state.created_contracts[e5] || []
+        const matching_contract = all_contracts.filter((object) => {
+            return (object['e5_id'] == item)
+        })
+        return matching_contract[0]
+    }
+
+    when_beneficiary_item_clicked(item){
+        const clone = structuredClone(this.state.contract_beneficiaries)
+        delete clone[item]
+        this.setState({contract_beneficiaries: clone})
+    }
+
+
+
+
+
+
 
     finish(){
         if(
@@ -1551,6 +1806,17 @@ class ConfigureObligationsPage extends Component {
 
 
 
+    render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
+        return(
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                    </div>
+                </div>
+            );
+    }
 
     get_all_sorted_objects_mappings(object){
         var all_objects = {}

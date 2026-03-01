@@ -23685,7 +23685,7 @@ class App extends Component {
     return(
       <div>
         <ConfigureObligationsPage ref={this.view_configure_obligations_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-        add_configure_obligations_transaction_to_stack={this.add_configure_obligations_transaction_to_stack.bind(this)}
+        add_configure_obligations_transaction_to_stack={this.add_configure_obligations_transaction_to_stack.bind(this)} load_obligation_contract={this.load_obligation_contract.bind(this)}
         />
       </div>
     )
@@ -23749,6 +23749,22 @@ class App extends Component {
 
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  async load_obligation_contract(id, e5){
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const e5_address = this.state.e5s[e5].e5_address;
+    if(e5_address != ''){
+      const web3 = new Web3(web3_url);
+      const contract_addresses = this.state.addresses[e5]
+      const E52contractArtifact = require('./contract_abis/E52.json');
+      const E52_address = contract_addresses[1];
+      const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+      return await this.load_id_type_then_object(id, E52contractInstance, e5) 
+    }else{
+      return 0
+    }
   }
 
 
@@ -36563,7 +36579,10 @@ class App extends Component {
       }
 
       var clone = structuredClone(this.state.loaded_contract_and_proposal_data)
-      clone[contract_id] = {'contract':created_contract_object_data[0], 'proposals':created_proposal_object_data}
+      clone[contract_id] = {
+        'contract':created_contract_object_data[0], 
+        'proposals':created_proposal_object_data
+      }
       this.setState({loaded_contract_and_proposal_data: clone})
 
       return {'contract':created_contract_object_data[0], 'proposals':created_proposal_object_data}
