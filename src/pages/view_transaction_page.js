@@ -970,6 +970,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == this.props.app_state.loc['3094']/* 'exchange-deposit' */){
+                return(
+                    <div>
+                        {this.render_exchange_deposit_data()}
+                    </div>
+                )
+            }
         }
     }
 
@@ -8645,6 +8652,80 @@ return data['data']
             </div>
         )
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_exchange_deposit_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = item.exchange_transfer_values
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3094d']/* 'Exchange Deposit Action' */, 'details':items.length+this.props.app_state.loc['1906']/* ' actions added' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.load_transfer_actions2()}
+            </div>
+        )
+    }
+
+    load_transfer_actions2(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transfer_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = [].concat(transfer_item.exchange_transfer_values)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
 
 
 

@@ -604,6 +604,8 @@ class SpendDetailSection extends Component {
 
                                     {index == 57 && this.render_exchange_transfer_button(selected_object)}
 
+                                    {index == 57 && this.render_exchange_deposit_button(selected_object)}
+
                                     {index == 58 && this.render_freeze_unfreeze_tokens_button(selected_object)}
 
                                     {index == 59 && this.render_authmint_tokens_button(selected_object)}
@@ -1397,6 +1399,26 @@ class SpendDetailSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_exchange_deposit_button(object){
+        if(object['id'] != 5 && object['hidden'] == false){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447bc']/* '💵 Exchange Deposit' */, 'details':this.props.app_state.loc['2447bd']/* 'Deposit tokens in the exchange\'s account.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_exchange_deposit_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2365']/* 'Run Transfers' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_exchange_deposit_ui(object){
+        this.props.show_exchange_deposit_bottomsheet(object)
     }
 
     render_freeze_unfreeze_tokens_button(object){

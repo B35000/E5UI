@@ -4753,6 +4753,20 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3094']/* 'exchange-deposit' */){
+                    var buy_album_obj = this.format_exchange_deposit_object(txs[i], ints)
+                    if(buy_album_obj.depth_swap_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.depth_swap_obj)
+                    }
+
+                    if(buy_album_obj.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_album_obj.transfers_obj)
+                    }
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -10377,6 +10391,62 @@ class StackPage extends Component {
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
+    }
+
+    format_exchange_deposit_object = (t, ints) => {
+        var ints_clone = ints.slice()
+        const object = t.token_item
+        const recpient = object['id']
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+
+        const data = t.exchange_transfer_values
+
+        for(var i=0; i<data.length; i++){
+            const exchange = data[i]['token']
+            const amount = (data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, transfers_obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var u=0; u<transfer_actions.length; u++){
+                transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(recpient.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(transfer_actions[u]['amount'])
+                transfers_obj[6].push(transfer_actions[u]['depth'])
+            }
+        }
+        
+
+
+        return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj}
     }
 
     

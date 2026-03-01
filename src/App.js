@@ -624,12 +624,13 @@ import ForceExitPage from './pages/contract_action_pages/force_exit_account_page
 import NewMintActionPage from './pages/token_action_pages/mint_dump_token_page';
 import NewTransferActionPage from './pages/token_action_pages/transfer_token_page';
 import ModifyTokenPage from './pages/token_action_pages/modify_token_page';
-import ExchangeTransferPage from './pages/token_action_pages/exchanage_transfer_page';
+import ExchangeTransferPage from './pages/token_action_pages/exchange_transfer_page';
 import FreezeUnfreezePage from './pages/token_action_pages/freeze_unfreeze_page';
 import AuthMintPage from './pages/token_action_pages/authmint_page';
 import DepthMintPage from './pages/token_action_pages/depthmint_page';
 import StageRoyaltiesPage from './pages/token_action_pages/stage_royalties_page';
 import ViewStagedRoyaltyPage from './pages/token_action_pages/view_staged_royalty_page';
+import ExchangeDepositPage from './pages/token_action_pages/exchange_deposit_page';
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -1249,7 +1250,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -3581,6 +3582,7 @@ class App extends Component {
     this.localStream = React.createRef();
     this.view_purchase_credits_page = React.createRef();
     this.view_configure_obligations_page = React.createRef();
+    this.exchange_deposit_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6302,6 +6304,7 @@ class App extends Component {
           {this.render_view_purchase_credits_bottomsheet()}
           {this.render_view_call_interface_bottomsheet()}
           {this.render_view_configure_obligations_element()}
+          {this.render_exchange_deposit_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -6434,7 +6437,7 @@ class App extends Component {
 
           set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)} emit_view_object_event={this.emit_view_object_event.bind(this)} fetch_and_set_loaded_object_views={this.fetch_and_set_loaded_object_views.bind(this)}
 
-          show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)}
+          show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -12884,7 +12887,7 @@ class App extends Component {
     var os = getOS()
     
     return this.renderBottomSheet(
-      this.render_stack_item(),
+      <CollectSubscriptionPage ref={this.collect_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_collect_subscription_to_stack={this.add_collect_subscription_to_stack.bind(this)}/>,
       this.state.collect_subscription_bottomsheet,
       this.open_collect_subscription_bottomsheet,
       this.state.height-70
@@ -14235,7 +14238,7 @@ class App extends Component {
     this.open_view_transaction_bottomsheet()
   }
 
-  //here
+  //here-----------------------------------------------------------------------------
   open_edit_object_uis(tx){
     if(tx.type == this.getLocale()['1130']/* 'contract' */){
         this.open_new_object('1')
@@ -14779,6 +14782,16 @@ class App extends Component {
           me.view_configure_obligations_page.current?.setState(tx)
         }
       }, (1 * 500));
+    }
+    else if(tx.type == this.getLocale()['3094']/* 'exchange-deposit' */){
+        this.open_exchange_deposit_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.exchange_deposit_page.current){
+          me.exchange_deposit_page.current?.setState(tx)
+        }
+        }, (1 * 500));
+        
     }
   }
 
@@ -16572,33 +16585,11 @@ class App extends Component {
     var os = getOS()
    
     return this.renderBottomSheet(
-      this.render_view_transaction_element(),
+      <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>,
       this.state.view_staged_royalties_bottomsheet,
       this.open_view_staged_royalties_bottomsheet,
       this.state.height-70
     )
-    // if(os == 'iOS'){
-    //     return(
-    //         <Sheet isOpen={this.state.view_staged_royalties_bottomsheet} onClose={this.open_view_staged_royalties_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
-    //             <Sheet.Container>
-    //                 <Sheet.Content>
-    //                     <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-    //                       <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>
-    //                     </div>
-    //                 </Sheet.Content>
-    //                 {/* <ToastContainer limit={3} containerId="id2"/> */}  {this.render_ios_page_toast_container()}
-    //             </Sheet.Container>
-    //             <Sheet.Backdrop onTap={()=> this.open_view_staged_royalties_bottomsheet()}/>
-    //         </Sheet>
-    //     )
-    // }
-    // return(
-    //   <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_staged_royalties_bottomsheet.bind(this)} open={this.state.view_staged_royalties_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-    //       <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-    //         <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>
-    //       </div>
-    //   </SwipeableBottomSheet>
-    // )
   }
 
   open_view_staged_royalties_bottomsheet(){
@@ -23767,6 +23758,90 @@ class App extends Component {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_exchange_deposit_bottomsheet(){
+    if(this.state.exchange_deposit_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <ExchangeDepositPage ref={this.exchange_deposit_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_exchange_deposit_to_stack={this.add_exchange_deposit_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+      />,
+      this.state.exchange_deposit_bottomsheet,
+      this.open_exchange_deposit_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_exchange_deposit_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_exchange_deposit_bottomsheet')
+    if(this.state.exchange_deposit_bottomsheet == true){
+      //closing
+      this.exchange_deposit_bottomsheet = this.exchange_deposit_page.current?.state;
+
+      this.setState({exchange_deposit_bottomsheet: !this.state.exchange_deposit_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({exchange_deposit_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({exchange_deposit_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({exchange_deposit_bottomsheet: !me.state.exchange_deposit_bottomsheet});
+
+          if(me.exchange_deposit_bottomsheet != null){
+            me.exchange_deposit_page.current?.setState(me.exchange_deposit_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_exchange_deposit_bottomsheet(token_item){
+    this.open_exchange_deposit_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.exchange_deposit_page.current != null){
+      me.exchange_deposit_page.current.set_token(token_item)
+    }
+    }, (1 * 500));
+  }
+
+  add_exchange_deposit_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
 
 
 

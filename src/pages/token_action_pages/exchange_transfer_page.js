@@ -67,10 +67,14 @@ class ExchangeTransferPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['907']/* 'exchange-transfer' */], [0]
+                ['xor','',0], ['e',this.props.app_state.loc['907']/* 'exchange-transfer' */], [1]
             ],
         };
     }
+
+
+
+
 
     render(){
         return(
