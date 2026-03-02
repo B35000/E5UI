@@ -69,7 +69,7 @@ class PayUpcomingSubscriptions extends Component {
 
     set_data(data){
         var e5 = this.props.app_state.selected_e5
-        this.setState({upcoming_subs: data, e5: e5})
+        this.setState({upcoming_subs: data, e5: e5, upcoming_subscription_objects: this.get_selected_subscriptions(data)})
     }
 
     render(){

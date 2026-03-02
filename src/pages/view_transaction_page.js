@@ -8617,9 +8617,9 @@ return data['data']
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                         {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_videopost_purchase_obligation), 'details':this.props.app_state.loc['3093cn']/* 'Videopost Purchase Obligation.' */, 'size':'l'})}
                     </li>
-                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_creator_group_payout_obligation), 'details':this.props.app_state.loc['3093cq']/* 'Creator Group Payout Obligation.' */, 'size':'l'})}
-                    </li>
+                    {/* <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_creator_group_payout_obligation), 'details':this.props.app_state.loc['3093cq'] 'Creator Group Payout Obligation.', 'size':'l'})}
+                    </li> */}
 
 
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>

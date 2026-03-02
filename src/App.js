@@ -8592,7 +8592,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)}
       />
     )
   }
@@ -10202,37 +10202,15 @@ class App extends Component {
   }
 
   load_targets_obligation_data = async (target_ids_arg, e5) => {
-    let target_ids = target_ids_arg.slice()
+    let all_authors = target_ids_arg.slice()
     if(this.state.author_address_mapping[e5] != null){
-      target_ids = target_ids_arg.filter((target) => {
+      all_authors = target_ids_arg.filter((target) => {
         return (this.state.author_address_mapping[e5][target] == null)
       })
     }
-    if(target_ids.length == 0){
+    if(all_authors.length == 0){
       return;
     }
-    
-    const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    const contract_addresses = this.state.addresses[e5]
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = contract_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-    const object_types = await E52contractInstance.methods.f134(target_ids).call((error, result) => {});
-
-    const accounts = []
-    const object_ids = []
-    object_types.forEach((type, index) => {
-      const corresponding_target = target_ids[index]
-      if(type != 0){
-        object_ids.push(corresponding_target)
-      }else{
-        accounts.push(corresponding_target)
-      }
-    });
-
-    const object_authors = object_ids.length > 0 ? await E52contractInstance.methods.f132(object_ids).call((error, result) => {}) : [];
-
-    const all_authors = object_authors.concat(accounts)
 
     await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], 1771762377000, (36*7*24*60*60*1000), [], e5, all_authors);
 
@@ -10243,6 +10221,7 @@ class App extends Component {
     if(author_address_mapping_clone[e5] == null){
       author_address_mapping_clone[e5] = {}
     }
+    const unfound_authors = []
     all_authors.forEach(author_target => {
       const address_key = Object.keys(this.state.obligation_subscriptions).find(key => this.state.obligation_subscriptions[key]['user_account_id'].includes(author_target));
       if(address_key != undefined){
@@ -10253,11 +10232,116 @@ class App extends Component {
             contracts_to_load.push(contract_e5_id)
           }
         });
+      }else{
+        unfound_authors.push(author_target)
       }
     });
+
+    if(unfound_authors.length > 0){
+      const unfound_author_addresses = []
+      for(var i=0; i<unfound_authors.length; i++){
+        const address = await this.get_recipient_address(unfound_authors[i], e5)
+        unfound_author_addresses.push(address)
+      }
+
+      unfound_authors.forEach((author_target, index) => {
+        const address_key = unfound_author_addresses[index]
+        author_address_mapping_clone[e5][author_target] = address_key
+        const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
+        obligation_contracts.forEach(contract_e5_id => {
+          if(!contracts_to_load.includes(contract_e5_id) && this.state.my_contract_obligation_subscription_data[contract_e5_id] == null){
+            contracts_to_load.push(contract_e5_id)
+          }
+        });
+      });
+    }
+
+
     await this.load_my_accounts_obligation_data(contracts_to_load);
     this.setState({author_address_mapping: author_address_mapping_clone})
     await this.wait(500);
+  }
+
+  load_target_or_object_accounts_obligation_data = async (target_ids_arg, e5) => {
+    let all_authors = target_ids_arg.slice()
+    if(this.state.author_address_mapping[e5] != null){
+      all_authors = target_ids_arg.filter((target) => {
+        return (this.state.author_address_mapping[e5][target] == null)
+      })
+    }
+    if(all_authors.length == 0){
+      return;
+    }
+
+    await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], 1771762377000, (36*7*24*60*60*1000), [], e5, all_authors);
+
+    await this.wait(500)
+
+    const contracts_to_load = []
+    const author_address_mapping_clone = structuredClone(this.state.author_address_mapping)
+    if(author_address_mapping_clone[e5] == null){
+      author_address_mapping_clone[e5] = {}
+    }
+    const unfound_authors = []
+    all_authors.forEach(author_target => {
+      const address_key = Object.keys(this.state.obligation_subscriptions).find(key => this.state.obligation_subscriptions[key]['user_account_id'].includes(author_target));
+      if(address_key != undefined){
+        author_address_mapping_clone[e5][author_target] = address_key
+        const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
+        obligation_contracts.forEach(contract_e5_id => {
+          if(!contracts_to_load.includes(contract_e5_id) && this.state.my_contract_obligation_subscription_data[contract_e5_id] == null){
+            contracts_to_load.push(contract_e5_id)
+          }
+        });
+      }else{
+        unfound_authors.push(author_target)
+      }
+    });
+
+    if(unfound_authors.length > 0){
+      const unfound_author_addresses = []
+      for(var i=0; i<unfound_authors.length; i++){
+        const address = await this.get_recipient_address(unfound_authors[i], e5)
+        unfound_author_addresses.push(address)
+      }
+
+      unfound_authors.forEach((author_target, index) => {
+        const address_key = unfound_author_addresses[index]
+        author_address_mapping_clone[e5][author_target] = address_key
+        const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
+        obligation_contracts.forEach(contract_e5_id => {
+          if(!contracts_to_load.includes(contract_e5_id) && this.state.my_contract_obligation_subscription_data[contract_e5_id] == null){
+            contracts_to_load.push(contract_e5_id)
+          }
+        });
+      });
+    }
+
+
+    await this.load_my_accounts_obligation_data(contracts_to_load);
+    this.setState({author_address_mapping: author_address_mapping_clone})
+    await this.wait(500);
+  }
+
+  async get_signature_for_obligation_data(data_to_be_signed){
+    try{
+      const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+      const account_to_use = this.state.accounts[this.state.selected_e5]
+      web3.eth.accounts.wallet.add(account_to_use.privateKey);
+      const accounts_signature = await web3.eth.sign(data_to_be_signed, account_to_use.address)
+
+      const seed = process.env.REACT_APP_PRIVACY_SIGNATURE_KEY
+      const web3_url = this.get_web3_url_from_e5('E25')
+      const account = this.get_account_from_seed(seed, web3_url)
+      const web3_2 = new Web3(web3_url);
+      web3_2.eth.accounts.wallet.add(account.privateKey);
+      const app_signature = await web3_2.eth.sign(data_to_be_signed, account.address)
+
+      return { accounts_signature, app_signature }
+    }catch(e){
+      console.log(e)
+      return null
+    }
   }
 
 
