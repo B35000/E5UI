@@ -119,7 +119,7 @@ class DialogPage extends Component {
 
         credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'', dm_recipient:'',
 
-        targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(),
+        targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(), obligation_search_account:'',
     };
 
 
@@ -621,6 +621,20 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_view_obligation_configuration_item_ui()}
+                </div>
+            )
+        }
+        else if(option == 'view_accounts_obligation_promise_history'){
+            return(
+                <div>
+                    {this.render_view_accounts_obligation_promise_history_ui()}
+                </div>
+            )
+        }
+        else if(option == 'show_my_obligation_fulfilment_item'){
+            return(
+                <div>
+                    {this.render_show_my_obligation_fulfilment_item_ui()}
                 </div>
             )
         }
@@ -11279,7 +11293,542 @@ return data['data']
             </div>
         )
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_view_accounts_obligation_promise_history_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_accounts_obligation_promise_history_data()}
+                    {this.render_detail_item('0')}
+                    {this.show_searched_account_general_info()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_accounts_obligation_promise_history_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_searched_account_general_info()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_accounts_obligation_promise_history_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_searched_account_general_info()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_accounts_obligation_promise_history_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055kx']/* 'Search Account.' */, 'details':this.props.app_state.loc['3055ky']/* 'Search an account by its ID or alias.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_obligation_search_account_input_field_changed.bind(this)} text={this.state.obligation_search_account} theme={this.props.theme}/>
+
+                <div style={{height:10}}/>
+                <div onClick={()=> this.search_obligation_search()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055kz']/* 'Search Account' */, 'action':''},)}
+                </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_searched_history()}
+            </div>
+        )
+    }
+
+    when_obligation_search_account_input_field_changed(text){
+        this.setState({obligation_search_account: text})
+    }
+
+    async search_obligation_search(){
+        const account = this.state.obligation_search_account.trim()
+        const recipient_id = await this.get_typed_alias_id(account)
+        const contract = this.state.data['object']
+
+        if(isNaN(recipient_id) || recipient_id =='' || parseInt(recipient_id) < 1001){
+            this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 3800)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['3055la']/* 'Searching the account...' */, 1700)
+            this.props.get_searched_user_obligation_data([recipient_id], contract['e5'], contract['e5_id'])
+            const time = Date.now()
+            const year = new Date(time).getFullYear()
+            this.setState({searched_obligation_account_id: recipient_id, selected_obligation_year: year})
+        }
+    }
     
+
+    render_searched_history(){
+        const contract = this.state.data['object']
+        const contract_data = this.props.app_state.user_obligation_data[contract['e5_id']] || {};
+        const searched_accounts = Object.keys(contract_data);
+
+        if(searched_accounts.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lq']/* 'Search History.' */, 'details':this.props.app_state.loc['3055lr']/* 'Your account search history should show here after a search.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        var size = this.props.size
+        if(size == 's'){
+            var items2 = [0, 1]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lq']/* 'Search History.' */, 'details':this.props.app_state.loc['3055lt']/* 'All the accounts youve recently searched.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {searched_accounts.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    <div onClick={() => this.when_searched_account_clicked(item)}>
+                                        {this.render_detail_item('3', {'title':item, 'details':this.get_senders_alias2(item, contract['e5']), 'size':'l'})}
+                                    </div>
+                                </li>
+                            ))}
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lq']/* 'Search History.' */, 'details':this.props.app_state.loc['3055lt']/* 'All the accounts youve recently searched.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {searched_accounts.map((item, index) => (
+                    <div style={{'padding': '3px'}} onClick={() => this.when_searched_account_clicked(item)}>
+                        {this.render_detail_item('3', {'title':item, 'details':this.get_senders_alias2(item, contract['e5']), 'size':'l'})}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    get_senders_alias2(account, e5){
+        if(account == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (bucket[account] == null ? this.props.app_state.loc['3055ls']/* 'Alias Unknown' */ : bucket[account])
+            return alias
+        }
+    }
+
+    when_searched_account_clicked(item){
+        const time = Date.now()
+        const year = new Date(time).getFullYear()
+        this.setState({searched_obligation_account_id: item, selected_obligation_year: year})
+    }
+
+
+    show_searched_account_general_info(){
+        return(
+            <div>
+                {this.render_general_info_or_loader_if_loading()}
+                {this.render_detail_item('0')}
+                {this.render_obligations_parts2()}
+            </div>
+        )
+    }
+
+    render_general_info_or_loader_if_loading(){
+        if(this.props.app_state.is_searching_user_obligation_data == true){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lf']/* 'General Info Loading.' */, 'details':this.props.app_state.loc['3055lg']/* 'The information of the account should load in a few moments...' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_small_skeleton_object2()}
+                    <div style={{height:3}}/>
+                    {this.render_small_skeleton_object2()}
+                </div>
+            )
+        }
+        else{
+            const searched_obligation_account_id = this.state.searched_obligation_account_id
+            const contract = this.state.data['object']
+            const contract_data = this.props.app_state.user_obligation_data[contract['e5_id']] || {};
+            const accounts_data = contract_data[searched_obligation_account_id] || {}
+            const entries = Object.entries(accounts_data)
+            if(entries.length == 0){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055le']/* 'Account Non-Existent.' */, 'details':this.props.app_state.loc['3055ld']/* 'The account hasnt recorded any obligations in your contract.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                )
+            }else{
+                const total_amounts_handled_data = this.calculate_total_amount_handled(accounts_data)
+                const each_type_number_entries = this.get_number_of_entries_for_each_type(accounts_data)
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lc']/* 'General Info.' */, 'details':this.props.app_state.loc['3055lb']/* 'Heres the general information on the account.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055lh']/* 'Logged Entries.' */, 'subtitle':this.format_power_figure(entries.length), 'barwidth':this.calculate_bar_width(entries.length), 'number':this.format_account_balance_figure(entries.length), 'barcolor':'', 'relativepower':this.props.app_state.loc['3055li']/* 'entries' */, })}
+                        </div>
+                        <div style={{height:10}}/>
+
+                        {this.render_years_and_entry_info(total_amounts_handled_data)}
+                        <div style={{height:10}}/>
+
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lk']/* 'Obligation Amounts.' */, 'details':this.props.app_state.loc['3055lm']/* 'The total amount set to be fulfilled by the account by the configured deadline.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        {this.render_selected_year_paid_amounts(total_amounts_handled_data)}
+                        <div style={{height:10}}/>
+
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lo']/* 'Entry Distribution.' */, 'details':this.props.app_state.loc['3055lp']/* 'The distribution of the accounts obligation entries.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        {this.render_each_type_entry_count(each_type_number_entries)}
+                    </div>
+                )
+            }
+        }
+    }
+
+    get_number_of_entries_for_each_type(accounts_data){
+        const entries = Object.entries(accounts_data)
+        const totals_obj = {}
+        entries.forEach(entry => {
+            const entry_data = accounts_data[entry]
+            const time = entry_data['time']
+            const id = entry_data['id']
+            const year = new Date(time).getFullYear()
+            if(totals_obj[year] == null){
+                totals_obj[year] = {}
+            }
+            if(totals_obj[year][id] == null){
+                totals_obj[year][id] = 0
+            }
+            totals_obj[year][id]++;
+        })
+        return totals_obj
+    }
+
+    calculate_total_amount_handled(accounts_data){
+        const entries = Object.entries(accounts_data)
+        const totals_obj = {}
+        entries.forEach(entry => {
+            const entry_data = accounts_data[entry]
+            const contracts_promise = entry_data['contracts_promises']
+            const time = entry_data['time']
+            const year = new Date(time).getFullYear()
+            if(totals_obj[year] == null){
+                totals_obj[year] = {}
+            }
+            const transfers = contracts_promise['transfers']
+            const proportions = contracts_promise['proportions']
+            transfers.forEach(transfer => {
+                const exchange = transfer['exchange']
+                const amount = transfer['amount']
+                if(totals_obj[year][exchange] == null){
+                    totals_obj[year][exchange] = bigInt(0)
+                }
+                let obligation_amount = bigInt(0)
+                let active_amount = bigInt(0).plus(amount)
+                proportions.forEach(proportion => {
+                    const obligation = bigInt(active_amount).multiply(proportion).divide('100e16')
+                    obligation_amount = bigInt(obligation_amount).plus(obligation)
+                    active_amount = bigInt(active_amount).minus(obligation)
+                });
+                totals_obj[year][exchange] = bigInt(totals_obj[year][exchange]).plus(obligation_amount)
+            });
+        });
+
+        return totals_obj
+    }
+
+
+    render_years_and_entry_info(total_amounts_handled_data){
+        const items = Object.keys(total_amounts_handled_data)
+        var items2 = [0, 1]
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_year_item(item, total_amounts_handled_data)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_year_item(item, total_amounts_handled_data){
+        const title = item;
+        const years_entries = Object.keys(total_amounts_handled_data[item])
+        const details = this.props.app_state.loc['3055lj']/* '$ exchanges.' */.replace('$', years_entries)
+        return(
+            <div onClick={() => this.when_year_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_line_if_selected(item)}
+            </div>
+        )
+    }
+
+    render_line_if_selected(item){
+        if(this.state.selected_obligation_year == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_year_item_clicked(item){
+        this.setState({selected_obligation_year: item})
+    }
+
+
+    render_selected_year_paid_amounts(total_amounts_handled_data){
+        const year = this.state.selected_obligation_year
+        const data = total_amounts_handled_data[year] || {}
+        const exchanges = Object.keys(data)
+        const object = this.state.data['object']
+        if(exchanges.length == 0){
+            const item = '5';
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width(0), 'number':this.format_account_balance_figure(0), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {exchanges.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':total_amounts_handled_data[year][item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':this.format_power_figure(total_amounts_handled_data[year][item]), 'barwidth':this.calculate_bar_width(total_amounts_handled_data[year][item]), 'number':this.format_account_balance_figure(total_amounts_handled_data[year][item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+    render_each_type_entry_count(each_type_number_entries){
+        const year = this.state.selected_obligation_year
+        const data = each_type_number_entries[year] || {}
+        const items = Object.keys(data)
+        var items2 = [0, 1]
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_type_entry_count_item(item, data)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_type_entry_count_item(item, data){
+        const title = item;
+        const details = this.props.app_state.loc['3055ln']/* '$ entries.' */.replace('$', data[item])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+
+    render_obligations_parts2(){
+        const searched_obligation_account_id = this.state.searched_obligation_account_id
+        const contract = this.state.data['object']
+        const unsorted_fulfilment_data = this.props.app_state.accounts_fulfilled_obligation_data[searched_obligation_account_id] || [];
+        const unfiltered_fulfilment_data = this.sortByAttributeDescending(unsorted_fulfilment_data, 'time')
+        const fulfilment_data = unfiltered_fulfilment_data.filter(obligation_item => obligation_item['contract'] == contract['id']);
+        const items2 = [0, 2]
+        const selected_pos = this.state.selected_fulfilment_item_pos || 0
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593lx']/* 'Fulfilment history.' */, 'details':this.props.app_state.loc['3055lu']/* 'The searched account\'s fulfilment history.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {fulfilment_data.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{}} onClick={() => this.when_fufilled_item_clicked(item, index)}>
+                                    {this.render_fulfilment_data_item(item)}
+                                </div>
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_selected_payment_history_amounts(fulfilment_data[selected_pos]['data'], fulfilment_data[selected_pos]['e5'])}
+            </div>
+        )
+    }
+
+    when_fufilled_item_clicked(item, index){
+        this.setState({selected_fulfilment_item_pos: index})
+    }
+
+    render_fulfilment_data_item(item){
+        const time = item['time']
+        const title = item['contract'] + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
+        const details = ''+(new Date(time*1000).toLocaleString())
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+    render_show_my_obligation_fulfilment_item_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_show_my_obligation_fulfilment_item_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_show_my_obligation_fulfilment_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_show_my_obligation_fulfilment_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_show_my_obligation_fulfilment_item_data(){
+        const item = this.state.data['item']
+        const time = item['time']
+        const title = item['contract'] + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
+        const details = ''+(new Date(time*1000).toLocaleString())
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_payment_history_amounts(item['data'], e5)}
+            </div>
+        )
+    }
+
+    render_selected_payment_history_amounts(data, e5){
+        const exchanges = Object.keys(data)
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {exchanges.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
 
 

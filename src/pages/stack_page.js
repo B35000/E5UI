@@ -165,7 +165,9 @@ class StackPage extends Component {
         typed_watch_account_input:'', sign_data_input:'', selected_signature_e5: this.props.app_state.default_e5, verify_signed_data_input:'', signed_data_input:'', storage_email_input:'',
 
         default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true, 
-        setting_text:'',
+        setting_text:'', 
+        
+        selected_obligation_year: new Date().getFullYear()
         
     };
 
@@ -188,7 +190,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' *//* , this.props.app_state.loc['1593kn'] *//* 'calls ☎️' */, this.props.app_state.loc['1593ba']/* 'storage 💾' *//* , this.props.app_state.loc['1593x'] *//* 'Watch 👁️' *//* , this.props.app_state.loc['1593gf'] *//* 'iTransfer 💳' */, /* this.props.app_state.loc['1593d'] *//* 'notifications 🔔' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, 'e.'+this.props.app_state.loc['1593aj']/* 'e.signatures' *//* , this.props.app_state.loc['1593kn'] *//* 'calls ☎️' */, this.props.app_state.loc['1593ba']/* 'storage 💾' *//* , this.props.app_state.loc['1593x'] *//* 'Watch 👁️' *//* , this.props.app_state.loc['1593gf'] *//* 'iTransfer 💳' */ /* , this.props.app_state.loc['1593d'] *//* 'notifications 🔔' */, this.props.app_state.loc['1593lk']/* 'obligations 🛡️' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -1563,6 +1565,13 @@ class StackPage extends Component {
             return(
                 <div key={selected_item}>
                     {this.render_group_calls_ui()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1593lk']/* 'obligations 🛡️' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_obligations_ui()}
                 </div>
             )
         }
@@ -4769,6 +4778,17 @@ class StackPage extends Component {
                         ints.push(buy_album_obj.transfers_obj)
                     }
                 }
+                else if(txs[i].type == this.props.app_state.loc['1593lq']/* 'fulfil-obligations' */){
+                    var format_object = await this.format_fulfil_obligations_object(txs[i], calculate_gas, ints, ipfs_index)
+                    if(format_object.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(format_object.depth)
+                    }
+                    strs.push(format_object.str)
+                    adds.push([])
+                    ints.push(format_object.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -5491,6 +5511,17 @@ class StackPage extends Component {
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
         var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
         console.log('rundata',optimized_run)
         ints = optimized_run['ints']
@@ -6201,7 +6232,16 @@ class StackPage extends Component {
                     const obligation_configuration_data = structuredClone(txs[i])
                     delete obligation_configuration_data.contract
                     ipfs_index_object[txs[i].id] = obligation_configuration_data
-                    ipfs_index_array.push({'id':txs[i].id, 'data':txs[i]})
+                    ipfs_index_array.push({'id':txs[i].id, 'data':obligation_configuration_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['1593lq']/* 'fulfil-obligations' */){
+                    const fulfilment_data = txs[i].fulfilment_data
+                    const contracts = Object.keys(fulfilment_data)
+                    contracts.forEach(contract => {
+                        const transaction_id = txs[i].id+contract
+                        ipfs_index_object[transaction_id] = fulfilment_data[contract]
+                        ipfs_index_array.push({'id':transaction_id, 'data':fulfilment_data[contract]})
+                    });
                 }
             }
         }
@@ -6457,7 +6497,7 @@ class StackPage extends Component {
                     const buy_sell_recipient = tx.recipient_id == 53 ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : tx.recipient_id;
                     const buy_sell_amount = tx.amount
                     const action = this.get_action(tx)
-                    const final_object_value_transfer_data = [{'exchange':object['id'], 'amount':buy_sell_amount}]
+                    const final_object_value_transfer_data = [{'exchange':object['id'], 'amount':buy_sell_amount, 'swap_tokens_used':{'ids':object['data'][3], 'amounts':object['data'][4], 'depths': object['data'][5]}}]
                     if(action == 1){
                         //sell action
                         const object_obligation_fulfiller = buy_sell_recipient
@@ -6468,8 +6508,9 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type, 
+                                'identifier':tx.id,
                                 'hard_id':'sell-token', 
-                                'confirm_transfers':true,
+                                'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
                                 'e5':object['e5'],
                                 'obligation_fulfiller_address':address_key,
@@ -6497,8 +6538,9 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type, 
+                                'identifier':tx.id,
                                 'hard_id':'buy-token', 
-                                'confirm_transfers':true,
+                                'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
                                 'e5':object['e5'],
                                 'obligation_fulfiller_address':address_key,
@@ -6542,6 +6584,7 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type, 
+                                'identifier':tx.id+e,
                                 'hard_id':'transfer', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6583,6 +6626,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'enter-contract', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6618,6 +6662,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'proposal-bounty', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6661,6 +6706,7 @@ class StackPage extends Component {
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
                                     'id': tx.type, 
+                                    'identifier':tx.id+e,
                                     'hard_id':'consensus-spend', 
                                     'confirm_transfers':true,
                                     'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6701,6 +6747,7 @@ class StackPage extends Component {
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
                                     'id': tx.type, 
+                                    'identifier':tx.id,
                                     'hard_id':'consensus-exchange-transfer', 
                                     'confirm_transfers':true,
                                     'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6742,6 +6789,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'pay-subscription', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6778,7 +6826,7 @@ class StackPage extends Component {
 
                     for(var f=0; f<amount_data.length; f++){
                         const action_object = amount_data[f]
-                        const final_object_value_transfer_data = [{'exchange':price_item['token'], 'amount':price_item['amount']}]
+                        const final_object_value_transfer_data = [{'exchange':action_object['token'], 'amount':action_object['amount']}]
 
                         const receiver = action_object['receiver'] == 53 ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : action_object['receiver']
 
@@ -6789,6 +6837,7 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type, 
+                                'identifier':tx.id+f,
                                 'hard_id':'exchange-transfer', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6833,8 +6882,9 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type, 
+                                'identifier':tx.id+f,
                                 'hard_id':action_object['action'] == 1 ? 'freeze' : 'unfreeze', 
-                                'confirm_transfers':true,
+                                'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
                                 'e5':object['e5'],
                                 'obligation_fulfiller_address':address_key,
@@ -6893,6 +6943,7 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type,
+                                'identifier':tx.id+m,
                                 'hard_id':'message-award', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6941,6 +6992,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'direct-purchase', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6983,6 +7035,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'award', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7004,10 +7057,10 @@ class StackPage extends Component {
                     }
                 }
                 else if(tx.type == this.props.app_state.loc['2884']/* 'royalty-payouts' */){
-                    
                     const object = tx.token_item
                     const batches = tx.selected_batches
                     const payout_amount = tx.staging_data['payout_amount']
+                    const total_held_shares = tx.staging_data['total_held_shares']
 
                     const transaction_receivers = []
                     for(var b=0; b<batches.length; b++){
@@ -7021,6 +7074,7 @@ class StackPage extends Component {
                         }
                     }
                     await this.props.load_target_or_object_accounts_obligation_data(transaction_receivers, object['e5'])
+                    
                     for(var b=0; b<batches.length; b++){
                         const batch = batches[b];
                         for(var bt=0; bt<batch['data'].length; bt++){
@@ -7041,6 +7095,7 @@ class StackPage extends Component {
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
                                     'id': tx.type, 
+                                    'identifier':tx.id+b+bt,
                                     'hard_id':'royalty-payouts', 
                                     'confirm_transfers':true,
                                     'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7094,6 +7149,7 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type,
+                                'identifier':tx.id+s,
                                 'hard_id':'pay-subscription', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7131,6 +7187,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'buy-album', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7167,6 +7224,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'buy-video', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7203,6 +7261,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'buy-storage', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7238,6 +7297,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'iTransfer', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7273,6 +7333,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'bill-payment', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7377,6 +7438,7 @@ class StackPage extends Component {
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type, 
+                                'identifier':tx.id+n,
                                 'hard_id':'nitro-renewal', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7423,6 +7485,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'fulfil-bids', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7463,6 +7526,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'order-payment', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7495,6 +7559,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'purchase-credits', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7601,6 +7666,7 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
+                            'identifier':tx.id,
                             'hard_id':'exchange-deposit', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7633,7 +7699,8 @@ class StackPage extends Component {
             const signature_object = await this.props.get_signature_for_obligation_data(data_to_be_signed)
             
             obligation_object['signature_object'] = signature_object;
-            obligation_object['time'] = time
+            obligation_object['time'] = time;
+            obligation_object['data_to_be_signed'] = data_to_be_signed;
             obj['tags']['obligation_data'] = obligation_object;
             obligation_inclusive = true;
         }
@@ -11664,6 +11731,84 @@ class StackPage extends Component {
 
 
         return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj}
+    }
+
+    format_fulfil_obligations_object = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()        
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [], [],/* target receivers */
+            [],/* awward contexts */
+            
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        const fulfilment_data = t.fulfilment_data
+        const contracts = Object.keys(fulfilment_data);
+        // const my_account_id = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+
+        for(var c=0; c<t.contracts.length; c++){
+            const contract = contracts[c]
+            const contract_id = contract.split('E')[0]
+            const data = fulfilment_data[contract]
+            const exchanges = Object.keys(data)
+
+            obj[1].push(contract_id)
+            obj[2].push(23)
+            obj[3].push(50/* fulfil_obligation_container */)
+
+            obj.push([])
+            obj.push([])
+            obj.push([])
+            obj.push([])
+
+            for(var i=0; i<exchanges.length; i++){
+                const exchange = exchanges[i].toString().toLocaleString('fullwide', {useGrouping:false});
+                const amount = data[exchange].toString().toLocaleString('fullwide', {useGrouping:false});
+
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+
+                const n = 4 + (c * 4)
+                for(var f=0; f<transfer_actions.length; f++){
+                    obj[n+0].push(exchange)
+                    obj[n+1].push(23)
+                    obj[n+2].push(transfer_actions[f]['amount'])
+                    obj[n+3].push(transfer_actions[f]['depth'])
+                }
+            }
+
+            const transaction_id = t.id+contract
+            const string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, transaction_id);
+            string_obj[0].push(string_data)
+        }
+        
+        
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
     }
 
     
@@ -20821,6 +20966,382 @@ class StackPage extends Component {
         )
     }
 
+
+
+
+
+
+
+
+
+
+
+    render_obligations_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div style={{'width':'97%'}}>
+                    {this.render_obligations_parts()}
+                    {this.render_detail_item('0')}
+                    {this.render_obligations_parts2()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_obligations_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_obligations_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_obligations_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_obligations_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_obligations_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ll']/* 'Obligation History.' */, 'details':this.props.app_state.loc['1593lm']/* 'All the obligations you\'re set to fulfil in the preceding years.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1593ln']/* Fulfil preceding years obligations. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.fulfil_obligations()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593lo']/* Fulfil */, 'action':''})}
+                </div>
+                {this.render_detail_item('0')}
+
+                {this.render_my_obligation_items()}
+            </div>
+        )
+    }
+
+    render_obligations_parts2(){
+        const unsorted_fulfilment_data = this.props.app_state.my_fulfilled_obligation_data[this.props.app_state.selected_e5] || [];
+        const fulfilment_data = this.sortByAttributeDescending(unsorted_fulfilment_data, 'time')
+        if(fulfilment_data.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593lx']/* 'Fulfilment history.' */, 'details':this.props.app_state.loc['1593lz']/* 'When you fulfil your obligations, the transactions will show here.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593lx']/* 'Fulfilment history.' */, 'details':this.props.app_state.loc['1593ly']/* 'Your fulfilment history in multiple public contracts.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {fulfilment_data.map((item, index) => (
+                    <div style={{'padding': '3px'}} onClick={() => this.when_fufilled_item_clicked(item)}>
+                        {this.render_fulfilment_data_item(item)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    when_fufilled_item_clicked(item){
+        this.show_dialog_bottomsheet({'item':item}, 'show_my_obligation_fulfilment_item')
+    }
+
+    render_fulfilment_data_item(item){
+        const time = item['time']
+        const title = item['contract'] + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
+        const details = ''+(new Date(time*1000).toLocaleString())
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_my_obligation_items(){
+        const total_amounts_handled_data = this.calculate_total_amount_handled(this.props.app_state.user_obligation_data)
+        const each_type_number_entries = this.get_number_of_entries_for_each_type(this.props.app_state.user_obligation_data)
+
+        return(
+            <div>
+                {this.render_years_and_entry_info(total_amounts_handled_data)}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lk']/* 'Obligation Amounts.' */, 'details':this.props.app_state.loc['3055lm']/* 'The total amount set to be fulfilled by the account by the configured deadline.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_year_paid_amounts(total_amounts_handled_data)}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lo']/* 'Entry Distribution.' */, 'details':this.props.app_state.loc['3055lp']/* 'The distribution of the accounts obligation entries.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_each_type_entry_count(each_type_number_entries)}
+            </div>
+        )
+    }
+
+    calculate_total_amount_handled(user_obligation_data){
+        const my_account_id = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        const totals_obj = {}
+        Object.keys(user_obligation_data).forEach(contract => {
+            if(contract.endsWith(this.props.app_state.selected_e5)){
+                const contract_data = user_obligation_data[contract] || {};
+                const accounts_data = contract_data[my_account_id] || {};
+
+                const entries = Object.entries(accounts_data)
+                entries.forEach(entry => {
+                    const entry_data = accounts_data[entry]
+                    const contracts_promise = entry_data['contracts_promises']
+                    const time = entry_data['time']
+                    const year = new Date(time).getFullYear()
+                    if(totals_obj[year] == null){
+                        totals_obj[year] = {}
+                    }
+                    const transfers = contracts_promise['transfers']
+                    const proportions = contracts_promise['proportions']
+                    transfers.forEach(transfer => {
+                        const exchange = transfer['exchange']
+                        const amount = transfer['amount']
+                        if(totals_obj[year][exchange] == null){
+                            totals_obj[year][exchange] = bigInt(0)
+                        }
+                        let obligation_amount = bigInt(0)
+                        let active_amount = bigInt(0).plus(amount)
+                        proportions.forEach(proportion => {
+                            const obligation = bigInt(active_amount).multiply(proportion).divide('100e16')
+                            obligation_amount = bigInt(obligation_amount).plus(obligation)
+                            active_amount = bigInt(active_amount).minus(obligation)
+                        });
+                        totals_obj[year][exchange] = bigInt(totals_obj[year][exchange]).plus(obligation_amount)
+                    });
+                });
+            }
+                
+        });
+
+        return totals_obj
+    }
+
+    get_number_of_entries_for_each_type(user_obligation_data){
+        const my_account_id = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        const totals_obj = {}
+        Object.keys(user_obligation_data).forEach(contract => {
+            const contract_data = user_obligation_data[contract] || {};
+            const accounts_data = contract_data[my_account_id] || {};
+
+            const entries = Object.entries(accounts_data)
+            entries.forEach(entry => {
+                const entry_data = accounts_data[entry]
+                const time = entry_data['time']
+                const id = entry_data['id']
+                const year = new Date(time).getFullYear()
+                if(totals_obj[year] == null){
+                    totals_obj[year] = {}
+                }
+                if(totals_obj[year][id] == null){
+                    totals_obj[year][id] = 0
+                }
+                totals_obj[year][id]++;
+            })
+        })
+
+        return totals_obj;
+    }
+
+
+    render_years_and_entry_info(total_amounts_handled_data){
+        const items = Object.keys(total_amounts_handled_data)
+        var items2 = [0, 1]
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_year_item(item, total_amounts_handled_data)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_year_item(item, total_amounts_handled_data){
+        const title = item;
+        const years_entries = Object.keys(total_amounts_handled_data[item])
+        const details = this.props.app_state.loc['3055lj']/* '$ exchanges.' */.replace('$', years_entries)
+        return(
+            <div onClick={() => this.when_year_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_line_if_selected(item)}
+            </div>
+        )
+    }
+
+    render_line_if_selected(item){
+        if(this.state.selected_obligation_year == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_year_item_clicked(item){
+        this.setState({selected_obligation_year: item})
+    }
+
+
+    render_selected_year_paid_amounts(total_amounts_handled_data){
+        const year = this.state.selected_obligation_year
+        const data = total_amounts_handled_data[year] || {}
+        const exchanges = Object.keys(data)
+        const e5 = this.props.app_state.selected_e5
+        if(exchanges.length == 0){
+            const item = '5';
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width(0), 'number':this.format_account_balance_figure(0), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {exchanges.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+    render_each_type_entry_count(each_type_number_entries){
+        const year = this.state.selected_obligation_year
+        const data = each_type_number_entries[year] || {}
+        const items = Object.keys(data)
+        var items2 = [0, 1]
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_type_entry_count_item(item, data)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_type_entry_count_item(item, data){
+        const title = item;
+        const details = this.props.app_state.loc['3055ln']/* '$ entries.' */.replace('$', data[item])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+
+    fulfil_obligations(){
+        const previous_year = new Date().getFullYear() - 1;
+        const total_amounts_handled_data = this.calculate_total_amount_handled_for_each_contract(this.props.app_state.user_obligation_data, previous_year)
+        
+        if(total_amounts_handled_data.transfer_exists == false){
+            this.props.notify(this.props.app_state.loc['1593lp']/* 'Nothing to fulfil.' */, 2600);
+        }
+        else{
+            const obj = {
+                id:makeid(8), type: this.props.app_state.loc['1593lq']/* 'fulfil-obligations' */,
+                entered_indexing_tags:[this.props.app_state.loc['1593lr']/* 'fulfil' */, this.props.app_state.loc['1593ls']/* 'obligation' */, this.props.app_state.loc['3068ah']/* 'payment' */],
+                e5:this.props.app_state.selected_e5, fulfilment_data: total_amounts_handled_data.totals_obj, year: previous_year
+            }
+
+            this.props.add_fulfil_obligations_transaction_to_stack(obj)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+        }
+    }
+
+    calculate_total_amount_handled_for_each_contract(user_obligation_data, previous_year){
+        const my_account_id = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        const totals_obj = {}
+        var transfer_exists = false;
+        Object.keys(user_obligation_data).forEach(contract => {
+            if(contract.endsWith(this.props.app_state.selected_e5)){
+                const contract_data = user_obligation_data[contract] || {};
+                const accounts_data = contract_data[my_account_id] || {};
+                const entries = Object.entries(accounts_data)
+                entries.forEach(entry => {
+                    const entry_data = accounts_data[entry]
+                    const contracts_promise = entry_data['contracts_promises']
+                    const time = entry_data['time']
+                    const year = new Date(time).getFullYear()
+                    if(year == previous_year){
+                        if(totals_obj[contract] == null){
+                            totals_obj[contract] = {}
+                        }
+                        const transfers = contracts_promise['transfers']
+                        const proportions = contracts_promise['proportions']
+                        transfers.forEach(transfer => {
+                            const exchange = transfer['exchange']
+                            const amount = transfer['amount']
+                            if(totals_obj[contract][exchange] == null){
+                                totals_obj[contract][exchange] = bigInt(0)
+                            }
+                            let obligation_amount = bigInt(0)
+                            let active_amount = bigInt(0).plus(amount)
+                            proportions.forEach(proportion => {
+                                const obligation = bigInt(active_amount).multiply(proportion).divide('100e16')
+                                obligation_amount = bigInt(obligation_amount).plus(obligation)
+                                active_amount = bigInt(active_amount).minus(obligation)
+                            });
+                            totals_obj[contract][exchange] = bigInt(totals_obj[contract][exchange]).plus(obligation_amount)
+                            transfer_exists = true;
+                        });
+                    } 
+                });
+            } 
+        });
+
+        return {totals_obj, transfer_exists}
+    }
 
 
 

@@ -524,6 +524,8 @@ class ContractDetailsSection extends Component {
 
                                     {index == 38 && this.render_configure_obligation_configuration_button(object)}
 
+                                    {index == 38 && this.render_search_and_view_accounts_obligation_history_button(object)}
+
                                     {index == 39 && this.render_subscribe_to_contracts_obligations_button(object)}
 
                                     {index == 39 && this.render_force_exit_button(object)}
@@ -1126,6 +1128,32 @@ class ContractDetailsSection extends Component {
     configure_obligations(object){
         this.props.show_view_configure_obligations(object)
     }
+
+
+    render_search_and_view_accounts_obligation_history_button(object){
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+        const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
+        const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
+        const contract_type = object['ipfs'].contract_type || 'custom'
+
+        if( object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214bx']/* '🔎 Search Account Obligation Promise History.' */, 'details': this.props.app_state.loc['2214by']/* 'Search and view an accounts obligation promise history and fulfilments.' */, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.search_account_obligations(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214bz']/* 'Search.' */, 'action': '' })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    search_account_obligations(object){
+        this.show_dialog_bottomsheet({'object':object}, 'view_accounts_obligation_promise_history')
+    }
+
 
     render_subscribe_to_contracts_obligations_button(object){
         if(object['obligation_configurations'] != null && object['obligation_configurations'].length > 0){

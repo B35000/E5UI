@@ -1355,7 +1355,7 @@ class App extends Component {
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
 
-    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}
+    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{},
   };
 
   get_thread_pool_size(){
@@ -8592,7 +8592,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)}
       />
     )
   }
@@ -10342,6 +10342,23 @@ class App extends Component {
       console.log(e)
       return null
     }
+  }
+
+  add_fulfil_obligations_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -17571,7 +17588,7 @@ class App extends Component {
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
         send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
 
-        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
+        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)}
         />
       </div>
     )
@@ -17660,7 +17677,9 @@ class App extends Component {
       'view_pre_purchase_request':570,
       'new_direct_message_chat':310,
       'view_poll_markdown_details':550,
-      'view_obligation_configuration_item':650
+      'view_obligation_configuration_item':650,
+      'view_accounts_obligation_promise_history':650,
+      'show_my_obligation_fulfilment_item':450,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -18904,6 +18923,137 @@ class App extends Component {
 
     await this.wait(300)
     this.open_direct_messages_convo(their_address)
+  }
+
+  async get_searched_user_obligation_data(account_ids, e5, contract_e5_id){
+    this.setState({is_searching_user_obligation_data: true})
+    const obligation_fulfiller_account_ids = []
+    account_ids.forEach(account => {
+      const e5_account = account+e5
+      if(!obligation_fulfiller_account_ids.includes(e5_account)){
+        obligation_fulfiller_account_ids.push(e5_account)
+      }
+    });
+
+    const filter_addresses = []
+    const end_time = Date.now()
+    const start_time = 1772477290
+    const filter_contracts = [contract_e5_id]
+
+    const user_obligation_data = await this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, false)
+
+    const contract_id = contract_e5_id.split('E')[0]
+
+    for(var n=0; n<account_ids.length; n++){
+      const account = account_ids[n]
+      var object_event_data = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p1/* target_id */: account, p2/* awward_receiver */: contract_id, p3/* context */:50/* fulfil_obligation_container */})
+
+      if(object_event_data.length > 0){
+        const data = []
+        for(var i=0; i<object_event_data.length; i++){
+          const event = object_event_data[i];
+          const object_data = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+          const block = event.returnValues.p6/* block_number */
+          const transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p2/* sender */: account, p6/* block_number */ :block})
+
+          const exchanges_logged = Object.keys(object_data)
+          const transfers = []
+          exchanges_logged.forEach(exchange => {
+            transfers.push({'exchange':exchange, 'amount':object_data[exchange]})
+          });
+          const do_all_transfers_exist = this.ensure_all_transfers_exist(transfers, transfer_events)
+          if(do_all_transfers_exist == true){
+            const obligation_fulfilment_object = {
+              'time': event.returnValues.p5/* timestamp */,
+              'event':event,
+              'contract':event.returnValues.p2/* awward_receiver */,
+              'data': object_data,
+              'e5':e5,
+            }
+            data.push(obligation_fulfilment_object)
+          }
+        }
+        const clone = structuredClone(this.state.accounts_fulfilled_obligation_data)
+        clone[account] = data
+        this.setState({my_fulfilled_obligation_data: data})
+      }
+    }
+    
+
+    await this.process_user_obligation_data(user_obligation_data)
+    this.setState({is_searching_user_obligation_data: false})
+  }
+
+  get_user_obligation_data = async (filter_addresses, end_time=(Date.now()), start_time=(Date.now() - (52*7*24*60*60*1000)), filter_contracts, obligation_fulfiller_account_ids, updated_signature=false) => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+    
+    const arg_obj = {
+      filter_addresses: filter_addresses,
+      filter_contracts: filter_contracts,
+      obligation_fulfiller_account_ids: obligation_fulfiller_account_ids,
+      end_time,/* the newest entry to include */
+      start_time,/* the oldest entry to include */
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'user_obligations')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      console.log('user_obligations', 'user_obligations', 'performing fetch...', request)
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log('datas', 'user_obligations',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('user_obligations', 'user_obligations', obligation_fulfiller_account_ids, obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, true)
+      }
+      var target_data = obj['obligations_data']
+      return target_data
+    }
+    catch(e){
+      console.log('apppage', 'tag_prices', 'trends', 'something went wrong with tag_prices', e)
+    }
+  }
+
+  process_user_obligation_data(data){
+    const update_object = structuredClone(this.state.user_obligation_data)
+    Object.keys(data).forEach(time => {
+      Object.keys(data[time]).forEach(contract => {
+        Object.keys(data[time][contract]).forEach(obligation_fulfiller_address => {
+          Object.keys(data[time][contract][obligation_fulfiller_address]).forEach(identifier => {
+            const entry = data[time][contract][obligation_fulfiller_address][identifier]
+            if(update_object[contract] == null){
+              update_object[contract] = {}
+            }
+            if(update_object[contract][entry['obligation_fulfiller']] == null){
+              update_object[contract][entry['obligation_fulfiller']] = {}
+            }
+            update_object[contract][entry['obligation_fulfiller']][identifier] = entry;
+          });
+        });
+      });
+    });
+    this.setState({user_obligation_data: update_object})
   }
 
 
@@ -26835,6 +26985,8 @@ class App extends Component {
       {'identifier':'my_created_contract_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e1', 'filter':{p3/* sender_acc_id */: '%%account%%', p2/* object_type */: 30}, 'from_filter':{}}},/* my_created_contract_events  */
 
       {'identifier':'my_created_subscription_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e1', 'filter':{p3/* sender_acc_id */: '%%account%%', p2/* object_type */: 33}, 'from_filter':{}}},/* my_created_subscription_events  */
+
+      {'identifier':'fulfilled_obligation_events','fetch_last_data':'all', 'fetch_last_data_p_pos':'p4', 'fetch_params':{'requested_contract':'H52', 'requested_event_id':'e5', 'filter':{p1/* awward_sender */: '%%account%%', p3/* awward_context */:'50'/* fulfil_obligation_container */}, 'from_filter':{}}},/* fulfilled obligation events */
     ]
     
   }
@@ -27968,6 +28120,7 @@ class App extends Component {
       [web3, contractInstance, 'e4', e5, {p1/* sender_account_id */: account}],/* my_e5_runs */
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:19}],/* pinned_objects */
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:20}],/* location_objects */
+      [web3, H52contractInstance, 'e5', e5, {p1/* award_sender_id */: account, p3/* awward_context */: 50/* fulfil_obligation_container */}],/* fulfilled_obligation_events */
     ]
     const all_basic_events = pre_launch_data[e5] != null ? 
     [
@@ -27995,7 +28148,8 @@ class App extends Component {
       pre_launch_data[e5]['hidden_objects'],/* 21 */
       pre_launch_data[e5]['my_e5_runs'],
       pre_launch_data[e5]['pined_objects'],/* 23 */
-      pre_launch_data[e5]['location_objects']/* 24 */
+      pre_launch_data[e5]['location_objects'],/* 24 */
+      pre_launch_data[e5]['fulfilled_obligation_events'],/* 25 */
     ] : (await this.load_multiple_events_from_nitro(event_params2)).all_events
 
 
@@ -28295,6 +28449,14 @@ class App extends Component {
 
 
 
+
+    /* ------------------------------------ FULFILLED OBLIGATION DATA-------------------------- */
+    this.load_my_fulfilled_obligation_data_in_e5(web3, H52contractInstance, e5, account, all_basic_events[25])
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
+
+
     /* ---------------------------------------- SUBSCRIPTION DATA ------------------------------------------- */
     
 
@@ -28424,24 +28586,10 @@ class App extends Component {
       if(pre_launch_data[e5] != null){
         this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
         this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
+        await this.process_user_obligation_data(pre_launch_data[e5]['obligation_data'])
       }else{
         this.load_my_contracts(e5)
         this.load_my_subscriptions(e5)
-      }
-
-      if(e5 == 'E25'){
-        if(
-          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] != null &&
-          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
-          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
-        ){
-          await this.load_my_accounts_obligation_data(this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'])
-        }else{
-          this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
-          await this.wait(500)
-          await this.emit_update_subscriptions_for_obligations_event()
-        }
-        await this.load_and_notify_flash()
       }
 
       // const load_signature_data = async () => {
@@ -28464,6 +28612,23 @@ class App extends Component {
       //   this.setState({is_loading_repost_and_following_data: false})
       // }
       // await load_repost_and_following_data()
+    }
+
+    if(this.state.has_wallet_been_set == true){
+      if(e5 == 'E25'){
+        if(
+          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] != null &&
+          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
+          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
+        ){
+          await this.load_my_accounts_obligation_data(this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'])
+        }else{
+          this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
+          await this.wait(500)
+          await this.emit_update_subscriptions_for_obligations_event()
+        }
+        await this.load_and_notify_flash()
+      }
     }
 
     // this.get_total_supply_of_ether(e5)
@@ -30235,6 +30400,91 @@ class App extends Component {
     }
   }
 
+  async load_my_fulfilled_obligation_data_in_e5(web3, H52contractInstance, e5, account, pre_loaded_events){
+    if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
+    
+    var object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p1/* target_id */: account, p3/* context */:50/* fulfil_obligation_container */})
+
+    if(object_event_data.length > 0){
+      const data = []
+      for(var i=0; i<object_event_data.length; i++){
+        const event = object_event_data[i];
+        const object_data = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+        const block = event.returnValues.p6/* block_number */
+        const transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p2/* sender */: account, p6/* block_number */ :block})
+
+        const exchanges_logged = Object.keys(object_data)
+        const transfers = []
+        exchanges_logged.forEach(exchange => {
+          transfers.push({'exchange':exchange, 'amount':object_data[exchange]})
+        });
+        const do_all_transfers_exist = this.ensure_all_transfers_exist(transfers, transfer_events)
+        if(do_all_transfers_exist == true){
+          const obligation_fulfilment_object = {
+            'time': event.returnValues.p5/* timestamp */,
+            'event':event,
+            'contract':event.returnValues.p2/* awward_receiver */,
+            'data': object_data,
+            'e5':e5,
+          }
+          data.push(obligation_fulfilment_object)
+        }
+      }
+      const clone = structuredClone(this.state.my_fulfilled_obligation_data)
+      clone[e5] = data
+      this.setState({my_fulfilled_obligation_data: data})
+    }
+  }
+
+  get_default_depth = (number) => {
+    var number_as_string = number.toString().toLocaleString('fullwide', {useGrouping:false})
+    return Math.floor((number_as_string.length-1)/72)
+  }
+
+  get_exchange_transfer_actions = (amount) => {
+    var transaction_amount = amount.toString().toLocaleString('fullwide', {useGrouping:false})
+    var transaction_amount_depth = this.get_default_depth(transaction_amount)
+
+    var end = transaction_amount.length - 1
+    var start = (end - 71) < 0 ? 0 : (end-71)
+
+    var data = []
+    for(var j=0; j<=transaction_amount_depth; j++){
+      var depth_amount = bigInt(transaction_amount.substring(start, end+1)).toString().toLocaleString('fullwide', {useGrouping:false})
+      var depth = j
+      if(!bigInt(depth_amount).equals(0)){
+        data.push({'amount':depth_amount, 'depth':depth})
+      }
+
+      end -= 72
+      start -= 72
+    }
+    return data
+  }
+
+  ensure_all_transfers_exist = (transfers, transfer_events) => {
+    var all_existing = true;
+    transfers.forEach(transfer => {
+      const exchange = transfer['exchange']
+      const amount = transfer['amount']
+      const transfer_actions = this.get_exchange_transfer_actions(amount)
+
+      transfer_actions.forEach(action => {
+        const existing_events = transfer_events.filter((event) => { 
+          return(
+            event.returnValues.p1 == exchange && 
+            action['amount'].toString() == event.returnValues.p4/* amount */.toString() &&
+            action['depth'].toString() == event.returnValues.p7/* depth */.toString()
+          )
+        });
+        if(existing_events.length == 0){
+          all_existing = false;
+        }
+      });
+    });
+
+    return all_existing;
+  }
 
 
 
