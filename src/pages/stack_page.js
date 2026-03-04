@@ -3293,7 +3293,7 @@ class StackPage extends Component {
                         should_optimize_run = false
                     }
 
-                    var include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
+                    const include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
 
                     if(include_enter_value == this.props.app_state.loc['1']/* 'enter-contract' */){
                         var t = txs[i];
@@ -6492,7 +6492,6 @@ class StackPage extends Component {
             const tx = txs[i]
             if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5 && calculate_gas != true){
                 if(tx.type == this.props.app_state.loc['946']/* 'buy-sell' */){
-                    
                     const object = tx.token_item
                     const buy_sell_recipient = tx.recipient_id == 53 ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : tx.recipient_id;
                     const buy_sell_amount = tx.amount
@@ -6509,7 +6508,7 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id,
-                                'hard_id':'sell-token', 
+                                'hard_id':'buy-sell-token', 
                                 'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
                                 'e5':object['e5'],
@@ -6539,7 +6538,7 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id,
-                                'hard_id':'buy-token', 
+                                'hard_id':'buy-sell-token', 
                                 'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
                                 'e5':object['e5'],
@@ -6645,6 +6644,49 @@ class StackPage extends Component {
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
+                    }
+                }
+                else if(tx.type == this.props.app_state.loc['1130']/* 'contract' */){
+                    const include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
+
+                    if(include_enter_value == this.props.app_state.loc['1']/* 'enter-contract' */){
+                        const price_data = tx.price_data
+                        const final_object_value_transfer_data = []
+                        price_data.forEach((price_item, index) => {
+                            final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
+                        });
+                        if(price_data.length == 0){
+                            final_object_value_transfer_data.push({'exchange':3, 'amount':10_000})
+                        }
+
+                        const object_obligation_fulfiller = this.props.app_state.user_account_id[this.props.app_state.selected_e5];
+                        await this.props.load_targets_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
+                        const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
+                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+
+                        if(authors_obligation_contracts.length > 0){
+                            const obligation_promise_data = { 
+                                'id': this.props.app_state.loc['1']/* 'enter-contract' */, 
+                                'identifier':tx.id,
+                                'hard_id':'enter-contract', 
+                                'confirm_transfers':true,
+                                'obligation_fulfiller':object_obligation_fulfiller, 
+                                'e5':this.props.app_state.selected_e5,
+                                'obligation_fulfiller_address':address_key,
+                                'promises':{},
+                            }
+                            authors_obligation_contracts.forEach(contract => {
+                                const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
+
+                                const default_obligation_proportion = configuration['ipfs'].default_enter_contract_obligation
+
+                                obligation_promise_data['promises'][contract] = {
+                                    'proportions':[default_obligation_proportion],
+                                    'transfers':final_object_value_transfer_data
+                                }
+                            });
+                            obligation_object['data'].push(obligation_promise_data)
+                        }
                     }
                 }
                 else if(tx.type == this.props.app_state.loc['312']/* 'proposal' */){

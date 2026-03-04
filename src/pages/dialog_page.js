@@ -11801,6 +11801,7 @@ return data['data']
 
     render_show_my_obligation_fulfilment_item_data(){
         const item = this.state.data['item']
+        const e5 = item['e5']
         const time = item['time']
         const title = item['contract'] + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
         const details = ''+(new Date(time*1000).toLocaleString())

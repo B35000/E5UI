@@ -1057,12 +1057,23 @@ class NitroDetailsSection extends Component {
                     {this.render_version_if_available(node_details)}
                     
                     {this.render_detail_item('3', {'title':''+(new Date(node_details['start_up_time']).toLocaleString()), 'details':this.props.app_state.loc['c2527l']/* 'Start Up Time' */, 'size':'l'})}
-                    
+
+                    {this.render_socket_synchronization_level_if_synching(node_details)}
 
                     {this.render_nitro_private_details(node_details, object)}
 
                     {this.render_nitro_storage_details_if_set(node_details)}
 
+                </div>
+            )
+        }
+    }
+
+    render_socket_synchronization_level_if_synching(node_details){
+        if(node_details['is_synching_socket_with_beacon'] == true){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':''+node_details['socket_section_synchronization']+'%', 'details':this.props.app_state.loc['c2527ec']/* 'Synchronization Level.' */, 'size':'l'})}
                 </div>
             )
         }

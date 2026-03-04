@@ -18943,6 +18943,10 @@ class App extends Component {
     const user_obligation_data = await this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, false)
 
     const contract_id = contract_e5_id.split('E')[0]
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     for(var n=0; n<account_ids.length; n++){
       const account = account_ids[n]
