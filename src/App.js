@@ -1355,7 +1355,7 @@ class App extends Component {
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
 
-    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}
+    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{}
   };
 
   get_thread_pool_size(){
@@ -6438,6 +6438,8 @@ class App extends Component {
           set_direct_messages_read_receipts={this.set_direct_messages_read_receipts.bind(this)} when_file_tapped={this.when_file_tapped.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} set_contextual_transfer_identifier={this.set_contextual_transfer_identifier.bind(this)} get_searched_tag_price_data_for_search={this.get_searched_tag_price_data_for_search.bind(this)} emit_view_object_event={this.emit_view_object_event.bind(this)} fetch_and_set_loaded_object_views={this.fetch_and_set_loaded_object_views.bind(this)}
 
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
+
+          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -45868,6 +45870,100 @@ class App extends Component {
                 const hits = data[time][item_type][item_lan][tag][item_state][object_type]['hits']
                 const entry = {time:parseInt(time), item_type, item_lan, item_state, object_type, hits, tag}
                 return_data.push(entry)
+              });
+            });
+          });
+        });
+      });
+    });
+
+    return return_data
+  }
+
+  async get_indexer_storage_acquisition_metrics(object){
+    const object_e5_id = object['e5_id']
+
+    const keywords = ['storage_acquisition', 'storage_renewal']
+    const filter_type = 1
+    const filter_languages = []
+    const filter_states = []
+    const filter_e5s = []
+    const end_time = Date.now()
+    const start_time = Date.now() - (12*7*24*60*60*1000)
+
+    const indexer_storage_trend_data = await this.get_indexers_storage_acquisition_storage_metrics_from_indexer(object_e5_id, keywords, end_time, start_time, filter_type, filter_languages, filter_states, [])
+
+    const processed_storage_trend_data = await this.get_process_tag_storage_trend_data(indexer_storage_trend_data)
+
+    const clone = structuredClone(this.state.indexer_storage_trend_data);
+    clone[object_e5_id] = processed_storage_trend_data
+    this.setState({indexer_storage_trend_data: clone})
+  }
+
+  async get_indexers_storage_acquisition_storage_metrics_from_indexer(object_e5_id, keywords, end_time=(Date.now()), start_time=(Date.now() - (52*7*24*60*60*1000)), filter_type, filter_languages, filter_states, filter_object_types=[]){
+    const beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+    const beacon_e5_id = this.state.my_preferred_nitro
+
+    await this.update_nitro_privacy_signature(false)
+    await this.wait(300)
+    await this.check_and_fetch_object_marco_if_non_existant(object_e5_id, beacon_node)
+    await this.wait(700)
+    await this.check_and_start_rerecording_of_key_in_nitro(beacon_node)
+
+    const arg_obj = {
+      keywords: keywords,
+      filter_type: filter_type,
+      filter_languages: filter_languages,
+      filter_states: filter_states,
+      filter_object_types:filter_object_types,
+      end_time,/* the newest entry to include */
+      start_time,/* the oldest entry to include */
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'trends')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+
+    try{
+      console.log('storage', 'trends', 'performing fetch...', request)
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log('datas', 'tag_prices',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('storage', 'trends', keywords, obj)
+      
+      const target_data = obj['trends']
+      return target_data
+    }
+    catch(e){
+      console.log('apppage', 'storage', 'trends', 'something went wrong with tag_prices', e)
+    }
+  }
+
+  get_process_tag_storage_trend_data(data){
+    const return_data = {}
+    Object.keys(data).forEach(time => {
+      Object.keys(data[time]).forEach(item_type => {
+        Object.keys(data[time][item_type]).forEach(item_lan => {
+          Object.keys(data[time][item_type][item_lan]).forEach(tag => {
+            Object.keys(data[time][item_type][item_lan][tag]).forEach(item_state => {
+              Object.keys(data[time][item_type][item_lan][tag][item_state]).forEach(object_type => {
+                //item_type: uploads & views
+                const hits = data[time][item_type][item_lan][tag][item_state][object_type]['hits']
+                const entry = { time:parseInt(time), hits }
+                if(return_data[tag] == null){
+                  return_data[tag] = []
+                }
+                return_data[tag].push(entry)
               });
             });
           });

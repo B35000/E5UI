@@ -5695,6 +5695,7 @@ class home_page extends Component {
         this.props.get_object_censored_keywords_and_accounts(object)
         this.props.get_nitro_purchases(object)
         this.props.get_nitro_telemetry_data(object)
+        this.props.get_indexer_storage_acquisition_metrics(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }

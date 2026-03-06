@@ -1062,7 +1062,7 @@ class NitroDetailsSection extends Component {
 
                     {this.render_nitro_private_details(node_details, object)}
 
-                    {this.render_nitro_storage_details_if_set(node_details)}
+                    {this.render_nitro_storage_details_if_set(node_details, object)}
 
                 </div>
             )
@@ -1121,7 +1121,7 @@ class NitroDetailsSection extends Component {
     }
 
 
-    render_nitro_storage_details_if_set(node_details){
+    render_nitro_storage_details_if_set(node_details, object){
         if(node_details['max_buyable_capacity'] == 0){
             return(
                 <div>
@@ -1140,6 +1140,8 @@ class NitroDetailsSection extends Component {
                         {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['c2527bg']/* 'Total Space Utilized' */, 'subtitle':this.format_power_figure(node_details['total_space_utilized']), 'barwidth':this.get_number_width(node_details['total_space_utilized']), 'number':`${number_with_commas(node_details['total_space_utilized'].toFixed(3))}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
                     </div>
                     <div style={{height:10}}/>
+
+                    {this.render_storage_acquisition_chart(object)}
 
                     {this.render_detail_item('3', {'title':number_with_commas(node_details['storage_accounts']), 'details':this.props.app_state.loc['c2527q']/* 'Accounts Served.' */, 'size':'l'})}
                     <div style={{height:10}}/>
@@ -1171,6 +1173,100 @@ class NitroDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_storage_acquisition_chart(object){
+        const data = this.props.app_state.indexer_storage_trend_data[object['e5_id']]
+        if(data == null) return;
+        const data_points_data = this.get_storag_space_data_datapoints(data['storage_acquisition'])
+        const data_points_data2 = this.get_storag_space_data_datapoints(data['storage_renewal'])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527ed']/* 'Storage Acquisition Stats.' */, 'details':this.props.app_state.loc['c2527ee']/* 'Chart containing the storage acquisition and renewal rates of this indexer node overtime.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('6', {'dataPoints':data_points_data.dps, 'start_time': data_points_data.starting_time, 'end_time':data_points_data.ending_time, 'y_axis_units': this.props.app_state.loc['c2527p']/* Mbs */})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527ef']/* 'Y-Axis: Storage Space Acquired' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('6', {'dataPoints':data_points_data2.dps, 'start_time': data_points_data2.starting_time, 'end_time':data_points_data2.ending_time, 'y_axis_units': this.props.app_state.loc['c2527p']/* Mbs */})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527eg']/* 'Y-Axis: Storage Space Renewed' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    get_storag_space_data_datapoints(upload_data){
+        var data = []
+        for(var i=0; i<upload_data.length; i++){
+            const focused_item = upload_data[i]['hits']
+            data.push(focused_item)
+
+            if(i==upload_data.length-1){
+                var diff = Date.now() - upload_data[i]['time']
+                for(var t=0; t<diff; t+=230000){
+                    data.push(data[data.length-1]*0.999)      
+                }
+            }
+            else{
+                var diff = upload_data[i+1]['time'] - upload_data[i]['time']
+                for(var t=0; t<diff; t+=230000){
+                    data.push(data[data.length-1]*0.999)      
+                }
+            }
+        }
+
+        // console.log('get_upload_data_datapoints', data)
+
+        var xVal = 1, yVal = 0, original_y_val = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var largest = 0;
+        var factor = Math.round(data.length/noOfDps) +1;
+        for(var i = 0; i < noOfDps; i++) {
+            if(i < 100 && data.length > 200){
+                var sum = 0
+                var slice = data.slice(factor * xVal, factor * (xVal+1))
+                for(var j = 0; j < slice.length; j++) {
+                    sum += slice[j]
+                }
+                var result = isNaN(parseInt(sum / slice.length)) ? 0 : parseInt(sum / slice.length)
+                original_y_val = result
+                // yVal =  parseInt(bigInt(result).multiply(100).divide(largest))
+                yVal = result
+            }
+            else{
+                original_y_val = data[factor * xVal]
+                // yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest))
+                yVal = data[factor * xVal]
+            }
+            if(yVal > largest){
+                largest = yVal
+            }
+            // console.log('get_upload_data_datapoints', factor, xVal, original_y_val)
+            if(yVal != null){
+                const bytes_val = Math.floor(original_y_val * (1024 * 1024));
+                const formatted_size = this.format_data_size(bytes_val)
+                var indicator = formatted_size['size']+' '+formatted_size['unit']
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && yVal != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            } 
+        }
+
+        const chart_starting_time = upload_data[0]['time']
+        const chart_ending_time = Date.now()
+
+        return { dps, largest, starting_time: chart_starting_time, ending_time: chart_ending_time }
     }
 
     render_price_per_megabyte_data(node_details){
