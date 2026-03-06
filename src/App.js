@@ -15813,7 +15813,7 @@ class App extends Component {
     var os = getOS()
     
     return this.renderBottomSheet(
-      <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)}
+      <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)}
       />,
       this.state.view_job_request_bottomsheet,
       this.open_view_job_request_bottomsheet,
@@ -15926,6 +15926,10 @@ class App extends Component {
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
     this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+  }
+
+  add_id_to_contacts(account_id, item){
+    this.show_dialog_bottomsheet({'account':account_id, 'e5':item['e5'], 'message': item}, 'account_options')
   }
 
 
@@ -21836,7 +21840,7 @@ class App extends Component {
       <div /* style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <FullVideoPage ref={this.full_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
             update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
-            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)}
+            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)}
             />
       </div>
     )
@@ -46781,6 +46785,8 @@ class App extends Component {
 
           await this.fetch_and_set_loaded_object_views(e5+':'+id)
 
+          await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], 1771762377000, (36*7*24*60*60*1000), [], e5, [id]);
+
           var searched_accounts_exchange_interactions_data = await this.load_searched_accounts_exchange_interactions_data(id, e5)
 
           var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1], 'interacted_exchanges':interacted_exchanges, 'interacted_exchanges_balances':token_balances, 'searched_accounts_exchange_interactions_data': searched_accounts_exchange_interactions_data, 'typed_search':typed_search,
@@ -51062,9 +51068,13 @@ class App extends Component {
   }
 
   async prepare_obligation_subscription_object_message(obligation_subscriptions_array_clone){
+    const country = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address].my_original_country || this.state.device_country
+    const city = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address].my_original_city || this.state.device_city
     const message_obj = {
       'obligation_subscriptions':obligation_subscriptions_array_clone, 
-      'my_accounts': this.state.user_account_id
+      'my_accounts': this.state.user_account_id,
+      'my_original_country': country,
+      'my_original_city': city,
     }
     const tags = []
     const id = this.make_number_id(12)
@@ -53230,6 +53240,9 @@ class App extends Component {
     if(ipfs != message.data){
       const time = message['time']
       const obligation_subscriptions = ipfs['obligation_subscriptions']
+      const my_original_country = ipfs['my_original_country']
+      const my_original_city = ipfs['my_original_city']
+
       const obligation_subscriptions_clone = structuredClone(this.state.obligation_subscriptions)
       if(obligation_subscriptions_clone[message['author_address']] == null){
         obligation_subscriptions_clone[message['author_address']] = { 
@@ -53243,6 +53256,8 @@ class App extends Component {
         //loading a more recent version
         obligation_subscriptions_clone[message['author_address']]['time'] = time
         obligation_subscriptions_clone[message['author_address']]['data'] = obligation_subscriptions
+        obligation_subscriptions_clone[message['author_address']]['my_original_country'] = my_original_country;
+        obligation_subscriptions_clone[message['author_address']]['my_original_city'] = my_original_city
 
         this.setState({obligation_subscriptions: obligation_subscriptions_clone})
       }

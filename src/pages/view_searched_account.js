@@ -661,6 +661,8 @@ class SearchedAccountPage extends Component {
                 </div>
                 <div style={{height: 10}}/>
 
+                {this.render_searched_account_origin(address)}
+
                 {this.render_followers(account_id)}
 
                 {this.render_follow_unfollow_author_button(id, e5)}
@@ -703,6 +705,25 @@ class SearchedAccountPage extends Component {
 
                 {this.show_transaction_transaction_count_chart(item['transactions'])}
 
+            </div>
+        )
+    }
+
+    render_searched_account_origin(address){
+        if(this.state.obligation_subscriptions[address] == null) return;
+
+        const country = this.state.obligation_subscriptions[address].my_original_country
+        const city = this.state.obligation_subscriptions[address].my_original_city
+
+        const my_country = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country
+
+        if(country == my_country) return;
+        if(country == '' || country == null) return;
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1770m']/* 'Country of Origin: $' */.replace('$', country), 'details':this.props.app_state.loc['1770n']/* City of Origin: $' */.replace('$', city), 'size':'l'})}
+                <div style={{height: 10}}/>
             </div>
         )
     }

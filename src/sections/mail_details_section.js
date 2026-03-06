@@ -1498,7 +1498,7 @@ class MailDetailsSection extends Component {
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], object)} >{this.get_sender_title_text(item, object)}</p>
+                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                                 </div>
                                 <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
@@ -2119,7 +2119,11 @@ class MailDetailsSection extends Component {
             var convo_id = mail['convo_id']
             var recipients_e5 = mail['author'] == this.props.app_state.user_account_id[mail['ipfs']['e5']] ? mail['ipfs']['recipients_e5'] : mail['ipfs']['e5']
 
-            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
+            const my_country =  this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country;
+
+            const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city;
+
+            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':'', my_country, my_city}
             this.props.add_mail_to_stack_object(tx)
 
             this.setState({entered_text:''})

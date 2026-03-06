@@ -96,6 +96,10 @@ class NewProposalPage extends Component {
         device_language_setting: this.props.app_state.device_language, 
         device_country: this.props.app_state.device_country,
 
+        my_country : this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
+
+        my_city : this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
+
         entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], entered_text:'',
 

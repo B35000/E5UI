@@ -86,6 +86,10 @@ class NewVideoPage extends Component {
         device_region: this.props.app_state.device_region,
         device_city: '', selected_device_city:'',
 
+        my_country : this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
+
+        my_city : this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
+
         typed_link_text:'', link_search_results:[], added_links:[],
         get_post_preview_option:this.get_post_preview_option(),
         edit_text_item_pos:-1,

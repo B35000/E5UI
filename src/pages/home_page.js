@@ -6663,10 +6663,7 @@ class home_page extends Component {
 
 
     add_id_to_contacts(account_id, item){
-        // if(account_id != this.props.app_state.user_account_id[item['e5']]){
-        //     this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
-        // }
-        this.props.show_dialog_bottomsheet({'account':account_id, 'e5':item['e5']}, 'account_options')
+        this.props.show_dialog_bottomsheet({'account':account_id, 'e5':item['e5'], 'message': item}, 'account_options')
     }
 
     render_dialog_ui(){

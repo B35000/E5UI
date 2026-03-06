@@ -4220,9 +4220,11 @@ return data['data']
         var account_id = this.state.data['account']
         var e5 = this.state.data['e5']
         var alias = (this.props.app_state.alias_bucket[e5][account_id] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : this.props.app_state.alias_bucket[e5][account_id])
+        const message = this.state.data['message']
         return(
             <div>
                 {this.render_detail_item('3', {'title':account_id, 'details':alias, 'size':'l'})}
+                {this.render_country_if_exists(message)}
                 {this.render_detail_item('0')}
                 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'details':this.props.app_state.loc['3055z']/* 'Add the account to your contact list for easier access in the future.' */, 'size':'l'})}
@@ -4240,6 +4242,24 @@ return data['data']
                 </div>
                 <div style={{height:5}}/>
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run. This action cannot be undone.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    render_country_if_exists(message){
+        const country = message['my_country']
+        const city = message['my_city']
+
+        if(country == null || city == null) return;
+        
+        const my_country = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country
+
+        if(my_country == country) return;
+
+        return(
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1770m']/* 'Country of Origin: $' */.replace('$', country), 'details':this.props.app_state.loc['1770n']/* City of Origin: $' */.replace('$', city), 'size':'l'})}
             </div>
         )
     }

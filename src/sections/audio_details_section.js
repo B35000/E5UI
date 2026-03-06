@@ -562,13 +562,28 @@ class AudioDetailSection extends Component {
             return(
                 <div>
                     <div onClick={() => this.when_object_views_clicked(e5_id)}>
-                        {this.props.render_object_view_count_message(hits, e5_id)}
+                        {this.props.render_object_view_count_message(hits, e5_id, this.get_object_views_footer(object))}
                     </div>
                     <div style={{height: 10}}/>
                     {this.render_object_views_chart_if_enabled(e5_id)}
                 </div>
             )
         }
+    }
+
+    get_object_views_footer(object){
+        const my_country =  this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country;
+
+        const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city;
+
+        const post_country = object['ipfs']['my_country']
+        const post_city = object['ipfs']['my_city']
+
+        if(post_country == null || post_city == null) return;
+
+        if(post_country == my_country) return;
+
+        return `${post_city} • ${post_country}`
     }
 
     when_object_views_clicked(e5_id){
@@ -4056,7 +4071,11 @@ return data['data']
             this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':''}
+            const my_country =  this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country;
+
+            const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city;
+        
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':'', my_country, my_city}
 
             this.props.add_audio_reply_to_stack(tx)
 

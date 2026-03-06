@@ -620,10 +620,17 @@ class PostDetailSection extends Component {
         return { dps, largest, starting_time: chart_starting_time, ending_time: chart_ending_time }
     }
 
-    render_object_view_count_message(hits, e5_id){
+    render_object_view_count_message(hits, e5_id, footer){
         const details = this.get_object_views_text(e5_id)
         const title = this.props.app_state.loc['2509bo']/* '$ views' */.replace('$', number_with_commas(hits))
         if(details == ''){
+            if(footer != null){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':title, 'details':footer, 'size':'l'})}
+                    </div>
+                )
+            }
             return(
                 <div>
                     {this.render_detail_item('4', {'text':title, 'textsize':'13px', 'font':this.props.app_state.font})}
@@ -632,7 +639,7 @@ class PostDetailSection extends Component {
         }
         return(
             <div>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'footer': footer, 'size':'l'})}
             </div>
         )
     }
