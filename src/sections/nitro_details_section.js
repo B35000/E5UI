@@ -1717,7 +1717,7 @@ class NitroDetailsSection extends Component {
         //     }
         // }
 
-        const chart_starting_time = timestamp_datapoints.length == 0 ? 1000*60*60*24 : timestamp_datapoints[0]
+        const chart_starting_time = timestamp_datapoints.length == 0 ? Date.now() - 1000*60*60*24 : timestamp_datapoints[0]
 
         const chart_ending_time = timestamp_datapoints.length == 0 ? Date.now() : timestamp_datapoints[timestamp_datapoints.length-1]
 

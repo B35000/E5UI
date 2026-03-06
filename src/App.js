@@ -1355,7 +1355,7 @@ class App extends Component {
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
 
-    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{},
+    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}
   };
 
   get_thread_pool_size(){
@@ -17680,6 +17680,7 @@ class App extends Component {
       'view_obligation_configuration_item':650,
       'view_accounts_obligation_promise_history':650,
       'show_my_obligation_fulfilment_item':450,
+      'view_region_specific_metrics':650,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -18940,7 +18941,7 @@ class App extends Component {
     const start_time = 1772477290
     const filter_contracts = [contract_e5_id]
 
-    const user_obligation_data = await this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, false)
+    const { user_obligation_data, metadata } = await this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, false)
 
     const contract_id = contract_e5_id.split('E')[0]
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -18988,7 +18989,7 @@ class App extends Component {
     this.setState({is_searching_user_obligation_data: false})
   }
 
-  get_user_obligation_data = async (filter_addresses, end_time=(Date.now()), start_time=(Date.now() - (52*7*24*60*60*1000)), filter_contracts, obligation_fulfiller_account_ids, updated_signature=false) => {
+  get_user_obligation_data = async (filter_addresses, end_time=(Date.now()), start_time=(Date.now() - (52*7*24*60*60*1000)), filter_contracts, obligation_fulfiller_account_ids, updated_signature=false, generate_metadata=false) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -19005,6 +19006,7 @@ class App extends Component {
       obligation_fulfiller_account_ids: obligation_fulfiller_account_ids,
       end_time,/* the newest entry to include */
       start_time,/* the oldest entry to include */
+      generate_metadata: generate_metadata,
     }
 
     const body = {
@@ -19031,8 +19033,9 @@ class App extends Component {
         await this.wait(300)
         return this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, true)
       }
-      var target_data = obj['obligations_data']
-      return target_data
+      const user_obligation_data = obj['obligations_data']
+      const metadata = obj['metadata'] || {}
+      return { user_obligation_data, metadata }
     }
     catch(e){
       console.log('apppage', 'tag_prices', 'trends', 'something went wrong with tag_prices', e)
@@ -19059,6 +19062,8 @@ class App extends Component {
     });
     this.setState({user_obligation_data: update_object})
   }
+
+
 
 
 
@@ -24295,6 +24300,7 @@ class App extends Component {
  
       await this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
+      this.set_sunrise_sunset_times()
 
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
@@ -24324,7 +24330,10 @@ class App extends Component {
       const sunrise = new Date(data.results.sunrise);
       const sunset = new Date(data.results.sunset);
 
-      this.setstate({sunrise: sunrise, sunset: sunset})
+      const user_city = loc['city']
+      const user_region = loc['region']
+
+      this.setstate({sunrise: sunrise, sunset: sunset, city: user_city, region: user_region})
     }catch(e){
       console.log('apppage', e)
     }
@@ -32325,7 +32334,7 @@ class App extends Component {
 
     const obligation_configuration_events = all_events[5]
     const configurations = []
-    await this.fetch_multiple_cids_from_nitro(obligation_configuration_events, 0, 'p4')
+    if(obligation_configuration_events.length > 0) await this.fetch_multiple_cids_from_nitro(obligation_configuration_events, 0, 'p4');
     for(var i=0; i<obligation_configuration_events.length; i++){
       const event = obligation_configuration_events[i]
       const cid = event.returnValues.p4
@@ -32334,6 +32343,9 @@ class App extends Component {
       configurations.push(configuration_object)
     }
 
+    if(obligation_configuration_events.length > 0){
+      await this.load_contracts_obligation_metadata(object['e5_id'])
+    }
 
     object['end_balance'] = end_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['spend_balance'] = spend_balance.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -32504,6 +32516,51 @@ class App extends Component {
     });
 
     return balance;
+  }
+
+  async load_contracts_obligation_metadata(contract_e5_id){
+    const filter_addresses = []
+    const end_time = Date.now()
+    const start_time = this.getStartOfCurrentQuarter()
+    const filter_contracts = [contract_e5_id]
+
+    const { user_obligation_data, metadata } = await this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, [], false, true)
+
+    const { contract_datapoint_data, contract_region_general_info_data } = metadata;
+    const loded_contract_datapoint_data_clone = structuredClone(this.state.loded_contract_datapoint_data);
+    const loaded_contract_region_general_info_data_clone = structuredClone(this.state.loaded_contract_region_general_info_data)
+
+    Object.assign(loded_contract_datapoint_data_clone, contract_datapoint_data)
+    Object.assign(loaded_contract_region_general_info_data_clone, contract_region_general_info_data)
+
+    this.setState({loded_contract_datapoint_data: loaded_contract_region_general_info_data_clone, loaded_contract_region_general_info_data: loaded_contract_region_general_info_data_clone})
+  }
+
+  getStartOfCurrentQuarter() {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // Calculate quarter start month (0-based: 0=Jan, 3=Apr, 6=Jul, 9=Oct)
+    let quarterStartMonth;
+    
+    if (currentMonth < 3) {
+      quarterStartMonth = 0; // Q1 (Jan-Mar)
+    } 
+    else if (currentMonth < 6) {
+      quarterStartMonth = 3; // Q2 (Apr-Jun)
+    } 
+    else if (currentMonth < 9) {
+      quarterStartMonth = 6; // Q3 (Jul-Sep)
+    } 
+    else {
+      quarterStartMonth = 9; // Q4 (Oct-Dec)
+    }
+    
+    // Create date at start of quarter
+    const quarterStart = new Date(currentYear, quarterStartMonth, 1, 0, 0, 0, 0);
+    
+    return quarterStart.getTime(); // Returns timestamp in milliseconds
   }
 
   get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account, accounts_to_load, return_created_object_events_only=false, all_return_data={}) => {

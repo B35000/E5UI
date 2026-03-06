@@ -528,6 +528,8 @@ class ContractDetailsSection extends Component {
 
                                     {index == 39 && this.render_subscribe_to_contracts_obligations_button(object)}
 
+                                    {index == 39 && this.render_obligation_promise_info(object)}
+
                                     {index == 39 && this.render_force_exit_button(object)}
 
                                     {index == 40 && this.render_moderator_button(object)}
@@ -1873,6 +1875,105 @@ class ContractDetailsSection extends Component {
         }
         
         return { dps, starting_time: chart_starting_time }
+    }
+
+
+
+    render_obligation_promise_info(object){
+        const contract_datapoint_object = this.props.app_state.loded_contract_datapoint_data[object['e5_id']];
+        const contract_region_general_info = this.props.app_state.loaded_contract_region_general_info_data[object['e5_id']];
+        
+        if(object['hidden'] == false && contract_datapoint_object != null && contract_region_general_info != null){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_obligation_promise_charts(object)}
+                    {this.render_obligation_amount_totals(object)}
+                </div>
+            )
+        } 
+    }
+
+    render_obligation_promise_charts(object){
+        const contract_datapoint_object = this.props.app_state.loded_contract_datapoint_data[object['e5_id']];
+
+        if(contract_datapoint_object != null){
+            const { dps, largest, starting_time, ending_time } = contract_datapoint_object;
+            dps.forEach(dp => {
+                if(dp.indexLabel != null){
+                    dp.indexLabel = dp.indexLabel.replace('entries', this.props.app_state.loc['2214cc']/* entries */)
+                }
+            });
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ca']/* 'Obligation Entry Rate' */, 'details':this.props.app_state.loc['2214cb']/* `Chart containing the average entry rates for all obligations logged in this contract.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':dps, 'start_time':starting_time, 'ending_time':ending_time})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214cd']/* 'Y-Axis: Entries' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    render_obligation_amount_totals(object){
+        const contract_region_general_info = this.props.app_state.loaded_contract_region_general_info_data[object['e5_id']];
+
+        if(contract_region_general_info != null){
+            const { regional_transfer_data, city_transfer_data } = contract_region_general_info;
+            const regions_logged = Object.keys(regional_transfer_data['token_data'])
+            const cities_logged = Object.keys(city_transfer_data['token_data'])
+            const { end, spend } = this.get_total_end_and_spend_logged(regional_transfer_data['token_data'], regions_logged)
+
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2214ce']/* 'Regions Tracked' */, 'subtitle':this.format_power_figure(regions_logged.length), 'barwidth':this.calculate_bar_width(regions_logged.length), 'number':this.format_account_balance_figure(regions_logged.length), 'relativepower':this.props.app_state.loc['2214cf']/* 'regions' */ })}
+
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2214cg']/* 'Cities Tracked.' */, 'subtitle':this.format_power_figure(cities_logged.length), 'barwidth':this.calculate_bar_width(cities_logged.length), 'number':this.format_account_balance_figure(cities_logged.length), 'relativepower':this.props.app_state.loc['2214ch']/* 'cities' */ })}
+                    </div>
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['2214cj']/* 'The total amount in End and Spend promised as obligations in this contract for the current quarter.' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+3], 'subtitle':this.format_power_figure(end), 'barwidth':this.calculate_bar_width(end), 'number':this.format_account_balance_figure(end), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[3] })}
+
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+5], 'subtitle':this.format_power_figure(spend), 'barwidth':this.calculate_bar_width(spend), 'number':this.format_account_balance_figure(spend), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5] })}
+                    </div>
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214ck']/* '⛰️ Region/City Specific Metrics' */, 'details': this.props.app_state.loc['2214cl']/* 'View the obligation promise metrics specific to a given region or city.' */, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.open_view_region_city_specific_metrics(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214cm']/* 'PView' */, 'action': '' })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_view_region_city_specific_metrics(object){
+        this.props.show_dialog_bottomsheet({'object':object}, 'view_region_specific_metrics')
+    }
+
+    get_total_end_and_spend_logged(token_data, regions_logged){
+        let end = bigInt(0)
+        let spend = bigInt(0)
+        regions_logged.forEach(region => {
+            const token_mappings = token_data[region]
+            if(token_mappings['3'] != null){
+                end = bigInt(end).plus(token_mappings['3'])
+            }
+            if(token_mappings['5'] != null){
+                spend = bigInt(spend).plus(token_mappings['5'])
+            }
+        });
+
+        return {end, spend}
     }
 
 

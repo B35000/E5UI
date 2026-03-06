@@ -6493,6 +6493,7 @@ class StackPage extends Component {
             if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5 && calculate_gas != true){
                 if(tx.type == this.props.app_state.loc['946']/* 'buy-sell' */){
                     const object = tx.token_item
+                    if(object['id'] == 3 || object['id'] == 5) continue;
                     const buy_sell_recipient = tx.recipient_id == 53 ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : tx.recipient_id;
                     const buy_sell_amount = tx.amount
                     const action = this.get_action(tx)
@@ -6508,6 +6509,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'buy-sell-token', 
                                 'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6538,6 +6541,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'buy-sell-token', 
                                 'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6584,6 +6589,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id+e,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'transfer', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6626,6 +6633,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'enter-contract', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6668,6 +6677,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': this.props.app_state.loc['1']/* 'enter-contract' */, 
                                 'identifier':tx.id,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'enter-contract', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6705,6 +6716,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'proposal-bounty', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6790,6 +6803,8 @@ class StackPage extends Component {
                                 const obligation_promise_data = { 
                                     'id': tx.type, 
                                     'identifier':tx.id,
+                                    'city':this.props.app_state.city,
+                                    'region':this.props.app_state.region,
                                     'hard_id':'consensus-exchange-transfer', 
                                     'confirm_transfers':true,
                                     'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6832,6 +6847,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'pay-subscription', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6880,6 +6897,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id+f,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'exchange-transfer', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6925,6 +6944,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id+f,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':action_object['action'] == 1 ? 'freeze' : 'unfreeze', 
                                 'confirm_transfers':false,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -6986,6 +7007,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type,
                                 'identifier':tx.id+m,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'message-award', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7035,6 +7058,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'direct-purchase', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7078,6 +7103,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'award', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7138,6 +7165,8 @@ class StackPage extends Component {
                                 const obligation_promise_data = { 
                                     'id': tx.type, 
                                     'identifier':tx.id+b+bt,
+                                    'city':this.props.app_state.city,
+                                    'region':this.props.app_state.region,
                                     'hard_id':'royalty-payouts', 
                                     'confirm_transfers':true,
                                     'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7192,6 +7221,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type,
                                 'identifier':tx.id+s,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'pay-subscription', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7230,6 +7261,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'buy-album', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7267,6 +7300,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'buy-video', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7304,6 +7339,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'buy-storage', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7340,6 +7377,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'iTransfer', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7376,6 +7415,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'bill-payment', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7425,6 +7466,9 @@ class StackPage extends Component {
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
                                     'id': tx.type,
+                                    'identifier':tx.id+p,
+                                    'city':this.props.app_state.city,
+                                    'region':this.props.app_state.region,
                                     'hard_id':'creator-payout', 
                                     'confirm_transfers':true,
                                     'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7481,6 +7525,8 @@ class StackPage extends Component {
                             const obligation_promise_data = { 
                                 'id': tx.type, 
                                 'identifier':tx.id+n,
+                                'city':this.props.app_state.city,
+                                'region':this.props.app_state.region,
                                 'hard_id':'nitro-renewal', 
                                 'confirm_transfers':true,
                                 'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7528,6 +7574,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'fulfil-bids', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7569,6 +7617,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'order-payment', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7602,6 +7652,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'purchase-credits', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7649,6 +7701,9 @@ class StackPage extends Component {
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type,
+                            'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'finish-payment',
                             'confirm_transfers':true, 
                             'obligation_fulfiller':object_obligation_fulfiller, 
@@ -7709,6 +7764,8 @@ class StackPage extends Component {
                         const obligation_promise_data = { 
                             'id': tx.type, 
                             'identifier':tx.id,
+                            'city':this.props.app_state.city,
+                            'region':this.props.app_state.region,
                             'hard_id':'exchange-deposit', 
                             'confirm_transfers':true,
                             'obligation_fulfiller':object_obligation_fulfiller, 

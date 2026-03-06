@@ -119,7 +119,7 @@ class DialogPage extends Component {
 
         credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'', dm_recipient:'',
 
-        targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(), obligation_search_account:'',
+        targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(), obligation_search_account:'', filter_id_name:'', filter_exchange_name:'', region_city_search:''
     };
 
 
@@ -635,6 +635,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_show_my_obligation_fulfilment_item_ui()}
+                </div>
+            )
+        }
+        else if(option == 'view_region_specific_metrics'){
+            return(
+                <div>
+                    {this.render_view_region_specific_metrics_ui()}
                 </div>
             )
         }
@@ -11830,6 +11837,345 @@ return data['data']
             </div>
         )
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_view_region_specific_metrics_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_region_specific_metrics_data()}
+                    <div style={{height: 10}}/>
+                    {this.render_city_or_region_metrics_and_info()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_region_specific_metrics_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_city_or_region_metrics_and_info()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_region_specific_metrics_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_city_or_region_metrics_and_info()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_region_specific_metrics_data(){
+        const object = this.state.data['object']
+        const contract_region_general_info = this.props.app_state.loaded_contract_region_general_info_data[object['e5_id']];
+        const { regional_transfer_data, city_transfer_data } = contract_region_general_info;
+        const regions_logged = Object.keys(regional_transfer_data['token_data'])
+        const cities_logged = Object.keys(city_transfer_data['token_data'])
+        const all_recommendeation_objects = this.get_recommendations(regions_logged, cities_logged)
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ly']/* 'Region and City specific metrics' */, 'details':this.props.app_state.loc['3055lz']/* 'Search a city or region by its name and view its obligation metrics.' */, 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055lv']/* 'Region or City...' */} when_text_input_field_changed={this.when_region_city_input_field_changed.bind(this)} text={this.state.region_city_search} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                {this.render_regions_or_cities_recommendations(all_recommendeation_objects)}
+
+            </div>
+        )
+    }
+
+    when_region_city_input_field_changed(text){
+        this.setState({region_city_search: text})
+    }
+
+    get_recommendations(regions_logged, cities_logged){
+        const all_regions = []
+        const all_cities = []
+        regions_logged.forEach(region => {
+            all_regions.push({'name':region, 'type':'region'})
+        });
+        cities_logged.forEach(city => {
+            all_cities.push({'name':city, 'type':'city'})
+        });
+
+        if(this.state.region_city_search != ''){
+            const filtered_regions = all_regions.filter((region) => {
+                return (region['name'].toLowerCase().startsWith(this.state.region_city_search.toLowerCase()))
+            }).slice(0, 3);
+
+            const filtered_cities = all_cities.filter((city) => {
+                return (city['name'].toLowerCase().startsWith(this.state.region_city_search.toLowerCase()))
+            }).slice(0, 3);
+
+            return filtered_regions.conat(filtered_cities);
+        }
+        else{
+            const filtered_regions = all_regions.slice(0, 3)
+            const filtered_cities = all_cities.slice(0, 3)
+
+            return filtered_regions.conat(filtered_cities);
+        }
+    }
+
+    render_regions_or_cities_recommendations(items){
+        var items2 = [0, 1]
+        var size = this.props.size
+        if(size != 's'){
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '3px'}}>
+                            {this.render_region_city_recommendation_item(item)}
+                        </div>
+                    ))}
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_region_city_recommendation_item(item)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_region_city_recommendation_item(item){
+        const title = item['name']
+        const details = item['type'] == 'city' ? this.props.app_state.loc['3055lw']/* City */ : this.props.app_state.loc['3055lx']/* Region */
+        return(
+            <div onClick={() => this.when_region_city_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+                {this.render_line_if_region_is_selected(item)}
+            </div>
+        )
+    }
+
+    render_line_if_region_is_selected(item){
+        if(this.state.selected_city_or_region != null && this.state.selected_city_or_region['name'] == item['name'] && this.state.selected_city_or_region['type'] == item['type']){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_region_city_item_clicked(item){
+        this.setState({selected_city_or_region: item })
+    }
+
+
+    render_city_or_region_metrics_and_info(regional_transfer_data, city_transfer_data){
+        const selected_city_or_region = this.state.selected_city_or_region
+
+        if(selected_city_or_region == null){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+
+        const selected_city_region_name = selected_city_or_region['name']
+        if(selected_city_or_region['type'] == 'city'){
+            const exchange_mappings = city_transfer_data['token_data'][selected_city_region_name]
+            const end = exchange_mappings['3']
+            const spend = exchange_mappings['5']
+            const id_mappings = city_transfer_data['id_data'][selected_city_region_name]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['3055ma']/* 'The total amount in End and Spend promised as obligations in this city for the current quarter.' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    
+                    {this.render_the_rest_of_the_city_region_data(exchange_mappings, end, spend, id_mappings)}
+                </div>
+            )
+        }else{
+            const exchange_mappings = regional_transfer_data['token_data'][selected_city_region_name]
+            const end = exchange_mappings['3']
+            const spend = exchange_mappings['5']
+            const id_mappings = regional_transfer_data['id_data'][selected_city_region_name]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['3055mb']/* 'The total amount in End and Spend promised as obligations in this region for the current quarter.' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    
+                    {this.render_the_rest_of_the_city_region_data(exchange_mappings, end, spend, id_mappings)}
+                </div>
+            )
+        }
+    }
+
+    render_the_rest_of_the_city_region_data(exchange_mappings, end, spend, id_mappings){
+        return(
+            <div>
+                {this.render_city_region_end_and_spend_totals(end, spend)}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['3055mc']/* 'Amounts promised in other token denomenations. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height: 10}}/>
+                
+                {this.render_other_token_promises_for_city_or_region(exchange_mappings)}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055me']/* 'Logged Transaction Types.' */, 'details':this.props.app_state.loc['3055mf']/* 'The number of entries for each entry type corresponding to each type of transaction.' */, 'size':'s'})}
+                <div style={{height: 10}}/>
+                {this.render_other_identifier_promises_for_city_or_region(id_mappings)}
+            </div>
+        )
+    }
+
+    render_city_region_end_and_spend_totals(end, spend){
+        const object = this.state.data['object']
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+3], 'subtitle':this.format_power_figure(end), 'barwidth':this.calculate_bar_width(end), 'number':this.format_account_balance_figure(end), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[3] })}
+
+                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+5], 'subtitle':this.format_power_figure(spend), 'barwidth':this.calculate_bar_width(spend), 'number':this.format_account_balance_figure(spend), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5] })}
+            </div>
+        )
+    }
+
+    render_other_token_promises_for_city_or_region(data){
+        const object = this.state.data['object']
+        const e5 = object['e5']
+
+        const exchanges_with_end_and_spend = Object.keys(data)
+        const unfiltered_exchanges = exchanges_with_end_and_spend.filter((exchange) => {
+            return (exchange != '3' && exchange != '5')
+        })
+
+        const token_directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)
+        const token_name_directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)
+
+        const exchanges = this.state.filter_exchange_name == '' ? unfiltered_exchanges : unfiltered_exchanges.filter((exchange) => {
+            return (
+                exchange == this.state.filter_exchange_name || 
+                token_directory[exchange].toLowerCase().startsWith(this.state.filter_exchange_name.toLowerCase()) || 
+                token_name_directory[e5+exchange].toLowerCase().startsWith(this.state.filter_exchange_name.toLowerCase())
+            )
+        })
+
+        if(exchanges.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }
+
+        return(
+            <div>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055md']/* 'Filter...' */} when_text_input_field_changed={this.when_filter_exchange_name_input_field_changed.bind(this)} text={this.state.filter_exchange_name} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {exchanges.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    when_filter_exchange_name_input_field_changed(text){
+        this.setState({filter_exchange_name: text})
+    }
+
+    render_other_identifier_promises_for_city_or_region(data){
+        const object = this.state.data['object']
+        const e5 = object['e5']
+        const identifiers = Object.keys(data)
+
+        const filtered_ids = this.state.filter_id_name == '' ? identifiers : identifiers.filter((id) => {
+            return (
+                id.toLowerCase().startsWith(this.state.filter_id_name.toLowerCase())
+            )
+        })
+
+        if(filtered_ids.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }
+
+        return(
+            <div>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055md']/* 'Filter...' */} when_text_input_field_changed={this.when_filter_id_name_input_field_changed.bind(this)} text={this.state.filter_id_name} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {filtered_ids.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':item, 'number':data[item], 'relativepower':this.props.app_state.loc['3055mg']/* entries */})}>
+                                {this.render_detail_item('2', {'style':'l','title':item, 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.props.app_state.loc['3055mg']/* entries */ })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    when_filter_id_name_input_field_changed(text){
+        this.setState({filter_id_name: text})
+    }
+
+
+
+
 
 
 
