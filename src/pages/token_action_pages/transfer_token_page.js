@@ -789,7 +789,12 @@ class TransferTokenPage extends Component {
 
     get_recipients_from_memory(){
         const recipients_data = this.state.recipients_data;
-        return recipients_data == null ? [] : JSON.parse(recipients_data)['data']
+        if(recipients_data != null){
+            const data = JSON.parse(recipients_data)['data']
+            if(data != null) return data;
+            else return []
+        }
+        else return []
     }
 
 

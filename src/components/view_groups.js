@@ -307,7 +307,9 @@ class ViewGroups extends Component {
                 if(object_data != null){
                     img = object_data['image'];
                     if(object_data['border_radius'] != null) image_border_radius = object_data['border_radius'];
-                    if(object_data['image_width'] != null) image_width = object_data['image_width'];
+                    if(object_data['image_width'] != null){
+                        image_width = object_data['image_width'];
+                    } 
                     if(object_data['blur_image'] != null) blur_image = object_data['blur_image'];
                 }
                 
@@ -317,6 +319,9 @@ class ViewGroups extends Component {
 
                 if(footer != null){
                     font_size[3] += 10; 
+                    if(image_width == font_size[3]){
+                        image_width += 10;
+                    }
                 }
                 return(
                     <div>

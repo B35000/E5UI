@@ -25,6 +25,7 @@ import { ViewPager, Frame, Track, View } from 'react-view-pager'
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { Virtuoso } from "react-virtuoso";
+import { motion, AnimatePresence } from "framer-motion";
 
 var bigInt = require("big-integer");
 
@@ -370,7 +371,28 @@ class ContractDetailsSection extends Component {
 
 
 
-
+    render_line_loader_if_loading(){
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
 
     render_contracts_main_details_section(object) {
         var background_color = this.props.theme['card_background_color']
@@ -390,6 +412,12 @@ class ContractDetailsSection extends Component {
                         itemContent={(index) => {
                             return (
                                 <div>
+                                    {index == 0 && object['hidden'] == true && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            {this.render_line_loader_if_loading()}
+                                        </div>
+                                    )}
                                     {index == 0 && this.render_detail_item('1', item['tags'])}
                                     {index == 1 && (
                                         <div>
@@ -414,12 +442,12 @@ class ContractDetailsSection extends Component {
                                     )}
                                     
 
-                                    {index == 6 && object['hidden'] == true && (
+                                    {/* {index == 6 && object['hidden'] == true && (
                                         <div>
                                             <div style={{ height: 10 }} />
-                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2214i']/* 'Loading the contracts metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2214i']'Loading the contracts metadata...', 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </div>
-                                    )}
+                                    )} */}
                                     
                                     {index == 7 && (<div style={{height:10}}/>)}
                                     {index == 7 && this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
@@ -924,7 +952,7 @@ class ContractDetailsSection extends Component {
                 <div>
                     {object['id'] != 2 && object['hidden'] == false && this.render_detail_item('0')}
 
-                    {object['id'] != 2 && object['hidden'] == false && this.show_enter_contract_button(object)}
+                    {object['id'] != 2 && object['hidden'] == false && object['interactible_hidden'] == false && this.show_enter_contract_button(object)}
 
                     {object['id'] != 2 && object['hidden'] == false && this.show_extend_stay_in_contract_button(object)}
 
@@ -1038,7 +1066,6 @@ class ContractDetailsSection extends Component {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         // var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
-
         if (expiry_time_in_seconds != 0) {
             return (
                 <div>
@@ -1153,7 +1180,7 @@ class ContractDetailsSection extends Component {
     }
 
     search_account_obligations(object){
-        this.show_dialog_bottomsheet({'object':object}, 'view_accounts_obligation_promise_history')
+        this.props.show_dialog_bottomsheet({'object':object}, 'view_accounts_obligation_promise_history')
     }
 
 
@@ -1185,7 +1212,12 @@ class ContractDetailsSection extends Component {
     }
 
     subscribe_to_obligation(object){
-        this.props.emit_subscribe_to_obligation_event(object['e5_id'])
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+        }
+        else{
+            this.props.emit_subscribe_to_obligation_event(object['e5_id'])
+        }
     }
 
     render_force_exit_button(object) {
@@ -1879,6 +1911,12 @@ class ContractDetailsSection extends Component {
 
 
 
+
+
+
+
+
+
     render_obligation_promise_info(object){
         const contract_datapoint_object = this.props.app_state.loded_contract_datapoint_data[object['e5_id']];
         const contract_region_general_info = this.props.app_state.loaded_contract_region_general_info_data[object['e5_id']];
@@ -1896,7 +1934,7 @@ class ContractDetailsSection extends Component {
 
     render_obligation_promise_charts(object){
         const contract_datapoint_object = this.props.app_state.loded_contract_datapoint_data[object['e5_id']];
-
+        console.log('render_obligation_promise_charts', contract_datapoint_object)
         if(contract_datapoint_object != null){
             const { dps, largest, starting_time, ending_time } = contract_datapoint_object;
             dps.forEach(dp => {
@@ -1909,7 +1947,7 @@ class ContractDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ca']/* 'Obligation Entry Rate' */, 'details':this.props.app_state.loc['2214cb']/* `Chart containing the average entry rates for all obligations logged in this contract.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':dps, 'start_time':starting_time, 'ending_time':ending_time})}
+                    {this.render_detail_item('6', {'dataPoints':dps, 'start_time':starting_time,})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2214cd']/* 'Y-Axis: Entries' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1936,7 +1974,7 @@ class ContractDetailsSection extends Component {
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['2214cj']/* 'The total amount in End and Spend promised as obligations in this contract for the current quarter.' */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['2214cj']/* 'The total amount in End and Spend promised as obligations in this contract for the current quarter.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>

@@ -1126,19 +1126,19 @@ class ViewTransactionPage extends Component {
         var contract_force_exit_enabled = this.get_selected_item(t.contract_force_exit_enabled, t.contract_force_exit_enabled['i'].active) == this.props.app_state.loc['89']/* 'enabled' */ ? 1 : 0
 
         var obj = [/* create contract */
-        [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 30, 0],
-        [30], [23],
-        [0, bigInt(default_vote_bounty_split_proportion), bigInt(max_extend_enter_contract_limit)/* 2 */, 0, bigInt(default_minimum_end_vote_bounty_amount), bigInt(default_proposal_expiry_duration_limit), bigInt(max_enter_contract_duration)/* 6 */, 0, bigInt(auto_wait_for_all_proposals_for_all_voters), 0, bigInt(default_minimum_spend_vote_bounty_amount), 0, 0, 0/* 13 */, 0, bgN(1, 63), 0,0,0,0,0/* 20 */,0,0,0,0,0,0,bigInt(proposal_modify_expiry_duration_limit)/* 27 */,bigInt(can_modify_contract_as_moderator),bigInt(can_extend_enter_contract_at_any_time),0,0,0,0,0/* 34 */,0,bigInt(maximum_proposal_expiry_submit_expiry_time_difference),bigInt(bounty_limit_type,contract_force_exit_enabled),0,0], 
-        [23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
-        [], [],
-        [], [],
-        [], [],
-        [0], [23],
-        [0], [23],
-        [0], [23],
-        [0], [23],
-        [0], [23]
-      ]
+            [bigInt(10000), 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, bigInt(30), 0],
+            [30], [23],
+            [0, bigInt(default_vote_bounty_split_proportion), bigInt(max_extend_enter_contract_limit)/* 2 */, 0, bigInt(default_minimum_end_vote_bounty_amount), bigInt(default_proposal_expiry_duration_limit), bigInt(max_enter_contract_duration)/* 6 */, 0, bigInt(auto_wait_for_all_proposals_for_all_voters), 0, bigInt(default_minimum_spend_vote_bounty_amount), 0, 0, 0/* 13 */, 0, bgN(1, 63), 0,0,0,0,0/* 20 */,0,0,0,0,0,0,bigInt(proposal_modify_expiry_duration_limit)/* 27 */,bigInt(can_modify_contract_as_moderator),bigInt(can_extend_enter_contract_at_any_time),0,0,0,0,0/* 34 */,0,bigInt(maximum_proposal_expiry_submit_expiry_time_difference),bigInt(bounty_limit_type), bigInt(contract_force_exit_enabled),0,0], 
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+            [], [],
+            [], [],
+            [], [],
+            [0], [23],
+            [0], [23],
+            [0], [23],
+            [0], [23],
+            [0], [23]
+        ]
 
       if(t.price_data.length == 0){
         obj[5].push(3)
@@ -8505,7 +8505,7 @@ return data['data']
                 {this.render_contract(transaction_item)}
                 <div style={{ height:15 }}/>
 
-                {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':number_with_commas(transaction_item.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
                 <div style={{ height:10 }}/>
 
                 {this.render_detail_item('3', {'title':''+(date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })), 'details':this.props.app_state.loc['3093eg']/* 'Deadline Date.' */, 'size':'l'})}
@@ -8565,8 +8565,11 @@ return data['data']
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var object_id = number_with_commas(object['id'])
         var id_text = '• '+object_id
-        if(object['id'] == 2) id_text = '• '+'Main Contract'
-        var sender = object['event'].returnValues.p3
+        var sender = ' • '+this.get_senders_name_or_you(object['event'].returnValues.p3, object['e5'])
+        if(object['id'] == 2){
+            id_text = '• '+'Main Contract'
+            sender = ''
+        } 
         var number = number_with_commas(age)
         var barwidth = this.get_number_width(age)
         var relativepower = this.get_time_difference(time)
@@ -8576,6 +8579,15 @@ return data['data']
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, }
         }
+    }
+
+    get_senders_name_or_you(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? sender : bucket[sender])
+            return alias
     }
 
     render_general_obligation_configuration(transaction_item){
@@ -8605,11 +8617,6 @@ return data['data']
                     </li>
 
 
-                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                        <div style={{height:'100%', width:1, 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 10px 3px 10px'}}/>
-                    </li>
-
-
 
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                         {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_award_payment_obligation), 'details':this.props.app_state.loc['3093cb']/* 'Default Award Payment Obligation' */, 'size':'l'})}
@@ -8630,10 +8637,6 @@ return data['data']
                         {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_creator_group_payout_obligation), 'details':this.props.app_state.loc['3093cq'] 'Creator Group Payout Obligation.', 'size':'l'})}
                     </li> */}
 
-
-                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                        <div style={{height:'100%', width:1, 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 10px 3px 10px'}}/>
-                    </li>
 
 
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
@@ -8657,9 +8660,9 @@ return data['data']
                     <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                         {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_liquidity_deposit_withdraw_obligation), 'details':this.props.app_state.loc['3093dq']/* 'Liquidity Deposit Withdraw Obligation.' */, 'size':'l'})}
                     </li>
-                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']/* 'Trust Fee Obligation.' */, 'size':'l'})}
-                    </li>
+                    {/* <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']'Trust Fee Obligation.', 'size':'l'})}
+                    </li> */}
                 </ul>
             </div>
         )

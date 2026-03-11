@@ -671,8 +671,8 @@ class NewMailPage extends Component {
     }
 
     render_previous_edit_item(data){
-        const title = this.truncate(data.entered_title_text, 17);
-        const details = (new Date(data.last_modified)).toLocaleString()+''
+        const title = this.truncate(data.entered_title_text, 23);
+        const details = (new Date(data.last_modified).toLocaleString())
         return(
             <div onClick={() => this.when_previous_edit_tapped(data)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}

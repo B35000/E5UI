@@ -26,7 +26,7 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { StaticDateTimePicker, StaticDatePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -66,7 +66,7 @@ class ConfigureObligationsPage extends Component {
 
         default_direct_transfer_obligation:0, default_iTransfer_obligation:0, default_bill_payment_obligation:0, default_token_acquisition_obligation:0, default_token_remarket_obligation:0, default_royalty_payout_obligation:0, default_liquidity_deposit_withdraw_obligation:0, /* default_trust_fee_obligation:0, */
 
-        default_keyword_combination:0, deadline_datetime:'1:0',
+        default_keyword_combination:0, deadline_datetime:'1:1',
 
         reserved_keyword:'', reserved_keywords:[],
 
@@ -84,11 +84,11 @@ class ConfigureObligationsPage extends Component {
         };
 
         obj[this.props.app_state.loc['3093e']/* 'work-obligations' */] = [
-            ['xor','',0], ['e',this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
+            ['xor','',0], [this.props.app_state.loc['3093e']/* 'work-obligations' */,this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
         ]
 
         obj[this.props.app_state.loc['3093f']/* 'explore-obligations' */] = [
-            ['xor','',0], ['e',this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
+            ['xor','',0], [this.props.app_state.loc['3093f']/* 'explore-obligations' */,this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
         ]
 
         return obj
@@ -96,7 +96,7 @@ class ConfigureObligationsPage extends Component {
 
 
     set_data(object){
-        this.setState({contract: object})
+        this.setState({contract: object, e5: object['e5']})
     }
 
 
@@ -109,7 +109,7 @@ class ConfigureObligationsPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_configure_obligations_title_tags_object} tag_size={'l'} when_tags_updated={this.when_get_configure_obligations_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_configure_obligations_title_tags_object} tag_size={'l'} when_tags_updated={this.when_get_configure_obligations_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
@@ -220,8 +220,6 @@ class ConfigureObligationsPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_default_general_data()}
-                        <div style={{height:10}}/>
-                        {this.render_empty_views(3)}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
                     </div>
@@ -237,8 +235,6 @@ class ConfigureObligationsPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_default_general_data()}
-                        <div style={{height:10}}/>
-                        {this.render_empty_views(3)}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
                     </div>
@@ -255,9 +251,6 @@ class ConfigureObligationsPage extends Component {
         const locale = navigator.language || navigator.userLanguage || 'en-US'
         return(
             <div>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['3093dw']/* 'General Settings.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                <div style={{ height:10 }}/>
-
                 {this.render_contract(this.state.contract)}
                 
                 <div style={{ height:15 }}/>
@@ -268,9 +261,9 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093du']/* 'Keyword Combinations.' */, 'details': this.props.app_state.loc['3093dv']/* 'Multiple targeted obligation keywords might be found in a given object. Set the maximum number that can be combined in such an instance.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
 
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':number_with_commas(this.state.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_default_default_keyword_combination.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={true} text_area_hint={'3'}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_default_keyword_combination.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={true} text_area_hint={'3'}/>
 
                 {this.render_detail_item('0')}
 
@@ -283,7 +276,7 @@ class ConfigureObligationsPage extends Component {
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], } })}>
                     <CssBaseline />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StaticDatePicker 
+                        <StaticDateTimePicker 
                             orientation="portrait" 
                             onChange={(newValue) => this.when_new_date_value_set(newValue)}
                             views={['month', 'day']} // This restricts to month and day selection
@@ -291,8 +284,26 @@ class ConfigureObligationsPage extends Component {
                     </LocalizationProvider>
                 </ThemeProvider>
 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fg']/* 'Set Recommended Proportions.' */, 'details': this.props.app_state.loc['3093fh']/* 'Set the recommended 1.35% value for all default obligation items.' */, 'size': 'l' })}
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.set_default_proportion()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3093fi']/* 'Set Default' */, 'action': '' })}
+                </div>
             </div>
         )
+    }
+
+    set_default_proportion(){
+        const default_proportion = bigInt('135e14')
+        this.setState({
+            default_job_contractor_income_obligation:default_proportion, default_enter_contract_obligation:default_proportion, default_spend_contract_obligation:default_proportion, default_proposal_bounty_obligation:default_proportion, default_storage_purchase_renewal_obligation:default_proportion, default_subscription_purchase_obligation:default_proportion, default_purchase_contract_credits_obligation:default_proportion,
+
+            default_award_payment_obligation:default_proportion, default_direct_purchase_obligation:default_proportion, default_fulfilled_bags_obligation:default_proportion, default_audiopost_purchase_obligation:default_proportion, default_videopost_purchase_obligation:default_proportion, default_creator_group_payout_obligation:default_proportion, 
+
+            default_direct_transfer_obligation:default_proportion, default_iTransfer_obligation:default_proportion, default_bill_payment_obligation:default_proportion, default_token_acquisition_obligation:default_proportion, default_token_remarket_obligation:default_proportion, default_royalty_payout_obligation:default_proportion, default_liquidity_deposit_withdraw_obligation:default_proportion,
+        })
     }
 
     get_deadline_date_object(deadline_datetime){
@@ -306,7 +317,7 @@ class ConfigureObligationsPage extends Component {
     when_new_date_value_set(value){
         const selectedDate = value instanceof Date ? value : new Date(value);
         const day = selectedDate.getDate()
-        const month = selectedDate.getMonth()
+        const month = selectedDate.getMonth() + 1;
         const deadline_datetime = day+':'+month
         this.setState({deadline_datetime: deadline_datetime})
     }
@@ -344,8 +355,11 @@ class ConfigureObligationsPage extends Component {
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var object_id = number_with_commas(object['id'])
         var id_text = '• '+object_id
-        if(object['id'] == 2) id_text = '• '+'Main Contract'
-        var sender = object['event'].returnValues.p3
+        var sender = ' • '+this.get_senders_name_or_you(object['event'].returnValues.p3, object['e5'])
+        if(object['id'] == 2){
+            id_text = '• '+'Main Contract'
+            sender = ''
+        } 
         var number = number_with_commas(age)
         var barwidth = this.get_number_width(age)
         var relativepower = this.get_time_difference(time)
@@ -355,6 +369,15 @@ class ConfigureObligationsPage extends Component {
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, }
         }
+    }
+
+    get_senders_name_or_you(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? sender : bucket[sender])
+            return alias
     }
 
     render_set_values(){
@@ -556,9 +579,7 @@ class ConfigureObligationsPage extends Component {
         return(
             <div>
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093i']/* 'Default Work Obligation Settings.' */, 'details': this.props.app_state.loc['3093j']/* 'Configure all your obligations targeted at the work section of e.' */, 'size': 'l' })}
-                <div style={{ height:15 }}/>
-
-
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093m']/* 'Default Job and Contractor Payments' */, 'details': this.props.app_state.loc['3093n']/* 'Set a default proportion for payments made to contractors for work done.' */, 'size': 'l' })}
 
@@ -723,7 +744,7 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bg']/* 'Keyword Target Obligation Settings.' */, 'details': this.props.app_state.loc['3093bh']/* 'Configure the keywords you wish to target in the work section.' */, 'size': 'l' })}
 
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3093bi']/* 'These keyword targets will be applied in the job and contractor sections exclusively.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
-                <div style={{ height:15 }}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bj']/* 'New Targeted Keyword' */, 'details': this.props.app_state.loc['3093bk']/* 'Type a keyword you wish to target with a specified obligation.' */, 'size': 'l' })}
@@ -904,7 +925,7 @@ class ConfigureObligationsPage extends Component {
         return(
             <div>
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bx']/* 'Default Explore Obligation Settings.' */, 'details': this.props.app_state.loc['3093by']/* 'Configure all your obligations targeted at the explore section of e.' */, 'size': 'l' })}
-                <div style={{ height:15 }}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bz']/* 'Award Payments.' */, 'details': this.props.app_state.loc['3093ca']/* 'Set the default proportion for awards issued in posts and comments.' */, 'size': 'l' })}
@@ -1036,7 +1057,7 @@ class ConfigureObligationsPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_work_explore_target_obligations_data()}
+                        {this.render_explore_keyword_target_obligations_data()}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
                     </div>
@@ -1054,7 +1075,7 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bg']/* 'Keyword Target Obligation Settings.' */, 'details': this.props.app_state.loc['3093cr']/* 'Configure the keywords you wish to target in the explore section.' */, 'size': 'l' })}
 
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3093cs']/* 'These keyword targets will be applied in the storefront and bag sections exclusively.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
-                <div style={{ height:15 }}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bj']/* 'New Targeted Keyword' */, 'details': this.props.app_state.loc['3093bk']/* 'Type a keyword you wish to target with a specified obligation.' */, 'size': 'l' })}
@@ -1144,7 +1165,7 @@ class ConfigureObligationsPage extends Component {
                                         action: () =>this.when_explore_keyword_target_clicked(item)
                                         }}>
                                         <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
-                                            {this.render_target_item(item)}
+                                            {this.render_target_item2(item)}
                                         </div>
                                     </SwipeableListItem>
                                 </div>
@@ -1153,6 +1174,16 @@ class ConfigureObligationsPage extends Component {
                     </SwipeableList>
                     
                 </ul>
+            </div>
+        )
+    }
+
+    render_target_item2(item){
+        const object = this.state.explore_keywords[item]
+        const proportion = object['proportion']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.format_proportion(proportion), 'details':item, 'size':'l'})}
             </div>
         )
     }
@@ -1222,7 +1253,7 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093cu']/* 'Default Wallet Obligation Settings.' */, 'details': this.props.app_state.loc['3093cv']/* 'Configure all your obligations targeted at the wallet section of e.' */, 'size': 'l' })}
 
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3093cw']/* 'These settings only apply to E5 assets and not Coins and Ethers.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
-                <div style={{ height:15 }}/>
+                {this.render_detail_item('0')}
 
 
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093cx']/* 'Direct Transfer.' */, 'details': this.props.app_state.loc['3093cy']/* 'Set the default proportion for direct transfer actions.' */, 'size': 'l' })}
@@ -1472,7 +1503,7 @@ class ConfigureObligationsPage extends Component {
                                         action: () =>this.when_reserved_keyword_target_clicked(item)
                                         }}>
                                         <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
-                                            {this.render_target_item(item)}
+                                            {this.render_detail_item('4', {'text':item, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         </div>
                                     </SwipeableListItem>
                                 </div>
@@ -1547,7 +1578,7 @@ class ConfigureObligationsPage extends Component {
     render_contract_beneficiaries_data(){
         return(
             <div>
-                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ek']/* 'Reserve Keywords.' */, 'details': this.props.app_state.loc['3093es']/* 'Specify obligation fulfilments for payments made in the other E5s.' */, 'size': 'l' })}
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ff']/* 'Contract Beneficiaries.' */, 'details': this.props.app_state.loc['3093es']/* 'Specify obligation fulfilments for payments made in the other E5s.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
 
                 {this.load_e5_selector_ui()}
@@ -1565,7 +1596,7 @@ class ConfigureObligationsPage extends Component {
                 </div>
                 <div style={{height:10}}/>
 
-                {this.render_searched_contracts()}
+                {this.render_searched_contract()}
             </div>
         )
     }

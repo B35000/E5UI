@@ -119,6 +119,7 @@ class DialogPage extends Component {
 
         credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'', dm_recipient:'',
 
+        searched_obligation_account_id: 0,
         targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(), obligation_search_account:'', filter_id_name:'', filter_exchange_name:'', region_city_search:''
     };
 
@@ -187,7 +188,7 @@ class DialogPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */, this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */], [0]
+                ['xor','',0], ['e', this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */, this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */], [1]
             ],
         };
     }
@@ -3817,7 +3818,7 @@ return data['data']
         }
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, }
         }
     }
@@ -4140,7 +4141,7 @@ return data['data']
         var time = item['event'] == null ? 0 : item['event'].returnValues.p4
         return{
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
-            'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -11133,8 +11134,6 @@ return data['data']
         const item_obligation_configuration = item['ipfs']
 
         const date_object = this.get_deadline_date_object(item_obligation_configuration.deadline_datetime)
-        const work_keyword_count = Object.keys(item_obligation_configuration.work_keywords).length
-        const explore_keyword_count = Object.keys(item_obligation_configuration.explore_keywords).length
         const locale = navigator.language || navigator.userLanguage || 'en-US'
 
         return(
@@ -11142,25 +11141,12 @@ return data['data']
                 {this.render_contract(contract)}
                 <div style={{ height:15 }}/>
 
-                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':number_with_commas(item_obligation_configuration.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
                 <div style={{ height:10 }}/>
 
                 {this.render_detail_item('3', {'title':''+(date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })), 'details':this.props.app_state.loc['3093eg']/* 'Deadline Date.' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
-
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093ea']/* 'Targeted Work Keywords' */, 'subtitle':this.format_power_figure(work_keyword_count), 'barwidth':this.get_number_width(work_keyword_count), 'number':`${this.format_account_balance_figure(work_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
-                </div>
-                <div style={{height:10}}/>
-
-
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093eb']/* 'Targeted Explore Keywords' */, 'subtitle':this.format_power_figure(explore_keyword_count), 'barwidth':this.get_number_width(explore_keyword_count), 'number':`${this.format_account_balance_figure(explore_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
-                </div>
-                <div style={{height:10}}/>
-
-
 
                 {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_job_contractor_income_obligation), 'details':this.props.app_state.loc['3093p']/* 'Default Job Contractor Income Obligation' */, 'size':'l'})}
                 <div style={{height:10}}/>
@@ -11219,10 +11205,9 @@ return data['data']
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_liquidity_deposit_withdraw_obligation), 'details':this.props.app_state.loc['3093dq']/* 'Liquidity Deposit Withdraw Obligation.' */, 'size':'l'})}
-                <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']/* 'Trust Fee Obligation.' */, 'size':'l'})}
-                <div style={{height:10}}/>
+                {/* {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']'Trust Fee Obligation.', 'size':'l'})}
+                <div style={{height:10}}/> */}
             </div>
         )
     }
@@ -11251,10 +11236,23 @@ return data['data']
     render_keyword_search(){
         const item = this.state.data['item']
         const item_obligation_configuration = item['ipfs']
+        const work_keyword_count = Object.keys(item_obligation_configuration.work_keywords).length
+        const explore_keyword_count = Object.keys(item_obligation_configuration.explore_keywords).length
         return(
             <div>
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055kt']/* 'Filter Targeted Keywords.' */, 'details': this.props.app_state.loc['3055ku']/* 'Filter and search for a targeted keyword in the configuration.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093ea']/* 'Targeted Work Keywords' */, 'subtitle':this.format_power_figure(work_keyword_count), 'barwidth':this.get_number_width(work_keyword_count), 'number':`${this.format_account_balance_figure(work_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093eb']/* 'Targeted Explore Keywords' */, 'subtitle':this.format_power_figure(explore_keyword_count), 'barwidth':this.get_number_width(explore_keyword_count), 'number':`${this.format_account_balance_figure(explore_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
                 
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3093bl']/* 'Keyword...' */} when_text_input_field_changed={this.when_targeted_obligation_keyword_input_field_changed.bind(this)} text={this.state.targeted_obligation_keyword} theme={this.props.theme}/>
                 <div style={{ height:10 }}/>
@@ -11283,7 +11281,7 @@ return data['data']
             Object.assign(all_keywords, item_obligation_configuration.explore_keywords)
         }
         
-        const all_items = [].concat(Object.keys(this.state.all_keywords))
+        const all_items = [].concat(Object.keys(all_keywords))
         const items = all_items.filter((keyword) => {
             return (keyword.startsWith(this.state.targeted_obligation_keyword.toLowerCase()) || this.state.targeted_obligation_keyword == '')
         }).slice(0, 15)
@@ -11319,6 +11317,14 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.format_proportion(proportion), 'details':item, 'size':'l'})}
             </div>
         )
+    }
+
+    get_deadline_date_object(deadline_datetime){
+        const day = deadline_datetime.split(':')[0]
+        const month = deadline_datetime.split(':')[1]
+        const year = new Date().getFullYear()
+        
+        return new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`)  
     }
 
 
@@ -11515,7 +11521,7 @@ return data['data']
             const contract = this.state.data['object']
             const contract_data = this.props.app_state.user_obligation_data[contract['e5_id']] || {};
             const accounts_data = contract_data[searched_obligation_account_id] || {}
-            const entries = Object.entries(accounts_data)
+            const entries = Object.keys(accounts_data)
             if(entries.length == 0){
                 return(
                     <div>
@@ -11555,7 +11561,7 @@ return data['data']
     }
 
     get_number_of_entries_for_each_type(accounts_data){
-        const entries = Object.entries(accounts_data)
+        const entries = Object.keys(accounts_data)
         const totals_obj = {}
         entries.forEach(entry => {
             const entry_data = accounts_data[entry]
@@ -11574,7 +11580,7 @@ return data['data']
     }
 
     calculate_total_amount_handled(accounts_data){
-        const entries = Object.entries(accounts_data)
+        const entries = Object.keys(accounts_data)
         const totals_obj = {}
         entries.forEach(entry => {
             const entry_data = accounts_data[entry]
@@ -11610,6 +11616,21 @@ return data['data']
     render_years_and_entry_info(total_amounts_handled_data){
         const items = Object.keys(total_amounts_handled_data)
         var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
         return(
             <div>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -11617,11 +11638,6 @@ return data['data']
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_year_item(item, total_amounts_handled_data)}
-                            </li>
-                        ))}
-                        {items2.map(() => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_empty_horizontal_list_item()}
                             </li>
                         ))}
                     </ul>
@@ -11632,11 +11648,11 @@ return data['data']
 
     render_year_item(item, total_amounts_handled_data){
         const title = item;
-        const years_entries = Object.keys(total_amounts_handled_data[item])
+        const years_entries = Object.keys(total_amounts_handled_data[item]).length
         const details = this.props.app_state.loc['3055lj']/* '$ exchanges.' */.replace('$', years_entries)
         return(
             <div onClick={() => this.when_year_item_clicked(item)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
                 {this.render_line_if_selected(item)}
             </div>
         )
@@ -11658,7 +11674,7 @@ return data['data']
 
 
     render_selected_year_paid_amounts(total_amounts_handled_data){
-        const year = this.state.selected_obligation_year
+        const year = this.state.selected_obligation_year || new Date().getFullYear()
         const data = total_amounts_handled_data[year] || {}
         const exchanges = Object.keys(data)
         const object = this.state.data['object']
@@ -11689,10 +11705,25 @@ return data['data']
 
 
     render_each_type_entry_count(each_type_number_entries){
-        const year = this.state.selected_obligation_year
+        const year = this.state.selected_obligation_year || new Date().getFullYear()
         const data = each_type_number_entries[year] || {}
         const items = Object.keys(data)
         var items2 = [0, 1]
+        if(items.length == 0){
+           return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            ) 
+        }
         return(
             <div>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -11700,11 +11731,6 @@ return data['data']
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_type_entry_count_item(item, data)}
-                            </li>
-                        ))}
-                        {items2.map(() => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_empty_horizontal_list_item()}
                             </li>
                         ))}
                     </ul>
@@ -11718,7 +11744,7 @@ return data['data']
         const details = this.props.app_state.loc['3055ln']/* '$ entries.' */.replace('$', data[item])
         return(
             <div>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
             </div>
         )
     }
@@ -11753,7 +11779,7 @@ return data['data']
                     </ul>
                 </div>
                 <div style={{height:10}}/>
-                {this.render_selected_payment_history_amounts(fulfilment_data[selected_pos]['data'], fulfilment_data[selected_pos]['e5'])}
+                {fulfilment_data.length > 0 && this.render_selected_payment_history_amounts(fulfilment_data[selected_pos]['data'], fulfilment_data[selected_pos]['e5'])}
             </div>
         )
     }
@@ -11925,7 +11951,7 @@ return data['data']
         const all_recommendeation_objects = this.get_recommendations(regions_logged, cities_logged)
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ly']/* 'Region and City specific metrics' */, 'details':this.props.app_state.loc['3055lz']/* 'Search a city or region by its name and view its obligation metrics.' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ly']/* 'Region and City specific metrics' */, 'details':this.props.app_state.loc['3055lz']/* 'Search a city or region by its name and view its obligation metrics.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055lv']/* 'Region or City...' */} when_text_input_field_changed={this.when_region_city_input_field_changed.bind(this)} text={this.state.region_city_search} theme={this.props.theme}/>
@@ -11960,13 +11986,13 @@ return data['data']
                 return (city['name'].toLowerCase().startsWith(this.state.region_city_search.toLowerCase()))
             }).slice(0, 3);
 
-            return filtered_regions.conat(filtered_cities);
+            return filtered_regions.concat(filtered_cities);
         }
         else{
             const filtered_regions = all_regions.slice(0, 3)
             const filtered_cities = all_cities.slice(0, 3)
 
-            return filtered_regions.conat(filtered_cities);
+            return filtered_regions.concat(filtered_cities);
         }
     }
 
@@ -12031,7 +12057,10 @@ return data['data']
     }
 
 
-    render_city_or_region_metrics_and_info(regional_transfer_data, city_transfer_data){
+    render_city_or_region_metrics_and_info(){
+        const object = this.state.data['object']
+        const contract_region_general_info = this.props.app_state.loaded_contract_region_general_info_data[object['e5_id']];
+        const { regional_transfer_data, city_transfer_data } = contract_region_general_info;
         const selected_city_or_region = this.state.selected_city_or_region
 
         if(selected_city_or_region == null){
@@ -12050,7 +12079,7 @@ return data['data']
             const id_mappings = city_transfer_data['id_data'][selected_city_region_name]
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['3055ma']/* 'The total amount in End and Spend promised as obligations in this city for the current quarter.' */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['3055ma']/* 'The total amount in End and Spend promised as obligations in this city for the current quarter.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     
                     {this.render_the_rest_of_the_city_region_data(exchange_mappings, end, spend, id_mappings)}
@@ -12063,7 +12092,7 @@ return data['data']
             const id_mappings = regional_transfer_data['id_data'][selected_city_region_name]
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['3055mb']/* 'The total amount in End and Spend promised as obligations in this region for the current quarter.' */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2214ci']/* 'Total End and Spend Promised.' */, 'details':this.props.app_state.loc['3055mb']/* 'The total amount in End and Spend promised as obligations in this region for the current quarter.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     
                     {this.render_the_rest_of_the_city_region_data(exchange_mappings, end, spend, id_mappings)}
@@ -12076,15 +12105,15 @@ return data['data']
         return(
             <div>
                 {this.render_city_region_end_and_spend_totals(end, spend)}
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['3055mc']/* 'Amounts promised in other token denomenations. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
                 
                 {this.render_other_token_promises_for_city_or_region(exchange_mappings)}
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055me']/* 'Logged Transaction Types.' */, 'details':this.props.app_state.loc['3055mf']/* 'The number of entries for each entry type corresponding to each type of transaction.' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055me']/* 'Logged Transaction Types.' */, 'details':this.props.app_state.loc['3055mf']/* 'The number of entries for each entry type corresponding to each type of transaction.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.render_other_identifier_promises_for_city_or_region(id_mappings)}
             </div>

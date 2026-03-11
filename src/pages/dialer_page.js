@@ -88,7 +88,7 @@ class DialerPage extends Component {
         get_manual_disable_beacon_node_override_object:this.get_manual_disable_beacon_node_override_object(), typed_notification_blocks_input:'',
         get_ether_e5_softwrite_object:this.get_ether_e5_softwrite_object(), get_document_title_object:this.get_document_title_object(),
 
-        keyword_text:'', typed_country_contract_obligation_e5_id:'', default_obligation_contract_ids:{}
+        keyword_text:'', typed_country_contract_obligation_e5_id:'', default_obligation_contract_ids:this.props.app_state.default_obligation_contract_ids
     };
 
 

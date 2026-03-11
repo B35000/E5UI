@@ -6229,7 +6229,7 @@ class StackPage extends Component {
                     ipfs_index_array.push({'id':txs[i].id, 'data':tags_payment_data})
                 }
                 else if(txs[i].type == this.props.app_state.loc['3093']/* 'configure-obligations' */){
-                    const obligation_configuration_data = structuredClone(txs[i])
+                    const obligation_configuration_data = JSON.parse(JSON.stringify(txs[i], (key, value) => typeof value === 'bigint' ? value.toString() : value))
                     delete obligation_configuration_data.contract
                     ipfs_index_object[txs[i].id] = obligation_configuration_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':obligation_configuration_data})
@@ -6490,7 +6490,7 @@ class StackPage extends Component {
         const obligation_object = { 'data':[], 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'e5':this.props.app_state.selected_e5 }
         for(var i=0; i<txs.length; i++){
             const tx = txs[i]
-            if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5 && calculate_gas != true){
+            if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5){
                 if(tx.type == this.props.app_state.loc['946']/* 'buy-sell' */){
                     const object = tx.token_item
                     if(object['id'] == 3 || object['id'] == 5) continue;
@@ -6503,7 +6503,8 @@ class StackPage extends Component {
                         const object_obligation_fulfiller = buy_sell_recipient
                         if(object_obligation_fulfiller != 1) await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], object['e5'])
                         const address_key = object_obligation_fulfiller == 1 ? this.props.app_state.accounts[this.props.app_state.selected_e5].address : this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -6535,7 +6536,8 @@ class StackPage extends Component {
                         const object_obligation_fulfiller = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
                         await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                         const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -6570,7 +6572,7 @@ class StackPage extends Component {
                     const amount_data = tx.stack_items
                     const fulfillers = []
                     amount_data.forEach(amount_item => {
-                        const fulfiller = amount_item[e]['recipient'] == '53' ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : amount_item[e]['recipient'];
+                        const fulfiller = amount_item['recipient'] == '53' ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : amount_item['recipient'];
                         if(!fulfillers.includes(fulfiller) && fulfiller != 1){
                             fulfillers.push(fulfiller)
                         }
@@ -6583,7 +6585,8 @@ class StackPage extends Component {
                         const object_obligation_fulfiller = amount_data[e]['recipient'] == '53' ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : amount_data[e]['recipient'];
                         // await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                         const address_key = object_obligation_fulfiller == 1 ? this.props.app_state.accounts[this.props.app_state.selected_e5].address :  this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -6627,7 +6630,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -6671,7 +6675,8 @@ class StackPage extends Component {
                         const object_obligation_fulfiller = this.props.app_state.user_account_id[this.props.app_state.selected_e5];
                         await this.props.load_targets_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                         const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -6710,7 +6715,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = this.props.app_state.user_account_id[this.props.app_state.selected_e5];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                     const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -6756,7 +6762,8 @@ class StackPage extends Component {
                             const object_obligation_fulfiller = receivers[e];
                             // await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                             const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                            const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                            const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                            const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
@@ -6797,7 +6804,8 @@ class StackPage extends Component {
                             const object_obligation_fulfiller = receivers[e];
                             // await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                             const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                            const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                            const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                            const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
@@ -6841,7 +6849,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -6891,7 +6900,8 @@ class StackPage extends Component {
 
                         const object_obligation_fulfiller = receiver;
                         const address_key = object_obligation_fulfiller == 1 ? this.props.app_state.accounts[this.props.app_state.selected_e5].address : this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -6938,7 +6948,8 @@ class StackPage extends Component {
 
                         const object_obligation_fulfiller = action_object['recipient'];
                         const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -7001,7 +7012,8 @@ class StackPage extends Component {
                         const object_obligation_fulfiller = award_receiver;
                         // await this.props.load_targets_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                         const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -7052,7 +7064,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7097,7 +7110,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = award_receiver;
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7159,7 +7173,8 @@ class StackPage extends Component {
                             const object_obligation_fulfiller = transaction_receiver;
                             // await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                             const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                            const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                            const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                            const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
@@ -7215,7 +7230,8 @@ class StackPage extends Component {
                         const object_obligation_fulfiller = object['author'];
                         // await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                         const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -7255,7 +7271,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7294,7 +7311,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7333,7 +7351,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7371,7 +7390,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = t.recipient;
                     await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                     const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7409,7 +7429,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = t.recipient;
                     await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                     const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7461,7 +7482,8 @@ class StackPage extends Component {
                             const object_obligation_fulfiller = receiver;
                             // await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                             const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                            const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                            const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                            const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
@@ -7519,7 +7541,8 @@ class StackPage extends Component {
                         const object_obligation_fulfiller = object['author'];
                         // await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                         const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                        const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -7568,7 +7591,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7611,7 +7635,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7646,7 +7671,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7697,7 +7723,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type,
@@ -7758,7 +7785,8 @@ class StackPage extends Component {
                     const object_obligation_fulfiller = this.props.app_state.user_account_id[this.props.app_state.selected_e5];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-                    const authors_obligation_contracts = this.props.app_state.obligation_subscriptions[address_key]['data'];
+                    const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+                    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -7793,7 +7821,7 @@ class StackPage extends Component {
         if(obligation_object['data'].length > 0){
             const data_hash = this.props.hash_data(JSON.stringify({'o':obligation_object['data']}));
             const time = Date.now()
-            const my_address = this.props.app_state.accounts[this.props.app_state.selected_e5]
+            const my_address = this.props.app_state.accounts[this.props.app_state.selected_e5].address
             const data_to_be_signed = `${time}:${data_hash}:${my_address}`
             const signature_object = await this.props.get_signature_for_obligation_data(data_to_be_signed)
             
@@ -7801,6 +7829,10 @@ class StackPage extends Component {
             obligation_object['time'] = time;
             obligation_object['data_to_be_signed'] = data_to_be_signed;
             obj['tags']['obligation_data'] = obligation_object;
+            
+            ipfs_index_object['obligation_data'] = obligation_object
+            ipfs_index_array.push({'id':'obligation_data', 'data':obligation_object})
+            
             obligation_inclusive = true;
         }
 
@@ -7810,7 +7842,7 @@ class StackPage extends Component {
         });
         console.log('stack_page_ipfs', 'unupdated ipfs-object', obj)
 
-        const size = this.lengthInUtf8Bytes(JSON.stringify(obj))
+        const size = this.lengthInUtf8Bytes(JSON.stringify(obj, (key, value) => typeof value === 'bigint' ? value.toString() : value));
         var stack_size_data_clone = structuredClone(this.state.stack_size_in_bytes)
         stack_size_data_clone[this.props.app_state.selected_e5] = size
         this.setState({stack_size_in_bytes: stack_size_data_clone})
@@ -21199,11 +21231,12 @@ class StackPage extends Component {
         Object.keys(user_obligation_data).forEach(contract => {
             if(contract.endsWith(this.props.app_state.selected_e5)){
                 const contract_data = user_obligation_data[contract] || {};
-                const accounts_data = contract_data[my_account_id] || {};
-
-                const entries = Object.entries(accounts_data)
+                const accounts_data = contract_data[my_account_id.toString()] || {};
+                // console.log('calculate_total_amount_handled', 'accounts_data', accounts_data)
+                const entries = Object.keys(accounts_data)
                 entries.forEach(entry => {
                     const entry_data = accounts_data[entry]
+                    // console.log('calculate_total_amount_handled', 'entry_data', entry_data)
                     const contracts_promise = entry_data['contracts_promises']
                     const time = entry_data['time']
                     const year = new Date(time).getFullYear()
@@ -21240,9 +21273,9 @@ class StackPage extends Component {
         const totals_obj = {}
         Object.keys(user_obligation_data).forEach(contract => {
             const contract_data = user_obligation_data[contract] || {};
-            const accounts_data = contract_data[my_account_id] || {};
+            const accounts_data = contract_data[my_account_id.toString()] || {};
 
-            const entries = Object.entries(accounts_data)
+            const entries = Object.keys(accounts_data)
             entries.forEach(entry => {
                 const entry_data = accounts_data[entry]
                 const time = entry_data['time']
@@ -21265,6 +21298,21 @@ class StackPage extends Component {
     render_years_and_entry_info(total_amounts_handled_data){
         const items = Object.keys(total_amounts_handled_data)
         var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
         return(
             <div>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -21272,11 +21320,6 @@ class StackPage extends Component {
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_year_item(item, total_amounts_handled_data)}
-                            </li>
-                        ))}
-                        {items2.map(() => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_empty_horizontal_list_item()}
                             </li>
                         ))}
                     </ul>
@@ -21287,11 +21330,11 @@ class StackPage extends Component {
 
     render_year_item(item, total_amounts_handled_data){
         const title = item;
-        const years_entries = Object.keys(total_amounts_handled_data[item])
+        const years_entries = Object.keys(total_amounts_handled_data[item]).length
         const details = this.props.app_state.loc['3055lj']/* '$ exchanges.' */.replace('$', years_entries)
         return(
             <div onClick={() => this.when_year_item_clicked(item)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
                 {this.render_line_if_selected(item)}
             </div>
         )
@@ -21348,6 +21391,21 @@ class StackPage extends Component {
         const data = each_type_number_entries[year] || {}
         const items = Object.keys(data)
         var items2 = [0, 1]
+        if(items.length == 0){
+           return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            ) 
+        }
         return(
             <div>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -21355,11 +21413,6 @@ class StackPage extends Component {
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_type_entry_count_item(item, data)}
-                            </li>
-                        ))}
-                        {items2.map(() => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_empty_horizontal_list_item()}
                             </li>
                         ))}
                     </ul>
@@ -21373,7 +21426,7 @@ class StackPage extends Component {
         const details = this.props.app_state.loc['3055ln']/* '$ entries.' */.replace('$', data[item])
         return(
             <div>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
             </div>
         )
     }
@@ -21405,8 +21458,8 @@ class StackPage extends Component {
         Object.keys(user_obligation_data).forEach(contract => {
             if(contract.endsWith(this.props.app_state.selected_e5)){
                 const contract_data = user_obligation_data[contract] || {};
-                const accounts_data = contract_data[my_account_id] || {};
-                const entries = Object.entries(accounts_data)
+                const accounts_data = contract_data[my_account_id.toString()] || {};
+                const entries = Object.keys(accounts_data)
                 entries.forEach(entry => {
                     const entry_data = accounts_data[entry]
                     const contracts_promise = entry_data['contracts_promises']

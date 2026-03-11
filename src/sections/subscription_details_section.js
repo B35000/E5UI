@@ -23,6 +23,8 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 import { Virtuoso } from "react-virtuoso";
+import { motion, AnimatePresence } from "framer-motion";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 var bigInt = require("big-integer");
 
@@ -291,6 +293,36 @@ class SubscriptionDetailsSection extends Component {
         
     }
 
+
+
+
+
+
+
+
+    render_line_loader_if_loading(){
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
+
     render_subscription_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
@@ -307,6 +339,13 @@ class SubscriptionDetailsSection extends Component {
                         itemContent={(index) => {
                             return (
                                 <div>
+                                    {index == 0 && object['hidden'] == true && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            {this.render_line_loader_if_loading()}
+                                           
+                                        </div>
+                                    )}
                                     {index == 0 && this.render_detail_item('1', item['tags'])}
                                     {index == 1 && (
                                         <div>
@@ -331,12 +370,12 @@ class SubscriptionDetailsSection extends Component {
                                     )}
                                     
 
-                                    {index == 4 && object['hidden'] == true && (
+                                    {/* {index == 4 && object['hidden'] == true && (
                                         <div>
                                             <div style={{ height: 10 }} />
-                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2695k']/* 'Loading the subscriptions metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2695k'] 'Loading the subscriptions metadata...', 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </div>
-                                    )}
+                                    )} */}
 
                                     {index == 5 && (<div style={{height:10}}/>)}
                                     {index == 5 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
@@ -646,7 +685,7 @@ class SubscriptionDetailsSection extends Component {
     }
 
     render_pay_subscription_button(object){
-        if(object['hidden'] == true) return;
+        if(object['hidden'] == true || object['interactible_hidden'] == true) return;
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2648']/* 'Pay Subscription' */, 'details':this.props.app_state.loc['2649']/* 'Pay for the subscription for your account' */, 'size':'l'})}
@@ -743,7 +782,7 @@ class SubscriptionDetailsSection extends Component {
         var minimum_cancellable_balance_amount = subscription_config[4/* minimum_cancellable_balance_amount */]
         // var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
 
-        if(object['hidden'] == true) return;
+        if(object['hidden'] == true || object['interactible_hidden'] == true) return;
 
         if(subscription_config[2] == 1/* cancellable */ && object['payment'] > bigInt(minimum_cancellable_balance_amount)){
             return(

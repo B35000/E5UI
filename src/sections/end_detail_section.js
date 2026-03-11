@@ -27,6 +27,8 @@ import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 import { Virtuoso } from "react-virtuoso";
+import { motion, AnimatePresence } from "framer-motion";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 var bigInt = require("big-integer");
 
@@ -390,6 +392,29 @@ class EndDetailSection extends Component {
         return this.props.get_exchange_tokens(exchange_type, '')
     }
 
+    render_line_loader_if_loading(){
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
+
     render_end_main_details_section(selected_object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-60
@@ -410,6 +435,13 @@ class EndDetailSection extends Component {
                             return (
                                 <div>
                                     {index == 0 && this.render_detail_item('7', item['banner-icon'])}
+                                    {index == 0 && selected_object['hidden'] == true && (
+                                        <div>
+                                            <div style={{ height: 10 }} />
+                                            {this.render_line_loader_if_loading()}
+                                            
+                                        </div>
+                                    )}
                                     {index == 1 && this.render_detail_item('1', item['tags'])}
 
                                     {index == 2 && (<div style={{height:10}}/>)}
@@ -430,12 +462,12 @@ class EndDetailSection extends Component {
                                     
                                     
 
-                                    {index == 4 && selected_object['hidden'] == true && (
+                                    {/* {index == 4 && selected_object['hidden'] == true && (
                                         <div>
                                             <div style={{ height: 10 }} />
-                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g']/* 'Loading the exchanges metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g'] 'Loading the exchanges metadata...' , 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </div>
-                                    )}
+                                    )} */}
 
 
                                     {index == 5 && (<div style={{height:10}}/>)}
@@ -874,7 +906,7 @@ class EndDetailSection extends Component {
     }
 
     render_buy_sell_token_button(selected_object, item){
-        if(selected_object['hidden'] == true || !this.is_token_in_my_channeling(selected_object)){
+        if(selected_object['hidden'] == true || !this.is_token_in_my_channeling(selected_object) || selected_object['interactible_hidden'] == true){
             return;
         }
         return(

@@ -511,6 +511,8 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['179'], 'details':this.props.app_state.loc['180'], 'size':'l'})}
                 </div>
 
+                <div style={{height:3}}/>
+
                 <div onClick={()=>this.preset_public_contract()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['252d']/* 🌐 Public Contract */, 'details':this.props.app_state.loc['252e']/* A contract representing shared consensus for a public institution or shared organization. */, 'size':'l'})}
                 </div>
@@ -679,8 +681,7 @@ class NewContractPage extends Component {
             keys.forEach(setting => {
                 if(setting == 'price_data'){
                     this.state[setting].forEach(price_target => {
-                        if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
-                            // console.log('new_contract_page', 'found unmatching end price setting', price_target['amount'], end_price)
+                        if(price_target['id'] == '3' && bigInt().lesser(bigInt(end_price))){
                             is_matching = false
                         }
                         else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
@@ -804,7 +805,7 @@ class NewContractPage extends Component {
         }
         else{
             this.setState(set_object);
-            this.props.notify(this.props.app_state.loc['181'], 2500)
+            this.props.notify(this.props.app_state.loc['252f'], 2500)
         }
     }
 
@@ -975,8 +976,8 @@ class NewContractPage extends Component {
     }
 
     render_previous_edit_item(data){
-        const title = this.truncate(data.entered_title_text, 17);
-        const details = (new Date(data.last_modified))+''
+        const title = this.truncate(data.entered_title_text, 23);
+        const details = (new Date(data.last_modified).toLocaleString())
         return(
             <div onClick={() => this.when_previous_edit_tapped(data)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}

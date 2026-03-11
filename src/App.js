@@ -1355,7 +1355,9 @@ class App extends Component {
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
 
-    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{}
+    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
+
+    e5_loading_data_object:{}
   };
 
   get_thread_pool_size(){
@@ -6303,7 +6305,7 @@ class App extends Component {
           {this.render_fulfil_auction_bid_bottomsheet()}
           {this.render_view_purchase_credits_bottomsheet()}
           {this.render_view_call_interface_bottomsheet()}
-          {this.render_view_configure_obligations_element()}
+          {this.render_view_configure_obligations_bottomsheet()}
           {this.render_exchange_deposit_bottomsheet()}
 
 
@@ -9845,7 +9847,7 @@ class App extends Component {
 
         me.clear_stacked_messages_after_run(e5)
         setTimeout(function() {
-          me.start_get_accounts_for_specific_e5(false, e5, false, )
+          me.start_get_accounts_for_specific_e5(false, e5, false, {})
         }, (1 * 500));
         setTimeout(function() {
           me.set_cookies()
@@ -10214,7 +10216,14 @@ class App extends Component {
       return;
     }
 
-    await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], 1771762377000, (36*7*24*60*60*1000), [], e5, all_authors);
+    const all_author_ints = []
+    all_authors.forEach(author => {
+      all_author_ints.push(parseInt(author).toString())
+    });
+
+    const absolute_load_limit = 1771762377000
+    const load_step = ((Date.now() - absolute_load_limit) - 10000)
+    await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], absolute_load_limit, load_step, [], '', all_author_ints);
 
     await this.wait(500)
 
@@ -10224,8 +10233,12 @@ class App extends Component {
       author_address_mapping_clone[e5] = {}
     }
     const unfound_authors = []
-    all_authors.forEach(author_target => {
-      const address_key = Object.keys(this.state.obligation_subscriptions).find(key => this.state.obligation_subscriptions[key]['user_account_id'].includes(author_target));
+    all_author_ints.forEach(author_target => {
+      const address_key = Object.keys(this.state.obligation_subscriptions).find((key) => {
+        const object = this.state.obligation_subscriptions[key] || {}
+        const user_account_array = object['user_account_id'] || []
+        return user_account_array.includes(author_target.toString())
+      });
       if(address_key != undefined){
         author_address_mapping_clone[e5][author_target] = address_key
         const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
@@ -10249,7 +10262,8 @@ class App extends Component {
       unfound_authors.forEach((author_target, index) => {
         const address_key = unfound_author_addresses[index]
         author_address_mapping_clone[e5][author_target] = address_key
-        const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
+        const obligation_subscription_object = this.state.obligation_subscriptions[address_key] || {}
+        const obligation_contracts = obligation_subscription_object['data'] || [];
         obligation_contracts.forEach(contract_e5_id => {
           if(!contracts_to_load.includes(contract_e5_id) && this.state.my_contract_obligation_subscription_data[contract_e5_id] == null){
             contracts_to_load.push(contract_e5_id)
@@ -10271,11 +10285,20 @@ class App extends Component {
         return (this.state.author_address_mapping[e5][target] == null)
       })
     }
-    if(all_authors.length == 0){
+
+    const all_author_ints = []
+    all_authors.forEach(author => {
+      all_author_ints.push(parseInt(author).toString())
+    });
+
+    console.log('load_target_or_object_accounts_obligation_data', 'all authors', all_author_ints)
+    if(all_author_ints.length == 0){
       return;
     }
 
-    await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], 1771762377000, (36*7*24*60*60*1000), [], e5, all_authors);
+    const absolute_load_limit = 1771762377000
+    const load_step = ((Date.now() - absolute_load_limit) - 10000)
+    await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], absolute_load_limit, load_step, [], '', all_author_ints);
 
     await this.wait(500)
 
@@ -10285,11 +10308,19 @@ class App extends Component {
       author_address_mapping_clone[e5] = {}
     }
     const unfound_authors = []
-    all_authors.forEach(author_target => {
-      const address_key = Object.keys(this.state.obligation_subscriptions).find(key => this.state.obligation_subscriptions[key]['user_account_id'].includes(author_target));
+    all_author_ints.forEach(author_target => {
+      const address_key = Object.keys(this.state.obligation_subscriptions).find((key) => {
+        const object = this.state.obligation_subscriptions[key] || {}
+        const user_account_array = object['user_account_id'] || []
+        return user_account_array.includes(author_target.toString())
+      });
+      console.log('load_target_or_object_accounts_obligation_data', 'found address_key for author target: ', author_target, address_key)
       if(address_key != undefined){
         author_address_mapping_clone[e5][author_target] = address_key
         const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
+        
+        console.log('load_target_or_object_accounts_obligation_data', 'obligation_contracts for author target', author_target, obligation_contracts)
+        
         obligation_contracts.forEach(contract_e5_id => {
           if(!contracts_to_load.includes(contract_e5_id) && this.state.my_contract_obligation_subscription_data[contract_e5_id] == null){
             contracts_to_load.push(contract_e5_id)
@@ -10301,6 +10332,7 @@ class App extends Component {
     });
 
     if(unfound_authors.length > 0){
+      console.log('load_target_or_object_accounts_obligation_data', 'unfound_authors', unfound_authors)
       const unfound_author_addresses = []
       for(var i=0; i<unfound_authors.length; i++){
         const address = await this.get_recipient_address(unfound_authors[i], e5)
@@ -10310,7 +10342,9 @@ class App extends Component {
       unfound_authors.forEach((author_target, index) => {
         const address_key = unfound_author_addresses[index]
         author_address_mapping_clone[e5][author_target] = address_key
-        const obligation_contracts = this.state.obligation_subscriptions[address_key]['data'];
+        const obligation_subscription_object = this.state.obligation_subscriptions[address_key] || {}
+        const obligation_contracts = obligation_subscription_object['data'] || [];
+        console.log('load_target_or_object_accounts_obligation_data', 'obligation_contracts for author target', author_target, obligation_contracts)
         obligation_contracts.forEach(contract_e5_id => {
           if(!contracts_to_load.includes(contract_e5_id) && this.state.my_contract_obligation_subscription_data[contract_e5_id] == null){
             contracts_to_load.push(contract_e5_id)
@@ -10319,7 +10353,7 @@ class App extends Component {
       });
     }
 
-
+    console.log('load_target_or_object_accounts_obligation_data', 'contracts_to_load', contracts_to_load)
     await this.load_my_accounts_obligation_data(contracts_to_load);
     this.setState({author_address_mapping: author_address_mapping_clone})
     await this.wait(500);
@@ -10881,9 +10915,9 @@ class App extends Component {
 
   update_object_change_in_db = (state, type) => {
     const type_as_string = type.toString()
-    const final_data = structuredClone(state)
+    const final_data = JSON.parse(JSON.stringify(state, (key, value) => typeof value === 'bigint' ? value.toString() : value))
     final_data.last_modified = Date.now()
-    var clone = structuredClone(this.state.new_object_changes)
+    var clone = this.structuredClone(this.state.new_object_changes)
     if(clone[type_as_string] == null){
       clone[type_as_string] = {}
     }
@@ -10947,6 +10981,13 @@ class App extends Component {
     }
 
     return reserved_keywords
+  }
+
+  does_entered_text_contain_reserved_keywords(text){
+    const all_reserved_keywords = this.get_accounts_reserved_keywords()
+    const words_to_check = text.toLowerCase().split(' ')
+    const foundWords = all_reserved_keywords.filter(word => words_to_check.includes(word));
+    return foundWords.length != 0
   }
 
   
@@ -14375,7 +14416,7 @@ class App extends Component {
       if(me.view_transaction_page.current != null){
       me.view_transaction_page.current.set_transaction(item, index)
     }
-    }, (1 * 500));
+    }, (1 * 900));
     
 
   }
@@ -16179,7 +16220,7 @@ class App extends Component {
           // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
           // this.start_get_accounts_data(false)
           this.update_withdraw_balance(e5)
-          this.start_get_accounts_for_specific_e5(false, e5, false)
+          this.start_get_accounts_for_specific_e5(false, e5, false, {})
           this.prompt_top_notification(this.getLocale()['2723']/* 'withdraw complete!' */, 4000)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
@@ -17123,7 +17164,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.set_cookies()
-      me.start_get_accounts_for_specific_e5(false, ether['e5'], false)
+      me.start_get_accounts_for_specific_e5(false, ether['e5'], false, {})
     }, (1 * 1000));
   }
 
@@ -18991,7 +19032,7 @@ class App extends Component {
     }
     
 
-    await this.process_user_obligation_data(user_obligation_data)
+    this.process_user_obligation_data(user_obligation_data)
     this.setState({is_searching_user_obligation_data: false})
   }
 
@@ -24339,7 +24380,7 @@ class App extends Component {
       const user_city = loc['city']
       const user_region = loc['region']
 
-      this.setstate({sunrise: sunrise, sunset: sunset, city: user_city, region: user_region})
+      this.setState({sunrise: sunrise, sunset: sunset, city: user_city, region: user_region})
     }catch(e){
       console.log('apppage', e)
     }
@@ -24576,6 +24617,7 @@ class App extends Component {
       }
       this.setState({stack_items: new_stack, stack_address: null, stacked_ids: null})
       this.set_cookies_after_stack_action(new_stack)
+      this.props.set_local_storage_data_if_enabled("transfer_data", "");
     }
 
     await this.wait(400);
@@ -27231,7 +27273,7 @@ class App extends Component {
   // }
 
   /* here */
-  get_all_events_from_e5 = async (_account, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data) => {
+  get_all_events_from_e5 = async (_account, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data={}) => {
     const web3 = new Web3(web3_url);
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = e5_address
@@ -27481,7 +27523,7 @@ class App extends Component {
         const allWords = Object.values(naughtyWords).flat();
         const censored_keywords_by_my_following = this.state.censored_keywords_by_my_following.slice().concat(censored_keywords, allWords)
 
-        const default_obligation_contract_ids = root_data.default_obligation_contract_ids
+        const default_obligation_contract_ids = root_data.default_obligation_contract_ids || {}
         const my_state = this.get_location_info().userCountry
         const default_obligation_contract = default_obligation_contract_ids[my_state] || ''
 
@@ -27987,9 +28029,15 @@ class App extends Component {
 
 
 
+  set_e5_as_loading(e5, value){
+    const clone = structuredClone(this.state.e5_loading_data_object)
+    clone[e5] = value
+    this.setState({e5_loading_data_object: clone})
+  }
   
   //here
   get_accounts_data = async (_account, is_syncing, web3_url, e5_address, e5, pre_launch_return_data) => {
+    this.set_e5_as_loading(e5, true)
     const web3 = new Web3(web3_url);
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = e5_address
@@ -28075,8 +28123,12 @@ class App extends Component {
     }
 
     if(account != null && account > 1000){
+      if(pre_launch_data[e5] != null){
+        this.process_user_obligation_data(pre_launch_data[e5]['obligation_data'])
+      }
+
       if(e5 == 'E25'){
-        await this.load_and_notify_flash()
+        this.load_and_notify_flash()
       }
     }
 
@@ -28509,9 +28561,6 @@ class App extends Component {
     //   this.inc_synch_progress()
     // }
 
-
-
-
    
 
 
@@ -28605,7 +28654,7 @@ class App extends Component {
       if(pre_launch_data[e5] != null){
         this.load_my_contracts(e5, pre_launch_data[e5]['my_created_contract_events'])
         this.load_my_subscriptions(e5, pre_launch_data[e5]['my_created_subscription_events'])
-        await this.process_user_obligation_data(pre_launch_data[e5]['obligation_data'])
+        // this.process_user_obligation_data(pre_launch_data[e5]['obligation_data'])
       }else{
         this.load_my_contracts(e5)
         this.load_my_subscriptions(e5)
@@ -28633,6 +28682,8 @@ class App extends Component {
       // await load_repost_and_following_data()
     }
 
+    console.log('get_accounts_data', 'obligation_subscriptions', this.state.obligation_subscriptions, this.state.has_wallet_been_set)
+
     if(this.state.has_wallet_been_set == true){
       if(e5 == 'E25'){
         if(
@@ -28640,18 +28691,26 @@ class App extends Component {
           this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
           this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
         ){
+          if(this.state.default_obligation_contract != '' && !this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].includes(this.state.default_obligation_contract)){
+            this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
+            await this.wait(500)
+            await this.emit_update_subscriptions_for_obligations_event()
+          }
           await this.load_my_accounts_obligation_data(this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'])
         }else{
-          this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
-          await this.wait(500)
-          await this.emit_update_subscriptions_for_obligations_event()
+          if(this.state.default_obligation_contract != ''){
+            this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
+            await this.wait(500)
+            await this.emit_update_subscriptions_for_obligations_event()
+          }
+          
         }
         await this.load_and_notify_flash()
       }
     }
 
     // this.get_total_supply_of_ether(e5)
-
+    this.set_e5_as_loading(e5, false)
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
@@ -29080,13 +29139,13 @@ class App extends Component {
   }
 
   load_e5_balance_data = async (web3, contractInstance, account, e5, contract_addresses, pre_launch_data = {}) => {
-    var withdraw_balance = pre_launch_data[e5] != null ? pre_launch_data[e5]['account_data']['withdraw_balance'] : await contractInstance.methods.f167([account], [], 1).call((error, result) => {});
+    var withdraw_balance = pre_launch_data[e5] != null && account > 1000 ? pre_launch_data[e5]['account_data']['withdraw_balance'] : await contractInstance.methods.f167([account], [], 1).call((error, result) => {});
     var clone = structuredClone(this.state.withdraw_balance)
     clone[e5] = withdraw_balance == null ? 0 : withdraw_balance[0]
     this.setState({withdraw_balance: clone})
     // console.log('withdraw balance for e5: ',e5,' : ',withdraw_balance[0])
 
-    var basic_transaction_data = pre_launch_data[e5] != null ? pre_launch_data[e5]['account_data']['basic_transaction_data'] : (this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284' ? await contractInstance.methods.f287([account]).call((error, result) => {}) : await contractInstance.methods.f287([account]).call((error, result) => {})[0])
+    var basic_transaction_data = pre_launch_data[e5] != null && account > 1000 ? pre_launch_data[e5]['account_data']['basic_transaction_data'] : (this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284' ? await contractInstance.methods.f287([account]).call((error, result) => {}) : await contractInstance.methods.f287([account]).call((error, result) => {})[0])
     var clone = structuredClone(this.state.basic_transaction_data)
     clone[e5] = basic_transaction_data == null ? [0, 0, 0, 0] : (pre_launch_data[e5] != null ? basic_transaction_data : basic_transaction_data[0])
     this.setState({basic_transaction_data: clone})
@@ -29231,8 +29290,10 @@ class App extends Component {
     if(section_tags_data_events.length != 0){
       var latest_event = section_tags_data_events[section_tags_data_events.length - 1];
       var section_tag_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+
+      if(section_tag_data == null) return;
       
-      var data_obj = section_tag_data == null ? await this.decrypt_data(section_tag_data['cypher']) : section_tag_data
+      var data_obj = section_tag_data['cypher'] != null ? await this.decrypt_data(section_tag_data['cypher']) : section_tag_data
 
       var job_section_tags = data_obj['job_section_tags']
       var explore_section_tags = data_obj['explore_section_tags']
@@ -30422,6 +30483,7 @@ class App extends Component {
   async load_my_fulfilled_obligation_data_in_e5(web3, H52contractInstance, e5, account, pre_loaded_events){
     if(!this.state.has_wallet_been_set && (this.state.user_account_id[e5] == 1 || this.state.user_account_id[e5] == 1)) return;
     
+    console.log('load_my_fulfilled_obligation_data_in_e5', 'begun loading my fulfilled obligation data')
     var object_event_data = pre_loaded_events != null ? pre_loaded_events : await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p1/* target_id */: account, p3/* context */:50/* fulfil_obligation_container */})
 
     if(object_event_data.length > 0){
@@ -30453,6 +30515,7 @@ class App extends Component {
       clone[e5] = data
       this.setState({my_fulfilled_obligation_data: data})
     }
+    console.log('load_my_fulfilled_obligation_data_in_e5', 'finished loading my fulfilled obligation data')
   }
 
   get_default_depth = (number) => {
@@ -31670,6 +31733,7 @@ class App extends Component {
           subscription_object['all_payment_history_events'] = previous_obj['all_payment_history_events']
           subscription_object['all_subscription_modification_events'] = previous_obj['all_subscription_modification_events']
           subscription_object['income_stream_data_points'] = previous_obj['income_stream_data_points']
+          subscription_object['interactible_hidden'] = previous_obj['interactible_hidden']
         }
       }
 
@@ -31905,13 +31969,13 @@ class App extends Component {
     object['income_stream_data_points'] = income_stream_data_points
 
     if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
-      object['hidden'] = true;
+      object['interactible_hidden'] = true;
     }
     else if(my_blocked_time_value/* [0] */[0] > Date.now()/1000){
-      object['hidden'] = true;
+      object['interactible_hidden'] = true;
     }
     else{
-      object['hidden'] = false;
+      object['interactible_hidden'] = false;
     }
 
     var created_subscription_object_data_clone = structuredClone(this.state.created_subscriptions)
@@ -32172,6 +32236,7 @@ class App extends Component {
           contract_obj['pre_purchase_record_events'] = previous_obj['pre_purchase_record_events']
           contract_obj['pre_purchase_transfer_events'] = previous_obj['pre_purchase_transfer_events']
           contract_obj['prepurchase_awards_events'] = previous_obj['prepurchase_awards_events']
+          contract_obj['interactible_hidden'] = previous_obj['interactible_hidden']
         }
       }
 
@@ -32252,8 +32317,8 @@ class App extends Component {
     const e5 = object['e5']
     const id = object['id']
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    var account = this.state.user_account_id[e5]
-    var contract_addresses = this.state.addresses[e5]
+    const account = this.state.user_account_id[e5]
+    const contract_addresses = this.state.addresses[e5]
 
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = contract_addresses[1];
@@ -32267,18 +32332,19 @@ class App extends Component {
     const H52_address = contract_addresses[6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var created_contracts = [id]
-    var i = 0
-    var account_as_list = [[account]]
+    const created_contracts = [id]
+    const i = 0
+    const account_as_list = [[account]]
 
     var interactible_checker_status_values_for_all_contracts = created_contracts.length==0? []: await E52contractInstance.methods.f254(created_contracts,0).call((error, result) => {});
 
     var my_interactable_time_value_for_all_contracts = created_contracts.length==0? []: await E52contractInstance.methods.f256(created_contracts, account_as_list, 0,2).call((error, result) => {});
 
     var my_blocked_time_value_for_all_contracts = created_contracts.length==0? []: await E52contractInstance.methods.f256(created_contracts, account_as_list, 0,3).call((error, result) => {});
-
+    console.log('beginning fetch of contracts end and spend balance...')
     var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
     var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
+    console.log('finished fetch of contracts end and spend balance, continuing...')
 
     const my_address = this.state.accounts[this.state.selected_e5].address;
     var event_params = [
@@ -32291,7 +32357,8 @@ class App extends Component {
 
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:id, p3/* context */:65/* 65(public_contract_obligation_configuration) */}],
     ]
-    var all_events = (await this.load_multiple_events_from_nitro(event_params)).all_events
+    var all_events_data = await this.load_multiple_events_from_nitro(event_params)
+    var all_events = all_events_data.all_events
     var entered_accounts = all_events[0]
 
     var contract_entered_accounts = []
@@ -32308,9 +32375,9 @@ class App extends Component {
     var entered_account_times = await G52contractInstance.methods.f266([created_contracts[i]], [contract_entered_accounts], 3).call((error, result) => {});
     var entered_account_times_data = {}
     for(var e=0; e<contract_entered_accounts.length; e++){
-      var time = entered_account_times[0][e]
-      var account = contract_entered_accounts[e]
-      entered_account_times_data[account] = time
+      const time = entered_account_times[0][e]
+      const my_account = contract_entered_accounts[e]
+      entered_account_times_data[my_account] = time
     }
 
     var moderator_data = all_events[1]
@@ -32337,12 +32404,14 @@ class App extends Component {
 
     var my_blocked_time_value =/*  await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_contracts
 
+    const accounts_for_expiry_time = [[account]]
+    const entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
 
     const obligation_configuration_events = all_events[5]
     const configurations = []
     if(obligation_configuration_events.length > 0) await this.fetch_multiple_cids_from_nitro(obligation_configuration_events, 0, 'p4');
-    for(var i=0; i<obligation_configuration_events.length; i++){
-      const event = obligation_configuration_events[i]
+    for(var f=0; f<obligation_configuration_events.length; f++){
+      const event = obligation_configuration_events[f]
       const cid = event.returnValues.p4
       const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
       const configuration_object = {'event':event, 'ipfs':ipfs, 'time':event.returnValues.p6/* timestamp */}
@@ -32363,17 +32432,18 @@ class App extends Component {
     object['my_interactable_time_value'] = my_interactable_time_value[i][0] 
     object['my_blocked_time_value'] = my_blocked_time_value[i][0]
     object['obligation_configurations'] = configurations
+    object['entry_expiry'] = entered_timestamp_data[i][0]
     object['hidden'] = false
 
 
     if(interactible_checker_status_values[0] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
-      object['hidden'] = true
+      object['interactible_hidden'] = true
     }
     else if(my_blocked_time_value[i][0] > Date.now()/1000){
-      object['hidden'] = true
+      object['interactible_hidden'] = true
     }
     else{
-      object['hidden'] = false
+      object['interactible_hidden'] = false
     }
 
     var pre_purchase_record_events = all_events[2]
@@ -32399,6 +32469,7 @@ class App extends Component {
 
     var created_contract_object_data_clone = structuredClone(this.state.created_contracts)
     const index = created_contract_object_data_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+    console.log('set_extra_contract_data', '--------index', index)
     created_contract_object_data_clone[e5][index] = object;
 
     var created_contract_mapping_clone = structuredClone(this.state.created_contract_mapping)
@@ -32539,7 +32610,7 @@ class App extends Component {
     Object.assign(loded_contract_datapoint_data_clone, contract_datapoint_data)
     Object.assign(loaded_contract_region_general_info_data_clone, contract_region_general_info_data)
 
-    this.setState({loded_contract_datapoint_data: loaded_contract_region_general_info_data_clone, loaded_contract_region_general_info_data: loaded_contract_region_general_info_data_clone})
+    this.setState({loded_contract_datapoint_data: loded_contract_datapoint_data_clone, loaded_contract_region_general_info_data: loaded_contract_region_general_info_data_clone})
   }
 
   getStartOfCurrentQuarter() {
@@ -33144,6 +33215,7 @@ class App extends Component {
           token_obj['account_data'] = previous_obj['account_data']
           token_obj['sends'] = previous_obj['sends']
           token_obj['receipts'] = previous_obj['receipts'];
+          token_obj['interactible_hidden'] = previous_obj['interactible_hidden']
         }
       }
 
@@ -33430,13 +33502,13 @@ class App extends Component {
     console.log('load_extra_token_data','sends and recepits set data', object['sends'], object['receipts'])
 
     if(interactible_checker_status_values[i] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && object['event'].returnValues.p3 != account )){
-      object['hidden'] = true
+      object['interactible_hidden'] = true
     }
     else if(my_blocked_time_value[i][0] > Date.now()/1000){
-      object['hidden'] = true
+      object['interactible_hidden'] = true
     }
     else{
-      object['hidden'] = false
+      object['interactible_hidden'] = false
     }
 
     console.log('load_extra', object)
@@ -36092,6 +36164,7 @@ class App extends Component {
   }
 
   async load_my_accounts_obligation_data(contract_e5_ids){
+    console.log('load_my_accounts_obligation_data', 'loading contract ids: ', contract_e5_ids)
     const all_queries = []
     const contract_e5_data = {}
     contract_e5_ids.forEach(e5_id => {
@@ -36121,6 +36194,9 @@ class App extends Component {
     }
 
     const all_loaded_events = (await this.load_multiple_events_from_nitro(all_queries)).all_events
+    
+    console.log('load_my_accounts_obligation_data', 'all_loaded_events', all_loaded_events)
+    
     const contract_e5_id_mapping_data = {}
     for(var i=0; i<e5s_used.length; i++){
       const e5 = e5s_used[i];
@@ -36142,14 +36218,20 @@ class App extends Component {
       });
     }
 
+    console.log('load_my_accounts_obligation_data', 'contract_e5_id_mapping_data', contract_e5_id_mapping_data)
+
     const obligation_configuration_events = []
     const obligation_contract_e5_ids = []
     Object.keys(contract_e5_id_mapping_data).forEach(contract_e5_id => {
       obligation_contract_e5_ids.push(contract_e5_id)
       obligation_configuration_events.push(contract_e5_id_mapping_data[contract_e5_id])
     });
+
+    console.log('load_my_accounts_obligation_data', 'beginning bulkload of ', obligation_configuration_events)
+
     await this.fetch_multiple_cids_from_nitro(obligation_configuration_events, 0, 'p4')
     const my_contract_obligation_subscription_data_clone = structuredClone(this.state.my_contract_obligation_subscription_data)
+    console.log('load_my_accounts_obligation_data', 'done. continuing with loop... ')
     for(var i=0; i<obligation_configuration_events.length; i++){
       const event = obligation_configuration_events[i]
       const contract_e5_id = obligation_contract_e5_ids[i]
@@ -36158,7 +36240,11 @@ class App extends Component {
       my_contract_obligation_subscription_data_clone[contract_e5_id] = {'event':event, 'ipfs':ipfs, 'time':event.returnValues.p6/* timestamp */}
     }
 
+    console.log('load_my_accounts_obligation_data', 'my_contract_obligation_subscription_data_clone', my_contract_obligation_subscription_data_clone)
+
     this.setState({my_contract_obligation_subscription_data: my_contract_obligation_subscription_data_clone})
+
+    await this.wait(700)
   }
 
 
@@ -43407,21 +43493,21 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var received_tokens_event_data = null
-    var stack_depth_swap_event_data = null
+    var received_tokens_event_data;
+    var stack_depth_swap_event_data;
 
     if(this.state.beacon_node_enabled == true){
       var event_params = [
         [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id}],
         [web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id}],
       ]
-      var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+      var event_data = await this.load_multiple_events_from_nitro(event_params)
+      var all_events = event_data.all_events
       received_tokens_event_data = all_events[0]
       stack_depth_swap_event_data = all_events[1]
     }else{
       received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
       stack_depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id})
-
     }
 
     var all_event_data = {}
@@ -53344,14 +53430,16 @@ class App extends Component {
         obligation_subscriptions_clone[message['author_address']] = { 
           'data':[], 
           'time':0, 
-          'user_account_id':ipfs['my_accounts'] 
+          'user_account_id':Object.values(ipfs['my_accounts'])
         }
       }
 
       if(obligation_subscriptions_clone[message['author_address']]['time'] < time){
         //loading a more recent version
         obligation_subscriptions_clone[message['author_address']]['time'] = time
-        obligation_subscriptions_clone[message['author_address']]['data'] = obligation_subscriptions
+        obligation_subscriptions_clone[message['author_address']]['data'] = obligation_subscriptions.filter((contract_e5_ids) => {
+          return contract_e5_ids.includes('E')
+        })
         obligation_subscriptions_clone[message['author_address']]['my_original_country'] = my_original_country;
         obligation_subscriptions_clone[message['author_address']]['my_original_city'] = my_original_city
 
@@ -54187,6 +54275,41 @@ class App extends Component {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
+
+          {
+            urls: "stun:stun.relay.metered.ca:80",
+          },
+          {
+            urls: "turn:standard.relay.metered.ca:80",
+            username: process.env.REACT_APP_METERED_USERNAME,
+            credential: process.env.REACT_APP_METERED_CREDENTIAL,
+          },
+          {
+            urls: "turn:standard.relay.metered.ca:80?transport=tcp",
+            username: process.env.REACT_APP_METERED_USERNAME,
+            credential: process.env.REACT_APP_METERED_CREDENTIAL,
+          },
+          {
+            urls: "turn:standard.relay.metered.ca:443",
+            username: process.env.REACT_APP_METERED_USERNAME,
+            credential: process.env.REACT_APP_METERED_CREDENTIAL,
+          },
+          {
+            urls: "turns:standard.relay.metered.ca:443?transport=tcp",
+            username: process.env.REACT_APP_METERED_USERNAME,
+            credential: process.env.REACT_APP_METERED_CREDENTIAL,
+          },
+
+          {
+            urls: 'turn:free.expressturn.com:3478',
+            username: process.env.REACT_APP_EXPRESSTURN_USERNAME,
+            credential: `${process.env.REACT_APP_EXPRESSTURN_PASSWORD}=`
+          },
+          {
+            urls: 'turn:free.expressturn.com:3478?transport=tcp',
+            username: process.env.REACT_APP_EXPRESSTURN_USERNAME,
+            credential: `${process.env.REACT_APP_EXPRESSTURN_PASSWORD}=`
+          },
 
           // { urls: 'stun:stun2.l.google.com:19302' },
           // { urls: 'stun:stun3.l.google.com:19302' },
