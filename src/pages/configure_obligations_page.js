@@ -79,7 +79,7 @@ class ConfigureObligationsPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' *//* , this.props.app_state.loc['3093e'] *//* 'obligation-children ↪️' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */, this.props.app_state.loc['3093er']/* 'beneficiaries 🔗' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' *//* , this.props.app_state.loc['3093e'] *//* 'obligation-children ↪️' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' *//* , this.props.app_state.loc['3093er'] *//* 'beneficiaries 🔗' */], [0]
             ],
         };
 

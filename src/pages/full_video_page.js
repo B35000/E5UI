@@ -604,11 +604,11 @@ class FullVideoPage extends Component {
             me.video_player.current?.addEventListener('leavepictureinpicture', me.when_pip_closed);
             me.video_player.current?.addEventListener('timeupdate', me.when_time_updated);
             me.video_player.current?.addEventListener('seeked', me.handleTimeUpdate);
-            me.when_metadata_loaded()
             me.streamAndPlayEncryptedVideo()
             me.video_player.current?.addEventListener("canplay", () => {
                 me.video_player.current?.play();
             });
+            me.when_metadata_loaded()
         }, (1 * 300));
     }
 
@@ -619,237 +619,6 @@ class FullVideoPage extends Component {
 
 
 
-    // streamAndPlayEncryptedVideo = async (should_reset_everything) => {
-    //     if(should_reset_everything !== false){
-    //         await this.reset_stream_decryptor_function()
-    //     }
-        
-    //     const track_data = this.get_video_file_data()
-    //     if(track_data['encrypted'] !== true){
-    //         return;
-    //     }
-
-    //     var current_video = this.state.videos[this.state.pos]
-    //     if(current_video['release_time'] != null && current_video['release_time'] > (Date.now()/1000)){
-    //         return;
-    //     }
-
-    //     const mediaSource = new MediaSource();
-    //     const videoElement = this.video_player.current;
-        
-    //     // Validate video element exists
-    //     if (!videoElement) {
-    //         console.error('Video element not found');
-    //         return;
-    //     }
-        
-    //     const codec = track_data['codec']
-    //     const video_type = track_data['video_type'] == null ? "video/mp4" : track_data['video_type']
-    //     const mimeType = `${video_type}; codecs="${codec}"`;
-
-    //     console.log('streamAndPlayEncryptedVideo', video_type, codec, mimeType)
-
-    //     // Check if the browser supports the codec
-    //     if (!MediaSource.isTypeSupported(mimeType)) {
-    //         console.error('Codec not supported:', mimeType);
-    //         return;
-    //     }
-
-    //     this.is_loading_and_decrypting_track = true;
-        
-    //     // Store MediaSource reference for state checking
-    //     this.mediaSourceRef = mediaSource;
-        
-    //     mediaSource.addEventListener('sourceopen', async () => {
-    //         console.log('MediaSource opened, ready state:', mediaSource.readyState);
-            
-    //         let sourceBuffer;
-    //         try {
-    //             sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    //             console.log('SourceBuffer created successfully');
-    //         } catch (error) {
-    //             console.error('Failed to create SourceBuffer:', error);
-    //             this.is_loading_and_decrypting_track = false;
-    //             return;
-    //         }
-
-    //         // Add error handling for sourceBuffer
-    //         sourceBuffer.addEventListener('error', (e) => {
-    //             console.error('SourceBuffer error:', e);
-    //         });
-
-    //         sourceBuffer.addEventListener('abort', (e) => {
-    //             console.warn('SourceBuffer aborted:', e);
-    //         });
-
-    //         const key = await this.props.get_key_from_password(track_data['password'], 'e');
-    //         const timestamp_keys = Object.keys(track_data['encrypted_file_data_info']);
-            
-    //         // Sort timestamp keys numerically
-    //         timestamp_keys.sort((a, b) => parseInt(a) - parseInt(b));
-            
-    //         var current_timestamp_key_pos = 0;
-            
-    //         if(this.update_start_time_pos != null){
-    //             current_timestamp_key_pos = this.update_start_time_pos;
-    //             const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
-                
-    //             // Validate timestamp offset
-    //             if (load_time_to_set >= 0) {
-    //                 sourceBuffer.timestampOffset = load_time_to_set;
-    //                 console.log('Set timestampOffset to:', load_time_to_set);
-    //             } else {
-    //                 console.warn('Invalid timestamp offset:', load_time_to_set);
-    //             }
-    //             delete this.update_start_time_pos;
-    //         }
-
-    //         while (current_timestamp_key_pos < timestamp_keys.length && this.current_file == track_data['data']) {
-    //             if(this.should_continue_loading(track_data) && !this.has_already_loaded_current_timestamp_key_pos(current_timestamp_key_pos)){
-    //                 const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]];
-    //                 const start = focused_timestamp_info.encryptedStartByte;
-    //                 const end = start + focused_timestamp_info.encryptedSize - 1;
-                    
-    //                 console.log(`Loading chunk ${current_timestamp_key_pos}: bytes ${start}-${end}`);
-                    
-    //                 if(this.update_start_time_pos == null){
-    //                     try {
-    //                         const link = await this.props.construct_encrypted_link_from_ecid_object(track_data, 'data');
-    //                         const response = await fetch(encodeURI(link), {
-    //                             headers: { Range: `bytes=${start}-${end}` },
-    //                         });
-                            
-    //                         if (response.status === 206 || response.status === 200) {
-    //                             const value = await response.arrayBuffer();
-    //                             const chunk = new Uint8Array(value);
-                                
-    //                             console.log(`Received chunk size: ${chunk.length} bytes`);
-                                
-    //                             try {
-    //                                 // Validate chunk structure
-    //                                 if (chunk.length < 12) {
-    //                                     throw new Error('Chunk too small for IV extraction');
-    //                                 }
-                                    
-    //                                 const iv = chunk.slice(0, 12);
-    //                                 const encryptedData = chunk.slice(12);
-                                    
-    //                                 console.log(`IV length: ${iv.length}, Encrypted data length: ${encryptedData.length}`);
-                                    
-    //                                 const decrypted = await window.crypto.subtle.decrypt(
-    //                                     { name: 'AES-GCM', iv },
-    //                                     key,
-    //                                     encryptedData
-    //                                 );
-                                    
-    //                                 const decryptedArray = new Uint8Array(decrypted);
-    //                                 console.log(`Decrypted chunk size: ${decryptedArray.length} bytes`);
-                                    
-    //                                 if(this.current_file == track_data['data']){
-    //                                     // Check MediaSource and SourceBuffer state before appending
-    //                                     if (mediaSource.readyState !== 'open') {
-    //                                         console.error('MediaSource not in open state:', mediaSource.readyState);
-    //                                         break;
-    //                                     }
-                                        
-    //                                     if (sourceBuffer.updating) {
-    //                                         console.log('SourceBuffer is updating, waiting...');
-    //                                         await new Promise(resolve => {
-    //                                             sourceBuffer.addEventListener('updateend', resolve, { once: true });
-    //                                         });
-    //                                     }
-                                        
-    //                                     await this.appendBufferAsync(sourceBuffer, decryptedArray);
-    //                                     console.log(`Successfully appended chunk ${current_timestamp_key_pos}`);
-                                        
-    //                                     if(this.loaded_timestamp_key_pos == null){
-    //                                         this.loaded_timestamp_key_pos = [];
-    //                                     }
-    //                                     this.loaded_timestamp_key_pos.push(current_timestamp_key_pos);
-    //                                     current_timestamp_key_pos++;
-    //                                 } else {
-    //                                     console.log('Current file changed, ending stream');
-    //                                     if (mediaSource.readyState === 'open') {
-    //                                         mediaSource.endOfStream();
-    //                                     }
-    //                                     return;
-    //                                 }
-    //                             } catch(decryptionError) {
-    //                                 console.error('Decryption or buffer append error:', decryptionError);
-    //                                 // Consider whether to continue or abort
-    //                                 break;
-    //                             }
-    //                         } else {
-    //                             console.error('Failed to fetch file chunk:', response.status, response.statusText);
-    //                             break;
-    //                         }
-    //                     } catch (fetchError) {
-    //                         console.error('Network error while fetching chunk:', fetchError);
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-                
-    //             if(this.current_file == track_data['data']){
-    //                 if(this.update_start_time_pos != null){
-    //                     current_timestamp_key_pos = this.update_start_time_pos;
-    //                     const load_time_to_set = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]].timestamp;
-                        
-    //                     // Wait for any pending updates before changing timestamp offset
-    //                     if (sourceBuffer.updating) {
-    //                         await new Promise(resolve => {
-    //                             sourceBuffer.addEventListener('updateend', resolve, { once: true });
-    //                         });
-    //                     }
-                        
-    //                     sourceBuffer.timestampOffset = load_time_to_set;
-    //                     console.log('Updated timestampOffset to:', load_time_to_set);
-    //                     delete this.update_start_time_pos;
-    //                 } else {
-    //                     const pause_time = this.should_continue_loading(track_data) ? 50 : 150;
-    //                     await new Promise(resolve => setTimeout(resolve, pause_time));
-    //                 }
-    //             }
-    //         }
-            
-    //         // Only end stream if MediaSource is still open
-    //         if (mediaSource.readyState === 'open') {
-    //             try {
-    //                 mediaSource.endOfStream();
-    //                 console.log('Stream ended successfully');
-    //             } catch (endError) {
-    //                 console.error('Error ending stream:', endError);
-    //             }
-    //         }
-            
-    //         this.is_loading_and_decrypting_track = false;
-    //     });
-
-    //     mediaSource.addEventListener('sourceended', () => {
-    //         console.log('MediaSource ended');
-    //     });
-
-    //     mediaSource.addEventListener('sourceclose', () => {
-    //         console.log('MediaSource closed - cleaning up');
-    //         this.mediaSourceRef = null;
-    //         this.is_loading_and_decrypting_track = false;
-    //     });
-
-    //     mediaSource.addEventListener('error', (e) => {
-    //         console.error('MediaSource error:', e);
-    //         this.mediaSourceRef = null;
-    //         this.is_loading_and_decrypting_track = false;
-    //     });
-
-    //     // Set the MediaSource as video source
-    //     try {
-    //         videoElement.src = URL.createObjectURL(mediaSource);
-    //         console.log('MediaSource URL set on video element');
-    //     } catch (error) {
-    //         console.error('Failed to set MediaSource URL:', error);
-    //         this.is_loading_and_decrypting_track = false;
-    //     }
-    // }
 
     has_already_loaded_current_timestamp_key_pos(pos){
         if(this.loaded_timestamp_key_pos != null && this.loaded_timestamp_key_pos.includes(pos)){
@@ -965,7 +734,12 @@ class FullVideoPage extends Component {
     actuallyAppendBuffer(sourceBuffer, chunk, resolve, reject) {
         try {
             sourceBuffer.appendBuffer(chunk);
-            
+            console.log('Buffered ranges:', sourceBuffer.buffered.length);
+            if (sourceBuffer.buffered.length > 0) {
+                console.log('Buffered start:', sourceBuffer.buffered.start(0));
+                console.log('Buffered end:', sourceBuffer.buffered.end(0));
+            }
+            console.log('Video duration after chunk:', this.video_player.current?.duration);
             sourceBuffer.addEventListener('updateend', () => {
                 console.log('Buffer append completed successfully');
                 resolve();
@@ -1013,6 +787,8 @@ class FullVideoPage extends Component {
             return;
         }
 
+        console.log('All timestamp keys data:', JSON.stringify(track_data['encrypted_file_data_info']));
+
         // If we already have an active MediaSource for this file, don't create a new one
         if (this.mediaSourceRef && this.mediaSourceRef.readyState === 'open' && 
             this.current_file === track_data['data'] && this.sourceBufferRef) {
@@ -1050,6 +826,7 @@ class FullVideoPage extends Component {
             let sourceBuffer;
             try {
                 sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+                console.log('MediaSource duration:', mediaSource.duration);
                 this.sourceBufferRef = sourceBuffer;
                 console.log('SourceBuffer created successfully');
             } catch (error) {
@@ -1057,6 +834,21 @@ class FullVideoPage extends Component {
                 this.isStreamingActive = false;
                 return;
             }
+
+            const timestampKeys = Object.keys(track_data['encrypted_file_data_info'])
+                .sort((a, b) => parseInt(a) - parseInt(b));
+
+            if(timestampKeys.length > 2){
+                const lastChunkTimestamp = parseInt(timestampKeys[timestampKeys.length - 1]);
+                const secondToLastTimestamp = parseInt(timestampKeys[timestampKeys.length - 2]);
+                const lastChunkDuration = lastChunkTimestamp - secondToLastTimestamp;
+                const totalDuration = lastChunkTimestamp + lastChunkDuration;
+                mediaSource.duration = totalDuration;
+            }else{
+                const lastChunkTimestamp = parseInt(timestampKeys[timestampKeys.length - 1]);
+                mediaSource.duration = lastChunkTimestamp;
+            }
+            
 
             // Add error handling for sourceBuffer
             sourceBuffer.addEventListener('error', (e) => {
@@ -1121,22 +913,25 @@ class FullVideoPage extends Component {
             this.mediaSourceRef === mediaSource && 
             this.isStreamingActive) {
             
-            if(this.should_continue_loading(track_data) && 
-            !this.has_already_loaded_current_timestamp_key_pos(current_timestamp_key_pos)){
-                
-                const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]];
-                const start = focused_timestamp_info.encryptedStartByte;
-                const end = start + focused_timestamp_info.encryptedSize - 1;
-                
-                console.log(`Loading chunk ${current_timestamp_key_pos}: bytes ${start}-${end}`);
-                
-                if(this.update_start_time_pos == null){
-                    const success = await this.loadAndAppendChunk(track_data, sourceBuffer, mediaSource, start, end, current_timestamp_key_pos, key);
-                    if (success) {
-                        current_timestamp_key_pos++;
-                    } else {
-                        break; // Stop on error
+            if(this.should_continue_loading(track_data)){
+                if(!this.has_already_loaded_current_timestamp_key_pos(current_timestamp_key_pos)){
+                    const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]];
+                    const start = focused_timestamp_info.encryptedStartByte;
+                    const end = start + focused_timestamp_info.encryptedSize - 1;
+                    
+                    console.log(`Loading chunk ${current_timestamp_key_pos}: bytes ${start}-${end}`);
+                    
+                    if(this.update_start_time_pos == null){
+                        const success = await this.loadAndAppendChunk(track_data, sourceBuffer, mediaSource, start, end, current_timestamp_key_pos, key);
+                        if (success) {
+                            current_timestamp_key_pos++;
+                        } else {
+                            break; // Stop on error
+                        }
                     }
+                }else{
+                    //has already loaded, so skip to next timestamp key
+                    current_timestamp_key_pos++;
                 }
             }
             
@@ -1244,6 +1039,16 @@ class FullVideoPage extends Component {
         // Clean up MediaSource
         this.cleanupMediaSource();
 
+        const videoElement = this.video_player.current;
+        if (videoElement) {
+            const oldSrc = videoElement.src;
+            videoElement.removeAttribute('src');
+            videoElement.load(); // Forces the browser to discard all buffered data
+            if (oldSrc && oldSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(oldSrc);
+            }
+        }
+
         // Wait for any ongoing operations to complete
         while (this.isStreamingActive) {
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -1280,9 +1085,7 @@ class FullVideoPage extends Component {
         const seek_data = this.seekToTime(time, track_data['encrypted_file_data_info'])
         this.update_start_time_pos = seek_data.pos
 
-        if(this.is_loading_and_decrypting_track != true){
-            this.streamAndPlayEncryptedVideo(false)
-        }
+        this.streamAndPlayEncryptedVideo(false)
     }
 
     seekToTime = (targetSeconds, seekTable) => {
@@ -1296,29 +1099,10 @@ class FullVideoPage extends Component {
             }
         }
 
-        return { time: closestEntry[0], byte: closestEntry[1], pos: closestEntry[2]}
+        return { time: closestEntry[0], byte: closestEntry[1], pos: closestEntry[2], count:entries.length}
     };
 
-    // reset_stream_decryptor_function = async () => {
-    //     delete this.update_start_time_pos;
-    //     delete this.loaded_timestamp_key_pos;
-    //     const track_data = this.get_video_file_data()
-    //     this.current_file = track_data['data'];
-
-    //     while (this.is_loading_and_decrypting_track == true) {
-    //         if (this.is_loading_and_decrypting_track != true) break
-    //         await new Promise(resolve => setTimeout(resolve, 1000))
-    //     }
-    // }
-
     should_continue_loading(track_data){
-        // const track_duration = track_data['duration']
-        // const value = ((this.state.value  * 100) / track_duration)
-        // const buffer = this.state.buffer
-        // const buffer_difference_percentage = buffer - value
-        // const remaining_time = (buffer_difference_percentage / 100) * track_duration;
-        // return remaining_time < 23
-
         const videoElement = this.video_player.current;
         
         // If video element doesn't exist or no buffered data, continue loading
@@ -1383,7 +1167,10 @@ class FullVideoPage extends Component {
 
         if(last_time != null && last_time != 0 && this.video_player.current != null && video_file_data['duration'] != null){
             const watch_time_proportion = last_time / video_file_data['duration']
-            if(watch_time_proportion < 0.96) this.video_player.current.currentTime = last_time;
+            if(watch_time_proportion < 0.96){ 
+                this.video_player.current.currentTime = last_time;
+                this.update_stream_start_value_after_scrub(last_time)
+            }
         }
     }
 

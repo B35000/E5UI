@@ -17940,37 +17940,6 @@ class StackPage extends Component {
         }
     }
 
-    compressImageFromFile(image_url) {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          const maxWidth = 200 
-      
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const scale = maxWidth / img.width;
-            canvas.width = maxWidth;
-            canvas.height = img.height * scale;
-      
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
-            const image_size = 35 * 1024
-            canvas.toBlob(blob => {
-                var quality = 1.0
-                var blob_size = blob.size
-                if(blob_size > image_size){
-                    quality = image_size / blob_size
-                }
-                var return_blob = canvas.toDataURL("image/jpeg", quality);
-                resolve(return_blob);
-            }, "image/jpeg")
-          };
-      
-          img.src = image_url;
-          img.onerror = reject;
-        });
-    }
-
     /* called when videos have been picked from picker */
     when_video_picked = (e) => {
         var upload_storage_selected_item = this.get_selected_item(this.state.get_upload_storage_option_tags_object, this.state.get_upload_storage_option_tags_object['i'].active)
@@ -18162,7 +18131,7 @@ class StackPage extends Component {
                     var audioFile = e.target.files[i];
                     const audioType = audioFile.type
                     const duration = await this.get_audio_duration(audioFile)
-                    const chunk_duration = duration < 35 ? 5 : 35
+                    const chunk_duration = duration < 15 ? 5 : 15
                     const timeToByteMap = await media_processors.buildTimeToByteMap(audioFile, chunk_duration)
                     if(timeToByteMap == null){
                         this.props.notify(this.props.app_state.loc['1593hs']/* 'Unable to process one of your selected files "$"' */.replace('$', unencrypted_file_name), 7000)
@@ -18205,7 +18174,7 @@ class StackPage extends Component {
                     // reader.readAsDataURL(videoFile);
                     const duration = await this.get_video_duration(videoFile)
                     const videoType = videoFile.type;
-                    const chunk_duration = duration < 53 ? 5 : 53
+                    const chunk_duration = duration < 15 ? 5 : 15
                     let codec;
                     let return_packaged_data;
                     if(extension == 'webm'){
@@ -19241,7 +19210,36 @@ class StackPage extends Component {
     
 
 
-
+    compressImageFromFile(image_url) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          const maxWidth = 200 
+      
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+      
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+            const image_size = 35 * 1024
+            canvas.toBlob(blob => {
+                var quality = 1.0
+                var blob_size = blob.size
+                if(blob_size > image_size){
+                    quality = image_size / blob_size
+                }
+                var return_blob = canvas.toDataURL("image/jpeg", quality);
+                resolve(return_blob);
+            }, "image/jpeg")
+          };
+      
+          img.src = image_url;
+          img.onerror = reject;
+        });
+    }
 
     get_file_sizes(dataURL){
         const base64Data = dataURL.split(",")[1];

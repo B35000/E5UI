@@ -1199,7 +1199,7 @@ class VideoDetailsSection extends Component {
 
             'listing_type':{'title':listing_type, 'details':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'size':'l'},
             'banner-icon':{'header':'', 'subtitle':'', 'image':image, 'height':'auto'},
-            'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+            'id2':{'title':author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px','image_width':'auto'},
 
             'videopost_sales':{'title':number_with_commas(object['videopost_sales']), 'details':this.props.app_state.loc['3024']/* 'Videopost Sales' */, 'size':'l'},
             'video_sales':{'title':number_with_commas(object['video_sales']), 'details':this.props.app_state.loc['3025']/* 'Video Sales' */, 'size':'l'},

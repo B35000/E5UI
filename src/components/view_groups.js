@@ -843,7 +843,7 @@ class ViewGroups extends Component {
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
             var width = '180px'
             var height = '180px'
-            var border_radius = '14%'
+            var border_radius = '14px'
             if(object_data != null && object_data['width_height']!= null){
                 width = object_data['width_height']
                 height = width;
@@ -1036,6 +1036,7 @@ class ViewGroups extends Component {
                             a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'] }} {...props} onClick={(e) => this.handleLinkClick(e, props.href)} /* target="_blank" rel="noopener noreferrer" */ />,
                             hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
                             br: ({ node, ...props }) => <br style={{ color: this.props.theme['line_color'] }} {...props} />,
+                            img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} alt="" style={{ width: '100%', height: 'auto' }} {...props} /> )
                         }}
                     >{source}</Markdown>
                 </div>

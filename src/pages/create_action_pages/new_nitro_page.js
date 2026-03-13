@@ -423,17 +423,48 @@ class NewNitroPage extends Component {
         )
     }
 
-    when_get_bundle_image_tags_option_updated(tag_obj){
+    async when_get_bundle_image_tags_option_updated(tag_obj){
         this.setState({get_bundle_image_tags_option: tag_obj})
 
         const selected_item = this.get_selected_item(tag_obj, 'e')
         if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
             if(this.state.album_art != null){
-                this.setState({image_bundle: this.get_image_from_file(this.state.album_art)})
+                this.setState({image_bundle: await this.compressImageFromFile(this.get_image_from_file(this.state.album_art))})
             }
         }else{
             this.setState({image_bundle: null})
         }
+    }
+
+    compressImageFromFile(image_url) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          const maxWidth = 200 
+      
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+      
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+            const image_size = 9 * 1024
+            canvas.toBlob(blob => {
+                var quality = 1.0
+                var blob_size = blob.size
+                if(blob_size > image_size){
+                    quality = image_size / blob_size
+                }
+                var return_blob = canvas.toDataURL("image/jpeg", quality);
+                resolve(return_blob);
+            }, "image/jpeg")
+          };
+      
+          img.src = image_url;
+          img.onerror = reject;
+        });
     }
 
     render_specific_country_selector(){
@@ -699,7 +730,7 @@ class NewNitroPage extends Component {
         const selected_item = this.get_selected_item(this.state.get_bundle_image_tags_option, 'e')
         if(selected_item == this.props.app_state.loc['a311dw']/* 'bundle' */){
             if(files[0] != null){
-                this.setState({image_bundle: this.get_image_from_file(files[0])})
+                this.setState({image_bundle: await this.compressImageFromFile(this.get_image_from_file(files[0]))})
             }
         }else{
             this.setState({image_bundle: null})
