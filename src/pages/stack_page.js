@@ -6767,7 +6767,7 @@ class StackPage extends Component {
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
-                                    'id': tx.type, 
+                                    'id': this.props.app_state.loc['c311df']/* 'submit-spend-proposal' */, 
                                     'identifier':tx.id+e,
                                     'hard_id':'consensus-spend', 
                                     'confirm_transfers':true,
@@ -6809,7 +6809,7 @@ class StackPage extends Component {
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
-                                    'id': tx.type, 
+                                    'id': this.props.app_state.loc['c311dg']/* 'submit-exchange-transfer' */, 
                                     'identifier':tx.id,
                                     'city':this.props.app_state.city,
                                     'region':this.props.app_state.region,
@@ -7017,7 +7017,7 @@ class StackPage extends Component {
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
-                                'id': tx.type,
+                                'id': this.props.app_state.loc['c311de']/* 'messages-award' */,
                                 'identifier':tx.id+m,
                                 'city':this.props.app_state.city,
                                 'region':this.props.app_state.region,
@@ -7738,7 +7738,9 @@ class StackPage extends Component {
                             'obligation_fulfiller_address':address_key,
                             'promises':{},
                         }
-                        authors_obligation_contracts.forEach(contract => {
+                        const contracts = Object.keys(authors_obligation_contracts)
+                        for(var c=0; c<contracts.length; c++){
+                            const contract = contracts[c];
                             const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
                             const keywords = object['object_type'] == 'storefront' ? configuration['ipfs'].explore_keywords : configuration['ipfs'].work_keywords
                             const default_keyword_combination = configuration['ipfs'].default_keyword_combination;
@@ -7758,10 +7760,17 @@ class StackPage extends Component {
                                 const top = Object.entries(hits_proportion_mapping)
                                     .sort(([, valueA], [, valueB]) => parseInt(valueB) - parseInt(valueA)).slice(0, default_keyword_combination);
                                 const top_hits_proportion_mapping = Object.fromEntries(top);
+                                const unhashed_keywords = Object.keys(top_hits_proportion_mapping)
+                                const keywords = []
+                                for(var te=0; te<unhashed_keywords.length; te++){
+                                    const word = unhashed_keywords[te]
+                                    const hash_word = await this.props.encryptTag(word, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+                                    keywords.push(hash_word)
+                                }
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':Object.values(top_hits_proportion_mapping),
                                     'transfers':final_object_value_transfer_data,
-                                    'keywords':Object.keys(top_hits_proportion_mapping)
+                                    'keywords': keywords
                                 }
                             }else{
                                 obligation_promise_data['promises'][contract] = {
@@ -7770,7 +7779,7 @@ class StackPage extends Component {
                                     'keywords':[]
                                 }
                             }
-                        });
+                        }
                         obligation_object['data'].push(obligation_promise_data)
                     }
                 }
@@ -11031,7 +11040,18 @@ class StackPage extends Component {
             winner_count: t.winner_count,
             poll_e5s: t.poll_e5s,
             randomizer: t.randomizer,
-            change_vote_enabled: get_changeable_vote_tags_object
+            change_vote_enabled: get_changeable_vote_tags_object,
+            
+            public_contracts: t.public_contracts,
+            max_voter_weight: (t.max_voter_weight == 0 ? 1 : t.max_voter_weight),
+            default_voter_weight: (t.default_voter_weight == 0 ? 1 : t.default_voter_weight),
+            tag_appearance_multiplier: await this.process_tag_appearance_multiplier_object(t.tag_appearance_multiplier),
+            tag_moved_token_amount_multiplier: t.tag_moved_token_amount_multiplier,
+            tag_moved_token_amount_anchor_amount: t.tag_moved_token_amount_anchor_amount,
+            obligation_count_start_time:t.obligation_count_start_time,
+            obligation_count_end_time:t.obligation_count_end_time,
+            public_contract_deadlines: t.public_contract_deadlines,
+            accepted_obligation_types: this.process_ignored_obligation_types(t.ignored_obligation_types),
         }/* try not to change this at all. even the order. */
         var string_data = await this.props.hash_data(JSON.stringify(hash_obj))
 
@@ -11043,6 +11063,28 @@ class StackPage extends Component {
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
+    }
+
+    async process_tag_appearance_multiplier_object(tag_appearance_multiplier){
+        const new_object = {}
+        const keys = Object.keys(tag_appearance_multiplier)
+        for(var k=0; k<keys.length; k++){
+            const word = keys[k]
+            const hash_word = await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+            new_object[hash_word] = tag_appearance_multiplier[word]
+        }
+        return new_object
+    }
+
+    process_ignored_obligation_types(ignored_obligation_types){
+        const all_items = this.load_active_accepted_obligation_types()
+        return Object.keys(all_items).filter(key => 
+            !ignored_obligation_types.includes(all_items[key])
+        );
+    }
+
+    load_active_accepted_obligation_types(){
+        return this.props.app_state.load_active_accepted_obligation_types
     }
 
     get_selected_item2(object, option){

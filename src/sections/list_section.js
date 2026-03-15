@@ -20,6 +20,7 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups';
 import TextInput from './../components/text_input';
 import Tags from './../components/tags';
+import LocationViewer from './../components/location_viewer';
 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
@@ -32,6 +33,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { Virtuoso } from "react-virtuoso";
+import { Drawer } from 'vaul';
+
 
 var bigInt = require("big-integer");
 
@@ -76,6 +79,10 @@ class PostListSection extends Component {
         tag_search_history:[],
         selected_time_filter_chart_tags_object:this.selected_time_filter_chart_tags_object(),
         selected_time_filter_chart_tags_object2: this.selected_time_filter_chart_tags_object(),
+
+        render_selected_map_job_bottomsheet:false, render_selected_map_contractor_bottomsheet:false,
+        selected_jobs_time_filter_chart_tags_object: this.selected_time_filter_chart_tags_object(),
+        selected_contractors_time_filter_chart_tags_object: this.selected_time_filter_chart_tags_object()
     };
 
 
@@ -148,6 +155,13 @@ class PostListSection extends Component {
                         </div>
                     )
                 }
+                else if(selected_item == this.props.app_state.loc['1264bq']/* job-map 🗺️ */){
+                    return(
+                        <div>
+                            {this.render_job_map()}
+                        </div>
+                    )
+                }
                 return(
                 <div>{this.render_jobs_list_group()}</div>
                 )
@@ -205,6 +219,13 @@ class PostListSection extends Component {
                     return(
                         <div>
                             {this.render_my_notifications(this.props.app_state.loc['1264e']/* 'contractor-notifications' */)}
+                        </div>
+                    )
+                }
+                else if(selected_item == this.props.app_state.loc['1264br']/* contractor-map 🗺️ */){
+                    return(
+                        <div>
+                            {this.render_contractor_map()}
                         </div>
                     )
                 }
@@ -417,6 +438,9 @@ class PostListSection extends Component {
         this.end_list = React.createRef();
         this.spend_list = React.createRef();
         this.bill_list = React.createRef();
+
+        this.locationPickerRef = React.createRef();
+        this.locationPickerRef2 = React.createRef();
 
         this.current_load_time = {}
     }
@@ -935,6 +959,17 @@ class PostListSection extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
     render_jobs_list_group(){
         var background_color = this.props.theme['card_background_color']
         var middle = this.props.height
@@ -1082,7 +1117,7 @@ class PostListSection extends Component {
         //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
         // });
         setTimeout(() => this.props.when_job_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
-        
+        this.when_pin_job_closed()
     }
 
     remove_duplicates(list){
@@ -1183,6 +1218,232 @@ class PostListSection extends Component {
             return 
         }
     }
+
+
+
+    render_job_map(){
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        middle -= 200
+        const job_location_pins = this.get_location_pins(this.get_job_items(), this.get_filter_end_time(this.state.selected_jobs_time_filter_chart_tags_object))
+        return(
+            <div>
+                <LocationViewer ref={this.locationPickerRef} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={job_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_job_pin_clicked.bind(this)}
+                />
+                <div style={{height:20}}/>
+                <div onClick={()=> this.show_my_location_on_map(this.locationPickerRef)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1264bs']/* My Location ⚲ */, 'action':''})}
+                </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2509di']/* 'Filter Time' */, 'details':this.props.app_state.loc['2509dj']/* 'Filter the pins by the time they were created or their age. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_jobs_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_jobs_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.state.selected_map_job != null && this.render_object_bottomsheet(this.render_job_object(this.state.selected_map_job), this.state.render_selected_map_job_bottomsheet, this.when_pin_job_closed, 200)}
+            </div>
+        )
+    }
+
+    get_location_pins(objects, filter_end_time){
+        const locations = []
+        objects.forEach(object => {
+            const pins = object['ipfs'].pins || []
+            if(pins.length > 0){
+                const first_pin = pins[0];
+                const pin_object = {
+                    'lat':first_pin['lat'], 
+                    'lng':first_pin['lng'], 
+                    'description':object['ipfs'].entered_title_text,
+                    'object':object
+                }
+                if(object['ipfs'].get_public_pins_object != null && this.get_selected_item2(object['ipfs'].get_public_pins_object, 'e') == 1 && object['time'] > (filter_end_time / 1000)){
+                    locations.push(pin_object)
+                }
+            }
+        });
+
+        return locations;
+    }
+
+    get_default_center(){
+        const my_city = this.props.app_state.device_city.toLowerCase()
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities_objects = all_cities.filter(function (el) {
+            return (el['city'].startsWith(my_city) || el['city'] == my_city)
+        });
+
+        if(specific_cities_objects.length > 0){
+            var city_obj = specific_cities_objects[0];
+            return { lat: city_obj['lat'], lon: city_obj['lon'] }
+        }
+        else{
+            return { lat: 51.505, lon: -0.09 }
+        }
+    }
+
+    on_job_pin_clicked(pin){
+        this.setState({selected_map_job: pin['object'], render_selected_map_job_bottomsheet: true})
+    }
+
+    when_pin_job_closed(){
+        this.setState({selected_map_job: null, render_selected_map_job_bottomsheet: false})
+    }
+
+    render_object_bottomsheet(view, open, onOpenChange, height){
+        const padding = 10
+        return(
+        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={false}>
+            <Drawer.Portal>
+                <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.0)" }}/>
+                <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
+                    <div style={{padding:'0px 20px 0px 20px'}}>
+                        {this.render_bottomsheet_container_view(view)}
+                    </div>
+                </Drawer.Content>
+            </Drawer.Portal>
+        </Drawer.Root>
+        )
+    }
+
+    render_bottomsheet_container_view(view){
+        var size = this.props.size;
+        var width = this.props.width;
+        if(size == 's'){
+            return(
+                <div>
+                    {view}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            var orientation = this.props.details_orientation;
+            if(orientation == this.props.app_state.loc['1420']/* 'left' */){
+                return(
+                    <div className="row" style={{'width':'99%'}}>
+                        <div className="col-6">
+                            
+                        </div>
+                        <div className="col-6">
+                            {view}
+                        </div>
+                    </div>
+                )
+            }else{
+                return(
+                    <div className="row" style={{'width':'99%'}}>
+                        <div className="col-6">
+                            {view}
+                        </div>
+                        <div className="col-6">
+                            
+                        </div>
+                    </div>
+                )
+            }
+        }
+        else if(size == 'l'){
+            var orientation = this.props.details_orientation;
+            if(orientation == this.props.app_state.loc['1420']/* 'left' */){
+                if(width > 1100){
+                    return(
+                        <div className="row" style={{'width':'99%'}}>
+                            <div className="col-1">
+                                
+                            </div>
+                            <div className="col-4">
+                                
+                            </div>
+                            <div className="col-4">
+                                {view}
+                            </div>
+                        </div>
+                    ) 
+                }else{
+                    return(
+                        <div className="row" style={{'width':'99%'}}>
+                            <div className="col-1">
+                                
+                            </div>
+                            <div className="col-7">
+
+                            </div>
+                            <div className="col-5">
+                                {view}
+                            </div>
+                        </div>
+                    )
+                }
+            }else{
+                if(width > 1100){
+                    return(
+                        <div className="row" style={{'width':'99%'}}>
+                            <div className="col-1">
+                                
+                            </div>
+                            <div className="col-4">
+                                {view}
+                            </div>
+                            <div className="col-4">
+                                
+                            </div>
+                        </div>
+                    ) 
+                }else{
+                    return(
+                        <div className="row" style={{'width':'99%'}}>
+                            <div className="col-1">
+                                
+                            </div>
+                            <div className="col-5">
+                                {view}
+                            </div>
+                            <div className="col-7">
+
+                            </div>
+                        </div>
+                    )
+                }
+            }
+        }
+    }
+
+    show_my_location_on_map(locationPickerRef){
+        var me = this;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const location_data = { lat: latitude, lon: longitude }
+                    console.log('position found: ', location_data)
+                    setTimeout(function() {
+                        locationPickerRef.current?.set_center(location_data);
+                    }, (2 * 1000));
+                    this.setState({my_location: location_data})
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    console.log('location_map_input','Unable to get your location. Please check permissions.');
+                    this.props.notify(this.props.app_state.loc['2509dk']/* 'e cant find your exact location right now.' */, 4400)
+                }
+            );
+        } else {
+            console.log('location_map_input','Geolocation is not supported by your browser.');
+            this.props.notify(this.props.app_state.loc['2509dl']/* 'Your browser doesnt support geo-location.' */, 4400)
+        }
+    }
+
+    when_selected_jobs_time_filter_chart_tags_object_updated(tag_obj){
+        this.setState({selected_jobs_time_filter_chart_tags_object: tag_obj})
+    }
+
+
+
+
 
 
 
@@ -2077,7 +2338,48 @@ class PostListSection extends Component {
         //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
         // });
         setTimeout(() => this.props.when_contractor_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
-        
+        this.when_pin_contractor_closed()
+    }
+
+    render_contractor_map(){
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        middle -= 200
+        const contractor_location_pins = this.get_location_pins(this.get_contractor_items(), this.get_filter_end_time(this.state.selected_contractors_time_filter_chart_tags_object))
+        return(
+            <div>
+                <LocationViewer ref={this.locationPickerRef2} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={contractor_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_contractor_pin_clicked.bind(this)}
+                />
+
+                <div style={{height:20}}/>
+                <div onClick={()=> this.show_my_location_on_map(this.locationPickerRef)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1264bs']/* My Location ⚲ */, 'action':''})}
+                </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2509di']/* 'Filter Time' */, 'details':this.props.app_state.loc['2509dj']/* 'Filter the pins by the time they were created or their age. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_contractors_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_contractors_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.state.selected_map_contractor != null && this.render_object_bottomsheet(this.render_contractor_object(this.state.selected_map_contractor), this.state.render_selected_map_contractor_bottomsheet, this.when_pin_contractor_closed, 200)}
+            </div>
+        )
+    }
+
+    on_contractor_pin_clicked(pin){
+        this.setState({selected_map_contractor: pin['object'], render_selected_map_contractor_bottomsheet: true})
+    }
+
+    when_pin_contractor_closed(){
+        this.setState({selected_map_contractor: null, render_selected_map_contractor_bottomsheet: false})
+    }
+
+    when_selected_contractors_time_filter_chart_tags_object_updated(tag_obj){
+        this.setState({selected_contractors_time_filter_chart_tags_object: tag_obj})
     }
 
 

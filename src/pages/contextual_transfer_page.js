@@ -477,6 +477,7 @@ class ContextualTransferPage extends Component {
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, exchange_id:'', price_amount:0});
             this.props.notify(this.props.app_state.loc['1187']/* 'Added amount.' */, 1400)
+            this.reset_the_number_picker()
         }
     }
 
@@ -1592,7 +1593,7 @@ class ContextualTransferPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1182']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.price_amount2), 'barwidth':this.calculate_bar_width(this.state.price_amount2), 'number':this.format_account_balance_figure(this.state.price_amount2), 'barcolor':'', 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker2} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount2.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker2} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} when_number_picker_value_changed={this.when_price_amount2.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set2()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1184']/* Add Amount' */, 'action':''})}
@@ -1656,6 +1657,7 @@ class ContextualTransferPage extends Component {
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data2: price_data_clone, exchange_id2:'', price_amount2:0});
             this.props.notify(this.props.app_state.loc['1187']/* 'Added amount.' */, 1400)
+            this.reset_the_number_picker2()
         }
     }
 

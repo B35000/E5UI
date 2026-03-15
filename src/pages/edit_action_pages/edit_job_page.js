@@ -64,7 +64,7 @@ class NewJobPage extends Component {
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[], e5: this.props.app_state.selected_e5, edit_text_item_pos:-1,
 
         get_sort_links_tags_object: this.get_sort_links_tags_object(), markdown:'', 
-        entered_zip_objects:[], pins:[]
+        entered_zip_objects:[], pins:[], get_public_pins_object:this.get_public_pins_object()
     };
     
 
@@ -147,6 +147,17 @@ class NewJobPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
+            ],
+        };
+    }
+
+    get_public_pins_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['284bq']/* 'public' */], [1]
             ],
         };
     }
@@ -2174,6 +2185,11 @@ return data['data']
                     </div>
                 </div>
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['284bo']/* 'Set as Public.' */, 'details':this.props.app_state.loc['284bp']/* 'If set to public, the locations youve specified will be visible to all users by default. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_public_pins_object} tag_size={'l'} when_tags_updated={this.when_get_public_pins_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
                 {this.render_selected_pins()}
             </div>
         )
@@ -2264,6 +2280,9 @@ return data['data']
         this.locationPickerRef.current?.set_center(location_data);
     }
 
+    when_get_public_pins_object_updated(tag_obj){
+        this.setState({get_public_pins_object: tag_obj})
+    }
 
 
 

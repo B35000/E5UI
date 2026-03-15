@@ -247,15 +247,16 @@ class PollDetailsSection extends Component {
                     {this.render_item_images(object)}
                     {this.render_pdf_files_if_any(object)}
                     {this.render_zip_files_if_any(object)}
-                    
-                    <div style={{height: 10}}/>
                     {this.render_markdown_if_any(object)}
+
+                    {this.render_voter_weights_if_any(object)}
+
+                    {this.render_view_poll_weight_configuration(object)}
 
                     {this.render_edit_object_button(object)}
 
                     {this.render_vote_object_button(object)}
 
-                    
 
                     {this.render_pin_post_button(object)}
 
@@ -800,6 +801,7 @@ class PollDetailsSection extends Component {
         if(state.markdown != null && state.markdown != ''){
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('13', {'source':state.markdown})}
                 </div>
             )
@@ -1131,6 +1133,68 @@ class PollDetailsSection extends Component {
         this.props.show_view_calculate_poll_result_bottomsheet(object)
     }
 
+
+    render_voter_weights_if_any(object){
+        const data = this.props.app_state.my_voter_weight_data[object['e5_id']]
+        if(data != null){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3072bi']/* Your vote\'s Weight. */, 'details':this.props.app_state.loc['3072bj']/* 'The weight of your vote for each of your accounts in this poll.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_weight_data(data)}
+                </div>
+            )
+        }
+    }
+
+    render_weight_data(data){
+        var items = Object.keys(data)
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_weight_item(item, data)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_weight_item(item, data){
+        const e5 = item;
+        const my_e5_account_id = parseInt(this.props.app_state.user_account_id[e5])
+        const my_weight_in_the_e5 = data[e5][my_e5_account_id]
+        const image = this.props.app_state.e5s[e5].e5_img
+        const details = this.props.app_state.loc['3072bk']/* Weight: $ */.replace('$', this.format_account_balance_figure(my_weight_in_the_e5))
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':my_e5_account_id, 'details':details, 'image':image, 'size':'s'})}
+            </div>
+        )
+    }
+
+
+    render_view_poll_weight_configuration(object){
+        if(Object.keys(object['ipfs'].public_contracts).length == 0) return;
+        
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3072bm']/* 'View the voter weight configuration of the poll as set by its author.' */, 'title':this.props.app_state.loc['3072bl']/* '🛠️ Vote Weight Configuration' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_view_poll_weight_configuration(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3072bn']/* 'View Configuration' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_view_poll_weight_configuration(object){
+        this.props.show_dialog_bottomsheet({'object':object}, 'view_voter_weight_information')
+    }
 
 
 

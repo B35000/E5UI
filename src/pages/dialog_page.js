@@ -120,7 +120,9 @@ class DialogPage extends Component {
         credit_spend_amount:0, typed_transaction_note:'', prepurchase_request_recipient:'', dm_recipient:'',
 
         searched_obligation_account_id: 0,
-        targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(), obligation_search_account:'', filter_id_name:'', filter_exchange_name:'', region_city_search:''
+        targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(), obligation_search_account:'', filter_id_name:'', filter_exchange_name:'', region_city_search:'',
+
+        weight_tags_search:'', moved_exchanges_search: ''
     };
 
 
@@ -643,6 +645,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_view_region_specific_metrics_ui()}
+                </div>
+            )
+        }
+        else if(option == 'view_voter_weight_information'){
+            return(
+                <div>
+                    {this.render_view_voter_weight_information_ui()}
                 </div>
             )
         }
@@ -12232,6 +12241,307 @@ return data['data']
 
 
 
+
+
+    render_view_voter_weight_information_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_voter_weight_information_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_view_voter_weight_information_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_voter_weight_information_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_voter_weight_information_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_voter_weight_information_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_voter_weight_information_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_voter_weight_information_data(){
+        const object = this.state.data['object']
+        const start_date_object = new Date(object['ipfs'].obligation_count_start_time)
+        const end_date_object = new Date(object['ipfs'].obligation_count_end_time)
+        const max_voter_weight = object['ipfs'].max_voter_weight == 0 ? 1 : object['ipfs'].max_voter_weight
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l','title':this.props.app_state.loc['3055mi']/* 'Public Contracts.' */, 'details':this.props.app_state.loc['3055mj']/* 'The public contracts used in this poll.' */ })}
+                <div style={{height:10}}/>
+                {this.render_selected_contracts(object['ipfs'].public_contracts, object['ipfs'].public_contract_deadlines)}
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dc']/* Accepted Obligation Types. */, 'details':this.props.app_state.loc['3055mk']/* The obligation types set as valid in for this poll. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.load_accepted_obligation_types(object['ipfs'].ignored_obligation_types)}
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ml']/* Filter Start and End Times */, 'details':this.props.app_state.loc['3055mm']/* The times between which all obligations logged would be valid during weight calculation. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+                {this.render_detail_item('3', {'title':''+(start_date_object.toLocaleString()), 'details':this.props.app_state.loc['3055mn']/* 'Obligation Count Start Date.' */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+                {this.render_detail_item('3', {'title':''+(end_date_object.toLocaleString()), 'details':this.props.app_state.loc['c311dj']/* 'Obligation Count End Date.' */, 'size':'l'})}
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dl']/* Max Voter Weight */, 'details':this.props.app_state.loc['3055mo']/* The maximum weight a voter can have in this poll. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311dl']/* 'Max Voter Weight' */, 'subtitle':this.format_power_figure(max_voter_weight), 'barwidth':this.calculate_bar_width(max_voter_weight), 'number':this.format_account_balance_figure(max_voter_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+                </div>
+
+            </div>
+        )
+    }
+
+    render_view_voter_weight_information_data2(){
+        const object = this.state.data['object']
+        const default_voter_weight = object['ipfs'].default_voter_weight == 0 ? 1 : object['ipfs'].default_voter_weight;
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311do']/* Default Voter Weight. */, 'details':this.props.app_state.loc['3055mp']/* The default weight for each voter\'s vote in this poll. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311do']/* 'Default Voter Weight.' */, 'subtitle':this.format_power_figure(default_voter_weight), 'barwidth':this.calculate_bar_width(default_voter_weight), 'number':this.format_account_balance_figure(default_voter_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+                </div>
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dq']/* Tag Appearance Multiplier. */, 'details':this.props.app_state.loc['3055mq']/* Multipliers that are applied to specific tags if they appear in a voters obligation history. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055mr']/* 'Filter Tags...' */} when_text_input_field_changed={this.when_weight_tags_search_input_field_changed.bind(this)} text={this.state.weight_tags_search} theme={this.props.theme}/>
+                <div style={{ height:10 }}/>
+                {this.render_added_tag_appearance_values(object['ipfs'].tag_appearance_multiplier)}
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dy']/* 'Moved Token Amount Multiplier' */, 'details':this.props.app_state.loc['3055ms']/* 'Multipliers applied for amounts received in a voters obligation history.' */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055mt']/* 'Filter Exchanges...' */} when_text_input_field_changed={this.when_moved_exchanges_search_input_field_changed.bind(this)} text={this.state.moved_exchanges_search} theme={this.props.theme}/>
+                <div style={{ height:10 }}/>
+                {this.render_added_exchange_multiplier_values(object['ipfs'].tag_moved_token_amount_multiplier, object['ipfs'].tag_moved_token_amount_anchor_amount)}
+            </div>
+        )
+    }
+
+    render_selected_contracts(public_contracts, public_contract_deadlines){
+        var items = Object.keys(public_contracts)
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_selected_contract_item(item, public_contracts, public_contract_deadlines)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_selected_contract_item(item, public_contracts, public_contract_deadlines){
+        const title = public_contracts[item]
+        const contract_e5_id  = public_contracts[item]+item
+        const deadline = public_contract_deadlines[contract_e5_id]
+        const date_object = this.get_deadline_date_object(deadline)
+        const locale = navigator.language || navigator.userLanguage || 'en-US'
+        const details = date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })
+        const image = this.props.app_state.e5s[item].e5_img
+        const footer = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null && this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address]['data'] != null && this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address]['data'].length > 0 && this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address]['data'].includes(contract_e5_id) ? this.props.app_state.loc['3055mh']/* 'Subscribed' */ : null;
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':title, 'image':image, 'footer':footer, 'details':details, 'image_width':'auto', 'size':'s'})}
+            </div>
+        )
+    }
+
+    load_accepted_obligation_types(ignored_obligation_types){
+        const items_object = this.load_active_accepted_obligation_types()
+        const items = Object.values(items_object).filter((type) => {
+            return !ignored_obligation_types.includes(type)
+        })
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_selected_obligation_type_item(item, ignored_obligation_types)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_accepted_obligation_types(){
+        return this.props.app_state.load_active_accepted_obligation_types
+    }
+
+    render_selected_obligation_type_item(item, ignored_obligation_types){
+        const alpha = ignored_obligation_types.includes(item) == true ? 0.4 : 1.0
+        return(
+            <div style={{'opacity':alpha}}>
+                {this.render_detail_item('4', {'text':item, 'textsize':'12px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    render_added_tag_appearance_values(tag_appearance_multiplier){
+        const items = Object.keys(tag_appearance_multiplier).filter((tag) => {
+            return (tag.toLowerCase().startsWith(this.state.weight_tags_search.toLowerCase()) || this.state.weight_tags_search == '')
+        })
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_selected_tag_appearance_item(item, tag_appearance_multiplier)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_selected_tag_appearance_item(item, tag_appearance_multiplier){
+        const title = item
+        const details = this.format_account_balance_figure(tag_appearance_multiplier[item])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    when_weight_tags_search_input_field_changed(text){
+        this.setState({weight_tags_search: text})
+    }
+
+    render_added_exchange_multiplier_values(tag_moved_token_amount_multiplier, tag_moved_token_amount_anchor_amount){
+        const directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)
+        const name_directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)
+        const items = Object.keys(tag_moved_token_amount_multiplier).filter((exchange_e5_id) => {
+            const exchange_id = parseInt(exchange_e5_id.split('E')[0])
+            const e5 = 'E'+exchange_e5_id.split('E')[1]
+            return (
+                this.state.moved_exchanges_search == '' ||
+                directory[exchange_id].toLowerCase().startsWith(this.state.moved_exchanges_search.toLowerCase()) ||
+                name_directory[e5+exchange_id].toLowerCase().startsWith(this.state.moved_exchanges_search.toLowerCase()) ||
+                exchange_id.startsWith(this.state.moved_exchanges_search.toLowerCase())
+            )
+        })
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_selected_exchange_multiplier_item(item, tag_moved_token_amount_multiplier, tag_moved_token_amount_anchor_amount)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_selected_exchange_multiplier_item(item, tag_moved_token_amount_multiplier, tag_moved_token_amount_anchor_amount){
+        const exchange_id = parseInt(item.split('E')[0])
+        const e5 = 'E'+item.split('E')[1]
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]
+        const details = this.props.app_state.loc['c311eg']/* 'Multiplier: $' */.replace('$', this.format_account_balance_figure(tag_moved_token_amount_multiplier[item]))
+        const image = this.props.app_state.token_thumbnail_directory[e5][exchange_id]
+        const footer = this.props.app_state.loc['c311eh']/* 'Anchor: $' */.replace('$', this.format_account_balance_figure(tag_moved_token_amount_anchor_amount[item])) 
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':title, 'image':image, 'footer':footer, 'details':details, 'size':'s', 'image_width':'auto'})}
+            </div>
+        )
+    }
+
+    when_moved_exchanges_search_input_field_changed(text){
+        this.setState({moved_exchanges_search: text})
+    }
+
+
+
+
+
+
+
+
+
     
 
 
@@ -12259,7 +12569,6 @@ return data['data']
             return 0;
         });
     }
-  
 
     render_empty_views(size){
         var items = []

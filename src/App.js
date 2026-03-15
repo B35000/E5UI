@@ -1273,7 +1273,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65,
+    sync_steps:(10), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -1357,7 +1357,7 @@ class App extends Component {
 
     obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
 
-    e5_loading_data_object:{}
+    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}
   };
 
   get_thread_pool_size(){
@@ -1377,7 +1377,7 @@ class App extends Component {
       'expand_icon':expand_icon,
       'close_pip':close_pip,
       'empty_image':empty_image,
-      'all_cities': 'https://bafybeia7eskmjltilomaguof27yxwbyrf2ofns34dp5xqhdjbkuwmmjzqu.ipfs.w3s.link/',
+      'all_cities': 'https://bafybeibapy5ft5zisu5k6vd54qseyqzb3efkexerynu7nqzieh7kyl36oy.ipfs.w3s.link/',
       /* 'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/' */
       'download_icon':download_icon,
       'zoom_in_icon':zoom_in_icon,
@@ -3466,6 +3466,35 @@ class App extends Component {
     }
   }
 
+  load_active_accepted_obligation_types(){
+    return{
+      'message-award':this.getLocale()['c311de']/* 'messages-award' */,
+      'buy-sell-token':this.getLocale()['946']/* 'buy-sell' */,
+      'transfer':this.getLocale()['1018']/* 'transfer' */,
+      'enter-contract':this.getLocale()['1']/* 'enter-contract' */,
+      'proposal-bounty':this.getLocale()['312']/* 'proposal' */,
+      'consensus-spend':this.getLocale()['c311df']/* 'submit-spend-proposal' */,
+      'consensus-exchange-transfer':this.getLocale()['c311dg']/* 'submit-exchange-transfer' */,
+      'pay-subscription':this.getLocale()['862']/* 'pay-subscription' */,
+      'exchange-transfer':this.getLocale()['907']/* 'exchange-transfer' */,
+      'direct-purchase':this.getLocale()['1499']/* 'direct-purchase' */,
+      'award':this.getLocale()['1155']/* 'award' */,
+      'royalty-payouts':this.getLocale()['2884']/* 'royalty-payouts' */,
+      'buy-album':this.getLocale()['2962']/* 'buy-album' */,
+      'buy-video':this.getLocale()['a2962a']/* 'buy-video' */,
+      'buy-storage':this.getLocale()['3031']/* 'buy-storage' */,
+      'iTransfer':this.getLocale()['3068ac']/* 'iTransfer' */,
+      'bill-payment':this.getLocale()['3071j']/* 'bill-payment' */,
+      'creator-payout':this.getLocale()['2117p']/* 'creator-payout' */,
+      'nitro-renewal':this.getLocale()['3055df']/* 'nitro-renewal' */,
+      'fulfil-bids':this.getLocale()['3077']/* 'fulfil-bids' */,
+      'order-payment':this.getLocale()['2642bm']/* 'order-payment' */,
+      'purchase-credits':this.getLocale()['3092']/* 'purchase-credits' */,
+      'finish-payment':this.getLocale()['1632o']/* 'finish-payment' */,
+      'exchange-deposit':this.getLocale()['3094']/* 'exchange-deposit' */,
+    }
+  }
+
 
 
 
@@ -3704,7 +3733,7 @@ class App extends Component {
   }
 
   fetch_filter_and_export_all_my_cities = async () => {
-    var request = 'https://gateway.pinata.cloud/ipfs/bafybeibmzrgod36lnaoth7wh65ypcb5u4ofdaebhhwaq4l5terch4vodby'
+    var request = 'https://bafybeiftp34ppmvfyuvoocpfsuh2lk6fjksxfiwtvrcyyexr5u6m4pmdae.ipfs.w3s.link/cities.json'
 
     try{
       const response = await fetch(request);
@@ -3713,8 +3742,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      var obj = JSON.parse(data);
-      const data_array = obj['data']
+      var data_array = JSON.parse(data);
       const final_object = {}
       data_array.forEach(city_item => {
         const country = city_item['country'];
@@ -6441,7 +6469,7 @@ class App extends Component {
 
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
 
-          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)}
+          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -10407,6 +10435,8 @@ class App extends Component {
 
 
 
+
+
   render_wiki_bottomsheet(){
     if(this.state.wiki_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -10684,7 +10714,7 @@ class App extends Component {
     }
     else if(target == '13'/* polls */){
       return(
-          <NewPollPage ref={this.new_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+          <NewPollPage ref={this.new_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} load_my_accounts_obligation_data={this.load_my_accounts_obligation_data.bind(this)}
         />
       )
     }
@@ -17728,6 +17758,7 @@ class App extends Component {
       'view_accounts_obligation_promise_history':650,
       'show_my_obligation_fulfilment_item':450,
       'view_region_specific_metrics':650,
+      'view_voter_weight_information':650,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -19078,7 +19109,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, true)
+        return await this.get_user_obligation_data(filter_addresses, end_time, start_time, filter_contracts, obligation_fulfiller_account_ids, true)
       }
       const user_obligation_data = obj['obligations_data']
       const metadata = obj['metadata'] || {}
@@ -22848,7 +22879,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
-        <CalculatePollResultPage ref={this.view_calculate_poll_result_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_poll_result_transaction_to_stack={this.add_poll_result_transaction_to_stack.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} count_poll_votes_and_post_results={this.count_poll_votes_and_post_results.bind(this)}
+        <CalculatePollResultPage ref={this.view_calculate_poll_result_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_poll_result_transaction_to_stack={this.add_poll_result_transaction_to_stack.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} count_poll_votes_and_post_results={this.count_poll_votes_and_post_results.bind(this)} encryptTag={this.encryptTag.bind(this)}
         />
       </div>
     )
@@ -22931,9 +22962,15 @@ class App extends Component {
       poll_e5: poll_e5,
     }
 
+    await this.update_nitro_privacy_signature(false)
     for(var o=0; o<nitro_objects.length; o++){
       const nitro_object = nitro_objects[o]
-      var node_url = nitro_object['ipfs'].node_url
+      const node_url = nitro_object['ipfs'].node_url
+
+      await this.check_and_fetch_object_marco_if_non_existant(nitro_object['e5_id'], node_url)
+      await this.wait(700)
+      await this.check_and_start_rerecording_of_key_in_nitro(node_url)
+
       const body = {
         method: "POST", // Specify the HTTP method
         headers: {
@@ -26798,7 +26835,7 @@ class App extends Component {
   }
 
   start_get_accounts_data = async (is_synching, should_skip_account_data, should_skip_pre_launch) => {
-    if(is_synching == false) this.start_get_accounts_wallet_data(false);
+    this.start_get_accounts_wallet_data(is_synching);
     // if(is_synching == true) this.get_objects_from_socket_and_set_in_state(['jobs'], []);
     if(is_synching == false){
       this.setState({pre_launch_fetch_loading: true, did_just_set_wallet: this.did_just_set_wallet})
@@ -26832,7 +26869,11 @@ class App extends Component {
       var e5_address = this.state.e5s[e5].e5_address;
       var account_for_e5 = this.state.accounts[e5]
       if(web3_url != ''){
-        this.get_wallet_data2(account_for_e5, is_syncing, web3_url, e5_address, e5)
+        if(is_syncing == false){
+          await this.get_wallet_data2(account_for_e5, is_syncing, web3_url, e5_address, e5)
+        }else{
+          await this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+        }
         await this.wait(2000)
       }
     }
@@ -26873,7 +26914,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.pre_launch_fetch(true)
+        return await this.pre_launch_fetch(true)
       }
       if(obj.all_return_data != null){
         this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [])
@@ -27057,7 +27098,6 @@ class App extends Component {
     var e5_address = this.state.e5s[e5].e5_address;
     var account_for_e5 = this.state.accounts[e5]
     if(web3_url != ''){
-      if(is_syncing == true) this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5);
       await this.wait(300)
       if(this.get_contract_from_e5(e5) != ''){
         this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data)
@@ -27209,7 +27249,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.load_events_from_nitro(_web3, contract_instance, event_id, e5, filter, load_limit, true)
+        return await this.load_events_from_nitro(_web3, contract_instance, event_id, e5, filter, load_limit, true)
       }
       return obj['data'][0]
     }
@@ -36075,7 +36115,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.load_muliple_batch_events_from_nitro(event_requests, beacon_node, p, true, tag)
+        return await this.load_muliple_batch_events_from_nitro(event_requests, beacon_node, p, true, tag)
       }
       return { events: obj['data'], event_data: obj['hash_data'] }
     }
@@ -37568,7 +37608,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.pre_object_fetch_call(created_object_events_mapping, item_type, true)
+        return await this.pre_object_fetch_call(created_object_events_mapping, item_type, true)
       }
 
       if(item_type == 18/* post_object */){
@@ -45643,7 +45683,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.get_nitro_telemetry_data(object, true)
+        return await this.get_nitro_telemetry_data(object, true)
       }
 
       const clone = structuredClone(this.state.nitro_telemetry_data_object)
@@ -45780,7 +45820,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.get_tag_price_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_e5s, true)
+        return await this.get_tag_price_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_e5s, true)
       }
       var target_data = obj['price_data']
       return target_data
@@ -45934,7 +45974,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.get_tag_trends_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_object_types, true)
+        return await this.get_tag_trends_data(keywords, end_time, start_time, filter_type, filter_languages, filter_states, filter_object_types, true)
       }
       var target_data = obj['trends']
       return target_data
@@ -46058,6 +46098,101 @@ class App extends Component {
     });
 
     return return_data
+  }
+
+  async get_my_voter_weight(object){
+    if(!this.state.has_wallet_been_set && !this.state.has_account_been_loaded_from_storage) return;
+    const t = object['ipfs']
+    const object_e5_id = object['e5_id']
+    const static_poll_data = {
+      public_contracts: t.public_contracts,
+      max_voter_weight: (t.max_voter_weight == 0 ? 1 : t.max_voter_weight),
+      default_voter_weight: (t.default_voter_weight == 0 ? 1 : t.default_voter_weight),
+      tag_appearance_multiplier: await this.process_tag_appearance_multiplier_object(t.tag_appearance_multiplier),
+      tag_moved_token_amount_multiplier: t.tag_moved_token_amount_multiplier,
+      tag_moved_token_amount_anchor_amount: t.tag_moved_token_amount_anchor_amount,
+      obligation_count_start_time:t.obligation_count_start_time,
+      obligation_count_end_time:t.obligation_count_end_time,
+      public_contract_deadlines: t.public_contract_deadlines,
+      accepted_obligation_types: this.process_ignored_obligation_types(t.ignored_obligation_types),
+    }
+
+    const e5_account_ids = []
+    t.poll_e5s.forEach(e5 => {
+      e5_account_ids.push(this.state.user_account_id[e5]+e5)
+    });
+
+    const voter_weight_data = await this.get_user_vote_weight_data(static_poll_data, e5_account_ids, false)
+
+    const clone = structuredClone(this.state.my_voter_weight_data)
+    clone[object_e5_id] = voter_weight_data
+    this.setState({my_voter_weight_data: clone})
+  }
+
+  async process_tag_appearance_multiplier_object(tag_appearance_multiplier){
+    const new_object = {}
+    const keys = Object.keys(tag_appearance_multiplier)
+    for(var k=0; k<keys.length; k++){
+      const word = keys[k]
+      const hash_word = await this.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+      new_object[hash_word] = tag_appearance_multiplier[word]
+    }
+    return new_object
+  }
+
+  process_ignored_obligation_types(ignored_obligation_types){
+    const all_items = this.load_active_accepted_obligation_types()
+    return Object.keys(all_items).filter(key => 
+      !ignored_obligation_types.includes(all_items[key])
+    );
+  }
+
+  get_user_vote_weight_data = async (static_poll_data, e5_account_ids, updated_signature=false) => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+    
+    const arg_obj = {
+      static_poll_data: static_poll_data,
+      e5_account_ids: e5_account_ids
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'user_vote_weight')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      console.log('user_vote_weight', 'calling for accounts ', e5_account_ids)
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log('datas', 'user_vote_weight',response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('user_vote_weight', 'weight', obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return await this.get_user_vote_weight_data(static_poll_data, e5_account_ids, true)
+      }
+      var target_data = obj['weights']
+      return target_data
+    }
+    catch(e){
+      console.log('apppage', 'user_vote_weight', 'something went wrong with user_vote_weight', e)
+    }
   }
 
 
@@ -53512,7 +53647,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.get_socket_data(targets, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true)
+        return await this.get_socket_data(targets, filter_end_time, filter_start_time, size_limit_in_kbs, filter_tags, true)
       }
       var target_data = obj['target_data']
       return target_data
@@ -53935,7 +54070,7 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return this.get_account_in_room_data(account_ids, room_id, true)
+        return await this.get_account_in_room_data(account_ids, room_id, true)
       }
       var target_data = obj['return_object']
       console.log('apppage', 'get_account_in_room_data', target_data)

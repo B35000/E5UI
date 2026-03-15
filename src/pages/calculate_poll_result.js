@@ -56,8 +56,24 @@ class CalculatePollResult extends Component {
     
     state = {
         selected: 0, id:makeid(8), poll_object:null, get_title_tags_object:this.get_title_tags_object(), e5: this.props.app_state.selected_e5, json_files:[],
-        csv_files:[], nitro:''
+        csv_files:[], nitro:'', get_weighted_unweighted_page_tags_object:this.get_weighted_unweighted_page_tags_object()
     };
+
+
+    get_weighted_unweighted_page_tags_object(){
+        var obj = {
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['3074cf']/* weighted */, this.props.app_state.loc['3074cg']/* 'un-weighted' */], [1]
+            ],
+        };
+        return obj;
+    }
+
+
+
 
     set_data(object){
         this.setState({poll_object: object})
@@ -686,7 +702,7 @@ class CalculatePollResult extends Component {
         }
     }
 
-    when_start_count_tapped(){
+    async when_start_count_tapped(){
         var last_time = this.props.app_state.count_poll_times[this.state.poll_object['e5_id']] == null ? 0 : this.props.app_state.count_poll_times[this.state.poll_object['e5_id']]
         var now = Date.now()
         if(last_time > (now-240_000)){
@@ -745,6 +761,17 @@ class CalculatePollResult extends Component {
                 poll_e5s: t.poll_e5s,
                 randomizer: t.randomizer,
                 change_vote_enabled: get_changeable_vote_tags_object,
+
+                public_contracts: t.public_contracts,
+                max_voter_weight: (t.max_voter_weight == 0 ? 1 : t.max_voter_weight),
+                default_voter_weight: (t.default_voter_weight == 0 ? 1 : t.default_voter_weight),
+                tag_appearance_multiplier: await this.process_tag_appearance_multiplier_object(t.tag_appearance_multiplier),
+                tag_moved_token_amount_multiplier: t.tag_moved_token_amount_multiplier,
+                tag_moved_token_amount_anchor_amount: t.tag_moved_token_amount_anchor_amount,
+                obligation_count_start_time:t.obligation_count_start_time,
+                obligation_count_end_time:t.obligation_count_end_time,
+                public_contract_deadlines: t.public_contract_deadlines,
+                accepted_obligation_types: this.process_ignored_obligation_types(t.ignored_obligation_types),
             }
             const poll_id = this.state.poll_object['id']
             const poll_e5 = this.state.poll_object['e5']
@@ -763,6 +790,28 @@ class CalculatePollResult extends Component {
         // Make a shallow copy to avoid modifying the original array
         const shuffled = [...array].sort(() => 0.5 - Math.random());
         return shuffled.slice(0, count);
+    }
+
+    async process_tag_appearance_multiplier_object(tag_appearance_multiplier){
+        const new_object = {}
+        const keys = Object.keys(tag_appearance_multiplier)
+        for(var k=0; k<keys.length; k++){
+            const word = keys[k]
+            const hash_word = await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY)
+            new_object[hash_word] = tag_appearance_multiplier[word]
+        }
+        return new_object
+    }
+
+    process_ignored_obligation_types(ignored_obligation_types){
+        const all_items = this.load_active_accepted_obligation_types()
+        return Object.keys(all_items).filter(key => 
+            !ignored_obligation_types.includes(all_items[key])
+        );
+    }
+
+    load_active_accepted_obligation_types(){
+        return this.props.app_state.load_active_accepted_obligation_types
     }
 
 
@@ -854,6 +903,7 @@ class CalculatePollResult extends Component {
         var tie_breaker = results_object.tie_breaker
         var inconclusive_ballot = results_object.inconclusive_ballot
         var quota = results_object.quota
+        var consensus_absolute_snapshots = results_object.consensus_absolute_snapshots || []
 
         if(inconclusive_ballot == true){
             return (
@@ -887,9 +937,9 @@ class CalculatePollResult extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bd']/* 'Counting Results.' */, 'details':this.props.app_state.loc['3074be']/* 'Below are the figures obtained at each cycle and runoff.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3074bd']/* 'Counting Results.' */, 'details':this.props.app_state.loc['3074be']/* 'Below are the figures obtained at each cycle and runoff. Tap a value to view its un-weighted result (the popular vote).' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                {this.render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota)}
+                {this.render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota, consensus_absolute_snapshots)}
 
                 {this.render_final_winners_if_voting_period_over(current_winners, time, tie_breaker)}
                 
@@ -933,11 +983,14 @@ class CalculatePollResult extends Component {
         )
     }
 
-    render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota){
+    render_consensus_snapshot_data(consensus_snapshots, elimination_snapshot, valid_vote_count, vote_transfer_snapshots, vote_donation_snapshots, quota, consensus_absolute_snapshots){
         var selected_index = this.state.selected_stage == null ? 0 : this.state.selected_stage
         var snapshot = consensus_snapshots[selected_index]
+        var absolute_snapshot = consensus_absolute_snapshots[selected_index] || {}
         return(
             <div>
+                <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_weighted_unweighted_page_tags_object} tag_size={'l'} when_tags_updated={this.when_get_weighted_unweighted_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {consensus_snapshots.map((item, index) => (
@@ -948,9 +1001,13 @@ class CalculatePollResult extends Component {
                     </ul>
                 </div>
                 <div style={{height: 10}}/>
-                {this.render_consensus_cycle(snapshot, elimination_snapshot[selected_index], valid_vote_count, vote_transfer_snapshots[selected_index], vote_donation_snapshots[selected_index], quota )}
+                {this.render_consensus_cycle(snapshot, elimination_snapshot[selected_index], valid_vote_count, vote_transfer_snapshots[selected_index], vote_donation_snapshots[selected_index], quota, absolute_snapshot)}
             </div>
         )
+    }
+
+    when_get_weighted_unweighted_page_tags_object_updated(tag_obj){
+        this.setState({get_weighted_unweighted_page_tags_object: tag_obj})
     }
 
     render_stage_item(index){
@@ -978,7 +1035,7 @@ class CalculatePollResult extends Component {
         this.setState({selected_stage: index})
     }
 
-    render_consensus_cycle(snapshot, eliminated_candidate, vote_count, vote_transfer_snapshot, vote_donation_snapshot, quota){
+    render_consensus_cycle(snapshot, eliminated_candidate, vote_count, vote_transfer_snapshot, vote_donation_snapshot, quota, absolute_snapshot){
         var figures = []
         var candidate_index = {}
         this.state.poll_object['ipfs'].candidates.forEach(candidate => {
@@ -986,8 +1043,10 @@ class CalculatePollResult extends Component {
         });
         var candidate_ids = Object.keys(snapshot)
 
+        const selected_item = this.get_selected_item(this.state.get_weighted_unweighted_page_tags_object, 'e')
+
         candidate_ids.forEach(candidate_id => {
-            var candidates_votes = snapshot[candidate_id]
+            var candidates_votes = selected_item == this.props.app_state.loc['3074cf']/* weighted */ ? snapshot[candidate_id] : (absolute_snapshot[candidate_id] == null ? 0 : absolute_snapshot[candidate_id])
             var percentage = candidates_votes > 0 ? this.round_off((candidates_votes / vote_count) * 100) : 0
             if(percentage >= 100){
                 percentage = 99.99

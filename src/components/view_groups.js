@@ -339,9 +339,9 @@ class ViewGroups extends Component {
                                                 {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2}} onClick={() => this.copy_id_to_clipboard(title)}>{subtitle}</p>  */}
                                             </div>
                                             <div style={{width: '99%', 'display': 'flex','flex-direction': 'row'}}>
-                                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, width: text_width }} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': (size == 's' ? 'nowrap':'pre-line') , 'word-wrap': word_wrap_value, width: text_width }} onClick={() => this.copy_id_to_clipboard(details)}>{
                                                     parts.map((part, index) => {
-                                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
+                                                        return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': font,'text-decoration': 'none', 'white-space': (size == 's' ? 'nowrap':'pre-line'), 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}{index == parts.length-1 ? '':' '}</span>;
                                                     })
                                                 }</p>
                                                 {/* <p className="text-end" style={{'font-size': '8px','color': this.props.theme['secondary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value}} onClick={() => this.copy_id_to_clipboard(title)}>{subdetails}</p>  */}
@@ -366,17 +366,17 @@ class ViewGroups extends Component {
                                         <div>
                                             <div style={{'display': 'flex','flex-direction': 'row'}}>
                                                 {this.render_text_image(title_image, font_size, text_image_border_radius)}
-                                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
+                                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2,'text-align':text_align, whiteSpace: (size == 's' ? 'nowrap':'pre-line')}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p>
                                             </div>
 
-                                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value, 'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(details)}>{
+                                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': (size == 's' ? 'nowrap':'pre-line'), 'word-wrap': word_wrap_value, 'text-align':text_align, whiteSpace: 'pre-wrap'}} onClick={() => this.copy_id_to_clipboard(details)}>{
                                                 parts.map((part, index) => {
-                                                    return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{index == 0 ? leading_trailing_spaces[0]:'' }{this.mask_word_if_censored(part)}{index == parts.length-1 ? leading_trailing_spaces[1]:' '}</span>;
+                                                    return <span style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font,'text-decoration': 'none', 'white-space': (size == 's' ? 'nowrap':'pre-line'), 'word-wrap': word_wrap_value }} key={index}>{index == 0 ? leading_trailing_spaces[0]:'' }{this.mask_word_if_censored(part)}{index == parts.length-1 ? leading_trailing_spaces[1]:' '}</span>;
                                                 })
                                                 }
                                             </p>
                                             {footer && (
-                                                <p style={{'font-size': '9px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(footer)}</Linkify></p>
+                                                <p style={{'font-size': '9px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': (size == 's' ? 'nowrap':'pre-line'), 'word-wrap': word_wrap_value}}><Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>{this.format_text_if_empty_or_null(footer)}</Linkify></p>
                                             )}
                                         </div>
                                     </div>

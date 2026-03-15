@@ -82,7 +82,8 @@ class NewJobPage extends Component {
 
         markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], pins:[],
 
-        get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object()
+        get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
+        get_public_pins_object:this.get_public_pins_object()
     };
     
 
@@ -191,6 +192,17 @@ class NewJobPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [pos]
+            ],
+        };
+    }
+
+    get_public_pins_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['284bq']/* 'public' */], [1]
             ],
         };
     }
@@ -2313,17 +2325,22 @@ return data['data']
                 <div style={{height:10}}/>
 
                 <div className="row">
-                        <div className="col-6" >
-                            <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
-                            </div>
-                        </div>
-                        <div className="col-6" >
-                            <div onClick={()=> this.props.show_dialog_bottomsheet({'pins':this.state.pins}, 'pick_from_my_locations')}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
-                            </div>
+                    <div className="col-6" >
+                        <div onClick={()=> this.props.show_set_map_location(this.state.pins)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['284c']/* Add Location. */, 'action':''})}
                         </div>
                     </div>
+                    <div className="col-6" >
+                        <div onClick={()=> this.props.show_dialog_bottomsheet({'pins':this.state.pins}, 'pick_from_my_locations')}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['535bk']/* Add From Saved */, 'action':''})}
+                        </div>
+                    </div>
+                </div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['284bo']/* 'Set as Public.' */, 'details':this.props.app_state.loc['284bp']/* 'If set to public, the locations youve specified will be visible to all users by default. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_public_pins_object} tag_size={'l'} when_tags_updated={this.when_get_public_pins_object_updated.bind(this)} theme={this.props.theme}/>
+
                 {this.render_detail_item('0')}
                 {this.render_selected_pins()}
             </div>
@@ -2413,6 +2430,10 @@ return data['data']
     when_pin_item_clicked(item){
         const location_data = { lat: item['lat'], lon: item['lng'] }
         this.locationPickerRef.current?.set_center(location_data);
+    }
+
+    when_get_public_pins_object_updated(tag_obj){
+        this.setState({get_public_pins_object: tag_obj})
     }
 
 

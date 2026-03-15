@@ -50,23 +50,27 @@ function SetViewOnClick({ input_enabled }) {
 }
 
 function FitBounds({ pins, my_location }) {
-  const map = useMap();
+    const map = useMap();
+    let fit = React.useRef(false);
+    
+    React.useEffect(() => {
+        if (!map || !pins?.length) return;
+        const bounds_positions = pins.map(pin => [pin.lat, pin.lng])
+        if(my_location != null){
+            bounds_positions.push([my_location.lat, my_location.lon])
+        }
+        const bounds = L.latLngBounds(bounds_positions);
+        if(fit.current == false){
+            map.fitBounds(bounds, { padding: [50, 50] });
+            fit.current = true
+        }
+    }, [map, pins, my_location, fit]);
 
-  React.useEffect(() => {
-    if (!map || !pins?.length) return;
-    const bounds_positions = pins.map(pin => [pin.lat, pin.lng])
-    if(my_location != null){
-        bounds_positions.push([my_location.lat, my_location.lon])
-    }
-    const bounds = L.latLngBounds(bounds_positions);
-    map.fitBounds(bounds, { padding: [50, 50] });
-  }, [map, pins, my_location]);
-
-  return null;
+    return null;
 }
 
 const LocationPicker = forwardRef((props, ref) => {
-    const { height, theme, center, pins, size, input_enabled, my_location } = props;
+    const { height, theme, center, pins, size, input_enabled, my_location, on_pin_clicked } = props;
     const mapRef = React.useRef();
 
     // This function will be callable from outside
@@ -79,6 +83,12 @@ const LocationPicker = forwardRef((props, ref) => {
     function get_center() {
         if (mapRef.current) {
             return mapRef.current.getCenter();
+        }
+    }
+
+    const when_pin_clicked = (pin) => {
+        if(on_pin_clicked){
+            on_pin_clicked(pin)
         }
     }
 
@@ -168,13 +178,17 @@ const LocationPicker = forwardRef((props, ref) => {
             <MapContainer zoomControl={input_enabled} scrollWheelZoom={false} dragging={input_enabled} touchZoom={input_enabled} doubleClickZoom={input_enabled} boxZoom={input_enabled} keyboard={input_enabled} ref={mapRef} bounds={bounds} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
                 <TileLayer attribution={attribution} url={url} />
                 {pins.map((pin, index) => (
-                    <Marker position={[pin['lat'], pin['lng']]} icon={customIcon}>
-                        {input_enabled == true && (
-                            <Popup>
-                                {pin['description']}
-                            </Popup>
-                        )}
-                    </Marker>
+                    <div>
+                        <Marker position={[pin['lat'], pin['lng']]} icon={customIcon}>
+                            {input_enabled == true && (
+                                <Popup>
+                                    <div onClick={() => when_pin_clicked(pin)}>
+                                        {pin['description']}
+                                    </div>
+                                </Popup>
+                            )}
+                        </Marker>
+                    </div>
                 ))}
                 <SetViewOnClick input_enabled={input_enabled} />
                 <FitBounds pins={pins} my_location={my_location} />

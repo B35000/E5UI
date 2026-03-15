@@ -88,7 +88,11 @@ class NewPollPage extends Component {
 
         winner_count:1, candidate:'', candidates:[], poll_e5s:[this.props.app_state.selected_e5], viewers:[], randomizer: Math.random() + 0.001, get_changeable_vote_tags_object:this.get_changeable_vote_tags_object(),
 
-        viewer:'', candidate_markdown:''
+        viewer:'', candidate_markdown:'',
+
+        selected_e5: this.props.app_state.selected_e5, typed_contract_account:'', public_contracts: {}, public_contract_deadlines: {}, ignored_obligation_types:[], 
+        obligation_count_start_time: (new Date((new Date().getFullYear() - 2), 0, 1).getTime()),
+        obligation_count_end_time: (new Date((new Date().getFullYear() - 2), 11, 31, 23, 59, 59, 999).getTime()), max_voter_weight:1, default_voter_weight:1, tag_appearance:'', tag_appearance_multiplier_weight:0, tag_appearance_multiplier:{}, exchange_id2:'', token_multiplier:0, anchor_amount:0, tag_moved_token_amount_multiplier:{}, tag_moved_token_amount_anchor_amount:{}
     };
 
 
@@ -98,7 +102,7 @@ class NewPollPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['c311bh']/* candidates */, this.props.app_state.loc['c311c']/* 'participants' */, this.props.app_state.loc['c311z']/* 'schedule' */, this.props.app_state.loc['c311cf']/* access */, 'e.'+this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', 'e.'+this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['c311bh']/* candidates */, this.props.app_state.loc['c311c']/* 'participants' */, this.props.app_state.loc['c311z']/* 'schedule' */, this.props.app_state.loc['c311cf']/* access */, this.props.app_state.loc['c311cy']/* vote-weights ⚖️ */,], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
@@ -280,6 +284,13 @@ class NewPollPage extends Component {
             return(
                 <div>
                     {this.render_access_rights_part()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['c311cy']/* vote-weights ⚖️ */){
+            return(
+                <div>
+                    {this.render_voter_weights_data()}
                 </div>
             )
         }
@@ -1040,18 +1051,6 @@ class NewPollPage extends Component {
         cloned_array[pos] = {'data':item, 'type':'4' }
         console.log(cloned_array)
         this.setState({entered_objects: cloned_array, entered_text:'', edit_text_item_pos: -1})
-    }
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
     }
 
 
@@ -2954,6 +2953,649 @@ class NewPollPage extends Component {
 
 
 
+
+
+
+
+
+    render_voter_weights_data(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_voter_weights_parts()}
+                    {this.render_detail_item('0')}
+                    {this.render_voter_weights_parts2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" >
+                        {this.render_voter_weights_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" >
+                        {this.render_voter_weights_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" >
+                        {this.render_voter_weights_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" >
+                        {this.render_voter_weights_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_voter_weights_parts(){
+        const date_object = new Date(this.state.obligation_count_start_time)
+        const locale = navigator.language || navigator.userLanguage || 'en-US'
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cz']/* Poll Voter Weights. */, 'details':this.props.app_state.loc['c311da']/* Specify the public contracts receiving obligation payments you wish to use to calculate each voter\'s vote weight. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.load_preferred_e5_ui2()}
+                <div style={{ height:10 }}/>
+                <div className="row">
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['3093et']/* 'Contract Account...' */} when_text_input_field_changed={this.when_typed_contract_account_input_field_changed.bind(this)} text={this.state.typed_contract_account} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.search_contract_id()}>
+                        <div className="text-end" style={{'padding': '5px 10px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_selected_contracts()}
+                {this.render_detail_item('0')} 
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dc']/* Accepted Obligation Types. */, 'details':this.props.app_state.loc['c311dd']/* You may choose to ignore specific obligation types during the calculation of each voter\'s vote weight. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.load_accepted_obligation_types()}
+                {this.render_detail_item('0')} 
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dh']/* Starting Time. */, 'details':this.props.app_state.loc['c311di']/* Set the time after which all obligations logged would be valid during weight calculation. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':''+(date_object.toLocaleString()), 'details':this.props.app_state.loc['c311dj']/* 'Obligation Count End Date.' */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], } })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker 
+                            orientation="portrait" 
+                            onChange={(newValue) => this.when_new_date_value_set(newValue)}
+                            views={['month', 'day']} // This restricts to month and day selection
+                        />
+                    </LocalizationProvider>
+                </ThemeProvider>
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dl']/* Max Voter Weight */, 'details':this.props.app_state.loc['c311dn']/* The maximum weight a voter can have in this poll. If unset, it will default to 1. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311dl']/* 'Max Voter Weight' */, 'subtitle':this.format_power_figure(this.state.max_voter_weight), 'barwidth':this.calculate_bar_width(this.state.max_voter_weight), 'number':this.format_account_balance_figure(this.state.max_voter_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_voter_weight.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311do']/* Default Voter Weight. */, 'details':this.props.app_state.loc['c311dp']/* The default weight for each voter\'s vote in this poll. If unset, it will default to 1. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311do']/* 'Default Voter Weight.' */, 'subtitle':this.format_power_figure(this.state.default_voter_weight), 'barwidth':this.calculate_bar_width(this.state.default_voter_weight), 'number':this.format_account_balance_figure(this.state.default_voter_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_voter_weight.bind(this)} theme={this.props.theme} power_limit={63}/>
+                
+            </div>
+        )
+    }
+
+    render_voter_weights_parts2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dq']/* Tag Appearance Multiplier. */, 'details':this.props.app_state.loc['c311dr']/* Set some multipliers that are applied to tags you\'re targeting. */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311ds']/* Only the tags logged in the obligations under job, contractor and bag fulfiments will be applied here.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{ height:10 }}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311dt']/* tag... */} when_text_input_field_changed={this.when_tag_appearance_input_field_changed.bind(this)} text={this.state.tag_appearance} theme={this.props.theme}/>
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311du']/* 'Tag Appearance Multiplier' */, 'subtitle':this.format_power_figure(this.state.tag_appearance_multiplier_weight), 'barwidth':this.calculate_bar_width(this.state.tag_appearance_multiplier_weight), 'number':this.format_account_balance_figure(this.state.tag_appearance_multiplier_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_tag_appearance_multiplier_weight.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{'padding':'5px'}} onClick={() => this.when_add_tag_appearance_mutliplier_value()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311dv']/* Add Multiplier */, 'action':''})}
+                </div>
+
+                {this.render_added_tag_appearance_values()}
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dy']/* 'Moved Token Amount Multiplier' */, 'details':this.props.app_state.loc['c311dz']/* 'Set the multiplier applied for amounts transacted by a specified voter.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311ea']/* The applied multiplier is derived from the specidied multiplier divided by the anchor amount. Basically, 10 weights are added for every 1,000,000 SPEND moved if the multiplier is 10 and the anchor amount is 1,000,000.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                <div style={{ height:10 }}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1180']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id2_input_field_changed.bind(this)} text={this.state.exchange_id2} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('token_amount_multiplier')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311eb']/* 'Token Multiplier' */, 'subtitle':this.format_power_figure(this.state.token_multiplier), 'barwidth':this.calculate_bar_width(this.state.token_multiplier), 'number':this.format_account_balance_figure(this.state.token_multiplier), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311ee']/* 'Token Anchor Amount' */, 'subtitle':this.format_power_figure(this.state.anchor_amount), 'barwidth':this.calculate_bar_width(this.state.anchor_amount), 'number':this.format_account_balance_figure(this.state.anchor_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+                </div>
+
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} when_number_picker_value_changed={this.when_token_multiplier.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
+
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker2 = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} when_number_picker_value_changed={this.when_anchor_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_multiplier_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311ec']/* Add Multiplier' */, 'action':''})}
+                </div>
+
+                {this.render_added_exchange_multiplier_values()}
+            </div>
+        )
+    }
+
+    when_typed_contract_account_input_field_changed(text){
+        this.setState({typed_contract_account: text})
+    }
+
+    load_preferred_e5_ui2(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_voter_weight_e5_clicked(item)}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_voter_weight_e5_clicked(item){
+        this.setState({selected_e5: item})
+    }
+
+    async search_contract_id(){
+        const typed_contract_account = this.state.typed_contract_account.trim()
+        const selected_e5 = this.state.selected_e5
+        const typed_contract_e5_id = typed_contract_account+selected_e5
+
+        if(typed_contract_account == ''){
+            this.props.notify(this.props.app_state.loc['c311ef']/* 'Type something.' */)
+        }
+        else if(isNaN(typed_contract_account) || parseInt(typed_contract_account) < 1001){
+            this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['3093ew']/* 'Searching...' */)
+            await this.props.load_my_accounts_obligation_data([typed_contract_e5_id])
+            const data = this.props.app_state.my_contract_obligation_subscription_data[typed_contract_e5_id]
+            if(data != null){
+                const deadline_date = data['ipfs']['deadline_datetime']
+                const clone = structuredClone(this.state.public_contracts);
+                clone[selected_e5] = typed_contract_account;
+
+                const clone2 = structuredClone(this.state.public_contract_deadlines);
+                clone2[typed_contract_e5_id] = deadline_date
+
+                this.setState({public_contracts: clone, public_contract_deadlines: clone2})
+            }
+            else{
+                this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+            }
+        }
+    }
+
+    render_selected_contracts(){
+        var items = Object.keys(this.state.public_contracts)
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_contract_item_clicked(item, index)}>
+                            {this.render_selected_contract_item(item, this.state.public_contracts)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_selected_contract_item(item, public_contracts){
+        const title = public_contracts[item]
+        const contract_e5_id  = public_contracts[item]+item
+        const deadline = this.state.public_contract_deadlines[contract_e5_id]
+        const date_object = this.get_deadline_date_object(deadline)
+        const locale = navigator.language || navigator.userLanguage || 'en-US'
+        const details = date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })
+        const image = this.props.app_state.e5s[item].e5_img
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':title, 'image':image, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    get_deadline_date_object(deadline_datetime){
+        const day = deadline_datetime.split(':')[0]
+        const month = deadline_datetime.split(':')[1]
+        const year = new Date().getFullYear()
+        
+        return new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`);
+    }
+
+    when_contract_item_clicked(item, public_contracts){
+        const e5 = public_contracts[item]
+        const contract_e5_id  = public_contracts[item]+item
+        const clone = structuredClone(this.state.public_contracts);
+        delete clone[e5];
+        const clone2 = structuredClone(this.state.public_contract_deadlines);
+        delete clone2[contract_e5_id];
+        this.setState({public_contracts: clone, public_contract_deadlines: clone2})
+    }
+
+    load_accepted_obligation_types(){
+        const items_object = this.load_active_accepted_obligation_types()
+        const items = Object.values(items_object)
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.accepted_obligation_type_clicked(item)}>
+                            {this.render_selected_obligation_type_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_accepted_obligation_types(){
+        return this.props.app_state.load_active_accepted_obligation_types
+    }
+
+    render_selected_obligation_type_item(item){
+        const alpha = this.state.ignored_obligation_types.includes(item) == true ? 0.4 : 1.0
+        return(
+            <div style={{'opacity':alpha}}>
+                {this.render_detail_item('4', {'text':item, 'textsize':'12px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    accepted_obligation_type_clicked(item){
+        const clone = this.state.ignored_obligation_types.slice()
+        const pos = clone.indexOf(item)
+        if(pos != -1){
+            clone.splice(pos, 1)
+        }else{
+            clone.push(item)
+        }
+        this.setState({ignored_obligation_types: clone})
+    }
+
+    when_new_date_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        if(selectedDate.getTime() >= this.state.obligation_count_end_time){
+            const end_year = new Date(this.state.obligation_count_end_time).getFullYear()
+            this.props.notify(this.props.app_state.loc['c311dk']/* 'You cant set a time later than the end $ */.replace('$', end_year), 4000)
+            return;
+        }
+        this.setState({obligation_count_start_time: selectedDate.getTime()})
+    }
+
+    when_max_voter_weight(number){
+        this.setState({max_voter_weight: number})
+    }
+
+    when_default_voter_weight(number){
+        this.setState({default_voter_weight: number})
+    }
+
+
+    when_tag_appearance_input_field_changed(text){
+        this.setState({tag_appearance: text})
+    }
+
+    when_tag_appearance_multiplier_weight(number){
+        this.setState({tag_appearance_multiplier_weight: number})
+    }
+
+    when_add_tag_appearance_mutliplier_value(){
+        const tag_appearance = this.state.tag_appearance.trim().toLowerCase()
+        const tag_appearance_multiplier_weight = this.state.tag_appearance_multiplier_weight
+
+        if(tag_appearance == ''){
+            this.props.notify(this.props.app_state.loc['128'], 1400)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(tag_appearance)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else if(tag_appearance_multiplier_weight == 0){
+            this.props.notify(this.props.app_state.loc['c311dw'], 4400)/* You cant use a multiplier of 0 */
+        }
+        else{
+            const clone = structuredClone(this.state.tag_appearance_multiplier)
+            clone[tag_appearance] = tag_appearance_multiplier_weight
+            this.setState({tag_appearance_multiplier: clone, tag_appearance:'', tag_appearance_multiplier_weight:0});
+            this.props.notify(this.props.app_state.loc['c311dx'], 800)/* Added. */
+        }
+    }
+
+    render_added_tag_appearance_values(){
+        var items = Object.keys(this.state.tag_appearance_multiplier)
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_selected_tag_appearance_item_clicked(item, index)}>
+                            {this.render_selected_tag_appearance_item(item, this.state.tag_appearance_multiplier)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_selected_tag_appearance_item(item, tag_appearance_multiplier){
+        const title = item
+        const details = this.format_account_balance_figure(tag_appearance_multiplier[item])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    when_selected_tag_appearance_item_clicked(item){
+        const clone = structuredClone(this.state.tag_appearance_multiplier)
+        delete clone[item];
+        this.setState({tag_appearance_multiplier: clone});
+    }
+
+    when_exchange_id2_input_field_changed(text){
+        this.setState({exchange_id2: text})
+    }
+
+    when_token_multiplier(number){
+        this.setState({token_multiplier: number})
+    }
+
+    when_anchor_amount(number){
+        this.setState({anchor_amount: number})
+    }
+
+    reset_the_number_picker2(){
+        setTimeout(() => {
+            if(this.amount_picker != null){
+                this.amount_picker.reset_number_picker()
+            }
+            if(this.amount_picker2 != null){
+                this.amount_picker2.reset_number_picker()
+            }
+        }, (1 * 1000));  
+    }
+
+    when_add_multiplier_tapped(){
+        const exchange_id = this.get_token_id_from_symbol(this.state.exchange_id2.trim())
+        const token_multiplier = this.state.token_multiplier
+        const anchor_amount = this.state.anchor_amount
+        const exchange_e5_id = exchange_id+this.state.e5
+
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['1185']/* 'Please put a valid exchange ID.' */, 3600)
+        }
+        else if(token_multiplier == 0 || anchor_amount == 0){
+            this.props.notify(this.props.app_state.loc['c311ed']/* 'You cant specify a multiplier or anchor amount of 0.' */, 3600)
+        }else{
+            const clone = structuredClone(this.state.tag_moved_token_amount_multiplier)
+            clone[exchange_e5_id] = token_multiplier
+
+            const clone2 = structuredClone(this.state.tag_moved_token_amount_anchor_amount)
+            clone2[exchange_e5_id] = anchor_amount
+
+            this.setState({tag_moved_token_amount_multiplier: clone, tag_moved_token_amount_anchor_amount: clone2, exchange_id2:'', token_multiplier:0, anchor_amount:0});
+
+            this.props.notify(this.props.app_state.loc['c311dx'], 800)/* Added. */
+            this.reset_the_number_picker2()
+        }
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
+    }
+
+    render_added_exchange_multiplier_values(){
+        var items = Object.keys(this.state.tag_moved_token_amount_multiplier)
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_selected_exchange_multiplier_clicked(item, index)}>
+                            {this.render_selected_exchange_multiplier_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_selected_exchange_multiplier_item(item){
+        const exchange_id = parseInt(item.split('E')[0])
+        const e5 = 'E'+item.split('E')[1]
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]
+        const details = this.props.app_state.loc['c311eg']/* 'Multiplier: $' */.replace('$', this.format_account_balance_figure(this.state.tag_moved_token_amount_multiplier[item]))
+        const image = this.props.app_state.token_thumbnail_directory[e5][exchange_id]
+        const footer = this.props.app_state.loc['c311eh']/* 'Anchor: $' */.replace('$', this.format_account_balance_figure(this.state.tag_moved_token_amount_anchor_amount[item])) 
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':title, 'image':image, 'footer':footer, 'details':details, 'size':'s', 'image_width':'auto'})}
+            </div>
+        )
+    }
+
+    when_selected_exchange_multiplier_clicked(item){
+        const clone = structuredClone(this.state.tag_moved_token_amount_multiplier)
+        const clone2 = structuredClone(this.state.tag_moved_token_amount_anchor_amount)
+        delete clone[item];
+        delete clone2[item];
+        this.setState({tag_moved_token_amount_multiplier: clone, tag_moved_token_amount_anchor_amount: clone2});
+    }
+
+    get_power_limit_for_exchange(exchange){
+        var exchange_id = this.get_token_id_from_symbol(exchange.trim())
+
+        if(!isNaN(exchange_id) && parseInt(exchange_id) > 0 && exchange_id != '' && this.does_exchange_exist(exchange_id)){
+            var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+            var default_depth = 0;
+            if(target_exchange_data != null){
+                target_exchange_data = target_exchange_data['ipfs']
+                if(target_exchange_data != null){
+                    default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+                }
+            }
+
+            return (default_depth*72)+63
+        }
+        else{
+            return 63
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    load_token_suggestions(target_type){
+        var items = [].concat(this.get_suggested_tokens())
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('14', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_tokens(){
+        var items = [
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
+        ];
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        var sorted_token_exchange_data = []
+        // var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['ipfs'].entered_symbol_text, 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s', 'image':(sorted_token_exchange_data[i]['ipfs'].token_image == null ? (sorted_token_exchange_data[i]['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img']:this.props.app_state.static_assets['spend_img']) : sorted_token_exchange_data[i]['ipfs'].token_image), 'img_size':30}})
+        }
+
+        return items;
+    }
+
+    when_price_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'token_amount_multiplier'){
+            this.setState({exchange_id2: item['id']})
+            this.reset_the_number_picker2()
+        }
+    }
+
+
+
+
+
+
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
@@ -3004,9 +3646,29 @@ class NewPollPage extends Component {
 
 
 
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
 
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
 
-
+        return all_objects
+    }
 
     render_empty_views(size){
         var items = []
