@@ -1273,7 +1273,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(10), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65,
+    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -1357,7 +1357,7 @@ class App extends Component {
 
     obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
 
-    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}
+    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}
   };
 
   get_thread_pool_size(){
@@ -8624,7 +8624,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)}
       />
     )
   }
@@ -9922,6 +9922,10 @@ class App extends Component {
     const buy_album_e5_ids = []
     const buy_video_e5_ids = []
     const auction_bid_e5_ids = []
+    const comments = []
+    const tagged_addresses_info = []
+
+    const all_tagged_addresses_data_clone = structuredClone(this.state.all_tagged_addresses_data)
     for(var i=0; i<stack.length; i++){
       if(!delete_pos_array.includes(i)){
         new_stack.push(stack[i])
@@ -9941,6 +9945,7 @@ class App extends Component {
           for(var m=0; m<t.messages_to_deliver.length; m++){
             const object_e5_id = t.messages_to_deliver[m]['id']+t.messages_to_deliver[m]['e5']
             comment_record_e5_ids.push(object_e5_id)
+            comments.push(t.messages_to_deliver[m])
           }
         }
         else if(stack[i].type == this.getLocale()['1512']/* 'job-response' */){
@@ -9974,6 +9979,45 @@ class App extends Component {
         else if(stack[i].type == this.getLocale()['3076']/* 'auction-bid' */){
           const t = stack[i]
           auction_bid_e5_ids.push(t.storefront_item['e5_id'])
+        }
+        else if(
+          stack[i].type == this.getLocale()['1130']/* 'contract' */ || 
+          stack[i].type == this.getLocale()['601']/* 'token' */ || 
+          stack[i].type == this.getLocale()['823']/* 'subscription' */ || 
+          stack[i].type == this.getLocale()['297']/* 'post' */ || 
+          stack[i].type == this.getLocale()['760']/* 'job' */ || 
+          stack[i].type == this.getLocale()['109']/* 'channel' */ || 
+          stack[i].type == this.getLocale()['439']/* 'storefront-item' */|| 
+          stack[i].type == this.getLocale()['784']/* 'proposal' */ || 
+          stack[i].type == this.getLocale()['253']/* 'contractor' */ || 
+          stack[i].type == this.getLocale()['a311a']/* audio */ || 
+          stack[i].type == this.getLocale()['b311a']/* video */|| 
+          stack[i].type == this.getLocale()['a273a']/* 'nitro' */ ||
+          stack[i].type == this.getLocale()['c311a']/* 'poll' */ ||
+          stack[i].type == this.getLocale()['753']/* 'edit-channel' */ || 
+          stack[i].type == this.getLocale()['763']/* 'edit-contractor' */ || 
+          stack[i].type == this.getLocale()['764']/* 'edit-job' */ || 
+          stack[i].type == this.getLocale()['765']/* 'edit-post' */ || 
+          stack[i].type == this.getLocale()['766']/* 'edit-storefront' */ || 
+          stack[i].type == this.getLocale()['767']/* 'edit-token' */ || 
+          stack[i].type == this.getLocale()['2739']/* 'edit-proposal' */ || 
+          stack[i].type == this.getLocale()['2975']/* 'edit-audio' */|| 
+          stack[i].type == this.getLocale()['3023']/* 'edit-video' */ || 
+          stack[i].type == this.getLocale()['3030']/* 'edit-nitro' */ ||
+          stack[i].type == this.getLocale()['3072h']/* 'edit-poll' */
+        ){
+          const id = stack[i].id
+          const object_type = stack[i].object_type
+          const tagged_data = all_tagged_addresses_data_clone[id]
+          if(tagged_data != null){
+            tagged_addresses_info.push({
+              tagged_addresses: tagged_data.tagged_addresses,
+              tagged_account_ids: tagged_data.tagged_account_ids,
+              id: id,
+              object_type: object_type,
+            })
+            delete all_tagged_addresses_data_clone[id]
+          }
         }
       }
     }
@@ -10020,6 +10064,26 @@ class App extends Component {
       this.emit_comment_record_object_event(auction_bid_e5_ids, 'auction_bid_events');
       await this.wait(1000)
     } 
+
+    for(var c=0; c<comments.length; c++){
+      const state_object = comments[c]
+      const object_e5_id = comment_record_e5_ids[c]
+      await this.check_for_tags_if_exists_and_notify_receiver(object_e5_id, state_object)
+      await this.wait(1000)
+    }
+
+    for(var o=0; o<tagged_addresses_info.length; o++){
+      const focused_object = tagged_addresses_info[o]
+      //App.notify_tagged_users_of_tag_in_new_object(tagged_addresses: any, tagged_account_ids: any, object_tag_id: any, object_type: any
+      const tagged_addresses = focused_object.tagged_addresses;
+      const tagged_account_ids = focused_object.tagged_account_ids;
+      const object_tag_id = focused_object.id;
+      const object_type = focused_object.object_type;
+      await this.notify_tagged_users_of_tag_in_new_object(tagged_addresses, tagged_account_ids, object_tag_id, object_type)
+      await this.wait(1000)
+    }
+
+    this.setState({all_tagged_addresses_data: all_tagged_addresses_data_clone})
 
     // if(this.state.follow_unfollow_stack['follow'] != null && this.state.follow_unfollow_stack['follow'].length > 0){
     //   this.emit_comment_record_object_event(this.state.follow_unfollow_stack['follow'], 'follow_account')
@@ -10423,6 +10487,54 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  
+  set_emit_tagged_addresses_for_current_run_in_state(tagged_addresses_data){
+    const clone = structuredClone(this.state.all_tagged_addresses_data)
+    clone[tagged_addresses_data.id] = tagged_addresses_data
+    this.setState({all_tagged_addresses_data: clone})
+  }
+
+  async check_for_any_tagged_accounts_in_object(t){
+    const tagged_addresses = []
+    const tagged_account_ids = []
+
+    const markdown = t.markdown
+    const markdown_words = markdown.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ')
+    const text_words = []
+    t.entered_objects.forEach(object => {
+      const type = object['type']
+      const text = type == '11' ? object['data']['caption']['text'] : object['data']['text']
+      text_words.push(text.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' '))
+    });
+    const words_containing_at_symbol = text_words.concat(markdown_words).filter((word) => {
+      return word.startsWith('@')
+    })
+
+    if(words_containing_at_symbol.length > 0){
+      for(var i=0; i<words_containing_at_symbol.length; i++){
+        const account_or_alias = words_containing_at_symbol[i].replace('@', '')
+        if(isNaN(account_or_alias)){
+          const recipient = await this.get_recipient_id(account_or_alias)
+          const recipients_e5 = await this.get_recipient_e5(account_or_alias)
+          const tagged_address = await this.get_recipient_address(recipient, recipients_e5)
+          if(!tagged_addresses.includes(tagged_address)){
+            tagged_addresses.push(tagged_address);
+            tagged_account_ids.push(recipient+recipients_e5)
+          }
+        }else{
+          const recipients_e5 = this.state.selected_e5
+          const tagged_address = await this.get_recipient_address(account_or_alias, recipients_e5)
+          if(!tagged_addresses.includes(tagged_address)){
+            tagged_addresses.push(tagged_address);
+            tagged_account_ids.push(account_or_alias+recipients_e5)
+          }
+        }
+      }
+    }
+
+    return { tagged_addresses, tagged_account_ids }
   }
 
 
@@ -10999,8 +11111,10 @@ class App extends Component {
     ){
       this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].forEach(subscribed_obligation_contract_id => {
         const subscribed_obligation_contract_object = this.state.my_contract_obligation_subscription_data[subscribed_obligation_contract_id]
-        const subscribed_obligation_contract_object_reserved_keywords = subscribed_obligation_contract_object['ipfs'].reserved_keywords
-        reserved_keywords = reserved_keywords.concat(subscribed_obligation_contract_object_reserved_keywords)
+        if(subscribed_obligation_contract_object != null){
+          const subscribed_obligation_contract_object_reserved_keywords = subscribed_obligation_contract_object['ipfs'].reserved_keywords
+          reserved_keywords = reserved_keywords.concat(subscribed_obligation_contract_object_reserved_keywords)
+        }
       });
     }
 
@@ -17714,7 +17828,7 @@ class App extends Component {
       'view_item_purchase':550, 
       'view_incoming_receipts':250, 
       'view_incoming_transactions':300, 
-      'view_e5_link':300, 
+      'view_e5_link':350, 
       'account_options':500,
       'confirm_pay_bill':350,
       'invalid_stack_size_dialog_box':350,
@@ -18249,6 +18363,7 @@ class App extends Component {
 
     if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet()
     if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
+    if(this.state.view_notification_log_bottomsheet == true) this.open_view_notification_log_bottomsheet();
   }
 
   show_post_item_preview_with_subscription(object, type){
@@ -22526,6 +22641,18 @@ class App extends Component {
       console.log('when_event_clicked', 'id_types_array_object', id_types_array_object)
       this.start_loading_objects_in_background(id_types_array_object)
     }
+    else if(event_type == 'comment_tag'){
+      const data = event['view']['data']
+      this.when_e5_link_tapped(data['object_id'])
+      return;
+    }
+    else if(event_type == 'post_tag'){
+      const tag_id = event['view']['data']['object_tag_id']
+      const object_type = event['view']['data']['object_type']
+      this.show_dialog_bottomsheet({'id':tag_id, 'tag_id':true, 'object_type':object_type}, 'view_e5_link')
+      this.fetch_objects_to_load_from_searched_tags([tag_id], '', '', [], object_type)
+      return;
+    }
     
 
     var id = obj['notification_id']
@@ -24327,6 +24454,15 @@ class App extends Component {
         else if(id == 'view_pre_purchase_request'){
           this.load_prepurchase_balance_for_prompt(onClickData['data'])
           this.show_dialog_bottomsheet(onClickData['data'], 'view_pre_purchase_request')
+        }
+        else if(id == 'comment_tag'){
+          this.when_e5_link_tapped(onClickData['data']['object_id'])
+        }
+        else if(id == 'post_tag'){
+          const tag_id = onClickData['data']['object_tag_id']
+          const object_type = onClickData['data']['object_type']
+          this.show_dialog_bottomsheet({'id':tag_id, 'tag_id':true, 'object_type':object_type}, 'view_e5_link')
+          this.fetch_objects_to_load_from_searched_tags([tag_id], '', '', [], object_type)
         }
         else{
           this.show_dialog_bottomsheet(onClickData, id)
@@ -28164,11 +28300,7 @@ class App extends Component {
 
     if(account != null && account > 1000){
       if(pre_launch_data[e5] != null){
-        this.process_user_obligation_data(pre_launch_data[e5]['obligation_data'])
-      }
-
-      if(e5 == 'E25'){
-        this.load_and_notify_flash()
+        await this.process_user_obligation_data(pre_launch_data[e5]['obligation_data'])
       }
     }
 
@@ -28578,6 +28710,12 @@ class App extends Component {
 
 
 
+    if(account != null && account > 1000){
+      if(e5 == 'E25'){
+        this.load_and_notify_flash()
+      }
+    }
+
 
     /* ---------------------------------------- CONTRACT DATA ------------------------------------------- */
     
@@ -28745,7 +28883,6 @@ class App extends Component {
           }
           
         }
-        await this.load_and_notify_flash()
       }
     }
 
@@ -33808,6 +33945,12 @@ class App extends Component {
     if(return_created_object_events_only == true){
       return created_post_events
     }
+
+    if(e5 == 'E25' && (this.state.created_posts[e5] != null || prioritized_accounts.length > 0)){
+      const last_searched_tags = this.last_searched_tags || []
+      const filter_tags = prioritized_accounts.length != 0 ? last_searched_tags.concat(prioritized_accounts) : []
+      this.get_objects_from_socket_and_set_in_state(['posts'], filter_tags)
+    }
     
     this.record_number_of_items(e5, 'posts', created_post_events.length)
     var created_posts = this.state.created_posts[e5] == null ? [] : this.state.created_posts[e5].slice()
@@ -34075,11 +34218,6 @@ class App extends Component {
     // const to = await this.get_recipient_address(1002, 'E25')
     // const target_type = 'read_receipts|'+'test'+'|'+to
     // this.get_objects_from_socket_and_set_in_state([target_type], [], [])
-
-    if(e5 == 'E25' && this.state.created_jobs[e5] != null){
-      const filter_tags = prioritized_accounts.length != 0 ? this.last_searched_tags : []
-      this.get_objects_from_socket_and_set_in_state(['jobs'], filter_tags)
-    }
     var created_job_events = extra_data['created_object_events_mapping'] != null ? extra_data['created_object_events_mapping'][e5] : (pre_launch_data[e5] != null ? pre_launch_data[e5]['job_objects_data']['created_object_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */, p1:this.get_valid_post_index(web3)}))
     created_job_events = created_job_events.slice().reverse()
 
@@ -34149,6 +34287,12 @@ class App extends Component {
         }
       });
       created_job_events = my_events
+    }
+
+    if(e5 == 'E25' && (this.state.created_jobs[e5] != null || prioritized_accounts.length > 0)){
+      const last_searched_tags = this.last_searched_tags || []
+      const filter_tags = prioritized_accounts.length != 0 ? last_searched_tags.concat(prioritized_accounts) : []
+      this.get_objects_from_socket_and_set_in_state(['jobs'], filter_tags)
     }
 
     console.log('apppage', 'created_job_events', created_job_events)
@@ -37366,7 +37510,7 @@ class App extends Component {
   //   }
   // }
 
-  when_e5_link_tapped = async (id) => {
+  when_e5_link_tapped = async (id, id_e5='') => {
     this.show_dialog_bottomsheet({'id':id}, 'view_e5_link')
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
@@ -37379,7 +37523,7 @@ class App extends Component {
         const E52_address = contract_addresses[1];
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        this.load_id_type_then_object(id, E52contractInstance, e5) 
+        if(id_e5 == '' || e5 == id_e5) this.load_id_type_then_object(id, E52contractInstance, e5);
       }
     }
   }
@@ -37639,8 +37783,8 @@ class App extends Component {
     this.setState({is_fetching_objects: is_fetching_objects_clone})
   }
 
-  fetch_objects_to_load_from_searched_tags = async (searched_tags, page, search, accounts) => {
-    var target_type = this.get_target_type_from_page(page)
+  fetch_objects_to_load_from_searched_tags = async (searched_tags, page, search, accounts, object_type=0) => {
+    var target_type = object_type != 0 ? object_type : this.get_target_type_from_page(page)
     if(target_type == 0) return;
 
     this.set_loading_for_page(page, true)
@@ -37819,37 +37963,37 @@ class App extends Component {
 
   load_and_notify_flash = async () => {
     if(this.state.syncronizing_progress < 95 || !this.do_i_have_an_account() || this.load_and_notify_flash_running == true) return;
-    this.load_and_notify_flash_running = true;
+    // this.load_and_notify_flash_running = true;
     const event_data = await this.get_all_notification_flash_event_fetch_objects()
     
     await this.load_and_notify_user_of_incoming_payments(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_mail(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_messages(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_proposals(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_job_applications(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_job_requests(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_job_application_responses(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_job_request_responses(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_entered_contracts(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_bag_application(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_nofity_user_of_incoming_bag_application_responses(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_storefront_direct_order(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_bills(event_data.return_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_incoming_post_comments(event_data.return_object, event_data.id_object_data_object)
-    await this.wait(200)
+    await this.wait(500)
     await this.load_and_notify_user_of_following_posts(event_data.return_object)
 
     // await this.load_latest_objects_for_notification_top_bar()
@@ -48681,6 +48825,12 @@ class App extends Component {
       else if(message['type'] == 'direct_message'){
         me.process_new_direct_message_received(message, object_hash, from, true)
       }
+      else if(message['type'] == 'tags'){
+        me.process_new_tags_message_received(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'object_tags'){
+        me.process_new_tags_in_object_message_received(message, object_hash, from, true)
+      }
     });
     socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -48823,6 +48973,14 @@ class App extends Component {
     else if(roomId == 'posts'){
       this.process_new_post_received(job_message_object.message, job_message_object.object_hash)
     }
+
+    const { tagged_addresses, tagged_account_ids } = await this.check_for_any_tagged_accounts_in_object(state_object);
+
+    if(tagged_addresses.length > 0){
+      const object_tag_id = state_object.id
+      const object_type = state_object.object_type
+      this.notify_tagged_users_of_tag_in_new_object(tagged_addresses, tagged_account_ids, object_tag_id, object_type)
+    }
   }
 
   async emit_new_mail_confirmed(state_object, show_job_after_broadcast, type){
@@ -48897,7 +49055,9 @@ class App extends Component {
 
     await this.wait(3000)
     this.process_new_comment_message(comment_message_object.message, comment_message_object.object_hash)
-    this.emit_comment_record_object_event([object_e5_id], 'object_comments')
+    await this.emit_comment_record_object_event([object_e5_id], 'object_comments')
+    await this.wait(1200)
+    this.check_for_tags_if_exists_and_notify_receiver(object_e5_id, state_object)
   }
 
   async emit_new_bill_confirmed(state_object, show_job_after_broadcast){
@@ -49381,6 +49541,7 @@ class App extends Component {
   async emit_view_object_event(object_e5_id){
     const viewed_objects_clone = this.state.viewed_objects.slice()
     if(viewed_objects_clone.includes(object_e5_id) || this.state.emit_record_data_view[object_e5_id] != null){
+      console.error('emit_view_object_event', 'already viewed object', object_e5_id, viewed_objects_clone.includes(object_e5_id), this.state.emit_record_data_view[object_e5_id])
       return;
     }else{
       viewed_objects_clone.push(object_e5_id)
@@ -49517,6 +49678,106 @@ class App extends Component {
     }
   }
 
+  async check_for_tags_if_exists_and_notify_receiver(object_e5_id, state_object){
+    console.log('check_for_tags_if_exists_and_notify_receiver', 'beginning emission...')
+    const { tagged_addresses, tagged_account_ids } = await this.check_for_any_tagged_accounts(state_object['message'], state_object['markdown'])
+
+    console.log('check_for_tags_if_exists_and_notify_receiver', 'found addresses:', tagged_addresses, tagged_account_ids)
+
+    for(var i=0; i<tagged_addresses.length; i++){
+      const tagged_address = tagged_addresses[i]
+      const tagged_account_id = tagged_account_ids[i]
+      const message_object = await this.prepare_new_tag_account_message(object_e5_id, tagged_address, state_object, tagged_account_id)
+
+      const to = tagged_address
+
+      const target = 'tags|'+to
+      const secondary_target ='tags|'+this.state.accounts[this.state.selected_e5].address
+
+      const send_message_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
+
+      await this.reconnect_socket_if_unconnected()
+      console.log('check_for_tags_if_exists_and_notify_receiver', 'emitting:', send_message_object)
+      this.state.socket.emit("send_message", send_message_object);
+      await this.wait(1200)
+    }
+  }
+
+  async check_for_any_tagged_accounts(text, markdown){
+    const tagged_addresses = []
+    const tagged_account_ids = []
+    const text_words = text.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ')
+    const markdown_words = markdown.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ')
+    const words_containing_at_symbol = text_words.concat(markdown_words).filter((word) => {
+      return word.startsWith('@')
+    })
+
+    if(words_containing_at_symbol.length > 0){
+      for(var i=0; i<words_containing_at_symbol.length; i++){
+        const account_or_alias = words_containing_at_symbol[i].replace('@', '')
+        if(isNaN(account_or_alias)){
+          const recipient = await this.get_recipient_id(account_or_alias)
+          const recipients_e5 = await this.get_recipient_e5(account_or_alias)
+          const tagged_address = await this.get_recipient_address(recipient, recipients_e5)
+          if(!tagged_addresses.includes(tagged_address)){
+            tagged_addresses.push(tagged_address);
+            tagged_account_ids.push(recipient+recipients_e5)
+          }
+        }else{
+          const recipients_e5 = this.state.selected_e5
+          const tagged_address = await this.get_recipient_address(account_or_alias, recipients_e5)
+          if(!tagged_addresses.includes(tagged_address)){
+            tagged_addresses.push(tagged_address);
+            tagged_account_ids.push(account_or_alias+recipients_e5)
+          }
+        }
+      }
+    }
+
+    return { tagged_addresses, tagged_account_ids }
+  }
+
+  async get_recipient_id(recipient){
+    await this.get_account_id_from_alias(recipient)
+    var obj = this.get_all_sorted_objects_mappings(this.state.alias_owners)
+    var id = (obj[recipient] == null ? recipient : obj[recipient])
+    return id
+  }
+
+  async get_recipient_e5(recipient){
+    await this.get_account_id_from_alias(recipient)
+    var e5s = this.state.e5s['data']
+    var recipients_e5 = this.state.selected_e5
+    for (let i = 0; i < e5s.length; i++) {
+      var e5 = e5s[i]
+      if(this.state.alias_owners[e5] != null){
+        var id = this.state.alias_owners[e5][recipient]
+        if(id != null && !isNaN(id)){
+          recipients_e5 = e5
+        }
+      }
+    }
+    return recipients_e5
+  }
+
+  async notify_tagged_users_of_tag_in_new_object(tagged_addresses, tagged_account_ids, object_tag_id, object_type){
+    for(var i=0; i<tagged_addresses.length; i++){
+      const tagged_address = tagged_addresses[i]
+      const tagged_account_id = tagged_account_ids[i]
+      const message_object = await this.prepare_new_tag_in_object_account_message(object_tag_id, tagged_address, tagged_account_id, object_type)
+
+      const to = tagged_address
+
+      const target = 'object_tags|'+to
+      const secondary_target ='object_tags|'+this.state.accounts[this.state.selected_e5].address
+
+      const send_message_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
+
+      await this.reconnect_socket_if_unconnected()
+      this.state.socket.emit("send_message", send_message_object);
+      await this.wait(1200)
+    }
+  }
   
 
 
@@ -49589,7 +49850,7 @@ class App extends Component {
     const extra_tags = state_object.entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => (word.length >= 3 && !state_object.entered_indexing_tags.includes(word.toLowerCase())))
 
     const all_elements = extra_tags.concat(state_object.entered_indexing_tags)
-    const all_final_elements = []
+    const all_final_elements = [state_object.id]
     for(var te=0; te<all_elements.length; te++){
       const word = all_elements[te]
       all_final_elements.push(await this.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
@@ -49609,8 +49870,8 @@ class App extends Component {
       identifier = 'en'
     }
 
-    const tags = all_final_elements
     const id = this.make_number_id(12)
+    const tags = all_final_elements
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
     const block_number = await web3.eth.getBlockNumber()
 
@@ -51427,6 +51688,109 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+
+
+
+
+
+
+
+  async prepare_new_tag_account_message(object_e5_id, tagged_address, state_object, tagged_account_id){
+    const id = this.make_number_id(12)
+    const signature_request = {
+      'request_id':id,
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'sender_address': this.state.accounts[this.state.selected_e5].address,
+      'tagged_address': tagged_address,
+      'tagged_account_id':tagged_account_id,
+    }
+
+    const tags = []
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(signature_request, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'tags',
+      message_identifier: id,
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      object_id: state_object['id'],
+      object_e5: state_object['e5'],
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_new_tag_in_object_account_message(object_tag_id, tagged_address, tagged_account_id, object_type){
+    const id = this.make_number_id(12)
+    const signature_request = {
+      'request_id':id,
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'sender_address': this.state.accounts[this.state.selected_e5].address,
+      'tagged_address': tagged_address,
+      'tagged_account_id':tagged_account_id,
+    }
+
+    const tags = []
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(signature_request, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'object_tags',
+      message_identifier: id,
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      object_tag_id: object_tag_id,
+      object_type: object_type
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -53583,6 +53947,126 @@ class App extends Component {
     }
   }
 
+  async process_new_tags_message_received(message, object_hash, from_arg, add_to_notifications){
+    console.log('check_for_tags_if_exists_and_notify_receiver', 'received message', message)
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        // me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    console.log('check_for_tags_if_exists_and_notify_receiver', 'decrypted message', ipfs)
+
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+      await this.handle_new_tag_notifications(ipfs, message)
+    }
+
+    if(true || !am_I_the_author){
+      this.set_new_tag_event_in_notifications(ipfs, message, object_hash)
+    }
+  }
+
+  async handle_new_tag_notifications(ipfs, message){
+    var sender_account = ipfs['sender_account']
+    var sender_account_e5 = ipfs['sender_account_e5']
+    var prompt = this.getLocale()['1407bf']/* '$ tagged you in their comment.' */
+    const alias = await this.get_sender_title_text(sender_account, sender_account_e5)
+    prompt = prompt.replace('$', alias)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'comment_tag', 'data':{ 'object_id': parseInt(message['object_id']), 'object_e5':message['object_e5'] }})
+  }
+
+  set_new_tag_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: message['object_id'], p2:0, p3:0, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['object_e5']
+    event['p'] = message['object_id']
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = ipfs['sender_account']
+    event['type'] = 'comment_tag'
+    event['event_type'] = 'comment_tag'
+    event['view'] = {'notification_id':'comment_tag','events':[], 'type':'comment_tag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p1', 'data':{ 'object_id': parseInt(message['object_id']), 'object_e5':message['object_e5'] }}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['comment_tag'] == null ? [] : clone['comment_tag'].slice()
+    const index = request_clone_array.findIndex(item => item['view']['data']['request_id'] == ipfs['request_id']);
+    if(index == -1){
+      request_clone_array.push(event)
+    }
+    clone['comment_tag'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
+  async process_new_tags_in_object_message_received(message, object_hash, from_arg, add_to_notifications){
+    console.log('check_for_tags_if_exists_and_notify_receiver', 'received message', message)
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        // me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    console.log('check_for_tags_if_exists_and_notify_receiver', 'decrypted message', ipfs)
+
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+      await this.handle_new_tag_in_object_notifications(ipfs, message)
+    }
+
+    if(!am_I_the_author){
+      this.set_new_tag_in_object_event_in_notifications(ipfs, message, object_hash)
+    }
+  }
+
+  async handle_new_tag_in_object_notifications(ipfs, message){
+    var sender_account = ipfs['sender_account']
+    var sender_account_e5 = ipfs['sender_account_e5']
+    var prompt = this.getLocale()['1407bg']/* '$ tagged you in their post.' */
+    const alias = await this.get_sender_title_text(sender_account, sender_account_e5)
+    prompt = prompt.replace('$', alias)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'post_tag', 'data':{'object_tag_id': message['object_tag_id'], 'object_type':message['object_type'] }})
+  }
+
+  set_new_tag_in_object_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: message['object_id'], p2:0, p3:0, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['object_e5']
+    event['p'] = message['object_id']
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = ipfs['sender_account']
+    event['type'] = 'post_tag'
+    event['event_type'] = 'post_tag'
+    event['view'] = {'notification_id':'post_tag','events':[], 'type':'post_tag', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p1', 'data':{'object_tag_id': message['object_tag_id'], 'object_type':message['object_type'] }}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['post_tag'] == null ? [] : clone['post_tag'].slice()
+    const index = request_clone_array.findIndex(item => item['view']['data']['request_id'] == ipfs['request_id']);
+    if(index == -1){
+      request_clone_array.push(event)
+    }
+    clone['post_tag'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
 
 
 
@@ -54023,6 +54507,12 @@ class App extends Component {
           }
           else if(object_data['type'] == 'obligation_subscription'){
             await this.process_obligation_subscriptions_message(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'tags'){
+            await this.process_new_tags_message_received(object_data, object_hash, object_data['author_address'], true)
+          }
+          else if(object_data['type'] == 'object_tags'){
+            await this.process_new_tags_in_object_message_received(object_data, object_hash, object_data['author_address'], true)
           }
           await this.wait(300)
         }

@@ -1143,8 +1143,10 @@ class home_page extends Component {
         const follower_poll = notification_object['follower_poll'] || [];
         const follower_bag = notification_object['follower_bag'] || [];
         const promoted_post = notification_object['promoted_post'] || [];
+        const comment_tag = notification_object['comment_tag'] || [];
+        const post_tag = notification_object['post_tag'] || [];
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag)
 
         const me = this
         const filtered_events = all_events.filter(function (event) {
@@ -5229,13 +5231,14 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
-        await this.props.fetch_uploaded_files_for_object(object)
-        await this.props.get_tag_price_data_for_object(object)
-        await this.props.get_object_censored_keywords_and_accounts(object)
         
-        this.props.set_audio_pip_opacity_because_of_inactivity()
+        this.props.fetch_uploaded_files_for_object(object)
+        this.props.get_tag_price_data_for_object(object)
+        this.props.get_object_censored_keywords_and_accounts(object)
+        
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     async when_contract_item_clicked(index, id, e5, ignore_set_details_data, object){

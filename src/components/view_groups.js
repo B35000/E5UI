@@ -129,6 +129,8 @@ class ViewGroups extends Component {
         var background_color = this.props.theme['view_group_card_item_background2'];
         var border_radius = '7px';
         var font = 'Sans-serif';
+        var tag_background_color = this.props.theme['tag_background_color'];
+        var tag_shadow = this.props.theme['tag_shadow'];
         // var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
 
         if(item_id=='0'){/* line */
@@ -140,8 +142,6 @@ class ViewGroups extends Component {
         else if(item_id=='1'){/* tags */
             /* {this.render_detail_item('1', {'active_tags':tags, 'index_option':'indexed'})} */
             var active_tags = ['tag1','tag2','tag3']
-            var tag_background_color = this.props.theme['tag_background_color'];
-            var tag_shadow = this.props.theme['tag_shadow'];
             var when_tapped = 'null'
             var selected_tags = []
             var masked = false;
@@ -418,11 +418,14 @@ class ViewGroups extends Component {
                                                         const isId = !isNaN(num) && num > 1000;
                                                         if (isId) {
                                                             return (
-                                                                <span
+                                                                <span key={index} style={{'width': 'fit-content', 'background-color': tag_background_color, 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(parseInt(part))}>
+                                                                    {/* <span
                                                                     key={index}
                                                                     style={{ textDecoration: "underline", cursor: "pointer", color: color }}
                                                                     onClick={() => this.when_e5_link_tapped(num)}>
                                                                         {part}
+                                                                </span> */}
+                                                                    <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
                                                                 </span>
                                                             );
                                                         }
@@ -1013,9 +1016,10 @@ class ViewGroups extends Component {
                                 const text = props.children
 
                                 const processed = typeof text === "string" ? this.split_text(text).map((part, i) => (!isNaN(parseInt(part)) && parseInt(part) > 1000) ? (
-                                        <span key={i} style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color']}} onClick={() => this.when_e5_link_tapped(parseInt(part))}>
-                                            {part}
+                                        <span key={i} style={{'width': 'fit-content', 'background-color': tag_background_color, 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(parseInt(part))}>
+                                            <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
                                         </span>
+                                        
                                     ) : (
                                         <React.Fragment key={i}>{this.mask_word_if_censored(part)}</React.Fragment>
                                     )

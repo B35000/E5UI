@@ -71,7 +71,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067ag']/* 'post-following' */, this.props.app_state.loc['3067x']/* 'explore-comments' */, this.props.app_state.loc['3067bb']/* 'promoted 📢' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067ag']/* 'post-following' */, this.props.app_state.loc['3067x']/* 'explore-comments' */, this.props.app_state.loc['3067bb']/* 'promoted 📢' */, this.props.app_state.loc['3067be']/* 'tagged ﹫' */], [0]
                 ],
             };
         }
@@ -232,6 +232,11 @@ class ViewNotificationLogPage extends Component {
             )
         }
 
+
+
+
+
+
         else if(selected_item == this.props.app_state.loc['3067f']/* 'bags' */){
             //bag, storefront, bag_application_response
             return(
@@ -275,6 +280,19 @@ class ViewNotificationLogPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3067be']/* 'tagged ﹫' */){
+            return(
+                <div>
+                    {this.render_explore_notifications(['comment_tag', 'post_tag'])}
+                </div>
+            )
+        }
+
+
+
+
+
+
 
         else if(selected_item == this.props.app_state.loc['3067']/* 'wallet' */){
             return(
@@ -559,6 +577,8 @@ class ViewNotificationLogPage extends Component {
             'follower_poll':this.props.app_state.loc['3067al'],/* '🗳️ $ posted a new poll for you to participate in.' */
             'follower_bag':this.props.app_state.loc['3067am'],/* '🛍️ $ posted a new bag for you to fulfil.' */
             'promoted_post': this.props.app_state.loc['3067ay'],/* '📣 $ promoted a post for you to see.' */
+            'comment_tag': this.props.app_state.loc['3067bd'],/* '﹫ $ tagged you in their comment.' */
+            'post_tag': this.props.app_state.loc['3067bf'],/* '﹫ $ tagged you in their post.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -600,8 +620,10 @@ class ViewNotificationLogPage extends Component {
         const follower_poll = notification_object['follower_poll'] || [];
         const follower_bag = notification_object['follower_bag'] || [];
         const promoted_post = notification_object['promoted_post'] || [];
+        const comment_tag = notification_object['comment_tag'] || [];
+        const post_tag = notification_object['post_tag'] || [];
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

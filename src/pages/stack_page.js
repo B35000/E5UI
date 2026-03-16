@@ -5920,7 +5920,21 @@ class StackPage extends Component {
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
                     
-                    // const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
+                    const { tagged_addresses, tagged_account_ids } = await this.props.check_for_any_tagged_accounts_in_object(data);
+
+                    if(tagged_addresses.length > 0){
+                        const existing_tagged_addresses = t.all_tagged_addresses_data || { tagged_addresses: [], tagged_account_ids:[] }
+                        const emit_tagged_addresses = tagged_addresses.filter((address) => {
+                            return !existing_tagged_addresses.tagged_addresses.includes(address)
+                        })
+                        const emit_tagged_account_ids = tagged_account_ids.filter((account_id) => {
+                            return !existing_tagged_addresses.tagged_account_ids.includes(account_id)
+                        })
+
+                        this.props.set_emit_tagged_addresses_for_current_run_in_state({ tagged_addresses: emit_tagged_addresses, tagged_account_ids: emit_tagged_account_ids })
+
+                        t.all_tagged_addresses_data = {tagged_addresses: existing_tagged_addresses.tagged_addresses.concat(emit_tagged_addresses), tagged_account_ids: existing_tagged_addresses.tagged_account_ids.concat(emit_tagged_account_ids)}
+                    }
 
                     const all_final_elements = []
                     for(var te=0; te<all_elements.length; te++){
@@ -6057,7 +6071,7 @@ class StackPage extends Component {
                         data = await this.process_channel_object(txs[i])
                     }
                     ipfs_index_object[data.id] = data
-                    var extra_tags = []
+                    var extra_tags = [data.id]
                     extra_tags = extra_tags.concat(data.entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
                     if(txs[i].type == this.props.app_state.loc['a311a']/* audio */){
                         var songs = data.songs
@@ -6089,8 +6103,15 @@ class StackPage extends Component {
                             all_elements.push(subscription_e5_id)
                         });
                     }
+
+                    const { tagged_addresses, tagged_account_ids } = await this.props.check_for_any_tagged_accounts_in_object(data);
+
+                    if(tagged_addresses.length > 0){
+                        this.props.set_emit_tagged_addresses_for_current_run_in_state({ tagged_addresses, tagged_account_ids, id: data.id });
+                        data.all_tagged_addresses_data = { tagged_addresses, tagged_account_ids }
+                    }
                     
-                    // const final_key = await this.props.get_key_from_password(process.env.REACT_APP_TAG_ENCRYPTION_KEY, 'f')
+                    
                     const all_final_elements = []
                     for(var te=0; te<all_elements.length; te++){
                         const word = all_elements[te]

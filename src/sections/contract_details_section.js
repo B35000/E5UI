@@ -1039,6 +1039,7 @@ class ContractDetailsSection extends Component {
     }
 
     show_send_main_contract_proposal(object){
+        console.log('show_send_main_contract_proposal', object['id'], object['hidden'])
         if(object['id'] == 2 && object['hidden'] == false){
             var e5 = object['e5']
             
@@ -1047,7 +1048,7 @@ class ContractDetailsSection extends Component {
             var minimum_entered_contracts = object['data'][1][14 /* minimum_entered_contracts */]
             var minimum_transaction_count = object['data'][1][19 /* minimum_transaction_count */]
 
-            if(entered_contracts_count>= minimum_entered_contracts && e5_runs_count>= minimum_transaction_count && this.props.app_state.user_account_id[object['e5']] != 1 && this.props.app_state.user_account_id[object['e5']] != null){
+            if(entered_contracts_count >= minimum_entered_contracts && e5_runs_count>= minimum_transaction_count && this.props.app_state.user_account_id[object['e5']] != 1 && this.props.app_state.user_account_id[object['e5']] != null){
                 return (
                     <div>
                         {this.render_detail_item('0')}
@@ -1135,12 +1136,13 @@ class ContractDetailsSection extends Component {
     }
 
     render_configure_obligation_configuration_button(object){
+        if(object['ipfs'] == null) return;
         const my_account = this.props.app_state.user_account_id[object['e5']]
         const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
         const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
         const contract_type = object['ipfs'].contract_type || 'custom'
 
-        if( object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
+        if(object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1160,12 +1162,13 @@ class ContractDetailsSection extends Component {
 
 
     render_search_and_view_accounts_obligation_history_button(object){
+        if(object['ipfs'] == null) return;
         const my_account = this.props.app_state.user_account_id[object['e5']]
         const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
         const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
         const contract_type = object['ipfs'].contract_type || 'custom'
 
-        if( object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
+        if(object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1185,7 +1188,7 @@ class ContractDetailsSection extends Component {
 
 
     render_subscribe_to_contracts_obligations_button(object){
-        if(object['obligation_configurations'] != null && object['obligation_configurations'].length > 0){
+        if(object['ipfs'] != null && object['obligation_configurations'] != null && object['obligation_configurations'].length > 0){
             const my_object = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] || {}
             const my_data = my_object['data'] || []
 

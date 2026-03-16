@@ -331,9 +331,6 @@ class NewProposalPage extends Component {
 
                 <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     <div style={{'width':'98%'}}>
-                        {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['344']+this.state.contract_item['id']})}
-                        <div style={{height: 10}}/>
-
                         {this.render_everything()}
                     </div>   
                 </div>
@@ -491,6 +488,10 @@ class NewProposalPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -499,8 +500,12 @@ class NewProposalPage extends Component {
                 <div className="row">
                     <div className="col-6" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
+                        {this.render_title_tags_part2()}
+                        <div style={{height:10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -512,8 +517,12 @@ class NewProposalPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
+                        {this.render_title_tags_part2()}
+                        <div style={{height:10}}/>
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -558,16 +567,16 @@ class NewProposalPage extends Component {
 
 
                 {this.render_previous_edits_if_existing()}
+            </div>
+        )
+    }
 
-
-
-                {this.render_detail_item('0')}
+    render_title_tags_part2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
-                
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }

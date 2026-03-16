@@ -3502,7 +3502,7 @@ return data['data']
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2738ae']/* 'Found Objects matching that link.' */, 'details':this.props.app_state.loc['2738af']/* 'below are the objects that have been located by e matching the link. They should load in a few moments.' */})}
                     {this.render_detail_item('10', {'text':entry_text, 'textsize':'9px', 'font':this.props.app_state.font})}
                     <div style={{height:10}}/>
-                    {this.render_empty_object()}
+                    {this.render_skeleton_object()}
                 </div>
             )
         }
@@ -3514,7 +3514,7 @@ return data['data']
                 <div style={{overflow: 'auto'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
-                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                            <div style={{'margin':'3px 4px 3px 4px'}}>
                                 {this.render_link_object_item(item, index, item_types[index])}
                             </div>
                         ))}
@@ -3526,11 +3526,12 @@ return data['data']
 
     get_e5_link_items(){
         const id = this.state.data['id']
+        const is_tag_id = this.state.data['tag_id'] == true;
         const link_items = []
         const link_item_types = []
         for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
             const e5 = this.props.app_state.e5s['data'][i]
-            const object_type = this.props.app_state.link_type_data[e5]
+            const object_type = is_tag_id == true ? this.state.data['object_type'] : this.props.app_state.link_type_data[e5]
             if(object_type != null && object_type != 0){
                 const obj = {
                     17/* jobs */: this.props.app_state.created_jobs[e5],
@@ -3549,7 +3550,7 @@ return data['data']
                     28/* 28(poll-object) */: this.props.app_state.created_polls[e5]
                 }
                 const items = obj[object_type]
-                const e5_object = items.find(e => e['id'] == id)
+                const e5_object = is_tag_id == true ? items.find(e => e['ipfs'].id == id) : items.find(e => e['id'] == id)
                 if(e5_object != null && object_type != null && object_type != 0){
                     //found an object
                     link_items.push(e5_object)
@@ -3578,7 +3579,7 @@ return data['data']
             )
         }
         
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(object) || post_author == me){
+        if(this.check_if_sender_has_paid_subscriptions(object) || this.is_post_preview_enabled(object) || post_author == me){
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -3647,7 +3648,7 @@ return data['data']
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'post')
@@ -3673,7 +3674,7 @@ return data['data']
                 return;
             }
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.when_link_object_clicked(object, object_type)
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'channel')
@@ -3694,7 +3695,7 @@ return data['data']
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.when_link_object_clicked(object, object_type)
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'audio')
@@ -3706,7 +3707,7 @@ return data['data']
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             
-            if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
+            if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
                 this.props.when_link_object_clicked(object, object_type, this.is_post_nsfw(object))
             }else{
                 this.props.show_post_item_preview_with_subscription(object, 'video')
@@ -3926,7 +3927,7 @@ return data['data']
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != '') extra = extra + ' '
@@ -3995,7 +3996,7 @@ return data['data']
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != ''){
@@ -4058,7 +4059,7 @@ return data['data']
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != '') extra = extra + ' '
@@ -4091,7 +4092,7 @@ return data['data']
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-        if(!this.check_if_sender_has_paid_subscriptions(required_subscriptions) && post_author != me){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && post_author != me){
             extra = extra+'🔏'
         }
         if(extra != '') extra = extra + ' '
