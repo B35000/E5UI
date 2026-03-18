@@ -6469,7 +6469,7 @@ class App extends Component {
 
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
 
-          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)}
+          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -7300,7 +7300,7 @@ class App extends Component {
       if(me.send_receive_ether_page.current != null){
         me.send_receive_ether_page.current.set_object(item)
       } 
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -7451,7 +7451,7 @@ class App extends Component {
       if(me.send_receive_coin_page.current != null){
         me.send_receive_coin_page.current.set_object(item)
       } 
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -9833,14 +9833,14 @@ class App extends Component {
 
     var os = getOS()
     if(os == 'iOS'){
-      setTimeout(function() {
-        // me.setState({is_reloading_stack_due_to_ios_run: true})
-        me.open_stack_bottomsheet()
-        setTimeout(function() {
-          // me.setState({is_reloading_stack_due_to_ios_run: false})
-          me.open_stack_bottomsheet()
-        }, (1 * 500));
-      }, (1 * 1000));
+      // setTimeout(function() {
+      //   // me.setState({is_reloading_stack_due_to_ios_run: true})
+      //   me.open_stack_bottomsheet()
+      //   setTimeout(function() {
+      //     // me.setState({is_reloading_stack_due_to_ios_run: false})
+      //     me.open_stack_bottomsheet()
+      //   }, (1 * 500));
+      // }, (1 * 1000));
     }
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
@@ -10620,7 +10620,7 @@ class App extends Component {
       if(me.wiki_page.current != null){
       me.wiki_page.current?.set(option)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -10839,7 +10839,7 @@ class App extends Component {
     setTimeout(function() {
       me.new_job_page.current.set_fileds_for_edit_action(obj)
       me.new_job_page.current.set_action('edit')
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -11224,7 +11224,7 @@ class App extends Component {
       me.edit_token_page.current?.setState({object_id: object['id']})
       me.edit_token_page.current?.set_token_symbol(object['ipfs'].entered_symbol_text, object['ipfs'].entered_title_text)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -11313,7 +11313,7 @@ class App extends Component {
       me.edit_channel_page.current?.set_edit_data()
       me.edit_channel_page.current?.setState({object_id: object['id']})
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     this.load_my_subscriptions()
   }
 
@@ -11404,7 +11404,7 @@ class App extends Component {
       me.edit_contractor_page.current?.setState({object_id: object['id']})
       me.edit_contractor_page.current?.set()
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -11492,7 +11492,7 @@ class App extends Component {
       me.edit_job_page.current?.setState({object_id: object['id']})
       me.edit_job_page.current?.set()
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -11579,7 +11579,7 @@ class App extends Component {
       me.edit_post_page.current?.setState({object_id: object['id']})
       me.edit_post_page.current?.set()
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     this.load_my_subscriptions() 
   }
 
@@ -11671,7 +11671,7 @@ class App extends Component {
       me.edit_storefront_page.current?.setState({object_id: object['id']})
       me.edit_storefront_page.current?.set()
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -11760,7 +11760,7 @@ class App extends Component {
         me.edit_proposal_page.current?.setState({object_id: object['id']})
         me.edit_proposal_page.current?.set_edit_data()
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -11853,7 +11853,7 @@ class App extends Component {
         me.edit_audiopost_page.current?.setState({object_id: object['id']})
         me.edit_audiopost_page.current?.set()
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     this.load_my_subscriptions() 
   }
 
@@ -11956,7 +11956,7 @@ class App extends Component {
       me.edit_videopost_page.current?.setState({object_id: object['id']})
       me.edit_videopost_page.current?.set()
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     this.load_my_subscriptions() 
   }
 
@@ -12048,7 +12048,7 @@ class App extends Component {
       me.edit_nitropost_page.current?.setState({object_id: object['id']})
       me.edit_nitropost_page.current?.set()
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     this.load_my_subscriptions() 
   }
 
@@ -12137,7 +12137,7 @@ class App extends Component {
       me.edit_poll_page.current?.setState({object_id: object['id']})
       me.edit_poll_page.current?.set()
     }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
 
@@ -12491,7 +12491,7 @@ class App extends Component {
       if(me.enter_contract_page.current != null){
       me.enter_contract_page.current.set_contract(contract_item, job_acceptance_action_state_object)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
     this.load_contracts_proposals(contract_item['e5'], contract_item['id'])
   }
@@ -12603,7 +12603,7 @@ class App extends Component {
       if(me.extend_contract_page.current != null){
       me.extend_contract_page.current.set_contract(contract_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -12700,7 +12700,7 @@ class App extends Component {
       if(me.exit_contract_page.current != null){
       me.exit_contract_page.current.set_contract(contract_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -12794,7 +12794,7 @@ class App extends Component {
         me.new_proposal_page.current.reset_state()
         me.new_proposal_page.current.set_contract(contract_item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
     
@@ -12893,7 +12893,7 @@ class App extends Component {
       if(me.vote_proposal_page.current != null){
       me.vote_proposal_page.current.set_proposal(proposal_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -12992,7 +12992,7 @@ class App extends Component {
       if(me.submit_proposal_page.current != null){
       me.submit_proposal_page.current.set_proposal(proposal_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -13087,7 +13087,7 @@ class App extends Component {
       if(me.pay_subscription_page.current != null){
       me.pay_subscription_page.current.set_subscription(subscription_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -13186,7 +13186,7 @@ class App extends Component {
       if(me.cancel_subscription_page.current != null){
       me.cancel_subscription_page.current.set_subscription(subscription_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -13288,7 +13288,7 @@ class App extends Component {
       if(me.collect_subscription_page.current != null){
       me.collect_subscription_page.current.set_subscription(subscription_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -13389,7 +13389,7 @@ class App extends Component {
       if(me.modify_subscription_page.current != null){
       me.modify_subscription_page.current.set_subscription(subscription_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -13489,7 +13489,7 @@ class App extends Component {
       if(me.modify_contract_page.current != null){
       me.modify_contract_page.current.set_contract(contract_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -13589,7 +13589,7 @@ class App extends Component {
       if(me.modify_token_page.current != null){
       me.modify_token_page.current.set_token(token_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -13689,7 +13689,7 @@ class App extends Component {
       if(me.exchange_transfer_page.current != null){
       me.exchange_transfer_page.current.set_token(token_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -13789,7 +13789,7 @@ class App extends Component {
       if(me.force_exit_page.current != null){
       me.force_exit_page.current.set_contract(contract_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -13890,7 +13890,7 @@ class App extends Component {
       if(me.archive_proposal_page.current != null){
       me.archive_proposal_page.current.set_object(proposal_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -13988,7 +13988,7 @@ class App extends Component {
       if(me.freeze_unfreeze_page.current != null){
       me.freeze_unfreeze_page.current.set_token(token_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -14134,7 +14134,7 @@ class App extends Component {
       if(me.authmint_page.current != null){
       me.authmint_page.current.set_token(token_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -14233,7 +14233,7 @@ class App extends Component {
       if(me.moderator_page.current != null){
       me.moderator_page.current.set_object(item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -14336,7 +14336,7 @@ class App extends Component {
         me.respond_to_job_page.current.set_object(item)
         me.load_my_contracts()
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -14447,7 +14447,7 @@ class App extends Component {
         me.view_application_contract_page.current.set_object(item)
         me.load_contract_item(item['e5'], item['picked_contract_id'])
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -14585,7 +14585,7 @@ class App extends Component {
           if(me.new_contract_page.current){
             me.new_contract_page.current?.set_state(tx)
           }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['601']/* 'token' */){
@@ -14595,7 +14595,7 @@ class App extends Component {
           if(me.new_token_page.current){
           me.new_token_page.current?.set_state(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['823']/* 'subscription' */){
@@ -14605,7 +14605,7 @@ class App extends Component {
           if(me.new_subscription_page.current){
           me.new_subscription_page.current?.set_state(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['297']/* 'post' */){
@@ -14615,7 +14615,7 @@ class App extends Component {
           if(me.new_post_page.current){
           me.new_post_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['760']/* 'job' */){
@@ -14625,7 +14625,7 @@ class App extends Component {
           if(me.new_job_page.current){
           me.new_job_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['109']/* 'channel' */){
@@ -14635,7 +14635,7 @@ class App extends Component {
           if(me.new_channel_page.current){
           me.new_channel_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['439']/* 'storefront-item' */){
@@ -14645,7 +14645,7 @@ class App extends Component {
           if(me.new_storefront_item_page.current){
           me.new_storefront_item_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['946']/* 'buy-sell' */){
@@ -14655,7 +14655,7 @@ class App extends Component {
           if(me.new_mint_dump_token_page.current){
         me.new_mint_dump_token_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['1018']/* 'transfer' */){
@@ -14665,7 +14665,7 @@ class App extends Component {
           if(me.new_transfer_token_page.current){
             me.new_transfer_token_page.current?.setState(tx)
           }
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['2125']/* 'enter-contract' */){
@@ -14675,7 +14675,7 @@ class App extends Component {
           if(me.enter_contract_page.current){
             me.enter_contract_page.current?.setState(tx)
           }
-        }, (1 * 500));
+        }, (1 * 1100));
        
     }
     else if(tx.type == this.getLocale()['35']/* 'extend-contract' */){
@@ -14685,7 +14685,7 @@ class App extends Component {
           if(me.extend_contract_page.current){
         me.extend_contract_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
        
     }
     else if(tx.type == this.getLocale()['312']/* 'proposal' */){
@@ -14695,7 +14695,7 @@ class App extends Component {
           if(me.new_proposal_page.current){
         me.new_proposal_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
        
     }
     else if(tx.type == this.getLocale()['796']/* 'vote' */){
@@ -14705,7 +14705,7 @@ class App extends Component {
           if(me.vote_proposal_page.current){
         me.vote_proposal_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['862']/* 'pay-subscription' */){
@@ -14715,7 +14715,7 @@ class App extends Component {
           if(me.pay_subscription_page.current){
         me.pay_subscription_page.current?.setState(tx)
       } 
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['821']/* 'cancel-subscription' */){
@@ -14725,7 +14725,7 @@ class App extends Component {
           if(me.cancel_subscription_page.current){
         me.cancel_subscription_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['840']/* 'modify-subscription' */){
@@ -14735,7 +14735,7 @@ class App extends Component {
           if(me.modify_subscription_page.current){
           me.modify_subscription_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }   
     else if(tx.type == this.getLocale()['2123']/* 'modify-contract' */){
@@ -14745,7 +14745,7 @@ class App extends Component {
           if(me.modify_contract_page.current){
           me.modify_contract_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['997']/* 'modify-token' */){
@@ -14755,7 +14755,7 @@ class App extends Component {
           if(me.modify_token_page.current){
           me.modify_token_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['318']/* 'exchange-transfer' */){
@@ -14765,7 +14765,7 @@ class App extends Component {
           if(me.exchange_transfer_page.current){
           me.exchange_transfer_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['48']/* 'force-exit' */){
@@ -14775,7 +14775,7 @@ class App extends Component {
           if(me.force_exit_page.current){
           me.force_exit_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['768']/* 'archive' */){
@@ -14785,7 +14785,7 @@ class App extends Component {
           if(me.archive_proposal_page.current){
           me.archive_proposal_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['930']/* 'freeze/unfreeze' */){
@@ -14795,7 +14795,7 @@ class App extends Component {
           if(me.freeze_unfreeze_page.current){
           me.freeze_unfreeze_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['880']/* 'authmint' */){
@@ -14805,7 +14805,7 @@ class App extends Component {
           if(me.authmint_page.current){
           me.authmint_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['1265']/* 'access-rights-settings' */){
@@ -14815,7 +14815,7 @@ class App extends Component {
           if(me.moderator_page.current){
           me.moderator_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
           
     }
     else if(tx.type == this.getLocale()['285']/* 'mail' */){
@@ -14825,7 +14825,7 @@ class App extends Component {
           if(me.new_mail_page.current){
           me.new_mail_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
          
     }  
     else if(tx.type == this.getLocale()['1307']/* 'job-response' */){
@@ -14835,7 +14835,7 @@ class App extends Component {
           if(me.respond_to_job_page.current){
           me.respond_to_job_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
            
     }
     else if(tx.type == this.getLocale()['1499']/* 'direct-purchase' */){
@@ -14845,7 +14845,7 @@ class App extends Component {
           if(me.direct_purchase_page.current){
         me.direct_purchase_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
        
     }
     else if(tx.type == this.getLocale()['1503']/* 'contractor' */){
@@ -14855,7 +14855,7 @@ class App extends Component {
           if(me.new_contractor_page.current){
           me.new_contractor_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
       
     }
@@ -14866,7 +14866,7 @@ class App extends Component {
           if(me.send_job_request_page.current){
           me.send_job_request_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
          
     }
     else if(tx.type == this.getLocale()['753']/* 'edit-channel' */){
@@ -14876,7 +14876,7 @@ class App extends Component {
           if(me.edit_channel_page.current){
         me.edit_channel_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['763']/* 'edit-contractor' */){
@@ -14886,7 +14886,7 @@ class App extends Component {
           if(me.edit_contractor_page.current){
         me.edit_contractor_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['764']/* 'edit-job' */){
@@ -14896,7 +14896,7 @@ class App extends Component {
           if(me.edit_job_page.current){
           me.edit_job_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['765']/* 'edit-post' */){
@@ -14906,7 +14906,7 @@ class App extends Component {
           if(me.edit_post_page.current){
           me.edit_post_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['766']/* 'edit-storefront' */){
@@ -14916,7 +14916,7 @@ class App extends Component {
           if(me.edit_storefront_page.current){
           me.edit_storefront_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['761']/* 'edit-token' */){
@@ -14926,7 +14926,7 @@ class App extends Component {
           if(me.edit_token_page.current){
           me.edit_token_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['2739']/* 'edit-proposal' */){
@@ -14936,7 +14936,7 @@ class App extends Component {
           if(me.edit_proposal_page.current){
         me.edit_proposal_page.current?.setState(tx)
       }
-        }, (1 * 500));
+        }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['898']/* 'depthmint' */){
@@ -14946,7 +14946,7 @@ class App extends Component {
           if(me.depthmint_page.current){
           me.depthmint_page.current?.setState(tx)
         }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['2846']/* stage-royalty */){
         this.open_stage_royalties_bottomsheet()
@@ -14955,7 +14955,7 @@ class App extends Component {
           if(me.stage_royalties_page.current){
             me.stage_royalties_page.current?.setState(tx)
           }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['2884']/* 'royalty-payouts' */){
         this.open_view_staged_royalties_bottomsheet()
@@ -14964,7 +14964,7 @@ class App extends Component {
           if(me.view_staged_royalties_page.current){
             me.view_staged_royalties_page.current?.setState(tx)
           }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['2896']/* 'upcoming-subscriptions' */){
         this.open_pay_upcoming_subscriptions_bottomsheet()
@@ -14973,7 +14973,7 @@ class App extends Component {
           if(me.pay_upcoming_subscriptions_page.current){
             me.pay_upcoming_subscriptions_page.current?.setState(tx)
           }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['a311a']/* 'audio' */){
         this.open_new_object('10')
@@ -14982,7 +14982,7 @@ class App extends Component {
           if(me.new_audio_page.current){
             me.new_audio_page.current?.setState(tx)
           }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
     else if(tx.type == this.getLocale()['2962']/* 'buy-album' */){
@@ -14992,7 +14992,7 @@ class App extends Component {
           if(me.buy_album_page.current){
             me.buy_album_page.current?.setState(tx)
           }
-        }, (1 * 500));
+        }, (1 * 1100));
     }
     else if(tx.type == this.getLocale()['2975']/* 'edit-audio' */){
         this.open_edit_audiopost_bottomsheet()
@@ -15001,7 +15001,7 @@ class App extends Component {
           if(me.edit_audiopost_page.current){
           me.edit_audiopost_page.current?.setState(tx)
         }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['b311a']/* video */){
         this.open_new_object('11')
@@ -15010,7 +15010,7 @@ class App extends Component {
           if(me.new_video_page.current){
           me.new_video_page.current?.setState(tx)
         }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['a2962a']/* 'buy-video' */){
       this.open_buy_video_bottomsheet()
@@ -15019,7 +15019,7 @@ class App extends Component {
           if(me.buy_video_page.current){
             me.buy_video_page.current?.setState(tx)
           }
-        }, (1 * 500));
+        }, (1 * 1100));
     }
     else if(tx.type == this.getLocale()['3023']/* 'edit-video' */){
         this.open_edit_videopost_bottomsheet()
@@ -15028,7 +15028,7 @@ class App extends Component {
           if(me.edit_videopost_page.current){
           me.edit_videopost_page.current?.setState(tx)
         }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['a273a']/* nitro */){
         this.open_new_object('12')
@@ -15037,7 +15037,7 @@ class App extends Component {
           if(me.new_nitro_page.current){
           me.new_nitro_page.current?.setState(tx)
         }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['3030']/* 'edit-nitro' */){
         this.open_edit_nitropost_bottomsheet()
@@ -15046,7 +15046,7 @@ class App extends Component {
           if(me.edit_nitropost_page.current){
           me.edit_nitropost_page.current?.setState(tx)
         }
-        }, (1 * 500));  
+        }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['3031']/* 'buy-storage' */){
       this.open_buy_nitro_storage_bottomsheet()
@@ -15055,7 +15055,7 @@ class App extends Component {
           if(me.buy_nitro_storage_page.current){
             me.buy_nitro_storage_page.current?.setState(tx)
           }
-        }, (1 * 500));
+        }, (1 * 1100));
     }
     else if(tx.type == this.getLocale()['c311a']/* 'poll' */){
       this.open_new_object('13')
@@ -15064,7 +15064,7 @@ class App extends Component {
         if(me.new_poll_page.current){
         me.new_poll_page.current?.setState(tx)
       }
-      }, (1 * 500));
+      }, (1 * 1100));
       
     }
     else if(tx.type == this.getLocale()['3072h']/* 'edit-poll' */){
@@ -15074,7 +15074,7 @@ class App extends Component {
         if(me.edit_poll_page.current){
         me.edit_poll_page.current?.setState(tx)
       }
-      }, (1 * 500));  
+      }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['3031']/* 'buy-storage' */){
       this.open_buy_nitro_storage_bottomsheet()
@@ -15083,7 +15083,7 @@ class App extends Component {
         if(me.buy_nitro_storage_page.current){
         me.buy_nitro_storage_page.current?.setState(tx)
       }
-      }, (1 * 500));  
+      }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['3073']/* 'vote-poll' */){
       this.open_view_vote_poll_bottomsheet()
@@ -15092,7 +15092,7 @@ class App extends Component {
         if(me.view_vote_poll_page.current){
         me.view_vote_poll_page.current?.setState(tx)
       }
-      }, (1 * 500));  
+      }, (1 * 1100));  
     }
     else if(tx.type == this.getLocale()['3076']/* 'auction-bid' */){
       this.open_view_bid_in_auction_bottomsheet()
@@ -15101,7 +15101,7 @@ class App extends Component {
         if(me.view_bid_in_auction_page.current){
           me.view_bid_in_auction_page.current?.setState(tx)
         }
-      }, (1 * 500)); 
+      }, (1 * 1100)); 
     }
     else if(tx.type == this.getLocale()['3092']/* 'purchase-credits' */){
       this.open_view_purchase_credits_bottomsheet()
@@ -15110,7 +15110,7 @@ class App extends Component {
         if(me.view_purchase_credits_page.current != null){
           me.view_purchase_credits_page.current?.setState(tx)
         }
-      }, (1 * 500));
+      }, (1 * 1100));
     }
     else if(tx.type == this.getLocale()['3093']/* 'configure-obligations' */){
       this.open_view_configure_obligations_bottomsheet()
@@ -15119,7 +15119,7 @@ class App extends Component {
         if(me.view_configure_obligations_page.current != null){
           me.view_configure_obligations_page.current?.setState(tx)
         }
-      }, (1 * 500));
+      }, (1 * 1100));
     }
     else if(tx.type == this.getLocale()['3094']/* 'exchange-deposit' */){
         this.open_exchange_deposit_bottomsheet()
@@ -15128,7 +15128,7 @@ class App extends Component {
           if(me.exchange_deposit_page.current){
           me.exchange_deposit_page.current?.setState(tx)
         }
-        }, (1 * 500));
+        }, (1 * 1100));
         
     }
   }
@@ -15163,7 +15163,7 @@ class App extends Component {
       if(me.add_to_bag_page.current != null){
         me.add_to_bag_page.current.setState(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -15288,7 +15288,7 @@ class App extends Component {
       if(me.view_transaction_log_page.current != null){
         me.view_transaction_log_page.current.set_transaction(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -15377,7 +15377,7 @@ class App extends Component {
           me.add_to_bag_page.current.setState({selected_variant: variant})
         }
       }
-    }, (1 * 500));
+    }, (1 *1100));
     
   }
 
@@ -15501,7 +15501,7 @@ class App extends Component {
         me.fulfil_bag_page.current.set_bag(item)
         me.load_my_contracts()
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_respond_to_bag_to_stack(state_obj){
@@ -15607,7 +15607,7 @@ class App extends Component {
         me.view_bag_application_contract_page.current.set_object(item)
         me.load_contract_item(item['e5'], item['picked_contract_id'])
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -15715,7 +15715,7 @@ class App extends Component {
       if(me.direct_purchase_page.current != null){
         me.direct_purchase_page.current.set_object(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
 
   }
 
@@ -15818,7 +15818,7 @@ class App extends Component {
       if(me.clear_purchase_page.current != null){
         me.clear_purchase_page.current.set_object(item, client_type, storefront)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
 
     await this.fetch_signature_requests_from_socket_storage(storefront)
   }
@@ -15963,7 +15963,7 @@ class App extends Component {
         me.send_job_request_page.current.set_object(item)
         me.load_my_contracts()
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -16205,7 +16205,7 @@ class App extends Component {
       if(me.view_job_request_contract_page.current != null){
         me.view_job_request_contract_page.current.set_object(item, proposals)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -16319,7 +16319,7 @@ class App extends Component {
       if(me.withdraw_ether_page.current != null){
         me.withdraw_ether_page.current.set_object(item)
       }
-    }, (1 * 500)); 
+    }, (1 * 1100)); 
     
   }
 
@@ -16462,7 +16462,7 @@ class App extends Component {
       if(me.give_award_page.current != null){
         me.give_award_page.current?.set_post(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
     const object_e5 = item['e5']
     const object_sender = item['event'].returnValues.p5
@@ -16589,7 +16589,7 @@ class App extends Component {
       if(me.add_comment_page.current != null){
         me.add_comment_page.current.set_comment_data(object, focused_message_id, page, contractor_object, starting_text)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
     if(focused_message_id != 0){
       const focused_message_sender = focused_message_id['sender'] == null ? focused_message_id['ipfs']['sender'] : focused_message_id['sender'];
@@ -16785,7 +16785,7 @@ class App extends Component {
       if(me.depthmint_page.current != null){
         me.depthmint_page.current.set_token(token_item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -16888,7 +16888,7 @@ class App extends Component {
       if(me.stage_royalties_page.current != null){
         me.stage_royalties_page.current.set_token(token_item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -16968,7 +16968,7 @@ class App extends Component {
       if(me.view_staged_royalties_page.current != null){
         me.view_staged_royalties_page.current.set_data(staging_data, token_item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -17103,7 +17103,7 @@ class App extends Component {
         if(me.searched_account_page.current != null){
           me.searched_account_page.current?.set_searched_item(object, searched_id)
         }
-      }, (1 * 500));
+      }, (1 * 1100));
       if(object['search_time'] > (Date.now() - (1000*60*15))){
         return;
       }
@@ -17125,7 +17125,7 @@ class App extends Component {
           }
         }
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   when_searched_account_reclicked = async (item, searched_id) => {
@@ -17139,7 +17139,7 @@ class App extends Component {
         if(me.searched_account_page.current != null){
           me.searched_account_page.current?.set_searched_item(object, searched_id)
         }
-      }, (1 * 500));
+      }, (1 * 1100));
       if(object['search_time'] > (Date.now() - (1000*60*15))){
         return;
       }
@@ -17158,7 +17158,7 @@ class App extends Component {
           me.searched_account_page.current?.set_searched_item(object, searched_id)
         }
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   when_account_in_data_clicked = async (account, e5, name) => {
@@ -17173,7 +17173,7 @@ class App extends Component {
         if(me.searched_account_page.current != null){
           me.searched_account_page.current?.set_searched_item(object, account)
         }
-      }, (1 * 500));
+      }, (1 * 1100));
       if(object['search_time'] > (Date.now() - (1000*60*15))){
         return;
       }
@@ -17193,7 +17193,7 @@ class App extends Component {
           me.searched_account_page.current?.set_searched_item(object, account)
         }
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   perform_searched_account_balance_search = async (exchange_id, id, e5) => {
@@ -17281,7 +17281,7 @@ class App extends Component {
       if(me.rpc_settings_page.current != null){
         me.rpc_settings_page.current.set_ether(ether)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
 
   }
@@ -17513,7 +17513,7 @@ class App extends Component {
       if(me.successful_send_page.current != null){
         me.successful_send_page.current.set_data(data)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   async send_message_to_recipient(data){
@@ -17615,7 +17615,7 @@ class App extends Component {
       if(me.view_number_page.current != null){
         me.view_number_page.current.set_data(number)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_number_to_number_board(number){
@@ -17701,7 +17701,7 @@ class App extends Component {
       if(me.scan_code_page.current != null){
         me.scan_code_page.current.set_page(option)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
     
   }
 
@@ -17779,7 +17779,7 @@ class App extends Component {
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
         send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
 
-        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)}
+        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)}
         />
       </div>
     )
@@ -17873,6 +17873,7 @@ class App extends Component {
       'show_my_obligation_fulfilment_item':450,
       'view_region_specific_metrics':650,
       'view_voter_weight_information':650,
+      'update_out_of_stock_switch_view':600,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -17889,7 +17890,7 @@ class App extends Component {
       if(me.dialog_page.current != null){
         me.dialog_page.current.set_data(data, id)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   clear_stack(){
@@ -17975,7 +17976,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.open_dialog_bottomsheet()
-    }, (1 * 500));
+    }, (1 * 1100));
     var playlists_clone = this.state.my_playlists.slice()
     var pos = -1
     for(var i=0; i<playlists_clone.length; i++){
@@ -17998,7 +17999,7 @@ class App extends Component {
         var me = this;
         setTimeout(function() {
           me.set_cookies_after_stack_action(me.state.stack_items)
-        }, (1 * 500));
+        }, (1 * 1100));
         this.prompt_top_notification(this.getLocale()['3006g']/* Track removed from your playlist. */, 1200)
       }
     }
@@ -18008,7 +18009,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.open_dialog_bottomsheet()
-    }, (1 * 500));
+    }, (1 * 1100));
     var playlists_clone = this.state.my_playlists.slice()
     var pos = -1
     for(var i=0; i<playlists_clone.length; i++){
@@ -19341,7 +19342,7 @@ class App extends Component {
       if(me.pay_upcoming_subscriptions_page.current != null){
         me.pay_upcoming_subscriptions_page.current.set_data(data)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_pay_upcoming_subscriptions_to_stack(state_obj){
@@ -19454,7 +19455,7 @@ class App extends Component {
       if(me.pick_file_page.current != null){
         me.pick_file_page.current.set_data(type, function_name, max)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   return_selected_files(picked_files, function_name){
@@ -19729,7 +19730,7 @@ class App extends Component {
       if(me.buy_album_page.current != null){
         me.buy_album_page.current.set_data(object)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_buy_album_transaction_to_stack(state_obj){
@@ -19830,7 +19831,7 @@ class App extends Component {
       if(me.buy_video_page.current != null){
         me.buy_video_page.current.set_data(object)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_buy_video_transaction_to_stack(state_obj){
@@ -19940,7 +19941,7 @@ class App extends Component {
       if(me.buy_nitro_storage_page.current != null){
         me.buy_nitro_storage_page.current.set_data(object)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_buy_nitro_storage_to_stack(state_obj){
@@ -20056,7 +20057,7 @@ class App extends Component {
         me.back_up_keys[object['e5_id']] = final_backup_key
         me.configure_nitro_node_page.current.set_data(object, final_backup_key)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   boot_nitro_node = async (entered_app_key_text, entered_backup_key_text, nitro_object) => {
@@ -21354,7 +21355,7 @@ class App extends Component {
       me.audio_pip_page.current?.set_data(queue, 0, queue, false)
       me.setState({queue: queue, pos: 0, original_song_list: queue, is_shuffling: false})
       me.load_queue(queue, 0)
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   get_mock_queue = async (item) => {
@@ -21786,7 +21787,7 @@ class App extends Component {
       if(me.full_audio_page.current != null){
         me.full_audio_page.current.set_data(queue, pos, play_pause_state, value, is_repeating, is_shuffling, original_song_list, buffer)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   play_pause(){
@@ -21943,7 +21944,7 @@ class App extends Component {
       if(me.add_to_playlist_page.current != null){
         me.add_to_playlist_page.current.set_data(song)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   create_new_playlist_with_song(playlist_with_song){
@@ -22075,7 +22076,7 @@ class App extends Component {
       if(me.full_video_page.current != null){
         me.full_video_page.current.set_data(queue, object, 0)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   play_individual_video(item){
@@ -22325,7 +22326,7 @@ class App extends Component {
       if(me.dialer_page.current != null){
         me.dialer_page.current.set_data(data)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   get_e5_data_for_dialer(){
@@ -22511,7 +22512,7 @@ class App extends Component {
       if(me.view_notification_log_page.current != null){
         me.view_notification_log_page.current.set_data(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   when_event_clicked(event){
@@ -22754,7 +22755,7 @@ class App extends Component {
       if(me.view_contextual_transfer_page.current != null){
         me.view_contextual_transfer_page.current.set_data(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   perform_itransfer_search = async (identifier, account, recipient, e5, silently) => {
@@ -22938,7 +22939,7 @@ class App extends Component {
       if(me.view_vote_poll_page.current != null){
         me.view_vote_poll_page.current.set_data(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_poll_vote_transaction_to_stack(state_obj){
@@ -23046,7 +23047,7 @@ class App extends Component {
       if(me.view_calculate_poll_result_page.current != null){
         me.view_calculate_poll_result_page.current.set_data(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_poll_result_transaction_to_stack(state_obj){
@@ -23224,7 +23225,7 @@ class App extends Component {
       if(me.view_stage_creator_payout_result_page.current != null){
         me.view_stage_creator_payout_result_page.current.set_data(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_staging_result_transaction_to_stack(state_obj){
@@ -23403,7 +23404,7 @@ class App extends Component {
       if(me.view_bid_in_auction_page.current != null){
         me.view_bid_in_auction_page.current.set_data(item)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_bid_in_auction_transaction_to_stack(state_obj){
@@ -23510,7 +23511,7 @@ class App extends Component {
       if(me.fulfil_auction_bid_page.current != null){
         me.fulfil_auction_bid_page.current.set_data(object, winning_bids)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_fulfil_bids_in_auction_to_stack(state_obj){
@@ -23638,7 +23639,7 @@ class App extends Component {
         if(me.view_iframe_link_page.current != null){
           me.view_iframe_link_page.current.set_data(object)
         }
-      }, (1 * 500));
+      }, (1 * 1100));
     }
   }
 
@@ -23827,7 +23828,7 @@ class App extends Component {
       if(me.set_map_location_page.current != null){
         me.set_map_location_page.current.set_data(object)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   return_pins(pins, page){
@@ -23938,7 +23939,7 @@ class App extends Component {
       if(me.view_map_location_pins_page.current != null){
         me.view_map_location_pins_page.current.set_data(object)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
 
@@ -24030,7 +24031,7 @@ class App extends Component {
       if(me.view_call_interface_page.current != null){
         me.view_call_interface_page.current.set_data()
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_call_page_message_to_stack_object(message){
@@ -24128,7 +24129,7 @@ class App extends Component {
       if(me.view_purchase_credits_page.current != null){
         me.view_purchase_credits_page.current.set_data(object)
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_purchase_credits_transaction_to_stack(state_obj){
@@ -24225,7 +24226,7 @@ class App extends Component {
         me.view_configure_obligations_page.current.set_data(object)
 
       }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_configure_obligations_transaction_to_stack(state_obj){
@@ -24327,7 +24328,7 @@ class App extends Component {
       if(me.exchange_deposit_page.current != null){
       me.exchange_deposit_page.current.set_token(token_item)
     }
-    }, (1 * 500));
+    }, (1 * 1100));
   }
 
   add_exchange_deposit_to_stack(state_obj){
@@ -27276,7 +27277,6 @@ class App extends Component {
 
 
 
-  //needs revision
   load_event_data = async (_web3, contract_instance, event_id, e5, filter) => {
     if(this.state.beacon_node_enabled == true){
       return await this.load_events_from_nitro(_web3, contract_instance, event_id, e5, filter)
@@ -27423,30 +27423,6 @@ class App extends Component {
 
 
 
-  // load_event_data_the_old_way = async (_web3, contract_instance, event_id, e5, f) => {
-  //   var web3 = this.get_web3_instance_from_e5(e5)
-  //   var latest = await web3.eth.getBlockNumber()
-  //   var events = []
-  //   var iteration = this.get_iteration(e5)
-  //   var starting_block = this.get_first_block(e5)
-    
-  //   if(latest - starting_block < iteration){
-  //     events = await contract_instance.getPastEvents(event_id, {filter: f, fromBlock: starting_block, toBlock: 'latest' }, (error, events) => {});
-  //   }
-  //   else{
-  //     var pos = starting_block
-  //     while (pos < latest) {
-  //       await this.wait(this.state.web3_delay)
-  //       var to = pos+iteration < latest ? pos+iteration : latest
-  //       var from = pos
-
-  //       events = events.concat(await contract_instance.getPastEvents(event_id, {filter: f, fromBlock: from, toBlock: to }, (error, events) => {}))
-  //       pos = to+1
-  //     }
-  //   }
-
-  //   return events
-  // }
 
   /* here */
   get_all_events_from_e5 = async (_account, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data={}) => {
@@ -46339,6 +46315,17 @@ class App extends Component {
     }
   }
 
+  async get_storefront_availability_status(object){
+    const target = 'storefront_availability|'+object['e5_id']
+    await this.get_objects_from_socket_and_set_in_state([target], [], [])
+
+    if(this.state.contractor_availability_info[object['e5_id']] == null){
+      const clone = structuredClone(this.state.contractor_availability_info)
+      clone[object['e5_id']] = []
+      this.setState({contractor_availability_info: clone})
+    }
+  }
+
 
 
 
@@ -48732,6 +48719,9 @@ class App extends Component {
       else if(roomId == 'jobs' && message.type == 'blocked_account'){
         me.process_new_blocked_account_message_update(message, object_hash)
       }
+      else if(roomId == 'jobs' && message.type == 'storefront_availability'){
+        me.process_new_storefront_availability_update(message, object_hash)
+      }
       else{
         if(this.state.active_rooms.includes(roomId)){
           if(message.type == 'channel-message'){
@@ -49777,6 +49767,24 @@ class App extends Component {
       this.state.socket.emit("send_message", send_message_object);
       await this.wait(1200)
     }
+  }
+
+  async emit_storefront_stock_availability_notification(object, stock_update){
+    this.prompt_top_notification(this.getLocale()['2231i']/* 'Updating Preference... */, 1900)
+    const availability_object = await this.prepare_storefront_stock_availability_message(object, stock_update)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(availability_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const target = 'storefront_availability|'+object['e5_id']
+    const broadcasat_object = {roomId: 'jobs', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(3000)
+
+    await this.process_new_storefront_availability_update(availability_object.message, availability_object.object_hash)
   }
   
 
@@ -51791,6 +51799,45 @@ class App extends Component {
       block: parseInt(block_number),
       object_tag_id: object_tag_id,
       object_type: object_type
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_storefront_stock_availability_message(object, availability_status){
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(object['e5']))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.accounts[object['e5']].address
+    const e5 = object['e5']
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify({availability_status, time: Date.now()})
+    const signature = await this.generate_signature(object_as_string)
+    
+    const message = {
+      type: 'storefront_availability',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id:id,
+      recipient:recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: object_as_string,
+      storefront_object_id: object['e5_id'],
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      signature,
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -53971,7 +54018,7 @@ class App extends Component {
       await this.handle_new_tag_notifications(ipfs, message)
     }
 
-    if(true || !am_I_the_author){
+    if(!am_I_the_author){
       this.set_new_tag_event_in_notifications(ipfs, message, object_hash)
     }
   }
@@ -54065,6 +54112,56 @@ class App extends Component {
     }
     clone['post_tag'] = this.sortByAttributeDescending(request_clone_array, 'time')
     this.setState({notification_object: clone})
+  }
+
+  async process_new_storefront_availability_update(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    if(message.signature == null) return;
+    try{
+      const e = JSON.parse(message.data)
+    }catch(exception){
+      return;
+    }
+    const ipfs = JSON.parse(message.data)
+
+    const signature_confirmation = await this.confirm_signature(message.signature, message.data, message['author'])
+    
+    if(signature_confirmation == false) return;
+    const signature_account = await this.get_account_from_address(message['author'], message.e5)
+
+    const index = this.state.created_stores[message.e5].findIndex(item => item['e5_id'] === message.storefront_object_id);
+
+    if(index != -1 && this.state.created_stores[message.e5][index]['author'] != signature_account) return;
+
+    if(this.storefront_contract_availability_info_time_history == null){
+      this.storefront_contract_availability_info_time_history = {}
+    }
+
+    if(this.storefront_contract_availability_info_time_history[message.storefront_object_id] == null){
+      this.storefront_contract_availability_info_time_history[message.storefront_object_id] = 0
+    }
+
+    if(this.storefront_contract_availability_info_time_history[message.storefront_object_id] < message.time){
+      this.storefront_contract_availability_info_time_history[message.storefront_object_id] = message.time
+
+      const contractor_availability_info_clone = structuredClone(this.state.contractor_availability_info)
+      contractor_availability_info_clone[message.storefront_object_id] = ipfs['availability_status']
+      this.setState({contractor_availability_info: contractor_availability_info_clone})
+    }
   }
 
 
@@ -54513,6 +54610,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'object_tags'){
             await this.process_new_tags_in_object_message_received(object_data, object_hash, object_data['author_address'], true)
+          }
+          else if(object_data['type'] == 'storefront_availability'){
+            await this.process_new_storefront_availability_update(object_data, object_hash)
           }
           await this.wait(300)
         }

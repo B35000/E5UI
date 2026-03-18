@@ -5420,6 +5420,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
+        await this.props.get_storefront_availability_status(object)
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_storefront_traffic_data(id, e5)
         await this.props.get_tag_price_data_for_object(object)

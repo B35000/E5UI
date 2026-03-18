@@ -562,6 +562,8 @@ class StorefrontDetailsSection extends Component {
 
                     {this.render_fulfil_bid_in_auction_button(object)}
 
+                    {this.render_out_of_stock_switch(object)}
+
                     {this.render_edit_object_button(object)}
 
                     {this.render_export_direct_purchases_button(object)}
@@ -1245,6 +1247,9 @@ class StorefrontDetailsSection extends Component {
 
 
 
+
+
+
     render_storefront_location_info(object){
         if(object['ipfs'].pins != null && object['ipfs'].pins.length > 0){
             const pins = object['ipfs'].pins
@@ -1494,8 +1499,8 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_chatroom_enabled_message(object){
-        var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
-        if(setting == 'enabled'){
+        var setting = this.get_selected_item2(object['ipfs'].chatroom_enabled_tags_object, 'e')
+        if(setting == 1){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2617']/* Activity Section Enabled' */, 'details':this.props.app_state.loc['2618']/* 'You can leave a product review message in the activity section' */, 'size':'l'})}
@@ -1517,6 +1522,19 @@ class StorefrontDetailsSection extends Component {
 
         if(sale_type == 2){
             return;
+        }
+
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+        if(out_of_stock_items == null){
+            return;
+        }
+        else if(out_of_stock_items.length == object['ipfs'].variants.length){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2623']/* 'Out of Stock' */, 'details':this.props.app_state.loc['2624']/* 'The item is not available for purchasing.' */, 'size':'l'})}
+                </div>
+            )
         }
 
         if(item_in_stock == 1){
@@ -1546,6 +1564,14 @@ class StorefrontDetailsSection extends Component {
         if(sale_type == 2){
             return;
         }
+
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+        if(out_of_stock_items == null){
+            return;
+        }
+        else if(out_of_stock_items.length == object['ipfs'].variants.length){
+            return;
+        }
         
         if(item_in_stock == 1/* 'in-stock' */ && bags_enabled == 1 && this.is_object_still_keyword_valid(object)){
             return(
@@ -1572,6 +1598,14 @@ class StorefrontDetailsSection extends Component {
         var sale_type = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
 
         if(sale_type == 2){
+            return;
+        }
+
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+        if(out_of_stock_items == null){
+            return;
+        }
+        else if(out_of_stock_items.length == object['ipfs'].variants.length){
             return;
         }
 
@@ -1765,7 +1799,12 @@ class StorefrontDetailsSection extends Component {
         }
 
         var bids = this.props.app_state.storefront_auction_bids[object['e5_id']]
-        if(bids == null) return
+        if(bids == null) return;
+
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+        if(out_of_stock_items == null){
+            return;
+        }
 
         if(object['event'].returnValues.p5 != my_account.toString() && object['ipfs'].auction_expiry_time > Date.now()/1000 && this.is_object_still_keyword_valid(object)){
             return(
@@ -1917,6 +1956,43 @@ class StorefrontDetailsSection extends Component {
         });
 
         return is_valid
+    }
+
+
+
+
+
+
+
+    render_out_of_stock_switch(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 == my_account.toString()){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cp']/* 'Update Variant Availability.' */, 'details':this.props.app_state.loc['2642cq']/* 'You can update the availability status of the variants specified in your storefront item listing.' */, 'size':'l'})}
+                    {this.props.app_state.contractor_availability_info[object['e5_id']] == null && (
+                        <div>
+                            <div style={{height:10}}/>
+                            {this.render_small_skeleton_object()}
+                        </div>
+                    )}
+                    {this.props.app_state.contractor_availability_info[object['e5_id']] != null && (
+                        <div>
+                            <div style={{height:10}}/>
+                            <div onClick={()=>this.open_out_of_stock_switch_ui(object)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['2642cr']/* 'Update Availability' */, 'action':''})}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+    }
+
+    open_out_of_stock_switch_ui(object){
+        this.props.show_dialog_bottomsheet({'object':object}, 'update_out_of_stock_switch_view')
     }
 
 
@@ -2110,25 +2186,27 @@ class StorefrontDetailsSection extends Component {
         var items = [].concat(object['ipfs'].variants)
         return(
             <div style={{}}>
-                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                <div style={{ 'padding': '0px 5px 0px 5px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '2px 5px 2px 5px'}}>
+                        <div style={{'padding': '2px 5px 2px 5px'}}>
                             <div key={index}>
                                 {this.render_variant_item(item, composition_type, object)}
                             </div>
-                        </li> 
+                        </div> 
                     ))}
-                </ul>
+                </div>
             </div>
         )
     }
 
     render_variant_item(variant_in_store, composition_type, object){
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+        const alpha = out_of_stock_items == null || out_of_stock_items.includes(variant_in_store['variant_id']) ? 0.4 : 1.0;
         if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
             const images = variant_in_store['image_data']['data']['images']
             var image = images[0];
             return(
-                <div onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
+                <div style={{opacity: alpha}} onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
                     {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})}
                     <div style={{height:3}}/>
                     {this.render_detail_item('9', {'images':images, 'pos':0})}
@@ -2137,7 +2215,7 @@ class StorefrontDetailsSection extends Component {
         }else{
             var image = this.props.app_state.static_assets['empty_image']
             return(
-                <div onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
+                <div style={{opacity: alpha}} onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
                     {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})}
                 </div>
             )
@@ -2152,6 +2230,12 @@ class StorefrontDetailsSection extends Component {
         var bags_enabled = object['ipfs'].get_purchase_through_bags_tags_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_purchase_through_bags_tags_object, 'e')
 
         if(sale_type == 2){
+            return;
+        }
+
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+        if(out_of_stock_items == null || out_of_stock_items.includes(variant['variant_id'])){
+            this.props.notify(this.props.app_state.loc['2642co']/* 'That variant is not available for your bag.' */, 3000);
             return;
         }
         

@@ -135,8 +135,12 @@ class DirectPurchasePage extends Component {
             return(
                 <div>
                     {this.render_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_content2()}
                     {this.render_purchase_options()}
                     {this.render_price_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -145,8 +149,11 @@ class DirectPurchasePage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content2()}
                         {this.render_purchase_options()}
                         {this.render_price_content()}
                         {this.render_empty_views(3)}
@@ -160,8 +167,11 @@ class DirectPurchasePage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_content()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content2()}
                         {this.render_purchase_options()}
                         {this.render_price_content()}
                         {this.render_empty_views(3)}
@@ -204,6 +214,20 @@ class DirectPurchasePage extends Component {
 
             return(
                 <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1100']/* 'Item Variants' */, 'details':this.props.app_state.loc['1101']/* 'Pick the variant you want to purchase' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_item_variants()}
+                    {this.render_selected_variant()}
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1102']/* 'Amount in ' */+composition_type, 'number':this.state.purchase_unit_count, 'relativepower':composition_type})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1102']/* 'Amount in ' */+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['1058f']/* 'Amount...' */} when_text_input_field_changed={this.when_purchase_unit_count_input_field_changed.bind(this)} text={this.state.purchase_unit_count.toString()} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1097']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['1098']/* 'Set the delivery location, and be sure to be specific to avoid shipping issues' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1099']/* 'Shipping Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
@@ -227,40 +251,28 @@ class DirectPurchasePage extends Component {
                     </div>
                     <div style={{height:10}}/>
                     {this.render_selected_pins()}
-                    {this.render_detail_item('0')}
-
-
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1114f']/* 'Order Indexing.' */, 'details':this.props.app_state.loc['1114g']/* 'If set to blockchain, the reference to your new order will be recorded on a blockchain and indexer while if left to indexer, your new order will be referenced in an indexer only.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
-
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1114c']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1114d']/* 'You can also include custom requirements for the item variant your ordering such as color, material and such.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications.' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
-                    {this.render_detail_item('0')}
+                    
 
-
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1100']/* 'Item Variants' */, 'details':this.props.app_state.loc['1101']/* 'Pick the variant you want to purchase' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {this.render_item_variants()}
-                    {this.render_selected_variant()}
-                    {this.render_detail_item('0')}
-
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1102']/* 'Amount in ' */+composition_type, 'number':this.state.purchase_unit_count, 'relativepower':composition_type})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1102']/* 'Amount in ' */+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
-                    </div>
-
-                    {/* <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/> */}
-                    <div style={{height:10}}/>
-                    <TextInput height={30} placeholder={this.props.app_state.loc['1058f']/* 'Amount...' */} when_text_input_field_changed={this.when_purchase_unit_count_input_field_changed.bind(this)} text={this.state.purchase_unit_count.toString()} theme={this.props.theme}/>
                 </div>
             )
         }
+    }
+
+    render_content2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1114f']/* 'Order Indexing.' */, 'details':this.props.app_state.loc['1114g']/* 'If set to blockchain, the reference to your new order will be recorded on a blockchain and indexer while if left to indexer, your new order will be referenced in an indexer only.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+            </div>
+        )
     }
 
     when_get_chain_or_indexer_job_object_updated(tag_obj){
@@ -336,7 +348,9 @@ class DirectPurchasePage extends Component {
                     {this.render_direct_purchase_shipping_fees()}
                     {this.render_purchase_option_fees()}
                     {this.render_my_balances()}
-                    <div style={{height:20}}/>
+                    {this.props.app_state.size != 's' && (
+                        <div style={{height:20}}/>
+                    )}
                 </div>
             )
         }
@@ -441,6 +455,7 @@ class DirectPurchasePage extends Component {
                             </li>
                         ))}
                     </ul>
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -452,19 +467,18 @@ class DirectPurchasePage extends Component {
 
         return(
             <div style={{}}>
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1114a']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1114b']/* 'This is the final amount for the shipping fee for the items your buying.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                <div style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '5px 0px 5px 0px'}}>
+                        <div style={{'padding': '5px 0px 5px 0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
                                 {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                             </div>
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         )
     }
@@ -542,17 +556,20 @@ class DirectPurchasePage extends Component {
     }
 
     render_item(variant_in_store, composition_type){
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[this.state.storefront_item['e5_id']]
+        const alpha = out_of_stock_items == null || out_of_stock_items.includes(variant_in_store['variant_id']) ? 0.4 : 1.0;
+
         if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
             var image = variant_in_store['image_data']['data']['images'][0]
             return(
-                <div>
+                <div style={{opacity: alpha}}>
                     {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
                 </div>
             )
         }else{
             var image = this.props.app_state.static_assets['empty_image']
             return(
-                <div>
+                <div style={{opacity: alpha}}>
                     {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
                 </div>
             )
@@ -564,6 +581,11 @@ class DirectPurchasePage extends Component {
     }
 
     when_variant_item_clicked(item){
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[this.state.storefront_item['e5_id']]
+        if(out_of_stock_items == null || out_of_stock_items.includes(item['variant_id'])){
+            this.props.notify(this.props.app_state.loc['2624']/* 'The item is not available for purchasing.' */, 3000);
+            return;
+        }
         if(this.selected_variant == item){
             this.setState({selected_variant: null})
         }else{
@@ -586,12 +608,18 @@ class DirectPurchasePage extends Component {
                     <div style={{height:5}}/>
                     {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1107']/* 'Number of Units' */, 'size':'l'})}
                     <div style={{height:5}}/>
-                    {this.render_purchase_accessible_objects(item['purchase_accessible_objects'])}
+                    {item['purchase_accessible_objects'] != null && this.render_purchase_accessible_objects(item['purchase_accessible_objects'])}
                     <div style={{height:5}}/>
                     {this.render_variant_price_data(item)}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
+        else return(
+            <div>
+                <div style={{height:10}}/>
+            </div>
+        )
     }
 
 

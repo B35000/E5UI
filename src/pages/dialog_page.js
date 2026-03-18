@@ -122,7 +122,9 @@ class DialogPage extends Component {
         searched_obligation_account_id: 0,
         targeted_obligation_keyword:'', get_obligation_keyword_filter_tags_object: this.get_obligation_keyword_filter_tags_object(), obligation_search_account:'', filter_id_name:'', filter_exchange_name:'', region_city_search:'',
 
-        weight_tags_search:'', moved_exchanges_search: ''
+        weight_tags_search:'', moved_exchanges_search: '', 
+
+        out_of_stock_items:[]
     };
 
 
@@ -235,6 +237,11 @@ class DialogPage extends Component {
             }
             else if(id == 'start_voice_call'){
                 this.setState({new_voice_call_number_id: make_number_id_str(15)})
+            }
+            else if(id == 'update_out_of_stock_switch_view'){
+                const object = data['object']
+                const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+                this.setState({out_of_stock_items: out_of_stock_items})
             }
         }
     }
@@ -652,6 +659,13 @@ class DialogPage extends Component {
             return(
                 <div>
                     {this.render_view_voter_weight_information_ui()}
+                </div>
+            )
+        }
+        else if(option == 'update_out_of_stock_switch_view'){
+            return(
+                <div>
+                    {this.render_update_out_of_stock_switch_ui()}
                 </div>
             )
         }
@@ -12535,6 +12549,130 @@ return data['data']
         this.setState({moved_exchanges_search: text})
     }
 
+
+
+
+
+
+
+
+
+    render_update_out_of_stock_switch_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_update_out_of_stock_switch_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_update_out_of_stock_switch_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_update_out_of_stock_switch_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_update_out_of_stock_switch_data(){
+        const object = this.state.data['object'];
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cp']/* 'Update Variant Availability.' */, 'details':this.props.app_state.loc['2642cs']/* 'Tap a Variant to render it unavailable.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.update_out_of_stock_values()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2642cr']/* 'Update Availability' */, 'action':''})}
+                </div>
+                <div style={{height:10}}/>
+                {this.render_storefront_item_variants(object)}
+            </div>
+        )
+    }
+
+    render_storefront_item_variants(object){
+        var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
+
+        var items = [].concat(object['ipfs'].variants)
+        return(
+            <div style={{}}>
+                <div style={{ 'padding': '0px 5px 0px 5px'}}>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '2px 5px 2px 5px'}}>
+                            <div key={index}>
+                                {this.render_variant_item(item, composition_type, object)}
+                            </div>
+                        </div> 
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    render_variant_item(variant_in_store, composition_type, object){
+        const variant_id = variant_in_store['variant_id']
+        const alpha = this.state.out_of_stock_items.includes(variant_id) ? 0.4 : 1.0
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            const images = variant_in_store['image_data']['data']['images']
+            var image = images[0];
+            return(
+                <div style={{'opacity':alpha}} onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})}
+                    <div style={{height:3}}/>
+                    {this.render_detail_item('9', {'images':images, 'pos':0})}
+                </div>
+            )
+        }else{
+            var image = this.props.app_state.static_assets['empty_image']
+            return(
+                <div style={{'opacity':alpha}} onClick={() => this.when_variant_item_clicked(variant_in_store, object)}>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(variant_in_store['available_unit_count'])+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})}
+                </div>
+            )
+        }
+    }
+
+    when_variant_item_clicked(variant, object){
+        const variant_id = variant['variant_id']
+        const clone = this.state.out_of_stock_items.slice()
+        const index = clone.indexOf(variant_id)
+        if(index != -1){
+            clone.splice(index, 1)
+        }else{
+            clone.push(variant_id)
+        }
+        this.setState({out_of_stock_items: clone})
+    }
+
+    update_out_of_stock_values(){
+        const object = this.state.data['object'];
+        const out_of_stock_items = this.state.out_of_stock_items
+        this.props.emit_storefront_stock_availability_notification(object, out_of_stock_items)
+    }
 
 
 

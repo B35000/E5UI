@@ -600,11 +600,11 @@ class EditVideoPage extends Component {
 
 
                 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311aw']/* 'Post Type.' */, 'details':this.props.app_state.loc['b311h']/* 'Set the type of post your'e uploading to the audioport section.' */, 'size':'l'})}
+                {/* this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311aw']'Post Type.' , 'details':this.props.app_state.loc['b311h']'Set the type of post your'e uploading to the audioport section.', 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_listing_type_tags_option} tag_size={'l'} when_tags_updated={this.when_get_listing_type_tags_option_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                <div style={{height:10}}/> */}
 
 
 
