@@ -825,16 +825,16 @@ class GiveAwardPage extends Component {
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
-                    for(var i=0; i<t.selected_variant['price_data'].length; i++){
+                    for(var j=0; j<t.selected_variant['price_data'].length; j++){
                         var exchange = t.selected_variant['price_data'][i]['id']
-                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][j]['amount'], t.purchase_unit_count)
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
                     }
-                    for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
-                        var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
-                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                    for(var j=0; j<t.storefront_item['ipfs'].shipping_price_data.length; j++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[j]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[j]['amount'], t.purchase_unit_count)
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
@@ -844,9 +844,9 @@ class GiveAwardPage extends Component {
                     if(token_id == 5){
                         total_amount = bigInt(total_amount).add(t.award_amount)
                     }
-                    for(var i=0; i<t.price_data.length; i++){
-                        var exchange = t.price_data[i]['id']
-                        var amount = t.price_data[i]['amount']
+                    for(var j=0; j<t.price_data.length; j++){
+                        var exchange = t.price_data[j]['id']
+                        var amount = t.price_data[j]['amount']
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }

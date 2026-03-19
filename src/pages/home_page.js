@@ -5117,22 +5117,36 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
-    when_ether_object_clicked(index, id){
+    when_ether_object_clicked(index, id, e5){
         this.setState({selected_ether_item: id})
         this.set_detail_data()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.props.get_wallet_data_for_specific_e5(e5, true)
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
-    when_coin_object_clicked(item){
+    when_coin_object_clicked(item, item_object){
         this.setState({selected_coin_item: item})
         this.set_detail_data()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        const data = this.props.app_state.coin_data[item_object['symbol']]
+        if(this.props.app_state.has_wallet_been_set && data['address'] != null && this.is_address_set(data['address'])){
+            this.props.update_coin_balances(item_object['symbol'], false, true)
+        }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+    }
+
+    is_address_set(address){
+        // return true
+        var default_addresses = this.props.app_state.default_addresses
+        if(default_addresses.includes(address)){
+            return false
+        }
+        return true;
     }
 
     record_viewed_item(e5_id){

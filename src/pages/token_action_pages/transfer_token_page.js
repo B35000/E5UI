@@ -24,6 +24,8 @@ import NumberPicker from '../../components/number_picker';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import { motion, AnimatePresence } from "framer-motion";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 // import Letter from '../../assets/letter.png';
 
@@ -123,7 +125,7 @@ class TransferTokenPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
-                        {this.render_empty_views(3)}
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_amount_picker()}
@@ -138,7 +140,7 @@ class TransferTokenPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
-                        {this.render_empty_views(3)}
+                        {this.render_empty_views(2)}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_amount_picker()}
@@ -197,8 +199,59 @@ class TransferTokenPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
                 {this.load_account_suggestions()}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1037c']/* 'Set multitransfer details from a csv or json file.' */, 'title':this.props.app_state.loc['1037b']/* 'Set From File.' */})}
+                {this.state.is_preparing_file == true && (
+                    <div><div style={{height:10}}/>
+                        {this.render_line_loader_if_loading()}
+                    </div>
+                )}
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.call_input_function('csv')}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['c311q']/* 'Select CSV File' */, 'action':''})}
+                        </div>
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        <div onClick={()=> this.call_input_function('json')}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['c311r']/* 'Select JSON File.' */, 'action':''})}
+                        </div>
+                    </div>
+                </div>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1037d']/* 'If you\'re picking a csv file, make sure each value in the file is separated by a comma \',\' character in [Account]:[Amount] fashion. \n eg ---> 1002:100000, 1003:200000, 1003:300000, 1004:400000,...*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.render_open_options_picker_upload_button()}
+                
+                <div style={{height:10}}/>
+                <div onClick={() => this.props.show_dialog_bottomsheet({'type':'transfer'}, 'view_json_example')}>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1037e']/* 'If you wish to use a JSON file, tap this to view the required JSON format example.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                </div>
                 <div style={{height:20}}/>
+                
             </div>
+        )
+    }
+
+    render_line_loader_if_loading(){
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
         )
     }
 
@@ -227,9 +280,166 @@ class TransferTokenPage extends Component {
         )
     }
 
+    render_open_options_picker_upload_button(){
+        return(
+            <div>
+                <input ref={this.json_input} style={{display: 'none'}} id="upload" type="file" accept =".json" onChange ={this.when_json_file_picked.bind(this)}/>
+                
+                <input ref={this.csv_input} style={{display: 'none'}} id="upload" type="file" accept =".csv" onChange ={this.when_csv_file_picked.bind(this)}/>
+            </div>
+        )
+    }
+
+    call_input_function(type){
+        if(this.is_preparing == true){
+            this.props.notify(this.props.app_state.loc['3074g']/* Please wait for e to finish loading your selected files. */, 1200);
+            return;
+        }
+        if(type == 'json'){
+            this.json_input.current?.click()
+        }
+        else if(type == 'csv'){
+            this.csv_input.current?.click()
+        }
+    }
+
     constructor(props) {
         super(props);
         this.amount_picker = React.createRef();
+        this.json_input = React.createRef();
+        this.csv_input = React.createRef();
+    }
+
+    when_json_file_picked = async (e) => {
+        this.props.notify(this.props.app_state.loc['1037h']/* Preparing the file... */, 1200);
+        this.is_preparing = true;
+        this.setState({is_preparing_file: true})
+        await new Promise(resolve => setTimeout(resolve, 1400))
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){
+                this.is_loading_file = true
+                let reader = new FileReader();
+                reader.onload = async function(ev){
+                    var data = ev.target.result
+                    try{
+                        const transfers_data = JSON.parse(data)
+                        const target_users = Object.keys(transfers_data)
+                        const clone = this.state.stack_items.slice()
+                        var active_debit_balance = this.state.debit_balance
+                        var added_entries = 0
+                        for(var t=0; t<target_users.length; t++){
+                            const recipient = await this.get_typed_alias_id(target_users[t].toString().trim());
+                            const amount = transfers_data[target_users[t]].toString()
+                            
+                            if(!isNaN(recipient) && parseInt(recipient) > 1000 && !isNaN(amount) && !amount.includes('.') && this.check_if_sender_has_balance2(amount, active_debit_balance)){
+                                const tx = {id:makeid(8), type:'transfer', 'amount':amount.toLocaleString('fullwide', {useGrouping:false}), 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
+                                clone.push(tx)
+                                active_debit_balance = bigInt(active_debit_balance).add(amount)
+                                added_entries++;
+                            }
+                        }
+                        this.setState({stack_items: clone, debit_balance: active_debit_balance})
+                        this.props.notify(this.props.app_state.loc['1037f']/* '$ entries out of % added.' */.replace('$', number_with_commas(added_entries)).replace('%', number_with_commas(target_users.length)), 5600)
+                    }catch(ex){
+                        console.log('new_poll', ex)
+                        this.props.notify(this.props.app_state.loc['1037g']/* 'Something went wrong.' */, 4400)
+                    }
+                    this.is_loading_file = false
+                    if(this.current_pos == e.target.files.length -1){
+                        //its the last one
+                        this.is_preparing = false;
+                        this.setState({is_preparing_file: false})
+                    }
+                }.bind(this);
+                var jsonFile = e.target.files[i];
+                this.current_file = jsonFile['name']
+                this.current_pos = i;
+                const includes = this.state.json_files.find(e => e['name'] === this.current_file)
+                if(includes == null){
+                    reader.readAsText(jsonFile);
+                }else{
+                    this.is_loading_file = false
+                }
+
+                while (this.is_loading_file == true) {
+                    if (this.is_loading_file == false) break
+                    console.log('poll_data','Waiting for file to be loaded')
+                    await new Promise(resolve => setTimeout(resolve, 1000))
+                }
+            }
+        }
+    }
+
+    when_csv_file_picked = async(e) => {
+        this.props.notify(this.props.app_state.loc['1037h']/* Preparing the file... */, 1200);
+        this.is_preparing = true;
+        this.setState({is_preparing_file: true})
+        await new Promise(resolve => setTimeout(resolve, 1400))
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                this.is_loading_file = true
+                let reader = new FileReader();
+                reader.onload = async function(ev){
+                    var data = ev.target.result
+                    var entry_data = data.toString()
+                    try{
+                        const entries = entry_data.replace(' ','').split(',');
+                        const clone = this.state.stack_items.slice()
+                        var active_debit_balance = this.state.debit_balance
+                        var added_entries = 0
+                        for(var t=0; t<entries.length; t++){
+                            const user_object = entries[t].split(':')
+                            const recipient = await this.get_typed_alias_id(user_object[0].toString().trim());
+                            const amount = user_object[1].toString()
+
+                            if(!isNaN(recipient) && parseInt(recipient) > 1000 && !isNaN(amount) && !amount.includes('.') && this.check_if_sender_has_balance2(amount, active_debit_balance)){
+                                const tx = {id:makeid(8), type:'transfer', 'amount':amount.toLocaleString('fullwide', {useGrouping:false}), 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
+                                clone.push(tx)
+                                active_debit_balance = bigInt(active_debit_balance).add(amount)
+                                added_entries++;
+                            }
+                        }
+                        this.setState({stack_items: clone, debit_balance: active_debit_balance})
+                        this.props.notify(this.props.app_state.loc['1037f']/* '$ entries out of % added.' */.replace('$', number_with_commas(added_entries)).replace('%', number_with_commas(entries.length)), 5600)
+                    }
+                    catch(e){
+                        console.error(e)
+                        this.props.notify(this.props.app_state.loc['1037g']/* 'Something went wrong.' */, 4400)
+                    }
+
+                    this.is_loading_file = false
+                    if(this.current_pos == e.target.files.length -1){
+                        //its the last one
+                        this.is_preparing = false;
+                        this.setState({is_preparing_file: false})
+                    }
+                }.bind(this);
+                var csvFile = e.target.files[i];
+                this.current_pos = i;
+                this.current_file = csvFile['name']
+                const includes = this.state.csv_files.find(e => e['name'] === this.current_file)
+                if(includes == null){
+                    reader.readAsText(csvFile);
+                }else{
+                    this.is_loading_file = false
+                }
+
+                while (this.is_loading_file == true) {
+                    if (this.is_loading_file == false) break
+                    console.log('poll_data','Waiting for file to be loaded')
+                    await new Promise(resolve => setTimeout(resolve, 1000))
+                }
+            }
+        }
+    }
+
+    check_if_sender_has_balance2(picked_amount, debit_balance){
+        var limit = this.get_number_limit2(debit_balance)
+
+        if(bigInt(picked_amount).greater(limit)){
+            return false
+        }
+        return true
     }
 
     get_power_limit_for_exchange(exchange){
@@ -255,6 +465,16 @@ class TransferTokenPage extends Component {
             // var balance =  this.state.token_item['balance']
             var balance = this.props.calculate_actual_balance(this.state.token_item['e5'], this.state.token_item['id'])
             var balance_after_transfers = bigInt(balance).minus(this.state.debit_balance)
+            return balance_after_transfers;
+        }
+        else return bigInt('1e72')
+    }
+
+    get_number_limit2(debit_balance){
+        if(this.state.token_item['balance'] != null){
+            // var balance =  this.state.token_item['balance']
+            var balance = this.props.calculate_actual_balance(this.state.token_item['e5'], this.state.token_item['id'])
+            var balance_after_transfers = bigInt(balance).minus(debit_balance)
             return balance_after_transfers;
         }
         else return bigInt('1e72')
@@ -308,10 +528,17 @@ class TransferTokenPage extends Component {
                         }
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */ || this.props.app_state.loc['1511']/* 'post-messages' */ || this.props.app_state.loc['1512']/* 'job-response' */ || this.props.app_state.loc['1514']/* 'job-messages' */ || this.props.app_state.loc['1515']/* 'proposal-messages' */ || this.props.app_state.loc['1501']/* 'bag-messages' */ || this.props.app_state.loc['1505']/* 'job-request-messages' */){
-                    for(var i=0; i<t.messages_to_deliver.length; i++){
-                        if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
-                            total_amount = bigInt(total_amount).add(t.messages_to_deliver[i]['award_amount'])
+                else if(
+                    txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */ || 
+                    txs[i].type == this.props.app_state.loc['1514']/* 'job-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
+                    for(var j=0; j<t.messages_to_deliver.length; j++){
+                        if(t.messages_to_deliver[j]['award_amount'] != 0 && t.messages_to_deliver[j]['award_receiver'] != null){
+                            total_amount = bigInt(total_amount).add(t.messages_to_deliver[j]['award_amount'])
                         }
                     }
                 }
@@ -440,7 +667,7 @@ class TransferTokenPage extends Component {
         return id
     }
 
-    check_if_sender_has_balance(){
+    check_if_sender_has_balance(picked_amount){
         var picked_amount = this.state.amount
         var limit = this.get_number_limit()
 

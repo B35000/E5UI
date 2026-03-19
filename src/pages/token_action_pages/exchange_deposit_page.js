@@ -70,7 +70,7 @@ class ExchangeDepositPage extends Component {
     }
 
     set_token(object){
-        this.setState({token_item: object})
+        this.setState({token_item: object, e5: object['e5']})
     }
 
     render(){
@@ -102,7 +102,7 @@ class ExchangeDepositPage extends Component {
 
     render_everything(){
         var size = this.props.app_state.size
-
+        if(this.state.token_item == null) return;
         if(size == 's'){
             return(
                 <div>
@@ -204,6 +204,29 @@ class ExchangeDepositPage extends Component {
 
 
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
 
     load_transfer_actions(){
         var items = [].concat(this.state.exchange_transfer_values)
@@ -212,17 +235,7 @@ class ExchangeDepositPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(4)}
                 </div>
             )
         }else{
@@ -413,7 +426,7 @@ class ExchangeDepositPage extends Component {
 
     check_if_sender_has_enough_balance_for_awards(){
         var has_enough = true
-        var price_data = this.state.price_data
+        var price_data = this.state.exchange_transfer_values
         for(var i=0; i<price_data.length; i++){
             var bounty_item_exchange = price_data[i]['token']
             var bounty_item_amount = price_data[i]['amount']
@@ -466,9 +479,9 @@ class ExchangeDepositPage extends Component {
                     if(token_id == 5){
                         total_amount = bigInt(total_amount).add(t.award_amount)
                     }
-                    for(var i=0; i<t.price_data.length; i++){
-                        var exchange = t.price_data[i]['id']
-                        var amount = t.price_data[i]['amount']
+                    for(var j=0; j<t.price_data.length; j++){
+                        var exchange = t.price_data[j]['id']
+                        var amount = t.price_data[j]['amount']
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }

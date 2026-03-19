@@ -1357,7 +1357,7 @@ class App extends Component {
 
     obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
 
-    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}
+    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{},
   };
 
   get_thread_pool_size(){
@@ -10488,7 +10488,6 @@ class App extends Component {
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
   }
-
   
   set_emit_tagged_addresses_for_current_run_in_state(tagged_addresses_data){
     const clone = structuredClone(this.state.all_tagged_addresses_data)
@@ -12326,7 +12325,7 @@ class App extends Component {
     var os = getOS()
     
     return this.renderBottomSheet(
-      <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}     
+      <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}  
       />,
       this.state.transfer_token_bottomsheet,
       this.open_transfer_token_bottomsheet,
@@ -12726,7 +12725,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
-      update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)}
+      update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} fetch_id_type={this.fetch_id_type.bind(this)}
       />,
       this.state.new_proposal_bottomsheet,
       this.open_new_proposal_bottomsheet,
@@ -12815,6 +12814,17 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  fetch_id_type = async (id, e5) => {
+    var web3_url = this.get_web3_url_from_e5(e5)
+    var e5_address = this.state.e5s[e5].e5_address;
+    const web3 = new Web3(web3_url);
+    var contract_addresses = this.state.addresses[e5]
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    return await E52contractInstance.methods.f135(id).call((error, result) => {});
   }
 
 
@@ -24791,7 +24801,7 @@ class App extends Component {
       }
       this.setState({stack_items: new_stack, stack_address: null, stacked_ids: null})
       this.set_cookies_after_stack_action(new_stack)
-      this.props.set_local_storage_data_if_enabled("transfer_data", "");
+      this.set_local_storage_data_if_enabled("transfer_data", "");
     }
 
     await this.wait(400);
@@ -25034,7 +25044,7 @@ class App extends Component {
     return new_arr.trim()
   }
 
-  update_coin_balances = async (coin, should_update_all) => {
+  update_coin_balances = async (coin, should_update_all, quietly=false) => {
     if(this.state.coin_data['BTC'] == null) return;
     var coin_data = this.state.coin_data
     if(!should_update_all){
@@ -25045,7 +25055,11 @@ class App extends Component {
         }
       }      
       this.update_time[coin] = Date.now()
-      this.prompt_top_notification(this.getLocale()['2927n']/* Refreshing Wallet... */, 1200)
+      if(quietly == false) this.prompt_top_notification(this.getLocale()['2927n']/* Refreshing Wallet... */, 1200);
+
+      const update_clone = structuredClone(this.state.updating_individual_coin)
+      update_clone[coin] = true;
+      this.setState({updating_individual_coin: update_clone})
     }
     if(coin == 'FIL' || should_update_all) coin_data = await this.update_filecoin_wallet_balance(coin_data);
     if(coin == 'BTC' || should_update_all) coin_data = await this.update_bitcoin_balance(coin_data);
@@ -25072,6 +25086,13 @@ class App extends Component {
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
+
+    await this.wait(700)
+    if(should_update_all == false){
+      const update_clone2 = structuredClone(this.state.updating_individual_coin)
+      delete update_clone2[coin];
+      this.setState({updating_individual_coin: update_clone2})
+    }
   }
 
   is_address_set(address){
@@ -26051,7 +26072,7 @@ class App extends Component {
 
     const acctInfo = await algodClient.accountInformation(address).do();
     const balance = (acctInfo.amount.toString())
-    clone['AlGO']['balance'] = balance
+    clone['ALGO']['balance'] = balance
     // this.setState({coin_dcloneata: clone})
     return clone
   }
@@ -27831,11 +27852,20 @@ class App extends Component {
 
 
 
-  get_wallet_data_for_specific_e5(e5){
-    this.prompt_top_notification(this.getLocale()['2730']/* 'reloading your wallet...' */, 2000)
+  async get_wallet_data_for_specific_e5(e5, silently=false){
+    if(silently == false) this.prompt_top_notification(this.getLocale()['2730']/* 'reloading your wallet...' */, 2000);
     var web3_url = this.get_web3_url_from_e5(e5)
     var account_for_e5 = this.state.accounts[e5]
-    this.get_wallet_data(account_for_e5, false, web3_url, null, e5)
+
+    const update_clone = structuredClone(this.state.updating_individual_coin)
+    update_clone[e5] = true;
+    this.setState({updating_individual_coin: update_clone})
+
+    await this.get_wallet_data(account_for_e5, false, web3_url, null, e5)
+
+    const update_clone2 = structuredClone(this.state.updating_individual_coin)
+    delete update_clone2[e5];
+    this.setState({updating_individual_coin: update_clone2})
   }
 
   get_wallet_data = async (_account, is_syncing, web3_url, e5_address, e5) => {
@@ -28416,8 +28446,8 @@ class App extends Component {
 
 
     /* ---------------------------------------- BALANCE DATA -------------------------------------- */
-     this.load_e5_balance_data(web3, contractInstance, account, e5, contract_addresses, pre_launch_data);
-     this.load_pending_withdraw_event_data(web3, contractInstance, account, e5, contract_addresses, [all_basic_events[19], all_basic_events[20]])
+    await this.load_e5_balance_data(web3, contractInstance, account, e5, contract_addresses, pre_launch_data);
+    this.load_pending_withdraw_event_data(web3, contractInstance, account, e5, contract_addresses, [all_basic_events[19], all_basic_events[20]])
     if(is_syncing){
       this.inc_synch_progress()
     }
@@ -28688,7 +28718,7 @@ class App extends Component {
 
     if(account != null && account > 1000){
       if(e5 == 'E25'){
-        this.load_and_notify_flash()
+        await this.load_and_notify_flash()
       }
     }
 

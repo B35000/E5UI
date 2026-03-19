@@ -19,6 +19,8 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import { motion, AnimatePresence } from "framer-motion";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 import { from } from "@iotexproject/iotex-address-ts";
@@ -171,6 +173,37 @@ class EthersDetailsSection extends Component {
         return sum
     }
 
+
+
+
+
+
+
+
+
+    render_line_loader_if_loading(){
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
+
     render_ethers_main_details_section(item){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-55
@@ -195,6 +228,7 @@ class EthersDetailsSection extends Component {
                     {this.render_wallet_status(item)}
                     <div style={{height:10}}/>
                     <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
+                        {/* {this.props.app_state.updating_individual_coin[item['e5']] == true && this.render_line_loader_if_loading()} */}
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
                     </div>
                     {this.render_detail_item('0')}

@@ -4698,16 +4698,16 @@ return data['data']
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
-                    for(var i=0; i<t.selected_variant['price_data'].length; i++){
-                        var exchange = t.selected_variant['price_data'][i]['id']
-                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                    for(var j=0; j<t.selected_variant['price_data'].length; j++){
+                        var exchange = t.selected_variant['price_data'][j]['id']
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][j]['amount'], t.purchase_unit_count)
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
                     }
-                    for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
-                        var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
-                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                    for(var j=0; j<t.storefront_item['ipfs'].shipping_price_data.length; j++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[j]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[j]['amount'], t.purchase_unit_count)
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
@@ -4717,9 +4717,9 @@ return data['data']
                     if(token_id == 5){
                         total_amount = bigInt(total_amount).add(t.award_amount)
                     }
-                    for(var i=0; i<t.price_data.length; i++){
-                        var exchange = t.price_data[i]['id']
-                        var amount = t.price_data[i]['amount']
+                    for(var j=0; j<t.price_data.length; j++){
+                        var exchange = t.price_data[j]['id']
+                        var amount = t.price_data[j]['amount']
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
@@ -5205,12 +5205,8 @@ return data['data']
     }
 
     render_poll_json_example_item(){
-        var data = {
-            'E25':[1002, 1003, 1004, 1005], 
-            'E35':[1032, 7003, 29304, 39205], 
-            'E45':[1032, 10009, 19829, 182928]
-        }
-        var view_theme = this.props.app_state.theme['json_view_theme']
+        const data = this.get_json_example_data()
+        const view_theme = this.props.app_state.theme['json_view_theme']
         return(
             <div>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['3055co']/* The JSON object in the file should look something like this. Make sure the format matches exactly, otherwise it wont work. */, 'textsize':'13px', 'font':this.props.app_state.font})}
@@ -5219,6 +5215,25 @@ return data['data']
                 />
             </div>
         )
+    }
+
+    get_json_example_data(){
+        const type = this.state.data['type']
+        if(type == 'poll'){
+            return {
+                'E25':[1002, 1003, 1004, 1005], 
+                'E35':[1032, 7003, 29304, 39205], 
+                'E45':[1032, 10009, 19829, 182928]
+            }
+        }
+        else if(type == 'transfer'){
+            return {
+                1002:'10000',
+                1003:'20000',
+                1004:'30000',
+                1005:'40000000',
+            }
+        }
     }
 
 

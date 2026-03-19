@@ -6925,7 +6925,7 @@ return data['data']
         //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
         // });
         
-        setTimeout(() => this.props.when_coin_object_clicked(item['id']), animate_time);
+        setTimeout(() => this.props.when_coin_object_clicked(item['id'], item), animate_time);
     }
 
 
@@ -7145,7 +7145,7 @@ return data['data']
         //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
         // });
         
-        setTimeout(() => this.props.when_ether_object_clicked(index, item['id']), animate_time);
+        setTimeout(() => this.props.when_ether_object_clicked(index, item['id'], item['e5']), animate_time);
     }
 
 

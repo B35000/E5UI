@@ -399,7 +399,11 @@ class SpendDetailSection extends Component {
                         itemContent={(index) => {
                             return (
                                 <div>
-                                    {index == 0 && this.render_detail_item('7', item['banner-icon'])}
+                                    {index == 0 && (
+                                        <div onClick={() => this.when_banner_clicked(selected_object)}>
+                                            {this.render_detail_item('7', item['banner-icon'])}
+                                        </div>
+                                    )}
                                     {index == 0 && selected_object['hidden'] == true && (
                                         <div>
                                             <div style={{ height: 10 }} />
@@ -913,6 +917,31 @@ class SpendDetailSection extends Component {
 
     when_pin_exchange_clicked(object){
         this.props.pin_token(object)
+    }
+
+    when_banner_clicked(selected_object){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 400){
+            //double tap
+            clearTimeout(this.all_timeout);
+            var user_country = this.props.app_state.device_country
+            if(selected_object['id'] == 5 && this.props.app_state.e5s[selected_object['e5']].spend_access != null && !this.props.app_state.e5s[selected_object['e5']].spend_access.includes(user_country)){
+            }
+            else if(selected_object['hidden'] == true || !this.is_token_in_my_channeling(selected_object) || selected_object['interactible_hidden'] == true){
+            }
+            else{
+                this.open_mint_burn_spend_token_ui(selected_object)
+            }
+        }else{
+            this.all_timeout = setTimeout(function() {
+                //single tap
+                clearTimeout(this.all_timeout);
+                if(bigInt(selected_object['balance']).notEquals(bigInt('0'))){
+                    me.open_transfer_ui(selected_object)
+                }
+            }, 400);
+        }
+        this.last_all_click_time = Date.now();
     }
 
     render_transfer_button(selected_object){

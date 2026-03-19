@@ -500,6 +500,120 @@ class ViewJobRequestPage extends Component {
         return has_enough
     }
 
+    get_debit_balance_in_stack(token_id, e5){
+        var txs = this.props.app_state.stack_items
+        var total_amount = bigInt(0)
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(txs[i].e5 == e5){
+                if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                    var amount = bigInt(txs[i].amount)
+                    var exchange = t.token_item['id']
+                    var action = this.get_action(t)
+                    if(token_id == exchange && action == 1){
+                        total_amount = bigInt(total_amount).add(amount)
+                    }
+                }
+                else 
+                if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                    if(txs[i].token_item['id'] == token_id){
+                        total_amount = bigInt(total_amount).add(txs[i].debit_balance)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    for(var j=0; j<t.selected_variant['price_data'].length; j++){
+                        var exchange = t.selected_variant['price_data'][i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][j]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                    for(var j=0; j<t.storefront_item['ipfs'].shipping_price_data.length; j++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[j]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[j]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
+                    if(token_id == 5){
+                        total_amount = bigInt(total_amount).add(t.award_amount)
+                    }
+                    for(var j=0; j<t.price_data.length; j++){
+                        var exchange = t.price_data[j]['id']
+                        var amount = t.price_data[j]['amount']
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                // else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                //     var buy_tokens = t.token_item['data'][3]
+                //     var required_amounts = this.calculate_token_prices(t, t.token_item['data'][4])
+                //     for(var i=0; i<buy_tokens.length; i++){
+                //         var buy_token_id = buy_tokens[i]
+                //         if(buy_token_id == token_id){
+                //             var required_amount = required_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
+                //     var entry_tokens = t.contract_item['data'][2]
+                //     var entry_amounts = t.contract_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         var entry_token_id = entry_tokens[i]
+                //         if(entry_token_id == token_id){
+                //             var required_amount = entry_amounts[i]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['312']/* 'proposal' */){
+                //     for(var i = 0; i<t.bounty_values.length; i++){
+                //         if(t.bounty_values[i]['exchange'] == token_id){
+                //             var required_amount = t.bounty_values[i]['amount']
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */){
+                //     var entry_tokens = this.state.subscription_item['data'][2]
+                //     var entry_fees = this.state.subscription_item['data'][3]
+                //     for(var i=0; i<entry_tokens.length; i++){
+                //         if(token_id == entry_tokens[i]){
+                //             var required_amount = this.calculate_final_amount(entry_fees[i], t)
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+                // else if(txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
+                //     var exchanges_used = t.data.exchanges_used
+                //     var exchange_amounts = t.data.exchange_amounts
+                //     for(var i=0; i<exchanges_used.length; i++){
+                //         if(token_id == exchanges_used[i]){
+                //             var required_amount = exchange_amounts[token_id]
+                //             total_amount = bigInt(total_amount).add(required_amount)
+                //         }
+                //     }
+                // }
+            }
+        }
+        return total_amount
+    }
+
+    get_action(t){
+        var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
+        var stack_action = 1
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
+        return stack_action
+    }
+    
+    get_amounts_to_be_paid(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
+    }
+
     when_get_chain_or_indexer_job_object_updated(tag_obj){
         this.setState({get_chain_or_indexer_job_object: tag_obj})
     }

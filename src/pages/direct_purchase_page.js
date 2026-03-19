@@ -1250,20 +1250,27 @@ class DirectPurchasePage extends Component {
                     if(token_id == 5){
                         total_amount = bigInt(total_amount).add(t.award_amount)
                     }
-                    for(var i=0; i<t.price_data.length; i++){
-                        var exchange = t.price_data[i]['id']
-                        var amount = t.price_data[i]['amount']
+                    for(var j=0; j<t.price_data.length; j++){
+                        var exchange = t.price_data[j]['id']
+                        var amount = t.price_data[j]['amount']
                         if(exchange == token_id){
                             total_amount = bigInt(total_amount).add(amount)
                         }
                     }
                 }
-                else if(txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */ || this.props.app_state.loc['1511']/* 'post-messages' */ || this.props.app_state.loc['1512']/* 'job-response' */ || this.props.app_state.loc['1514']/* 'job-messages' */ || this.props.app_state.loc['1515']/* 'proposal-messages' */ || this.props.app_state.loc['1501']/* 'bag-messages' */ || this.props.app_state.loc['1505']/* 'job-request-messages' */){
-                    for(var i=0; i<t.messages_to_deliver.length; i++){
-                        if(t.messages_to_deliver[i]['award_amount'] != 0 && t.messages_to_deliver[i]['award_receiver'] != null){
-                            total_amount = bigInt(total_amount).add(t.messages_to_deliver[i]['award_amount'])
+                else if(
+                    txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */ || 
+                    txs[i].type == this.props.app_state.loc['1514']/* 'job-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */ || 
+                    txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
+                    for(var j=0; j<t.messages_to_deliver.length; j++){
+                        if(t.messages_to_deliver[j]['award_amount'] != 0 && t.messages_to_deliver[j]['award_receiver'] != null){
+                            total_amount = bigInt(total_amount).add(t.messages_to_deliver[j]['award_amount'])
                         }
-                    } 
+                    }
                 }
                 // else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
                 //     var buy_tokens = t.token_item['data'][3]

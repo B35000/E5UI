@@ -966,7 +966,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695b']/* Subscription Income Stream' */, 'details':this.props.app_state.loc['2695c']/* `Chart containing the amount of value that has been transfered from maturing subscription payments made in the last week.` */, 'size':'l'})}
                     
-                    {this.render_detail_item('6', {'dataPoints':datapoints, 'start_time':Date.now() - (1000*60*60*24*7),  'interval':120, 'hide_label':false, 'scale':scale})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints, 'start_time':Date.now() - (1000*60*60*24*7), 'hide_label':false, 'scale':scale})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2695a']/* 'Y-Axis: Average Value Transfer' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -1097,7 +1097,10 @@ class SubscriptionDetailsSection extends Component {
             const focused_data_point = data[pos]
             yVal = 0
             if(focused_data_point != null && focused_data_point['count'] != 0 && largest_number != 0){
-                yVal = parseInt(bigInt(focused_data_point['count']).multiply(100).divide(largest_number))
+                // yVal = parseInt(bigInt(focused_data_point['count']).multiply(100).divide(largest_number))
+                const price_data =  focused_data_point['price_data']['prices']
+                var selected_price_item = price_data[0]
+                yVal = bigInt(selected_price_item['amount']).multiply(focused_data_point['count'])
             }
             
             // yVal = data[factor * xVal]
@@ -1117,15 +1120,15 @@ class SubscriptionDetailsSection extends Component {
                     const final_price_amount = bigInt(selected_price_item['amount']).multiply(focused_data_point['count'])
                     const token_name = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_price_item['id']]
 
-                    dps.push({x: xVal,y: (yVal+10), indexLabel: ""+this.format_account_balance_figure(final_price_amount)+` ${token_name}`});//
+                    dps.push({x: xVal,y: (yVal), indexLabel: ""+this.format_account_balance_figure(final_price_amount)+` ${token_name}`});//
                 }else{
-                    dps.push({x: xVal, y: (yVal+10)});//
+                    dps.push({x: xVal, y: (yVal)});//
                 }
                 xVal++;
             }
         }
 
-        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
+        const scale = bigInt(largest_number).divide(1) == 0 ? 1 : bigInt(largest_number).divide(1)
         return {dps, total_payment_data, scale}
     }
 

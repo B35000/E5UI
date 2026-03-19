@@ -6728,7 +6728,7 @@ class StackPage extends Component {
                 }
                 else if(tx.type == this.props.app_state.loc['312']/* 'proposal' */){
                     
-                    const bounty_values = t.bounty_values;
+                    const bounty_values = tx.bounty_values;
                     const final_object_value_transfer_data = []
                     bounty_values.forEach(price_item => {
                         final_object_value_transfer_data.push({'exchange':price_item['exchange'], 'amount':price_item['amount']})
@@ -7013,7 +7013,7 @@ class StackPage extends Component {
                     
                     const isEthereumAddress = (input) => /^0x[a-fA-F0-9]{40}$/.test(input);
                     const receivers = []
-                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                    for(var m=0; m<tx.messages_to_deliver.length; m++){
                         const award_receiver = tx.messages_to_deliver[m]['award_receiver']
                         if(isEthereumAddress(award_receiver)){
                             continue;
@@ -7023,7 +7023,7 @@ class StackPage extends Component {
                         }
                     }
                     await this.props.load_targets_obligation_data(receivers, this.props.app_state.selected_e5)
-                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                    for(var m=0; m<tx.messages_to_deliver.length; m++){
                         const final_object_value_transfer_data = [{'exchange':'5', 'amount':tx.messages_to_deliver[m]['award_amount']}];
                         const award_receiver = tx.messages_to_deliver[m]['award_receiver']
                         
@@ -7408,7 +7408,7 @@ class StackPage extends Component {
                     amount_data.forEach(price_item => {
                         final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                     });
-                    const object_obligation_fulfiller = t.recipient;
+                    const object_obligation_fulfiller = tx.recipient;
                     await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                     const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -7447,7 +7447,7 @@ class StackPage extends Component {
                     amount_data.forEach(price_item => {
                         final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                     });
-                    const object_obligation_fulfiller = t.recipient;
+                    const object_obligation_fulfiller = tx.recipient;
                     await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
                     const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}

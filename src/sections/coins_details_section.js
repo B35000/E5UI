@@ -19,6 +19,8 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import { motion, AnimatePresence } from "framer-motion";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 var bigInt = require("big-integer");
 
@@ -151,6 +153,36 @@ class CoinsDetailsSection extends Component {
     }
 
 
+
+
+
+
+
+
+
+    render_line_loader_if_loading(){
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
+
     render_coins_main_details_section(item){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-55
@@ -237,7 +269,7 @@ class CoinsDetailsSection extends Component {
                     {this.render_address(item)}
 
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} 
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}
                     onClick={() => this.props.view_number({'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'number':balance_base_unit, 'relativepower':item['base_unit']})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['symbol'], 'subtitle':this.format_power_figure(balance_decimal), 'barwidth':this.calculate_bar_width(balance_decimal), 'number':(balance_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
 
@@ -250,6 +282,12 @@ class CoinsDetailsSection extends Component {
 
                     <div style={{height: 10}}/>
                     <div onClick={()=>this.update_coin_balance(item)}>
+                        {this.props.app_state.updating_individual_coin[item['symbol']] == true && (
+                            <div>
+                                {this.render_line_loader_if_loading()}
+                                <div style={{height: 10}}/>
+                            </div>
+                        )}
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2927f']/* 'Refresh Wallet.' */, 'action': ''})}
                     </div>
 

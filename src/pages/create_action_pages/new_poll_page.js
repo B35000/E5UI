@@ -37,6 +37,9 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import { motion, AnimatePresence } from "framer-motion";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+
 
 var bigInt = require("big-integer");
 
@@ -181,8 +184,8 @@ class NewPollPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
-                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-(25 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
+                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(50+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
                         <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div style={{'padding': '0px 10px 0px 0px', width:40}}>
@@ -201,7 +204,7 @@ class NewPollPage extends Component {
                 </div> */}
                 
                 
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     <div style={{'width':'98%'}}>
                         {this.render_everything()}
                     </div>   
@@ -1866,11 +1869,39 @@ class NewPollPage extends Component {
         )
     }
 
+    render_line_loader_if_loading(){
+        const styles = {
+             skeletonBox: {
+                display: 'block',
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                lineHeight: '0',
+                margin: 0,
+            },
+        };
+        return(
+            <AnimatePresence initial={true}>
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                    <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                        <Skeleton style={styles.skeletonBox}/>
+                    </SkeletonTheme>
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
+
     render_pick_participants_parts2(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['c311o']/* Add from File. */, 'details':this.props.app_state.loc['c311p']/* You can add multiple account ids from a csv or json file if youre dealing with a large number of participants. */, 'size':'l'})}
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['c311y']/* 'You will be required to reproduce these files in their current condition while calculating and posting results. Do not change them after your post this poll.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.state.is_preparing_file == true && (
+                    <div><div style={{height:10}}/>
+                        {this.render_line_loader_if_loading()}
+                    </div>
+                )}
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['c311s']/* 'Select a CSV file to use. You can select multiple files at once. */, 'textsize':'13px', 'font':this.props.app_state.font})}
@@ -1886,7 +1917,7 @@ class NewPollPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['c311u']/* 'Select a JSON file to use. You can select multiple files at once. Kindly observe the required format as shown below. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
-                <div onClick={() => this.props.show_dialog_bottomsheet({}, 'view_json_example')}>
+                <div onClick={() => this.props.show_dialog_bottomsheet({'type':'poll'}, 'view_json_example')}>
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['c311ce']/* 'Tap this to view an example.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 </div>
                 <div style={{height:10}}/>
@@ -2084,6 +2115,7 @@ class NewPollPage extends Component {
     when_json_file_picked = async (e) => {
         this.props.notify(this.props.app_state.loc['c311v']/* Preparing files... */, 1200);
         this.is_preparing = true;
+        this.setState({is_preparing_file: true})
         await new Promise(resolve => setTimeout(resolve, 1400))
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){
@@ -2104,6 +2136,7 @@ class NewPollPage extends Component {
                     if(this.current_pos == e.target.files.length -1){
                         //its the last one
                         this.is_preparing = false;
+                        this.setState({is_preparing_file: false})
                     }
                 }.bind(this);
                 var jsonFile = e.target.files[i];
@@ -2128,6 +2161,7 @@ class NewPollPage extends Component {
     when_csv_file_picked = async(e) => {
         this.props.notify(this.props.app_state.loc['c311v']/* Preparing files... */, 1200);
         this.is_preparing = true;
+        this.setState({is_preparing_file: true})
         await new Promise(resolve => setTimeout(resolve, 1400))
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){ 
@@ -2145,6 +2179,7 @@ class NewPollPage extends Component {
                     if(this.current_pos == e.target.files.length -1){
                         //its the last one
                         this.is_preparing = false;
+                        this.setState({is_preparing_file: false})
                     }
                 }.bind(this);
                 var csvFile = e.target.files[i];

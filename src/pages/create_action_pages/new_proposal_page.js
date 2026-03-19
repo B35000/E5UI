@@ -157,36 +157,63 @@ class NewProposalPage extends Component {
     }
 
 
-    get_reconfig_items_tags_object(){
-        var obj = {
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3']/* contract */,'e.'+this.props.app_state.loc['319']/* subscription */, 'e.'+this.props.app_state.loc['320']/* exchange */, this.props.app_state.loc['861a']/* 'prices' */], [0]
-            ],
-            'contract':[
-                ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, this.props.app_state.loc['438h']/* Transaction Gas Limit */, this.props.app_state.loc['438s']/* Primary Transaction Account */, this.props.app_state.loc['438t']/* Primary Transaction Period */], [1]
-            ],
-            'subscription':[
-                ['xor','',0], [this.props.app_state.loc['319']/* 'subscription' */,this.props.app_state.loc['321']/* 'Minimum Buy Amount' */,this.props.app_state.loc['322']/* 'Target Authority' */, this.props.app_state.loc['323']/* 'Target Beneficiary' */, this.props.app_state.loc['324']/* 'Maximum Buy Amount' */, this.props.app_state.loc['325']/* 'Minimum Cancellable Balance Amount' */], [1]
-            ],
-            'exchange':[
-                ['xor','',0], [this.props.app_state.loc['320']/* 'exchange' */,this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */], [1]
-            ],
-        };
+    get_reconfig_items_tags_object(type, is_main=false){
+        if(type == 30/* contract */){
+            var obj = {
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['xor','',0], ['e', this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */].concat((is_main == true ? [this.props.app_state.loc['438h']/* 'Transaction Gas Limit' */, this.props.app_state.loc['438s']/* 'Primary Transaction Account' */, this.props.app_state.loc['438t']/* 'Primary Transaction Period' */, this.props.app_state.loc['438bc']/* 'Default Minimum End Contract Amount' */, this.props.app_state.loc['438bf']/* 'Default Minimum Spend Contract Amount' */, this.props.app_state.loc['438bi']/* 'Block Invocation Limit' */, this.props.app_state.loc['438bl']/* 'Time Invocation Limit' */, this.props.app_state.loc['438bo']/* 'Absolute Proposal Expiry Duration Limit' */] : [])), [2]
+                ],
+            };
+            return obj;
+        }
+        else if(type == 33/* subscription */){
+            var obj = {
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['xor','',0], ['e', this.props.app_state.loc['861a']/* 'prices' */, this.props.app_state.loc['321']/* 'Minimum Buy Amount' */,this.props.app_state.loc['322']/* 'Target Authority' */, this.props.app_state.loc['323']/* 'Target Beneficiary' */, this.props.app_state.loc['324']/* 'Maximum Buy Amount' */, this.props.app_state.loc['325']/* 'Minimum Cancellable Balance Amount' */], [2]
+                ],
+            };
+            return obj;
+        }
+        else if(type == 31/* 31(token_exchange) */){
+            var obj = {
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['xor','',0], ['e', this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */], [2]
+                ],
+            };
+            return obj;
+        }
+        else{
+            var obj = {
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['or','',0], ['e','e.'+this.props.app_state.loc['3']/* contract */,'e.'+this.props.app_state.loc['319']/* subscription */, 'e.'+this.props.app_state.loc['320']/* exchange */, this.props.app_state.loc['861a']/* 'prices' */], [0]
+                ],
+            };
 
-        obj[this.props.app_state.loc['3']/* contract */] = [
+            obj[this.props.app_state.loc['3']/* contract */] = [
                 ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, this.props.app_state.loc['438h']/* Transaction Gas Limit */, this.props.app_state.loc['438s']/* Primary Transaction Account */, this.props.app_state.loc['438t']/* Primary Transaction Period */], [1]
             ];
-        obj[this.props.app_state.loc['319']/* 'subscription' */] = [
+            obj[this.props.app_state.loc['319']/* 'subscription' */] = [
                 ['xor','',0], [this.props.app_state.loc['319']/* 'subscription' */,this.props.app_state.loc['321']/* 'Minimum Buy Amount' */,this.props.app_state.loc['322']/* 'Target Authority' */, this.props.app_state.loc['323']/* 'Target Beneficiary' */, this.props.app_state.loc['324']/* 'Maximum Buy Amount' */, this.props.app_state.loc['325']/* 'Minimum Cancellable Balance Amount' */], [1]
             ];
-        obj[this.props.app_state.loc['320']/* 'exchange' */] = [
+            obj[this.props.app_state.loc['320']/* 'exchange' */] = [
                 ['xor','',0], [this.props.app_state.loc['320']/* 'exchange' */,this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */], [1]
             ];
 
-        return obj;
+            return obj;
+        }
+            
     }
 
     get_auto_wait_tags_object(){
@@ -307,11 +334,19 @@ class NewProposalPage extends Component {
 
 
 
+
+
+
+
+
+
+
+
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-25}}>
-                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-50}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-(25 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
+                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(50+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
                         <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.new_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div style={{'padding': '0px 10px 0px 0px', width:40}}>
@@ -329,7 +364,7 @@ class NewProposalPage extends Component {
                     </div>
                 </div> */}
 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     <div style={{'width':'98%'}}>
                         {this.render_everything()}
                     </div>   
@@ -2502,7 +2537,7 @@ return data['data']
 
     set_max_submit_expiry_time(){
         var contract_config = this.state.contract_item['data'][1]
-        var max = bigInt(this.state.proposal_expiry_time).plus(contract_config[36]).plus(6*60*60)
+        var max = bigInt(this.state.proposal_expiry_time).plus(contract_config[36]).minus(1*60*60)
         if(contract_config[36] == 0){
             max = bigInt(max).plus((60*60*24*7*3))
         }
@@ -2517,13 +2552,20 @@ return data['data']
 
     when_modify_target_text_input_field_changed = async (text) =>{
         this.setState({modify_target_id: text})
-        this.fetch_modify_target_data(text)
+        setTimeout(() => {
+            if(this.state.modify_target_id == text){
+                this.fetch_modify_target_data(text)
+            }
+        }, (1 * 700));
     }
 
     fetch_modify_target_data = async (text) =>{
         if(text.trim() != '' && !isNaN(text)){
-            var modify_target_data = await this.props.load_modify_item_data(text, this.props.app_state.selected_e5)
-            this.setState({modify_target_data: modify_target_data})
+            const modify_target_data = await this.props.load_modify_item_data(text, this.props.app_state.selected_e5)
+            const main_types = {'2':30, '3':31, '5':31}
+            const modify_target_type = main_types[text] != null ? main_types[text] : await this.props.fetch_id_type(parseInt(text), this.props.app_state.selected_e5)
+
+            this.setState({modify_target_data: modify_target_data, reconfig_items_tags_object: this.get_reconfig_items_tags_object(modify_target_type, parseInt(text) == 2), modify_target_type: modify_target_type})
         }
     }
 
@@ -2631,6 +2673,7 @@ return data['data']
             ]
         }
         
+        
     }
 
     get_all_sorted_objects_mappings(object){
@@ -2646,7 +2689,7 @@ return data['data']
     }
 
     get_account_suggestions(type){
-        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5] || []
         var return_array = []
 
         if(type == 'spend_target'){
@@ -2742,6 +2785,8 @@ return data['data']
                     {this.spend_action_data_ui()}
                     <div style={{height:20}}/>
                     {this.render_spend_actions()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2750,6 +2795,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.spend_action_data_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_spend_actions()}
@@ -2763,6 +2810,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.spend_action_data_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_spend_actions()}
@@ -2961,6 +3010,8 @@ return data['data']
                 <div>
                     {this.render_reconfig_selector_part()}
                     {this.load_reconfig_items()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2969,6 +3020,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.render_reconfig_selector_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.load_reconfig_items()}
@@ -2982,6 +3035,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.render_reconfig_selector_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.load_reconfig_items()}
@@ -2995,6 +3050,9 @@ return data['data']
     render_reconfig_selector_part(){
         return(
             <div>
+                {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['438bs']/* 'Youre reconfiguring an object. Just select the setting you wish to change and set the new value.' */, 'title': this.props.app_state.loc['438br']/* 'Object Reconfiguration' */ })}
+                <div style={{ height: 10 }} />
+
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.load_reconfig_item_selectors()}
@@ -3046,11 +3104,18 @@ return data['data']
 
         var properties = this.get_target_configuration(selected_item)
         var ui = properties['picker']
+        const explanation = properties['e']
+        const recommendation = properties['r']
 
         if(ui == 'number'){
             return(
                 <div>
                     <div style={{height:10}}/>
+
+                    {Object.keys(explanation).length > 0 && this.render_detail_item('3', explanation)}
+                    {Object.keys(recommendation).length > 0 && this.render_detail_item('10', recommendation)}
+                    <div style={{height:10}}/>
+
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':selected_item, 'number':this.state.reconfig_number, 'relativepower':this.props.app_state.loc['391']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                     </div>
@@ -3063,7 +3128,6 @@ return data['data']
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
-
                     
                 </div>
             )
@@ -3072,6 +3136,10 @@ return data['data']
             return(
                 <div>
                     <div style={{height:10}}/>
+                    {Object.keys(explanation).length > 0 && this.render_detail_item('3', explanation)}
+                    {Object.keys(recommendation).length > 0 && this.render_detail_item('10', recommendation)}
+                    <div style={{height:10}}/>
+
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.reconfig_proportion), 'details':selected_item, 'size':'l'})}
 
                     <div style={{height:10}}/>
@@ -3083,6 +3151,7 @@ return data['data']
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
+
                     
                 </div>
             )
@@ -3091,6 +3160,10 @@ return data['data']
             return(
                 <div>
                     <div style={{height:10}}/>
+                    {Object.keys(explanation).length > 0 && this.render_detail_item('3', explanation)}
+                    {Object.keys(recommendation).length > 0 && this.render_detail_item('10', recommendation)}
+                    <div style={{height:10}}/>
+
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.reconfig_duration), 'details':selected_item, 'size':'l'})}
 
                     <div style={{height:10}}/>
@@ -3110,6 +3183,10 @@ return data['data']
             return(
                 <div>
                     <div style={{height:10}}/>
+                    {Object.keys(explanation).length > 0 && this.render_detail_item('3', explanation)}
+                    {Object.keys(recommendation).length > 0 && this.render_detail_item('10', recommendation)}
+                    <div style={{height:10}}/>
+
                     {this.load_tags_ui()}
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
@@ -3124,6 +3201,10 @@ return data['data']
             return(
                 <div>
                     <div style={{height:10}}/>
+                    {Object.keys(explanation).length > 0 && this.render_detail_item('3', explanation)}
+                    {Object.keys(recommendation).length > 0 && this.render_detail_item('10', recommendation)}
+                    <div style={{height:10}}/>
+
                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}
@@ -3135,7 +3216,6 @@ return data['data']
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
-
                     
                 </div>
             )
@@ -3144,49 +3224,45 @@ return data['data']
 
     render_current_items(properties, selected_item){
         if(this.state.modify_target_data != null){
-            var selected_option = this.state.reconfig_items_tags_object['i'].active
-            var o = {'contract':30/* 30(contract_obj_id) */, 'subscription':33/* 33(subscription_object) */, 'exchange':31/* 31(token_exchange) */}
-            var modify_target_type = this.state.modify_target_data['type']
-            if((modify_target_type == o[selected_option]) || (this.state.modify_target_id == '2' && selected_option == 'contract')){
-                var ui = properties['picker']
-                var current_value = this.state.modify_target_data['data'][properties['position'][0]][properties['position'][1]]
-                if(ui == 'number'){
-                    return(
-                        <div>
-                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2806']/* 'Current ' */+selected_item, 'number':current_value, 'relativepower':this.props.app_state.loc['391']/* 'units' */})}>
-                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2806']/* 'Current ' */+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
-                            </div>
+            // var modify_target_type = this.state.modify_target_data['type']
+            var ui = properties['picker']
+            var current_value = this.state.modify_target_data['data'][properties['position'][0]][properties['position'][1]]
+            if(ui == 'number'){
+                return(
+                    <div>
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2806']/* 'Current ' */+selected_item, 'number':current_value, 'relativepower':this.props.app_state.loc['391']/* 'units' */})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2806']/* 'Current ' */+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                         </div>
-                    )
-                }
-                else if(ui == 'proportion'){
-                    return(
-                        <div>
-                            {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':this.props.app_state.loc['393']/* 'Current ' */+selected_item, 'size':'l'})}
-                        </div>
-                    )
-                }
-                else if(ui == 'time'){
-                    return(
-                        <div>
-                            {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
-                        </div>
-                    )
-                }
-                else if(ui == 'tag'){
-                    return(
-                        <div>
-                            {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
-                        </div>
-                    )
-                }
-                else if(ui == 'id'){
-                    return(
-                        <div>
-                            {this.render_detail_item('3', {'title':current_value, 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
-                        </div>
-                    )
-                }
+                    </div>
+                )
+            }
+            else if(ui == 'proportion'){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':this.props.app_state.loc['393']/* 'Current ' */+selected_item, 'size':'l'})}
+                    </div>
+                )
+            }
+            else if(ui == 'time'){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
+                    </div>
+                )
+            }
+            else if(ui == 'tag'){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
+                    </div>
+                )
+            }
+            else if(ui == 'id'){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':current_value, 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
+                    </div>
+                )
             }
         }
     }
@@ -3254,51 +3330,57 @@ return data['data']
             'Exchange Ratio Y':{'position':[2,1], 'picker':'number', 'powerlimit':63},
         }
 
-        obj[this.props.app_state.loc['68']]/* 'Vote Bounty Split Proportion' */ = {'position':[1,1], 'picker':'proportion', 'powerlimit':9}
-        obj[this.props.app_state.loc['69']]/* 'Maximum Extend Enter Contract Limit' */ = {'position':[1,2], 'picker':'time', 'powerlimit':63} 
-        obj[this.props.app_state.loc['70']]/* 'Minimum End Bounty Amount' */ = {'position':[1,4], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['71']]/* 'Proposal Expiry Duration Limit' */ = {'position':[1,5], 'picker':'time', 'powerlimit':63} 
-        obj[this.props.app_state.loc['72']]/* 'Maximum Enter Contract Duration' */ = {'position':[1,6], 'picker':'time', 'powerlimit':63} 
-        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {'position':[1,8], 'picker':'tag', 'powerlimit':63}
-        obj[this.props.app_state.loc['74']]/* 'Proposal Modify Expiry Duration Limit' */ = {'position':[1,27], 'picker':'time', 'powerlimit':63}
-        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {'position':[1,28], 'picker':'tag', 'powerlimit':9}
-        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {'position':[1,29], 'picker':'tag', 'powerlimit':9}
-        obj[this.props.app_state.loc['77']]/* 'Maximum Proposal Expiry Submit Expiry time difference' */ = {'position':[1,36], 'picker':'time', 'powerlimit':63} 
-        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {'position':[1,37], 'picker':'tag', 'powerlimit':9} 
-        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {'position':[1,38], 'picker':'tag', 'powerlimit':9} 
-        obj[this.props.app_state.loc['80']]/* 'Minimum Spend Bounty Amount' */ = {'position':[1,10], 'picker':'number', 'powerlimit':63}
-        obj[this.props.app_state.loc['438h']]/* 'Transaction Gas Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63}
-        obj[this.props.app_state.loc['438s']]/* 'Primary Transaction Account' */ = {'position':[1,39], 'picker':'id', 'powerlimit':63}
-        obj[this.props.app_state.loc['438t']]/* 'Primary Transaction Period' */ = {'position':[1,40], 'picker':'time', 'powerlimit':63}
+        obj[this.props.app_state.loc['68']]/* 'Vote Bounty Split Proportion' */ = {'position':[1,1], 'picker':'proportion', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['191'], 'details':this.props.app_state.loc['192'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['194'], 'textsize':'10px', 'font':this.props.app_state.font}}
+        obj[this.props.app_state.loc['69']]/* 'Maximum Extend Enter Contract Limit' */ = {'position':[1,2], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['195'], 'details':this.props.app_state.loc['196'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['197'], 'textsize':'10px', 'font':this.props.app_state.font}} 
+        obj[this.props.app_state.loc['70']]/* 'Minimum End Bounty Amount' */ = {'position':[1,4], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['198'], 'details':this.props.app_state.loc['199'], 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['71']]/* 'Proposal Expiry Duration Limit' */ = {'position':[1,5], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['228'], 'details':this.props.app_state.loc['229'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['230'], 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['72']]/* 'Maximum Enter Contract Duration' */ = {'position':[1,6], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['204'], 'details':this.props.app_state.loc['205'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['206'], 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {'position':[1,8], 'picker':'tag', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['207'], 'details':this.props.app_state.loc['208'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['209'], 'textsize':'10px', 'font':this.props.app_state.font},}
+        obj[this.props.app_state.loc['74']]/* 'Proposal Modify Expiry Duration Limit' */ = {'position':[1,27], 'picker':'time', 'powerlimit':63, 'e':{}, 'r':{},}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {'position':[1,28], 'picker':'tag', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['213'], 'details':this.props.app_state.loc['214'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['215'], 'textsize':'10px', 'font':this.props.app_state.font},}
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {'position':[1,29], 'picker':'tag', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['216'], 'details':this.props.app_state.loc['217'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['218'], 'textsize':'10px', 'font':this.props.app_state.font},}
+        obj[this.props.app_state.loc['77']]/* 'Maximum Proposal Expiry Submit Expiry time difference' */ = {'position':[1,36], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['219'], 'details':this.props.app_state.loc['220'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['221'], 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {'position':[1,37], 'picker':'tag', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['222'], 'details':this.props.app_state.loc['223'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['224'], 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {'position':[1,38], 'picker':'tag', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['225'], 'details':this.props.app_state.loc['226'], 'size':'l'}, 'r':{'text':this.props.app_state.loc['227'], 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['80']]/* 'Minimum Spend Bounty Amount' */ = {'position':[1,10], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['201'], 'details':this.props.app_state.loc['202'], 'size':'l'}, 'r':{},}
+        
+        //main contract
+        obj[this.props.app_state.loc['438h']/* 'Transaction Gas Limit' */] = {'position':[1,11], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438u']/* 'Transaction Gas Limit' */, 'details':this.props.app_state.loc['438v']/* 'The maximum amount of gas a given run can consume on e.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438s']/* 'Primary Transaction Account' */] = {'position':[1,39], 'picker':'id', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438x']/* 'Primary Transaction Account (Main Contract Setting)' */, 'details':this.props.app_state.loc['438w']/* 'The account responsible for keeping e unlocked.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438t']/* 'Primary Transaction Period' */] = {'position':[1,40], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438y']/* 'Primary Transaction Period (Main Contract Setting)' */, 'details':this.props.app_state.loc['438z']/* 'The period of time after which e will be locked if the primary transaction account fails to run a transaction.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438bc']/* 'Default Minimum End Contract Amount' */] = {'position':[1,3], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438bd']/* 'Default Minimum End Contract Amount (Main Contract Setting)' */, 'details':this.props.app_state.loc['438be']/* 'The minimum amount of END that can be used as an entry fee for all contracts created on e.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438bf']/* 'Default Minimum Spend Contract Amount' */] = {'position':[1,9], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438bg']/* 'Default Minimum Spend Contract Amount (Main Contract Setting)' */, 'details':this.props.app_state.loc['438bh']/* 'The minimum amount of SPEND that can be used as an entry fee for all contracts created on e.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438bi']/* 'Block Invocation Limit' */] = {'position':[1,12], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438bj']/* 'Default Block Invocation Limit (Main Contract Setting)' */, 'details':this.props.app_state.loc['438bk']/* 'The minimum number of blocks that need to be mined before an accounts next run.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438bl']/* 'Time Invocation Limit' */] = {'position':[1,13], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438bm']/* 'Default Time Invocation Limit (Main Contract Setting)' */, 'details':this.props.app_state.loc['438bn']/* 'The minimum amount of time that needs to pass before a sender can make their next run.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438bo']/* 'Absolute Proposal Expiry Duration Limit' */] = {'position':[1,30], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438bp']/* 'Absolute Proposal Expiry Duration Limit (Main Contract Setting)' */, 'details':this.props.app_state.loc['438bq']/* 'The minimum amount of time that can be defined by a contract as the proposal expiry duration limit for all proposals sent to it.' */, 'size':'l'}, 'r':{},}
 
 
 
+        obj[this.props.app_state.loc['438a']]/* 'Target Authority' */ = {'position':[1,0], 'picker':'id', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438ba']/* 'Target Authority' */, 'details':this.props.app_state.loc['438z']/* 'The account or contract responsible for moderating and making changes to the subscription.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438b']]/* 'Target Beneficiary' */ = {'position':[1,6], 'picker':'id', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['438b']/* 'Target Beneficiary' */, 'details':this.props.app_state.loc['438bb']/* 'The account responsible for collecting subscription payments.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438c']]/* 'Minimum Buy Amount' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['560']/* 'Minimum Buy Amount' */, 'details':this.props.app_state.loc['561']/* 'Minimum amount of time units that can be paid for your new subscription.' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['563']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':this.props.app_state.font},}
+        obj[this.props.app_state.loc['438d']]/* 'Maximum Buy Amount' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['564']/* 'Maximum Buy Amount' */, 'details':this.props.app_state.loc['565']/* 'Maximum amount of time units that can be paid for your new subscription.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['438e']]/* 'Minimum Cancellable Balance Amount' */ = {'position':[1,4], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['566']/* 'Minimum Cancellable Amount(For Cancellable Subscriptions)' */, 'details':this.props.app_state.loc['567']/* 'the minimum amount of time units that can be left when cancelling your new subscriptions payments' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['569']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':this.props.app_state.font},}
 
-        obj[this.props.app_state.loc['438a']]/* 'Target Authority' */ = {'position':[1,0], 'picker':'id', 'powerlimit':63}
-        obj[this.props.app_state.loc['438b']]/* 'Target Beneficiary' */ = {'position':[1,6], 'picker':'id', 'powerlimit':63}
-        obj[this.props.app_state.loc['438c']]/* 'Minimum Buy Amount' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63}
-        obj[this.props.app_state.loc['438d']]/* 'Maximum Buy Amount' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63}
-        obj[this.props.app_state.loc['438e']]/* 'Minimum Cancellable Balance Amount' */ = {'position':[1,4], 'picker':'number', 'powerlimit':63}
 
-
-        obj[this.props.app_state.loc['326']]/* 'Buy Limit' */ = {'position':[1,0], 'picker':'number', 'powerlimit':63}
-        obj[this.props.app_state.loc['327']]/* 'Trust Fee' */ = {'position':[1,7], 'picker':'proportion', 'powerlimit':9}
-        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['329']]/* 'Minimum Time Between Swap' */ = {'position':[1,4], 'picker':'time', 'powerlimit':63}
-        obj[this.props.app_state.loc['330']]/* 'Minimum Transactions Between Swap' */ = {'position':[1,2], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['331']]/* 'Minimum Blocks Between Swap' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['332']]/* 'Minimum Entered Contracts Between Swap' */ = {'position':[1,13], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['333']]/* 'Minimum Transactions For First Buy' */ = {'position':[1,17], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['334']]/* 'Minimum Entered Contracts For First Buy' */ = {'position':[1,18], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['335']]/* 'Block Limit' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63}
-        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {'position':[1,15], 'picker':'tag', 'powerlimit':63}
-        obj[this.props.app_state.loc['337']]/* 'Maturity Limit' */ = {'position':[1,16], 'picker':'number', 'powerlimit':63}
-        obj[this.props.app_state.loc['338']]/* 'Internal Block Halving Proportion' */ = {'position':[1,5], 'picker':'proportion', 'powerlimit':9} 
-        obj[this.props.app_state.loc['339']]/* 'Block Limit Reduction Proportion' */ = {'position':[1,6], 'picker':'proportion', 'powerlimit':9} 
-        obj[this.props.app_state.loc['340']]/* 'Block Reset Limit' */ = {'position':[1,8], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {'position':[1,12], 'picker':'tag', 'powerlimit':63} 
-        obj[this.props.app_state.loc['395']]/* 'Exchange Ratio X' */ = {'position':[2,0], 'picker':'number', 'powerlimit':63} 
-        obj[this.props.app_state.loc['396']]/* 'Exchange Ratio Y' */ = {'position':[2,1], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['326']]/* 'Buy Limit' */ = {'position':[1,0], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'details':this.props.app_state.loc['649']/* 'The maximum amount of tokens that can be bought in one transaction.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['327']]/* 'Trust Fee' */ = {'position':[1,7], 'picker':'proportion', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['660']/* 'Trust Fee' */, 'details':this.props.app_state.loc['661']/* 'proportion or percentage fee enforced on all contract spending that takes place using token.' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['662']/* 'Recommended: 3.5%' */, 'textsize':'10px', 'font':this.props.app_state.font},}
+        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'details':this.props.app_state.loc['654']/* 'The maximum amount of your new token a sender can sell in a transaction.' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['329']]/* 'Minimum Time Between Swap' */ = {'position':[1,4], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'details':this.props.app_state.loc['659']/* 'the minimum amount of time a sender has to wait between making a swap for a given token.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['330']]/* 'Minimum Transactions Between Swap' */ = {'position':[1,2], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'details':this.props.app_state.loc['664']/* 'The minimum number of transactions sender has to make between swaps for your new token.' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['331']]/* 'Minimum Blocks Between Swap' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['666']/* 'Minimum Blocks Between Swap' */, 'details':this.props.app_state.loc['667']/* 'the minimum number of blocks sender has to wait between making a swap for your new token.' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['332']]/* 'Minimum Entered Contracts Between Swap' */ = {'position':[1,13], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['669']/* 'Minimum Entered Contracts Between Swap' */, 'details':this.props.app_state.loc['670']/* 'the minimum amount of contracts sender should enter before interacting with your new exchange again.' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['333']]/* 'Minimum Transactions For First Buy' */ = {'position':[1,17], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['671']/* 'Minimum Transactions For First Buy' */, 'details':this.props.app_state.loc['672']/* 'The minimum number of transactions sender has to make to buy/sell your new token for the first time.' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['334']]/* 'Minimum Entered Contracts For First Buy' */ = {'position':[1,18], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['674']/* 'Minimum Entered Contracts For First Buy' */, 'details':this.props.app_state.loc['675']/* 'The minimum number of contracts sender should have entered before first buy.' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['335']]/* 'Block Limit' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['685']/* 'Block Limit(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['686']/* 'the maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {'position':[1,15], 'picker':'tag', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['689']/* 'Halving type (for Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['690']/* 'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['691']/* 'Recommended: Spread' */, 'textsize':'10px', 'font':this.props.app_state.font},}
+        obj[this.props.app_state.loc['337']]/* 'Maturity Limit' */ = {'position':[1,16], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['692']/* 'Maturity Limit(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['693']/* 'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is less than its default set value.' */, 'size':'l'}, 'r':{},}
+        obj[this.props.app_state.loc['338']]/* 'Internal Block Halving Proportion' */ = {'position':[1,5], 'picker':'proportion', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['695']/* 'Internal Block Halving(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['696']/* 'proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['698']/* 'Recommended: 40% - 51%' */, 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['339']]/* 'Block Limit Reduction Proportion' */ = {'position':[1,6], 'picker':'proportion', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['699']/* 'Block Limit Reduction(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['700']/* 'proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['702']/* 'Recommended: 65% - 91%' */, 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['340']]/* 'Block Reset Limit' */ = {'position':[1,8], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['703']/* 'Block Reset Limit(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['704']/* 'the maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['706']/* 'Recommended: 3' */, 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {'position':[1,12], 'picker':'tag', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['707']/* 'Block Limit Sensitivity (for Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['708']/* 'The sensitivity of your new exchange to increasing demand' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['709']/* 'Recommended: 2' */, 'textsize':'10px', 'font':this.props.app_state.font},} 
+        obj[this.props.app_state.loc['395']]/* 'Exchange Ratio X' */ = {'position':[2,0], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['710']/* 'Exchange Ratio X' */, 'details':this.props.app_state.loc['711']/* 'The buy output exchange ratio X for your new token' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['396']]/* 'Exchange Ratio Y' */ = {'position':[2,1], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'details':this.props.app_state.loc['714']/* 'The buy input exchange ratio Y for your new token' */, 'size':'l'}, 'r':{},}
 
         return obj[property]
     }
@@ -3511,7 +3593,7 @@ return data['data']
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                 </div>
@@ -3790,6 +3872,8 @@ return data['data']
                 <div>
                     {this.load_exchange_transfer_config_ui()}
                     {this.load_transfer_actions()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -3798,6 +3882,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.load_exchange_transfer_config_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.load_transfer_actions()}
@@ -3811,6 +3897,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.load_exchange_transfer_config_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.load_transfer_actions()}
@@ -4000,6 +4088,8 @@ return data['data']
                 <div>
                     {this.render_bounty_amount_picker_ui()}
                     {this.render_bounty_amounts()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -4008,6 +4098,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.render_bounty_amount_picker_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_bounty_amounts()}
@@ -4021,6 +4113,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.render_bounty_amount_picker_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_bounty_amounts()}
