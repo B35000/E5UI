@@ -1511,11 +1511,11 @@ class home_page extends Component {
             return 'iTransfer'
         }
 
-        // var data = {'ends ☝️':'8','spends 🫰':'8'};
-        // data[this.props.app_state.loc['1218']/* ends ☝️ */] = '8'
-        // data[this.props.app_state.loc['1219']/* spends 🫰 */] = '8'
-        // if(data[selected_item] == null) return ''
-        // return data[selected_item];
+        var data = {'ends ☝️':'8','spends 🫰':'8'};
+        data[this.props.app_state.loc['1218']/* ends ☝️ */] = '8'
+        data[this.props.app_state.loc['1219']/* spends 🫰 */] = '8'
+        if(data[selected_item] == null) return ''
+        return data[selected_item];
       }
     }
 

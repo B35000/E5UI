@@ -1003,7 +1003,7 @@ class DialogPage extends Component {
             <div style={{}}>
                 <h5 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font}}>{this.props.app_state.loc['1786']/* Confirm Delete Action */}</h5>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1787']/* 'Are you sure?' */, 'details':'You cannot undo this action', 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1787']/* 'Are you sure?' */, 'details':this.props.app_state.loc['3055mv']/* 'You cannot undo this action' */, 'size':'l'})}
                 <div style={{height:20}}/>
 
                 <div onClick={()=> this.props.open_delete_action()}>
@@ -8850,7 +8850,7 @@ return data['data']
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055gd']/* 'Recipient Account ID...' */} when_text_input_field_changed={this.when_typed_recipient_account_id_changed.bind(this)} text={this.state.typed_recipient_account_id} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
-                <div onClick={()=> this.props.transfer_alias_transaction_to_stack(item, this.state.typed_recipient_account_id)}>
+                <div onClick={()=> this.transfer_alias_transaction_to_stack(item, this.state.typed_recipient_account_id)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ge']/* Transfer Alias */, 'action':''})}
                 </div>
 
@@ -8870,15 +8870,24 @@ return data['data']
     }
 
     when_typed_recipient_account_id_changed(text){
-        if(isNaN(text) || text.includes('.')){
-            return;
-        }
         this.setState({typed_recipient_account_id: text})
     }
 
-
-
-
+    async transfer_alias_transaction_to_stack(){
+        const alias = this.state.typed_recipient_account_id.trim()
+        const recipient = await this.get_typed_alias_id(alias)
+        const recipient_e5 = this.get_recipient_e5(recipient)
+        
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
+            this.props.notify(this.props.app_state.loc['3091bq']/* 'Please put a valid account ID.' */, 1600)
+        }
+        else if(recipient_e5 != this.props.app_state.selected_e5){
+            this.props.notify(this.props.app_state.loc['3055mu']/* 'You cant transfer it to a user on another E5.' */, 1600)
+        }else{
+            const item = this.state.data['item']
+            this.props.transfer_alias_transaction_to_stack(item, recipient)
+        }
+    }
 
 
 

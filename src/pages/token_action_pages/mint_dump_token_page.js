@@ -132,6 +132,8 @@ class NewMintActionPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_fees_and_price_data_if_buyable()}
@@ -145,6 +147,8 @@ class NewMintActionPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_fees_and_price_data_if_buyable()}
@@ -253,10 +257,13 @@ class NewMintActionPage extends Component {
             return(
                 <div>
                     {this.render_fees_for_action_title()}
+                    
 
                     {this.render_my_balances_if_buy_action()}
                     
+
                     {this.set_price_data()}
+                    
 
                     {this.calculate_and_show_buy_sell_impact_proportion()}
                 </div>
@@ -329,18 +336,22 @@ class NewMintActionPage extends Component {
             }
             var impact_percentage = 0
             try{
-                var big_int_amount = bigInt(amount)
-                var big_int_liquidity = bigInt(exchanges_liquidity)
-                impact_percentage = bigInt(big_int_amount).multiply(100).divide(big_int_liquidity)
+                if(amount > 10**13){
+                    var big_int_amount = bigInt(amount)
+                    var big_int_liquidity = bigInt(exchanges_liquidity)
+                    impact_percentage = bigInt(big_int_amount).multiply(100).divide(big_int_liquidity)
+                }else{
+                    impact_percentage = parseFloat((amount * 100) / exchanges_liquidity).toFixed(3)
+                }
             }catch(e){
-                impact_percentage = ( amount * 100 ) / exchanges_liquidity
+                impact_percentage = 99.999
             }
             var p = impact_percentage+'%'
             var n = action == this.props.app_state.loc['949']/* 'mint-buy' */ ? '-' : ''
 
             return(
                 <div>
-                    <div style={{height:20}}/>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['996d']/* 'The impact proportion your transaction will have in the exchanges liquidity.' */, 'title':this.props.app_state.loc['996c']/* 'Transaction Impact' */})}
                     <div style={{height:10}}/>
 
@@ -416,7 +427,7 @@ class NewMintActionPage extends Component {
                 }
                 return(
                     <div>
-                        <div style={{height:20}}/>
+                        {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['965']/* 'The amount youll probably get from the buy action' */, 'title':this.props.app_state.loc['966']/* 'Receive Amount' */})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
@@ -465,7 +476,7 @@ class NewMintActionPage extends Component {
         if(size == 's'){
             return(
                 <div>
-                    <div style={{height:20}}/>
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -589,7 +600,7 @@ class NewMintActionPage extends Component {
         if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
             return(
                 <div>
-                    <div style={{height:20}}/>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['969']/* 'The amounts you have available for buying the token' */, 'title':this.props.app_state.loc['970']/* 'Your balances' */})}
                     <div style={{height:10}}/>
 
@@ -931,7 +942,7 @@ class NewMintActionPage extends Component {
             this.props.notify(this.props.app_state.loc['979']/* 'That amount is too low.' */, 3600)
         }
         else if(stack_action == 1/* sell-action */ && !this.check_if_liquidity_is_available_for_sell(price)){
-            this.props.notify(this.props.app_state.loc['996h']/* 'The exchange doesn\'t have enough liquidity to fulfil that sell.' */, 6600)
+            this.props.notify(this.props.app_state.loc['996h']/* 'The exchange doesn\'t have enough funds to fulfil that sell.' */, 6600)
         }
         else{
             if(!this.check_if_sender_has_tokens_for_sell() && action == this.props.app_state.loc['950']/* 'dump-sell' */){
