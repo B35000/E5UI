@@ -1357,7 +1357,7 @@ class App extends Component {
 
     obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
 
-    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{},
+    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false
   };
 
   get_thread_pool_size(){
@@ -2365,7 +2365,7 @@ class App extends Component {
       this.get_token('OBNB', 'opBNB', 'E1095'),
       this.get_token('PLUME', 'Plume', 'E1105'),
       this.get_token('KETH', 'Katana', 'E1115'),
-      this.get_token('PETH', 'Polygon zkEVM', 'E1125'),
+      this.get_token('PETH', 'Polygon zkEVM', 'E1125', true),
       this.get_token('RON', 'Ronin', 'E1135'),
       this.get_token('SETH', 'Scroll', 'E1145'),
       this.get_token('BONE', 'Shibarium', 'E1155'),
@@ -3936,8 +3936,8 @@ class App extends Component {
     return str.length + (m ? m.length : 0);
   }
 
-  set_cookies(){
-    var x = JSON.stringify(this.get_persistent_data(), (key, value) =>
+  async set_cookies(){
+    var x = JSON.stringify(await this.get_persistent_data(), (key, value) =>
             typeof value === 'bigint'
                 ? value.toString()
                 : value // return everything else unchanged));
@@ -3977,7 +3977,7 @@ class App extends Component {
 
 
 
-  get_persistent_data(){
+  async get_persistent_data(){
     return {
       theme: this.state.theme, 
       storage_option: this.state.storage_option, 
@@ -4079,6 +4079,8 @@ class App extends Component {
       last_notification_view_time: this.state.last_notification_view_time,
       notification_object: this.state.notification_object,
       rounded_edges: this.state.rounded_edges,
+
+      saved_cypher_seed_object: await this.get_encrypted_seed_if_passcode_is_set(),
     }
   }
 
@@ -4313,6 +4315,7 @@ class App extends Component {
       var last_notification_view_time = state.last_notification_view_time || this.state.last_notification_view_time
       var notification_object = state.notification_object || this.state.notification_object;
       var rounded_edges = state.rounded_edges || this.state.rounded_edges;
+      var saved_cypher_seed_object = state.saved_cypher_seed_object || {}
 
       this.setState({
         theme: theme,
@@ -4400,6 +4403,7 @@ class App extends Component {
         last_address: last_address,
         previous_notification_objects: notification_object,
         rounded_edges: rounded_edges,
+        saved_cypher_seed_object: saved_cypher_seed_object
       })
       var me = this;
       setTimeout(function() {
@@ -4688,6 +4692,26 @@ class App extends Component {
     });
 
     this.setState({uploaded_data: uploaded_data_clone, /* uploaded_data_cids: uploaded_data_cids_clone */});
+  }
+
+  async get_encrypted_seed_if_passcode_is_set(){
+    if(this.state.seed_passcode == ''){
+      return {}
+    }else{
+      const seed_object_as_string = JSON.stringify(this.state.seed_object, (key, value) => typeof value === 'bigint' ? value.toString() : value)
+      const cypher = await this.encrypt_storage_object_using_provided_key(seed_object_as_string, {}, `${this.state.seed_passcode}`)
+
+      const return_data = {
+        'time':Date.now(),
+        'passcode_expiry_time':this.state.passcode_expiry_time,
+        'cypher': cypher,
+      }
+      if(this.state.use_during_app_launch == true){
+        return_data['seed_object'] = this.state.seed_object
+      }
+
+      return return_data
+    }
   }
 
 
@@ -7155,14 +7179,17 @@ class App extends Component {
     }
   }
 
-  when_synchronizing_page_top_part_tapped(){
-    if(this.state.syncronizing_page_bottomsheet == true && !this.state.should_keep_synchronizing_bottomsheet_open){
-      this.open_syncronizing_page_bottomsheet()
-    }
-  }
+  // when_synchronizing_page_top_part_tapped(){
+  //   if(this.state.syncronizing_page_bottomsheet == true && !this.state.should_keep_synchronizing_bottomsheet_open){
+  //     this.open_syncronizing_page_bottomsheet()
+  //   }
+  // }
 
   open_syncronizing_page_bottomsheet(){
     if(this.state != null){
+      if(this.state.syncronizing_page_bottomsheet == true){
+        this.close_syncronizing_page()
+      }
       this.setState({syncronizing_page_bottomsheet: !this.state.syncronizing_page_bottomsheet});
     }
   };
@@ -7174,45 +7201,65 @@ class App extends Component {
   };
 
   close_syncronizing_page(){
-    let me = this;
-    if(Date.now() - this.last_all_click_time < 400){
-        me.close_syncronizing_page_after_double_tap()
-        clearTimeout(this.all_timeout);
-    }else{
-        this.all_timeout = setTimeout(function() {
-          clearTimeout(this.all_timeout);
-          me.close_syncronizing_page_after_single_tap();
-        }, 400);
-    }
-    this.last_all_click_time = Date.now();
+    this.close_syncronizing_page_after_single_tap();
+    // let me = this;
+    // if(Date.now() - this.last_all_click_time < 400){
+    //     me.close_syncronizing_page_after_double_tap()
+    //     clearTimeout(this.all_timeout);
+    // }else{
+    //     this.all_timeout = setTimeout(function() {
+    //       clearTimeout(this.all_timeout);
+    //       me.close_syncronizing_page_after_single_tap();
+    //     }, 400);
+    // }
+    // this.last_all_click_time = Date.now();
   }
 
   close_syncronizing_page_after_single_tap(){
     if(this.state.syncronizing_progress >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == false){
-      this.open_syncronizing_page_bottomsheet()
+      this.setState({syncronizing_page_bottomsheet: !this.state.syncronizing_page_bottomsheet});
       var me = this;
       setTimeout(function() {
         if(me.state.storage_permissions == 'e'){
           me.show_dialog_bottomsheet({}, 'request_cookies_permission')
         }
+        else if(Object.keys(me.state.saved_cypher_seed_object).length > 0){
+          /* 
+            'time':Date.now(),
+            'passcode_expiry_time':this.state.passcode_expiry_time,
+            'cypher': cypher,
+            'seed_object':{}
+          */
+          const expiry_time = me.state.saved_cypher_seed_object['time'] + (me.state.saved_cypher_seed_object['passcode_expiry_time'] * 1000)
+          if(Date.now() <= expiry_time){
+            console.log('close_syncronizing_page_after_single_tap', 'time hasnt expired, user can set password.')
+            me.setState({is_setting_passcode: true})
+            me.show_dialog_bottomsheet({}, 'request_passcode_for_decrypting_stored_seed')
+          }else{
+            console.log('close_syncronizing_page_after_single_tap', 'time has expired.')
+            me.setState({saved_cypher_seed_object: {}})
+          }
+        }else{
+          console.log('close_syncronizing_page_after_single_tap', 'saved_cypher_seed_object is empty', me.state.saved_cypher_seed_object)
+        }
       }, (1 * 800));
     }
   }
 
-  close_syncronizing_page_after_double_tap(){
-    if(this.state.syncronizing_progress >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == false){
-      this.setState({storage_permissions: this.getLocale()['1428']/* 'enabled' */})
-      this.prompt_top_notification(this.getLocale()['2738aq']/* 'preserving state.' */, 1000)
-      var me = this;
-      setTimeout(function() {
-          me.set_cookies()
-          me.stack_page.current?.set_storage_permissions_tag()
-          if(me.state.syncronizing_progress >= 100 && me.state.should_keep_synchronizing_bottomsheet_open == false){
-            me.open_syncronizing_page_bottomsheet()
-          }
-      }, (1 * 1200));
-    }
-  }
+  // close_syncronizing_page_after_double_tap(){
+  //   if(this.state.syncronizing_progress >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == false){
+  //     this.setState({storage_permissions: this.getLocale()['1428']/* 'enabled' */})
+  //     this.prompt_top_notification(this.getLocale()['2738aq']/* 'preserving state.' */, 1000)
+  //     var me = this;
+  //     setTimeout(function() {
+  //         me.set_cookies()
+  //         me.stack_page.current?.set_storage_permissions_tag()
+  //         if(me.state.syncronizing_progress >= 100 && me.state.should_keep_synchronizing_bottomsheet_open == false){
+  //           me.open_syncronizing_page_bottomsheet()
+  //         }
+  //     }, (1 * 1200));
+  //   }
+  // }
 
 
 
@@ -8276,12 +8323,12 @@ class App extends Component {
   }
 
   create_and_broadcast_tezos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
-    // var seed = this.state.final_seed
-    // const wallet = await this.generate_tezos_wallet(seed)
+    var seed = this.state.final_seed
+    const wallet = await this.generate_tezos_wallet(seed)
     // const wallet = data['wallet']
-    // const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
-    // Tezos.setProvider({ signer: wallet });
-    const Tezos = data['Tezos']
+    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    Tezos.setProvider({ signer: wallet });
+    // const Tezos = data['Tezos']
     const amount = this.get_amount_int_tez(transfer_amount)
     try{
       const tx = await Tezos.wallet.transfer({ to: recipient_address, amount: amount }).send();
@@ -9793,16 +9840,17 @@ class App extends Component {
     }
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, e5) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, e5, finish_job_payment_data) => {
     this.lock_delete_pos_array(delete_pos_array, e5)
-    const web3 = new Web3(this.get_selected_web3_url());
+    const web3_url = this.get_selected_web3_url()
+    const web3 = new Web3(web3_url);
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
 
     var now = await contractInstance.methods.f147(2).call((error, result) => {})
-    var run_expiry_time = now + run_expiry_duration
+    var run_expiry_time = parseInt(now) + parseInt(run_expiry_duration)
 
     var v5/* t_limits */ = [100000000000000, run_expiry_time];
     var network_gp = await web3.eth.getGasPrice()
@@ -9813,11 +9861,11 @@ class App extends Component {
     var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
     var tx = {
-        gas: gasLimit,
-        value: wei,
-        to: contractAddress,
-        data: encoded,
-        gasPrice: run_gas_price.toString(),
+      gas: gasLimit,
+      value: wei,
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString(),
     }
 
     // if(this.state.e5s[this.state.selected_e5].type == '1559'){
@@ -9830,21 +9878,16 @@ class App extends Component {
     //     maxFeePerGas: set_max_fee_per_gas.toString(),
     //   }
     // }
-
-    var os = getOS()
-    if(os == 'iOS'){
-      // setTimeout(function() {
-      //   // me.setState({is_reloading_stack_due_to_ios_run: true})
-      //   me.open_stack_bottomsheet()
-      //   setTimeout(function() {
-      //     // me.setState({is_reloading_stack_due_to_ios_run: false})
-      //     me.open_stack_bottomsheet()
-      //   }, (1 * 500));
-      // }, (1 * 1000));
-    }
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
-      web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction)
+      .on('transactionHash', (hash) => {
+        console.log('TX broadcasted to mempool:', hash);
+        if(Object.keys(finish_job_payment_data).length > 0){
+          me.notify_of_finishing_payment_in_mempool(finish_job_payment_data, run_gas_price, gasLimit, web3_url, run_expiry_time, 100000000000000)
+        }
+      })
+      .on('receipt', (receipt) => {
         var clone = structuredClone(me.state.is_running)
         clone[e5] = false
         me.setState({
@@ -9880,7 +9923,8 @@ class App extends Component {
         setTimeout(function() {
           me.set_cookies()
         }, (1 * 1000));
-      }).on('error', (error) => {
+      })
+      .on('error', (error) => {
         console.error('Transaction error:', error);
         var clone = structuredClone(this.state.is_running)
         clone[e5] = false
@@ -17789,7 +17833,9 @@ class App extends Component {
         return_selected_pins={this.return_selected_pins.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} transfer_alias_transaction_to_stack={this.transfer_alias_transaction_to_stack.bind(this)} emit_new_object_confirmed={this.emit_new_object_confirmed.bind(this)} add_order_payment_to_stack={this.add_order_payment_to_stack.bind(this)} view_application_contract={this.show_view_application_contract_bottomsheet.bind(this)} view_bag_application_contract={this.show_view_bag_application_contract_bottomsheet.bind(this)} 
         send_signature_response={this.send_signature_response.bind(this)} accept_cookies={this.accept_cookies.bind(this)} reject_cookies={this.reject_cookies.bind(this)} emit_storefront_order_status_notification={this.emit_storefront_order_status_notification.bind(this)} get_and_set_account_online_status={this.get_and_set_account_online_status.bind(this)} get_alias_from_account_id={this.get_alias_from_account_id.bind(this)} enter_new_call={this.enter_new_call.bind(this)} enter_call_with_specified_details={this.enter_call_with_specified_details.bind(this)} initialize_microphone={this.initialize_microphone.bind(this)} leave_call_confirmed={this.leave_call_confirmed.bind(this)} stay_in_call={this.stay_in_call.bind(this)} calculate_credit_balance={this.calculate_credit_balance.bind(this)} emit_pre_purchase_transaction={this.emit_pre_purchase_transaction.bind(this)} export_prepurchases={this.export_prepurchases.bind(this)} cancel_entering_call={this.cancel_entering_call.bind(this)} add_finish_job_payment_transaction_to_stack={this.add_finish_job_payment_transaction_to_stack.bind(this)} add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
 
-        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)}
+        open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
+
+        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)}
         />
       </div>
     )
@@ -17805,6 +17851,14 @@ class App extends Component {
       this.dialog_bottomsheet = this.dialog_page.current?.state;
 
       this.setState({dialog_bottomsheet: !this.state.dialog_bottomsheet});
+
+      if(this.state.is_setting_passcode == true){
+        this.set_cookies()
+        setTimeout(function() {
+          window.location.reload(false);
+        }, (500));
+      }
+
       var me = this;
       setTimeout(function() {
         me.setState({dialog_bottomsheet2: false});
@@ -17884,11 +17938,17 @@ class App extends Component {
       'view_region_specific_metrics':650,
       'view_voter_weight_information':650,
       'update_out_of_stock_switch_view':600,
+      'mempool_notification':550,
+      'open_remember_account_settings_ui':600,
+      'request_passcode_for_decrypting_stored_seed':300,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
       if(data['from'] == 'audio_details_section3') size = 350
+    }
+    if(size > this.state.height-70){
+      size = this.state.height-70
     }
     if(this.state.dialog_bottomsheet == false){
       this.open_dialog_bottomsheet(size);
@@ -19265,6 +19325,44 @@ class App extends Component {
       });
     });
     this.setState({user_obligation_data: update_object})
+  }
+
+  set_remember_account_stack_object(tag_obj){
+    this.open_dialog_bottomsheet();
+    this.setState({seed_passcode: '', passcode_expiry_time: 0, use_during_app_launch: false})
+    this.stack_page.current?.set_remember_account_tags_object(tag_obj)
+    this.prompt_top_notification(this.getLocale()['3055oa']/* 'Configuration Set.' */, 2000)
+  }
+
+  set_seed_passcode_and_expiry_time(seed_passcode, passcode_expiry_time, tag_obj, use_during_app_launch){
+    this.open_dialog_bottomsheet();
+    this.setState({seed_passcode: seed_passcode, passcode_expiry_time: passcode_expiry_time, use_during_app_launch: use_during_app_launch})
+    this.stack_page.current?.set_remember_account_tags_object(tag_obj)
+    this.prompt_top_notification(this.getLocale()['3055oa']/* 'Configuration Set.' */, 2000)
+  }
+
+  async decrypt_seed(cypher_passcode){
+    const cypher = this.state.saved_cypher_seed_object['cypher']
+    const cypher_object = JSON.parse(cypher)
+    const decrypted = await this.decrypt_storage_object_using_provided_key(cypher_object, `${cypher_passcode}`)
+    console.log('decrypt_seed', cypher_object, decrypted)
+    if(decrypted == null || decrypted == cypher_object){
+      return false;
+    }
+    else{
+      this.setState({is_setting_passcode: false})
+      await this.wait(500)
+      this.open_dialog_bottomsheet();
+      const seed_object = JSON.parse(decrypted)
+      
+      this.setState({seed_passcode: cypher_passcode, passcode_expiry_time: this.state.saved_cypher_seed_object['passcode_expiry_time'], saved_cypher_seed_object: {}})
+      
+      this.when_wallet_data_updated3(seed_object.added_tags, seed_object.set_salt, seed_object.selected_item, false, seed_object.selected_item_2)
+    }
+  }
+
+  fail_to_set_password(){
+    this.open_dialog_bottomsheet();
   }
 
 
@@ -22178,7 +22276,7 @@ class App extends Component {
       
       if(i == 0){
         //if its the video thats to be played
-        await this.wait(750)
+        await this.wait(1750)
         this.full_video_page.current?.start_playing()
       }
     }
@@ -22662,6 +22760,11 @@ class App extends Component {
       const object_type = event['view']['data']['object_type']
       this.show_dialog_bottomsheet({'id':tag_id, 'tag_id':true, 'object_type':object_type}, 'view_e5_link')
       this.fetch_objects_to_load_from_searched_tags([tag_id], '', '', [], object_type)
+      return;
+    }
+    else if(event_type == 'mempool_notification'){
+      const data = event['view']['data']
+      this.show_dialog_bottomsheet(data, event_type)
       return;
     }
     
@@ -24475,6 +24578,10 @@ class App extends Component {
           this.show_dialog_bottomsheet({'id':tag_id, 'tag_id':true, 'object_type':object_type}, 'view_e5_link')
           this.fetch_objects_to_load_from_searched_tags([tag_id], '', '', [], object_type)
         }
+        else if(id == 'mempool_notification'){
+          const data = onClickData['data']
+          this.show_dialog_bottomsheet(data, id)
+        }
         else{
           this.show_dialog_bottomsheet(onClickData, id)
         }
@@ -24536,13 +24643,19 @@ class App extends Component {
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
-      if(this.state.accounts[this.state.selected_e5] != null){
+
+      const seed_object = this.state.saved_cypher_seed_object['seed_object']
+      if(this.state.accounts[this.state.selected_e5] != null && seed_object == null){
         var me = this
         setTimeout(function() {
-            me.start_get_accounts_data(true, false, false/* should_skip_pre_launch */)
+          me.start_get_accounts_data(true, false, false/* should_skip_pre_launch */)
         }, (3 * 1000));
       }else{
-        this.when_wallet_data_updated(['(32)'], 0, '', true,) 
+        if(seed_object != null && Object.keys(seed_object).length > 0){
+          this.when_wallet_data_updated3(seed_object.added_tags, seed_object.set_salt, seed_object.selected_item, true, seed_object.selected_item_2)
+        }else{
+          this.when_wallet_data_updated(['(32)'], 0, '', true, 'e') 
+        }
       }
     }else{
       this.prompt_top_notification(this.getLocale()['2738']/* 'Not available in your region yet.' */, (35*60*1000))
@@ -24700,7 +24813,7 @@ class App extends Component {
 
 
   when_wallet_data_updated2(added_tags, set_salt, selected_item, is_synching, selected_item_2){
-    const randomizer = selected_item_2 == this.getLocale()['1593hm']/* 'enabled' */ ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
+    const randomizer = selected_item_2 != 'e' ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
     var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
 
     var e5 = this.state.e5s['data'][0]
@@ -24715,9 +24828,11 @@ class App extends Component {
   }
 
   async when_wallet_data_updated3(added_tags, set_salt, selected_item, is_synching, selected_item_2){
-    this.prompt_top_notification(this.getLocale()['1561']/* 'Setting your wallet.' */, 5500)
-    const randomizer = selected_item_2 == this.getLocale()['1593hm']/* 'enabled' */ ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
+    if(is_synching == false) this.prompt_top_notification(this.getLocale()['1561']/* 'Setting your wallet.' */, 5500);
+    const randomizer = selected_item_2 != 'e' ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
+    const seed_object = { 'added_tags':added_tags, 'set_salt':set_salt, 'selected_item':selected_item, selected_item_2: selected_item_2 }
     var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;/* try not to change this, otherwise peopels seeds will generate different wallet addresses */
+    // console.log('when_wallet_data_updated3', 'my set seed', seed)
     this.generate_one_account_for_all_e5s(seed)
     
     this.did_just_set_wallet = true;
@@ -24725,7 +24840,7 @@ class App extends Component {
     if(this.state.has_wallet_been_set == true && this.state.account_seed != seed){
       this.setState({
         account_balance: {}, 
-        account_seed: seed, 
+        account_seed: seed,
         mail_message_events:{}, 
         all_mail:{}, 
         account_balance:{}, 
@@ -24805,7 +24920,14 @@ class App extends Component {
     }
 
     await this.wait(400);
-    this.setState({has_wallet_been_set: true})
+    this.setState({has_wallet_been_set: true, seed_object: seed_object})
+
+    if(is_synching == true){
+      if(selected_item != '') {
+        this.setState({account_seed: seed});
+        this.setState({my_pub_key: await this.get_my_entire_public_key()})
+      }
+    }
     
     await this.wait(400);
     this.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
@@ -24841,15 +24963,16 @@ class App extends Component {
     }
   }
 
-  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
-    var seed = added_tags.join(' | ') + set_salt + selected_item;
+  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching, selected_item_2){
+    const randomizer = selected_item_2 != 'e' ? `${process.env.REACT_APP_SEED_RANDOMIZER_KEY}` : ''
+    var seed = added_tags.join(' | ') + set_salt + selected_item + randomizer;
     if(selected_item != '') {
       this.setState({account_seed: seed});
     }
     this.generate_one_account_for_all_e5s(seed)
-    if(this.state.coin_data['BTC'] == null){
-      this.generate_account_data_for_each_coin(seed)
-    }
+    // if(this.state.coin_data['BTC'] == null){
+    // }
+    this.generate_account_data_for_each_coin(seed)
     var me = this
     setTimeout(async function() {
         me.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
@@ -26088,7 +26211,7 @@ class App extends Component {
     const balance = (await Tezos.tz.getBalance(address)).toString()
 
     var fee_info = {'fee':await this.get_tezos_transaction_fee(), 'type':'variable', 'per':'transaction'}
-    var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet, 'Tezos':Tezos}
+    var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
     // var clone = structuredClone(this.state.coin_data)
     // clone['XTZ'] = data;
     // this.setState({coin_data: clone})
@@ -48851,6 +48974,9 @@ class App extends Component {
       else if(message['type'] == 'object_tags'){
         me.process_new_tags_in_object_message_received(message, object_hash, from, true)
       }
+      else if(message['type'] == 'mempool_notification'){
+        me.process_new_mempool_notification_message(message, object_hash, from, true)
+      }
     });
     socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -49815,6 +49941,28 @@ class App extends Component {
     await this.wait(3000)
 
     await this.process_new_storefront_availability_update(availability_object.message, availability_object.object_hash)
+  }
+
+  async notify_of_finishing_payment_in_mempool(finish_job_payment_data, gas_price, gas_limit, rpc_url, transaction_expiry_time, transaction_expiry_block){
+    const recipient_accounts = Object.keys(finish_job_payment_data)
+    for(var f=0; f<recipient_accounts.length; f++){
+      const focused_recipient = recipient_accounts[f]
+      const state_data = finish_job_payment_data[focused_recipient]
+      const mail_message_object = await this.prepare_finishing_payment_in_mempool_message_object_message(state_data, gas_price, gas_limit, rpc_url, focused_recipient, transaction_expiry_time, transaction_expiry_block)
+
+      const clone = this.state.broadcast_stack.slice()
+      clone.push(mail_message_object.message.message_identifier)
+      this.setState({broadcast_stack: clone})
+
+      const to = await this.get_recipient_address(focused_recipient, this.state.selected_e5)
+      const target = 'mempool_notification|'+to
+      const secondary_target = 'mempool_notification|'+this.state.accounts[this.state.selected_e5].address
+
+      await this.reconnect_socket_if_unconnected()
+      this.state.socket.emit("send_message", {to: to, message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash, secondary_target: secondary_target });
+
+      await this.wait(1100)
+    }
   }
   
 
@@ -51868,6 +52016,62 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       signature,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_finishing_payment_in_mempool_message_object_message(state_data, gas_price, gas_limit, rpc_url, recipient_account, transaction_expiry_time, transaction_expiry_block){
+    const id = this.make_number_id(12)
+    const state_object = {
+      'id':id,
+      'recipient_account':recipient_account,
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'sender_address': this.state.accounts[this.state.selected_e5].address,
+      'data':state_data,
+      'gas_price':gas_price,
+      'gas_limit':gas_limit,
+      'rpc_url':rpc_url,
+      'time':Date.now(),
+      'transaction_expiry_time':transaction_expiry_time,
+      'transaction_expiry_block':transaction_expiry_block,
+      'recipients_e5':this.state.selected_e5,
+    }
+    const tags = []
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = await this.get_recipient_address(recipient_account, e5)
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const encrypted_object = await this.get_encrypted_mail_message(state_object, recipient_account)
+    const object_as_string = JSON.stringify(encrypted_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    var context = 0
+    const message = {
+      type: 'mempool_notification',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: state_object.convo_id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -54194,6 +54398,72 @@ class App extends Component {
     }
   }
 
+  async process_new_mempool_notification_message(message, object_hash, from_arg, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
+    const am_I_the_author = this.state.accounts[message['e5']].address == from;
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        // me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const account = this.state.user_account_id[message['e5']]
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
+      
+      if(ipfs_obj != null && ipfs != ipfs_obj){
+        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+          await this.handle_new_mempool_notification(ipfs_obj, message)
+        }
+
+        if(!am_I_the_author){
+          this.set_new_new_mempool_event_in_notifications(ipfs_obj, message, object_hash)
+        }
+      }
+    }
+  }
+
+  async handle_new_mempool_notification(ipfs, message){
+    var sender_account = ipfs['sender_account']
+    var sender_account_e5 = ipfs['sender_account_e5']
+    var prompt = this.getLocale()['1407bh']/* '$ is finishing your payment in the mempool.' */
+    const alias = await this.get_sender_title_text(sender_account, sender_account_e5)
+    prompt = prompt.replace('$', alias)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'mempool_notification', 'data':ipfs})
+  }
+
+  async set_new_new_mempool_event_in_notifications(ipfs, message, object_hash){
+    const event = {returnValues:{p1: 0, p2:0, p3:0, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    event['e5'] = message['object_e5']
+    event['p'] = 0
+    event['time'] = message['time']
+    event['block'] = message['block']
+    event['sender'] = ipfs['sender_account']
+    event['type'] = 'mempool_notification'
+    event['event_type'] = 'mempool_notification'
+    event['view'] = {'notification_id':'mempool_notification','events':[], 'type':'mempool_notification', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p1', 'data':ipfs}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['mempool_notification'] == null ? [] : clone['mempool_notification'].slice()
+    const index = request_clone_array.findIndex(item => item['view']['data']['id'] == ipfs['id']);
+    if(index == -1){
+      request_clone_array.push(event)
+    }
+    clone['mempool_notification'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
 
 
 
@@ -54643,6 +54913,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'storefront_availability'){
             await this.process_new_storefront_availability_update(object_data, object_hash)
+          }
+          else if(object_data['type'] == 'mempool_notification'){
+            await this.process_new_mempool_notification_message(object_data, object_hash, object_data['author_address'], true)
           }
           await this.wait(300)
         }

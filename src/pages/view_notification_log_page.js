@@ -710,6 +710,7 @@ class ViewNotificationLogPage extends Component {
                 'signature': this.props.app_state.loc['3067ad'],/* '✍️ $ sent you a singature request.' */
                 'ether_coin_request': this.props.app_state.loc['3067aq'],/* '📥 $ sent you a request for some %' */
                 'ether_coin_receipt': this.props.app_state.loc['3067av'],/* '🧾 $ sent you a transaction receipt for some %' */
+                'mempool_notification': this.props.app_state.loc['3067bg'],/* '⏳ $ is finishing your payment in the mempool.' */
             }
             const event_type = item['event_type']
             const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -739,8 +740,9 @@ class ViewNotificationLogPage extends Component {
         const signature = notification_object['signature'] == null ? [] : notification_object['signature']
         const ether_coin_request = notification_object['ether_coin_request'] || []
         const ether_coin_receipt = notification_object['ether_coin_receipt'] || []
+        const mempool_notification = notification_object['mempool_notification'] || []
         
-        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt)
+        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt, mempool_notification)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

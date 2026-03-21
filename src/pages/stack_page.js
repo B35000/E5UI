@@ -251,7 +251,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['1593hm']/* 'percentage' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['1593hm']/* 'enabled' */], [0]
             ], 
         }
     }
@@ -1683,8 +1683,8 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'details':this.props.app_state.loc['1431']/* 'The gas budget for your next run with E5. You can auto-set the value to be the estimated gas to be comsumed.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'number':this.state.run_gas_limit, 'relativepower':this.props.app_state.loc['1430']/* 'units' */})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'subtitle':this.format_power_figure(this.state.run_gas_limit), 'barwidth':this.calculate_bar_width(this.state.run_gas_limit), 'number':this.format_account_balance_figure(this.state.run_gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['1430']/* 'units' */, })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'number':this.state.run_gas_limit, 'relativepower':this.props.app_state.loc['3055nd']/* 'gas' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'subtitle':this.format_power_figure(this.state.run_gas_limit), 'barwidth':this.calculate_bar_width(this.state.run_gas_limit), 'number':this.format_account_balance_figure(this.state.run_gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['3055nd']/* 'gas' */, })}
                 </div>
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -3212,7 +3212,7 @@ class StackPage extends Component {
         var newly_participated_polls = []
         var newly_participated_objects = [].concat(this.props.app_state.socket_participated_objects)
         var new_transaction_index_obj={}
-
+        
         const creator_group_updates = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3220,6 +3220,7 @@ class StackPage extends Component {
             []/* int_data */
         ]
         const creator_group_updates_strings = [ [] ]
+        const finish_job_payment_data = {}
         var tag_payment_indexer_data = false
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
@@ -4748,6 +4749,11 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(format_object.int)
 
+                    if(finish_job_payment_data[txs[i].recipient] == null){
+                        finish_job_payment_data[txs[i].recipient] = []
+                    }
+                    finish_job_payment_data[txs[i].recipient].push({'transactions':txs[i].price_data})
+
                     tag_payment_indexer_data = true
                 }
                 else if(txs[i].type == this.props.app_state.loc['1593le']/* 'renew-alias' */){
@@ -5568,7 +5574,7 @@ class StackPage extends Component {
                 }
                 else{
                     var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration, e5)
+                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration, e5, finish_job_payment_data)
                 }
             }else{
                 this.props.lock_run(false)
@@ -14898,6 +14904,15 @@ class StackPage extends Component {
     }
 
     when_get_remember_account_tags_object_updated(tag_object){
+        var selected_item = this.get_selected_item(tag_object, 'e')
+        if(selected_item == this.props.app_state.loc['2892']/* 'remember' */){
+            this.props.show_dialog_bottomsheet({'tag_object':tag_object}, 'open_remember_account_settings_ui')
+        }else{
+            this.set_remember_account_tags_object(tag_object)
+        }
+    }
+    
+    set_remember_account_tags_object(tag_object){
         this.setState({get_remember_account_tags_object: tag_object});
         var selected_item = this.get_selected_item(tag_object, 'e')
         this.props.when_remember_account_tags_changed(selected_item)

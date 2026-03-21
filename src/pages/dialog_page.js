@@ -36,6 +36,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import DurationPicker from './../components/duration_picker';
 
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -124,7 +125,7 @@ class DialogPage extends Component {
 
         weight_tags_search:'', moved_exchanges_search: '', 
 
-        out_of_stock_items:[]
+        out_of_stock_items:[], seed_passcode:'', passcode_expiry_time:0, passcode_entry_tries:5, cypher_passcode:'', get_remember_seed_during_initial_synch_tags_object: this.get_remember_seed_during_initial_synch_tags_object()
     };
 
 
@@ -193,6 +194,17 @@ class DialogPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e', this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */, this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */], [1]
+            ],
+        };
+    }
+
+    get_remember_seed_during_initial_synch_tags_object(){
+        return {
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['2892']/* 'remember' */], [0]
             ],
         };
     }
@@ -668,6 +680,19 @@ class DialogPage extends Component {
                     {this.render_update_out_of_stock_switch_ui()}
                 </div>
             )
+        }
+        else if(option == 'mempool_notification'){
+            return(
+                <div>
+                    {this.render_mempool_notification_ui()}
+                </div>
+            )
+        }
+        else if(option == 'open_remember_account_settings_ui'){
+            return this.render_remember_account_settings_ui()
+        }
+        else if(option == 'request_passcode_for_decrypting_stored_seed'){
+            return this.request_passcode_for_decrypting_stored_seed_ui()
         }
     }
 
@@ -12696,6 +12721,351 @@ return data['data']
         const object = this.state.data['object'];
         const out_of_stock_items = this.state.out_of_stock_items
         this.props.emit_storefront_stock_availability_notification(object, out_of_stock_items)
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_mempool_notification_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_mempool_notification_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_mempool_notification_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mempool_notification_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mempool_notification_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mempool_notification_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mempool_notification_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_mempool_notification_data(){
+        const time = this.state.data['time']/1000
+        const sender_account = this.state.data['sender_account']
+        const sender_account_e5 = this.state.data['sender_account_e5']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const gas_limit = this.state.data['gas_limit']
+        const rpc_url = this.state.data['rpc_url']
+        const alias = this.get_senders_alias(sender_account, sender_account_e5)
+        const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
+        const transaction_expiry_time = this.state.data['transaction_expiry_time']
+        const transaction_expiry_block = this.state.data['transaction_expiry_block']
+        // console.log('render_mempool_notification_data','transaction_expiry_time', transaction_expiry_time)
+        var current_gas_prices = this.props.app_state.gas_price[sender_account_e5]
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055my']/* 'Transaction Details.' */, 'details':this.props.app_state.loc['3055mz']/* 'The details for the transaction posted in the mempool which you\'re set to receive funds from a job payment.' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+                {this.render_detail_item('3', {'title':alias, 'details':this.props.app_state.loc['3055mw']/* 'Transaction Author.' */, 'size':'l', 'title_image': e5_image})}
+                <div style={{height: 10}}/>
+                
+                {this.render_detail_item('3', {'title':sender_address, 'details':this.props.app_state.loc['3055mx']/* 'Author\'s Address.' */, 'size':'l',})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['3055na']/* 'Gas Price Used.' */, 'number':gas_price, 'relativepower':'wei'})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055na']/* 'Gas Price Used' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055nb']/* 'Gas Price Used in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+
+                    {current_gas_prices != null && this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055nj']/* 'Current Gas Prices In Gwei.' */, 'subtitle':this.format_power_figure(current_gas_prices/10**9), 'barwidth':this.calculate_bar_width(current_gas_prices/10**9), 'number':(current_gas_prices/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['3055nc']/* 'Transaction Gas Limit Used' */, 'number':gas_limit, 'relativepower':this.props.app_state.loc['3055nd']/* 'gas' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055nc']/* 'Transaction Gas Limit Used.' */, 'subtitle':this.format_power_figure(gas_limit), 'barwidth':this.calculate_bar_width(gas_limit), 'number':this.format_account_balance_figure(gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['3055nd']/* 'gas' */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':rpc_url, 'details':this.props.app_state.loc['3055ne']/* 'RPC used.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055nh']/* 'Expiry Time: $' */.replace('$', (new Date(parseInt(transaction_expiry_time)*1000).toLocaleString())), 'details':this.props.app_state.loc['3055ni']/* 'Transaction Expiry Block: $' */.replace('$', this.format_account_balance_figure(transaction_expiry_block)), 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_mempool_notification_data2(){
+        const transaction_groups = this.state.data['data']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055nf']/* 'Job Payments' */, 'details':this.props.app_state.loc['3055ng']/* 'The transfers set to occur once the run is included in an upcoming block.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {transaction_groups.map((pay_group, index) => (
+                    <div style={{'padding': '3px 0px 3px 0px'}}>
+                        {this.render_transaction_group(pay_group['transactions'])}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_transaction_group(transactions){
+        const e5 = this.state.data['sender_account_e5']
+        return(
+            <div>
+                {transactions.map((pay_item, index) => (
+                    <div style={{'padding': '3px 0px 3px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+pay_item['id']], 'number':pay_item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+pay_item['id']], 'subtitle':this.format_power_figure(pay_item['amount']), 'barwidth':this.calculate_bar_width(pay_item['amount']), 'number':this.format_account_balance_figure(pay_item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']], })}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+    render_remember_account_settings_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_remember_account_settings_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_remember_account_settings_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_remember_account_settings_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_remember_account_settings_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055nk']/* 'Remember Account Settings.' */, 'details':this.props.app_state.loc['3055nl']/* 'Optionally set a passcode and expiry duration for your wallet. If left unset, e will only remember your account Id and addresses.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055nq']/* 'Only set a password if you trust the browser and device your using.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_seed_passcode_input_field_changed.bind(this)} text={this.state.seed_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055nn']/* 'Passcode Expiry Duration.' */, 'details':this.props.app_state.loc['3055no']/* 'The time after which you will be required to manually set your wallet again in the stack section.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.passcode_expiry_time), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l'})}
+
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_passcode_expiry_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ny']/* 'Set During Sync' */, 'details':this.props.app_state.loc['3055nz']/* 'Set your wallet during initial synchronization before setting your pin.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_seed_during_initial_synch_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_seed_during_initial_synch_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
+
+                <div style={{height:10}}/>
+                <div onClick={()=>this.finish_setting_remember_account_password()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055np']/* 'Finish */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_seed_passcode_input_field_changed(text){
+        this.setState({seed_passcode: text})
+    }
+
+    when_passcode_expiry_time_set(number){
+        this.setState({passcode_expiry_time: number})
+    }
+
+    when_get_remember_seed_during_initial_synch_tags_object_updated(tags_obj){
+        this.setState({get_remember_seed_during_initial_synch_tags_object: tags_obj})
+    }
+
+    finish_setting_remember_account_password(){
+        const seed_passcode = this.state.seed_passcode.trim()
+        const passcode_expiry_time = this.state.passcode_expiry_time
+        const tag_object = this.state.data['tag_object']
+        const selected_item = this.get_selected_item(this.state.get_remember_seed_during_initial_synch_tags_object, 'e')
+        if(seed_passcode == ''){
+            this.props.set_remember_account_stack_object(tag_object)
+        }
+        else{
+            if(passcode_expiry_time == 0){
+                this.props.notify(this.props.app_state.loc['3055nr']/* Set a valid expiry duration first. */, 2000)
+            }
+            else if(seed_passcode.length < 3){
+                this.props.notify(this.props.app_state.loc['3055ns']/* That passcode is too short. */, 2000)
+            }
+            else{
+                this.props.set_seed_passcode_and_expiry_time(seed_passcode, passcode_expiry_time, tag_object, selected_item == this.props.app_state.loc['2892']/* 'remember' */)
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    request_passcode_for_decrypting_stored_seed_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.request_passcode_for_decrypting_stored_seed_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.request_passcode_for_decrypting_stored_seed_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.request_passcode_for_decrypting_stored_seed_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    request_passcode_for_decrypting_stored_seed_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055nt']/* 'Set Passcode.' */, 'details':this.props.app_state.loc['3055nu']/* 'Set your passcode to decrypt your seed and synchronize your wallet.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055nv']/* 'You have $ tries left.' */.replace('$', this.state.passcode_entry_tries), 'textsize':'12px', 'font':this.props.app_state.font})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_cypher_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                <div style={{height: 10}}/>
+
+                <div onClick={()=>this.decrypt_seed_and_synchronize()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055np']/* 'Finish */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_cypher_passcode_input_field_changed(text){
+        this.setState({cypher_passcode: text})
+    }
+
+    async decrypt_seed_and_synchronize(){
+        const cypher_passcode = this.state.cypher_passcode.trim()
+
+        if(cypher_passcode == ''){
+            this.props.notify(this.props.app_state.loc['3055nw']/* type something. */, 1500);
+        }
+        else{
+            const value = await this.props.decrypt_seed(cypher_passcode)
+            if(value == false){
+                this.props.notify(this.props.app_state.loc['3055nx']/* That didn\'t work. */, 3500);
+                const tries_left = this.state.passcode_entry_tries - 1
+                if(tries_left > 0){
+                    this.setState({passcode_entry_tries: tries_left})
+                }else{
+                    this.props.fail_to_set_password()
+                }
+            }
+        }
     }
 
 
