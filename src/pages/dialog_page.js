@@ -694,6 +694,9 @@ class DialogPage extends Component {
         else if(option == 'request_passcode_for_decrypting_stored_seed'){
             return this.request_passcode_for_decrypting_stored_seed_ui()
         }
+        else if(option == 'confirm_bridge_ether_dialog'){
+            return this.render_confirm_bridge_ether_dialog_ui()
+        }
     }
 
 
@@ -13035,6 +13038,7 @@ return data['data']
                 <div style={{height: 10}}/>
 
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_cypher_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055ob']/* 'If you refresh your browser, youll need to set your wallet in the stack section.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
 
                 <div onClick={()=>this.decrypt_seed_and_synchronize()}>
@@ -13068,6 +13072,132 @@ return data['data']
         }
     }
 
+
+
+
+
+
+
+
+
+
+    render_confirm_bridge_ether_dialog_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_bridge_ether_dialog_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_bridge_ether_dialog_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_bridge_ether_dialog_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_confirm_bridge_ether_dialog_data(){
+        const item = this.state.data['item']
+        const picked_amount = this.state.data['picked_amount']
+        const recipient_address = this.state.data['recipient_address']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const my_balance = this.state.data['my_balance']
+
+        const layer1e5 = this.props.app_state.e5s[item['e5']].parent
+        var state_list = this.props.app_state.ether_data
+        const parent_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == layer1e5
+        })
+        const parent_ether_name = parent_ether_object['name']
+        const parent_symbol = parent_ether_object['symbol']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055oc']/* 'Confirm Bridge Action from $.' */.replace('$', parent_ether_name), 'details':this.props.app_state.loc['3055od']/* 'Confirm the details for the bridging action.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095d']/* 'Balance in $' */.replace('$', parent_symbol)}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance/10**18),
+                    'number':(my_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender_address, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055of']/* 'Set Amount To Bridge.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount), 'number':this.format_account_balance_figure(picked_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount/10**18),
+                    'number':(picked_amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055oe']/* 'Gas Price To Be Used.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_price/10**9),
+                    'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+
+                <div style={{height:10}}/>
+                <div onClick={()=>this.confirm_bridge_ether()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2481q']/* 'Bridge' */, 'action': ''})}
+                </div>
+            </div>
+        )
+    }
+
+    confirm_bridge_ether(){
+        const item = this.state.data['item']
+        const picked_amount = this.state.data['picked_amount']
+        const recipient_address = this.state.data['recipient_address']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const my_balance = this.state.data['my_balance']
+
+        this.props.bridge_ether_into_l2(item, picked_amount, recipient_address, gas_price, my_balance, sender_address)
+    }
 
 
 

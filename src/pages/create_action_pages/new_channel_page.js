@@ -552,6 +552,10 @@ class NewChannelPage extends Component {
     add_indexing_tag_for_new_job(){
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
+        if(this.add_multiple_indexing_tags_for_new_job(typed_word) == true){
+            return;
+        }
+
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128'], 1400)
         }
@@ -578,6 +582,45 @@ class NewChannelPage extends Component {
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
             // this.props.notify('tag added!', 1200)
+        }
+    }
+
+    add_multiple_indexing_tags_for_new_job(typed_statement){
+        if(!this.hasWhiteSpace(typed_statement)){
+            return false
+        }
+        else if(typed_statement == ''){
+            this.props.notify(this.props.app_state.loc['128'], 1400)
+            return true
+        }
+        var cloned_seed_array = this.state.entered_indexing_tags.slice()
+        let added_items = 0
+        const add_tag = (typed_word) => {
+            if(
+                typed_word != '' &&
+                typed_word.length <= this.props.app_state.tag_size &&
+                typed_word.length >= 3 &&
+                !this.state.entered_indexing_tags.includes(typed_word) &&
+                this.state.entered_indexing_tags.length < this.props.app_state.max_tags_count &&
+                /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word) == false
+            ){
+                cloned_seed_array.push(typed_word)
+                added_items++
+            }
+        }
+        const typed_tags = typed_statement.split(' ')
+        typed_tags.forEach(tag_item => {
+            add_tag(tag_item)
+        });
+        
+        if(added_items == 0){
+            this.props.notify(this.props.app_state.loc['284br']/* 'nothing added.' */, 1800)
+            return true;
+        }
+        else{
+            this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
+            this.props.notify(this.props.app_state.loc['284bs']/* '$ tags added.' */.replace('$', added_items), 2800)
+            return true;
         }
     }
 

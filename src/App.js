@@ -505,6 +505,7 @@ import kaia_logo from './assets/kaia.png'
 import manta_logo from './assets/manta.png'
 import filecoin_evm_logo from './assets/filecoin_evm.png'
 import monad_logo from  './assets/monad.png'
+import zora_logo from './assets/zora.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -689,6 +690,7 @@ import ViewObjectLocations from './pages/view_object_location_pins'
 import CallPage from './pages/call_page'
 import PurchaseCreditsPage from './pages/purchase_credits_page'
 import ConfigureObligationsPage from './pages/configure_obligations_page'
+import BridgeEtherPage from './pages/bridge_ether_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -696,6 +698,8 @@ import currencies from './resources/coins';
 import WorkerFactory from './WorkerFactory';
 import myWorker from './resources/encryptor_decryptor_worker';
 import notificationSound from './sounds/notification_sound_pop.mp3';
+import { Wallet, Provider, utils } from "zksync-ethers";
+import { EthBridger, getL2Network, L1TransactionReceipt, L1ToL2MessageStatus } from "@arbitrum/sdk";
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -725,6 +729,12 @@ import * as Tone from 'tone';
 import { Drawer } from 'vaul';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { createPublicClient, createWalletClient, http } from 'viem'
+import { mainnet, optimism, base, fraxtal, ink, soneium, unichain, zircuit, zora } from 'viem/chains'
+import { getL2TransactionHashes, publicActionsL2, walletActionsL1 } from 'viem/op-stack'
+import { privateKeyToAccount } from 'viem/accounts'
+import { CrossChainMessenger, ETHBridgeAdapter } from "@eth-optimism/sdk";
+import * as optimismSDK from "@eth-optimism/sdk";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -1250,7 +1260,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1410,7 +1420,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1545,19 +1555,19 @@ class App extends Component {
         web3:['https://optimism-rpc.publicnode.com'],
         token:'OETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:optimism_logo/* 'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:optimism_logo/* 'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185',
       },
       'E205':{
         web3:['https://base-rpc.publicnode.com'],
         token:'BETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:base_logo/* 'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:base_logo/* 'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185',
       },
       'E215':{
         web3:['https://arbitrum-one-rpc.publicnode.com'],
         token:'AETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled: true, parent: 'E185',
       },
       'E225':{
         web3:['https://astar-rpc.dwellir.com'],
@@ -1881,7 +1891,7 @@ class App extends Component {
         web3:['https://rpc.ethoprotocol.com'],
         token:'ETHO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:etho_logo/* 'https://nftstorage.link/ipfs/bafkreihxyf4fksj7bajilfz2m66v455goeushb2w36kn5h63p7f2gvllgq' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:etho_logo/* 'https://nftstorage.link/ipfs/bafkreihxyf4fksj7bajilfz2m66v455goeushb2w36kn5h63p7f2gvllgq' */, iteration:3_000, url:0, active:false, e5_img:null,
       },
       'E765':{
         web3:['https://mainnet-rpc.oneledger.network'],
@@ -1942,7 +1952,7 @@ class App extends Component {
         web3:['https://api.mainnet.abs.xyz'],
         token:'ABETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:abstract_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:abstract_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E865':{
         web3:['https://apechain.drpc.org'],
@@ -1960,13 +1970,13 @@ class App extends Component {
         web3:['https://rpc.blast.io'],
         token:'BLETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:blast_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:blast_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E895':{
         web3:['https://rpc.gobob.xyz/'],
         token:'BOETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:bob_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:bob_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E905':{
         web3:['https://rpc.botanixlabs.com'],
@@ -2002,7 +2012,7 @@ class App extends Component {
         web3:['https://rpc.frax.com'],
         token:'FRAX',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:fraxtal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:fraxtal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185'
       },
       'E965':{
         web3:['https://mainnet.hsk.xyz'],
@@ -2014,13 +2024,13 @@ class App extends Component {
         web3:['https://rpc.hemi.network/rpc'],
         token:'HETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:hemi_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+        first_block:0, end_image: null, spend_image: null, ether_image:hemi_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E985':{
         web3:['https://rpc-qnd.inkonchain.com'],
         token:'IETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:ink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:ink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185',
       },
       'E995':{
         web3:['https://rpc.lens.xyz'],
@@ -2032,13 +2042,13 @@ class App extends Component {
         web3:['https://rpc.linea.build '],
         token:'LETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:linea_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:linea_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1015':{
         web3:['https://rpc.api.lisk.com'],
         token:'LIETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:lisk_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:lisk_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1025':{
         web3:['https://merlin.drpc.org'],
@@ -2050,7 +2060,7 @@ class App extends Component {
         web3:['https://rpc.metall2.com'],
         token:'METH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:metal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:metal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1045':{
         web3:['https://metis-rpc.publicnode.com'],
@@ -2062,19 +2072,19 @@ class App extends Component {
         web3:['https://rpc-mainnet.mindnetwork.xyz'],
         token:'MIETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:mind_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:mind_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1065':{
         web3:['https://rpc.mintchain.io'],
         token:'MINETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:mint_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:mint_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1075':{
         web3:['https://mainnet.mode.network/'],
         token:'MOETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:mode_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:mode_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1085':{
         web3:['https://mainnet-1.rpc.banelabs.org', 'https://mainnet-2.rpc.banelabs.org', 'https://mainnet-3.rpc.banelabs.org'],
@@ -2086,7 +2096,7 @@ class App extends Component {
         web3:['https://opbnb-rpc.publicnode.com'],
         token:'OBNB',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:opbnb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:opbnb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E135', bridge_enabled: true,
       },
       'E1105':{
         web3:['https://rpc.plume.org'],
@@ -2098,13 +2108,13 @@ class App extends Component {
         web3:['https://rpc.katana.network/'],
         token:'KETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:katana_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:katana_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1125':{
         web3:['https://zkevm-rpc.com'],
         token:'PETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:peth_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+        first_block:0, end_image: null, spend_image: null, ether_image:peth_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E185',
       },
       'E1135':{
         web3:['https://api.roninchain.com/rpc'],
@@ -2116,7 +2126,7 @@ class App extends Component {
         web3:['https://scroll-rpc.publicnode.com'],
         token:'SETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1155':{
         web3:['https://www.shibrpc.com'],
@@ -2128,19 +2138,19 @@ class App extends Component {
         web3:['https://rpc.soneium.org/'],
         token:'SONETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:soneium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:soneium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled: true
       },
       'E1175':{
         web3:['https://mainnet.superseed.xyz'],
         token:'SUETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:superseed_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:superseed_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1185':{
         web3:['https://rpc.taiko.xyz'],
         token:'TETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:taiko_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:taiko_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1195':{
         web3:['https://rpc.treasure.lol'],
@@ -2152,13 +2162,14 @@ class App extends Component {
         web3:['https://unichain-rpc.publicnode.com'],
         token:'UETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:unichain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:unichain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185',
       },
       'E1215':{
         web3:['https://worldchain-mainnet.g.alchemy.com/public'],
         token:'WOETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:world_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:world_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
+        class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1225':{
         web3:['https://rpc.xlayer.tech'],
@@ -2176,25 +2187,28 @@ class App extends Component {
         web3:['https://mainnet.zircuit.com'],
         token:'ZETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:zircuit_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:zircuit_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+        class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185',
       },
       'E1255':{
         web3:['https://mainnet.era.zksync.io'],
         token:'ZKETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:zksync_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:zksync_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+        class:'L2', rollup_type:'zk', bridge_enabled: true, parent: 'E185',
       },
       'E1265':{
         web3:['https://mainnet.zkevm.cronos.org/'],
         token:'zkCRO',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:cronoszkevm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:cronoszkevm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E235',
       },
       'E1275':{
         web3:['https://rpc.zerion.io/v1/zero'],
         token:'ZERETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:zero_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
+        first_block:0, end_image: null, spend_image: null, ether_image:zero_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
+        class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1285':{
         web3:['https://rpc.sophon.xyz'],
@@ -2207,6 +2221,7 @@ class App extends Component {
         token:'MAETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:manta_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
+        class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1305':{
         web3:['https://api.node.glif.io'],
@@ -2220,6 +2235,14 @@ class App extends Component {
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:monad_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
       },
+      'E1325':{
+        web3:['https://zora.drpc.org'],
+        token:'ZOETH',
+        e5_address:'',/*  */
+        first_block:0, end_image: null, spend_image: null, ether_image:zora_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, 
+        class:'L2', rollup_type:'op', type:'1559', bridge_enabled: true, parent: 'E185',
+      },
+      
     }
   }
 
@@ -2376,7 +2399,7 @@ class App extends Component {
       this.get_token('UETH', 'Unichain', 'E1205'),
       this.get_token('WOETH', 'World Chain', 'E1215'),
       this.get_token('OKB', 'X Layer', 'E1225'),
-      this.get_token('OKT', 'OKTC', 'E1235'),
+      this.get_token('OKT', 'OKTC', 'E1235', true),
       this.get_token('ZETH', 'Zircuit', 'E1245'),
       this.get_token('ZKETH', 'ZKsync Era', 'E1255'),
       this.get_token('zkCRO', 'Cronos zkEVM', 'E1265'),
@@ -2384,7 +2407,8 @@ class App extends Component {
       this.get_token('SOPH', 'Sophon', 'E1285'),
       this.get_token('MAETH', 'Manta Pacific', 'E1295'),
       this.get_token('FIL', 'Filecoin EVM', 'E1305'),
-      this.get_token('MON', 'Monad', 'E1315')
+      this.get_token('MON', 'Monad', 'E1315'),
+      this.get_token('ZOETH', 'Zora', 'E1325'),
     ]
 
     return list
@@ -3614,6 +3638,7 @@ class App extends Component {
     this.view_purchase_credits_page = React.createRef();
     this.view_configure_obligations_page = React.createRef();
     this.exchange_deposit_page = React.createRef();
+    this.bridge_ether_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6359,6 +6384,7 @@ class App extends Component {
           {this.render_view_call_interface_bottomsheet()}
           {this.render_view_configure_obligations_bottomsheet()}
           {this.render_exchange_deposit_bottomsheet()}
+          {this.render_bridge_ether_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -6493,7 +6519,7 @@ class App extends Component {
 
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
 
-          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)}
+          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -7108,6 +7134,13 @@ class App extends Component {
       </Drawer.Root>
     )
   }
+
+
+
+
+
+
+
 
 
 
@@ -9200,6 +9233,9 @@ class App extends Component {
 
   when_remember_account_tags_changed(item){
     this.setState({remember_account: item})
+    if(item == 'e'){
+      this.setState({seed_passcode: '', passcode_expiry_time: 0, use_during_app_launch: false})
+    }
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -11162,9 +11198,16 @@ class App extends Component {
     }
 
     if(regex == true){
-      const wordRegex = new RegExp('\\b(' + reserved_keywords.join('|') + ')\\b', 'i');
-      this.setState({reserved_words_regex: wordRegex})
-      return wordRegex
+      if(reserved_keywords.length == 0){
+        const wordRegex = new RegExp('(?!)', 'iu');
+        this.setState({reserved_words_regex: wordRegex})
+        return wordRegex
+      }
+      else{
+        const wordRegex = new RegExp('\\b(' + reserved_keywords.join('|') + ')\\b', 'iu');
+        this.setState({reserved_words_regex: wordRegex})
+        return wordRegex
+      }
     }
 
     return reserved_keywords
@@ -17571,9 +17614,9 @@ class App extends Component {
   }
 
   async send_message_to_recipient(data){
-    const ether_id = data['type'] == 'coin' ? data['item']['id'] : this.state.e5s[data['e5']].token
-    const sender_address = data['type'] == 'coin' ? data['sender'] : data['tx'].from
-    const recipient_address = data['type'] == 'coin' ? data['recipient'] : data['tx'].to
+    const ether_id = data['type'] == 'coin' ? data['item']['id'] : ( data['type'] == 'ether' ? this.state.e5s[data['e5']].token : this.state.e5s[data['item']['e5']].token )
+    const sender_address = data['type'] == 'coin' ? data['sender'] : (data['type'] == 'ether' ? data['tx'].from : data['sender'])
+    const recipient_address = data['type'] == 'coin' ? data['recipient'] : (data['type'] == 'ether' ? data['tx'].to : data['recipient'])
 
     const object_data = {
       'sender_address': sender_address,
@@ -17835,7 +17878,7 @@ class App extends Component {
 
         open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
 
-        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)}
+        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)}
         />
       </div>
     )
@@ -17941,6 +17984,7 @@ class App extends Component {
       'mempool_notification':550,
       'open_remember_account_settings_ui':600,
       'request_passcode_for_decrypting_stored_seed':300,
+      'confirm_bridge_ether_dialog':500,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -24459,6 +24503,267 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_bridge_ether_bottomsheet(){
+    if(this.state.bridge_ether_bottomsheet2 != true) return;
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <BridgeEtherPage ref={this.bridge_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+      />,
+      this.state.bridge_ether_bottomsheet,
+      this.open_bridge_ether_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_bridge_ether_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_bridge_ether_bottomsheet')
+    if(this.state.bridge_ether_bottomsheet == true){
+      //closing
+      this.bridge_ether_bottomsheet = this.bridge_ether_page.current?.state;
+
+      this.setState({bridge_ether_bottomsheet: !this.state.bridge_ether_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({bridge_ether_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({bridge_ether_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({bridge_ether_bottomsheet: !me.state.bridge_ether_bottomsheet});
+
+          if(me.bridge_ether_bottomsheet != null){
+            me.bridge_ether_page.current?.setState(me.bridge_ether_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_bridge_ether_bottomsheet(item){
+    this.open_bridge_ether_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.bridge_ether_page.current != null){
+      me.bridge_ether_page.current.set_token(item)
+    }
+    }, (1 * 1100));
+  }
+
+  async bridge_ether_into_l2(item, picked_amount, recipient_address, gas_price, my_balance, sender_address){
+    this.open_dialog_bottomsheet()
+    this.prompt_top_notification(this.getLocale()['3095e']/* Broadcasting Bridge Transaction... */, 5000)
+    const e5 = item['e5']
+    const layer1e5 = this.state.e5s[e5].parent
+    const private_key = this.state.accounts[e5].privateKey
+
+    const refresh_balance = async (focused_e5) => {
+      const web3_url = this.get_web3_url_from_e5(focused_e5)
+      const account_for_e5 = this.state.accounts[focused_e5]
+      await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5)
+    }
+
+    const bridge_transaction_with_viem = async (chain) =>{
+      const account = privateKeyToAccount(private_key)
+      const publicClientL1 = createPublicClient({ chain: mainnet, transport: http() })
+      const walletClientL1 = createWalletClient({ account, chain: mainnet, transport: http() }).extend(walletActionsL1());
+      const publicClientL2 = createPublicClient({ chain: chain, transport: http() }).extend(publicActionsL2())
+
+      const args = await publicClientL2.buildDepositTransaction({
+        mint: picked_amount,
+        to: recipient_address,
+      })
+
+      const hash = await walletClientL1.depositTransaction(args)
+      const receipt = await publicClientL1.waitForTransactionReceipt({ hash })
+      const [l2Hash] = getL2TransactionHashes(receipt)
+      const l2Receipt = await publicClientL2.waitForTransactionReceipt({ hash: l2Hash })
+      const cumulativeGasUsed = l2Receipt.cumulativeGasUsed
+      const effectiveGasPrice = l2Receipt.effectiveGasPrice
+      const transactionHash = l2Receipt.transactionHash
+      const timestamp = l2Receipt.blockTimestamp
+
+      await refresh_balance(e5)
+      await refresh_balance(layer1e5)
+
+      
+      this.show_successful_send_bottomsheet({'type':'op_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'l2Hash':l2Hash, 'transactionHash':transactionHash, 'cumulativeGasUsed':cumulativeGasUsed, 'effectiveGasPrice':effectiveGasPrice, 'timestamp':timestamp}, true)
+    }
+
+    const bridge_transaction_with_eth_optimism = async (privateKey, config) => {
+      const l1Provider = new ethers.providers.JsonRpcProvider(config.l1URL);
+      const l2Provider = new ethers.providers.JsonRpcProvider(config.l2URL);
+      const l1Signer = new ethers.Wallet(privateKey, l1Provider);
+      const l2Signer = new ethers.Wallet(privateKey, l2Provider);
+
+      const messenger = new CrossChainMessenger({
+        l1SignerOrProvider: l1Signer,
+        l2SignerOrProvider: l2Signer,
+        l1ChainId: config.l1ChainID,
+        l2ChainId: config.l2ChainID,
+        contracts: { l1: config.contracts },
+        bridges: {
+          NativeToken: {
+            Adapter: ETHBridgeAdapter,
+            l1Bridge: config.contracts.L1StandardBridge,
+            l2Bridge: config.L2StandardBridge,
+          },
+        },
+      });
+
+      const tx = await messenger.depositETH(picked_amount, { recipient: recipient_address });
+      const hash = tx.hash
+      console.log("Deposit tx sent:", tx.hash);
+      const receipt = await tx.wait();
+      console.log("Deposit confirmed in block:", receipt.blockNumber);
+      const gas_used = receipt.cumulativeGasUsed
+      const effective_gas_price = receipt.effectiveGasPrice
+      return { gas_used, effective_gas_price, hash }
+    }
+
+    if(item['e5'] == 'E1325'){
+      //bridge zora
+      await bridge_transaction_with_viem(zora)
+    }
+    else if(item['e5'] == 'E1255'){
+      //bridge zkSync
+      const l2Provider = new Provider(this.get_web3_url_from_e5(e5));
+      const l1Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(layer1e5));
+      const wallet = new Wallet(private_key, l2Provider, l1Provider);
+
+      const depositTx = await wallet.deposit({
+        token: utils.ETH_ADDRESS,
+        amount: picked_amount,
+        to: recipient_address,
+        refundRecipient: sender_address,
+      });
+      const receipt = await depositTx.wait();
+      const hash = receipt.hash
+      console.log(`Tx: ${hash}`);
+      await depositTx.waitL1Commit();
+      console.log(`Transaction committed on L1`);
+      console.log(`L2 balance after deposit: ${await wallet.getBalance()}`);
+      console.log(`L1 balance after deposit: ${await wallet.getBalanceL1()}`);
+
+      await refresh_balance(e5)
+      await refresh_balance(layer1e5)
+
+      this.show_successful_send_bottomsheet({'type':'zk_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash}, true)
+    }
+    else if(item['e5'] == 'E1245'){
+      //bridge zircuit
+      await bridge_transaction_with_viem(zircuit)
+    }
+    else if(item['e5'] == 'E1205'){
+      //bridge unichain
+      await bridge_transaction_with_viem(unichain)
+    }
+    else if(item['e5'] == 'E985'){
+      //bridge ink
+      await bridge_transaction_with_viem(ink)
+    }
+    else if(item['e5'] == 'E215'){
+      //bridge arbitrum
+      const l1Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(layer1e5));
+      const l2Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(e5));
+      const l1Wallet = new ethers.Wallet(private_key, l1Provider);
+      const l2Network = await getL2Network(42161); 
+      const ethBridger = new EthBridger(l2Network);
+
+      const depositTx = await ethBridger.deposit({
+        amount: picked_amount,
+        l1Signer: l1Wallet,
+        l2Provider: l2Provider,
+      });
+      console.log(`tx: ${depositTx.hash}`)
+      const hash = depositTx.hash
+      const l1Receipt = await depositTx.wait();
+      const gas_limit = depositTx.gasLimit;
+      const gas_p = depositTx.gasPrice;
+      const timestamp = depositTx.timestamp;
+      const l1TxnReceipt = new L1TransactionReceipt(l1Receipt)/* <-- ethers-js TransactionReceipt of an ethereum tx that triggered an L1 to L2 message (say depositting a token via a bridge)  */
+      const l1ToL2Message = await l1TxnReceipt.getL1ToL2Message(l2Provider)/* <-- connected ethers-js Wallet */
+      const res = await l1ToL2Message.waitForStatus();
+
+      if (res.status === L1ToL2MessageStatus.FUNDS_DEPOSITED_ON_L2) {
+        /** Message wasn't auto-redeemed; redeem it now: */
+        console.log('message wasnt auto-redeemed, redeem it now.')
+        this.prompt_top_notification(this.getLocale()['3095p']/* Redeeming Receipt... */, 4000)
+        const response = await l1ToL2Message.redeem()
+        const receipt = await response.wait()
+        
+        console.log('redeem receipt', receipt)
+        await refresh_balance(e5)
+        await refresh_balance(layer1e5)
+
+        this.show_successful_send_bottomsheet({'type':'ar_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'gas_limit':gas_limit, 'gas_price':gas_p, 'timestamp':timestamp}, true)
+      } 
+      else if (res.status === L1ToL2MessageStatus.REDEEMED) {
+        /** Message succesfully redeeemed */
+        await refresh_balance(e5)
+        await refresh_balance(layer1e5)
+
+        this.show_successful_send_bottomsheet({'type':'ar_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'gas_limit':gas_limit, 'gas_price':gas_p, 'timestamp':timestamp}, true)
+      }
+    }
+    else if(item['e5'] == 'E205'){
+      //bridge base
+      await bridge_transaction_with_viem(base)
+    }
+    else if(item['e5'] == 'E195'){
+      //bridge optimism
+      await bridge_transaction_with_viem(optimism)
+    }
+    else if(item['e5'] == 'E1165'){
+      //bridge soneium
+      await bridge_transaction_with_viem(soneium)
+    }
+    else if(item['e5'] == 'E1095'){
+      const CONFIG = {
+        l1URL: this.get_web3_url_from_e5(layer1e5),
+        l2URL: this.get_web3_url_from_e5(e5),
+        l1ChainID: 56,
+        l2ChainID: 204,
+        contracts: {
+          L1CrossDomainMessenger:"0xd95D508f13f7029CCF0fb61984d5dfD11b879c4f", // Proxy__OVM_L1CrossDomainMessenger
+          L1StandardBridge:"0xF05F0e4362859c3331Cb9395CBC201E3Fa6757Ea", // Proxy__OVM_L1StandardBridge
+          OptimismPortal:"0x1876EA7702C0ad0C6A2ae6036DE7733edfBca519", // OptimismPortalProxy
+          L2OutputOracle:"0x153CAB79f4767E2ff862C94aa49573294B13D169", // L2OutputOracleProxy
+          AddressManager:"0x29cfb9A803589Ff5C37f955ead83b45311F15b12",
+        },
+        L2StandardBridge:"0x4200000000000000000000000000000000000010",
+      };
+      const { gas_used, effective_gas_price, hash } = await bridge_transaction_with_eth_optimism(private_key, CONFIG)
+
+      await refresh_balance(e5)
+      await refresh_balance(layer1e5)
+
+      this.show_successful_send_bottomsheet({'type':'op2_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'cumulativeGasUsed':gas_used, 'effectiveGasPrice':effective_gas_price}, true)
+    }
+
   }
 
 

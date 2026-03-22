@@ -474,7 +474,8 @@ class HomepageSideBar extends Component {
         this.props.app_state.e5s['data'].forEach(e5 => {
             if(e5 != 'E35'){
                 var symbol = this.props.app_state.e5s[e5].token
-                var ether_price = this.props.app_state.asset_price_data[symbol] == null ? 0 : this.props.app_state.asset_price_data[symbol]['price']
+                const effective_symbol = symbol.endsWith('ETH') ? 'ETH' : symbol
+                var ether_price = this.props.app_state.asset_price_data[effective_symbol] == null ? 0 : this.props.app_state.asset_price_data[effective_symbol]['price']
                 var ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : (this.props.app_state.account_balance[e5] / 10**18)
                 if(ether_price != null){
                     total_value += (ether_balance * ether_price)

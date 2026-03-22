@@ -75,6 +75,18 @@ class SuccessfulSend extends Component {
                 </div>
             )
         }
+        else if(type == 'op_bridge'){
+            return this.optimistic_bridge_data()
+        }
+        else if(type == 'zk_bridge'){
+            return this.zk_bridge_data()
+        }
+        else if(type == 'ar_bridge'){
+            return this.ar_bridge_data()
+        }
+        else if(type == 'op2_bridge'){
+            return this.op2_bridge_data()
+        }
     }
 
 
@@ -474,6 +486,9 @@ class SuccessfulSend extends Component {
         }else if(e5 == 'E1315'){
             return `https://monadvision.com/tx/${hash}`
         }
+        else if(e5 == 'E1325'){
+            return `https://explorer.zora.energy/tx/${hash}`
+        }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
             if(blockexplorer_link != null){
@@ -570,7 +585,6 @@ class SuccessfulSend extends Component {
         }
     }
 
-
     render_coin_content(){
         var data = this.state.data
         var item = data['item']
@@ -630,7 +644,6 @@ class SuccessfulSend extends Component {
         }
     }
 
-
     render_coin_transaction_hash_part(){
         var data = this.state.data
         return(
@@ -662,7 +675,6 @@ class SuccessfulSend extends Component {
             )
         }
     }
-
 
     get_coin_blockexplorer_link(){
         var data = this.state.data
@@ -734,6 +746,587 @@ class SuccessfulSend extends Component {
             return `https://celenium.io/tx/${hash}`
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+    optimistic_bridge_data(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_op_bridge_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_op_bridge_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op_bridge_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op_bridge_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_op_bridge_content(){
+        const data = this.state.data
+        const item = data['item']
+        const e5 = item['e5']
+        const layer1e5 = this.props.app_state.e5s[e5].parent
+        var state_list = this.props.app_state.ether_data
+        const parent_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == layer1e5
+        })
+        const parent_ether_name = parent_ether_object['name']
+        const parent_symbol = parent_ether_object['symbol']
+
+        const amount = data['amount']
+        const recipient = data['recipient']
+        const sender = data['sender']
+        const cumulativeGasUsed = data['cumulativeGasUsed']
+        const effectiveGasPrice = data['effectiveGasPrice']
+        const l1_balance = this.props.app_state.account_balance[layer1e5]
+        const l2_balance = this.props.app_state.account_balance[e5]
+        
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3095f']/* Successful Bridge Transaction.*/,'details':this.props.app_state.loc['3095g']/* Your ether was successfully bridged from $ to % */.replace('$', parent_ether_name).replace('%', item['name']), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
+                    'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
+                    'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
+                    'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095k']/* 'Effective Gas Price in Gwei.' */, 'subtitle':this.format_power_figure(effectiveGasPrice/10**9), 'barwidth':this.calculate_bar_width(effectiveGasPrice/10**9), 'number':(effectiveGasPrice/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095r']/* 'Gas Consumed.' */, 'subtitle':this.format_power_figure(cumulativeGasUsed), 'barwidth':this.calculate_bar_width(cumulativeGasUsed), 'number':this.format_account_balance_figure(cumulativeGasUsed), 'barcolor':'#606060', 'relativepower':'gas', })}
+                </div>
+            </div>
+        )
+    }
+
+    render_op_bridge_transaction_hash_part(){
+        const data = this.state.data
+        const l1Hash = data['l1Hash']
+        const l2Hash = data['l2Hash']
+        const transactionHash = data['transactionHash']
+        const time = data['timestamp']
+
+        return(
+            <div>
+                <div onClick={() => this.copy_to_clipboard(l1Hash)}>
+                    {this.render_detail_item('3',{'details':start_and_end(l1Hash), 'title':this.props.app_state.loc['3095l']/* 'L1 Hash.' */,'size':'l'})}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div onClick={() => this.copy_to_clipboard(l2Hash)}>
+                    {this.render_detail_item('3',{'details':start_and_end(l2Hash), 'title':this.props.app_state.loc['3095m']/* 'L2 Hash.' */,'size':'l'})}
+                </div>
+                
+                <div style={{height: 10}}/>
+
+                <div onClick={() => this.copy_to_clipboard(transactionHash)}>
+                    {this.render_detail_item('3',{'details':start_and_end(transactionHash), 'title':this.props.app_state.loc['3095n']/* 'Transaction Hash.' */,'size':'l'})}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+    zk_bridge_data(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_zk_bridge_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_zk_bridge_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_zk_bridge_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_zk_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_zk_bridge_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_zk_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_zk_bridge_content(){
+        const data = this.state.data
+        const item = data['item']
+        const e5 = item['e5']
+        const layer1e5 = this.props.app_state.e5s[e5].parent
+        var state_list = this.props.app_state.ether_data
+        const parent_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == layer1e5
+        })
+        const parent_ether_name = parent_ether_object['name']
+        const parent_symbol = parent_ether_object['symbol']
+
+        const amount = data['amount']
+        const recipient = data['recipient']
+        const sender = data['sender']
+        const l1_balance = this.props.app_state.account_balance[layer1e5]
+        const l2_balance = this.props.app_state.account_balance[e5]
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3095f']/* Successful Bridge Transaction.*/,'details':this.props.app_state.loc['3095g']/* Your ether was successfully bridged from $ to % */.replace('$', parent_ether_name).replace('%', item['name']), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
+                    'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
+                    'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
+                    'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+    render_zk_bridge_transaction_hash_part(){
+        const data = this.state.data
+        const l1Hash = data['l1Hash']
+        
+        return(
+            <div>
+                <div onClick={() => this.copy_to_clipboard(l1Hash)}>
+                    {this.render_detail_item('3',{'details':start_and_end(l1Hash), 'title':this.props.app_state.loc['3095o']/* 'Hash' */,'size':'l'})}
+                </div>
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ar_bridge_data(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_ar_bridge_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_ar_bridge_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_ar_bridge_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_ar_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_ar_bridge_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_ar_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_ar_bridge_content(){
+        const data = this.state.data
+        const item = data['item']
+        const e5 = item['e5']
+        const layer1e5 = this.props.app_state.e5s[e5].parent
+        var state_list = this.props.app_state.ether_data
+        const parent_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == layer1e5
+        })
+        const parent_ether_name = parent_ether_object['name']
+        const parent_symbol = parent_ether_object['symbol']
+
+        const amount = data['amount']
+        const recipient = data['recipient']
+        const sender = data['sender']
+        const l1_balance = this.props.app_state.account_balance[layer1e5]
+        const l2_balance = this.props.app_state.account_balance[e5]
+        const cumulativeGasUsed = data['gas_limit']
+        const effectiveGasPrice = data['gas_price']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3095f']/* Successful Bridge Transaction.*/,'details':this.props.app_state.loc['3095g']/* Your ether was successfully bridged from $ to % */.replace('$', parent_ether_name).replace('%', item['name']), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
+                    'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
+                    'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
+                    'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095k']/* 'Effective Gas Price in Gwei.' */, 'subtitle':this.format_power_figure(effectiveGasPrice/10**9), 'barwidth':this.calculate_bar_width(effectiveGasPrice/10**9), 'number':(effectiveGasPrice/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095q']/* 'Gas Limit Used.' */, 'subtitle':this.format_power_figure(cumulativeGasUsed), 'barwidth':this.calculate_bar_width(cumulativeGasUsed), 'number':this.format_account_balance_figure(cumulativeGasUsed), 'barcolor':'#606060', 'relativepower':'gas', })}
+                </div>
+            </div>
+        )
+    }
+
+    render_ar_bridge_transaction_hash_part(){
+        const data = this.state.data
+        const l1Hash = data['l1Hash']
+        const time = data['timestamp']
+
+        return(
+            <div>
+                <div onClick={() => this.copy_to_clipboard(l1Hash)}>
+                    {this.render_detail_item('3',{'details':start_and_end(l1Hash), 'title':this.props.app_state.loc['3095l']/* 'L1 Hash.' */,'size':'l'})}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+    op2_bridge_data(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_op2_bridge_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_op2_bridge_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op2_bridge_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op2_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op2_bridge_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_op2_bridge_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_op2_bridge_content(){
+        const data = this.state.data
+        const item = data['item']
+        const e5 = item['e5']
+        const layer1e5 = this.props.app_state.e5s[e5].parent
+        var state_list = this.props.app_state.ether_data
+        const parent_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == layer1e5
+        })
+        const parent_ether_name = parent_ether_object['name']
+        const parent_symbol = parent_ether_object['symbol']
+
+        const amount = data['amount']
+        const recipient = data['recipient']
+        const sender = data['sender']
+        const l1_balance = this.props.app_state.account_balance[layer1e5]
+        const l2_balance = this.props.app_state.account_balance[e5]
+        const cumulativeGasUsed = data['cumulativeGasUsed']
+        const effectiveGasPrice = data['effectiveGasPrice']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3095f']/* Successful Bridge Transaction.*/,'details':this.props.app_state.loc['3095g']/* Your ether was successfully bridged from $ to % */.replace('$', parent_ether_name).replace('%', item['name']), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
+                    'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
+                    'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
+                    'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095k']/* 'Effective Gas Price in Gwei.' */, 'subtitle':this.format_power_figure(effectiveGasPrice/10**9), 'barwidth':this.calculate_bar_width(effectiveGasPrice/10**9), 'number':(effectiveGasPrice/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095r']/* 'Gas Consumed.' */, 'subtitle':this.format_power_figure(cumulativeGasUsed), 'barwidth':this.calculate_bar_width(cumulativeGasUsed), 'number':this.format_account_balance_figure(cumulativeGasUsed), 'barcolor':'#606060', 'relativepower':'gas', })}
+                </div>
+            </div>
+        )
+    }
+
+    render_op2_bridge_transaction_hash_part(){
+        const data = this.state.data
+        const l1Hash = data['l1Hash']
+
+        return(
+            <div>
+                <div onClick={() => this.copy_to_clipboard(l1Hash)}>
+                    {this.render_detail_item('3',{'details':start_and_end(l1Hash), 'title':this.props.app_state.loc['3095o']/* 'Hash' */,'size':'l'})}
+                </div>
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+
 
 
 

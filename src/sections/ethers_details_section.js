@@ -307,13 +307,46 @@ class EthersDetailsSection extends Component {
                     <div onClick={()=>this.open_rpc_settings(item)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2462']/* 'Open' */, 'action': ''})}
                     </div>
-                    <div style={{height:10}}/>
+
+                    {this.show_bridge_button(item)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    show_bridge_button(item){
+        if(this.props.app_state.e5s[item['e5']].bridge_enabled == true){
+            const layer1e5 = this.props.app_state.e5s[item['e5']].parent
+            var state_list = this.props.app_state.ether_data
+            const parent_ether_object = state_list.filter((list_item) => {
+                return list_item['e5'] == layer1e5
+            })
+            const parent_ether_name = parent_ether_object['name']
+            const l1_balance = this.props.app_state.account_balance[layer1e5]
+            if(l1_balance == 0) return;
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481o']/* 'Bridge Your Ether.' */, 'details':this.props.app_state.loc['2481p']/* '𖣑 Bridge some Ether from your $ wallet into this Layer 2 wallet.' */.replace('$', parent_ether_name), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_bridge_settings(item)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2481q']/* 'Bridge' */, 'action': ''})}
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    open_bridge_settings(item){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.open_wallet_guide_bottomsheet('action')
+        }else{
+            this.props.show_bridge_ether_bottomsheet(item)
+        }
     }
 
     show_moderator_note_if_any(item){
@@ -368,8 +401,9 @@ class EthersDetailsSection extends Component {
 
     render_wallet_vaue(item, balance_decimal){
         var final_balance = balance_decimal == null ? 0.0 : balance_decimal
-        if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[item['symbol']] == null) return;
-        var coin_price = this.props.app_state.asset_price_data[item['symbol']]['price']
+        const used_symbol = item['symbol'].endsWith('ETH') ? 'ETH' : item['symbol']
+        if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[used_symbol] == null) return;
+        var coin_price = this.props.app_state.asset_price_data[used_symbol]['price']
         var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
         var selected_preferred_currency = this.props.app_state.preferred_currency
         if(coin_price != null){
@@ -492,6 +526,18 @@ class EthersDetailsSection extends Component {
     
 
     get_token(symbol, name, e5){
+        const other_tags = []
+        if(this.props.app_state.e5s[e5].class == 'L2'){
+            other_tags.push(this.props.app_state.loc['2481j']/* Layer-2 */)
+            other_tags.push(this.props.app_state.loc['2481m']/* Rollup */)
+            if(this.props.app_state.e5s[e5].rollup_type == 'op'){
+                other_tags.push(this.props.app_state.loc['2481k']/* Optimistic */)
+                other_tags.push(this.props.app_state.loc['2481l']/* Superchain */)
+            }
+            else if(this.props.app_state.e5s[e5].rollup_type == 'zk'){
+                other_tags.push(this.props.app_state.loc['2481n']/* zero-knowledge */)
+            }
+        }
         return {
                 'id':symbol,
                 'name': name,
@@ -499,7 +545,7 @@ class EthersDetailsSection extends Component {
                 'e5': e5,
                 'image': this.props.app_state.e5s[e5].ether_image,
                 'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
-                'tags':{'active_tags':[name, 'EVM', symbol], 'index_option':'indexed'},
+                'tags':{'active_tags':[name, 'EVM', symbol].concat(other_tags), 'index_option':'indexed'},
                 'number_label':this.get_blockchain_data('s', e5),
                 'number_label_large': this.get_blockchain_data('l', e5),
                 'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},

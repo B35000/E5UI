@@ -5,12 +5,14 @@
   "version": "6.0",
   "private": true,
   "dependencies": {
+    "@arbitrum/sdk": "^4.0.4",
     "@cosmjs/crypto": "^0.32.4",
     "@cosmjs/encoding": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
     "@cosmjs/stargate": "^0.32.4",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@eth-optimism/sdk": "^3.3.3",
     "@glif/filecoin-address": "^3.0.12",
     "@harmony-js/crypto": "^0.1.56",
     "@iotexproject/iotex-address-ts": "^1.0.4",
@@ -122,10 +124,12 @@
     "url": "^0.11.4",
     "util": "^0.12.5",
     "vaul": "^1.1.2",
+    "viem": "^2.47.6",
     "web-vitals": "^2.1.4",
     "web3": "1.10.3",
     "webpack-dev-server": "^5.2.2",
-    "xrpl": "^4.0.0"
+    "xrpl": "^4.0.0",
+    "zksync-ethers": "^6.21.1"
   },
   "scripts": {
     "predeploy": "npm run build",
