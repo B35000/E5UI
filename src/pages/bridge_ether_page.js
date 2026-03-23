@@ -109,6 +109,8 @@ class BridgeEtherPage extends Component {
                 <div>
                     {this.render_bridge_details()}
                     {this.render_detail_item('0')}
+                    {this.render_bridge_details2()}
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -122,7 +124,7 @@ class BridgeEtherPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_bridge_details2()}
                     </div>
                 </div>
                 
@@ -137,7 +139,7 @@ class BridgeEtherPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_bridge_details2()}
                     </div>
                 </div>
             )
@@ -151,16 +153,9 @@ class BridgeEtherPage extends Component {
         var state_list = this.props.app_state.ether_data
         const parent_ether_object = state_list.filter((list_item) => {
             return list_item['e5'] == layer1e5
-        })
+        })[0]
         const parent_ether_name = parent_ether_object['name']
         const parent_symbol = parent_ether_object['symbol']
-
-        var gas_price = this.props.app_state.gas_price[layer1e5]
-        if(gas_price == null){
-            gas_price = this.get_gas_price_from_runs(layer1e5)
-        }
-        if(gas_price == 0 || gas_price > 10**18) gas_price = 10**10
-        var gas_transactions = this.state.picked_wei_amount == 0 ? 0 : Math.floor((this.state.picked_wei_amount/gas_price)/2_300_000)
 
         const my_balance = this.props.app_state.account_balance[layer1e5]
         return(
@@ -186,8 +181,21 @@ class BridgeEtherPage extends Component {
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
 
-                {this.render_detail_item('0')}
+            </div>
+        )
+    }
 
+    render_bridge_details2(){
+        const item = this.state.item;
+        const layer1e5 = this.props.app_state.e5s[item['e5']].parent
+        var gas_price = this.props.app_state.gas_price[layer1e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs(layer1e5)
+        }
+        if(gas_price == 0 || gas_price > 10**18) gas_price = 10**10
+        var gas_transactions = this.state.picked_wei_amount == 0 ? 0 : Math.floor((this.state.picked_wei_amount/gas_price)/2_300_000)
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3095a']/* 'Amount to Bridge.' */, 'details':this.props.app_state.loc['3095b']/* 'Set the amount you wish to bridge to the Layer 2 rollup.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
@@ -205,8 +213,6 @@ class BridgeEtherPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
                 </div>
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3095s']/* 'Bridge transactions usually take 10 to 20 minutes to finialize.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
-
-
             </div>
         )
     }
@@ -266,7 +272,7 @@ class BridgeEtherPage extends Component {
     }
 
     get_account_address(){
-        var e5 = this.state.ether['e5']
+        var e5 = this.state.item['e5']
         if(this.props.app_state.accounts[e5] != null){
             return this.format_address(this.props.app_state.accounts[e5].address, e5);
         }
@@ -347,10 +353,10 @@ class BridgeEtherPage extends Component {
         var e5 = this.state.item['e5']
         try {
             const web3 = new Web3()
-            web3.utils.toChecksumAddress(this.format_to_address(adr, e5))
-        return true
+            web3.utils.toChecksumAddress(this.format_address(adr, e5))
+            return true
         } catch (e) {
-        return false
+            return false
         }
     }
 

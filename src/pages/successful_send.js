@@ -485,9 +485,10 @@ class SuccessfulSend extends Component {
             return `https://filscan.io/message/${hash}`
         }else if(e5 == 'E1315'){
             return `https://monadvision.com/tx/${hash}`
-        }
-        else if(e5 == 'E1325'){
+        }else if(e5 == 'E1325'){
             return `https://explorer.zora.energy/tx/${hash}`
+        }else if(e5 == 'E1335'){
+            return `https://arbitrum-nova.blockscout.com/tx/${hash}`
         }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
@@ -809,15 +810,15 @@ class SuccessfulSend extends Component {
         var state_list = this.props.app_state.ether_data
         const parent_ether_object = state_list.filter((list_item) => {
             return list_item['e5'] == layer1e5
-        })
+        })[0]
         const parent_ether_name = parent_ether_object['name']
         const parent_symbol = parent_ether_object['symbol']
 
         const amount = data['amount']
         const recipient = data['recipient']
         const sender = data['sender']
-        const cumulativeGasUsed = data['cumulativeGasUsed']
-        const effectiveGasPrice = data['effectiveGasPrice']
+        const cumulativeGasUsed = data['cumulativeGasUsed'].toString().toLocaleString('fullwide', {useGrouping:false})
+        const effectiveGasPrice = data['effectiveGasPrice'].toString().toLocaleString('fullwide', {useGrouping:false})
         const l1_balance = this.props.app_state.account_balance[layer1e5]
         const l2_balance = this.props.app_state.account_balance[e5]
         
@@ -857,15 +858,8 @@ class SuccessfulSend extends Component {
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
-                    'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
-                </div>
-                <div style={{height: 10}}/>
-
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':'wei', })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095k']/* 'Effective Gas Price in Gwei.' */, 'subtitle':this.format_power_figure(effectiveGasPrice/10**9), 'barwidth':this.calculate_bar_width(effectiveGasPrice/10**9), 'number':(effectiveGasPrice/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(parseInt(l2_balance)/10**18),
+                    'number':(parseInt(l2_balance)/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
                 </div>
                 <div style={{height: 10}}/>
 
@@ -899,9 +893,6 @@ class SuccessfulSend extends Component {
                 <div onClick={() => this.copy_to_clipboard(transactionHash)}>
                     {this.render_detail_item('3',{'details':start_and_end(transactionHash), 'title':this.props.app_state.loc['3095n']/* 'Transaction Hash.' */,'size':'l'})}
                 </div>
-                <div style={{height: 10}}/>
-
-                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
             </div>
         )
     }
@@ -968,7 +959,7 @@ class SuccessfulSend extends Component {
         var state_list = this.props.app_state.ether_data
         const parent_ether_object = state_list.filter((list_item) => {
             return list_item['e5'] == layer1e5
-        })
+        })[0]
         const parent_ether_name = parent_ether_object['name']
         const parent_symbol = parent_ether_object['symbol']
 
@@ -1100,7 +1091,7 @@ class SuccessfulSend extends Component {
         var state_list = this.props.app_state.ether_data
         const parent_ether_object = state_list.filter((list_item) => {
             return list_item['e5'] == layer1e5
-        })
+        })[0]
         const parent_ether_name = parent_ether_object['name']
         const parent_symbol = parent_ether_object['symbol']
 
@@ -1109,8 +1100,8 @@ class SuccessfulSend extends Component {
         const sender = data['sender']
         const l1_balance = this.props.app_state.account_balance[layer1e5]
         const l2_balance = this.props.app_state.account_balance[e5]
-        const cumulativeGasUsed = data['gas_limit']
-        const effectiveGasPrice = data['gas_price']
+        const cumulativeGasUsed = data['gas_limit'].toString().toLocaleString('fullwide', {useGrouping:false})
+        const effectiveGasPrice = data['gas_price'].toString().toLocaleString('fullwide', {useGrouping:false})
 
         return(
             <div>
@@ -1245,7 +1236,7 @@ class SuccessfulSend extends Component {
         var state_list = this.props.app_state.ether_data
         const parent_ether_object = state_list.filter((list_item) => {
             return list_item['e5'] == layer1e5
-        })
+        })[0]
         const parent_ether_name = parent_ether_object['name']
         const parent_symbol = parent_ether_object['symbol']
 
@@ -1254,8 +1245,8 @@ class SuccessfulSend extends Component {
         const sender = data['sender']
         const l1_balance = this.props.app_state.account_balance[layer1e5]
         const l2_balance = this.props.app_state.account_balance[e5]
-        const cumulativeGasUsed = data['cumulativeGasUsed']
-        const effectiveGasPrice = data['effectiveGasPrice']
+        const cumulativeGasUsed = data['cumulativeGasUsed'].toString().toLocaleString('fullwide', {useGrouping:false})
+        const effectiveGasPrice = data['effectiveGasPrice'].toString().toLocaleString('fullwide', {useGrouping:false})
 
         return(
             <div>

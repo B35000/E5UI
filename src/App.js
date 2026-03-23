@@ -506,6 +506,7 @@ import manta_logo from './assets/manta.png'
 import filecoin_evm_logo from './assets/filecoin_evm.png'
 import monad_logo from  './assets/monad.png'
 import zora_logo from './assets/zora.png'
+import nova_logo from './assets/nova.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -699,7 +700,7 @@ import WorkerFactory from './WorkerFactory';
 import myWorker from './resources/encryptor_decryptor_worker';
 import notificationSound from './sounds/notification_sound_pop.mp3';
 import { Wallet, Provider, utils } from "zksync-ethers";
-import { EthBridger, getL2Network, L1TransactionReceipt, L1ToL2MessageStatus } from "@arbitrum/sdk";
+import { EthBridger, getArbitrumNetwork, ParentTransactionReceipt, EthDepositMessageStatus } from "@arbitrum/sdk";
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -1420,7 +1421,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -2242,7 +2243,12 @@ class App extends Component {
         first_block:0, end_image: null, spend_image: null, ether_image:zora_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, 
         class:'L2', rollup_type:'op', type:'1559', bridge_enabled: true, parent: 'E185',
       },
-      
+      'E1335':{
+        web3:['https://arbitrum-nova-rpc.publicnode.com', 'https://nova.arbitrum.io/rpc'],
+        token:'ANETH',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: nova_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled:true, parent: 'E185',
+      },
     }
   }
 
@@ -2401,7 +2407,7 @@ class App extends Component {
       this.get_token('OKB', 'X Layer', 'E1225'),
       this.get_token('OKT', 'OKTC', 'E1235', true),
       this.get_token('ZETH', 'Zircuit', 'E1245'),
-      this.get_token('ZKETH', 'ZKsync Era', 'E1255'),
+      this.get_token('ZKETH', 'zkSync Era', 'E1255'),
       this.get_token('zkCRO', 'Cronos zkEVM', 'E1265'),
       this.get_token('ZERETH', 'ZERϴ Network', 'E1275'),
       this.get_token('SOPH', 'Sophon', 'E1285'),
@@ -2409,6 +2415,7 @@ class App extends Component {
       this.get_token('FIL', 'Filecoin EVM', 'E1305'),
       this.get_token('MON', 'Monad', 'E1315'),
       this.get_token('ZOETH', 'Zora', 'E1325'),
+      this.get_token('ANETH', 'Arbitrum Nova', 'E1335'),
     ]
 
     return list
@@ -24586,6 +24593,10 @@ class App extends Component {
       await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5)
     }
 
+    const convert_to_big_number = (am) => {
+      return ethers.BigNumber.from(am.toString())
+    }
+
     const bridge_transaction_with_viem = async (chain) =>{
       const account = privateKeyToAccount(private_key)
       const publicClientL1 = createPublicClient({ chain: mainnet, transport: http() })
@@ -24634,7 +24645,7 @@ class App extends Component {
         },
       });
 
-      const tx = await messenger.depositETH(picked_amount, { recipient: recipient_address });
+      const tx = await messenger.depositETH(convert_to_big_number(picked_amount), { recipient: recipient_address });
       const hash = tx.hash
       console.log("Deposit tx sent:", tx.hash);
       const receipt = await tx.wait();
@@ -24642,6 +24653,39 @@ class App extends Component {
       const gas_used = receipt.cumulativeGasUsed
       const effective_gas_price = receipt.effectiveGasPrice
       return { gas_used, effective_gas_price, hash }
+    }
+    
+    const bridge_transaction_with_arbitrum = async (chain_id) => {
+      const l1Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(layer1e5));
+      const l2Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(e5));
+      const l1Wallet = new ethers.Wallet(private_key, l1Provider);
+      const l2Network = await getArbitrumNetwork(chain_id); 
+      const ethBridger = new EthBridger(l2Network);
+
+      const depositTx = await ethBridger.deposit({
+        amount: convert_to_big_number(picked_amount),
+        parentSigner: l1Wallet,
+        childProvider: l2Provider,
+      });
+      console.log(`tx: ${depositTx.hash}`)
+      const hash = depositTx.hash
+      const l1Receipt = await depositTx.wait();
+      const gas_limit = depositTx.gasLimit;
+      const gas_p = depositTx.gasPrice;
+      const timestamp = depositTx.timestamp;
+
+      const parentTxReceipt = new ParentTransactionReceipt(l1Receipt)/* <-- ethers-js TransactionReceipt of an ethereum tx that triggered an L1 to L2 message (say depositting a token via a bridge)  */
+      const parentToChildMessages = await parentTxReceipt.getEthDeposits(l2Provider)/* <-- connected ethers-js Wallet */
+      const parentToChildMessage = parentToChildMessages[0]
+      const res = await parentToChildMessage.waitForStatus();
+
+      if (res.status === EthDepositMessageStatus.DEPOSITED) {
+        /** Message succesfully redeeemed */
+        await refresh_balance(e5)
+        await refresh_balance(layer1e5)
+
+        this.show_successful_send_bottomsheet({'type':'ar_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'gas_limit':gas_limit, 'gas_price':gas_p, 'timestamp':timestamp}, true)
+      }
     }
 
     if(item['e5'] == 'E1325'){
@@ -24656,17 +24700,15 @@ class App extends Component {
 
       const depositTx = await wallet.deposit({
         token: utils.ETH_ADDRESS,
-        amount: picked_amount,
+        amount: convert_to_big_number(picked_amount),
         to: recipient_address,
         refundRecipient: sender_address,
       });
       const receipt = await depositTx.wait();
-      const hash = receipt.hash
+      const hash = receipt.transactionHash
       console.log(`Tx: ${hash}`);
       await depositTx.waitL1Commit();
       console.log(`Transaction committed on L1`);
-      console.log(`L2 balance after deposit: ${await wallet.getBalance()}`);
-      console.log(`L1 balance after deposit: ${await wallet.getBalanceL1()}`);
 
       await refresh_balance(e5)
       await refresh_balance(layer1e5)
@@ -24686,48 +24728,8 @@ class App extends Component {
       await bridge_transaction_with_viem(ink)
     }
     else if(item['e5'] == 'E215'){
-      //bridge arbitrum
-      const l1Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(layer1e5));
-      const l2Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(e5));
-      const l1Wallet = new ethers.Wallet(private_key, l1Provider);
-      const l2Network = await getL2Network(42161); 
-      const ethBridger = new EthBridger(l2Network);
-
-      const depositTx = await ethBridger.deposit({
-        amount: picked_amount,
-        l1Signer: l1Wallet,
-        l2Provider: l2Provider,
-      });
-      console.log(`tx: ${depositTx.hash}`)
-      const hash = depositTx.hash
-      const l1Receipt = await depositTx.wait();
-      const gas_limit = depositTx.gasLimit;
-      const gas_p = depositTx.gasPrice;
-      const timestamp = depositTx.timestamp;
-      const l1TxnReceipt = new L1TransactionReceipt(l1Receipt)/* <-- ethers-js TransactionReceipt of an ethereum tx that triggered an L1 to L2 message (say depositting a token via a bridge)  */
-      const l1ToL2Message = await l1TxnReceipt.getL1ToL2Message(l2Provider)/* <-- connected ethers-js Wallet */
-      const res = await l1ToL2Message.waitForStatus();
-
-      if (res.status === L1ToL2MessageStatus.FUNDS_DEPOSITED_ON_L2) {
-        /** Message wasn't auto-redeemed; redeem it now: */
-        console.log('message wasnt auto-redeemed, redeem it now.')
-        this.prompt_top_notification(this.getLocale()['3095p']/* Redeeming Receipt... */, 4000)
-        const response = await l1ToL2Message.redeem()
-        const receipt = await response.wait()
-        
-        console.log('redeem receipt', receipt)
-        await refresh_balance(e5)
-        await refresh_balance(layer1e5)
-
-        this.show_successful_send_bottomsheet({'type':'ar_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'gas_limit':gas_limit, 'gas_price':gas_p, 'timestamp':timestamp}, true)
-      } 
-      else if (res.status === L1ToL2MessageStatus.REDEEMED) {
-        /** Message succesfully redeeemed */
-        await refresh_balance(e5)
-        await refresh_balance(layer1e5)
-
-        this.show_successful_send_bottomsheet({'type':'ar_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'gas_limit':gas_limit, 'gas_price':gas_p, 'timestamp':timestamp}, true)
-      }
+      //bridge arbitrum one
+      await bridge_transaction_with_arbitrum(42161)
     }
     else if(item['e5'] == 'E205'){
       //bridge base
@@ -24762,6 +24764,10 @@ class App extends Component {
       await refresh_balance(layer1e5)
 
       this.show_successful_send_bottomsheet({'type':'op2_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'cumulativeGasUsed':gas_used, 'effectiveGasPrice':effective_gas_price}, true)
+    }
+    else if(item['e5'] == 'E1335'){
+      //bridge arbitrum nova
+      await bridge_transaction_with_arbitrum(42170)
     }
 
   }

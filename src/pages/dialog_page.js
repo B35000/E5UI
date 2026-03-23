@@ -13135,7 +13135,7 @@ return data['data']
         var state_list = this.props.app_state.ether_data
         const parent_ether_object = state_list.filter((list_item) => {
             return list_item['e5'] == layer1e5
-        })
+        })[0]
         const parent_ether_name = parent_ether_object['name']
         const parent_symbol = parent_ether_object['symbol']
 

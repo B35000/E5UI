@@ -208,15 +208,18 @@ class EthersDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-55
         
-        var gas_price = this.props.app_state.gas_price[item['e5']]
-        if(gas_price == null){
-            gas_price = this.get_gas_price_from_runs(item)
+        var gas_price = this.get_gas_price(item['e5'])
+        console.log('render_ethers_main_details_section', this.props.app_state.account_balance[item['e5']], gas_price)
+        // var gas_transactions = this.props.app_state.account_balance[item['e5']] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[item['e5']]/gas_price)/2_300_000)
+
+        var gas_transactions = 0;
+        if(this.props.app_state.account_balance[item['e5']] != null && parseInt(this.props.app_state.account_balance[item['e5']]) > 0){
+            const gas_payable = bigInt(this.props.app_state.account_balance[item['e5']]).divide(gas_price)
+            gas_transactions = bigInt(gas_payable).divide(2_300_000)
         }
-        var gas_transactions = this.props.app_state.account_balance[item['e5']] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[item['e5']]/gas_price)/2_300_000)
 
-
-        var e5_transactions_per_ether =  Math.floor((10**18/gas_price)/2_300_000)
-        var gas_transactions_per_ether =  Math.floor((10**18/gas_price)/23_000)
+        var e5_transactions_per_ether = bigInt('1e18').divide(gas_price).divide(2_300_000)
+        var gas_transactions_per_ether =  bigInt('1e18').divide(gas_price).divide(23_000)
 
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
@@ -323,10 +326,10 @@ class EthersDetailsSection extends Component {
             var state_list = this.props.app_state.ether_data
             const parent_ether_object = state_list.filter((list_item) => {
                 return list_item['e5'] == layer1e5
-            })
+            })[0]
             const parent_ether_name = parent_ether_object['name']
             const l1_balance = this.props.app_state.account_balance[layer1e5]
-            if(l1_balance == 0) return;
+            if(l1_balance == null || l1_balance == 0) return;
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1280,9 +1283,9 @@ class EthersDetailsSection extends Component {
         const time = ipfs['time']/1000
         const my_address = this.props.app_state.accounts[ether_item['e5']].address
         const sender_or_recipient_account = ipfs['sender_address'] == my_address ? ipfs['recipient_address'] : ipfs['sender_address'];
-        const base_unit_amount = bigInt(ipfs['hash']['tx'].value)
+        const base_unit_amount = ipfs['hash']['type'] == 'ether' ? bigInt(ipfs['hash']['tx'].value) : bigInt(ipfs['hash']['amount'])
         const decimal_amount = base_unit_amount / 10**18
-        const sender_or_receiver = ipfs['sender_address'] == my_address ? this.props.app_state.loc['2481e']/* 'To $, % ago.' */ :  this.props.app_state.loc['2481c']/* 'From $, % ago.' */
+        const sender_or_receiver = ipfs['recipient_address'] == my_address ? this.props.app_state.loc['2481c']/* 'From $, % ago.' */ : this.props.app_state.loc['2481e']/* 'To $, % ago.' */
 
         return(
             <div>
