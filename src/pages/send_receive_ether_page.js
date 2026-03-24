@@ -319,7 +319,6 @@ class SendReceiveEtherPage extends Component {
     show_gas_price_or_eip_options(e5){
         var picked_gas_price_in_gwei = (this.state.picked_wei_gas_price / (10**9))
         if(this.props.app_state.e5s[e5].type == '1559'){
-            return;
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1407a']/* 'Max Priority Fee per Gas.' */, 'details':this.props.app_state.loc['1407b']/* 'Set the max prioryt fee per gas for your transaction below.' */, 'size':'l'})}
@@ -1068,10 +1067,10 @@ class SendReceiveEtherPage extends Component {
             var base_fee = this.props.app_state.gas_price[e5]
             gas_price_picked = (this.state.picked_max_priority_per_gas_amount)
             
-            // if(gas_price_picked > this.state.picked_max_fee_per_gas_amount){
-            //     this.props.notify(this.props.app_state.loc['1407e']/* 'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.' */, 11200)
-            //     return;
-            // }
+            if(gas_price_picked > this.state.picked_max_fee_per_gas_amount){
+                this.props.notify(this.props.app_state.loc['1407e']/* 'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.' */, 11200)
+                return;
+            }
             if((picked_amount+gas_price_picked) > my_balance){
                 this.props.notify(this.props.app_state.loc['1404']/* 'Your ether balance is insufficient to fulfil that transaction.' */, 7200)
                 return;

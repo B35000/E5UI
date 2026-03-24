@@ -1714,7 +1714,6 @@ class StackPage extends Component {
     show_gas_price_or_eip_options(){
         var e5 = this.props.app_state.selected_e5
         if(this.props.app_state.e5s[e5].type == '1559'){
-            return;
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'details':this.props.app_state.loc['1593r']/* 'The max priority fee per gas(miner tip) for your next run with E5.' */, 'size':'l'})}
@@ -5575,7 +5574,7 @@ class StackPage extends Component {
                 }
                 else{
                     var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration, e5, finish_job_payment_data)
+                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration, e5, finish_job_payment_data, this.set_max_priority_per_gas(), this.set_max_fee_per_gas())
                 }
             }else{
                 this.props.lock_run(false)

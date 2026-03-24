@@ -507,6 +507,7 @@ import filecoin_evm_logo from './assets/filecoin_evm.png'
 import monad_logo from  './assets/monad.png'
 import zora_logo from './assets/zora.png'
 import nova_logo from './assets/nova.png'
+import arenaz_logo from './assets/arenaz.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -1421,7 +1422,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -2043,7 +2044,7 @@ class App extends Component {
         web3:['https://rpc.linea.build '],
         token:'LETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:linea_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
+        first_block:0, end_image: null, spend_image: null, ether_image:linea_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185',
       },
       'E1015':{
         web3:['https://rpc.api.lisk.com'],
@@ -2061,7 +2062,7 @@ class App extends Component {
         web3:['https://rpc.metall2.com'],
         token:'METH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:metal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185',
+        first_block:0, end_image: null, spend_image: null, ether_image:metal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled:true,
       },
       'E1045':{
         web3:['https://metis-rpc.publicnode.com'],
@@ -2127,7 +2128,7 @@ class App extends Component {
         web3:['https://scroll-rpc.publicnode.com'],
         token:'SETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
+        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185',
       },
       'E1155':{
         web3:['https://www.shibrpc.com'],
@@ -2170,7 +2171,7 @@ class App extends Component {
         token:'WOETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:world_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
-        class:'L2', rollup_type:'op', parent: 'E185',
+        class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled:true
       },
       'E1225':{
         web3:['https://rpc.xlayer.tech'],
@@ -2248,6 +2249,12 @@ class App extends Component {
         token:'ANETH',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image: nova_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled:true, parent: 'E185',
+      },
+      'E1345':{
+        web3:['https://rpc.arena-z.gg'],
+        token:'ARETH',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: arenaz_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185',
       },
     }
   }
@@ -2416,6 +2423,7 @@ class App extends Component {
       this.get_token('MON', 'Monad', 'E1315'),
       this.get_token('ZOETH', 'Zora', 'E1325'),
       this.get_token('ANETH', 'Arbitrum Nova', 'E1335'),
+      this.get_token('ARETH', 'Arena-Z', 'E1345'),
     ]
 
     return list
@@ -4132,7 +4140,7 @@ class App extends Component {
   }
 
   does_account_have_balance(e5){
-    if(this.state.account_balance[e5] != null && this.state.account_balance[e5]!=0){
+    if(this.state.account_balance[e5] != null && parseInt(this.state.account_balance[e5]) > 0){
       return true
     }
     return false
@@ -7391,13 +7399,13 @@ class App extends Component {
     
   }
 
-  send_ether_to_target(recipientAddress, amount, gasPrice, state, e5, set_max_priority_per_gas, set_max_fee_per_gas, ether){
+  async send_ether_to_target(recipientAddress, amount, gasPrice, state, e5, set_max_priority_per_gas, set_max_fee_per_gas, ether){
     // this.prompt_top_notification(this.getLocale()['2738cf']/* 'Sending the ether...' */, 5000);
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const me = this;
 
     web3.eth.accounts.wallet.add(state.accounts[e5].privateKey);
-    var gas_price = (gasPrice == null || gasPrice == 0 || gasPrice > 100**18) ? 10**9 : gasPrice
+    var gas_price = (gasPrice == null || gasPrice == 0 || gasPrice > 1e20) ? 10**9 : gasPrice
 
     var tx = {
       from: state.accounts[e5].address,
@@ -7407,16 +7415,22 @@ class App extends Component {
       gasPrice: gas_price.toString()
     }
 
-    // if(this.state.e5s[e5].type == '1559'){
-    //   tx = {
-    //     from: state.accounts[e5].address,
-    //     to: recipientAddress,
-    //     value: amount.toString(),
-    //     gas: 23000,
-    //     maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
-    //     maxFeePerGas: set_max_fee_per_gas.toString()
-    //   }
-    // }
+    if(this.state.e5s[e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      gas_price = Number(block.baseFeePerGas);
+      const maxPriorityFeePerGas = set_max_priority_per_gas == 0 ? ((gas_price == null || gas_price == 0) ? 10**9 : gas_price) : set_max_priority_per_gas;
+      const maxFeePerGas = set_max_fee_per_gas == 0 ? (maxPriorityFeePerGas * 2) : set_max_fee_per_gas
+
+      tx = {
+        from: state.accounts[e5].address,
+        to: recipientAddress,
+        value: amount.toString(),
+        gas: 23000,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      };
+    }
 
     web3.eth.sendTransaction(tx)
     .on('transactionHash', function (hash) {
@@ -9883,7 +9897,7 @@ class App extends Component {
     }
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, e5, finish_job_payment_data) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, e5, finish_job_payment_data, set_max_priority_per_gas, set_max_fee_per_gas) => {
     this.lock_delete_pos_array(delete_pos_array, e5)
     const web3_url = this.get_selected_web3_url()
     const web3 = new Web3(web3_url);
@@ -9911,16 +9925,22 @@ class App extends Component {
       gasPrice: run_gas_price.toString(),
     }
 
-    // if(this.state.e5s[this.state.selected_e5].type == '1559'){
-    //   tx = {
-    //     gas: gasLimit,
-    //     value: wei,
-    //     to: contractAddress,
-    //     data: encoded,
-    //     maxPriorityFeePerGas: set_max_priority_per_gas.toString(),
-    //     maxFeePerGas: set_max_fee_per_gas.toString(),
-    //   }
-    // }
+    if(this.state.e5s[this.state.selected_e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = Number(block.baseFeePerGas);
+      const maxPriorityFeePerGas = set_max_priority_per_gas == 0 ? ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price) : set_max_priority_per_gas;
+      const maxFeePerGas = set_max_fee_per_gas == 0 ? (maxPriorityFeePerGas * 2) : set_max_fee_per_gas
+
+      tx = {
+        gas: gasLimit,
+        value: wei,
+        to: contractAddress,
+        data: encoded,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      }
+    }
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
@@ -16427,7 +16447,7 @@ class App extends Component {
     
   }
 
-  withdraw_ether_to_address = async (target_recipient_address, e5, run_expiry_duration, _run_gas_price, picked_max_priority_per_gas_amount, picked_max_fee_per_gas_amount) =>{
+  withdraw_ether_to_address = async (target_recipient_address, e5, run_expiry_duration, _run_gas_price, set_max_priority_per_gas, set_max_fee_per_gas) =>{
     this.prompt_top_notification(this.getLocale()['2722']/* 'withdrawing your ether...' */, 9000)
 
     const web3 = new Web3(this.get_selected_web3_url());
@@ -16454,15 +16474,22 @@ class App extends Component {
     }
 
     if(this.state.e5s[e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = Number(block.baseFeePerGas);
+      const maxPriorityFeePerGas = set_max_priority_per_gas == 0 ? ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price) : set_max_priority_per_gas;
+      const maxFeePerGas = set_max_fee_per_gas == 0 ? (maxPriorityFeePerGas * 2) : set_max_fee_per_gas
+
       tx = {
         gas: 65000,
-        value: 0,
+        value: '0',
         to: contractAddress,
         data: encoded,
-        maxPriorityFeePerGas: picked_max_priority_per_gas_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
-        maxFeePerGas: picked_max_fee_per_gas_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString().toLocaleString('fullwide', {useGrouping:false}),
+        maxFeePerGas: maxFeePerGas.toString().toLocaleString('fullwide', {useGrouping:false}),
+        type: '0x2', // explicitly mark as EIP-1559
       }
     }
+
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
@@ -24635,15 +24662,16 @@ class App extends Component {
         l2SignerOrProvider: l2Signer,
         l1ChainId: config.l1ChainID,
         l2ChainId: config.l2ChainID,
-        contracts: { l1: config.contracts },
-        bridges: {
-          NativeToken: {
-            Adapter: ETHBridgeAdapter,
-            l1Bridge: config.contracts.L1StandardBridge,
-            l2Bridge: config.L2StandardBridge,
-          },
-        },
+        contracts: { l1: config.contracts, l2: optimismSDK.DEFAULT_L2_CONTRACT_ADDRESSES, },
       });
+
+      const ethBridgeAdapter = new ETHBridgeAdapter({
+        messenger: messenger,
+        l1Bridge: config.contracts.L1StandardBridge,
+        l2Bridge: config.L2StandardBridge,
+      });
+
+      messenger.bridges.ETH = ethBridgeAdapter;
 
       const tx = await messenger.depositETH(convert_to_big_number(picked_amount), { recipient: recipient_address });
       const hash = tx.hash
@@ -24750,11 +24778,14 @@ class App extends Component {
         l1ChainID: 56,
         l2ChainID: 204,
         contracts: {
-          L1CrossDomainMessenger:"0xd95D508f13f7029CCF0fb61984d5dfD11b879c4f", // Proxy__OVM_L1CrossDomainMessenger
-          L1StandardBridge:"0xF05F0e4362859c3331Cb9395CBC201E3Fa6757Ea", // Proxy__OVM_L1StandardBridge
-          OptimismPortal:"0x1876EA7702C0ad0C6A2ae6036DE7733edfBca519", // OptimismPortalProxy
-          L2OutputOracle:"0x153CAB79f4767E2ff862C94aa49573294B13D169", // L2OutputOracleProxy
-          AddressManager:"0x29cfb9A803589Ff5C37f955ead83b45311F15b12",
+          AddressManager: "0x29cfb9A803589Ff5C37f955ead83b45311F15b12",
+          StateCommitmentChain: "0x0000000000000000000000000000000000000000",
+          CanonicalTransactionChain: "0x0000000000000000000000000000000000000000",
+          BondManager: "0x0000000000000000000000000000000000000000",
+          L1CrossDomainMessenger: "0xd95D508f13f7029CCF0fb61984d5dfD11b879c4f",
+          L1StandardBridge: "0xF05F0e4362859c3331Cb9395CBC201E3Fa6757Ea",
+          OptimismPortal: "0x7e2419F79c9546B9A0E292Fd36aC5005ffed5495",
+          L2OutputOracle: "0x153CAB79f4767E2ff862C94aa49573294B13D169",
         },
         L2StandardBridge:"0x4200000000000000000000000000000000000010",
       };
@@ -24768,6 +24799,72 @@ class App extends Component {
     else if(item['e5'] == 'E1335'){
       //bridge arbitrum nova
       await bridge_transaction_with_arbitrum(42170)
+    }
+    else if(item['e5'] == 'E1215'){
+      //worldchain
+      const CONFIG = {
+        l1URL: this.get_web3_url_from_e5(layer1e5),
+        l2URL: this.get_web3_url_from_e5(e5),
+        l1ChainID: 1,
+        l2ChainID: 480,
+        contracts: {
+          AddressManager: "0x0000000000000000000000000000000000000000",
+          StateCommitmentChain: "0x0000000000000000000000000000000000000000",
+          CanonicalTransactionChain: "0x0000000000000000000000000000000000000000",
+          BondManager: "0x0000000000000000000000000000000000000000",
+          L1CrossDomainMessenger: "0xf931a81D18B1766d15695ffc7c1920a62b7e710a",
+          L1StandardBridge: "0x470458C91978D2d929704489Ad730DC3E3001113",
+          OptimismPortal: "0xd5ec14a83B7d95BE1E2Ac12523e2dEE12Cbeea6C",
+          L2OutputOracle: "0x19A6d1E9034596196295CF148509796978343c5D",
+        },
+        L2StandardBridge:"0x4200000000000000000000000000000000000010",
+      };
+
+      const { gas_used, effective_gas_price, hash } = await bridge_transaction_with_eth_optimism(private_key, CONFIG)
+
+      await refresh_balance(e5)
+      await refresh_balance(layer1e5)
+
+      this.show_successful_send_bottomsheet({'type':'op2_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'cumulativeGasUsed':gas_used, 'effectiveGasPrice':effective_gas_price}, true)
+    }
+    else if(item['e5'] == '1035'){
+      //metal l2
+      const CONFIG = {
+        l1URL: this.get_web3_url_from_e5(layer1e5),
+        l2URL: this.get_web3_url_from_e5(e5),
+        l1ChainID: 1,
+        l2ChainID: 1750,
+        contracts: {
+          // Legacy (optional, some SDKs still expect it)
+          AddressManager: "0xd4b1EC0DEc3C7F12abD3ec27B7514880ae1C3a37",
+          // Deprecated in modern OP stack (set to zero if SDK requires)
+          StateCommitmentChain: "0x0000000000000000000000000000000000000000",
+          CanonicalTransactionChain: "0x0000000000000000000000000000000000000000",
+          BondManager: "0x0000000000000000000000000000000000000000",
+          // Core bridging contracts
+          L1CrossDomainMessenger: "0x0a47A44f1B2bb753474f8c830322554A96C9934D",
+          L1StandardBridge: "0x6d0f65D59b55B0FEC5d2d15365154DcADC140BF3",
+          // Bedrock / modern OP stack contracts
+          OptimismPortal: "0x3F37aBdE2C6b5B2ed6F8045787Df1ED1E3753956",
+          L2OutputOracle: '0x0000000000000000000000000000000000000000',
+          // Optional but sometimes useful
+          SystemConfig: "0x7BD909970B0EEdcF078De6Aeff23ce571663b8aA",
+        },
+        // L2 predeploy
+        L2StandardBridge: "0x4200000000000000000000000000000000000010",
+      };
+      /* 
+        L1StandardBridge
+        L1CrossDomainMessenger
+        L2StandardBridge
+      */
+
+      const { gas_used, effective_gas_price, hash } = await bridge_transaction_with_eth_optimism(private_key, CONFIG)
+
+      await refresh_balance(e5)
+      await refresh_balance(layer1e5)
+
+      this.show_successful_send_bottomsheet({'type':'op2_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'cumulativeGasUsed':gas_used, 'effectiveGasPrice':effective_gas_price}, true)
     }
 
   }

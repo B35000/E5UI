@@ -209,8 +209,12 @@ class EthersDetailsSection extends Component {
         var he = this.props.height-55
         
         var gas_price = this.get_gas_price(item['e5'])
-        console.log('render_ethers_main_details_section', this.props.app_state.account_balance[item['e5']], gas_price)
+        // console.log('render_ethers_main_details_section', this.props.app_state.account_balance[item['e5']], gas_price)
         // var gas_transactions = this.props.app_state.account_balance[item['e5']] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[item['e5']]/gas_price)/2_300_000)
+
+        if(gas_price == 0){
+            gas_price = 1;
+        }
 
         var gas_transactions = 0;
         if(this.props.app_state.account_balance[item['e5']] != null && parseInt(this.props.app_state.account_balance[item['e5']]) > 0){

@@ -489,6 +489,8 @@ class SuccessfulSend extends Component {
             return `https://explorer.zora.energy/tx/${hash}`
         }else if(e5 == 'E1335'){
             return `https://arbitrum-nova.blockscout.com/tx/${hash}`
+        }else if(e5 == 'E1345'){
+            return `https://explorer.arena-z.gg/tx/${hash}`
         }
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
@@ -824,7 +826,7 @@ class SuccessfulSend extends Component {
         
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3095f']/* Successful Bridge Transaction.*/,'details':this.props.app_state.loc['3095g']/* Your ether was successfully bridged from $ to % */.replace('$', parent_ether_name).replace('%', item['name']), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3095f']/* Successful Bridge Transaction.*/,'details':this.props.app_state.loc['3095g']/* Your ether was successfully bridged from $ to %.Your balance should be updated in a few minutes. */.replace('$', parent_ether_name).replace('%', item['name']), 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender, 'size':'l'})}

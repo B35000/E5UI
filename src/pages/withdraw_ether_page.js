@@ -309,7 +309,6 @@ class WithdrawEtherPage extends Component {
         if(this.props.app_state.e5s[e5] == null) return;
         
         if(this.props.app_state.e5s[e5].type == '1559'){
-            return;
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'details':this.props.app_state.loc['2027a']/* 'The max priority fee per gas(miner tip) for your next wirdraw run.' */, 'size':'l'})}
