@@ -1066,7 +1066,7 @@ class ProposalDetailsSection extends Component {
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var events = this.get_item_logs(object, 'submit')
 
-        if(events.length != 0){
+        if(events != null && events.length != 0){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2539']/* 'Proposal Submitted' */, 'details':this.props.app_state.loc['2540']/* 'The proposal has been submitted by its author.' */, 'size':'l'})}
@@ -1085,7 +1085,7 @@ class ProposalDetailsSection extends Component {
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var events = this.get_item_logs(object, 'archive')
 
-        if(events.length != 0){
+        if(events != null && events.length != 0){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2543']/* 'Proposal Archived' */, 'details':this.props.app_state.loc['2544']/* 'The proposal has been archived by its author.' */, 'size':'l'})}

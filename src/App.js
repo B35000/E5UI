@@ -10612,7 +10612,9 @@ class App extends Component {
     t.entered_objects.forEach(object => {
       const type = object['type']
       const text = type == '11' ? object['data']['caption']['text'] : object['data']['text']
-      text_words.push(text.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' '))
+      text.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ').forEach(word => {
+        text_words.push(word)
+      });
     });
     const words_containing_at_symbol = text_words.concat(markdown_words).filter((word) => {
       return word.startsWith('@')
@@ -24716,11 +24718,11 @@ class App extends Component {
       }
     }
 
-    if(item['e5'] == 'E1325'){
+    if(item['e5'] == 'E1325'/* zora */){
       //bridge zora
       await bridge_transaction_with_viem(zora)
     }
-    else if(item['e5'] == 'E1255'){
+    else if(item['e5'] == 'E1255'/* zkSync */){
       //bridge zkSync
       const l2Provider = new Provider(this.get_web3_url_from_e5(e5));
       const l1Provider = new ethers.providers.JsonRpcProvider(this.get_web3_url_from_e5(layer1e5));
@@ -24743,35 +24745,36 @@ class App extends Component {
 
       this.show_successful_send_bottomsheet({'type':'zk_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash}, true)
     }
-    else if(item['e5'] == 'E1245'){
+    else if(item['e5'] == 'E1245'/* zircuit */){
       //bridge zircuit
       await bridge_transaction_with_viem(zircuit)
     }
-    else if(item['e5'] == 'E1205'){
+    else if(item['e5'] == 'E1205'/* unichain */){
       //bridge unichain
       await bridge_transaction_with_viem(unichain)
     }
-    else if(item['e5'] == 'E985'){
+    else if(item['e5'] == 'E985'/* ink */){
       //bridge ink
       await bridge_transaction_with_viem(ink)
     }
-    else if(item['e5'] == 'E215'){
+    else if(item['e5'] == 'E215'/* arbitrum one */){
       //bridge arbitrum one
       await bridge_transaction_with_arbitrum(42161)
     }
-    else if(item['e5'] == 'E205'){
+    else if(item['e5'] == 'E205'/* base */){
       //bridge base
       await bridge_transaction_with_viem(base)
     }
-    else if(item['e5'] == 'E195'){
+    else if(item['e5'] == 'E195'/* optimism */){
       //bridge optimism
       await bridge_transaction_with_viem(optimism)
     }
-    else if(item['e5'] == 'E1165'){
+    else if(item['e5'] == 'E1165'/* soneium */){
       //bridge soneium
       await bridge_transaction_with_viem(soneium)
     }
-    else if(item['e5'] == 'E1095'){
+    else if(item['e5'] == 'E1095'/* opBNB */){
+      //bridge opBNB
       const CONFIG = {
         l1URL: this.get_web3_url_from_e5(layer1e5),
         l2URL: this.get_web3_url_from_e5(e5),
@@ -24796,12 +24799,12 @@ class App extends Component {
 
       this.show_successful_send_bottomsheet({'type':'op2_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'cumulativeGasUsed':gas_used, 'effectiveGasPrice':effective_gas_price}, true)
     }
-    else if(item['e5'] == 'E1335'){
+    else if(item['e5'] == 'E1335'/* arbitrum nova */){
       //bridge arbitrum nova
       await bridge_transaction_with_arbitrum(42170)
     }
-    else if(item['e5'] == 'E1215'){
-      //worldchain
+    else if(item['e5'] == 'E1215'/* worldchain */){
+      //bridge worldchain
       const CONFIG = {
         l1URL: this.get_web3_url_from_e5(layer1e5),
         l2URL: this.get_web3_url_from_e5(e5),
@@ -24827,8 +24830,8 @@ class App extends Component {
 
       this.show_successful_send_bottomsheet({'type':'op2_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'cumulativeGasUsed':gas_used, 'effectiveGasPrice':effective_gas_price}, true)
     }
-    else if(item['e5'] == '1035'){
-      //metal l2
+    else if(item['e5'] == 'E1035'/* metal l2 */){
+      //bridge metal l2
       const CONFIG = {
         l1URL: this.get_web3_url_from_e5(layer1e5),
         l2URL: this.get_web3_url_from_e5(e5),

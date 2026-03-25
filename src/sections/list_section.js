@@ -1873,7 +1873,7 @@ class PostListSection extends Component {
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id'])},
+            'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image, 'footer':this.get_object_views_text(object['e5_id'])}
         }
@@ -6078,6 +6078,10 @@ return data['data']
     }
 
     get_audio_files_view_counts(object){
+        const views_data = this.get_object_views_text(object['e5_id'])
+        if(views_data != null && views_data != '') return `• ${views_data}`;
+        else return '';
+
         var view_count = 0
         var songs = object['ipfs'].songs
         if(songs == null) return view_count;
@@ -6159,7 +6163,7 @@ return data['data']
         var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])},
+            'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
             'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])}
         }
@@ -6631,6 +6635,10 @@ return data['data']
     }
 
     get_video_files_view_counts(object){
+        const views_data = this.get_object_views_text(object['e5_id'])
+        if(views_data != null && views_data != '') return `• ${views_data}`;
+        else return '';
+        
         var view_count = 0
         var videos = object['ipfs'].videos
         if(videos == null) return view_count;

@@ -1177,7 +1177,7 @@ class NitroDetailsSection extends Component {
 
     render_storage_acquisition_chart(object){
         const data = this.props.app_state.indexer_storage_trend_data[object['e5_id']]
-        if(data == null) return;
+        if(data == null || data['storage_acquisition'] == null || data['storage_renewal'] == null) return;
         const data_points_data = this.get_storag_space_data_datapoints(data['storage_acquisition'])
         const data_points_data2 = this.get_storag_space_data_datapoints(data['storage_renewal'])
         return(
