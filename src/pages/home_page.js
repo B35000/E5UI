@@ -121,7 +121,7 @@ class home_page extends Component {
         details_container_width:0, typed_tag:{}, search_visible:true, posts_container_width:0, 
         search_results:{}, searched_texts:{}, similar_posts:{}, 
 
-        current_load_time:{},
+        current_load_time:{}, viewed_items_data:{'':{}}
     };
 
     constructor(props) {
@@ -667,10 +667,10 @@ class home_page extends Component {
         var bar_width = 77
         return(
             <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
-                <div style={{height:15, width:bar_width, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid', opacity:0.15}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.3}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.5}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.7}}/>
+                <div style={{height:15, width:bar_width, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid', opacity:0.80}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.85}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.90}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.95}}/>
                 <div style={{height:(this.props.height-89), width:bar_width, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     {this.render_navbar_button_group(size)}
                 </div>
@@ -2251,7 +2251,7 @@ class home_page extends Component {
     }
 
     
-    set_page_scroll(pos){
+    set_page_scroll(pos, viewed_items, page){
         if(this.page_scroll_data == null) this.page_scroll_data = {}
 
         if(this.state.page == '?'){
@@ -2287,6 +2287,25 @@ class home_page extends Component {
             }else{
                 this.page_scroll_data[id] = pos
             }
+        }
+
+
+        if(pos != 0){
+            const viewed_items_data_clone = structuredClone(this.state.viewed_items_data)
+            const page_searched_item = this.state.page_search_data[page] || ''
+            if(viewed_items_data_clone[page_searched_item] == null){
+                viewed_items_data_clone[page_searched_item] = {}
+            }
+            if(viewed_items_data_clone[page_searched_item][page] == null){
+                viewed_items_data_clone[page_searched_item][page] = []
+            }
+            viewed_items.forEach(viewed_item_id => {
+                if(!viewed_items_data_clone[page_searched_item][page].includes(viewed_item_id)){
+                    viewed_items_data_clone[page_searched_item][page].push(viewed_item_id)
+                }
+            });
+
+            this.setState({viewed_items_data: viewed_items_data_clone})
         }
     }
 
@@ -2439,7 +2458,7 @@ class home_page extends Component {
             // var scroll_pos = this.page_scroll_data[id]
             if(this.page_scroll_data[id] == null || this.page_scroll_data[id] == 0){
                 if(ignore_notification_if_at_top != true){
-                    this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+                    // this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
                 }
             }else{
                 this.render_top_notification(this.props.app_state.loc['1264bi']/* 'Scrolling to the top...' */, 1500)
@@ -2490,7 +2509,7 @@ class home_page extends Component {
 
             // var scroll_pos = this.page_scroll_data[id]
             if(this.page_scroll_data[id] == null || this.page_scroll_data[id] == 0){
-                this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+                // this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
             }else{
                 this.render_top_notification(this.props.app_state.loc['1264bi']/* 'Scrolling to the top...' */, 1500)
             }
@@ -2553,7 +2572,7 @@ class home_page extends Component {
 
             // var scroll_pos = this.page_scroll_data[id]
             if(this.page_scroll_data[id] == null || this.page_scroll_data[id] == 0){
-                this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
+                // this.render_top_notification(this.props.app_state.loc['1264bh']/* 'You\'re already at the top.' */, 2300)
             }else{
                 this.render_top_notification(this.props.app_state.loc['1264bi']/* 'Scrolling to the top...' */, 1500)
             }
@@ -4742,6 +4761,22 @@ class home_page extends Component {
         
     }
 
+    is_swiping_enabled(){
+        const page = this.state.page
+        if(page == '?'){
+            const selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+            if(selected_item == this.props.app_state.loc['1264bq']/* job-map 🗺️ */ || selected_item == this.props.app_state.loc['1264br']/* contractor-map 🗺️ */){
+                return false
+            }
+            else{
+                return true
+            }
+        }
+        else{
+            return true
+        }
+    }
+
     render_post_list_group_if_touch_screen(size, height){
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
@@ -4756,7 +4791,7 @@ class home_page extends Component {
                 {this.render_search_tags_views()}
                 <ViewPager tag="main">
                     <Frame className="frame">
-                        <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => this.handleChange2(e)} className="track">
+                        <Track swipe={this.is_swiping_enabled()} ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => this.handleChange2(e)} className="track">
                             <View className="view">
                                 <div>
                                     {this.render_post_list_group2(size, '?', this.work_list_section, h)}
@@ -5101,7 +5136,7 @@ class home_page extends Component {
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
             current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
 
-            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)}
+            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data}
             />
         )
     }

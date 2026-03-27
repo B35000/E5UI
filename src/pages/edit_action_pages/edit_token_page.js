@@ -1300,9 +1300,11 @@ class NewTokenPage extends Component {
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
+        var uploaded_data = {}
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}
                 when_spend_country_selected={this.when_spend_country_selected.bind(this)} when_spend_included_country_selected={this.when_spend_included_country_selected.bind(this)}
                 />
             </div>

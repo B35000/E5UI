@@ -641,123 +641,128 @@ class PostListSection extends Component {
 
 
 
-
+    handleScroll2(range, viewed_items){
+        const page = this.props.get_page_id()
+        this.props.set_page_scroll(range.startIndex, viewed_items, page)
+    }
 
     handleScroll = (event, id) => {
-        var pos = event.currentTarget.scrollTop
-        this.props.set_page_scroll(pos)
+        // var pos = event.currentTarget.scrollTop
+        // this.props.set_page_scroll(pos)
     };
 
     set_jobs_list(pos, smooth){
         if(smooth == null || smooth == false){
-            this.jobs_list.current?.scrollTo(0, pos);
+            // this.jobs_list.current?.scrollTo(0, pos);
+            this.jobs_list.current?.scrollToIndex({ index: pos, align: "start", });
         }else{
-            this.jobs_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+            // this.jobs_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+            this.jobs_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
         }
     }
 
     set_contract_list(pos, smooth){
-        if(smooth == null || smooth == false) this.contract_list.current?.scrollTo(0, pos);
-        else this.contract_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.contract_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.contract_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_contractor_list(pos, smooth){
-        if(smooth == null || smooth == false) this.contractor_list.current?.scrollTo(0, pos);
-        else this.contractor_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.contractor_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.contractor_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_proposal_list(pos, smooth){
-        if(smooth == null || smooth == false) this.proposal_list.current?.scrollTo(0, pos);
-        else this.proposal_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.proposal_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.proposal_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_subscription_list(pos, smooth){
-        if(smooth == null || smooth == false) this.subscription_list.current?.scrollTo(0, pos);
-        else this.subscription_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.subscription_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.subscription_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_mail_list(pos, smooth){
-        if(smooth == null || smooth == false) this.mail_list.current?.scrollTo(0, pos);
-        else this.mail_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.mail_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.mail_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_direct_mail_list(pos, smooth){
-        if(smooth == null || smooth == false) this.direct_messages_list.current?.scrollTo(0, pos);
-        else this.direct_messages_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.direct_messages_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.direct_messages_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
 
 
     set_e5_list(pos, smooth){
-        if(smooth == null || smooth == false) this.e5_list.current?.scrollTo(0, pos);
-        else this.e5_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.e5_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.e5_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_searched_account_list(pos, smooth){
-        if(smooth == null || smooth == false) this.searched_account_list.current?.scrollTo(0, pos);
-        else this.searched_account_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.searched_account_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.searched_account_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_post_list(pos, smooth){
-        if(smooth == null || smooth == false) this.post_list.current?.scrollTo(0, pos);
-        else this.post_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.post_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.post_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_channel_list(pos, smooth){
-        if(smooth == null || smooth == false) this.channel_list.current?.scrollTo(0, pos);
-        else this.channel_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.channel_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.channel_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_storefront_list(pos, smooth){
-        if(smooth == null || smooth == false) this.storefront_list.current?.scrollTo(0, pos);
-        else this.storefront_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.storefront_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.storefront_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_bag_list(pos, smooth){
-        if(smooth == null || smooth == false) this.bag_list.current?.scrollTo(0, pos);
-        else this.bag_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.bag_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.bag_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_audio_list(pos, smooth){
-        if(smooth == null || smooth == false) this.audio_list.current?.scrollTo(0, pos);
-        else this.audio_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.audio_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.audio_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_video_list(pos, smooth){
-        if(smooth == null || smooth == false) this.video_list.current?.scrollTo(0, pos);
-        else this.video_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.video_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.video_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
     
     set_poll_list(pos, smooth){
-        if(smooth == null || smooth == false) this.poll_list.current?.scrollTo(0, pos);
-        else this.poll_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.poll_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.poll_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
 
 
     set_coin_list(pos, smooth){
-        if(smooth == null || smooth == false) this.coin_list.current?.scrollTo(0, pos)
-        else this.coin_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.coin_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.coin_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_ether_list(pos, smooth){
-        if(smooth == null || smooth == false) this.ether_list.current?.scrollTo(0, pos);
-        else this.ether_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.ether_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.ether_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_end_list(pos, smooth){
-        if(smooth == null || smooth == false) this.end_list.current?.scrollTo(0, pos);
-        else this.end_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.end_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.end_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_spend_list(pos, smooth){
-        if(smooth == null || smooth == false) this.spend_list.current?.scrollTo(0, pos);
-        else this.spend_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.spend_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.spend_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
     set_bills_list(pos, smooth){
-        if(smooth == null || smooth == false) this.bill_list.current?.scrollTo(0, pos);
-        else this.bill_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
+        if(smooth == null || smooth == false) this.bill_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.bill_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
 
@@ -1001,11 +1006,12 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div>
-                    <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                    <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                             {this.render_line_loader_if_reloading()}
                             {this.show_load_metrics(items, 'jobs')}
                             {this.show_new_objects_message_if_any(all_items)}
                             <Virtuoso
+                                ref={this.jobs_list}
                                 style={{ height: middle }}
                                 totalCount={items.length}
                                 itemContent={(index) => {
@@ -1021,11 +1027,24 @@ class PostListSection extends Component {
                                         </div>
                                     );
                                 }}
+                                rangeChanged={(range) => {
+                                    this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                                }}
                             />
                     </div>
                 </div>
             );
         } 
+    }
+
+    get_viewed_item_ids(items, range, identifier){
+        const { startIndex, endIndex } = range;
+        const viewed_item_ids = []
+        for(var i=startIndex; i<=endIndex; i++){
+            viewed_item_ids.push(items[i][identifier])
+        }
+
+        return viewed_item_ids
     }
 
     render_loading_screen_card(){
@@ -1044,7 +1063,7 @@ class PostListSection extends Component {
     }
 
     get_job_items(){
-        return this.remove_duplicates(this.props.get_job_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_job_items()), 'e5_id');
     }
 
     render_job_object(object, index){
@@ -1074,9 +1093,9 @@ class PostListSection extends Component {
                         <div style={{'padding': '0px 0px 0px 0px'}} >
                             {this.render_detail_item('3', item['id'])}
                         </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}}>
-                            {this.render_detail_item('2', item['age'])}
-                        </div>
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
                     </div>
                 </div>         
             </div>
@@ -1106,9 +1125,9 @@ class PostListSection extends Component {
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':title_space+id_to_show+sender+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
-            'min':{'details':'• '+object['id']+sender+responses_text, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
+            'id':{'title':title_space+id_to_show+sender, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':'• '+object['id']+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -1131,6 +1150,23 @@ class PostListSection extends Component {
             }
         });
         return filtered
+    }
+
+    order_elements(objects, identifier){
+        const viewed_items_data = this.props.viewed_items_data
+        const page_id = this.props.get_page_id()
+        const page_search_data = this.props.page_search_data[page_id] || ''
+        if(viewed_items_data[page_search_data] != null && viewed_items_data[page_search_data][page_id] != null){
+            const viewed_element_ids = viewed_items_data[page_search_data][page_id] || []
+            const orderMap = new Map(viewed_element_ids.map((id, index) => [id, index]));
+            const first_elements = objects.sort((a, b) => {
+                const indexA = orderMap.get(a[identifier]) ?? Infinity;
+                const indexB = orderMap.get(b[identifier]) ?? Infinity;
+                return indexA - indexB;
+            });
+            return first_elements
+        }
+        else return objects
     }
 
     is_object_blocked_for_sender(object){
@@ -1482,11 +1518,12 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'contracts')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.contract_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -1502,6 +1539,9 @@ class PostListSection extends Component {
                                 </div>
                             );
                         }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        }}
                     />
                 </div>
             );
@@ -1510,7 +1550,7 @@ class PostListSection extends Component {
     }
 
     get_contract_items(){
-        return this.remove_duplicates(this.props.get_contract_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_contract_items()), 'e5_id');
     }
 
     render_contract_item(object, index){
@@ -1544,7 +1584,7 @@ class PostListSection extends Component {
                         <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
                             {this.render_detail_item('3', item['id'])}
                         </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
+                        <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_contract_item_clicked(index, object)} */>
                             {this.render_detail_item('2', item['age'])}
                         </div>
                         
@@ -1579,7 +1619,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, },
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, 'number_when_tapped':`${relativepower == '????' ? relativepower : (new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+object_id+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -1644,12 +1684,13 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
-                <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'proposals')}
                     {this.show_new_objects_message_if_any(all_items)}
                     {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
                     <Virtuoso
+                        ref={this.proposal_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -1664,6 +1705,9 @@ class PostListSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
                         }}
                     />
                 </div>
@@ -1723,7 +1767,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_proposal_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_proposal_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_proposal_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -1733,7 +1777,7 @@ class PostListSection extends Component {
     }
 
     get_my_proposals(){
-        return this.remove_duplicates(this.props.get_proposal_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_proposal_items()), 'e5_id');
     }
 
     format_proposal_item(object){
@@ -1745,7 +1789,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -1796,11 +1840,12 @@ class PostListSection extends Component {
         else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.nitro_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics([], 'nitro')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.nitro_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -1816,6 +1861,9 @@ class PostListSection extends Component {
                                 </div>
                             );
                         }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        }}
                     />
                 </div>
             );
@@ -1823,7 +1871,7 @@ class PostListSection extends Component {
     }
 
     get_nitro_items(){
-        return this.remove_duplicates(this.props.get_nitro_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_nitro_items()), 'e5_id');
     }
 
     render_nitro_object_if_locked(object, index){
@@ -1852,7 +1900,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_nitro_item_clicked(index, object)}>
                         {this.render_detail_item('8', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_nitro_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}}/*  onClick={() => this.when_nitro_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -1874,7 +1922,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+' • '+sender, 'title':title, 'size':'l', 'border_radius':'7px', 'image':image, 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -1922,12 +1970,13 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'subscriptions')}
                     {this.show_new_objects_message_if_any(all_items)}
                     {this.render_pay_all_upcoming_subscriptions_button(items)}
                     <Virtuoso
+                        ref={this.subscription_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -1942,6 +1991,9 @@ class PostListSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
                         }}
                     />
                 </div>
@@ -1968,7 +2020,7 @@ class PostListSection extends Component {
     }
 
     get_subscription_items(){
-        return this.remove_duplicates(this.props.get_subscription_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_subscription_items()), 'e5_id');
     }
 
     render_subscription_object(object, index){
@@ -1998,7 +2050,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_subscription_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_subscription_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}}/*  onClick={() => this.when_subscription_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -2028,7 +2080,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -2075,11 +2127,12 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
-                <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, object_type)}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.mail_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -2094,6 +2147,9 @@ class PostListSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'convo_id'))
                         }}
                     />
                 </div>
@@ -2113,7 +2169,7 @@ class PostListSection extends Component {
     }
 
     get_mail_items(){
-        return this.remove_duplicates(this.props.get_mail_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_mail_items()), 'convo_id');
     }
 
     render_mail_object_or_null(object, index){
@@ -2158,7 +2214,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_mail_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['author_title'])}
                     </div>
-                    <div style={{'padding': '15px 0px 0px 0px'}} onClick={() => this.when_mail_item_clicked(index, object)}>
+                    <div style={{'padding': '15px 0px 0px 0px'}} /* onClick={() => this.when_mail_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                 </div>         
@@ -2197,7 +2253,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'textsize':'14px', 'text':details, 'font':this.props.app_state.font},
             'author_title':{'title':title, 'details':details, 'size':'l'},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':title+' • '+this.get_time_difference(time), 'title':details, 'size':'l', 'border_radius':'0%'}
         }
     }
@@ -2251,11 +2307,12 @@ class PostListSection extends Component {
         else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'contractor')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.contractor_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -2271,6 +2328,9 @@ class PostListSection extends Component {
                                 </div>
                             );
                         }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        }}
                     />
                 </div>
             );
@@ -2278,7 +2338,7 @@ class PostListSection extends Component {
     }
 
     get_contractor_items(){
-        return this.remove_duplicates(this.props.get_contractor_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_contractor_items()), 'e5_id');
     }
 
     render_contractor_object(object, index){
@@ -2307,7 +2367,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_contractor_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_contractor_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}}/*  onClick={() => this.when_contractor_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -2328,7 +2388,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -2425,8 +2485,9 @@ class PostListSection extends Component {
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509w']/* 'Filter Account or Alias...' */} when_text_input_field_changed={this.when_typed_search_dm_account_id_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_dm_account_id} theme={this.props.theme} />
                     </div>
-                    <div ref={this.direct_messages_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-x}}>
+                    <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-x}}>
                         <Virtuoso
+                            ref={this.direct_messages_list}
                             style={{ height: middle }}
                             totalCount={items.length}
                             itemContent={(index) => {
@@ -2441,6 +2502,9 @@ class PostListSection extends Component {
                                         </AnimatePresence>
                                     </div>
                                 );
+                            }}
+                            rangeChanged={(range) => {
+                                this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'convo_id'))
                             }}
                         />
                     </div>
@@ -2834,8 +2898,9 @@ class PostListSection extends Component {
             );
         }
         return (
-            <div ref={this.e5_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+            <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <Virtuoso
+                    ref={this.e5_list}
                     style={{ height: middle }}
                     totalCount={items.length}
                     itemContent={(index) => {
@@ -2851,13 +2916,16 @@ class PostListSection extends Component {
                             </div>
                         );
                     }}
+                    rangeChanged={(range) => {
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id'))
+                    }}
                 />
             </div>
         );
     }
 
     get_e5_data(){
-        return this.remove_duplicates(this.props.get_e5_data())
+        return this.order_elements(this.remove_duplicates(this.props.get_e5_data()), 'id');
     }
 
     render_E5s_object(item_data, index, name){
@@ -3135,7 +3203,7 @@ class PostListSection extends Component {
                         <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
                             {this.render_detail_item(selector_item, item['id'])}
                         </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_link_object_clicked(index, object, type)}>
+                        <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_link_object_clicked(index, object, type)} */>
                             {this.render_detail_item('2', item['age'])}
                         </div>
                     </div>         
@@ -3306,7 +3374,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
             'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4263,11 +4331,12 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'posts')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.post_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -4283,6 +4352,9 @@ class PostListSection extends Component {
                                 </div>
                             );
                         }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        }}
                     />
                 </div>
             );
@@ -4290,7 +4362,7 @@ class PostListSection extends Component {
     }
 
     get_post_items(){
-        return this.remove_duplicates(this.props.get_post_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_post_items()), 'e5_id');
     }
 
 
@@ -4406,7 +4478,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_post_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_post_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}}/*  onClick={() => this.when_post_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -4485,7 +4557,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+id_to_show+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`,  'number_when_tapped':`${relativepower == '???' ? '???' : (new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+objectid+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%', 'title_image':title_image, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -4568,11 +4640,12 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'channels')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.channel_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -4587,6 +4660,9 @@ class PostListSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
                         }}
                     />
                 </div>
@@ -4625,7 +4701,7 @@ class PostListSection extends Component {
                         <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
                             {this.render_detail_item('3', item['id'])}
                         </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
+                        <div style={{'padding': '20px 0px 0px 0px'}}/*  onClick={() => this.when_channel_item_clicked(index, object)} */>
                             {this.render_detail_item('2', item['age'])}
                         </div>
                         
@@ -4642,7 +4718,7 @@ class PostListSection extends Component {
     }
 
     get_channel_items(){
-        return this.remove_duplicates(this.props.get_channel_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_channel_items()), 'e5_id');
     }
 
     format_channel_item(object){
@@ -4670,7 +4746,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':extra+title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -4753,11 +4829,12 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.poll_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'polls')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.poll_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -4772,6 +4849,9 @@ class PostListSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
                         }}
                     />
                 </div>
@@ -4806,7 +4886,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_poll_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_poll_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}}/*  onClick={() => this.when_poll_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -4839,7 +4919,7 @@ class PostListSection extends Component {
     }
 
     get_poll_items(){
-        return this.remove_duplicates(this.props.get_poll_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_poll_items()), 'e5_id');
     }
 
     format_poll_item(object){
@@ -4851,7 +4931,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -4899,11 +4979,12 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'storefront')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.storefront_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -4919,6 +5000,9 @@ class PostListSection extends Component {
                                 </div>
                             );
                         }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        }}
                     />
                 </div>
             );
@@ -4926,7 +5010,7 @@ class PostListSection extends Component {
     }
 
     get_storefront_items(){
-        return this.remove_duplicates(this.props.get_storefront_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_storefront_items()), 'e5_id');
     }
 
     render_storefront_object(object, index){
@@ -4996,7 +5080,7 @@ class PostListSection extends Component {
                         {this.render_detail_item('3', item['id'])}
                     </div>
                     {/* {this.render_storefront_item_images(object)} */}
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_storefront_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -5060,7 +5144,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -5143,11 +5227,12 @@ class PostListSection extends Component {
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return( 
-                <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'bags')}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.bag_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -5163,6 +5248,9 @@ class PostListSection extends Component {
                                 </div>
                             );
                         }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        }}
                     />
                 </div>
             );
@@ -5170,7 +5258,7 @@ class PostListSection extends Component {
     }
 
     get_bag_items(){
-        return this.remove_duplicates(this.props.get_bag_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_bag_items()), 'e5_id');
     }
 
     render_bag_object(object, index){
@@ -5200,7 +5288,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_bag_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -5285,7 +5373,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'footer':this.get_object_views_text(object['e5_id'])},
             // 'id_with_image':{'title':number_with_commas(object['id']), 'details':title, 'size':'l', 'image':image},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id']), 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -5374,12 +5462,13 @@ class PostListSection extends Component {
         else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.audio_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'audioport')}
                     {this.show_new_objects_message_if_any(all_items)}
                     {this.render_search_songs(items)}
                     <Virtuoso
+                        ref={this.audio_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -5394,6 +5483,9 @@ class PostListSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
                         }}
                     />
                 </div>
@@ -5961,7 +6053,7 @@ return data['data']
 
 
     get_audio_items(){
-        return this.remove_duplicates(this.props.get_audio_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_audio_items()), 'e5_id');
     }
 
     render_audio_object_if_locked(item, index){
@@ -6068,7 +6160,7 @@ return data['data']
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
                         {this.render_detail_item('8', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_audio_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -6163,9 +6255,9 @@ return data['data']
         var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
-            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])}
+            'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`,  'number_when_tapped':`${relativepower == '???' ? '???' : (new Date(time*1000).toLocaleString())}` },
+            'min':{'details': author+' • '+relativepower, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -6259,12 +6351,13 @@ return data['data']
         else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.video_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div  onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'videoport')}
                     {this.show_new_objects_message_if_any(all_items)}
                     {this.render_search_videos(items)}
                     <Virtuoso
+                        ref={this.video_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -6279,6 +6372,9 @@ return data['data']
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
                         }}
                     />
                 </div>
@@ -6514,7 +6610,7 @@ return data['data']
     }
 
     get_video_items(){
-        return this.remove_duplicates(this.props.get_video_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_video_items()), 'e5_id');
     }
 
     render_video_object_if_locked(item, index){
@@ -6625,7 +6721,7 @@ return data['data']
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
                         {this.render_detail_item('8', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_video_item_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -6712,9 +6808,9 @@ return data['data']
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':author+view_count_message, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, },
-            'min':{'details': author+' • '+relativepower+view_count_message, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])}
+            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`,  'number_when_tapped':`${relativepower == '???' ? '???' : (new Date(time*1000).toLocaleString())}` },
+            'min':{'details': author+' • '+relativepower, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -6828,8 +6924,9 @@ return data['data']
                 <div style={{ 'margin': '5px 5px 5px 5px'}}>
                     <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} adjust_height={false} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
                 </div>
-                <div ref={this.coin_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
                     <Virtuoso
+                        ref={this.coin_list}
                         style={{ height: middle-x }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -6844,6 +6941,9 @@ return data['data']
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id'))
                         }}
                     />
                 </div>
@@ -6977,8 +7077,9 @@ return data['data']
                     <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_ether_id} theme={this.props.theme} />
                 </div>
 
-                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-x}}>
                     <Virtuoso
+                        ref={this.ether_list}
                         style={{ height: middle-x }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -6993,6 +7094,9 @@ return data['data']
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id'))
                         }}
                     />
                 </div>
@@ -7191,11 +7295,12 @@ return data['data']
         }
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return (
-            <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+            <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 {this.render_line_loader_if_reloading()}
                 {this.show_load_metrics(items, 'tokens')}
                 {this.show_new_objects_message_if_any(all_items)}
                 <Virtuoso
+                    ref={this.end_list}
                     style={{ height: middle }}
                     totalCount={items.length}
                     itemContent={(index) => {
@@ -7211,17 +7316,20 @@ return data['data']
                             </div>
                         );
                     }}
+                    rangeChanged={(range) => {
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                    }}
                 />
             </div>
         );
     }
 
     get_end_exchange_tokens(){
-        return this.remove_duplicates(this.props.get_end_token_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_end_token_items()), 'e5_id');
     }
 
     get_exchange_tokens(exchange_type){
-        return this.remove_duplicates(this.props.get_exchange_tokens(exchange_type))
+        return this.order_elements(this.remove_duplicates(this.props.get_exchange_tokens(exchange_type)), 'e5_id');
     }
 
     render_ends_object(object_array, index, token_id, img, object){
@@ -7260,10 +7368,9 @@ return data['data']
                         <div style={{'padding': '0px 10px 0px 10px'}}>
                             {this.render_detail_item('8', item['label'])}
                         </div>
-                        <div style={{height: 20}}/>
-                        {this.render_detail_item('2', item['age'])}
                     </div>
-                    
+                    <div style={{height: 20}}/>
+                    {this.render_detail_item('2', item['age'])}
                 </div>         
             </div>
         );
@@ -7333,7 +7440,7 @@ return data['data']
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id']), 'image_width':'auto'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id'])}
         }
     }
@@ -7437,11 +7544,12 @@ return data['data']
         }
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
-            <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+            <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 {this.render_line_loader_if_reloading()}
                 {this.show_load_metrics(items, 'tokens')}
                 {this.show_new_objects_message_if_any(all_items)}
                 <Virtuoso
+                    ref={this.spend_list}
                     style={{ height: middle }}
                     totalCount={items.length}
                     itemContent={(index) => {
@@ -7457,13 +7565,16 @@ return data['data']
                             </div>
                         );
                     }}
+                    rangeChanged={(range) => {
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                    }}
                 />
             </div>
         );
     }
 
     get_spend_exchange_tokens(){
-        return this.remove_duplicates(this.props.get_spend_token_items())
+        return this.order_elements(this.remove_duplicates(this.props.get_spend_token_items()), 'e5_id');
     }
 
     render_spends_object(object_array, index, token_id, img, object){
@@ -7502,9 +7613,9 @@ return data['data']
                         <div style={{'padding': '0px 10px 0px 10px'}}>
                             {this.render_detail_item('8', item['label'])}
                         </div>
-                        <div style={{height: 20}}/>
-                        {this.render_detail_item('2', item['age'])}
                     </div>
+                    <div style={{height: 20}}/>
+                    {this.render_detail_item('2', item['age'])}
                 </div>         
             </div>
         );
@@ -7557,11 +7668,12 @@ return data['data']
         }else{
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
-                <div ref={this.bill_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
                     {this.render_pay_all_bills_button(items)}
                     {this.show_new_objects_message_if_any(all_items)}
                     <Virtuoso
+                        ref={this.bill_list}
                         style={{ height: middle }}
                         totalCount={items.length}
                         itemContent={(index) => {
@@ -7576,6 +7688,9 @@ return data['data']
                                     </AnimatePresence>
                                 </div>
                             );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
                         }}
                     />
                 </div>
@@ -7620,7 +7735,7 @@ return data['data']
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bill_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '15px 0px 0px 0px'}} onClick={() => this.when_bill_clicked(index, object)}>
+                    <div style={{'padding': '15px 0px 0px 0px'}} /* onClick={() => this.when_bill_clicked(index, object)} */>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                 </div>         
@@ -7653,7 +7768,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
             'id':{'title':' • '+title, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':object['e5']+' • '+details, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }

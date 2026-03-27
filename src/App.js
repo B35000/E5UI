@@ -20,6 +20,7 @@
 import React, { Component, useState, useImperativeHandle, forwardRef } from 'react';
 
 /* images */
+import e5_app_icon from './assets/app_icon.png'
 import music_label from './assets/music_default_label.png'
 import expand_icon from './assets/expand_icon.png'
 import close_pip from './assets/close_pip.png'
@@ -1257,7 +1258,7 @@ class App extends Component {
   // }
 
   state = {
-    version:'6.0', os: getOS(),
+    version:'7.0', os: getOS(),
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -1268,7 +1269,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -4121,6 +4122,7 @@ class App extends Component {
       rounded_edges: this.state.rounded_edges,
 
       saved_cypher_seed_object: await this.get_encrypted_seed_if_passcode_is_set(),
+      notifications_permissions: this.state.notifications_permissions,
     }
   }
 
@@ -4356,6 +4358,7 @@ class App extends Component {
       var notification_object = state.notification_object || this.state.notification_object;
       var rounded_edges = state.rounded_edges || this.state.rounded_edges;
       var saved_cypher_seed_object = state.saved_cypher_seed_object || {}
+      var notifications_permissions = state.notifications_permissions || 'e'
 
       this.setState({
         theme: theme,
@@ -4443,7 +4446,8 @@ class App extends Component {
         last_address: last_address,
         previous_notification_objects: notification_object,
         rounded_edges: rounded_edges,
-        saved_cypher_seed_object: saved_cypher_seed_object
+        saved_cypher_seed_object: saved_cypher_seed_object,
+        notifications_permissions: notifications_permissions
       })
       var me = this;
       setTimeout(function() {
@@ -4504,6 +4508,7 @@ class App extends Component {
       me.stack_page.current?.set_page_background_object()
       me.stack_page.current?.set_chain_or_indexer_option()
       me.stack_page.current?.set_rounded_edges_option()
+      me.stack_page.current?.set_notifications_permissions_option()
     }, (1 * 1000));
   }
 
@@ -8725,7 +8730,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)}
       />
     )
   }
@@ -9788,6 +9793,14 @@ class App extends Component {
 
   when_rounded_edges_option_changed(item){
     this.setState({rounded_edges: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_notifications_permissions_option_changed(item){
+    this.setState({notifications_permissions: item})
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -16761,6 +16774,8 @@ class App extends Component {
   }
 
   add_comment_to_respective_forum_page(tx, page){
+    this.open_add_comment_bottomsheet()
+    
     if(page == 'channel'){
       this.add_channel_message_to_stack_object(tx)      
     }
@@ -24938,6 +24953,7 @@ class App extends Component {
         hideProgressBar: true,
         style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:'auto'}
     });
+    this.render_notification_in_desktop(data, duration)
   }
 
   /* renders the toast item used */
@@ -24997,6 +25013,24 @@ class App extends Component {
           this.show_dialog_bottomsheet(onClickData, id)
         }
       }
+    }
+  }
+
+  render_notification_in_desktop(data, duration){
+    if(this.state.notifications_permissions == this.getLocale()['1593hm']/* enabled */ && Notification.permission == "granted" && document.hidden == true){
+      const options = {
+        body: data,
+        icon: e5_app_icon,
+        // dir: 'ltr',
+      };
+      const notification = new Notification(this.getLocale()['1593mc']/* 'E5 Notification.' */, options);
+      notification.onclick = () => {
+        window.focus();
+        notification.close()
+      };
+      setTimeout(() => {
+        notification.close()
+      }, (30_000));
     }
   }
 

@@ -72,6 +72,7 @@ class ViewGroups extends Component {
         keyboard_showing: false,
         animate: false,
         screen_width:0,
+        number_line_switch: false,
     };
 
     constructor(props) {
@@ -192,6 +193,10 @@ class ViewGroups extends Component {
             var number = object_data != null ? object_data['number']:'123,445,555'
             var barcolor = this.props.theme['bar_color']
             var relativepower = object_data != null ? object_data['relativepower']:'500 blocks'
+
+            if(object_data != null && object_data['number_when_tapped'] != null && this.state.number_line_switch == true){
+                number = object_data['number_when_tapped']
+            }
             
             if(number == 0){
                 number = '000'
@@ -207,7 +212,7 @@ class ViewGroups extends Component {
                                 </div>
                             </div>
 
-                            <div className="row">
+                            <div onClick={() => this.when_number_relativepower_clicked()} className="row">
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
                                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '10px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
                                 </div>
@@ -1134,6 +1139,10 @@ class ViewGroups extends Component {
         }
     }
 
+    when_number_relativepower_clicked(){
+        this.setState({number_line_switch: !this.state.number_line_switch})
+    }
+
     extract_leading_trailing_spaces(clean_text){
         const letters = clean_text.split('')
         const leading_trailing_spaces = ['', '']
@@ -1724,7 +1733,7 @@ class ViewGroups extends Component {
 
     get_default_image_or_empty_image(ecid){
         if(ecid == null) return empty_image;
-        if(this.props.uploaded_data[ecid] == null) return empty_image;
+        if(this.props.uploaded_data == null || this.props.uploaded_data[ecid] == null) return empty_image;
         return this.props.uploaded_data[ecid];
     }
 

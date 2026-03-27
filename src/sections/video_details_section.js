@@ -857,8 +857,12 @@ class VideoDetailsSection extends Component {
         var item = items[0]
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
-        }else if(!this.is_video_available_for_viewing(item)){
+        }
+        else if(!this.is_video_available_for_viewing(item)){
             this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+        }
+        else if(!this.has_file_loaded(item['video'])){
+            this.props.notify(this.props.app_state.loc['b2527y']/* 'Wait a bit.' */, 3000)
         }
         else{
             this.props.play_video(item, object)
@@ -2557,7 +2561,7 @@ class VideoDetailsSection extends Component {
                     <div style={{width:10}}/>
                     <div className="row" style={{width:ww}}>
                         <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme}/>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >

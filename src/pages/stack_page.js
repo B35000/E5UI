@@ -80,6 +80,43 @@ function start_and_end(str) {
   return str;
 }
 
+function getOS() {
+  if(iOS()) return 'iOS'
+  const userAgent = window.navigator.userAgent,
+      platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
+      macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+      windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+      iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+  let os = null;
+
+  if (macosPlatforms.indexOf(platform) !== -1) {
+    os = 'macOS';
+  } else if (iosPlatforms.indexOf(platform) !== -1) {
+    os = 'iOS';
+  } else if (windowsPlatforms.indexOf(platform) !== -1) {
+    os = 'Windows';
+  } else if (/Android/.test(userAgent)) {
+    os = 'Android';
+  } else if (/Linux/.test(platform)) {
+    os = 'Linux';
+  }
+
+  return os;
+}
+
+function iOS() {
+  return [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+}
+
 const gridComponents = {
   List: forwardRef(({ style, children, ...props }, ref) => (
     <div
@@ -148,6 +185,7 @@ class StackPage extends Component {
         get_page_background_object:this.get_page_background_object(),
         get_chain_or_indexer_option_object:this.get_chain_or_indexer_option_object(),
         get_rounded_edges_option_tags_object: this.get_rounded_edges_option_tags_object(),
+        get_notifications_permissions_option_tags_object:this.get_notifications_permissions_option_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
@@ -255,6 +293,8 @@ class StackPage extends Component {
             ], 
         }
     }
+
+    
 
     
 
@@ -1393,6 +1433,32 @@ class StackPage extends Component {
         this.setState({get_rounded_edges_option_tags_object: this.get_rounded_edges_option_tags_object(),})
     }
 
+
+
+
+
+
+
+    get_notifications_permissions_option_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593hm']/* 'enabled' */], [this.get_notifications_permissions_option()]
+            ],
+        };
+    }
+
+    get_notifications_permissions_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593hm']/* 'enabled' */] = 1
+        return obj[this.props.app_state.notifications_permissions]
+    }
+
+    set_notifications_permissions_option(){
+        this.setState({get_notifications_permissions_option_tags_object: this.get_notifications_permissions_option_tags_object(),})
+    }
 
 
 
@@ -3147,6 +3213,7 @@ class StackPage extends Component {
         this.run_transactions(true, false)
     }
 
+    //here-------------------------------
     run_transactions = async (calculate_gas, silently) => {
         const txs = this.props.app_state.stack_items
         const e5 = this.props.app_state.selected_e5
@@ -13389,6 +13456,9 @@ class StackPage extends Component {
                             {this.render_detail_item('0')}
                         </div>
                     )}
+
+
+                    {this.render_notification_setting_if_not_mobile()}
                 </div>
             </div>
         )
@@ -13566,6 +13636,7 @@ class StackPage extends Component {
                             {this.render_detail_item('0')}
                         </div>
                     )}
+
                 </div>
             </div>
         )
@@ -14644,7 +14715,7 @@ class StackPage extends Component {
     }
 
     render_auto_run_setting_if_not_ios(){
-        if(this.props.app_state.os == 'iOS'){
+        if(getOS() == 'iOS'){
             return(
                 <div style={{opacity:0.5}}>
                     {this.does_title_details_contain_searched_text('1593fw', '1593fx') && (
@@ -14747,6 +14818,26 @@ class StackPage extends Component {
         }else{
             return render_no_theme_image_settings()
         }
+    }
+
+    render_notification_setting_if_not_mobile(){
+        const os = getOS();
+        const opacity = os != 'Android' && os != 'iOS' ? 1.0 : 0.5
+
+        return(
+            <div style={{opacity: opacity}}>
+                {this.does_title_details_contain_searched_text('1593ma', '1593mb') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ma']/* 'Desktop Notifications.' */, 'details':this.props.app_state.loc['1593mb']/* 'If set to enabled, you\'ll receive notifications on your desktop from e if you\'re away from its tab.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_notifications_permissions_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_notifications_permissions_option_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+            </div>
+        )
     }
 
     render_image(item){
@@ -15014,6 +15105,30 @@ class StackPage extends Component {
         this.setState({get_rounded_edges_option_tags_object: tag_obj})
         var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_rounded_edges_option_changed(selected_item)
+    }
+
+    async when_get_notifications_permissions_option_tags_object_updated(tag_obj){
+        const os = getOS();
+        if(os == 'Android' || os == 'iOS') return; 
+
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        if(selected_item == this.props.app_state.loc['1593hm']/* 'enabled' */){
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+                this.setState({get_notifications_permissions_option_tags_object: tag_obj})
+                this.props.when_notifications_permissions_option_changed(selected_item)
+            } 
+            else if (permission === "denied") {
+                
+            } 
+            else {
+                //dismissed
+            }
+        }else{
+            this.setState({get_notifications_permissions_option_tags_object: tag_obj})
+            this.props.when_notifications_permissions_option_changed(selected_item)
+        }
+        
     }
     
 
