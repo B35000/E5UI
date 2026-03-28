@@ -5569,7 +5569,7 @@ class App extends Component {
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
-        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'rgb(241, 241, 241)','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5612,7 +5612,7 @@ class App extends Component {
     else if(theme == this.getLocale()['1418']/* 'dark' */){
       return{
         'name':this.getLocale()['1418']/* 'dark' */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(68, 68, 68, 0.3)',/* 'button_color':'#444444' */ 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1', 'linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(68, 68, 68, 0.3)',/* 'button_color':'#444444' */ 'button_color':'linear-gradient(135deg, #444444,rgb(87, 86, 86))', 'button_text_color':'white', 'line_color':'#C1C1C1', 'linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(68, 68, 68, 1.0)',
         
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
 
@@ -5657,7 +5657,7 @@ class App extends Component {
     else if(theme == this.getLocale()['2740']/* midnight */){
       return{
         'name':this.getLocale()['2740']/* midnight */,
-        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#171717' */ 'button_color':'linear-gradient(135deg, #171717,rgb(43, 43, 43))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#171717' */ 'button_color':'linear-gradient(135deg, #171717,rgb(43, 43, 43))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF','nav_bar_color2':'rgba(26, 26, 26, 1.0)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5702,7 +5702,7 @@ class App extends Component {
     else if(theme == this.getLocale()['2741']/* green */){
       return{
         'name':this.getLocale()['2741']/* green */,
-        'bar_shadow':'rgb(14, 48, 21)','bar_color':'#03a003', 'bar_background_color':'rgb(185, 247, 198)','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#171717' */ 'button_color': 'linear-gradient(135deg, #171717,rgb(29, 48, 11))', 'button_text_color':'#04e504', 'line_color':'#01c601','linebar_background_color':'rgb(185, 247, 198,.9)',
+        'bar_shadow':'rgb(14, 48, 21)','bar_color':'#03a003', 'bar_background_color':'rgb(185, 247, 198)','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#171717' */ 'button_color': 'linear-gradient(135deg, #171717,rgb(29, 48, 11))', 'button_text_color':'#04e504', 'line_color':'#01c601','linebar_background_color':'rgb(185, 247, 198,.9)','nav_bar_color2':'rgba(26, 26, 26, 1.0)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#212821','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5750,7 +5750,7 @@ class App extends Component {
     if(theme == this.getLocale()['3056']/* 'light-green' */){
       return{
         'name':this.getLocale()['3056']/* 'light-green' */,
-        'bar_shadow':'rgb(158, 214, 171)','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'rgba(221, 221, 221, 0.05)', /* 'button_color':'#01c601' */'button_color': 'linear-gradient(135deg, #01c601,rgb(31, 244, 31))', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(158, 214, 171)','bar_color':'#03a003', 'bar_background_color':'#d4e2cc','nav_bar_color':'rgba(221, 221, 221, 0.05)', /* 'button_color':'#01c601' */'button_color': 'linear-gradient(135deg, #01c601,rgb(31, 244, 31))', 'button_text_color':'white', 'line_color':'#01c601','linebar_background_color':'#BFBFBF','nav_bar_color2':'rgba(221, 221, 221, 1.0)',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5797,7 +5797,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3057']/* 'red' */){
       return{
         'name':this.getLocale()['3057']/* 'red' */,
-        'bar_shadow':'rgb(48, 14, 14)','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#0c0c0c' */ 'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(51, 18, 14))', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)',
+        'bar_shadow':'rgb(48, 14, 14)','bar_color':'#d10404', 'bar_background_color':'#f9b1b1','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#0c0c0c' */ 'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(51, 18, 14))', 'button_text_color':'#f92020', 'line_color':'#f94545','linebar_background_color':'rgb(249, 182, 182,.9)', 'nav_bar_color2':'rgba(26, 26, 26, 1.0)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1717','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5845,7 +5845,7 @@ class App extends Component {
     if(theme == this.getLocale()['3058']/* 'light-red' */){
       return{
         'name':this.getLocale()['3058']/* 'light-red' */,
-        'bar_shadow':'rgb(214, 158, 158)','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#c60b01' */'linear-gradient(135deg, #c60b01,rgb(237, 41, 31))', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(214, 158, 158)','bar_color':'#a00803', 'bar_background_color':'#e2cdcc','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#c60b01' */'linear-gradient(135deg, #c60b01,rgb(237, 41, 31))', 'button_text_color':'white', 'line_color':'#c60b01','linebar_background_color':'#BFBFBF','nav_bar_color2':'rgba(221, 221, 221, 1.0)',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5892,7 +5892,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3059']/* 'blue' */){
       return{
         'name':this.getLocale()['3059']/* 'blue' */,
-        'bar_shadow':'rgb(14, 28, 48)','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#0c0c0c' */'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(13, 28, 43))', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)',
+        'bar_shadow':'rgb(14, 28, 48)','bar_color':'#014a9e', 'bar_background_color':'#b1b5f9','nav_bar_color':'rgba(26, 26, 26, 0.3)',/* 'button_color':'#0c0c0c' */'button_color': 'linear-gradient(135deg, #0c0c0c,rgb(13, 28, 43))', 'button_text_color':'#2587f7', 'line_color':'#5da3f4','linebar_background_color':'rgb(188, 182, 249,.9)','nav_bar_color2':'rgba(26, 26, 26, 1.0)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#17171c','send_receive_ether_overlay_shadow':'#303030',
 
@@ -5940,7 +5940,7 @@ class App extends Component {
     if(theme == this.getLocale()['3060']/* 'light-blue' */){
       return{
         'name':this.getLocale()['3060']/* 'light-blue' */,
-        'bar_shadow':'rgb(158, 178, 214)','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#0181c6' */'linear-gradient(135deg, #0181c6,rgb(30, 155, 222))', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(158, 178, 214)','bar_color':'#0374a0', 'bar_background_color':'#ccdce2','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#0181c6' */'linear-gradient(135deg, #0181c6,rgb(30, 155, 222))', 'button_text_color':'white', 'line_color':'#0181c6','linebar_background_color':'#BFBFBF','nav_bar_color2':'rgba(221, 221, 221, 1.0)',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -5987,7 +5987,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3061']/* 'yellow' */){
       return{
         'name':this.getLocale()['3061']/* 'yellow' */,
-        'bar_shadow':'rgb(46, 48, 14)','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg, #0c0c0c, #202100)', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6',
+        'bar_shadow':'rgb(46, 48, 14)','bar_color':'#a3a003', 'bar_background_color':'#f7f9b1','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg, #0c0c0c, #202100)', 'button_text_color':'#efec4c', 'line_color':'#f9f645','linebar_background_color':'#f9f7b6','nav_bar_color2':'rgba(26, 26, 26, 1.0)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b1c17','send_receive_ether_overlay_shadow':'#303030',
 
@@ -6035,7 +6035,7 @@ class App extends Component {
     if(theme == this.getLocale()['3062']/* 'light-yellow' */){
       return{
         'name':this.getLocale()['3062']/* 'light-yellow' */,
-        'bar_shadow':'rgb(211, 214, 158)','bar_color':'#9ba003', 'bar_background_color':'rgb(221, 221, 197)','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#9ba003' */'linear-gradient(135deg, #9ba003,rgb(204, 211, 24))', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(211, 214, 158)','bar_color':'#9ba003', 'bar_background_color':'rgb(221, 221, 197)','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#9ba003' */'linear-gradient(135deg, #9ba003,rgb(204, 211, 24))', 'button_text_color':'white', 'line_color':'#9ba003','linebar_background_color':'#BFBFBF','nav_bar_color2':'rgba(221, 221, 221, 1.0)',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -6082,7 +6082,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3063']/* 'pink' */){
       return{
         'name':this.getLocale()['3063']/* 'pink' */,
-        'bar_shadow':'rgb(37, 14, 48)','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg,rgb(21, 21, 21),rgb(46, 0, 61))', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9',
+        'bar_shadow':'rgb(37, 14, 48)','bar_color':'#bc04d1', 'bar_background_color':'#f1b1f9','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg,rgb(21, 21, 21),rgb(46, 0, 61))', 'button_text_color':'#c94cef', 'line_color':'#e445f9','linebar_background_color':'#eeb6f9','nav_bar_color2':'rgba(26, 26, 26, 1.0)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1b171c','send_receive_ether_overlay_shadow':'#303030',
 
@@ -6130,7 +6130,7 @@ class App extends Component {
     if(theme == this.getLocale()['3064']/* 'light-pink' */){
       return{
         'name':this.getLocale()['3064']/* 'light-pink' */,
-        'bar_shadow':'rgb(210, 158, 214)','bar_color':'#8e03a0', 'bar_background_color':'rgb(215, 196, 219)','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#af01c6' */'linear-gradient(135deg, #af01c6,rgb(216, 37, 239))', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(210, 158, 214)','bar_color':'#8e03a0', 'bar_background_color':'rgb(215, 196, 219)','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#af01c6' */'linear-gradient(135deg, #af01c6,rgb(216, 37, 239))', 'button_text_color':'white', 'line_color':'#af01c6','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -6177,7 +6177,7 @@ class App extends Component {
     else if(theme == this.getLocale()['3065']/* 'orange' */){
       return{
         'name':this.getLocale()['3065']/* 'orange' */,
-        'bar_shadow':'rgb(48, 35, 14)','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(62, 45, 20))', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6',
+        'bar_shadow':'rgb(48, 35, 14)','bar_color':'#d16a04', 'bar_background_color':'#f9d2b1','nav_bar_color':'rgba(26, 26, 26, 0.3)','button_color':'linear-gradient(135deg, #0c0c0c,rgb(62, 45, 20))', 'button_text_color':'#efa04c', 'line_color':'#f9a245','linebar_background_color':'#f9e0b6','nav_bar_color2':'rgba(26, 26, 26, 1.0)',
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#1c1a17','send_receive_ether_overlay_shadow':'#303030',
 
@@ -6225,7 +6225,7 @@ class App extends Component {
     if(theme == this.getLocale()['3066']/* 'light-orange' */){
       return{
         'name':this.getLocale()['3066']/* 'light-orange' */,
-        'bar_shadow':'rgb(214, 193, 158)','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#c67b01' */'linear-gradient(135deg, #c67b01,rgb(235, 160, 39))', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF',
+        'bar_shadow':'rgb(214, 193, 158)','bar_color':'#a05403', 'bar_background_color':'#e2d7cc','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':/* '#c67b01' */'linear-gradient(135deg, #c67b01,rgb(235, 160, 39))', 'button_text_color':'white', 'line_color':'#c67b01','linebar_background_color':'#BFBFBF','nav_bar_color2':'rgba(221, 221, 221, 1.0)',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         

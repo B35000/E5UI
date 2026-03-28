@@ -661,16 +661,16 @@ class home_page extends Component {
         var middle = this.props.height-126;
         var bottom_bar = 75;
         var width = this.props.width;
-        var navbar_color = this.props.theme['nav_bar_color'];
+        var navbar_color = this.props.theme['nav_bar_color2'];
         var background_color = this.props.theme['homepage_background_color'];
         var back = this.props.theme['background']
         var bar_width = 77
         return(
             <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
-                <div style={{height:15, width:bar_width, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid', opacity:0.80}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.85}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.90}}/>
-                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.95}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color,'border-radius': '20px 20px 0px 0px', opacity:0.25}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.35,}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.55,}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.75,}}/>
                 <div style={{height:(this.props.height-89), width:bar_width, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     {this.render_navbar_button_group(size)}
                 </div>
@@ -4745,7 +4745,7 @@ class home_page extends Component {
             <div>
                 {this.render_line_if_enabled()}
                 {this.render_search_tags_views()}
-                <SwipeableViews index={pos} onChangeIndex={this.handleChange}>
+                <SwipeableViews disabled={!this.is_swiping_enabled()} index={pos} onChangeIndex={this.handleChange}>
                     <div key={'?'}>
                         {this.render_post_list_group2(size, '?', this.work_list_section, h)}
                     </div>
