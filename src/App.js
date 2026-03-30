@@ -3708,6 +3708,18 @@ class App extends Component {
 
     const isSupported = typeof RTCRtpSender !== 'undefined' && 'createEncodedStreams' in RTCRtpSender.prototype;
     this.setState({ isEncryptionSupported: isSupported });
+
+
+    window.addEventListener('load', function() {
+      window.history.pushState({}, '')
+    })
+
+    window.addEventListener('popstate', function() {
+      me.when_close_button_clicked()
+      window.history.pushState({}, '')
+    })
+
+    window.history.pushState({}, '')
   }
 
   start_everything = async () => {
@@ -9801,10 +9813,73 @@ class App extends Component {
 
   when_notifications_permissions_option_changed(item){
     this.setState({notifications_permissions: item})
+    this.get_set_updated_notifications_setting_in_indexer(item, false);
     var me = this;
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+  }
+
+  get_set_updated_notifications_setting_in_indexer = async (new_notifications_status, updated_signature=false) => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
+    var server_public_key = ''
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+      server_public_key = this.state.beacon_data['vapid_public_key']
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
+      server_public_key = this.state.nitro_node_details[this.state.my_preferred_nitro]['vapid_public_key']
+    }
+
+    await navigator.serviceWorker.register('/sw.js');
+    const activeRegistration = await navigator.serviceWorker.ready;
+    const subscription = await activeRegistration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: this.urlBase64ToUint8Array(server_public_key)
+    });
+    
+    const arg_obj = {
+      subscription: subscription,
+      account_address: this.state.accounts[this.state.selected_e5].address,
+      action: new_notifications_status == 'e' ? 'delete' : 'set',
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'save_subscription')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('save_subscription', 'response', obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return await this.get_set_updated_notifications_setting_in_indexer(new_notifications_status, true)
+      }
+    }
+    catch(e){
+      console.log('apppage', 'save_subscription', 'something went wrong with save_subscription', e)
+    }
+  }
+
+  urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
   }
 
 
@@ -49201,8 +49276,9 @@ class App extends Component {
     });
 
     this.register_room_listeners(socket)
-
     this.setState({socket: socket})
+    
+    this.get_set_updated_notifications_setting_in_indexer(this.state.notifications_permissions, false);
   }
 
   disconnect_socket_if_connected(){

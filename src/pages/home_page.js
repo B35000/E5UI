@@ -2606,6 +2606,17 @@ class home_page extends Component {
             }
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+
+        if(ignore_notification_if_at_top == true){
+            const page = this.get_page_id()
+            const viewed_items_data_clone = structuredClone(this.state.viewed_items_data)
+            const page_searched_item = this.state.page_search_data[page] || ''
+            if(viewed_items_data_clone[page_searched_item] == null){
+                viewed_items_data_clone[page_searched_item] = {}
+            }
+            viewed_items_data_clone[page_searched_item][page] = []
+            this.setState({viewed_items_data: viewed_items_data_clone})
+        }
     }
 
     get_tags_object(page){

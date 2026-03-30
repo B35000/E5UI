@@ -14825,7 +14825,7 @@ class StackPage extends Component {
         const opacity = os != 'Android' && os != 'iOS' ? 1.0 : 0.5
 
         return(
-            <div style={{opacity: opacity}}>
+            <div style={{/* opacity: opacity */}}>
                 {this.does_title_details_contain_searched_text('1593ma', '1593mb') && (
                     <div>
                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ma']/* 'Desktop Notifications.' */, 'details':this.props.app_state.loc['1593mb']/* 'If set to enabled, you\'ll receive notifications on your desktop from e if you\'re away from its tab.' */, 'size':'l'})}
@@ -15108,8 +15108,8 @@ class StackPage extends Component {
     }
 
     async when_get_notifications_permissions_option_tags_object_updated(tag_obj){
-        const os = getOS();
-        if(os == 'Android' || os == 'iOS') return; 
+        // const os = getOS();
+        // if(os == 'Android' || os == 'iOS') return; 
 
         var selected_item = this.get_selected_item(tag_obj, 'e')
         if(selected_item == this.props.app_state.loc['1593hm']/* 'enabled' */){
