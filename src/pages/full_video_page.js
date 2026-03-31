@@ -30,6 +30,12 @@ import Linkify from "linkify-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Virtuoso } from "react-virtuoso";
 
+import '@vidstack/react/player/styles/default/theme.css';
+import '@vidstack/react/player/styles/default/layouts/video.css';
+import { MediaPlayer, Gesture, MediaProvider, Controls, PlayButton, MuteButton, FullscreenButton, TimeSlider, VolumeSlider, Time, useMediaState, PIPButton} from '@vidstack/react';
+import { DefaultVideoLayout, defaultLayoutIcons } from '@vidstack/react/player/layouts/default';
+import { PlayIcon, PauseIcon, VolumeHighIcon, MuteIcon, FullscreenIcon, PictureInPictureIcon } from '@vidstack/react/icons';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -113,7 +119,7 @@ class FullVideoPage extends Component {
         detials_or_queue_tags:this.detials_or_queue_tags(), is_player_resetting:false,
         subtitle_option_tags:null, queue_or_comments_tags:this.queue_or_comments_tags(),
         entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], 
-        value:0, lastTap: 0, tapTimeout: null, seekFeedback: null,
+        value:0, lastTap: 0, tapTimeout: null, seekFeedback: null, video_src: URL.createObjectURL(new MediaSource())
     };
 
 
@@ -156,7 +162,7 @@ class FullVideoPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['3026']/* 'details' */, this.props.app_state.loc['3027']/* 'queue' */, this.props.app_state.loc['3030a']/* 'comments' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['3026']/* 'details' */, this.props.app_state.loc['3027']/* 'queue' */, this.props.app_state.loc['3030a']/* 'comments' */, 'a.'+this.props.app_state.loc['3030e']/* close */], [1]
             ],
         };
     }
@@ -167,7 +173,7 @@ class FullVideoPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['3027']/* 'queue' */, this.props.app_state.loc['3030a']/* 'comments' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['3027']/* 'queue' */, this.props.app_state.loc['3030a']/* 'comments' */, 'a.'+this.props.app_state.loc['3030e']/* close */], [1]
             ],
         };
     }
@@ -330,8 +336,11 @@ class FullVideoPage extends Component {
         )
     }
 
-    when_queue_or_comments_tags_object_updated(tags_obj){
+    when_queue_or_comments_tags_object_updated(tags_obj, clicked_tag_name){
         this.setState({queue_or_comments_tags: tags_obj})
+        if(clicked_tag_name == 'a.'+this.props.app_state.loc['3030e']/* close */){
+            this.props.open_full_video_bottomsheet()
+        }
     }
 
     render_queue_or_comments(){
@@ -397,6 +406,14 @@ class FullVideoPage extends Component {
             return;
         }
         return encodeURI(data['data'])
+    }
+
+    get_video_thumbnail(){
+        if(this.state.videos == null || this.state.videos.length == 0) return null;
+        var item = this.state.videos[this.state.pos]
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        return this.props.app_state.video_thumbnails[ecid_obj['full']] || this.props.app_state.static_assets['video_label']
     }
 
     get_video_file_data(){
@@ -466,29 +483,28 @@ class FullVideoPage extends Component {
                     srcLang: subtitle_track['subtitle_language_object']['code']
                 })
             }
-            if(this.props.app_state.os == 'iOS'){
-                return(
-                    <div style={{}}>
-                        <div onTouchEnd={this.handleVideoTap} onClick={this.handleVideoTap} style={{ position: 'relative', cursor: 'pointer' }}>
-                            <video ref={this.video_player} controlsList="nodownload" width={this.state.screen_width} style={{'border-radius':'10px'}} controls disablePictureInPicture>
-                            {video_file_data['encrypted'] != true && (<source ref={this.sourceRef} src={video} type={video_type}/>)}
-                                {tracks.map((item, index) => (
-                                    <track
-                                        label={item.label} 
-                                        kind={item.kind}
-                                        srclang={item.srcLang} 
-                                        src={item.src}
-                                    />
-                                ))}
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                        
-                        <div style={{height:10}}/>
-                        {this.render_subtitle_options(subtitles)}
-                    </div>
-                )
-            }
+            // return(
+            //     <div>
+            //         <MediaPlayer
+            //             ref={this.video_player}
+            //             src={video_file_data['encrypted'] != true ? video : this.state.video_src}
+            //             poster={this.get_video_thumbnail()}
+            //             onLeavePictureInPicture={this.when_pip_closed}
+            //             onTimeUpdate={this.when_time_updated}       
+            //             onSeeked={this.handleTimeUpdate}           
+            //             onCanPlay={() => this.video_player.current?.play()}
+            //             playsinline
+            //         >
+            //             <MediaProvider />
+            //             <DefaultVideoLayout icons={defaultLayoutIcons} />
+            //             <Gesture className="vds-gesture" event="pointerup" action="toggle:paused" />
+            //             <Gesture className="vds-gesture" event="pointerup" action="toggle:controls" />
+            //             <Gesture className="vds-gesture" event="dblpointerup" action="seek:-10" />
+            //             <Gesture className="vds-gesture" event="dblpointerup" action="seek:10" />
+            //             <Gesture className="vds-gesture" event="dblpointerup" action="toggle:fullscreen" />
+            //         </MediaPlayer>
+            //     </div>
+            // )
             return(
                 <div style={{}}>
                     <div onTouchEnd={this.handleVideoTap} onClick={this.handleVideoTap} style={{ position: 'relative', cursor: 'pointer' }}>
@@ -506,8 +522,8 @@ class FullVideoPage extends Component {
                         </video>
                     </div>
                     
-                    <div style={{height:10}}/>
-                    {this.render_subtitle_options(subtitles)}
+                    {/* <div style={{height:10}}/> */}
+                    {/* {this.render_subtitle_options(subtitles)} */}
                 </div>
             )
         }
@@ -515,29 +531,47 @@ class FullVideoPage extends Component {
     }
 
     handleVideoTap = (e) => {
-        const currentTime = new Date().getTime();
-        const tapDelay = currentTime - this.state.lastTap;
+        // const currentTime = new Date().getTime();
+        // const tapDelay = currentTime - this.state.lastTap;
         
-        // Clear any existing timeout
-        if (this.state.tapTimeout) {
-            clearTimeout(this.state.tapTimeout);
-        }
+        // // Clear any existing timeout
+        // if (this.state.tapTimeout) {
+        //     clearTimeout(this.state.tapTimeout);
+        // }
         
-        // Double tap detected (within 300ms)
-        if (tapDelay < 300 && tapDelay > 0) {
-            this.handleDoubleTap(e);
-            this.setState({ lastTap: 0, tapTimeout: null });
-        } else {
-            // Single tap - set timeout to reset
-            const timeout = setTimeout(() => {
-                this.setState({ lastTap: 0 });
-            }, 300);
+        // // Double tap detected (within 300ms)
+        // if (tapDelay < 300 && tapDelay > 0) {
+        //     this.handleDoubleTap(e);
+        //     this.setState({ lastTap: 0, tapTimeout: null });
+        // } else {
+        //     // Single tap - set timeout to reset
+        //     const timeout = setTimeout(() => {
+        //         this.setState({ lastTap: 0 });
+        //     }, 300);
             
-            this.setState({ 
-                lastTap: currentTime,
-                tapTimeout: timeout 
-            });
+        //     this.setState({ 
+        //         lastTap: currentTime,
+        //         tapTimeout: timeout 
+        //     });
+        // }
+
+
+        if(Date.now() - this.last_all_click_time < 400){
+            this.handleDoubleTap(e);
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(() => {
+                clearTimeout(this.all_timeout);
+                if(this.video_player.current?.paused){
+                    this.video_player.current?.play();
+                    this.props.notify(this.props.app_state.loc['3090b']/* 'video resumed ▶️' */)
+                }else{
+                    this.video_player.current?.pause()
+                    this.props.notify(this.props.app_state.loc['3090a']/* 'video paused ⏸️' */)
+                }
+            }, 400);
         }
+        this.last_all_click_time = Date.now();
     }
 
     handleDoubleTap = (e) => {
@@ -556,8 +590,33 @@ class FullVideoPage extends Component {
             video.currentTime = Math.max(0, video.currentTime - 5);
         } 
         else if (tapPosition > (videoWidth * 2) / 3) {
-            // Right side - fast forward 5 seconds
-            video.currentTime = Math.min(video.duration, video.currentTime + 5);
+            // Right side - fast forward 10 seconds
+            video.currentTime = Math.min(video.duration, video.currentTime + 10);
+        }
+        else{
+            if (!document.fullscreenElement) {
+                // Enter fullscreen
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } 
+                else if (video.webkitRequestFullscreen) { // Safari
+                    video.webkitRequestFullscreen();
+                } 
+                else if (video.msRequestFullscreen) { // IE/Edge
+                    video.msRequestFullscreen();
+                }
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } 
+                else if (document.webkitExitFullscreen) { // Safari
+                    document.webkitExitFullscreen();
+                } 
+                else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
+                }
+            }
         }
         this.update_stream_start_value_after_scrub(video.currentTime)
         this.setState({value: video.currentTime})
@@ -822,7 +881,7 @@ class FullVideoPage extends Component {
         
         mediaSource.addEventListener('sourceopen', async () => {
             console.log('MediaSource opened, ready state:', mediaSource.readyState);
-            
+
             let sourceBuffer;
             try {
                 sourceBuffer = mediaSource.addSourceBuffer(mimeType);
@@ -880,6 +939,7 @@ class FullVideoPage extends Component {
         try {
             videoElement.src = URL.createObjectURL(mediaSource);
             console.log('MediaSource URL set on video element');
+            // this.setState({video_src: URL.createObjectURL(mediaSource)})
         } catch (error) {
             console.error('Failed to set MediaSource URL:', error);
             this.cleanupMediaSource();
@@ -1043,7 +1103,7 @@ class FullVideoPage extends Component {
         if (videoElement) {
             const oldSrc = videoElement.src;
             videoElement.removeAttribute('src');
-            videoElement.load(); // Forces the browser to discard all buffered data
+            // videoElement.load(); // Forces the browser to discard all buffered data
             if (oldSrc && oldSrc.startsWith('blob:')) {
                 URL.revokeObjectURL(oldSrc);
             }

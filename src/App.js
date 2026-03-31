@@ -7149,12 +7149,13 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  renderBottomSheet(view, open, onOpenChange, height) {
+  renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}) {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? 0 : 10;
     const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? '0px' : '15px';
-    return(
-      <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)}>
+
+    const data = () => {
+      return(
         <Drawer.Portal>
           <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
           <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
@@ -7163,6 +7164,20 @@ class App extends Component {
             </div>
           </Drawer.Content>
         </Drawer.Portal>
+      )
+    }
+
+    if(snap_points.length > 0){
+      return(
+        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} snapPoints={snap_points} activeSnapPoint={active_snap_point} setActiveSnapPoint={set_active_snap_point}>
+          {data()}
+        </Drawer.Root>
+      )
+    }    
+
+    return(
+      <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction}>
+        {data()}
       </Drawer.Root>
     )
   }
@@ -9820,7 +9835,26 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  get_set_updated_notifications_setting_in_indexer = async (new_notifications_status, updated_signature=false) => {
+  get_set_updated_notifications_setting_in_indexer = async (new_notifications_status_arg, updated_signature=false, ask_for_permissions_first=false) => {
+    let new_notifications_status = ''
+    if(ask_for_permissions_first == true && new_notifications_status_arg == 'e'){
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        this.setState({notifications_permissions: this.getLocale()['1593hm']/* 'enabled' */})
+        await this.wait(400)
+        this.stack_page.current?.set_notifications_permissions_option()
+        new_notifications_status = this.getLocale()['1593hm']/* 'enabled' */
+      } 
+      else if (permission === "denied") {
+        new_notifications_status = 'e'
+      } 
+      else {
+        new_notifications_status = 'e'
+      }
+    }else{
+      new_notifications_status = new_notifications_status_arg
+    }
+
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     var server_public_key = ''
@@ -22273,12 +22307,19 @@ class App extends Component {
   render_full_video_bottomsheet(){
     if(this.state.full_video_bottomsheet2 != true) return;
     var os = getOS()
-    
+    const height = this.state.height-20
+    const snap_points = [height+'px', '0px']
+    const active_snap_point = this.state.active_full_video_snap_point == null ? snap_points[0] : this.state.active_full_video_snap_point;
+
     return this.renderBottomSheet(
       this.render_full_video_element(),
       this.state.full_video_bottomsheet,
       this.open_full_video_bottomsheet,
-      this.state.height-70
+      height,
+      false,
+      snap_points,
+      active_snap_point,
+      this.when_full_video_snap_point_updated
     )
     // if(os == 'iOS'){
     //     return(
@@ -22301,17 +22342,19 @@ class App extends Component {
   }
 
   render_full_video_element(){
-    var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
-    var height = this.state.full_video_window_height == 0 ? (this.state.height-90) : (this.state.full_video_window_height + 20)
     return(
       <div /* style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
-            <FullVideoPage ref={this.full_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
-            update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
-            construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)}
-            />
+        <FullVideoPage ref={this.full_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
+        update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
+        construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_full_video_bottomsheet={this.open_full_video_bottomsheet.bind(this)}
+        />
       </div>
     )
+  }
+
+  when_full_video_snap_point_updated(snap_point){
+    this.setState({active_full_video_snap_point: snap_point})
   }
 
   open_full_video_bottomsheet(){
@@ -22320,7 +22363,12 @@ class App extends Component {
       //closing
       if(this.is_picture_in_pictiure_showing()){
         //just hide the page
-        this.setState({full_video_bottomsheet: !this.state.full_video_bottomsheet});
+        if(this.state.video_page_height == 0){
+          const height = this.state.height-20
+          this.setState({active_full_video_snap_point: height+'px'});
+        }else{
+          this.setState({active_full_video_snap_point: '0px'});
+        }
       }else{
         this.full_video_bottomsheet = this.full_video_page.current?.state;
         this.setState({full_video_bottomsheet: !this.state.full_video_bottomsheet});
@@ -22348,6 +22396,7 @@ class App extends Component {
   }
 
   show_full_video_bottomsheet(queue, object){
+    this.setState({active_full_video_snap_point: (this.state.height-20)+'px'})
     this.open_full_video_bottomsheet()
     var me = this;
     setTimeout(function() {
@@ -22482,7 +22531,7 @@ class App extends Component {
   }
 
   when_picture_in_picture_exited(){
-    this.setState({full_video_bottomsheet: true});
+    this.setState({active_full_video_snap_point: (this.state.height-20)+'px'});
   }
 
   update_video_time_for_future_reference(time, current_video){
@@ -49277,8 +49326,8 @@ class App extends Component {
 
     this.register_room_listeners(socket)
     this.setState({socket: socket})
-    
-    this.get_set_updated_notifications_setting_in_indexer(this.state.notifications_permissions, false);
+
+    this.get_set_updated_notifications_setting_in_indexer(this.state.notifications_permissions, false, true);
   }
 
   disconnect_socket_if_connected(){

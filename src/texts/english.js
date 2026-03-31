@@ -358,7 +358,7 @@ const english = {
     /* add to playlist page */
     '3007':'Add to playlist.','3008':'You can add to an existing playlist or a new playlist.','3009':'existing','3010':'new','3011':'Youre creating a new Playlist.','3012':'Playlist Title','3013':'Playlist Description (optional)','3014':'Create and Add.','3015':'You need a title for your new playlist.','3016':'That title is too long.','3017':'Added your song to the new playlist.','3018':'A playlist with a similar title exists in your library.','3019':'You\'re adding the song to an existing playlist.','3020':'Added your song to the playlist.','3021':'You need to buy the track to add it to your playlists','3022':'Please purchase the song to play it.',
     
-    '3023':'edit-video','3024':'Videopost Sales.','3025':'Video Sales','3026':'details','3027':'queue','3028':'Loading...','3029':'e is already playing that video.','3030':'edit-indexer','3030a':'activity','3030b':'video-comment-messages','3030c':'video','3030d':'You cant purchase storage from the same node twice in one run.','3030e':'','3030f':'','3030g':'','3030h':'','3030i':'','3030j':'','3030k':'','3030l':'','3030m':'','3030n':'','3030o':'','3030p':'','3030q':'','3030r':'','3030s':'','3030t':'','3030ugv':'',
+    '3023':'edit-video','3024':'Videopost Sales.','3025':'Video Sales','3026':'details','3027':'queue','3028':'Loading...','3029':'e is already playing that video.','3030':'edit-indexer','3030a':'activity','3030b':'video-comment-messages','3030c':'video','3030d':'You cant purchase storage from the same node twice in one run.','3030e':'close','3030f':'','3030g':'','3030h':'','3030i':'','3030j':'','3030k':'','3030l':'','3030m':'','3030n':'','3030o':'','3030p':'','3030q':'','3030r':'','3030s':'','3030t':'','3030ugv':'',
     
     
     /* buy nitro storage */
@@ -419,7 +419,7 @@ const english = {
     '3077':'fulfil-bids','3077a':'fulfil','3077b':'Below are the items you won.','3077c':'Below is the total amount you are to pay. The transaction is a direct purchase transaction.','3077d':'Final Payment.','3077e':'Your balance is insufficient to fulfil this transaction.','3077f':'Transaction already in stack.','3077g':'','3077h':'','3077i':'','3077jk':'','3077l':'','3077m':'','3077n':'','3077o':'','3077p':'','3077q':'','3077r':'','3077s':'','3077t':'','3077u':'','3077v':'','3077w':'','3077x':'','3077y':'','3077z':'','3077aa':'','3077ab':'','3077ac':'','3077ad':'','3077ae':'','3077af':'','3077ag':'','3077ah':'','3077ai':'','3077aj':'','3077ak':'',
     
     
-    '3078':'END','3079':'SPEND','3080':'reload','3081':'reloading page...','3082':'Copied link to Clipboard','3083':'5 second rewind','3084':'5 second forward','3085':'e(Beta)','3086':'E5(Beta)','3087':'E5','3088':'??(Beta)','3089':'Specified Locations.','3090':'Below are the locations that were set.',
+    '3078':'END','3079':'SPEND','3080':'reload','3081':'reloading page...','3082':'Copied link to Clipboard','3083':'10 second rewind ⏮','3084':'10 second forward ⏭️','3085':'e(Beta)','3086':'E5(Beta)','3087':'E5','3088':'??(Beta)','3089':'Specified Locations.','3090':'Below are the locations that were set.','3090a':'video paused ⏸️','3090b':'video resumed ▶️',
     
 
     /* call page stuff */
