@@ -1040,8 +1040,8 @@ class PostListSection extends Component {
     get_viewed_item_ids(items, range, identifier){
         const { startIndex, endIndex } = range;
         const viewed_item_ids = []
-        for(var i=startIndex; i<=endIndex; i++){
-            viewed_item_ids.push(items[i][identifier])
+        for(var i=startIndex-1; i<=endIndex; i++){
+            if(i >= 0) viewed_item_ids.push(items[i][identifier]);
         }
 
         return viewed_item_ids

@@ -485,7 +485,7 @@ class NewTokenPage extends Component {
         if(tag != 'e'){
             var clone = this.state.spend_exchange_allowed_countries.slice()
             clone.push(tag)
-            this.setState({spend_exchange_allowed_countries: clone})
+            this.setState({spend_exchange_allowed_countries: clone, typed_spend_country_name:''})
         }
     }
 

@@ -2524,7 +2524,7 @@ class ConfigureNitroNodePage extends Component {
         const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[e5][account_id]
-            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toString().toLowerCase())){
                 aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
             }
         });

@@ -4135,6 +4135,7 @@ class App extends Component {
 
       saved_cypher_seed_object: await this.get_encrypted_seed_if_passcode_is_set(),
       notifications_permissions: this.state.notifications_permissions,
+      account_balance: this.state.remember_account == 'e' ? {} : this.state.account_balance
     }
   }
 
@@ -4249,6 +4250,7 @@ class App extends Component {
   }
 
   load_cookies = async () => {
+    this.setState({beacon_chain_url: `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`})
     var state = await this.load_data_from_indexdb('123')
     var state_language = state != null ? (state.language || this.get_language()) : this.get_language()
     const state_theme = this.state.theme['name']
@@ -4371,6 +4373,7 @@ class App extends Component {
       var rounded_edges = state.rounded_edges || this.state.rounded_edges;
       var saved_cypher_seed_object = state.saved_cypher_seed_object || {}
       var notifications_permissions = state.notifications_permissions || 'e'
+      var account_balance = state.account_balance || {}
 
       this.setState({
         theme: theme,
@@ -4459,7 +4462,8 @@ class App extends Component {
         previous_notification_objects: notification_object,
         rounded_edges: rounded_edges,
         saved_cypher_seed_object: saved_cypher_seed_object,
-        notifications_permissions: notifications_permissions
+        notifications_permissions: notifications_permissions,
+        account_balance: account_balance,
       })
       var me = this;
       setTimeout(function() {
@@ -4481,7 +4485,6 @@ class App extends Component {
         me.prepare_and_set_my_pins_in_homepage(all_my_pinns)
       }, (1 * 500));
     }
-    this.setState({beacon_chain_url: `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`})
     this.set_stack_page_data()
   }
 
@@ -4523,6 +4526,7 @@ class App extends Component {
       me.stack_page.current?.set_notifications_permissions_option()
     }, (1 * 1000));
   }
+
 
   get_account_data_to_store(){
     var _accounts = {}
@@ -6924,11 +6928,11 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  connect_to_node(object){
+  connect_to_node(object, link){
     var clone = this.state.subscribed_nitros.slice()
     clone.push(object['e5_id'])
 
-    this.setState({my_preferred_nitro: object['e5_id'], subscribed_nitros: clone})
+    this.setState({my_preferred_nitro: object['e5_id'], subscribed_nitros: clone, my_preferred_nitro_link: link})
     this.prompt_top_notification(this.getLocale()['c2527bu']/* 'Connected to Nitro node.' */, 2500)
     var me = this;
     setTimeout(function() {
@@ -9870,6 +9874,10 @@ class App extends Component {
 
     await navigator.serviceWorker.register('/sw.js');
     const activeRegistration = await navigator.serviceWorker.ready;
+    const current_subscription = await activeRegistration.pushManager.getSubscription();
+    if(current_subscription != null){
+      await current_subscription.unsubscribe();
+    }
     const subscription = await activeRegistration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: this.urlBase64ToUint8Array(server_public_key)
@@ -11113,7 +11121,7 @@ class App extends Component {
 
   test_node_url_link = async (link, key) => {
     this.prompt_top_notification(this.getLocale()['a273i']/* 'Testing that link...' */, 1000)
-    var request = `${link}/`
+    var request = `${link}/e`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -25331,7 +25339,7 @@ class App extends Component {
 
   }
 
-  update_nitro_privacy_signature = async ( get_sync_block_from_nitro = true ) => {
+  update_nitro_privacy_signature = async (get_sync_block_from_nitro=true, update_endpoint_registry=false) => {
     if(get_sync_block_from_nitro == false){
       if(this.has_already_updated_nitro_privacy_signature != null && this.has_already_updated_nitro_privacy_signature > Date.now() - (1000*20)){
         return;
@@ -25352,13 +25360,25 @@ class App extends Component {
     var current_block_number = parseInt(block_number)
     var signature_data = Math.floor(current_block_number/40)
     var signature = await web3.eth.sign(signature_data.toString(), address)
+    
     console.log('update_nitro_privacy_signature','nitro privacy address', address)
+    const should_update_endpoint_registry = this.state.nitro_privacy_signature != signature
     this.setState({nitro_privacy_signature: signature})
+
+    if(should_update_endpoint_registry == true || update_endpoint_registry == true){
+      await this.wait(400)
+      await this.reset_beacon_node_endpoint_directory()
+    }
   }
 
   get_sync_block_from_nitro = async () => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
+    
+    if(this.state.my_preferred_nitro_link != ''){
+      beacon_node = this.state.my_preferred_nitro_link
+    }
+
     var request = `${beacon_node}/${this.state.nitro_privacy_signature}`
     try{
       const response = await fetch(request);
@@ -27577,96 +27597,6 @@ class App extends Component {
     return { all_symbols, symbol_mappings }
   }
 
-  check_if_beacon_node_is_online = async () => {
-    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
-    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
-    try{
-      const nitro_link_directory = await this.load_nitro_directory_details(beacon_node)
-      var request = `${beacon_node}/${nitro_link_directory['marco']}`
-      const response = await fetch(request);
-      if (!response.ok) {
-        console.log(response)
-        throw new Error(`Failed to retrieve data. Status: ${response}`);
-      }
-      var data = await response.text();
-      var obj = JSON.parse(data);
-      if(obj.success == true){
-        console.log('apppage', 'beacon node online!')
-        const nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
-        nitro_link_directory_data_clone[beacon_node] = nitro_link_directory
-        this.setState({beacon_node_enabled: true, nitro_link_directory_data: nitro_link_directory_data_clone, default_nitro_e5_id: default_nitro_option})
-        await this.wait(700)
-        await this.record_beacon_node_key_in_nitro_node(obj, beacon_node)
-      }
-    }
-    catch(e){
-      console.log(e)
-      setTimeout(function() {
-        window.location.reload();
-      }, (1 * 4000));
-    }
-  }
-
-  record_beacon_node_key_in_nitro_node = async (marco_obj, link) => {
-    const root_identifier_data = this.generate_id_for_nitro_node_key(link)
-    const root_identifier = root_identifier_data.id
-    const root_identifier_from_private_key = root_identifier_data.from_private_key
-
-    const user_key_data = await this.generate_my_box_keys(root_identifier);
-    const user_temp_hash = user_key_data.my_node_server_public_key
-    const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
-    const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'], user_key_data.keypair)
-    const nitro_link_directory = this.state.nitro_link_directory_data[link]
-
-    var arg_obj = {
-      user_temp_hash: user_temp_hash,
-      encrypted_key: encrypted_user_temp_encryption_key
-    }
-    var body = {
-      method: "POST", // Specify the HTTP method
-      headers: {
-        "Content-Type": "application/json" // Set content type to JSON
-      },
-      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
-    }
-    const endpoint = nitro_link_directory['register']
-    console.log('apppage', 'attempting to register my key in node...')
-    var request = `${link}/${endpoint}`
-    try{
-      const response = await fetch(request, body);
-      if (!response.ok) {
-        console.log(response)
-        throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
-      }
-      var data = await response.text();
-      var obj = JSON.parse(data);
-      var success = obj.success
-      if(success == true || obj.existing == true){
-        marco_obj['user_temp_hash'] = user_temp_hash
-        marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
-        var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
-        
-        nitro_url_temp_hash_data_clone[link] = {
-          'user_temp_hash': user_temp_hash, 
-          'user_temp_encryption_key' : user_temp_encryption_key,
-          'root_identifier_from_private_key' : root_identifier_from_private_key,
-          'endpoint_data_decryption_key': await this.get_key_from_password(user_temp_encryption_key, 'f'),
-          'e5_id': default_nitro_option
-        }
-        
-        this.setState({nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone, beacon_data: marco_obj})
-
-        await this.wait(700)
-        // console.log('apppage', 'nitro_url_temp_hash_data after beacon node setting', nitro_url_temp_hash_data_clone)
-      }else{
-        console.log('apppage', 'something went wrong with registering my key', obj)
-      }
-    }
-    catch(e){
-      
-    }
-  }
-
   get_browser_cache_size_limit(){
     // if (localStorage && !localStorage.getItem('size')) {
     //     var i = 0;
@@ -27732,6 +27662,9 @@ class App extends Component {
   pre_launch_fetch = async (updated_signature) => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
+    if(this.state.my_preferred_nitro_link != ''){
+      beacon_node = this.state.my_preferred_nitro_link
+    }
     const address = this.state.accounts['E25'].address
     const crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
     // console.log('pre_launch_fetch', 'known_hashes', this.get_my_recorded_hashes(''))
@@ -27950,7 +27883,7 @@ class App extends Component {
     if(web3_url != ''){
       await this.wait(300)
       if(this.get_contract_from_e5(e5) != ''){
-        this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data)
+        await this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data)
       }
     }
   }
@@ -29096,7 +29029,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- NITRO LINK DATA -------------------------------------- */
-    if(is_syncing) this.get_my_nitro_link_data(web3, E52contractInstance, e5, account, all_basic_events[18]);
+    if(is_syncing) await this.get_my_nitro_link_data(web3, E52contractInstance, e5, account, all_basic_events[18]);
     if(is_syncing){
       this.inc_synch_progress()
     }
@@ -29127,7 +29060,7 @@ class App extends Component {
     /* ---------------------------------------- JOB DATA ------------------------------------------- */
     // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
     if(is_syncing){
-      this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+      await this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
       if(pre_launch_data[e5] != null) this.get_alias_data(E52contractInstance, e5, account, web3, pre_launch_data[e5]['job_alias_data']);
     }
     // if(is_syncing){
@@ -29761,28 +29694,34 @@ class App extends Component {
           }else{
             //we need to remove the previously set alias in the other e5 since this event is earler than that of the other e5
             var invalid_data = this.alias_data[alias_string]
-
+            console.log('get_alias_data', 'invalid_data', invalid_data)
             var alias_bucket_clone = structuredClone(this.state.alias_bucket)
-            delete alias_bucket_clone[invalid_data['e5']][invalid_data['id']]
+            console.log('get_alias_data', 'alias_bucket_clone', alias_bucket_clone)
+
+            if(alias_bucket_clone[invalid_data['e5']] != null) delete alias_bucket_clone[invalid_data['e5']][invalid_data['id']];
 
             var alias_owners_clone = structuredClone(this.state.alias_owners)
-            delete alias_owners_clone[invalid_data['e5']][invalid_data['name']]
+            if(alias_owners_clone[invalid_data['e5']] != null) delete alias_owners_clone[invalid_data['e5']][invalid_data['name']];
 
             var my_alias_events_clone = structuredClone(this.state.my_alias_events)
-            const pos = my_alias_events_clone[invalid_data['e5']].findIndex(obj => obj['alias'] == invalid_data['name'])
-            if(pos != -1){
-              my_alias_events_clone[invalid_data['e5']].splice(pos, 1)
+            if(my_alias_events_clone[invalid_data['e5']] != null){
+              const pos = my_alias_events_clone[invalid_data['e5']].findIndex(obj => obj['alias'] == invalid_data['name'])
+              if(pos != -1){
+                my_alias_events_clone[invalid_data['e5']].splice(pos, 1)
+              }
             }
+            
 
             // console.log('apppage','apppage_alias', 'deleting alias in other e5', alias_string)
 
             var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
-            delete alias_timestamp_clone[invalid_data['e5']][invalid_data['name']]
+            if(alias_timestamp_clone[invalid_data['e5']] != null) delete alias_timestamp_clone[invalid_data['e5']][invalid_data['name']]
 
             this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
             this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id}
           }
+          await this.wait(400)
         }else{
           this.alias_data[alias_string] = {'id':alias_sender, 'name':alias_string, 'time':alias_time, 'e5':e5, 'set_id':set_id}
         }
@@ -29824,6 +29763,8 @@ class App extends Component {
 
       //   this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
       // }
+
+      
     }
 
     var alias_bucket_clone = structuredClone(this.state.alias_bucket)
@@ -34420,11 +34361,17 @@ class App extends Component {
         [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
         [web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2/* depth_auth_mint */}],
       ]
-      var all_events = pre_launch_data[e5] != null ? [
-        pre_launch_data[e5]['received_tokens_event_data'],
-        pre_launch_data[e5]['update_balance_event_data'],
-        pre_launch_data[e5]['stack_depth_swap_event_data'],
-      ] : (await this.load_multiple_events_from_nitro(event_params)).all_events
+      var all_events;
+      if(pre_launch_data[e5] != null){
+        all_events = [
+          pre_launch_data[e5]['received_tokens_event_data'],
+          pre_launch_data[e5]['update_balance_event_data'],
+          pre_launch_data[e5]['stack_depth_swap_event_data'],
+        ]
+      }else{
+        var return_data = await this.load_multiple_events_from_nitro(event_params)
+        all_events = return_data.all_events
+      }
       received_tokens_event_data = all_events[0]
       update_balance_event_data = all_events[1]
       stack_depth_swap_event_data = all_events[2]
@@ -34918,6 +34865,8 @@ class App extends Component {
     // this.get_objects_from_socket_and_set_in_state([target_type], [], [])
     var created_job_events = extra_data['created_object_events_mapping'] != null ? extra_data['created_object_events_mapping'][e5] : (pre_launch_data[e5] != null ? pre_launch_data[e5]['job_objects_data']['created_object_events'] : await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */, p1:this.get_valid_post_index(web3)}))
     created_job_events = created_job_events.slice().reverse()
+
+    console.log('get_job_data', 'found ', created_job_events.length, 'job events')
 
     //prioritize the objects ive participated in first
     if(this.state.my_objects.length > 0){
@@ -36969,6 +36918,7 @@ class App extends Component {
 
   encrypt_arg_string = async (node_url, target_data_to_encrypt, tag='') => {
     const data = this.state.nitro_url_temp_hash_data[node_url]
+    console.log('encrypt_arg_string', 'data',this.state.nitro_url_temp_hash_data, node_url )
     const user_temp_encryption_key = data['user_temp_encryption_key']
     const encrypted_data = await this.encrypt_data_string(target_data_to_encrypt, user_temp_encryption_key);
     return encrypted_data;
@@ -41897,7 +41847,10 @@ class App extends Component {
     var e5_id = split_cid_array[0]
     var nitro_cid = split_cid_array[1]
 
+    
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
+    await this.check_and_fetch_object_marco_if_non_existant(e5_id, nitro_url)
+    
     if(nitro_url == null) return;
 
     console.log('apppage', 'loading cid', nitro_cid)
@@ -42698,6 +42651,10 @@ class App extends Component {
     const file = nitro_cid2/* +'.'+content_type */
 
     // console.log('construct_encrypted_link_from_ecid_object', 'check_and_start_rerecording_of_key_in_nitro')
+
+    await this.start_update_url_endpoint_if_exists(nitro_url)
+
+    await this.reset_node_endpoint_directory(nitro_url)
     await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
     // console.log('construct_encrypted_link_from_ecid_object', 'done proceeding...')
 
@@ -42706,6 +42663,17 @@ class App extends Component {
     // raw_link.replace(`/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`)
 
     // return raw_link
+  }
+
+  async start_update_url_endpoint_if_exists(nitro_url){
+    if(this.updated_enpoints_times_info == null){
+      this.updated_enpoints_times_info = {}
+    }
+    if(this.updated_enpoints_times_info[nitro_url] == null || Date.now() - this.updated_enpoints_times_info[nitro_url] > 1000*60*5){
+      this.updated_enpoints_times_info[nitro_url] = Date.now()
+      await this.reset_node_endpoint_directory(nitro_url)
+      await this.wait(400)
+    }
   }
 
   parseLyric(lrc) {
@@ -48534,13 +48502,21 @@ class App extends Component {
 
   load_nitro_node_details = async (object, should_load_subscription_if_any=false, should_load_account_storage_info=false, image_load_from_nitro_data={}) =>{
     var link = object['ipfs'] == null ? null : object['ipfs'].node_url
+    console.log('load_nitro_node_details', 'loading link: ', link)
+
+    if(this.state.nitro_node_details[object['e5_id']] != null && this.state.nitro_node_details[object['e5_id']]['user_temp_encryption_key'] != null){
+      return;
+    }
+
     if(this.state.beacon_chain_url == link){
       //data already loaded, so just set it in place
+      console.log('load_nitro_node_details', 'link is beacon chain, setting its details')
       const clone = structuredClone(this.state.nitro_node_details)      
       clone[object['e5_id']] = this.state.beacon_data
       this.setState({nitro_node_details: clone})
     }
     if(this.state.nitro_link_directory_data[link] != null){
+      console.log('load_nitro_node_details', 'link not in directory')
       return;
     }
     const nitro_link_directory = await this.load_nitro_directory_details(link)
@@ -48610,6 +48586,7 @@ class App extends Component {
     }
 
     if(this.state.nitro_link_directory_data[link] != null || this.state.nitro_node_details[e5_id] != null){
+      await this.start_update_url_endpoint_if_exists(link)
       return;
     }
 
@@ -48685,6 +48662,7 @@ class App extends Component {
       if(success == true){
         marco_obj['user_temp_hash'] = user_temp_hash
         marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
+        marco_obj['link'] = link
 
         var clone = structuredClone(this.state.nitro_node_details)
         var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
@@ -48728,6 +48706,155 @@ class App extends Component {
         this.is_re_recording_key_in_nitro_node = {}
       }
       this.is_re_recording_key_in_nitro_node[link] = false
+    }
+  }
+
+  check_if_beacon_node_is_online = async () => {
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = default_nitro_option
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
+    
+    if(this.state.my_preferred_nitro_link != ''){
+      beacon_node = this.state.my_preferred_nitro_link
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+
+    try{
+      const nitro_link_directory = await this.load_nitro_directory_details(beacon_node)
+      var request = `${beacon_node}/${nitro_link_directory['marco']}`
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      if(obj.success == true){
+        console.log('apppage', 'beacon node online!')
+        const nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
+        nitro_link_directory_data_clone[beacon_node] = nitro_link_directory
+        
+        this.setState({beacon_node_enabled: true, nitro_link_directory_data: nitro_link_directory_data_clone, default_nitro_e5_id: default_nitro_option})
+        
+        await this.wait(700)
+        await this.record_beacon_node_key_in_nitro_node(obj, beacon_node, beacon_e5_id)
+      }
+    }
+    catch(e){
+      console.log(e)
+      setTimeout(function() {
+        window.location.reload();
+      }, (1 * 4000));
+    }
+  }
+
+  record_beacon_node_key_in_nitro_node = async (marco_obj, link, e5_id) => {
+    const root_identifier_data = this.generate_id_for_nitro_node_key(link)
+    const root_identifier = root_identifier_data.id
+    const root_identifier_from_private_key = root_identifier_data.from_private_key
+
+    const user_key_data = await this.generate_my_box_keys(root_identifier);
+    const user_temp_hash = user_key_data.my_node_server_public_key
+    const user_temp_encryption_key = this.hash_data_with_randomizer(root_identifier)
+    const encrypted_user_temp_encryption_key = await this.encrypt_my_key_with_user_encryption_key(user_temp_encryption_key, marco_obj['node_public_key'], user_key_data.keypair)
+    const nitro_link_directory = this.state.nitro_link_directory_data[link]
+
+    var arg_obj = {
+      user_temp_hash: user_temp_hash,
+      encrypted_key: encrypted_user_temp_encryption_key
+    }
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(arg_obj) // Convert the data object to a JSON string
+    }
+    const endpoint = nitro_link_directory['register']
+    console.log('apppage', 'attempting to register my key in node...')
+    var request = `${link}/${endpoint}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = JSON.parse(data);
+      var success = obj.success
+      if(success == true || obj.existing == true){
+        marco_obj['user_temp_hash'] = user_temp_hash
+        marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
+        marco_obj['link'] = link
+
+        var clone = structuredClone(this.state.nitro_node_details)
+        var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
+        var nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
+        
+        nitro_url_temp_hash_data_clone[link] = {
+          'user_temp_hash': user_temp_hash, 
+          'user_temp_encryption_key' : user_temp_encryption_key,
+          'root_identifier_from_private_key' : root_identifier_from_private_key,
+          'endpoint_data_decryption_key': await this.get_key_from_password(user_temp_encryption_key, 'f'),
+          'e5_id': default_nitro_option
+        }
+
+        clone[e5_id] = marco_obj
+        nitro_link_directory_data_clone[link] = nitro_link_directory
+        
+        this.setState({
+          beacon_data: marco_obj, 
+          nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone,
+          nitro_node_details: clone, 
+          nitro_link_directory_data: nitro_link_directory_data_clone
+        })
+
+        await this.wait(700)
+        // console.log('apppage', 'nitro_url_temp_hash_data after beacon node setting', nitro_url_temp_hash_data_clone)
+      }else{
+        console.log('apppage', 'something went wrong with registering my key', obj)
+      }
+    }
+    catch(e){
+      console.log(e)
+      setTimeout(function() {
+        window.location.reload();
+      }, (1 * 4000));
+    }
+  }
+
+  async reset_beacon_node_endpoint_directory(){
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = default_nitro_option
+    if(this.state.beacon_chain_url != '') beacon_node = this.state.beacon_chain_url
+    
+    if(this.state.my_preferred_nitro_link != ''){
+      beacon_node = this.state.my_preferred_nitro_link
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+
+    try{
+      const nitro_link_directory = await this.load_nitro_directory_details(beacon_node)
+      if(nitro_link_directory != null){
+        const nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
+        nitro_link_directory_data_clone[beacon_node] = nitro_link_directory
+        this.setState({nitro_link_directory_data: nitro_link_directory_data_clone})
+      }
+    }catch(e){
+      console.log('apppage', 'reset_beacon_node_endpoint_directory', 'error reloading enpoint directory', e)
+    }
+  }
+
+  async reset_node_endpoint_directory(beacon_node){
+    try{
+      const nitro_link_directory = await this.load_nitro_directory_details(beacon_node)
+      if(nitro_link_directory != null){
+        const nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
+        nitro_link_directory_data_clone[beacon_node] = nitro_link_directory
+        this.setState({nitro_link_directory_data: nitro_link_directory_data_clone})
+      }
+    }catch(e){
+      console.log('apppage', 'reset_beacon_node_endpoint_directory', 'error reloading enpoint directory', e)
     }
   }
 
@@ -48784,6 +48911,7 @@ class App extends Component {
       if(success == true){
         marco_obj['user_temp_hash'] = user_temp_hash
         marco_obj['user_temp_encryption_key'] = user_temp_encryption_key
+        marco_obj['link'] = link
 
         var clone = structuredClone(this.state.nitro_node_details)
         var nitro_url_temp_hash_data_clone = structuredClone(this.state.nitro_url_temp_hash_data)
@@ -48797,7 +48925,14 @@ class App extends Component {
           'e5_id': nitro_e5_id
         }
         
-        this.setState({nitro_node_details: clone, nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone})
+        this.setState({
+          nitro_node_details: clone, 
+          nitro_url_temp_hash_data: nitro_url_temp_hash_data_clone
+        })
+
+        if(this.state.beacon_data['link'] == link){
+          this.setState({beacon_data: marco_obj})
+        }
       }
 
       await this.wait(700)
@@ -49289,13 +49424,16 @@ class App extends Component {
       pingTimeout: 20_000,
     });
 
+    var registration_attempts = 0;
+    var last_disconnect_message = ''
+
     const me = this;
     socket.on('connect', () => {
       me.setState({ my_socket_id: socket.id })
       me.register_account_in_socket(beacon_node, socket)
     });
 
-    socket.on('register_status', ({success, time, reason, userId}) => {
+    socket.on('register_status', async ({success, time, reason, userId}) => {
       if(success == true){
         console.log('apppage','socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'socket registration successful!', userId)
         me.setState({ socket_online: true, socket_userId: userId })
@@ -49306,8 +49444,15 @@ class App extends Component {
           this.resume_call()
         }
         this.is_device_online = true;
+        last_disconnect_message = ''
+        registration_attempts = 0;
       }else{
         console.log('apppage', 'socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'failed to register in socket', reason)
+        await this.wait(5000)
+        registration_attempts++;
+        if(registration_attempts > 3 && last_disconnect_message == 'transport close'){
+          await this.check_and_start_rerecording_of_key_in_nitro(beacon_node)
+        }
         me.register_account_in_socket(beacon_node, socket)
       }
     });
@@ -49316,6 +49461,7 @@ class App extends Component {
       console.log('apppage', 'socket_connection', 'socketio', "Disconnected:", reason);
       this.setState({socket_connetcted: false, is_device_online: false})
       this.is_device_online = false;
+      last_disconnect_message = reason
     });
 
     socket.on("reconnect", () => {
@@ -49357,7 +49503,7 @@ class App extends Component {
 
   async register_account_in_socket(beacon_node, socket){
     const e5 = this.state.selected_e5
-    await this.update_nitro_privacy_signature(false)
+    await this.update_nitro_privacy_signature(false, true)
     await this.wait(300)
     const app_signature = await this.fetch_nitro_privacy_signature(beacon_node)
     const signature_object = await this.get_signature_for_registering_in_socket(e5)
@@ -49368,6 +49514,8 @@ class App extends Component {
       privacy_signature: app_signature, 
       e5: e5,
     }
+
+    console.log('register_account_in_socket', 'attempting to register account in socket', beacon_node, register_object)
     socket.emit("register", register_object);
   }
 

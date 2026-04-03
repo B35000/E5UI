@@ -1252,9 +1252,9 @@ class HomepageSideBar extends Component {
 
     show_subscription_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['subscription']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_subscription_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1345,9 +1345,9 @@ class HomepageSideBar extends Component {
 
     show_contract_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['contract']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_contract_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1377,9 +1377,9 @@ class HomepageSideBar extends Component {
 
     show_proposal_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['proposal']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_proposal_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1410,9 +1410,9 @@ class HomepageSideBar extends Component {
 
     show_exchange_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['exchange']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_exchange_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1446,9 +1446,9 @@ class HomepageSideBar extends Component {
 
     show_post_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['post']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_post_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1539,9 +1539,9 @@ class HomepageSideBar extends Component {
 
     show_channel_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['channel']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_channel_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1572,9 +1572,9 @@ class HomepageSideBar extends Component {
     
     show_job_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['job']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_job_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null && nitro_graphs_data['event_count'] != null){
+        if(nitro_graphs_data['total'] != null && nitro_graphs_data['event_count'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1606,9 +1606,9 @@ class HomepageSideBar extends Component {
 
     show_stores_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['store']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_stores_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1639,9 +1639,9 @@ class HomepageSideBar extends Component {
 
     show_bag_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['bag']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_bag_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1672,9 +1672,9 @@ class HomepageSideBar extends Component {
 
     show_contractor_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['contractor']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_contractor_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1705,9 +1705,9 @@ class HomepageSideBar extends Component {
 
     show_audio_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['audio']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_audio_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1738,9 +1738,9 @@ class HomepageSideBar extends Component {
 
     show_video_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['video']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_video_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1771,9 +1771,9 @@ class HomepageSideBar extends Component {
 
     show_poll_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['poll']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_poll_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1804,9 +1804,9 @@ class HomepageSideBar extends Component {
 
     show_data_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['data']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_bag_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_post_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -1932,9 +1932,9 @@ class HomepageSideBar extends Component {
 
     show_metadata_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['metadata']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_metadata_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_metadata_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -2255,9 +2255,9 @@ class HomepageSideBar extends Component {
 
     show_transaction_transaction_count_chart(e5_chart_data, e5){
         var events = e5_chart_data['transaction']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_transaction_transaction_count_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transaction_transaction_count_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 
@@ -2348,9 +2348,9 @@ class HomepageSideBar extends Component {
 
     show_transfer_events_chart(e5_chart_data, e5){
         var events = e5_chart_data['transfer']
-        var amount = events.length
+        var amount = 0
         var nitro_graphs_data =  (this.props.app_state.saved_pre_launch_events[e5] != null && this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data'] != null) ? this.props.app_state.saved_pre_launch_events[e5]['e5_charts_data']['show_transfer_events_chart'] : {}
-        if(events.length >= 23 || nitro_graphs_data['total'] != null){
+        if( nitro_graphs_data['total'] != null){
             const dataPoints1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['dps'] : this.get_transfers_data_points(events)
             const start_time1 = nitro_graphs_data['total'] != null ? nitro_graphs_data['total']['chart_starting_time'] : null
 

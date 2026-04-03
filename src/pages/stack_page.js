@@ -5993,7 +5993,7 @@ class StackPage extends Component {
                     ipfs_index_object[t.id] = t
                     var all_elements = extra_tags.concat(t.entered_indexing_tags)
                     
-                    const { tagged_addresses, tagged_account_ids } = await this.props.check_for_any_tagged_accounts_in_object(data);
+                    const { tagged_addresses, tagged_account_ids } = await this.props.check_for_any_tagged_accounts_in_object(t);
 
                     if(tagged_addresses.length > 0){
                         const existing_tagged_addresses = t.all_tagged_addresses_data || { tagged_addresses: [], tagged_account_ids:[] }

@@ -1013,18 +1013,37 @@ class NitroDetailsSection extends Component {
 
     render_subscribe_to_nitro_button(object){
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]
-        if(object['bought'] == true && node_details != null && node_details != 'unavailable'){
+        if(/* object['bought'] == true && */ node_details != null && node_details != 'unavailable'){
+            const my_preferred_nitro_link = this.props.app_state.my_preferred_nitro_link
+            const node_details_link = node_details['link']
+            const alpha = node_details_link == my_preferred_nitro_link ? 0.5 : 1.0
             return(
                 <div>
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527br']/* 🔌 Connect with Node.' */, 'details':this.props.app_state.loc['c2527bs']/* 'Load all your content via this node.' */, 'size':'l'})}
+                    {node_details_link == my_preferred_nitro_link && (
+                        <div>
+                            <div style={{height:10}}/>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['c2527eh']/* 'You\'re already using this indexer.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.props.connect_to_node(object)}>
+                    <div style={{opacity: alpha}} onClick={()=>this.connect_to_node(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
                     </div>
+                    
                 </div>
             )
+        }
+    }
+
+    connect_to_node(object){
+        const node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+        const my_preferred_nitro_link = this.props.app_state.my_preferred_nitro_link
+        const node_details_link = node_details['link']
+        if(node_details_link != my_preferred_nitro_link){
+            this.props.connect_to_node(object, node_details_link)
         }
     }
 
@@ -1125,6 +1144,7 @@ class NitroDetailsSection extends Component {
         if(node_details['max_buyable_capacity'] == 0){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['c2527m']/* 'Node Storage Service Offline.' */})}
                 </div>
             )
