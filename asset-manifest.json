@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.5176f859.css",
-    "main.js": "/static/js/main.7920cac9.js",
+    "main.js": "/static/js/main.214a3aca.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -75,6 +75,7 @@
     "static/media/tutorial_image_number_picker2.png": "/static/media/tutorial_image_number_picker2.1718def6fec35471dc7d.png",
     "static/media/tutorial_image_number_picker.png": "/static/media/tutorial_image_number_picker.a39bc8cab7bdcb4797d0.png",
     "static/media/wallet_section_4.png": "/static/media/wallet_section_4.5d80acce8085a0eabd7a.png",
+    "static/media/xdai.png": "/static/media/xdai.eb9ef1b5bc85a53b7064.png",
     "static/media/job_icon_darkblue.png": "/static/media/job_icon_darkblue.ce4e2c731e833eaeee66.png",
     "static/media/job_icon_darkorange.png": "/static/media/job_icon_darkorange.1b893998648b53a7a887.png",
     "static/media/alert_icon_pink.png": "/static/media/alert_icon_pink.6909791bccd3c288c39e.png",
@@ -343,7 +344,6 @@
     "static/media/syscoin.png": "/static/media/syscoin.281e2c1204588b76879e.png",
     "static/media/next_icon_blue.png": "/static/media/next_icon_blue.25421dbb0b3ed773fc39.png",
     "static/media/pulse.png": "/static/media/pulse.c5720f338113bea00185.png",
-    "static/media/xdai.png": "/static/media/xdai.67c1afde6f540380107f.png",
     "static/media/callisto.png": "/static/media/callisto.a03c4c80bf2b19245938.png",
     "static/media/taiko.png": "/static/media/taiko.55839821608a12aa6899.png",
     "static/media/etho.png": "/static/media/etho.e57086cb7025b2779a1f.png",
@@ -476,6 +476,6 @@
   },
   "entrypoints": [
     "static/css/main.5176f859.css",
-    "static/js/main.7920cac9.js"
+    "static/js/main.214a3aca.js"
   ]
 }
