@@ -6066,6 +6066,13 @@ class home_page extends Component {
         }, (1 * 300));
     }
 
+    reset_chat_scroll_position(){
+        var me = this;
+        setTimeout(function() {
+            me.detail_section.current?.reset_chat_scroll_position()
+        }, (1 * 300));
+    }
+
 
     render_top_notification(data, duration){
         const time = duration == null ? 1000: duration;

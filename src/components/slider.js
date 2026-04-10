@@ -148,7 +148,7 @@ class Slider extends React.Component {
     render(){
         const value_to_use = this.props.value
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px', cursor: 'pointer'}}>
+            <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px', cursor: 'pointer'}}>
                 <style>{`
                     .button-click {
                         animation: clickAnim 0.2s ease;

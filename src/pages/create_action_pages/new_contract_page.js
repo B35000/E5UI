@@ -22,6 +22,7 @@ import Tags from '../../components/tags';
 import NumberPicker from '../../components/number_picker';
 import TextInput from '../../components/text_input';
 import DurationPicker from '../../components/duration_picker';
+import MySwipeableViews from '../../components/my_swipeable_views';
 
 // import Letter from '../../assets/letter.png';
 
@@ -1198,13 +1199,43 @@ class NewContractPage extends Component {
 
     render_contract_list_small_screen(){
         var page = this.state.page
+        const bottom_part = (message) => {
+            const image_height = 60
+            const standard_width = this.props.width - 30
+            return(
+                <div style={{'margin':'20px 0px 20px 0px', 'width':standard_width}}>
+                    <div className="row">
+                        <div className="col-2">
+                            <div style={{'padding': '0px 0px 0px 20px'}} >
+                                <img alt="" onClick={()=>this.enter_previous_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
+                            </div>
+                        </div>
+                        <div className="col-8">
+                            <div style={{'margin':'25px 0px 0px 10px'}}>
+                                {this.render_detail_item('16', {'message':message})}
+                            </div>
+                        </div>
+                        <div className="col-2">
+                            <div className="text-end" style={{}} >
+                                <img alt="" onClick={()=>this.enter_next_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 25px 0px 0px', 'transform': 'rotate(270deg)'}} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        const message = (this.state.page +1) + ' / '+ 15
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['185']})}
                 <div style={{height:20}}/>
-                {this.render_contract_section_parts(page)}
+                <div style={{height:this.props.height-280}}>
+                    {/* {this.render_contract_section_parts(page)} */}
+                    {this.render_contract_section_parts_viewpager(page)}
+                </div>
 
-                <div style={{height:20}}/>
+                {bottom_part(message)}
+                {/* <div style={{height:20}}/>
                 <div style={{'width':'96%', 'padding':'0px 0px 0px 10px'}}>
                     <div className="row">
                         <div className="col-6">
@@ -1215,8 +1246,7 @@ class NewContractPage extends Component {
                         </div>
                     </div>
                 </div>
-                
-                <div style={{height:20}}/>
+                <div style={{height:20}}/> */}
             </div>
         )
     }
@@ -1486,6 +1516,28 @@ class NewContractPage extends Component {
         }
     }
 
+    handleSwipeableViewsChange = (value) => {
+        this.setState({page: parseInt(value)})
+    };
+
+    render_contract_section_parts_viewpager(page){
+        const items = []
+        for(var i=0; i<15; i++){
+            items.push(i)
+        }
+        return(
+            <div>
+                <MySwipeableViews width={this.props.width} index={page} onChangeIndex={this.handleSwipeableViewsChange}>
+                    {items.map((item, index) => (
+                        <div key={''+item}>
+                            {this.render_contract_section_parts(item)}
+                        </div>
+                    ))}
+                </MySwipeableViews>
+            </div>
+        )
+    }
+
 
     when_default_consensus_majority_limit(number){
         this.setState({default_consensus_majority_limit: number})
@@ -1498,7 +1550,7 @@ class NewContractPage extends Component {
     
     enter_next_page(){
         var page = this.state.page
-        if(page < 18){
+        if(page < 14){
             this.setState({page: this.state.page+1})
             this.reset_the_number_picker()
         }

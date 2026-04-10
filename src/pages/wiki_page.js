@@ -21,6 +21,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import SwipeableViews from 'react-swipeable-views';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
+import MySwipeableViews from './../components/my_swipeable_views';
 
 import stack_section_pointer from './../assets/wallet_section_1.png';
 import settings_section_pointer from './../assets/wallet_section_2.png';
@@ -111,7 +112,7 @@ class WikiPage extends Component {
         if(size == 's'){
             return(
                 <div>
-                    {this.render_option()}
+                    {this.render_option_view_pager2()}
                 </div>
             )
         }
@@ -269,6 +270,10 @@ class WikiPage extends Component {
         }
     }
 
+
+
+
+
     handleChange = (value) => {
         this.setState({page: parseInt(value)})
     };
@@ -372,7 +377,7 @@ class WikiPage extends Component {
         }
         else if(this.state.option == 'tutorial'){
             const final_pos = pos+1
-            const message = (final_pos) + ' / '+ 9
+            const message = (final_pos) + ' / '+ 11
             return(
                 <div>
                     <ViewPager tag="main">
@@ -428,11 +433,36 @@ class WikiPage extends Component {
                                         </div>
                                     </div>
                                 </View>
+
+
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989k']/* 'To express very large numbers, scientific notation values such as \'e+\' and \'E\' are used. However, for simplicity sake, a lowercase \'e\' is used here.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'5'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+
+                                <View className="view">
+                                    <div style={{width: this.props.width-30}}>
+                                        {this.render_detail_item('4', {'text':this.props.app_state.loc['1989l']/* 'Note how the first nine digits of a large number are shown for greater context, and the \'power\' at the end representing the remaining omitted and least significant values.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                                        <div style={{height: 20}}/>
+                                        <div key={'6'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number2} alt="E5"/>
+                                            <div style={{height: 30}}/>
+                                        </div>
+                                    </div>
+                                </View>
+
+
                                 <View className="view">
                                     <div style={{width: this.props.width-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989h']/* 'The number picker is what is used on e to pick large numbers. The top slider picks a number, and the bottom slider picks a power.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'6'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'7'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker} alt="E5"/>
                                             <div style={{height: 20}}/>
                                         </div>
@@ -442,7 +472,7 @@ class WikiPage extends Component {
                                     <div style={{width: this.props.width-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989i']/* 'Tap the numbers at the top to select which part of the number your setting. Then tap the circles to the left to increment by one, and double tap to decrement by one.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'7'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'8'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker2} alt="E5"/>
                                             <div style={{height: 20}}/>
                                         </div>
@@ -452,7 +482,7 @@ class WikiPage extends Component {
                                     <div style={{width: this.props.width-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989j']/* 'Then tap the black circle to change input to be a textarea for small exact figues, and tap the grey circle to reset the number picker.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'8'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'9'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker3} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
@@ -462,7 +492,7 @@ class WikiPage extends Component {
                                     <div style={{width: this.props.width-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989g']/* 'Then when your ready to run your stack, tap this button to start your run. This executes all your transactions in your stack as one combined transaction on the blockchain.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'9'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'10'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_run_transactions} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
@@ -477,6 +507,239 @@ class WikiPage extends Component {
             )
         }
     }
+
+
+
+
+
+    handleSwipeableViewsChange = (value) => {
+        this.setState({page: parseInt(value)})
+    };
+
+    render_option_view_pager2(){
+        const pos = this.state.page
+        const h = this.props.height*0.6
+        const standard_width = this.props.width-30
+        const standard_height = this.props.height-270
+        const previous = () => {
+            const previous_page = parseInt(pos) - 1;
+            if(previous_page >= 0){
+                this.handleSwipeableViewsChange(previous_page)
+            }
+        }
+        const next = () => {
+            const next_page = parseInt(pos) + 1;
+            const totals = {'one':3, 'action':3, 'tutorial':11}
+            if(next_page < totals[this.state.option]){
+                this.handleSwipeableViewsChange(next_page)
+            }
+        }
+        const bottom_part = (message) => {
+            const image_height = 60
+            return(
+                <div style={{'margin':'20px 0px 20px 0px', 'width':standard_width}}>
+                    <div className="row">
+                        <div className="col-2">
+                            <div style={{'padding': '0px 0px 0px 20px'}} >
+                                <img alt="" onClick={()=>previous()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
+                            </div>
+                        </div>
+                        <div className="col-8">
+                            <div style={{'margin':'25px 0px 0px 10px'}}>
+                                {this.render_detail_item('16', {'message':message})}
+                            </div>
+                        </div>
+                        <div className="col-2">
+                            <div className="text-end" style={{}} >
+                                <img alt="" onClick={()=>next()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 25px 0px 0px', 'transform': 'rotate(270deg)'}} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        if(this.state.option == 'one'){
+            const final_pos = pos+1
+            const message = (final_pos) + ' / '+ 3
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1980']/* 'One more step' */, 'details':this.props.app_state.loc['1981']/* 'You need to set your wallet and fill it with some ether' */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+                    <MySwipeableViews width={this.props.width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                        <div key={'0'} style={{width: standard_width, height: standard_height}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'0'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{width:'auto', height:h}} src={settings_section_pointer} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'1'} style={{width: standard_width, height: standard_height}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1983']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'1'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{width:'auto', height:h}} src={wallet_section_pointer} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'2'} style={{width: standard_width, height: standard_height}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1984']/* 'Then afterwards fill it with the E5s ether of your choice' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'2'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{width:'auto', height:h}} src={deposit_section_pointer} alt="E5"/>
+                                <div style={{height: 20}}/>
+                            </div>
+                        </div>
+                    </MySwipeableViews> 
+                    {bottom_part(message)}
+                </div>
+            )
+        }
+        else if(this.state.option == 'action'){
+            const final_pos = pos+1
+            const message = (final_pos) + ' / '+ 3
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1985']/* 'Action Required' */, 'details':this.props.app_state.loc['1986']/* 'You need to set your wallet first' */, 'size':'l'})}
+                    {this.render_detail_item('0')}
+                    <MySwipeableViews width={this.props.width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                        <div key={'0'} style={{width: standard_width, height: standard_height}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'0'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{width:'auto', height:h}} src={stack_section_pointer} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'1'} style={{width: standard_width, height: standard_height}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1988']/* 'In the settings-data section...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'1'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{width:'auto', height:h}} src={settings_section_pointer} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'2'} style={{width: standard_width, height: standard_height}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'2'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{width:'auto', height:h}} src={wallet_section_pointer} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                    </MySwipeableViews>
+                    {bottom_part(message)}
+                </div>
+            )
+        }
+        else if(this.state.option == 'tutorial'){
+            const final_pos = pos+1
+            const message = (final_pos) + ' / '+ 11
+            const height_to_use = this.props.height-180
+            return(
+                <div>
+                    <MySwipeableViews width={this.props.width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                        <div key={'0'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['1989a']/* 'Quick Tutorial' */, 'details':this.props.app_state.loc['1989b']/* 'You need to know how to use this webapp.' */, 'size':'l'})}
+                            <div style={{height: 20}}/>
+                            <div key={'0'} style={{ display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{width:'auto', height:h}} src={tutorial_image_begin} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'1'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989c']/* 'The top and bottom navigation buttons are for navigating e.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'1'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70, 'scale':'0.87'}} src={tutorial_image_navigation_buttons} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'2'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989d']/* 'Tap a tag to view its sub-options, then tap it again (the very first tag-option) to go back.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'2'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70, 'scale':'0.95'}} src={tutorial_image_navigate_back} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'3'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989e']/* 'Then tap the e+ button at the top right corner to create a new post or object.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'3'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_new_object} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'4'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989f']/* 'Then when you\'re done creating an object, tap the top right icon to add it to your stack. The stack is where all your staged transactions go before your next run.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'4'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_add_transaction} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'5'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989k']/* 'To express very large numbers, scientific notation values such as \'e+\' and \'E\' are used. However, for simplicity sake, a lowercase \'e\' is used here.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'5'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'6'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989l']/* 'Note how the first nine digits of a large number are shown for greater context, and the \'power\' at the end representing the remaining omitted and least significant values.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'6'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number2} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'7'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989h']/* 'The number picker is what is used on e to pick large numbers. The top slider picks a number, and the bottom slider picks a power.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'7'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker} alt="E5"/>
+                                <div style={{height: 20}}/>
+                            </div>
+                        </div>
+                        <div key={'8'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989i']/* 'Tap the numbers at the top to select which part of the number your setting. Then tap the circles to the left to increment by one, and double tap to decrement by one.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'8'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker2} alt="E5"/>
+                                <div style={{height: 20}}/>
+                            </div>
+                        </div>
+                        <div key={'9'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989j']/* 'Then tap the black circle to change input to be a textarea for small exact figues, and tap the grey circle to reset the number picker.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'9'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker3} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                        <div key={'10'} style={{width: standard_width, height: height_to_use}}>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['1989g']/* 'Then when your ready to run your stack, tap this button to start your run. This executes all your transactions in your stack as one combined transaction on the blockchain.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            <div style={{height: 20}}/>
+                            <div key={'10'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_run_transactions} alt="E5"/>
+                                <div style={{height: 30}}/>
+                            </div>
+                        </div>
+                    </MySwipeableViews>
+                    {bottom_part(message)}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
 
     when_wiki_tags_updated(tag_group){
         this.setState({get_wiki_page_tags_object: tag_group})

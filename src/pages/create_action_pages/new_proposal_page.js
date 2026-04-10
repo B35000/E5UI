@@ -22,6 +22,7 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 import DurationPicker from '../../components/duration_picker';
+import MySwipeableViews from '../../components/my_swipeable_views';
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -2423,11 +2424,39 @@ return data['data']
 
     render_small_screen_proposal_config_ui(){
         var page = this.state.page
+        const bottom_part = (message) => {
+            const image_height = 60
+            const standard_width = this.props.width - 30
+            return(
+                <div style={{'margin':'20px 0px 20px 0px', 'width':standard_width}}>
+                    <div className="row">
+                        <div className="col-2">
+                            <div style={{'padding': '0px 0px 0px 20px'}} >
+                                <img alt="" onClick={()=>this.enter_previous_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
+                            </div>
+                        </div>
+                        <div className="col-8">
+                            <div style={{'margin':'25px 0px 0px 10px'}}>
+                                {this.render_detail_item('16', {'message':message})}
+                            </div>
+                        </div>
+                        <div className="col-2">
+                            <div className="text-end" style={{}} >
+                                <img alt="" onClick={()=>this.enter_next_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 25px 0px 0px', 'transform': 'rotate(270deg)'}} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        const message = (this.state.page +1) + ' / '+ 4
         return(
             <div>
-                {this.render_configuration_section_parts(page)}
-
-                <div style={{height:20}}/>
+                {this.render_configuration_section_parts_viewpager(page)}
+                <div style={{height:this.props.height-210}}>
+                    {bottom_part(message)}
+                </div>
+                {/* <div style={{height:20}}/>
                 <div style={{'width':'96%', 'padding':'0px 0px 0px 10px'}}>
                     <div className="row">
                         <div className="col-6">
@@ -2438,7 +2467,7 @@ return data['data']
                         </div>
                     </div>
                 </div>
-                <div style={{height:20}}/>
+                <div style={{height:20}}/> */}
             </div>
         )
     }
@@ -2466,6 +2495,28 @@ return data['data']
         }
     }
 
+
+    handleSwipeableViewsChange = (value) => {
+        this.setState({page: parseInt(value)})
+    };
+
+    render_configuration_section_parts_viewpager(page){
+        const items = []
+        for(var i=0; i<4; i++){
+            items.push(i)
+        }
+        return(
+            <div>
+                <MySwipeableViews width={this.props.width} index={page} onChangeIndex={this.handleSwipeableViewsChange}>
+                    {items.map((item, index) => (
+                        <div key={''+item}>
+                            {this.render_configuration_section_parts(item)}
+                        </div>
+                    ))}
+                </MySwipeableViews>
+            </div>
+        )
+    }
 
     render_configuration_section_parts(page){
         // var page = this.state.page
@@ -2633,7 +2684,7 @@ return data['data']
 
     enter_next_page(){
         var page = this.state.page
-        if(page < 18 && this.check_if_page_details_are_valid()){
+        if(page < 3 && this.check_if_page_details_are_valid()){
             this.setState({page: this.state.page+1})
         }
     }

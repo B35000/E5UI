@@ -25,7 +25,7 @@ self.addEventListener('push', event => {
       'storefront_order':'You\'ve received a new order in your storefront on e.',
       'signature_request':'You\'ve received a new signature request to finalize your direct purchase on e.',
       'signature_response':'You\'ve received a response for your signature request from a client on e.',
-      'read_receipts':'You\'re message on e has been opened and read.',
+      // 'read_receipts':'You\'re message on e has been opened and read.',
       'open_signature_request':'You\'ve received an open signature request on e.',
       'open_signature_response':'You\'ve received a response for your open signature request on e.',
       'call_invite':'You\'ve been invited to a call on e.',
@@ -39,7 +39,7 @@ self.addEventListener('push', event => {
     }
   }
   const notification_type = data['type']
-  if(notification_type == 'typing') return;
+  if(notification_type == 'typing' || notification_type == 'read_receipts') return;
   const body = notification_data[get_language()][notification_type] || notification_data[get_language()]['default']
   const options = {
       body: body,

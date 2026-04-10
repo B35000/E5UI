@@ -7153,7 +7153,7 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}) {
+  renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}, background_size='cover') {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? 0 : 10;
     const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? '0px' : '15px';
@@ -7163,7 +7163,7 @@ class App extends Component {
         <Drawer.Portal>
           <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
           <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
-            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)"}}>
+            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)"}}>
               {view}
             </div>
           </Drawer.Content>
@@ -17819,7 +17819,9 @@ class App extends Component {
       <ViewNumber ref={this.view_number_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)} />,
       this.state.view_number_bottomsheet,
       this.open_view_number_bottomsheet,
-      h
+      h,
+      true, [], 0, {},
+      'auto'
     )
     // if(os == 'iOS'){
     //     return(
@@ -18006,7 +18008,9 @@ class App extends Component {
       this.render_dialog_element(),
       this.state.dialog_bottomsheet,
       this.open_dialog_bottomsheet,
-      this.state.dialog_size
+      this.state.dialog_size,
+      true, [], 0, {},
+      'auto'
     )
     // if(os == 'iOS'){
     //     return(
@@ -27700,8 +27704,12 @@ class App extends Component {
         return await this.pre_launch_fetch(true)
       }
       if(obj.all_return_data != null){
-        this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [])
-        this.set_socket_entries_in_memory(obj.all_return_data['socket_view_objects_data'], [])
+        setTimeout(async () => {
+          // this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [])
+          await this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], ['object'])
+          this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], [], ['object'])
+          this.set_socket_entries_in_memory(obj.all_return_data['socket_view_objects_data'], [])
+        }, (35 * 1000));
       }
       return obj;
     }
@@ -29060,7 +29068,7 @@ class App extends Component {
     /* ---------------------------------------- JOB DATA ------------------------------------------- */
     // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
     if(is_syncing){
-      await this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+      this.get_job_data(E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
       if(pre_launch_data[e5] != null) this.get_alias_data(E52contractInstance, e5, account, web3, pre_launch_data[e5]['job_alias_data']);
     }
     // if(is_syncing){
@@ -29076,6 +29084,16 @@ class App extends Component {
     if(is_syncing){
       this.inc_synch_progress()
     }
+
+
+
+
+
+    if(is_syncing) await this.load_main_contracts(e5, pre_launch_data)
+    // this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance)
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
 
 
 
@@ -29350,13 +29368,6 @@ class App extends Component {
 
     /* ---------------------------------------- CONTRACT DATA ------------------------------------------- */
     
-
-
-    if(is_syncing)  this.load_main_contracts(e5, pre_launch_data)
-    // this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance)
-    // if(is_syncing){
-    //   this.inc_synch_progress()
-    // }
 
 
 
@@ -32315,6 +32326,7 @@ class App extends Component {
 
   
   set_object_view_data_in_memory(data){
+    console.log('set_object_view_data_in_memory', 'data to set', data)
     const set_data = structuredClone(this.state.object_view_data)
     const set_extra_data = structuredClone(this.state.object_extra_data)
     Object.keys(data).forEach(time => {
@@ -33945,7 +33957,7 @@ class App extends Component {
     token_symbol_directory['wei'] = 0
     token_name_directory[e5+'0'] = this.state.e5s[e5].token
 
-    if(Object.keys(pre_launch_data).length != 0){
+    if(Object.keys(pre_launch_data).length != 0 && pre_launch_data[e5]['exchange_objects_data']['view_data'] != null){
       const object_view_data = pre_launch_data[e5]['exchange_objects_data']['view_data']
       this.set_object_view_data_in_memory(object_view_data)
     }
@@ -34951,7 +34963,7 @@ class App extends Component {
     var my_job_ids = []
     var is_first_time = this.state.created_jobs[e5] == null
 
-    if(Object.keys(pre_launch_data).length != 0){
+    if(Object.keys(pre_launch_data).length != 0 && pre_launch_data[e5]['job_objects_data']['view_data'] != null){
       const object_view_data = pre_launch_data[e5]['job_objects_data']['view_data']
       this.set_object_view_data_in_memory(object_view_data)
     }
@@ -41849,9 +41861,9 @@ class App extends Component {
 
     
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
+    if(nitro_url == null) return;
     await this.check_and_fetch_object_marco_if_non_existant(e5_id, nitro_url)
     
-    if(nitro_url == null) return;
 
     console.log('apppage', 'loading cid', nitro_cid)
     const arg_string_data = await this.encrypt_arg_string(nitro_url, JSON.stringify({hashes:[nitro_cid]}))
@@ -48551,7 +48563,7 @@ class App extends Component {
     }
   }
 
-  load_nitro_directory_details = async (link) => {
+  load_nitro_directory_details = async (link, attempts=0) => {
     if(this.state.nitro_privacy_signature == null){
       const get_sync_block_from_nitro = link != this.state.beacon_chain_url
       await this.update_nitro_privacy_signature(get_sync_block_from_nitro)
@@ -48565,6 +48577,7 @@ class App extends Component {
         throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
       }
       var data = await response.text();
+      // console.log('load_nitro_directory_details', 'data', data)
       var obj = JSON.parse(data);
       var success = obj.success
       console.log('load_nitro_directory_details', 'directory data', link, obj)
@@ -48573,7 +48586,11 @@ class App extends Component {
       }
     }
     catch(e){
-      console.log('apppage', e)
+      console.log('apppage', 'request: ', request, e)
+      if(attempts < 3){
+        await this.wait(5000)
+        return await this.load_nitro_directory_details(link, attempts+1)
+      }
     }
   }
 
@@ -49426,6 +49443,7 @@ class App extends Component {
 
     var registration_attempts = 0;
     var last_disconnect_message = ''
+    var disconnect_time = 0;
 
     const me = this;
     socket.on('connect', () => {
@@ -49443,9 +49461,17 @@ class App extends Component {
           this.setState({is_device_online: true})
           this.resume_call()
         }
+
+        if(disconnect_time != 0){
+          const target_address = this.state.accounts[this.state.selected_e5].address
+          const resync_targets = ['jobs', 'open_signature_request|' +target_address, 'open_signature_response|'+target_address, 'call_invites|'+target_address, 'ether_coin_request|'+target_address, 'pre_purchase_request|'+target_address, 'direct_message|'+target_address, 'tags|'+target_address, 'mempool_notification|'+target_address]
+          this.get_objects_from_socket_and_set_in_state(resync_targets, [], [], disconnect_time)  
+        }
+
         this.is_device_online = true;
         last_disconnect_message = ''
         registration_attempts = 0;
+        disconnect_time = 0;
       }else{
         console.log('apppage', 'socket_connection', 'set_up_socket_connection_and_initialize_listeners', 'failed to register in socket', reason)
         await this.wait(5000)
@@ -49461,7 +49487,10 @@ class App extends Component {
       console.log('apppage', 'socket_connection', 'socketio', "Disconnected:", reason);
       this.setState({socket_connetcted: false, is_device_online: false})
       this.is_device_online = false;
-      last_disconnect_message = reason
+      last_disconnect_message = reason;
+      if(this.state.socket_userId != null){
+        disconnect_time = Date.now()
+      }
     });
 
     socket.on("reconnect", () => {
@@ -52805,7 +52834,27 @@ class App extends Component {
 
 
 
-
+  update_scroll_position_of_chat(){
+    if(this.homepage.current != null){
+      this.homepage.current?.reset_chat_scroll_position()
+    }
+    if(this.view_job_request_page.current != null){
+      try{
+        this.view_job_request_page.current?.scroll_to_bottom()
+      }
+      catch(e){
+        console.log('apppage', e)
+      }
+    }
+    if(this.view_call_interface_page.current != null){
+      try{
+        this.view_call_interface_page.current?.scroll_to_bottom()
+      }
+      catch(e){
+        console.log('apppage', e)
+      }
+    }
+  }
 
   async process_new_job_received(message, object_hash){
     if(this.hash_message_for_id(message) != object_hash) return;
@@ -52946,6 +52995,7 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
     const account = this.state.user_account_id[message['e5']]
@@ -53042,6 +53092,7 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
     const account = this.state.user_account_id[message['e5']]
@@ -53128,6 +53179,7 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
     const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
@@ -53214,6 +53266,7 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
 
@@ -53281,6 +53334,7 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
 
@@ -54258,6 +54312,7 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
 
@@ -54617,6 +54672,7 @@ class App extends Component {
       var me = this;
       setTimeout(function() {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
     const account = this.state.user_account_id[message['e5']]
@@ -55498,7 +55554,7 @@ class App extends Component {
     }
   }
 
-  async set_socket_entries_in_memory(target_data, application_responses){
+  async set_socket_entries_in_memory(target_data, application_responses, targets_to_prioritize=[], targets_to_ignore=[]){
     const entries = Object.keys(target_data)
     for(var j=0; j<entries.length; j++){
       const time_entry = entries[j]
@@ -55509,6 +55565,12 @@ class App extends Component {
         for(var i=0; i<object_hashes.length; i++){
           const object_hash = object_hashes[i]
           const object_data = target_data[time_entry][target_entry][object_hash]
+          if(targets_to_prioritize.length > 0 && !targets_to_prioritize.includes(object_data['type'])){
+            continue;
+          }
+          if(targets_to_ignore.length > 0 && targets_to_ignore.includes(object_data['type'])){
+            continue;
+          }
           if(target_entry == 'jobs' && object_data.type == 'object'){
             await this.process_new_job_received(object_data, object_hash)
 

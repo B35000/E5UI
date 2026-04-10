@@ -320,6 +320,14 @@ class PostDetailSection extends Component {
         
     }
 
+    reset_chat_scroll_position(){
+        try{
+            this.curent_post_section.current?.scroll_to_bottom()
+        }catch(e){
+            console.log('detaul_section', e)
+        }
+    }
+
 
 
 
