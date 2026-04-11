@@ -77,7 +77,7 @@ class PollDetailsSection extends Component {
 
     render_posts_list_detail(){
         var object = this.get_item_in_array(this.get_poll_items(), this.props.selected_poll_item);
-        if(object == null){
+        if(object == null || object['ipfs'] == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}

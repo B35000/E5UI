@@ -19417,7 +19417,7 @@ class StackPage extends Component {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       
-            const image_size = 35 * 1024
+            const image_size = 17 * 1024
             canvas.toBlob(blob => {
                 var quality = 1.0
                 var blob_size = blob.size

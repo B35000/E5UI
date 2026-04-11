@@ -183,7 +183,7 @@ class VideoDetailsSection extends Component {
 
     render_posts_list_detail(){
         var object = this.get_item_in_array(this.get_video_items(), this.props.selected_video_item);
-        if(object == null){
+        if(object == null || object['ipfs'] == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}

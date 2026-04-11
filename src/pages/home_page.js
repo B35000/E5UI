@@ -1729,6 +1729,20 @@ class home_page extends Component {
         return id
     }
 
+    get_page_active_section_data(){
+        const page = this.state.page
+        if(page == '?'){
+            return { active: this.state.work_page_tags_object['i'].active, page }
+        }
+        else if(page == 'e'){
+            return { active: this.state.explore_page_tags_object['i'].active, page }
+        }
+        else{
+            //wallet
+            return { active: this.state.wallet_page_tags_object['i'].active, page }
+        }
+    }
+
     reset_scroll_height(){
         var id = this.get_page_id()
         var typed_searched_word = this.state.page_search_data[id]
@@ -2307,6 +2321,8 @@ class home_page extends Component {
 
             this.setState({viewed_items_data: viewed_items_data_clone})
         }
+
+        
     }
 
     update_scroll_position(){
@@ -5147,7 +5163,7 @@ class home_page extends Component {
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
             current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
 
-            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data}
+            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)}
             />
         )
     }
@@ -5204,6 +5220,7 @@ class home_page extends Component {
             this.setState({viewed_objects: viewed_objects_clone})
             this.update_cookies()
         }
+        this.props.set_details_focused_item(e5_id)
     }
 
     when_ends_object_clicked(index, id, e5, object, ignore_set_details_data){

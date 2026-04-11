@@ -714,6 +714,7 @@ import classes2 from "./PIP.module.css";
 
 import Dexie from 'dexie';
 import { locale } from 'dayjs';
+import localforage from 'localforage';
 
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
@@ -1370,7 +1371,9 @@ class App extends Component {
 
     obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
 
-    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false
+    e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false,
+
+    focused_items:[], detail_focused_items:[], should_continue_loading:{},
   };
 
   get_thread_pool_size(){
@@ -3677,7 +3680,7 @@ class App extends Component {
 
   componentDidMount() {
     console.log("mounted", 'os version: ', iOS());
-
+    localforage.clear()
     if (this.props.onReady) {
       this.props.onReady();
     }
@@ -3937,6 +3940,7 @@ class App extends Component {
     this.delete_data_in_db_when_app_closed()
     this.shutdown_webworkers()
     this.disconnect_socket_if_connected()
+    localforage.clear()
   }
 
   reset_background_sync(){
@@ -6555,7 +6559,7 @@ class App extends Component {
 
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
 
-          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)}
+          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -7185,6 +7189,24 @@ class App extends Component {
       </Drawer.Root>
     )
   }
+
+  set_page_objects_that_should_be_in_focus(focused_items, should_continue_loading, section){
+    // return;
+    const clone = structuredClone(this.state.should_continue_loading)
+    clone[section] = should_continue_loading;
+    this.setState({focused_items: focused_items, should_continue_loading: clone})
+    const { active, page } = this.homepage.current.get_page_active_section_data()
+    this.load_focused_items_into_memory(focused_items, active, page)
+  }
+
+  set_details_focused_item(detail_focused_item){
+    const clone = this.state.detail_focused_items.slice()
+    if(!clone.includes(detail_focused_item)) clone.push(detail_focused_item);
+    this.setState({detail_focused_items: clone})
+    this.remove_unfocused_items_comments_and_metadata_from_memory(clone)
+  }
+
+  
 
 
 
@@ -27707,6 +27729,7 @@ class App extends Component {
         setTimeout(async () => {
           // this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [])
           await this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], ['object'])
+          await this.set_page_objects_that_should_be_in_focus(this.state.focused_items)
           this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], [], ['object'])
           this.set_socket_entries_in_memory(obj.all_return_data['socket_view_objects_data'], [])
         }, (35 * 1000));
@@ -32378,7 +32401,7 @@ class App extends Component {
       keywords.push(id+e5)
     });
     const view_data = await this.get_tag_trends_data(keywords, end_time, start_time, '', [], [], [], false)
-    this.set_object_view_data_in_memory(view_data)
+    if(view_data != null) this.set_object_view_data_in_memory(view_data)
   }
 
   get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance, prioritized_accounts, specific_items, return_created_object_events_only=false, all_return_data={}) => {
@@ -32574,6 +32597,8 @@ class App extends Component {
         }
         created_subscription_object_mapping[created_subscriptions[i]] = subscription_object
       }
+
+      this.set_object_in_local_forage(subscription_object)
       
 
       if(is_first_time || true){
@@ -32594,6 +32619,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('subscriptions')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -33076,6 +33103,7 @@ class App extends Component {
       }
       created_contract_mapping[created_contracts[i]] = contract_obj
 
+      this.set_object_in_local_forage(contract_obj)
 
       if(is_first_time || true){
         var created_contract_object_data_clone = structuredClone(this.state.created_contracts)
@@ -33097,6 +33125,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('contracts')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -33684,6 +33714,8 @@ class App extends Component {
         created_proposal_object_data.push(obj)
       }
 
+      this.set_object_in_local_forage(obj)
+
       if(is_first_time || true){
         var my_proposals_clone = structuredClone(this.state.my_proposals)
         my_proposals_clone[e5] = created_proposal_object_data
@@ -33696,6 +33728,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('proposals')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -34056,6 +34090,8 @@ class App extends Component {
         }
         created_token_object_mapping[token_id] = token_obj
       }
+
+      this.set_object_in_local_forage(token_obj)
       
       var token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
       var token_title = tokens_data == null ? 'tokens' : tokens_data.entered_title_text
@@ -34107,6 +34143,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('tokens')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -34477,6 +34515,7 @@ class App extends Component {
           'id':id, 'ipfs':data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6/* timestamp */), 'author':event.returnValues.p2/* sender_acc_id */ ,'e5_id':id+e5, 'target':event.returnValues.p1, 'object_type':'bill'
         }
         my_bills.push(bill)
+        this.set_object_in_local_forage(bill)
 
         if(is_first_time){
           var created_bills_clone = structuredClone(this.state.created_bills)
@@ -34484,6 +34523,8 @@ class App extends Component {
           this.setState({created_bills: created_bills_clone});
         }
       }
+
+      await this.pause_load_if_should_not_continue_loading('bills')
 
       if(i == loaded_target && i+1 >= all_bills.length){
         await this.wait(1000)
@@ -34646,6 +34687,8 @@ class App extends Component {
         }else{
           created_posts.push(obj)
         }
+
+        this.set_object_in_local_forage(obj)
       }
 
       if(is_first_time || true){
@@ -34661,6 +34704,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('posts')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -34810,6 +34855,8 @@ class App extends Component {
         }else{
           created_channel.push(channel_obj)
         }
+
+        this.set_object_in_local_forage(channel_obj)
       }
 
       if(is_first_time || true){
@@ -34824,6 +34871,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('channels')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -34996,7 +35045,7 @@ class App extends Component {
           var response_count = response_data[id] == null ? [] : response_data[id]
           var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':parseInt(created_job_events[i].returnValues.p6), 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5, 'responses':response_count.length, 'object_type':'job'}
           
-          
+          this.set_object_in_local_forage(job)
           const index = created_job.findIndex(item => item['e5_id'] === job['e5_id']);
           if(index != -1){
             created_job[index] = job
@@ -35029,6 +35078,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('jobs')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -35198,9 +35249,12 @@ class App extends Component {
         const convo_with = event.returnValues.p2 == account ? recipient : event.returnValues.p2
         const messages = message_event_array[convo_id] == null ? [] : message_event_array[convo_id]
         const newest_message_time = newest_event_time[convo_id] == null ? parseInt(event.returnValues.p6) : newest_event_time[convo_id]
+        
         const obj = {'convo_id':convo_id,'id':cid, 'event':event, 'ipfs':ipfs_obj, 'type':type, 'time':event.returnValues.p6, 'convo_with':convo_with, 'sender':event.returnValues.p2, 'recipient':recipient, 'e5':recipient_e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p2, 'e5_id':cid, 'messages':messages, 'newest_message_time':newest_message_time}
         
         const includes = all_mail_clone[convo_id].find(e => e['id'] === obj['id'])
+        this.set_object_in_local_forage(obj)
+
         if(includes == null){
           // console.log('apppage', 'includes is null, pushing it')
           all_mail_clone[convo_id].push(obj);
@@ -35209,6 +35263,8 @@ class App extends Component {
           // await this.wait(150)
         }
       }
+
+      await this.pause_load_if_should_not_continue_loading('mail')
 
       if(i == loaded_target && i+1 >= all_my_mail_events.length){
         await this.wait(1000)
@@ -35439,6 +35495,8 @@ class App extends Component {
           if(load_prioritized_accounts_exclusively){
             this.fetch_uploaded_files_for_object(obj)
           }
+
+          this.set_object_in_local_forage(obj)
         }
       }
       if(is_first_time || true){
@@ -35458,6 +35516,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('storefronts')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -35654,6 +35714,8 @@ class App extends Component {
           my_created_bag_ids.push(id)
           my_bag_responses = my_bag_responses.concat(response_count)
         }
+
+        this.set_object_in_local_forage(bag)
       }
       if(is_first_time || true){
         var created_bags_clone = structuredClone(this.state.created_bags)
@@ -35668,6 +35730,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('bags')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -35904,6 +35968,8 @@ class App extends Component {
           if(post['author'] == account){
             my_contractor_posts.push(id)
           }
+
+          this.set_object_in_local_forage(post)
         }
       }
 
@@ -35919,6 +35985,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('contractor')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -36111,6 +36179,8 @@ class App extends Component {
               my_acquired_audios.push(data)
             }
           }
+
+          this.set_object_in_local_forage(data)
         }
       }
 
@@ -36128,6 +36198,8 @@ class App extends Component {
           }
         }, (1 * 500));      
       }
+
+      await this.pause_load_if_should_not_continue_loading('audio')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -36300,8 +36372,8 @@ class App extends Component {
           }else{
             created_videos.push(data)
           }
-
           created_video_mappings[id] = data
+
           if(this.state.my_videoposts.includes(id)){
             const index2 = my_acquired_videos.findIndex(item => item['e5_id'] === data['e5_id']);
             if(index2 != -1){
@@ -36310,6 +36382,8 @@ class App extends Component {
               my_acquired_videos.push(data)
             }
           }
+
+          this.set_object_in_local_forage(data)
         }
       }
 
@@ -36328,6 +36402,8 @@ class App extends Component {
           }
         }, (1 * 500));   
       }
+
+      await this.pause_load_if_should_not_continue_loading('videos')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -36506,12 +36582,14 @@ class App extends Component {
             const nitro_album_art_clone = structuredClone(this.state.nitro_album_art)
             nitro_album_art_clone[id+e5] = nitro_data.album_art
             this.setState({nitro_album_art: nitro_album_art_clone})
+            await this.wait(400)
           }
 
           if(nitro_data.image_bundle != null){
             const uploaded_data_clone = structuredClone(this.state.uploaded_data)
             uploaded_data_clone[nitro_data.album_art] = nitro_data.image_bundle
             this.setState({uploaded_data: uploaded_data_clone})
+            await this.wait(400)
           }
 
           if(this.state.my_preferred_nitro == (id+e5) || true){
@@ -36525,6 +36603,8 @@ class App extends Component {
             created_nitros.push(data)
           }
           created_nitro_mappings[id] = data
+
+          this.set_object_in_local_forage(data)
         }
       }
 
@@ -36544,6 +36624,8 @@ class App extends Component {
           }
         }, (1 * 500));   
       }
+
+      // await this.pause_load_if_should_not_continue_loading('nitros')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -36683,6 +36765,8 @@ class App extends Component {
         }else{
           created_posts.push(data)
         }
+
+        this.set_object_in_local_forage(data)
       }
 
       if(is_first_time || true){
@@ -36697,6 +36781,8 @@ class App extends Component {
           }
         }, (1 * 500));
       }
+
+      await this.pause_load_if_should_not_continue_loading('polls')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
@@ -37089,6 +37175,665 @@ class App extends Component {
     this.setState({my_contract_obligation_subscription_data: my_contract_obligation_subscription_data_clone})
 
     await this.wait(700)
+  }
+
+  async set_object_in_local_forage(object){
+    // return;
+    const object_e5_id = object['e5_id'];
+    try{
+      await localforage.setItem(object_e5_id, object)
+    }catch(e){
+      console.log('apppage', 'localforage', e)
+    }
+  }
+
+  async get_object_in_local_forage(id){
+    try{
+      return await localforage.getItem(id);
+    }catch(e){
+      console.log('apppage', 'localforage', e)
+    }
+  }
+
+  async load_focused_items_into_memory(focused_items, active, page){
+    // return;
+    const final_focused_items = focused_items == null ? this.state.focused_items : focused_items;
+    
+    if(page == '?'){
+      if(active == this.getLocale()['1196']/* 'jobs' */ || active == 'e'){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_jobs_clone = structuredClone(this.state.created_jobs)
+            const created_job_mappings_clone = structuredClone(this.state.created_job_mappings)
+
+            const index = created_jobs_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_jobs_clone[e5][index] = object
+            }else{
+              created_jobs_clone[e5].push(object)
+            }
+            created_job_mappings_clone[e5][id] = object
+
+            this.setState({created_jobs: created_jobs_clone, created_job_mappings:created_job_mappings_clone});
+          }
+        }
+
+        const created_jobs_clone2 = structuredClone(this.state.created_jobs)
+        const created_job_mappings_clone2 = structuredClone(this.state.created_job_mappings)
+
+        Object.keys(created_jobs_clone2).forEach(e5 => {
+          created_jobs_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_jobs_clone2[e5][index]['ipfs'];
+                delete created_job_mappings_clone2[e5][object_or_e5_id['id']]['ipfs']
+              }
+          });
+        });
+
+        this.setState({created_jobs: created_jobs_clone2, created_job_mappings: created_job_mappings_clone2});
+      }
+      else if(active == this.getLocale()['1197']/* 'contracts' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_contract_object_data_clone = structuredClone(this.state.created_contracts)
+            const created_contract_mapping_clone = structuredClone(this.state.created_contract_mapping)
+        
+            const index = created_contract_object_data_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_contract_object_data_clone[e5][index] = object
+            }else{
+              created_contract_object_data_clone[e5].push(object)
+            }
+            created_contract_mapping_clone[e5][id] = object
+
+            this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_contracts)
+        const created_objects_mappings_clone2 = structuredClone(this.state.created_contract_mapping)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && object_or_e5_id['id'] != 2 && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+                delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_contracts: created_objects_clone2, created_contract_mapping: created_objects_mappings_clone2});
+      }
+      else if(active == this.getLocale()['1199']/* 'proposals' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const my_proposals_clone = structuredClone(this.state.my_proposals)
+            const index = my_proposals_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              my_proposals_clone[e5][index] = object
+            }else{
+              my_proposals_clone[e5].push(object)
+            }
+
+            this.setState({my_proposals: my_proposals_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.my_proposals)
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+              }
+          });
+        });
+        this.setState({my_proposals: created_objects_clone2});
+      }
+      else if(active == this.getLocale()['1200']/* 'subscriptions' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_subscription_object_data_clone = structuredClone(this.state.created_subscriptions)
+            const created_subscription_object_mapping_clone = structuredClone(this.state.created_subscription_object_mapping)
+
+            const index = created_subscription_object_data_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_subscription_object_data_clone[e5][index] = object
+            }else{
+              created_subscription_object_data_clone[e5].push(object)
+            }
+            created_subscription_object_mapping_clone[e5][id] = object
+
+            this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_subscriptions)
+        const created_objects_mappings_clone2 = structuredClone(this.state.created_subscription_object_mapping)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+                delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_subscriptions: created_objects_clone2, created_subscription_object_mapping: created_objects_mappings_clone2});
+      }
+      else if(active == this.getLocale()['1201']/* 'mail' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+            const convo_id = object['convo_id']
+
+            const all_mail_clone = structuredClone(this.state.all_mail)
+            const index = all_mail_clone[convo_id].findIndex(item => item['id'] == focused_object_e5_id);
+            if(index != -1){
+              all_mail_clone[convo_id][index] = object
+            }else{
+              all_mail_clone[convo_id].push(object)
+            }
+            this.setState({all_mail: all_mail_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.all_mail)
+
+        Object.keys(created_objects_clone2).forEach(convo_id => {
+          created_objects_clone2[convo_id].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['id'])  && !this.state.detail_focused_items.includes(object_or_e5_id['id'])){
+                delete created_objects_clone2[convo_id][index]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({all_mail: created_objects_clone2});
+      }
+      else if(active == this.getLocale()['1198']/* 'contractors' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_contractors_clone = structuredClone(this.state.created_contractors)
+            const index = created_contractors_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_contractors_clone[e5][index] = object
+            }else{
+              created_contractors_clone[e5].push(object)
+            }
+
+            this.setState({created_contractors: created_contractors_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_contractors)
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+              }
+          });
+        });
+        this.setState({created_contractors: created_objects_clone2});
+      }
+      else if(active == this.getLocale()['1264s']/* 'nitro' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_nitros_clone = structuredClone(this.state.created_nitros)
+            const created_nitro_mappings_clone = structuredClone(this.state.created_nitro_mappings)
+
+            const index = created_nitros_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_nitros_clone[e5][index] = object
+            }else{
+              created_nitros_clone[e5].push(object)
+            }
+            created_nitro_mappings_clone[e5][id] = object
+
+            this.setState({created_nitros: created_nitros_clone, created_nitro_mappings: created_nitro_mappings_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_nitros)
+        const created_objects_mappings_clone2 = structuredClone(this.state.created_nitro_mappings)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+                delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_nitros: created_objects_clone2, created_nitro_mappings: created_objects_mappings_clone2});
+      }
+    }
+    else if(page == 'e'){
+      if(active == this.getLocale()['1213']/* 'posts' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_posts_clone = structuredClone(this.state.created_posts)
+            const index = created_posts_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_posts_clone[e5][index] = object
+            }else{
+              created_posts_clone[e5].push(object)
+            }
+
+            this.setState({created_posts: created_posts_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_posts)
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+              }
+          });
+        });
+        this.setState({created_posts: created_objects_clone2});
+      }
+      else if(active == this.getLocale()['1214']/* 'channels' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_channels_clone = structuredClone(this.state.created_channels)
+            const index = created_channels_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_channels_clone[e5][index] = object
+            }else{
+              created_channels_clone[e5].push(object)
+            }
+            this.setState({created_channels: created_channels_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_channels)
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+              }
+          });
+        });
+        this.setState({created_channels: created_objects_clone2});
+      }
+      else if(active == this.getLocale()['1215']/* 'storefront' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_stores_clone = structuredClone(this.state.created_stores)
+            const created_store_mappings_clone = structuredClone(this.state.created_store_mappings)
+
+            const index = created_stores_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_stores_clone[e5][index] = object
+            }else{
+              created_stores_clone[e5].push(object)
+            }
+            created_store_mappings_clone[e5][id] = object
+
+            this.setState({created_stores: created_stores_clone, created_store_mappings: created_store_mappings_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_stores)
+        const created_objects_mappings_clone2 = structuredClone(this.state.created_store_mappings)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+                delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_stores: created_objects_clone2, created_store_mappings: created_objects_mappings_clone2});
+      }
+      else if(active == this.getLocale()['1216']/* 'bags' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_bags_clone = structuredClone(this.state.created_bags)
+
+            const index = created_bags_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_bags_clone[e5][index] = object
+            }else{
+              created_bags_clone[e5].push(object)
+            }
+            this.setState({created_bags: created_bags_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_bags)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_bags: created_objects_clone2});
+      }
+      else if(active == this.getLocale()['1264k']/* 'audioport' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_audios_clone = structuredClone(this.state.created_audios)
+            const created_audio_mappings_clone = structuredClone(this.state.created_audio_mappings)
+
+            const index = created_audios_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_audios_clone[e5][index] = object
+            }else{
+              created_audios_clone[e5].push(object)
+            }
+            created_audio_mappings_clone[e5][id] = object
+
+            this.setState({created_audios: created_audios_clone, created_audio_mappings: created_audio_mappings_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_audios)
+        const created_objects_mappings_clone2 = structuredClone(this.state.created_audio_mappings)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+                delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_audios: created_objects_clone2, created_audio_mappings: created_objects_mappings_clone2});
+      }
+      else if(active == this.getLocale()['1264p']/* 'videoport' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_videos_clone = structuredClone(this.state.created_videos)
+            const created_video_mappings_clone = structuredClone(this.state.created_video_mappings)
+
+            const index = created_videos_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_videos_clone[e5][index] = object
+            }else{
+              created_videos_clone[e5].push(object)
+            }
+            created_video_mappings_clone[e5][id] = object
+
+            this.setState({created_videos: created_videos_clone, created_video_mappings: created_video_mappings_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_videos)
+        const created_objects_mappings_clone2 = structuredClone(this.state.created_video_mappings)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+                delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_videos: created_objects_clone2, created_video_mappings: created_objects_mappings_clone2});
+      }
+      else if(active == this.getLocale()['1264ao']/* 'polls' */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_polls_clone = structuredClone(this.state.created_polls)
+            const index = created_polls_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_polls_clone[e5][index] = object
+            }else{
+              created_polls_clone[e5].push(object)
+            }
+
+            this.setState({created_polls: created_polls_clone})
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_polls)
+
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+              }
+          });
+        });
+
+        this.setState({created_polls: created_objects_clone2});
+      }
+    }
+    else{
+      // if(active == this.getLocale()['1218']/* 'ends' */){
+      //   for(var i=0; i<final_focused_items.length; i++){
+      //     const focused_object_e5_id = final_focused_items[i]
+      //     const object = await this.get_object_in_local_forage(focused_object_e5_id)
+      //     if(object != null){
+      //       const e5 = object['e5']
+      //       const id = object['id']
+
+      //       const created_tokens_clone = structuredClone(this.state.created_tokens)
+      //       const created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
+
+      //       const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+      //       if(index != -1){
+      //         created_tokens_clone[e5][index] = object
+      //       }else{
+      //         created_tokens_clone[e5].push(object)
+      //       }
+      //       created_token_object_mapping_clone[e5][id] = object
+
+      //       this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+      //     }
+      //   }
+      //   const created_objects_clone2 = structuredClone(this.state.created_tokens)
+      //   const created_objects_mappings_clone2 = structuredClone(this.state.created_token_object_mapping)
+
+      //   Object.keys(created_objects_clone2).forEach(e5 => {
+      //     created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+      //         if(!final_focused_items.includes(object_or_e5_id['e5_id']) && object_or_e5_id['id'] != 3 && object_or_e5_id['id'] != 5 && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+      //           delete created_objects_clone2[e5][index]['ipfs'];
+      //           delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+      //         }
+      //     });
+      //   });
+
+      //   this.setState({created_tokens: created_objects_clone2, created_token_object_mapping: created_objects_mappings_clone2});
+      // }
+      // if(active == this.getLocale()['1219']/* 'spends' */){
+      //   for(var i=0; i<final_focused_items.length; i++){
+      //     const focused_object_e5_id = final_focused_items[i]
+      //     const object = await this.get_object_in_local_forage(focused_object_e5_id)
+      //     if(object != null){
+      //       const e5 = object['e5']
+      //       const id = object['id']
+
+      //       const created_tokens_clone = structuredClone(this.state.created_tokens)
+      //       const created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
+
+      //       const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+      //       if(index != -1){
+      //         created_tokens_clone[e5][index] = object
+      //       }else{
+      //         created_tokens_clone[e5].push(object)
+      //       }
+      //       created_token_object_mapping_clone[e5][id] = object
+
+      //       this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+      //     }
+      //   }
+      //   const created_objects_clone2 = structuredClone(this.state.created_tokens)
+      //   const created_objects_mappings_clone2 = structuredClone(this.state.created_token_object_mapping)
+
+      //   Object.keys(created_objects_clone2).forEach(e5 => {
+      //     created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+      //         if(!final_focused_items.includes(object_or_e5_id['e5_id']) && object_or_e5_id['id'] != 3 && object_or_e5_id['id'] != 5 && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+      //           delete created_objects_clone2[e5][index]['ipfs'];
+      //           delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+      //         }
+      //     });
+      //   });
+
+      //   this.setState({created_tokens: created_objects_clone2, created_token_object_mapping: created_objects_mappings_clone2});
+      // }
+      // else 
+      if(active == this.getLocale()['1264ai']/* bills */){
+        for(var i=0; i<final_focused_items.length; i++){
+          const focused_object_e5_id = final_focused_items[i]
+          const object = await this.get_object_in_local_forage(focused_object_e5_id)
+          if(object != null){
+            const e5 = object['e5']
+            const id = object['id']
+
+            const created_bills_clone = structuredClone(this.state.created_bills)
+            const index = created_bills_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+            if(index != -1){
+              created_bills_clone[e5][index] = object
+            }else{
+              created_bills_clone[e5].push(object)
+            }
+            this.setState({created_bills: created_bills_clone});
+          }
+        }
+        const created_objects_clone2 = structuredClone(this.state.created_bills)
+        Object.keys(created_objects_clone2).forEach(e5 => {
+          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+                delete created_objects_clone2[e5][index]['ipfs'];
+              }
+          });
+        });
+        this.setState({created_bills: created_objects_clone2});
+      }
+    }
+  }
+
+  async remove_unfocused_items_comments_and_metadata_from_memory(focused_items){
+    const final_focused_items = focused_items == null ? this.state.detail_focused_items : focused_items;
+    const clone = {}
+    const all_messages_e5_ids = Object.keys(this.state.object_messages);
+    for(var i=0; i<all_messages_e5_ids.length; i++){
+      const e5_id = all_messages_e5_ids[i]
+      if(final_focused_items.includes(e5_id)){
+        const existing_data = await this.get_object_in_local_forage(e5_id) || []
+        clone[e5_id] = this.sortByAttributeDescending(existing_data.concat(this.state.object_messages[e5_id]), 'time')
+      }
+      else{
+        this.set_message_data_in_local_forage(e5_id, this.state.object_messages[e5_id])
+      }
+    }
+
+    const clone2 = {}
+    const all_socket_messages_e5_ids = Object.keys(this.state.socket_object_messages);
+    for(var i=0; i<all_socket_messages_e5_ids.length; i++){
+      const e5_id = all_socket_messages_e5_ids[i]
+      if(final_focused_items.includes(e5_id)){
+        const existing_data = await this.get_object_in_local_forage(e5_id+'socket') || []
+        clone2[e5_id] = this.sortByAttributeDescending(existing_data.concat(this.state.socket_object_messages[e5_id]), 'time')
+      }
+      else{
+        this.set_message_data_in_local_forage(e5_id+'socket', this.state.socket_object_messages[e5_id])
+      }
+    }
+
+    this.setState({object_messages: clone, socket_object_messages: clone2})
+  }
+
+  async set_message_data_in_local_forage(e5_id, messages){
+    try{
+      await localforage.setItem(e5_id, messages)
+    }catch(e){
+      console.log('apppage', 'localforage', e)
+    }
+  }
+
+  async set_new_focused_item_comments_and_metadata_into_memory(e5_id){
+    const clone = structuredClone(this.state.object_messages)
+    const clone2 = structuredClone(this.state.socket_object_messages)
+
+    const memory_messages = this.state.object_messages[e5_id] || []
+    const existing_data = await this.get_object_in_local_forage(e5_id) || []
+    clone[e5_id] = this.sortByAttributeDescending(existing_data.concat(memory_messages), 'time')
+
+    const memory_messages2 = this.state.socket_object_messages[e5_id] || []
+    const existing_data2 = await this.get_object_in_local_forage(e5_id) || []
+    clone2[e5_id] = this.sortByAttributeDescending(existing_data2.concat(memory_messages2), 'time')
+
+    this.setState({object_messages: clone, socket_object_messages: clone2})
+  }
+
+  async pause_load_if_should_not_continue_loading(section){
+    return await new Promise(resolve => {
+      const checkReady = () => {
+        if (this.state.should_continue_loading[section] != false) {
+          resolve();
+        } else {
+          setTimeout(checkReady, 100);
+        }
+      };
+      checkReady();
+    });
   }
 
 
@@ -42498,6 +43243,7 @@ class App extends Component {
           }catch(e){
             console.log('datas', e)
           }
+          // await this.wait(400);
         }else{
           console.log('apppage', 'get_nitro_data', 'file was tampered with, ignoring...')
         }
@@ -44069,7 +44815,8 @@ class App extends Component {
     });
   }
 
-  filter_using_searched_text = async (objects, searched_input) => {
+  filter_using_searched_text = async (objects_, searched_input) => {
+    const objects = await this.set_objects_ipfs_data_in_objects(objects_)
     await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
     return new Promise((resolve, reject) => {
       const available_worker_index = this.get_available_position()
@@ -44106,7 +44853,8 @@ class App extends Component {
     });
   }
 
-  get_similar_posts = async (focused_objects, id_object) => {
+  get_similar_posts = async (focused_objects_, id_object) => {
+    const focused_objects = await this.set_objects_ipfs_data_in_objects(focused_objects_)
     await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
     return new Promise((resolve, reject) => {
       const available_worker_index = this.get_available_position()
@@ -44142,6 +44890,29 @@ class App extends Component {
         reject(error);
       };
     });
+  }
+
+  async set_objects_ipfs_data_in_objects(objects){
+    const objects_with_ipfs_data = objects.slice()
+    var fetch_total = 0;
+    for(var i=0; i<objects.length; i++){
+      const fetch_and_set = async () => {
+        const focused_item = objects[i]
+        const object_in_localforage = await this.get_object_in_local_forage(focused_item['e5_id'])
+        if(object_in_localforage != null){
+          objects_with_ipfs_data[i]['ipfs'] = object_in_localforage['ipfs']
+        }
+        fetch_total--;
+      }
+      fetch_total++;
+      fetch_and_set()
+    }
+
+    while (fetch_total > 0) {
+      if (fetch_total == 0) break;
+      await new Promise(resolve => setTimeout(resolve, 500))
+    }
+    return objects_with_ipfs_data
   }
 
 
@@ -44695,6 +45466,7 @@ class App extends Component {
 
   get_objects_messages = async (id, e5, object) => {
     const e5_id = id+e5
+    await this.set_new_focused_item_comments_and_metadata_into_memory(e5_id)
     console.log('apppage', 'get_object_messages', 'loading object comments...')
     this.get_objects_messages_from_socket_and_enter_chatroom(id+e5)
     const all_object_comment_events = await this.get_object_comment_events(id, e5, 17)

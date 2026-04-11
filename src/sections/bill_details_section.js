@@ -120,7 +120,7 @@ class BillDetailsSection extends Component {
         var item = this.get_item_in_array(this.get_bills_data(), this.props.selected_bill_item)
         // console.log('bills_details_section', item, this.props.selected_bill_item)
 
-        if(item == null){
+        if(item == null  || item['ipfs'] == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}
@@ -789,7 +789,7 @@ class BillDetailsSection extends Component {
 
     render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height
+        var he = this.props.height - 70
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>

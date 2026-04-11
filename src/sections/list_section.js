@@ -1028,7 +1028,7 @@ class PostListSection extends Component {
                                     );
                                 }}
                                 rangeChanged={(range) => {
-                                    this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                                    this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'jobs'))
                                 }}
                             />
                     </div>
@@ -1037,7 +1037,8 @@ class PostListSection extends Component {
         } 
     }
 
-    get_viewed_item_ids(items, range, identifier){
+    get_viewed_item_ids(items, range, identifier, section){
+        this.update_items_that_should_be_in_view(items, range, identifier, section)
         const { startIndex, endIndex } = range;
         const viewed_item_ids = []
         for(var i=startIndex-1; i<=endIndex; i++){
@@ -1045,6 +1046,16 @@ class PostListSection extends Component {
         }
 
         return viewed_item_ids
+    }
+
+    update_items_that_should_be_in_view(items, range, identifier, section){
+        const { startIndex, endIndex } = range;
+        const focused_item_ids = []
+        for(var i=startIndex-7; i<=endIndex+7; i++){
+            if(i >= 0 && i<items.length) focused_item_ids.push(items[i][identifier]);
+        }
+        const should_continue_loading = endIndex+10 >= items.length
+        this.props.set_page_objects_that_should_be_in_focus(focused_item_ids, should_continue_loading, section)
     }
 
     render_loading_screen_card(){
@@ -1067,6 +1078,20 @@ class PostListSection extends Component {
     }
 
     render_job_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_job_item(object)
@@ -1540,7 +1565,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'contracts'))
                         }}
                     />
                 </div>
@@ -1554,6 +1579,20 @@ class PostListSection extends Component {
     }
 
     render_contract_item(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contract_item(object)
@@ -1707,7 +1746,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'proposals'))
                         }}
                     />
                 </div>
@@ -1748,6 +1787,20 @@ class PostListSection extends Component {
     }
 
     render_proposal_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_proposal_item(object)
@@ -1862,7 +1915,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'nitros'))
                         }}
                     />
                 </div>
@@ -1875,6 +1928,20 @@ class PostListSection extends Component {
     }
 
     render_nitro_object_if_locked(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_nitro_item(object)
@@ -1993,7 +2060,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'subscriptions'))
                         }}
                     />
                 </div>
@@ -2024,6 +2091,20 @@ class PostListSection extends Component {
     }
 
     render_subscription_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
@@ -2149,7 +2230,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'convo_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'convo_id', 'mail'))
                         }}
                     />
                 </div>
@@ -2189,6 +2270,20 @@ class PostListSection extends Component {
     }
 
     render_mail_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_mail_item(object)
@@ -2329,7 +2424,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'contractors'))
                         }}
                     />
                 </div>
@@ -2342,6 +2437,20 @@ class PostListSection extends Component {
     }
 
     render_contractor_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contractor_item(object)
@@ -2504,7 +2613,7 @@ class PostListSection extends Component {
                                 );
                             }}
                             rangeChanged={(range) => {
-                                this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'convo_id'))
+                                this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'convo_id', 'messages'))
                             }}
                         />
                     </div>
@@ -2917,7 +3026,7 @@ class PostListSection extends Component {
                         );
                     }}
                     rangeChanged={(range) => {
-                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id'))
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id', 'E5s'))
                     }}
                 />
             </div>
@@ -3177,6 +3286,13 @@ class PostListSection extends Component {
 
     render_link_object_item(object, index, type){
         if(object == null) return;
+        if(object == null || object['ipfs'] == null){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         const item = this.format_link_item(object, type)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -4353,7 +4469,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'posts'))
                         }}
                     />
                 </div>
@@ -4453,6 +4569,20 @@ class PostListSection extends Component {
     }
 
     render_post_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_post_item(object)
@@ -4662,7 +4792,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'channels'))
                         }}
                     />
                 </div>
@@ -4671,6 +4801,20 @@ class PostListSection extends Component {
     }
 
     render_channel_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_channel_item(object)
@@ -4851,7 +4995,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'polls'))
                         }}
                     />
                 </div>
@@ -4860,6 +5004,20 @@ class PostListSection extends Component {
     }
 
     render_poll_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_poll_item(object)
@@ -5001,7 +5159,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'storefronts'))
                         }}
                     />
                 </div>
@@ -5014,6 +5172,20 @@ class PostListSection extends Component {
     }
 
     render_storefront_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_storefront_item(object)
@@ -5249,7 +5421,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'bags'))
                         }}
                     />
                 </div>
@@ -5262,6 +5434,20 @@ class PostListSection extends Component {
     }
 
     render_bag_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_bag_item(object)
@@ -5485,7 +5671,7 @@ class PostListSection extends Component {
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'audio'))
                         }}
                     />
                 </div>
@@ -6073,6 +6259,20 @@ return data['data']
     }
 
     render_audio_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_audio_item(object)
@@ -6374,7 +6574,7 @@ return data['data']
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'videos'))
                         }}
                     />
                 </div>
@@ -6635,6 +6835,20 @@ return data['data']
     }
 
     render_video_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_video_item(object)
@@ -6943,7 +7157,7 @@ return data['data']
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id', 'coins'))
                         }}
                     />
                 </div>
@@ -7096,7 +7310,7 @@ return data['data']
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'id', 'ethers'))
                         }}
                     />
                 </div>
@@ -7317,7 +7531,7 @@ return data['data']
                         );
                     }}
                     rangeChanged={(range) => {
-                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'tokens'))
                     }}
                 />
             </div>
@@ -7333,6 +7547,20 @@ return data['data']
     }
 
     render_ends_object(object_array, index, token_id, img, object){
+        if(object == null || (object['ipfs'] == null && object['id'] != 3)){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.get_exchanges_data(object_array, token_id, img, object)
@@ -7566,7 +7794,7 @@ return data['data']
                         );
                     }}
                     rangeChanged={(range) => {
-                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'tokens'))
                     }}
                 />
             </div>
@@ -7578,6 +7806,20 @@ return data['data']
     }
 
     render_spends_object(object_array, index, token_id, img, object){
+        if(object == null || (object['ipfs'] == null && object['id'] != 5)){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.get_exchanges_data(object_array, token_id, img, object)
@@ -7690,7 +7932,7 @@ return data['data']
                             );
                         }}
                         rangeChanged={(range) => {
-                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id'))
+                            this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'bills'))
                         }}
                     />
                 </div>
@@ -7710,6 +7952,20 @@ return data['data']
     }
 
     render_bill_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         var item = this.format_bill_object(object)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']

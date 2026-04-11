@@ -199,7 +199,7 @@ class AudioDetailSection extends Component {
 
     render_posts_list_detail(){
         var object = this.is_object_playlist() ? this.get_item_in_playlists(this.get_audio_items(), this.props.selected_audio_item) : this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
-        if(object == null){
+        if(object == null || (this.is_object_playlist() == false && object['ipfs'] == null)){
             return(
                 <div>
                     {this.render_empty_detail_object()}

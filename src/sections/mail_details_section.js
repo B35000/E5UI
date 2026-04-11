@@ -123,7 +123,7 @@ class MailDetailsSection extends Component {
 
     render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height
+        var he = this.props.height - 70
         return(
             <div>
                 <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
@@ -147,7 +147,7 @@ class MailDetailsSection extends Component {
     render_mail_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_mail_list_detail_tags_object, this.state.navigate_view_mail_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
-        if(object == null){
+        if(object == null || object['ipfs'] == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}

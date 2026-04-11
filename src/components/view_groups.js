@@ -1720,6 +1720,7 @@ class ViewGroups extends Component {
             if(ecid == null) return empty_image
             if(!ecid.startsWith('image')) return ecid
             var ecid_obj = this.get_cid_split(ecid)
+            // console.log('get_image_from_file', ecid, this.props.uploaded_data)
             if(this.props.uploaded_data[ecid_obj['filetype']] == null) return this.get_default_image_or_empty_image(ecid)
             var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
             if(data == null) return this.get_default_image_or_empty_image(ecid)
