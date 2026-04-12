@@ -3837,7 +3837,7 @@ return data['data']
 
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':title_space+number_with_commas(object['id'])+sender+' • '+responses_text, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
+            'id':{'title':title_space+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -4277,7 +4277,7 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('3', {'title':account_id, 'details':alias, 'size':'l'})}
-                {this.render_country_if_exists(message)}
+                {message != null && this.render_country_if_exists(message)}
                 {this.render_detail_item('0')}
                 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'details':this.props.app_state.loc['3055z']/* 'Add the account to your contact list for easier access in the future.' */, 'size':'l'})}

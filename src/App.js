@@ -1373,7 +1373,7 @@ class App extends Component {
 
     e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false,
 
-    focused_items:[], detail_focused_items:[], should_continue_loading:{},
+    focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false,
   };
 
   get_thread_pool_size(){
@@ -4378,6 +4378,7 @@ class App extends Component {
       var saved_cypher_seed_object = state.saved_cypher_seed_object || {}
       var notifications_permissions = state.notifications_permissions || 'e'
       var account_balance = state.account_balance || {}
+      var is_safe_to_load_focused_items_into_memory = storage_permissions != 'e'
 
       this.setState({
         theme: theme,
@@ -4468,6 +4469,7 @@ class App extends Component {
         saved_cypher_seed_object: saved_cypher_seed_object,
         notifications_permissions: notifications_permissions,
         account_balance: account_balance,
+        is_safe_to_load_focused_items_into_memory: is_safe_to_load_focused_items_into_memory,
       })
       var me = this;
       setTimeout(function() {
@@ -9232,10 +9234,11 @@ class App extends Component {
     this.setState({storage_permissions: item})
     var me = this;
     setTimeout(function() {
-        me.set_cookies()
-        me.update_theme_image_data_once_storage_permissions_enabled()
-        me.update_local_storage_data_once_storage_permissions_disabled()
-        me.delete_data_in_db_after_permissions_change()
+      me.set_cookies()
+      me.update_theme_image_data_once_storage_permissions_enabled()
+      me.update_local_storage_data_once_storage_permissions_disabled()
+      me.delete_data_in_db_after_permissions_change()
+      if(item != 'e') me.load_all_objects_into_local_forage_after_permissions_change()
     }, (1 * 1000));
   }
 
@@ -16415,7 +16418,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
-      when_file_link_tapped={this.when_file_link_tapped.bind(this)}
+      when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
       />,
       this.state.view_job_request_contract_bottomsheet,
       this.open_view_job_request_contract_bottomsheet,
@@ -19246,6 +19249,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.prompt_top_notification(me.getLocale()['3055gu']/* Cookies Accepted. */, 1200)
+      me.load_all_objects_into_local_forage_after_permissions_change()
     }, (1 * 600))
 
     this.open_wallet_guide_bottomsheet('tutorial')
@@ -22381,7 +22385,7 @@ class App extends Component {
       <div /* style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <FullVideoPage ref={this.full_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
         update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
-        construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_full_video_bottomsheet={this.open_full_video_bottomsheet.bind(this)}
+        construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_full_video_bottomsheet={this.open_full_video_bottomsheet.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         />
       </div>
     )
@@ -24357,7 +24361,7 @@ class App extends Component {
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
       <div /* style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
-        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call_confirmation={this.leave_call_confirmation.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)}
+        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call_confirmation={this.leave_call_confirmation.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         />
       </div>
     )
@@ -37178,7 +37182,7 @@ class App extends Component {
   }
 
   async set_object_in_local_forage(object){
-    // return;
+    if(this.state.storage_permissions == 'e') return;
     const object_e5_id = object['e5_id'];
     try{
       await localforage.setItem(object_e5_id, object)
@@ -37196,7 +37200,7 @@ class App extends Component {
   }
 
   async load_focused_items_into_memory(focused_items, active, page){
-    // return;
+    if(this.state.is_safe_to_load_focused_items_into_memory == false) return;
     const final_focused_items = focused_items == null ? this.state.focused_items : focused_items;
     
     if(page == '?'){
@@ -37398,42 +37402,42 @@ class App extends Component {
         });
         this.setState({created_contractors: created_objects_clone2});
       }
-      else if(active == this.getLocale()['1264s']/* 'nitro' */){
-        for(var i=0; i<final_focused_items.length; i++){
-          const focused_object_e5_id = final_focused_items[i]
-          const object = await this.get_object_in_local_forage(focused_object_e5_id)
-          if(object != null){
-            const e5 = object['e5']
-            const id = object['id']
+      // else if(active == this.getLocale()['1264s']/* 'nitro' */){
+      //   for(var i=0; i<final_focused_items.length; i++){
+      //     const focused_object_e5_id = final_focused_items[i]
+      //     const object = await this.get_object_in_local_forage(focused_object_e5_id)
+      //     if(object != null){
+      //       const e5 = object['e5']
+      //       const id = object['id']
 
-            const created_nitros_clone = structuredClone(this.state.created_nitros)
-            const created_nitro_mappings_clone = structuredClone(this.state.created_nitro_mappings)
+      //       const created_nitros_clone = structuredClone(this.state.created_nitros)
+      //       const created_nitro_mappings_clone = structuredClone(this.state.created_nitro_mappings)
 
-            const index = created_nitros_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
-            if(index != -1){
-              created_nitros_clone[e5][index] = object
-            }else{
-              created_nitros_clone[e5].push(object)
-            }
-            created_nitro_mappings_clone[e5][id] = object
+      //       const index = created_nitros_clone[e5].findIndex(item => item['e5_id'] == focused_object_e5_id);
+      //       if(index != -1){
+      //         created_nitros_clone[e5][index] = object
+      //       }else{
+      //         created_nitros_clone[e5].push(object)
+      //       }
+      //       created_nitro_mappings_clone[e5][id] = object
 
-            this.setState({created_nitros: created_nitros_clone, created_nitro_mappings: created_nitro_mappings_clone})
-          }
-        }
-        const created_objects_clone2 = structuredClone(this.state.created_nitros)
-        const created_objects_mappings_clone2 = structuredClone(this.state.created_nitro_mappings)
+      //       this.setState({created_nitros: created_nitros_clone, created_nitro_mappings: created_nitro_mappings_clone})
+      //     }
+      //   }
+      //   const created_objects_clone2 = structuredClone(this.state.created_nitros)
+      //   const created_objects_mappings_clone2 = structuredClone(this.state.created_nitro_mappings)
 
-        Object.keys(created_objects_clone2).forEach(e5 => {
-          created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
-              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
-                delete created_objects_clone2[e5][index]['ipfs'];
-                delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
-              }
-          });
-        });
+      //   Object.keys(created_objects_clone2).forEach(e5 => {
+      //     created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
+      //         if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+      //           delete created_objects_clone2[e5][index]['ipfs'];
+      //           delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
+      //         }
+      //     });
+      //   });
 
-        this.setState({created_nitros: created_objects_clone2, created_nitro_mappings: created_objects_mappings_clone2});
-      }
+      //   this.setState({created_nitros: created_objects_clone2, created_nitro_mappings: created_objects_mappings_clone2});
+      // }
     }
     else if(page == 'e'){
       if(active == this.getLocale()['1213']/* 'posts' */){
@@ -37770,17 +37774,20 @@ class App extends Component {
   }
 
   async remove_unfocused_items_comments_and_metadata_from_memory(focused_items){
+    if(this.state.is_safe_to_load_focused_items_into_memory == false) return;
     const final_focused_items = focused_items == null ? this.state.detail_focused_items : focused_items;
     const clone = {}
     const all_messages_e5_ids = Object.keys(this.state.object_messages);
     for(var i=0; i<all_messages_e5_ids.length; i++){
       const e5_id = all_messages_e5_ids[i]
+      const identifier = e5_id+'chain'+'comments'
       if(final_focused_items.includes(e5_id)){
-        const existing_data = await this.get_object_in_local_forage(e5_id) || []
+        var existing_data = await this.get_object_in_local_forage(identifier)
+        if(existing_data == null) existing_data = [];
         clone[e5_id] = this.sortByAttributeDescending(existing_data.concat(this.state.object_messages[e5_id]), 'time')
       }
       else{
-        this.set_message_data_in_local_forage(e5_id, this.state.object_messages[e5_id])
+        this.set_message_data_in_local_forage(identifier, this.state.object_messages[e5_id])
       }
     }
 
@@ -37788,12 +37795,14 @@ class App extends Component {
     const all_socket_messages_e5_ids = Object.keys(this.state.socket_object_messages);
     for(var i=0; i<all_socket_messages_e5_ids.length; i++){
       const e5_id = all_socket_messages_e5_ids[i]
+      const identifier = e5_id+'socket'+'comments'
       if(final_focused_items.includes(e5_id)){
-        const existing_data = await this.get_object_in_local_forage(e5_id+'socket') || []
+        var existing_data = await this.get_object_in_local_forage(identifier)
+        if(existing_data == null) existing_data = [];
         clone2[e5_id] = this.sortByAttributeDescending(existing_data.concat(this.state.socket_object_messages[e5_id]), 'time')
       }
       else{
-        this.set_message_data_in_local_forage(e5_id+'socket', this.state.socket_object_messages[e5_id])
+        this.set_message_data_in_local_forage(identifier, this.state.socket_object_messages[e5_id])
       }
     }
 
@@ -37813,11 +37822,15 @@ class App extends Component {
     const clone2 = structuredClone(this.state.socket_object_messages)
 
     const memory_messages = this.state.object_messages[e5_id] || []
-    const existing_data = await this.get_object_in_local_forage(e5_id) || []
+    const identifier = e5_id+'chain'+'comments'
+    var existing_data = await this.get_object_in_local_forage(identifier)
+    if(existing_data == null) existing_data = [];
     clone[e5_id] = this.sortByAttributeDescending(existing_data.concat(memory_messages), 'time')
 
     const memory_messages2 = this.state.socket_object_messages[e5_id] || []
-    const existing_data2 = await this.get_object_in_local_forage(e5_id) || []
+    const identifier2 = e5_id+'socket'+'comments'
+    var existing_data2 = await this.get_object_in_local_forage(identifier2)
+    if(existing_data2 == null) existing_data2 = [];
     clone2[e5_id] = this.sortByAttributeDescending(existing_data2.concat(memory_messages2), 'time')
 
     this.setState({object_messages: clone, socket_object_messages: clone2})
@@ -37834,6 +37847,38 @@ class App extends Component {
       };
       checkReady();
     });
+  }
+
+  async load_all_objects_into_local_forage_after_permissions_change(){
+    const run_function = async (objects) => {
+      var fetch_total = 0;
+      for(var i=0; i<objects.length; i++){
+        const fetch_and_set = async () => {
+          if(objects[i]['ipfs'] != null) await this.set_object_in_local_forage(objects[i])
+          fetch_total--;
+        }
+        fetch_total++;
+        fetch_and_set()
+      }
+      while (fetch_total > 0) {
+        if (fetch_total == 0) break;
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
+    }
+
+    const all_objects = []
+    const sources = [this.state.created_jobs, this.state.created_contracts, this.state.my_proposals, this.state.created_subscriptions, this.state.all_mail, this.state.created_contractors, this.state.created_posts, this.state.created_channels, this.state.created_stores, this.state.created_bags, this.state.created_audios, this.state.created_videos, this.state.created_polls, this.state.created_bills]
+
+    sources.forEach(source => {
+      Object.keys(source).forEach(e5 => {
+        source[e5].forEach(object => {
+          all_objects.push(object)
+        });
+      });
+    });
+
+    await run_function(all_objects);
+    this.setState({is_safe_to_load_focused_items_into_memory: true})
   }
 
 

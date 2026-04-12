@@ -134,6 +134,15 @@ class ViewGroups extends Component {
         var tag_shadow = this.props.theme['tag_shadow'];
         // var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
 
+        const check_if_is_link = (part) => {
+            const num = part.startsWith('e') ? parseInt(part.replace('e',''), 10): parseInt(part, 10);
+            return !isNaN(num) && num > 1000 && part.startsWith('e') && (part.match(/e/g) || []).length == 1;
+        }
+
+        const check_if_is_account_link = (part) => {
+            return isNaN(part.replace('@', '')) && part.startsWith('@') && (part.match(/@/g) || []).length == 1;
+        }
+
         if(item_id=='0'){/* line */
             /* {this.render_detail_item('0')} */
             return(
@@ -419,17 +428,9 @@ class ViewGroups extends Component {
                                             <Linkify options={this.linkifyOptions} /* options={{target: '_blank'}} */>
                                                 {
                                                     parts.map((part, index) => {
-                                                        const num = parseInt(part, 10);
-                                                        const isId = !isNaN(num) && num > 1000;
-                                                        if (isId) {
+                                                        if (check_if_is_link(part) || check_if_is_account_link(part)) {
                                                             return (
-                                                                <span key={index} style={{'width': 'fit-content', 'background-color': tag_background_color, 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(parseInt(part))}>
-                                                                    {/* <span
-                                                                    key={index}
-                                                                    style={{ textDecoration: "underline", cursor: "pointer", color: color }}
-                                                                    onClick={() => this.when_e5_link_tapped(num)}>
-                                                                        {part}
-                                                                </span> */}
+                                                                <span key={index} style={{'width': 'fit-content', 'background-color': tag_background_color, 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(part, check_if_is_link(part), check_if_is_account_link(part))}>
                                                                     <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
                                                                 </span>
                                                             );
@@ -1020,8 +1021,8 @@ class ViewGroups extends Component {
                                 console.log('markdown',props.children)
                                 const text = props.children
 
-                                const processed = typeof text === "string" ? this.split_text(text).map((part, i) => (!isNaN(parseInt(part)) && parseInt(part) > 1000) ? (
-                                        <span key={i} style={{'width': 'fit-content', 'background-color': tag_background_color, 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(parseInt(part))}>
+                                const processed = typeof text === "string" ? this.split_text(text).map((part, i) => (check_if_is_link(part) || check_if_is_account_link(part)) ? (
+                                        <span key={i} style={{'width': 'fit-content', 'background-color': tag_background_color, 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(part, check_if_is_link(part), check_if_is_account_link(part))}>
                                             <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
                                         </span>
                                         
@@ -1396,15 +1397,15 @@ class ViewGroups extends Component {
 
     split_text(text){
         if(text == null) return []
-        var split = text.split(' ')
-        var final_string = []
-        split.forEach((word, index) => {
-            final_string.push(word)
-            if(split.length-1 != index){
-                final_string.push(' ')
-            }
-        });
-        return final_string
+        return text.match(/\s+|\S+/g) || []
+        // var final_string = []
+        // split.forEach((word, index) => {
+        //     final_string.push(word)
+        //     if(split.length-1 != index){
+        //         final_string.push(' ')
+        //     }
+        // });
+        // return final_string
     }
 
     when_detail_eight_clicked(id, object){
@@ -1461,8 +1462,9 @@ class ViewGroups extends Component {
         }
     }
 
-    when_e5_link_tapped(id){
-        this.props.when_e5_link_tapped(id)
+    when_e5_link_tapped(id, is_link, is_account_link){
+        if(is_link == true) this.props.when_e5_link_tapped(parseInt(id.replace('e',''), 10));
+        else if(is_account_link == true) this.props.show_account_details(id.replace('@',''))
     }
 
     mask_item_if_enabled(masked, item){

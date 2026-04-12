@@ -1284,23 +1284,21 @@ class CallPage extends Component {
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} > {this.get_sender_title_text(item)}</p>
+                                    <p className="fw-bold" style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}}>{this.get_sender_title_text(item)}</p>
                                 </div>
                                 <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                                 </div>
                             </div>
                             <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={this.linkifyOptions}  /* options={{target: '_blank'}} */>{
                                 parts.map((part, index) => {
-                                    const num = parseInt(part, 10);
-                                    const isId = !isNaN(num) && num > 1000;
-                                    if (isId) {
+                                    const num = part.startsWith('e') ? parseInt(part.replace('e',''), 10): parseInt(part, 10);
+                                    const isId = !isNaN(num) && num > 1000 && part.startsWith('e') && (part.match(/e/g) || []).length == 1;
+                                    const is_account_link = isNaN(part.replace('@', '')) && part.startsWith('@') && (part.match(/@/g) || []).length == 1;
+                                    if (isId || is_account_link) {
                                         return (
-                                            <span
-                                                key={index}
-                                                style={{ textDecoration: "underline", cursor: "pointer", color: this.props.theme['secondary_text_color'] }}
-                                                onClick={() => this.when_e5_link_tapped(num)}>
-                                                    {part}
+                                            <span key={index} style={{'width': 'fit-content', 'background-color': this.props.theme['tag_background_color'], 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => (isId ? this.when_e5_link_tapped(num) : this.show_account_details(part.replace('@','')))}>
+                                                <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
                                             </span>
                                         );
                                     }
@@ -1335,6 +1333,36 @@ class CallPage extends Component {
             )
         }
     };
+
+    async get_recipient_id(recipient){
+        await this.props.get_account_id_from_alias(recipient)
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = (obj[recipient] == null ? recipient : obj[recipient])
+        return id
+    }
+
+    async get_recipient_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    async show_account_details(alias){
+        this.props.notify(this.props.app_state.loc['1264bt'], 1000);
+        const account_id = await this.get_recipient_id(alias)
+        const account_e5 = await this.get_recipient_e5(alias)
+        this.props.show_dialog_bottomsheet({'account':account_id, 'e5':account_e5}, 'account_options')
+    }
 
     handleLinkClick = (url, e) => {
         e.preventDefault(); // stop normal navigation
@@ -1562,15 +1590,15 @@ class CallPage extends Component {
 
     split_text(text){
         if(text == null) return []
-        var split = text.split(' ')
-        var final_string = []
-        split.forEach((word, index) => {
-            final_string.push(word)
-            if(split.length-1 != index){
-                final_string.push(' ')
-            }
-        });
-        return final_string
+        return text.match(/\s+|\S+/g) || []
+        // var final_string = []
+        // split.forEach((word, index) => {
+        //     final_string.push(word)
+        //     if(split.length-1 != index){
+        //         final_string.push(' ')
+        //     }
+        // });
+        // return final_string
     }
 
     when_e5_link_tapped(id){
@@ -1809,6 +1837,8 @@ class CallPage extends Component {
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             }
+
+            this.unfocus_message()
         }
     }
 

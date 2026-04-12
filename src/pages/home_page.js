@@ -6070,7 +6070,7 @@ class home_page extends Component {
 
                 show_view_configure_obligations={this.props.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.props.emit_subscribe_to_obligation_event.bind(this)}
                 does_entered_text_contain_reserved_keywords={this.props.does_entered_text_contain_reserved_keywords.bind(this)}
-                show_exchange_deposit_bottomsheet={this.props.show_exchange_deposit_bottomsheet.bind(this)} show_bridge_ether_bottomsheet={this.props.show_bridge_ether_bottomsheet.bind(this)}
+                show_exchange_deposit_bottomsheet={this.props.show_exchange_deposit_bottomsheet.bind(this)} show_bridge_ether_bottomsheet={this.props.show_bridge_ether_bottomsheet.bind(this)} show_account_details={this.show_account_details.bind(this)}
                 />
             </div>
         )
@@ -6803,6 +6803,36 @@ class home_page extends Component {
 
     add_id_to_contacts(account_id, item){
         this.props.show_dialog_bottomsheet({'account':account_id, 'e5':item['e5'], 'message': item}, 'account_options')
+    }
+
+    async get_recipient_id(recipient){
+        await this.props.get_account_id_from_alias(recipient)
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = (obj[recipient] == null ? recipient : obj[recipient])
+        return id
+    }
+
+    async get_recipient_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    async show_account_details(alias){
+        this.render_top_notification(this.props.app_state.loc['1264bt'], 1000);
+        const account_id = await this.get_recipient_id(alias)
+        const account_e5 = await this.get_recipient_e5(alias)
+        this.props.show_dialog_bottomsheet({'account':account_id, 'e5':account_e5}, 'account_options')
     }
 
     render_dialog_ui(){
