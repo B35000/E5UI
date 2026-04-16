@@ -71,7 +71,7 @@ class ViewNotificationLogPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067ag']/* 'post-following' */, this.props.app_state.loc['3067x']/* 'explore-comments' */, this.props.app_state.loc['3067bb']/* 'promoted 📢' */, this.props.app_state.loc['3067be']/* 'tagged ﹫' */], [0]
+                    ['or','',0], ['e', this.props.app_state.loc['3067f']/* 'bags' */, this.props.app_state.loc['3067g']/* 'storefronts' */, this.props.app_state.loc['3067aa']/* 'auction' */, this.props.app_state.loc['3067bi']/* 'purchase-request 📝' */, this.props.app_state.loc['3067bk']/* 'purchase-response 🤝' */, this.props.app_state.loc['3067ag']/* 'post-following' */, this.props.app_state.loc['3067x']/* 'explore-comments' */, this.props.app_state.loc['3067bb']/* 'promoted 📢' */, this.props.app_state.loc['3067be']/* 'tagged ﹫' */], [0]
                 ],
             };
         }
@@ -284,6 +284,20 @@ class ViewNotificationLogPage extends Component {
             return(
                 <div>
                     {this.render_explore_notifications(['comment_tag', 'post_tag'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3067bi']/* 'purchase-request 📝' */){
+            return(
+                <div>
+                    {this.render_explore_notifications(['storefront_purchase_request'])}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3067bk']/* 'purchase-response 🤝' */){
+            return(
+                <div>
+                    {this.render_explore_notifications(['storefront_request_response'])}
                 </div>
             )
         }
@@ -579,6 +593,8 @@ class ViewNotificationLogPage extends Component {
             'promoted_post': this.props.app_state.loc['3067ay'],/* '📣 $ promoted a post for you to see.' */
             'comment_tag': this.props.app_state.loc['3067bd'],/* '﹫ $ tagged you in their comment.' */
             'post_tag': this.props.app_state.loc['3067bf'],/* '﹫ $ tagged you in their post.' */
+            'storefront_purchase_request':this.props.app_state.loc['3067bh'],/* '🏪 $ sent a purchase request to one of your stores.' */
+            'storefront_request_response':this.props.app_state.loc['3067bj'],/* '🤝 $ accepted your storefront purchase request and sent you their contract.' */
         }
         const event_type = item['event_type']
         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
@@ -622,8 +638,10 @@ class ViewNotificationLogPage extends Component {
         const promoted_post = notification_object['promoted_post'] || [];
         const comment_tag = notification_object['comment_tag'] || [];
         const post_tag = notification_object['post_tag'] || [];
+        const storefront_purchase_request = notification_object['storefront_purchase_request'] || []
+        const storefront_request_response = notification_object['storefront_request_response'] || []
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag, storefront_purchase_request, storefront_request_response)
 
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)

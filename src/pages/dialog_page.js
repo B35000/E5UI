@@ -125,7 +125,9 @@ class DialogPage extends Component {
 
         weight_tags_search:'', moved_exchanges_search: '', 
 
-        out_of_stock_items:[], seed_passcode:'', passcode_expiry_time:0, passcode_entry_tries:5, cypher_passcode:'', get_remember_seed_during_initial_synch_tags_object: this.get_remember_seed_during_initial_synch_tags_object()
+        out_of_stock_items:[], seed_passcode:'', passcode_expiry_time:0, passcode_entry_tries:5, cypher_passcode:'', get_remember_seed_during_initial_synch_tags_object: this.get_remember_seed_during_initial_synch_tags_object(),
+
+        selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object()
     };
 
 
@@ -209,6 +211,17 @@ class DialogPage extends Component {
         };
     }
 
+    get_include_exit_contract_after_finish_transaction_object(initial=0){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['3097l']/* 'exit-contract ↩' */], [initial]
+            ],
+        };
+    }
+
 
 
 
@@ -254,6 +267,11 @@ class DialogPage extends Component {
                 const object = data['object']
                 const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
                 this.setState({out_of_stock_items: out_of_stock_items})
+            }
+            else if(id == 'finalize_storefront_request_transaction'){
+                if(data['am_i_part_of_contract'] == true){
+                    this.setState({get_include_exit_contract_after_finish_transaction_object: this.get_include_exit_contract_after_finish_transaction_object(1)})
+                }
             }
         }
     }
@@ -696,6 +714,9 @@ class DialogPage extends Component {
         }
         else if(option == 'confirm_bridge_ether_dialog'){
             return this.render_confirm_bridge_ether_dialog_ui()
+        }
+        else if(option == 'finalize_storefront_request_transaction'){
+            return this.view_finalize_storefront_request_transaction_ui()
         }
     }
 
@@ -3183,7 +3204,7 @@ return data['data']
         var type = this.state.data['type']
         var id = event.returnValues[p]
         var items = []
-        if(type == 'storefront' || type == 'auctionbids'){
+        if(type == 'storefront' || type == 'auctionbids' || type == 'storefront_purchase_request'){
             items = this.props.app_state.created_stores[e5]
         }
         else if(type == 'bag'){
@@ -3458,6 +3479,9 @@ return data['data']
                 }
                 if(extra_data['storefront_order_events'] != null){
                     return_text.push(this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits'])));
+                }
+                if(extra_data['storefront_purchase_request_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['storefront_purchase_request_events']['all_hits'])));
                 }
             }
             const result_string = return_text.join(' • ')
@@ -9136,6 +9160,10 @@ return data['data']
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1632l']/* 'Finalize Transaction.' */, 'details':this.props.app_state.loc['1632m']/* 'Finish up by making the requested payments quoted and recording them on E5.' */, 'size':'l'})}
                     <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3097m']/* 'Exit their contract?' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_include_exit_contract_after_finish_transaction_object} tag_size={'l'} when_tags_updated={this.when_get_include_exit_contract_after_finish_transaction_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height:10}}/>
 
                     <div onClick={()=> this.finish_transaction(item, object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1632n']/* 'Finalize And Finish' */, 'action':''},)}
@@ -9154,6 +9182,10 @@ return data['data']
                 id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
                 entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
                 e5: object['e5'], application: item, object: object, price_data: item['price_data'], recipient: item['applicant_id'], identifier: object['e5_id']+item['applicant_id']+item['time']
+            }
+            const selected_item = this.state.get_selected_item(this.state.get_include_exit_contract_after_finish_transaction_object, 'e')
+            if(selected_item == this.props.app_state.loc['3097l']/* 'exit-contract ↩' */){
+                obj.contract_id = item['picked_contract_id']
             }
             this.props.add_finish_job_payment_transaction_to_stack(obj)
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
@@ -13029,7 +13061,6 @@ return data['data']
         }
     }
 
-
     request_passcode_for_decrypting_stored_seed_data(){
         return(
             <div>
@@ -13197,6 +13228,312 @@ return data['data']
         const my_balance = this.state.data['my_balance']
 
         this.props.bridge_ether_into_l2(item, picked_amount, recipient_address, gas_price, my_balance, sender_address)
+    }
+
+
+
+
+
+
+
+
+
+
+    view_finalize_storefront_request_transaction_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_finalize_storefront_request_transaction_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_finalize_storefront_request_transaction_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_finalize_storefront_request_transaction_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_finalize_storefront_request_transaction_data(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const variant_in_store = this.get_variant_object_from_storefront(object, item['variant_id'])
+        if(variant_in_store == null) return this.render_empty_views(3)
+        return(
+            <div>
+                {this.render_variant_final_prices(variant_in_store, item, object)}
+                {this.render_set_conditions_list_part(item)}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['3097m']/* 'Exit their contract?' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_include_exit_contract_after_finish_transaction_object} tag_size={'l'} when_tags_updated={this.when_get_include_exit_contract_after_finish_transaction_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                <div onClick={()=> this.finish_transaction2(variant_in_store, item, object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1632n']/* 'Finalize And Finish' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_get_include_exit_contract_after_finish_transaction_object_updated(tag_obj){
+        this.setState({get_include_exit_contract_after_finish_transaction_object: tag_obj})
+    }
+
+    render_variant_final_prices(variant_in_store, item, object){
+        const price_array = this.get_final_price_data(variant_in_store, item)
+        const shipping_price = object['ipfs'].shipping_price_data
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064o']/* 'Order Price.' */, 'details':this.props.app_state.loc['2064p'] /* 'The price of the ordered item with the specified options.' */})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_array.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                        </div>
+                    ))}
+                </div>
+
+                {shipping_price.length > 0 && (
+                    <div>
+                        {this.render_detail_item('4', {'text':this.props.app_state.loc['3097k']/* 'Shipping Fee.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        <div style={{height: 10}}/>
+                        
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {shipping_price.map((item, index) => (
+                                <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_set_conditions_list_part(purchase_item){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(purchase_item['condition_data'])
+
+        if(items.length == 0){
+            return;
+        }
+        return(
+            <div style={{}}>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3097b']/* 'Order Conditions.' */, 'details':this.props.app_state.loc['3055og'] /* 'Tap a condition to include it in the final pay.' */})}
+                <div style={{height: 10}}/>
+                <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '5px'}} onClick={() => this.when_conition_clicked(item)}>
+                            {this.render_condition_item(item)}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+    
+    when_conition_clicked(item){
+        const clone = this.state.selected_conditions.slice()
+        const index = clone.indexOf(item)
+        if(index == -1){
+            clone.push(item)
+        }
+        else{
+            clone.splice(index, 1)
+        }
+        this.setState({selected_conditions: clone})
+    }
+    
+    render_condition_item(item){
+        const title = item['condition']
+        const details = this.props.app_state.loc['3096n']/* $ exchanges added. */.replace('$', number_with_commas(item['price_data'].length))
+        const opacity = this.state.selected_conditions.includes(item) ? 0.5 : 1.0
+        return(
+            <div style={{opacity: opacity}}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_selected_pay_amounts(item['price_data'])}
+            </div>
+        )
+    }
+
+    render_selected_pay_amounts(price_data){
+        var items = [].concat(price_data)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_price_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_price_item(item){
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        const details = this.format_account_balance_figure(item['amount'])
+        const image = this.props.app_state.token_thumbnail_directory[this.state.data['object']['e5']][item['id']]
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':title, 'details':details, 'image':image, 'size':'s'})}
+            </div>
+        )
+    }
+
+    finish_transaction2(variant_in_store, item, object){
+        const price_data = this.get_final_price_data(variant_in_store, item, object)
+        if(!this.check_if_sender_has_enough_balance_for_payouts(price_data, object['e5'])){
+            this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+        }
+        else{
+            const obj = {
+                id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
+                entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
+                e5: object['e5'], application: item, object: object, price_data: price_data,
+                recipient: object['author'], identifier: item['purchase_identifier']
+            }
+
+            const selected_item = this.get_selected_item(this.state.get_include_exit_contract_after_finish_transaction_object, 'e')
+            if(selected_item == this.props.app_state.loc['3097l']/* 'exit-contract ↩' */){
+                obj.contract_id = item['contract']
+            }
+
+            this.props.add_finish_job_payment_transaction_to_stack(obj)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+            this.props.open_dialog_bottomsheet()
+        }
+    }
+
+    get_final_price_data(variant_in_store, item, object){
+        var price_items = variant_in_store['price_data']
+        var price_obj = {}
+        price_items.forEach(price => {
+            if(price_obj[price['id']] == null) price_obj[price['id']] = bigInt(0)
+            price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+        });
+
+        if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+            var options = item['storefront_options']
+
+            for(var i=0; i<item['options'].length; i++){
+                var tag_obj = item['options'][i]
+                var selected_items = []
+                for(var j=0; j<tag_obj['e'][2].length; j++){
+                    var selected_item_pos = tag_obj['e'][2][j]
+                    if(selected_item_pos != 0){
+                        selected_items.push(selected_item_pos-1)
+                    }
+                }
+                for(var k=0; k<selected_items.length; k++){
+                    var selected_pos = selected_items[k]
+                    var option_prices = options[i]['options'][selected_pos]['price']
+                    option_prices.forEach(price => {
+                        if(price_obj[price['id']] == null){
+                            price_obj[price['id']] = bigInt(0)
+                        }
+                        price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                    });
+                } 
+            }
+        }
+
+        
+        if(item['price_data2'].length != 0){
+            const price_array = [].concat(item['price_data2'])
+            this.state.selected_conditions.forEach(condition => {
+                const price_data = condition['price_data']
+                price_data.forEach(price => {
+                    price_array.push(price)
+                });
+            });
+
+            if(object != null && object['ipfs'].shipping_price_data.length > 0){
+                object['ipfs'].shipping_price_data.forEach(price_item => {
+                    price_array.push(price_item)
+                });
+            }
+
+            return price_array
+        }else{
+            const price_array = []
+            for (const id in price_obj) {
+                if (price_obj.hasOwnProperty(id)) {
+                    price_array.push({'id':id, 'amount':price_obj[id]})
+                }
+            }
+
+            this.state.selected_conditions.forEach(condition => {
+                const price_data = condition['price_data']
+                price_data.forEach(price => {
+                    if(price_obj[price['id']] == null) price_obj[price['id']] = bigInt(0)
+                    price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                });
+            });
+
+            if(object != null && object['ipfs'].shipping_price_data.length > 0){
+                object['ipfs'].shipping_price_data.forEach(price_item => {
+                    price_array.push(price_item)
+                });
+            }
+
+            return price_array
+        }
     }
 
 

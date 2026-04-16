@@ -139,7 +139,7 @@ class StorefrontDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2642cn']/* 'variants 🎒' */, this.props.app_state.loc['2030']/* 'activity' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2642cn']/* 'variants 🎒' */, this.props.app_state.loc['2030']/* 'activity' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */],[1]
           ],
           'direct-purchases':[
               ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
@@ -207,6 +207,9 @@ class StorefrontDetailsSection extends Component {
         }
         else if(selected_item == this.props.app_state.loc['2642cl']/* 'accessibles 📂' */){
             this.props.get_direct_purchase_files(object)
+        }
+        else if(selected_item == this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */){
+            this.props.get_storefron_purchase_requests(object['id'], object['e5'])
         }
     }
 
@@ -351,6 +354,9 @@ class StorefrontDetailsSection extends Component {
                     {this.render_variants_section(object)}
                 </div>
             )
+        }
+        else if(selected_item == this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */){
+            return this.render_purchase_requests_section(object)
         }
     }
 
@@ -549,6 +555,7 @@ class StorefrontDetailsSection extends Component {
                     {this.render_item_variants(object, composition_type)} 
                     <div style={{height: 10}}/> */}
                     {this.render_chatroom_enabled_message(object)}
+
                     {this.render_out_of_stock_message_if_any(object)}   
 
                     {this.render_storefront_traffic_metrics(object)}  
@@ -556,7 +563,10 @@ class StorefrontDetailsSection extends Component {
                     {this.render_object_tag_price_info(object)}           
 
                     {this.render_add_to_bag_button(object)}
+
                     {this.render_direct_purchase_button(object)}
+
+                    {this.render_purchase_via_contract_button(object)}
 
                     {this.render_bid_in_auction_button(object)}
 
@@ -1622,6 +1632,51 @@ class StorefrontDetailsSection extends Component {
             )
         }
         
+    }
+
+    render_purchase_via_contract_button(object){
+        var direct_purchase_option = object['ipfs'].purchase_option_tags_object == null ? 2/* 'disabled' */ : this.get_selected_item2(object['ipfs'].purchase_option_tags_object, 'e')
+
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1/* 'in-stock' */ : this.get_selected_item2(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+
+        var purchase_via_contract_enabled = object['ipfs'].get_purchase_contracts_enabled_tags_object == null ? 0/* 'e' */ : this.get_selected_item2(object['ipfs'].get_purchase_contracts_enabled_tags_object, 'e')
+
+        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+
+        var sale_type = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
+
+        if(sale_type == 2){
+            return;
+        }
+        else if(purchase_via_contract_enabled == 0){
+            return;
+        }
+
+        const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
+        if(out_of_stock_items == null){
+            return;
+        }
+        else if(out_of_stock_items.length == object['ipfs'].variants.length){
+            return;
+        }
+        
+
+        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */ && object['event'].returnValues.p5 != my_account.toString() && this.is_object_still_keyword_valid(object)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2642cu']/* 'Send an offer to purchase the item using the seller\'s purchase contract with predefined conditions.' */, 'title':this.props.app_state.loc['2642ct']/* '📑 Contract Purchase' */})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.open_send_purchase_request_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2642cv']/* 'Create Offer' */, 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_send_purchase_request_ui(object){
+        this.props.open_send_purchase_request_ui(object)
     }
 
     render_edit_object_button(object){
@@ -3801,6 +3856,180 @@ class StorefrontDetailsSection extends Component {
         clone[object['e5_id']] = index
         this.setState({selected_token_tag: clone})
     }
+
+
+
+
+
+
+
+
+
+
+    render_purchase_requests_section(object){
+        var he = this.props.height-50
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_storefront_post_top_title(object)}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_storefront_requests(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_storefront_post_top_title(object){
+        // var object = this.get_contractor_items()[this.props.selected_contractor_item];
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':'✦ '+object['id'], 'details':this.props.app_state.loc['2642cx']/* 'Purchase Requests' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_storefront_requests(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var loaded_items = [].concat(this.get_job_details_responses(object))
+        var items = this.append_divider_between_old_messages_and_new_ones(loaded_items)
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    {this.props.app_state.contractor_applications[object['id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_storefront_response_item(item, object)}
+                                </div>
+                            </li> 
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    append_divider_between_old_messages_and_new_ones(items){
+        if(items.length == 0) return [];
+        const last_login_time = this.props.app_state.last_login_time
+        const newElement = 'e';
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        items.forEach((obj, i) => {
+            const diff = Math.abs((obj['application_expiry_time']*1000) - last_login_time);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIndex = i;
+            }
+        });
+        if(closestIndex == items.length - 1){
+            return items
+        }
+        const clone = items.slice()
+        clone.splice(closestIndex + 1, 0, newElement);
+        return clone;
+    }
+
+    get_job_details_responses(object){
+        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
+            const chain_messages = this.props.app_state.storefront_purchase_requests[object['id']] == null ? [] : this.props.app_state.storefront_purchase_requests[object['id']]
+            const socket_messages = this.props.app_state.socket_storefront_purchase_requests[object['id']] == null ? [] : this.props.app_state.socket_contractor_applications[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+            return all_responses
+        }else{
+            var filtered_responses = []
+            const chain_messages = this.props.app_state.storefront_purchase_requests[object['id']] == null ? [] : this.props.app_state.storefront_purchase_requests[object['id']]
+            const socket_messages = this.props.app_state.socket_storefront_purchase_requests[object['id']] == null ? [] : this.props.app_state.socket_storefront_purchase_requests[object['id']]
+            const all_responses = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+            for(var i=0; i<all_responses.length; i++){
+                if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
+                    filtered_responses.push(all_responses[i])
+                }
+            }
+            return filtered_responses
+        }
+    }
+
+    render_storefront_response_item(item, object){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('16', {'message':this.props.app_state.loc['2117w']/* new */})}
+                </div>
+            )
+        }
+        
+        const accepted_title = item['is_response_accepted'] == true ? '🤝 • ':''
+        const sender_id = this.get_senders_name2(item['applicant_id'], object)
+        return(
+            <div onClick={() => this.view_storefron_purchase_request(item, object)}>
+                {this.render_detail_item('3', {'title':accepted_title+sender_id+' • '+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'details':(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+            </div>
+        );
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['2785']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    get_expiry_time(item){
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
+        var t = ''
+        if(time_diff < 0){
+            t = this.get_time_diff(time_diff*-1) +this.props.app_state.loc['1698a']/* ' ago.' */
+        }else{
+            t = this.props.app_state.loc['1698b']/* 'In ' */+this.get_time_diff(time_diff)
+        }
+
+        return t
+    }
+
+    view_storefron_purchase_request(item, object){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 5000)
+            return;
+        }
+        this.open_view_storefront_purchase_request_ui(item, object)
+    }
+
+    open_view_storefront_purchase_request_ui(item, object){
+        this.props.open_view_storefront_request_ui(item, object)
+    }
+
+
+
+
+
+
+
+
+
 
 
 

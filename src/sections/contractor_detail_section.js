@@ -1304,7 +1304,7 @@ class ContractorDetailsSection extends Component {
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':this.props.app_state.loc['2228']/* 'Job Requests' */, 'size':'l'})} 
+                {this.render_detail_item('3', {'title':'✦ '+object['id'], 'details':this.props.app_state.loc['2228']/* 'Job Requests' */, 'size':'l'})} 
             </div>
         )
     }

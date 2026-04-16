@@ -76,6 +76,7 @@ class NewStorefrontItemPage extends Component {
         purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(), 
         get_option_storefront_type_object:this.get_option_storefront_type_object(),
         get_purchase_through_bags_tags_object:this.get_purchase_through_bags_tags_object(), get_bundle_image_tags_option:this.get_bundle_image_tags_option(),
+        get_purchase_contracts_enabled_tags_object:this.get_purchase_contracts_enabled_tags_object(),
         
         typed_link_text:'', link_search_results:[], added_links:[],
         edit_text_item_pos:-1, edit_variant_item_pos:-1,
@@ -283,6 +284,17 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+    get_purchase_contracts_enabled_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['89']/* 'enabled' */], [0]
+            ],
+        };
+    }
+
 
 
 
@@ -317,6 +329,10 @@ class NewStorefrontItemPage extends Component {
 
         if(this.state.pins == null){
             this.setState({pins: []})
+        }
+        
+        if(this.state.get_purchase_contracts_enabled_tags_object == null){
+            this.setState({get_purchase_contracts_enabled_tags_object: this.get_purchase_contracts_enabled_tags_object()})
         }
     }
 
@@ -537,6 +553,12 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535bq']/* 'Enable Pre-Purchase Agreement Offers.' */, 'details':this.props.app_state.loc['535br']/* 'If set to enabled, your clients will be able send purchase agreement offers to acquire your storefront items using your purchase contract (you\'ll need your purchase contract for this feature).' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_purchase_contracts_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_purchase_contracts_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['471']/* 'Direct Purchase Option' */, 'details':this.props.app_state.loc['472']/* 'If set to enabled, youll handle the shipping for the item when purchased directly by your clients' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -544,6 +566,10 @@ class NewStorefrontItemPage extends Component {
                 {this.render_direct_shipping_fee_view_if_enabled()}
             </div>
         )
+    }
+
+    when_get_purchase_contracts_enabled_tags_object_updated(tag_obj){
+        this.setState({get_purchase_contracts_enabled_tags_object: tag_obj})
     }
 
     render_pick_up_location_input_if_sale(){
@@ -1177,6 +1203,10 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -1185,9 +1215,11 @@ class NewStorefrontItemPage extends Component {
                 <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
                     <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6">
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -1198,9 +1230,11 @@ class NewStorefrontItemPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
-                        {this.render_empty_views(3)}
+                        {this.render_title_tags_part2()}
                     </div>
                 </div>
                 
@@ -1252,9 +1286,13 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['535g']/* 'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part2()}
+            </div>
+        )
+    }
 
-
-                {this.render_detail_item('0')}
+    render_title_tags_part2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311du']/* 'Bundle Thumbnail.' */, 'details':this.props.app_state.loc['a311dv']/* 'Bundle the image set as the thumbnail in the object to be displayed as a default while loading. This will make your object larger.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_bundle_image_tags_option} tag_size={'l'} when_tags_updated={this.when_get_bundle_image_tags_option_updated.bind(this)} theme={this.props.theme}/>
@@ -1264,9 +1302,6 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }

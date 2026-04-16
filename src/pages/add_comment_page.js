@@ -381,7 +381,7 @@ class AddCommentPage extends Component {
                 }
             }, (1 * 2000));
         }
-        else if(this.state.page == 'request'){
+        else if(this.state.page == 'request' || this.state.page == 'purchase_request'){
             const job_request = this.state.object
             const contractor_object = this.state.contractor_object
             const recipient_id = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
@@ -635,7 +635,7 @@ class AddCommentPage extends Component {
                 }
             }, (1 * 2000));
         }
-        else if(this.state.page == 'request'){
+        else if(this.state.page == 'request' || this.state.page == 'purchase_request'){
             const job_request = this.state.object
             const contractor_object = this.state.contractor_object
             const recipient_id = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
@@ -1405,6 +1405,10 @@ class AddCommentPage extends Component {
             var recipients_e5 = mail['account_e5']
 
             tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['account_e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'dim':this.state.entered_video_object_dimensions, 'expiry_time':expiry_time, my_country:my_country, my_city: my_city}
+        }
+        else if(page == 'purchase_request'){
+            var key_data = object['key_data']
+            tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':this.state.entered_image_objects,'pos':0}, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'target_recipient':this.state.contractor_object['author'], 'e5':object['e5'], 'award_tier':award_tier, 'award_amount':award_amount, 'award_receiver':award_receiver, 'font':font, 'size':size, 'pdf-data':this.state.entered_pdf_objects, 'markdown':markdown, 'sender_e5':this.props.app_state.selected_e5, 'key_data':key_data, 'lan':this.props.app_state.device_language, my_country:my_country, my_city: my_city}
         }
         
         

@@ -220,7 +220,7 @@ class PostDetailSection extends Component {
                     open_participate_in_auction={this.props.open_participate_in_auction.bind(this)}
                     get_direct_purchase_events={this.props.get_direct_purchase_events.bind(this)}
                     get_storefront_auction_bids={this.props.get_storefront_auction_bids.bind(this)}
-                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} get_stop_words={this.get_stop_words.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)} does_entered_text_contain_reserved_keywords={this.props.does_entered_text_contain_reserved_keywords.bind(this)} show_account_details={this.props.show_account_details.bind(this)}
+                    get_objects_messages={this.props.get_objects_messages.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_view_map_location_pins={this.props.show_view_map_location_pins.bind(this)} similar_posts={this.props.similar_posts} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_direct_purchase_orders={this.props.get_direct_purchase_orders.bind(this)} get_direct_purchase_files={this.props.get_direct_purchase_files.bind(this)} get_storefront_order_status={this.props.get_storefront_order_status.bind(this)} get_stop_words={this.get_stop_words.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)} does_entered_text_contain_reserved_keywords={this.props.does_entered_text_contain_reserved_keywords.bind(this)} show_account_details={this.props.show_account_details.bind(this)} open_send_purchase_request_ui={this.props.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.props.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)}
                     />
                 )
             }
@@ -686,6 +686,9 @@ class PostDetailSection extends Component {
                 if(extra_data['storefront_order_events'] != null){
                     return_text.push(this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits'])));
                 }
+                if(extra_data['storefront_purchase_request_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['storefront_purchase_request_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -732,7 +735,8 @@ class PostDetailSection extends Component {
                 'purchase_events':this.props.app_state.loc['2509cb']/* purchase 📼 */,
                 'auction_bid_events':this.props.app_state.loc['2509cc']/* bids */,
                 'storefront_order_events':this.props.app_state.loc['2509cd']/* orders 📦 */,
-                'repost_object_event':this.props.app_state.loc['2509de']/* reposts 🔄 */
+                'repost_object_event':this.props.app_state.loc['2509de']/* reposts 🔄 */,
+                'storefront_purchase_request_events':this.props.app_state.loc['2509dm']/* purchase-requests 🛍️ */,
             }
 
             const available_items = ['e']
@@ -801,6 +805,11 @@ class PostDetailSection extends Component {
                     'title':this.props.app_state.loc['2509df']/* Post Reposts */, 
                     'details':this.props.app_state.loc['2509dg']/* Chart containing the number of reposts made by users over time. */,
                     'y_axis':this.props.app_state.loc['2509dh']/* Y-Axis: Reposts. */
+                },
+                'storefront_purchase_request_events':{
+                    'title':this.props.app_state.loc['2509dn']/* Storefront Purchase Requests' */, 
+                    'details':this.props.app_state.loc['2509do']/* Chart containing the contract purchase requests sent to the storefront over time. */,
+                    'y_axis':this.props.app_state.loc['2509cm']/* Y-Axis: Requests */
                 }
             }
 

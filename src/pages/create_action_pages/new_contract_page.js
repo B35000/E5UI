@@ -561,6 +561,11 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['252d']/* 🌐 Public Contract */, 'details':this.props.app_state.loc['252e']/* A contract representing shared consensus for a public institution or shared organization. */, 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
+
+                <div onClick={()=>this.preset_purchase_contract()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['252h']/* 🌾 Purchase Contract */, 'details':this.props.app_state.loc['252i']/* A contract representing shared consensus between a buyer and seller of a given commodity with predefined transactional conditions. */, 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
                 
                 {this.get_contract_type() == 'workgroup' && (
                     <div>
@@ -570,6 +575,29 @@ class NewContractPage extends Component {
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_contract_credits_purchase_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_contract_credits_purchase_enabled_tags_object.bind(this)} theme={this.props.theme}/>
                     </div>
                 )}
+
+                {this.render_detail_item('0')}
+                {this.render_contract_type()}
+            </div>
+        )
+    }
+
+    render_contract_type(){
+        var obj = {
+            'workgroup':this.props.app_state.loc['173'],
+            'personal':this.props.app_state.loc['175'],
+            'work':this.props.app_state.loc['177'],
+            'life':this.props.app_state.loc['179'],
+            'public':this.props.app_state.loc['252d']/* 🌐 Public Contract */,
+            'purchase':this.props.app_state.loc['252h']/* 🌾 Purchase Contract */,
+            'custom':this.props.app_state.loc['2214g'],
+        }
+        const title = this.props.app_state.loc['2214h']/* 'Contract Type.' */
+        const details = obj[this.get_contract_type()]
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -696,7 +724,7 @@ class NewContractPage extends Component {
         var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1] ], };
         var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
 
-        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [2] ], };
         var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [2] ], };
         var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
@@ -853,6 +881,70 @@ class NewContractPage extends Component {
         }
     }
 
+    preset_purchase_contract(is_checking_type){
+        var end_mint_limit = this.get_mint_limit(3)
+        var spend_mint_limit = this.get_mint_limit(5)
+
+        var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.06)).toString())
+
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
+
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [2] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [2] ], };
+        var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
+
+        var set_object = {
+            new_contract_type_tags_object: contract_type,
+            default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
+            max_extend_enter_contract_limit: (60*60*24*120),/* 4m0 */
+            default_minimum_end_vote_bounty_amount: bigInt('0'),
+            default_proposal_expiry_duration_limit: (60*60*9), /* 5 hr */
+            max_enter_contract_duration: (60*60*24*120),/* 4 mo */
+
+            auto_wait_tags_object:auto_wait,
+            default_minimum_spend_vote_bounty_amount:bigInt('0'),
+            proposal_modify_expiry_duration_limit: (60*60*3), /* 3 hrs */
+            can_modify_contract_as_moderator: can_modify_contrac_as_mod,
+            can_extend_enter_contract_at_any_time: can_extend_enter_contract_at_any_time,
+            maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7),/* 1 week */
+            bounty_limit_type:bounty_limit_type,
+            contract_force_exit_enabled: force_exit_enabled,
+            price_data:price, default_consensus_majority_limit: 0
+        }
+
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(setting == 'price_data'){
+                    this.state[setting].forEach(price_target => {
+                        if(price_target['id'] == '3' && bigInt().lesser(bigInt(end_price))){
+                            is_matching = false
+                        }
+                        else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
+                            // console.log('new_contract_page', 'found unmatching spend price setting', price_target['amount'], spend_price)
+                            is_matching = false
+                        }
+                    });
+                }else
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
+                    // console.log('new_contract_page', 'found unmatching setting', setting, this.state[setting], set_object[setting])
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['252g'], 2500)
+        }
+
+    }
+
 
 
     get_contract_type(){
@@ -870,6 +962,9 @@ class NewContractPage extends Component {
         }
         else if(this.preset_public_contract(true) == true){
             return 'public'
+        }
+        else if(this.preset_purchase_contract(true) == true){
+            return 'purchase'
         }
         else{
             return 'custom'

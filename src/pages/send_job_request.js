@@ -22,10 +22,6 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 
-// import Letter from './../assets/letter.png';
-// import E5EmptyIcon from './../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
-
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
@@ -883,12 +879,17 @@ return data['data']
         )
     }
 
-
     when_new_date_time_value_set(value){
         const selectedDate = value instanceof Date ? value : new Date(value);
         const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
         this.setState({application_expiry_time: timeInSeconds})
     }
+
+
+
+
+
+
 
 
 
@@ -930,7 +931,6 @@ return data['data']
             )
         }
     }
-
 
     render_application_prices_data(){
         return(
@@ -1072,7 +1072,7 @@ return data['data']
                     }
                 `}</style>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeLeft={{
@@ -1127,7 +1127,7 @@ return data['data']
         )
     }
 
-   get_suggested_tokens(target_type){
+    get_suggested_tokens(target_type){
         var items = [
             {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.state.e5, 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].end_image, 'img_size':30}},
             {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.state.e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.state.e5].spend_image, 'img_size':30}},
@@ -1187,6 +1187,16 @@ return data['data']
         this.reset_the_number_picker()
     }
 
+
+
+
+
+
+
+
+
+
+
     set_object(contractor_item){
         if(this.state.contractor_item['id'] != contractor_item['id']){
             this.setState({
@@ -1223,8 +1233,7 @@ return data['data']
                 this.props.add_send_job_request_to_stack(this.state)
                 this.reset_state()
                 this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
-            }
-            
+            }  
         }
     }
 
@@ -1255,7 +1264,6 @@ return data['data']
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
-
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

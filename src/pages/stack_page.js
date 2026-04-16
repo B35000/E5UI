@@ -3213,7 +3213,7 @@ class StackPage extends Component {
         this.run_transactions(true, false)
     }
 
-    //here-------------------------------
+    //here-------------------------------------------------------------------------------------------
     run_transactions = async (calculate_gas, silently) => {
         const txs = this.props.app_state.stack_items
         const e5 = this.props.app_state.selected_e5
@@ -4207,7 +4207,7 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
                 }  
-                else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
+                else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */ || txs[i].type == this.props.app_state.loc['3097e']/* 'purchase-request-messages' */){
                     var message_obj = await this.format_job_request_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
@@ -4816,6 +4816,19 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(format_object.int)
 
+                    if(txs[i].contract_id != null){
+                        var obj = [/* exit contract */
+                            [30000, 11, 0],
+                            [], []/* contract ids */
+                        ]
+                        obj[1].push(txs[i].contract_id)
+                        obj[2].push(23)
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(obj)
+                    }
+
                     if(finish_job_payment_data[txs[i].recipient] == null){
                         finish_job_payment_data[txs[i].recipient] = []
                     }
@@ -4861,6 +4874,25 @@ class StackPage extends Component {
                     strs.push(format_object.str)
                     adds.push([])
                     ints.push(format_object.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3096']/* 'purchase-request' */){
+                    const my_now = parseInt(now.toString() + i)
+                    var message_obj = await this.format_purchase_request_object(txs[i], calculate_gas, my_now, ipfs_index)
+
+                    if(!newly_participated_objects.includes(txs[i].storefront_item['e5_id'])){
+                        newly_participated_objects.push(txs[i].storefront_item['e5_id'])
+                    }
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3097']/* 'accept-storefront-request' */){
+                    var message_obj = await this.format_accept_storefront_request_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
                 }
                 
                 delete_pos_array.push(i)
@@ -5923,7 +5955,7 @@ class StackPage extends Component {
                     ipfs_index_object[t.id] = application_obj
                     ipfs_index_array.push({'id':t.id, 'data':application_obj})
                 }
-                else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
+                else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */ || txs[i].type == this.props.app_state.loc['3097e']/* 'purchase-request-messages' */){
                     var t = txs[i]
                     const my_unique_crosschain_identifier = bigInt(await this.get_my_unique_crosschain_identifier_number())
                     const private_key_to_use = this.props.get_my_private_key()
@@ -6336,6 +6368,47 @@ class StackPage extends Component {
                         ipfs_index_object[transaction_id] = fulfilment_data[contract]
                         ipfs_index_array.push({'id':transaction_id, 'data':fulfilment_data[contract]})
                     });
+                }
+                else if(txs[i].type == this.props.app_state.loc['3096']/* 'purchase-request' */){
+                    var t = txs[i]
+                    var now = parseInt(now.toString() + i)
+                    const key_data = await this.get_encrypted_storefront_request_key(t)
+                    const application_obj = {
+                        'condition_data':t.condition_data, 
+                        'price_data2':t.price_data2,
+                        'application_expiry_time':t.application_expiry_time, 
+                        'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5],
+                        'entered_images':t.entered_image_objects, 
+                        'job_request_id':now, 
+                        'entered_pdfs':t.entered_pdf_objects, 
+                        'key_data':key_data.key_data, 
+                        'pins': t.pins, 
+                        'shipping_detail':t.fulfilment_location, 
+                        'custom_specifications':t.custom_specifications, 
+                        'variant_id':t.selected_variant['variant_id'], 
+                        'purchase_unit_count':t.purchase_unit_count,
+                        'signature_data':Date.now(), 
+                        'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5), 
+                        'options':t.purchase_option_tags_array, 
+                        'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 
+                        'purchase_identifier': this.props.hash_data(makeid(12))
+                    }
+
+                    if(!newly_participated_objects.includes(t.storefront_item['e5_id'])){
+                        newly_participated_objects.push(t.storefront_item['e5_id'])
+                    }
+
+                    const encrypted_obj = await this.props.encrypt_data_object(JSON.stringify(application_obj), key_data.key.toString())
+                    const encrypted_job_request_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+                    ipfs_index_object[t.id] = encrypted_job_request_object
+                    ipfs_index_array.push({'id':t.id, 'data':encrypted_job_request_object})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3097']/* 'accept-storefront-request' */){
+                    var t = txs[i]
+                    var application_obj = {'accepted':true, 'contract_id':t.picked_contract['id']}
+                    ipfs_index_object[t.id] = application_obj
+                    ipfs_index_array.push({'id':t.id, 'data':application_obj})
                 }
             }
         }
@@ -8002,6 +8075,25 @@ class StackPage extends Component {
         var key = makeid(35)
         var recipient = t.contractor_item['author']
         var author_e5 = t.contractor_item['e5']
+        var key_data = {}
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, author_e5)
+        if(recipients_pub_key_hash != ''){
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(recipients_pub_key_hash))
+
+            key_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+        }
+        var uint8array = await this.props.get_account_raw_public_key() 
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, this.props.uint8ToBase64(uint8array))
+        key_data[await this.get_my_unique_crosschain_identifier_number()] = my_encrypted_key
+        key_data['encryptor_pub_key'] = this.props.uint8ToBase64(uint8array)
+
+        return { key_data, key }
+    }
+
+    get_encrypted_storefront_request_key = async (t) =>{
+        var key = makeid(35)
+        var recipient = t.storefront_item['author']
+        var author_e5 = t.storefront_item['e5']
         var key_data = {}
         var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, author_e5)
         if(recipients_pub_key_hash != ''){
@@ -12076,6 +12168,65 @@ class StackPage extends Component {
         
 
         return {int: obj, str: string_obj, depth: depth_swap_obj}
+    }
+
+    format_purchase_request_object = async (t, calculate_gas, now, ipfs_index) => {
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var target_id = t.storefront_item['id']
+        var context = 38
+        var int_data = now
+
+        var application_obj = {}
+
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_accept_storefront_request_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var target_id = t.storefront_object['id']
+        var context = 39
+        var int_data = t.request_item['job_request_id']
+
+        var application_obj = t.picked_contract['id'].toString()
+
+        // var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
+        var string_data = application_obj
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+
+
+        return {int: obj, str: string_obj}
     }
 
     

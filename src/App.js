@@ -694,6 +694,8 @@ import CallPage from './pages/call_page'
 import PurchaseCreditsPage from './pages/purchase_credits_page'
 import ConfigureObligationsPage from './pages/configure_obligations_page'
 import BridgeEtherPage from './pages/bridge_ether_page'
+import SendPurchaseRequestPage from './pages/send_purchase_request_page'
+import ViewStorefrontRequestPage from './pages/view_storefront_purchase_request_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -1264,7 +1266,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1287,7 +1289,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65,
+    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65, condition_title_size:65,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -1373,7 +1375,7 @@ class App extends Component {
 
     e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false,
 
-    focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false,
+    focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}
   };
 
   get_thread_pool_size(){
@@ -3658,6 +3660,8 @@ class App extends Component {
     this.view_configure_obligations_page = React.createRef();
     this.exchange_deposit_page = React.createRef();
     this.bridge_ether_page = React.createRef();
+    this.send_purchase_request_page = React.createRef();
+    this.view_storefront_request_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -3935,6 +3939,7 @@ class App extends Component {
     if(this.dissapearing_pip_interval != null) clearInterval(this.dissapearing_pip_interval);
     if(this.interval7 != null) clearInterval(this.interval7);
     if(this.interval8 != null) clearInterval(this.interval8);
+    if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval)
 
     this.set_cookies()
     this.delete_data_in_db_when_app_closed()
@@ -3952,6 +3957,7 @@ class App extends Component {
     if(this.interval6 != null) clearInterval(this.interval6);
     if(this.interval7 != null) clearInterval(this.interval7);
     if(this.interval8 != null) clearInterval(this.interval8);
+    if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval)
     
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':290_000, 'fast':90_000}
     obj[this.getLocale()['1421']/* sluggish */] = 1000_000
@@ -3982,6 +3988,7 @@ class App extends Component {
       me.interval6 = setInterval(() => me.update_nitro_privacy_signature(), 200_000)
       me.interval7 = setInterval(() => me.load_and_notify_flash2(), 300_000)
       me.interval8 = setInterval(() => me.load_and_notify_flash3(), 270_000)
+      me.coin_prices_interval = setInterval(() => me.load_coin_and_ether_coin_prices(), (1000*60*60))
     }, (1 * 100));
     
     this.schedule_audio_pip_visibility_because_of_inactivity()
@@ -6427,6 +6434,8 @@ class App extends Component {
           {this.render_view_configure_obligations_bottomsheet()}
           {this.render_exchange_deposit_bottomsheet()}
           {this.render_bridge_ether_bottomsheet()}
+          {this.render_send_purchase_request_bottomsheet()}
+          {this.render_view_storefront_request_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -6561,7 +6570,7 @@ class App extends Component {
 
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
 
-          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)}
+          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -7193,12 +7202,21 @@ class App extends Component {
   }
 
   set_page_objects_that_should_be_in_focus(focused_items, should_continue_loading, section){
-    // return;
+    return;
     const clone = structuredClone(this.state.should_continue_loading)
     clone[section] = should_continue_loading;
-    this.setState({focused_items: focused_items, should_continue_loading: clone})
-    const { active, page } = this.homepage.current.get_page_active_section_data()
-    this.load_focused_items_into_memory(focused_items, active, page)
+    const is_previous_focused_items_similar = JSON.stringify(focused_items) == JSON.stringify(this.state.focused_items);
+    this.setState({should_continue_loading: clone})
+    
+    if(is_previous_focused_items_similar == false){
+      this.setState({focused_items: focused_items})
+      setTimeout(() => {
+        if(JSON.stringify(focused_items) == JSON.stringify(this.state.focused_items)){
+          const { active, page } = this.homepage.current.get_page_active_section_data()
+          this.load_focused_items_into_memory(focused_items, active, page)
+        }
+      }, (800));
+    }
   }
 
   set_details_focused_item(detail_focused_item){
@@ -10186,6 +10204,7 @@ class App extends Component {
     const auction_bid_e5_ids = []
     const comments = []
     const tagged_addresses_info = []
+    const storefront_purchase_request_e5_ids = []
 
     const all_tagged_addresses_data_clone = structuredClone(this.state.all_tagged_addresses_data)
     for(var i=0; i<stack.length; i++){
@@ -10281,6 +10300,10 @@ class App extends Component {
             delete all_tagged_addresses_data_clone[id]
           }
         }
+        else if(stack[i].type == this.getLocale()['3096']/* 'purchase-request' */){
+          const t = stack[i]
+          storefront_purchase_request_e5_ids.push(t.storefront_item['e5_id'])
+        }
       }
     }
 
@@ -10300,7 +10323,7 @@ class App extends Component {
     if(contractor_job_request_e5_ids.length > 0){
       this.emit_comment_record_object_event(contractor_job_request_e5_ids, 'contractor_job_request_events');
       await this.wait(1000)
-    } 
+    }
 
     if(direct_purchase_e5_ids.length > 0){
       this.emit_comment_record_object_event(direct_purchase_e5_ids, 'direct_purchase_events');
@@ -10344,6 +10367,13 @@ class App extends Component {
       await this.notify_tagged_users_of_tag_in_new_object(tagged_addresses, tagged_account_ids, object_tag_id, object_type)
       await this.wait(1000)
     }
+
+    if(storefront_purchase_request_e5_ids.length > 0){
+      this.emit_comment_record_object_event(storefront_purchase_request_e5_ids, 'storefront_purchase_request_events');
+      await this.wait(1000)
+    }
+
+    
 
     this.setState({all_tagged_addresses_data: all_tagged_addresses_data_clone})
 
@@ -10761,10 +10791,11 @@ class App extends Component {
     const tagged_addresses = []
     const tagged_account_ids = []
 
-    const markdown = t.markdown
+    const markdown = t.markdown || ''
     const markdown_words = markdown.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ')
     const text_words = []
-    t.entered_objects.forEach(object => {
+    const entered_objects = t.entered_objects || []
+    entered_objects.forEach(object => {
       const type = object['type']
       const text = type == '11' ? object['data']['caption']['text'] : object['data']['text']
       text.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ').forEach(word => {
@@ -15412,6 +15443,17 @@ class App extends Component {
         }, (1 * 1100));
         
     }
+    else if(tx.type == this.getLocale()['3096']/* 'purchase-request' */){
+        this.open_send_purchase_request_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.send_purchase_request_page.current){
+          me.send_purchase_request_page.current?.setState(tx)
+        }
+        }, (1 * 1100));
+        
+    }
+    
   }
 
   delete_message_item(item, transaction_item){
@@ -16273,7 +16315,7 @@ class App extends Component {
 
 
 
-
+  /* VIEW JOB REQUEST */
   render_view_job_request_bottomsheet(){
     if(this.state.view_job_request_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -16409,7 +16451,7 @@ class App extends Component {
 
 
 
-  /* view job request */
+  
   render_view_job_request_contract_bottomsheet(){
     if(this.state.view_job_request_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -16960,6 +17002,9 @@ class App extends Component {
     else if(page == 'direct_message'){
       this.open_add_comment_bottomsheet()
       this.send_direct_message(tx)
+    }
+    else if(page == 'purchase_request'){
+      this.add_storefront_request_message_to_stack_object(tx)
     }
 
     const clone = this.state.stacked_message_ids.slice()
@@ -18024,7 +18069,7 @@ class App extends Component {
 
 
 
-
+  //-------------------------------------------DIALOG BOTTOMSHEET---------------------------------------------
   render_dialog_bottomsheet(){
     if(this.state.dialog_bottomsheet2 != true) return;
     var os = getOS()
@@ -18182,6 +18227,7 @@ class App extends Component {
       'open_remember_account_settings_ui':600,
       'request_passcode_for_decrypting_stored_seed':300,
       'confirm_bridge_ether_dialog':500,
+      'finalize_storefront_request_transaction':550,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -19839,6 +19885,7 @@ class App extends Component {
       this.add_comment_page.current?.when_image_gif_files_picked(picked_files)
       this.send_job_request_page.current?.when_image_gif_files_picked(picked_files)
       this.dialog_page.current?.when_files_picked(picked_files)
+      this.send_purchase_request_page.current?.when_image_gif_files_picked(picked_files)
     }
     else if(function_name == 'create_text_banner_image'){
       this.new_channel_page.current?.when_banner_selected(picked_files)
@@ -19913,6 +19960,7 @@ class App extends Component {
       this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
       this.view_contextual_transfer_page.current?.when_pdf_files_picked(picked_files)
       this.dialog_page.current?.when_files_picked(picked_files)
+      this.send_purchase_request_page.current?.when_pdf_files_picked(picked_files)
     }
     else if(function_name == 'create_zip'){
       this.new_channel_page.current?.when_zip_files_picked(picked_files)
@@ -23024,6 +23072,12 @@ class App extends Component {
       this.show_dialog_bottomsheet(data, event_type)
       return;
     }
+    else if(event_type == 'storefront_purchase_request'){
+      this.load_specific_storefront_items(events, 'p1')
+    }
+    else if(event_type == 'storefront_request_response'){
+      this.load_specific_storefront_items(events, 'p1')
+    }
     
 
     var id = obj['notification_id']
@@ -25047,6 +25101,193 @@ class App extends Component {
       this.show_successful_send_bottomsheet({'type':'op2_bridge', 'item':item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'l1Hash':hash, 'cumulativeGasUsed':gas_used, 'effectiveGasPrice':effective_gas_price}, true)
     }
 
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_send_purchase_request_bottomsheet(){
+    if(this.state.send_purchase_request_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <SendPurchaseRequestPage ref={this.send_purchase_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_purchase_request_to_stack={this.add_send_purchase_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
+      />,
+      this.state.send_purchase_request_bottomsheet,
+      this.open_send_purchase_request_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_send_purchase_request_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_send_purchase_request_bottomsheet')
+    if(this.state.send_purchase_request_bottomsheet == true){
+      //closing
+      this.send_purchase_request_bottomsheet = this.send_purchase_request_page.current?.state;
+
+      this.setState({send_purchase_request_bottomsheet: !this.state.send_purchase_request_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({send_purchase_request_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({send_purchase_request_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({send_purchase_request_bottomsheet: !me.state.send_purchase_request_bottomsheet});
+
+          if(me.send_purchase_request_bottomsheet != null){
+            me.send_purchase_request_page.current?.setState(me.send_purchase_request_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_send_purchase_request_ui(item){
+    this.open_send_purchase_request_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.send_purchase_request_page.current != null){
+        me.send_purchase_request_page.current.set_object(item)
+        me.load_my_contracts()
+      }
+    }, (1 * 1100));
+    
+
+  }
+
+  add_send_purchase_request_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* VIEW STOREFRONT REQUEST */
+  render_view_storefront_request_bottomsheet(){
+    if(this.state.view_storefront_request_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <ViewStorefrontRequestPage ref={this.view_storefront_request_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_storefront_request_message_to_stack_object={this.add_storefront_request_message_to_stack_object.bind(this)} load_storefront_request_messages={this.load_storefront_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)}
+      />,
+      this.state.view_storefront_request_bottomsheet,
+      this.open_view_storefront_request_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_view_storefront_request_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_storefront_request_bottomsheet')
+    if(this.state.view_storefront_request_bottomsheet == true){
+      //closing
+      this.view_storefront_request_bottomsheet = this.view_storefront_request_page.current?.state;
+
+      this.setState({view_storefront_request_bottomsheet: !this.state.view_storefront_request_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_storefront_request_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_storefront_request_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_storefront_request_bottomsheet: !me.state.view_storefront_request_bottomsheet});
+
+          if(me.view_storefront_request_bottomsheet != null){
+            me.view_storefront_request_page.current?.setState(me.view_storefront_request_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_view_storefront_request_ui(item, object){
+    this.open_view_storefront_request_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_storefront_request_page.current != null){
+        me.view_storefront_request_page.current.set_object(item, object)
+        if(item['contract'] != null){
+          me.load_contract_item(object['e5'], item['contract'])
+        }
+      }
+    }, (1 * 1500));
+    this.load_my_contracts()
+  }
+
+  add_storefront_request_message_to_stack_object(message){
+    if(this.direct_message_via_socket_enabled(message)){
+      return this.emit_new_message_or_comment(message, 'purchase_request')
+    }
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == this.getLocale()['3097e']/* 'purchase-request-messages' */ && stack[i].e5 == this.state.selected_e5){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['3097e']/* 'purchase-request-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */,this.getLocale()['3097a']/* 'storefront' */,this.getLocale()['1366']/* 'request' */], messages_to_deliver:[], e5: message['e5']}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+    this.set_cookies_after_stack_action(stack)
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
 
@@ -37182,6 +37423,7 @@ class App extends Component {
   }
 
   async set_object_in_local_forage(object){
+    return
     if(this.state.storage_permissions == 'e') return;
     const object_e5_id = object['e5_id'];
     try{
@@ -37200,6 +37442,7 @@ class App extends Component {
   }
 
   async load_focused_items_into_memory(focused_items, active, page){
+    return;
     if(this.state.is_safe_to_load_focused_items_into_memory == false) return;
     const final_focused_items = focused_items == null ? this.state.focused_items : focused_items;
     
@@ -37268,7 +37511,7 @@ class App extends Component {
 
         Object.keys(created_objects_clone2).forEach(e5 => {
           created_objects_clone2[e5].forEach((object_or_e5_id, index) => {
-              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && object_or_e5_id['id'] != 2 && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
+              if(!final_focused_items.includes(object_or_e5_id['e5_id']) && !this.state.detail_focused_items.includes(object_or_e5_id['e5_id'])){
                 delete created_objects_clone2[e5][index]['ipfs'];
                 delete created_objects_mappings_clone2[e5][object_or_e5_id['id']]['ipfs'];
               }
@@ -45600,6 +45843,9 @@ class App extends Component {
               else if(object_data['type'] == 'channel-message'){
                 await this.process_new_channel_message(object_data, object_hash)
               }
+              else if(object_data['type'] == 'storefront-request-message'){
+                await this.process_new_storefront_request_message(object_data, object_hash, from)
+              }
               else{
                 await this.process_new_comment_message(object_data, object_hash)
               }
@@ -47845,6 +48091,172 @@ class App extends Component {
     }
   }
 
+  get_storefron_purchase_requests = async (id, E5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(E5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[E5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_job_respnse_data = null
+    var application_responses = null
+
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params2 = [
+        [web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38}],/* created_job_respnse_data */
+        [web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39}],/* application_responses */
+      ]
+      const all_events = (await this.load_multiple_events_from_nitro(event_params2)).all_events
+      created_job_respnse_data = all_events[0] || []
+      application_responses = all_events[1] || []
+    }else{
+      created_job_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:38})
+
+      application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', E5, {p1/* target_id */: id, p3/* context */:39})
+    }
+
+    const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (120*24*60*60*1000), 'contractor_accept_storefront_request')
+
+    console.log('socket_stuff', 'socket_notifications', socket_notifications)
+
+    application_responses = application_responses.concat(socket_notifications)
+    const e5_id = id+E5
+    await this.get_objects_from_socket_and_set_in_state(['storefron_purchase_request|'+e5_id+'|'+this.state.accounts[this.state.selected_e5].address], [], application_responses)
+
+    created_job_respnse_data = created_job_respnse_data.reverse()
+
+    var loaded_target = 0
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_job_respnse_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+    const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+    var messages = []
+    if(created_job_respnse_data.length == 0){
+      var clone = JSON.parse(JSON.stringify(this.state.storefront_purchase_requests))
+      clone[id] = messages
+      this.setState({storefront_purchase_requests: clone})
+    }
+    var is_first_time = this.state.storefront_purchase_requests[id] == null ? true: false
+    for(var j=0; j<created_job_respnse_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
+      if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
+        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, E5, encryptor_pub_key)
+        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+        ipfs_message = JSON.parse(JSON.parse(originalText));
+      }
+      if(ipfs_message != null && ipfs_message['job_request_id'] != null){
+        ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
+        ipfs_message['contractor_post_id'] = id;
+        ipfs_message['e5'] = E5
+        ipfs_message['time'] = created_job_respnse_data[j].returnValues.p6
+
+        var filtered_events = []
+        for(var i=0; i<application_responses.length; i++){
+          if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
+            filtered_events.push(application_responses[i])
+          }
+        }
+        if(filtered_events.length > 0){
+          var last_response = filtered_events[filtered_events.length -1]
+          var last_response_ipfs_obj = {'accepted': true, 'contract_id':parseInt(last_response.returnValues.p4)}
+          ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+          
+          // this.load_contract_item(E5, last_response_ipfs_obj['contract_id'])
+          ipfs_message['contract'] = last_response_ipfs_obj['contract_id']
+          ipfs_message['proposals'] = []
+        }else{
+          ipfs_message['is_response_accepted'] = false
+        }
+
+        messages.push(ipfs_message)
+      }
+      if(is_first_time){
+        var clone = JSON.parse(JSON.stringify(this.state.storefront_purchase_requests))
+        clone[id] = messages
+        this.setState({storefront_purchase_requests: clone})
+      }
+
+      if(j == loaded_target && j+1 >= created_job_respnse_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_job_respnse_data.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
+      }
+    }
+
+    var clone = JSON.parse(JSON.stringify(this.state.storefront_purchase_requests))
+    clone[id] = messages
+    this.setState({storefront_purchase_requests: clone})
+
+  }
+
+  load_storefront_request_messages = async (contractor_id, request_id, e5, key_data, job_request, contractor_object) => {
+    const convo_key = await this.get_job_request_messages_convo_id(key_data, e5)
+
+    const job_request_convo_keys_clone = structuredClone(this.state.job_request_convo_keys);
+    job_request_convo_keys_clone[request_id] = convo_key
+    this.setState({job_request_convo_keys: job_request_convo_keys_clone})
+
+    const mail_messages_target = 'storefront_request_mail|'+request_id+this.state.accounts[this.state.selected_e5].address
+    await this.get_objects_messages_from_socket_and_enter_chatroom(mail_messages_target)
+
+    const recipient_id = contractor_object['author'] == this.state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
+    const recipient_e5 = contractor_object['e5']
+    this.emit_new_read_receipts_notification(request_id, recipient_id, recipient_e5)
+
+    await this.get_and_set_account_online_status(recipient_id, recipient_e5)
+
+    var all_object_comment_events = await this.get_job_request_comment_events(contractor_id, request_id)
+    var loaded_target = 0
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = all_object_comment_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+
+    var is_first_time = this.state.object_messages[request_id] == null ? true: false
+    var messages = []
+    for(var j=0; j<all_object_comment_events.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(all_object_comment_events[j].returnValues.p4)
+      console.log('apppage', 'ipfs message', ipfs_message)
+      if(ipfs_message != null){
+        if(ipfs_message['encrypted_data'] != null){
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          ipfs_message = JSON.parse(JSON.parse(originalText));
+        }
+        ipfs_message['time'] = all_object_comment_events[j].returnValues.p6
+        this.fetch_uploaded_files_for_object(ipfs_message)
+        const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
+        if(includes == null){
+          messages.push(ipfs_message)
+        }
+        if(is_first_time){
+          const clone = structuredClone(this.state.object_messages)
+          clone[request_id] = messages
+          this.setState({object_messages: clone})
+        }
+      }
+      if(j == loaded_target && j+1 >= all_object_comment_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_object_comment_events.slice(j+1, j+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = j+this.state.max_post_bulk_load_count
+      }
+    }
+
+    const clone = structuredClone(this.state.object_messages)
+    clone[request_id] = messages
+    this.setState({object_messages: clone})
+
+    const load_read_receipts_data = async () => {
+      const to = await this.get_recipient_address(recipient_id, recipient_e5)
+      const target_type = 'read_receipts|'+request_id+'|'+to
+      await this.get_objects_from_socket_and_set_in_state([target_type], [], [])
+      await this.get_alias_from_account_id(recipient_id, recipient_e5)
+    }
+    
+    await load_read_receipts_data();
+  }
+
 
 
 
@@ -48750,7 +49162,7 @@ class App extends Component {
           var token_balances_and_data = await this.get_balance_from_multiple_exchanges(interacted_exchanges, id, H52contractInstance, interacted_exchanges_depths, e5)
           var token_balances = token_balances_and_data['bal']
 
-          await this.fetch_and_set_loaded_object_views(e5+':'+id)
+          await this.fetch_and_set_loaded_object_views([id], e5)
 
           await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], 1771762377000, (36*7*24*60*60*1000), [], e5, [id]);
 
@@ -50541,6 +50953,15 @@ class App extends Component {
       else if(message['type'] == 'mempool_notification'){
         me.process_new_mempool_notification_message(message, object_hash, from, true)
       }
+      else if(message['type'] == 'storefront_purchase_request'){
+        me.process_new_storefront_purchase_request_message(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'storefront-request-message'){
+        me.process_new_storefront_request_message(message, object_hash, from)
+      }
+      else if(message['type'] == 'contractor_accept_storefront_request'){
+        me.process_new_contractor_accepted_storefront_request_message(message, object_hash, from, true)
+      }
     });
     socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -50631,6 +51052,12 @@ class App extends Component {
     else if(state_object.type == this.getLocale()['1093']/* 'direct-purchase' */){
       await this.emit_new_storefront_order_request(state_object, show_job_after_broadcast);
     }
+    else if(state_object.type == this.getLocale()['3096']/* 'purchase-request' */){
+      await this.emit_new_storefront_purchase_request_application(state_object, show_job_after_broadcast);
+    }
+    else if(state_object.type == this.getLocale()['3097']/* 'accept-storefront-request' */){
+      await this.emit_new_contractor_accept_storefront_request(state_object, show_job_after_broadcast);
+    }
     else{
       await this.emit_new_public_object_confirmed(state_object, show_job_after_broadcast)
     }
@@ -50645,6 +51072,9 @@ class App extends Component {
     }
     else if(page == 'channel'){
       await this.emit_new_channel_message(state_object);
+    }
+    else if(page == 'purchase_request'){
+      await this.emit_new_storefront_request_message(state_object);
     }
     else{
       await this.emit_new_object_comment_message(state_object);
@@ -51527,6 +51957,67 @@ class App extends Component {
 
       await this.wait(1100)
     }
+  }
+
+  async emit_new_storefront_purchase_request_application(state_object, show_job_after_broadcast){
+    this.prompt_top_notification(this.getLocale()['3096q']/* 'Sending Purchase Request... */, 1900)
+    const message_object = await this.prepare_storefront_purchase_object_message(state_object, show_job_after_broadcast)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(state_object.storefront_item['author'], state_object.storefront_item['e5'])
+
+
+    const target = 'storefront_purchase_request|'+state_object.contractor_item['e5_id']+'|'+to
+    const secondary_target = 'storefront_purchase_request|'+state_object.contractor_item['e5_id']+'|'+this.state.accounts[this.state.selected_e5].address
+    const emit_object = {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target }
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", emit_object);
+
+
+    await this.wait(1000)
+    const target2 = 'storefront_purchase_request|'+to
+    const secondary_target2 = 'storefront_purchase_request|'+this.state.accounts[this.state.selected_e5].address
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target2, object_hash: message_object.object_hash, secondary_target: secondary_target2 });
+
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([state_object.storefront_item['e5_id']], 'storefront_purchase_request_events')
+  }
+
+  async emit_new_storefront_request_message(state_object){
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
+    const job_request_message_object = await this.prepare_storefront_request_message(state_object)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(job_request_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(state_object['target_recipient'], state_object['sender_e5'])
+    const target = 'storefront_request_mail|'+state_object['id']+to
+    const secondary_target = 'storefront_request_mail|'+state_object['id']+this.state.accounts[this.state.selected_e5].address
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: job_request_message_object.message, target: target, object_hash: job_request_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_new_contractor_accept_storefront_request(state_object, show_job_after_broadcast){
+    this.prompt_top_notification(this.getLocale()['2738bc']/* 'Sending Contractor Response... */, 1900)
+    const message_object = await this.prepare_storefront_request_response_object_message(state_object, show_job_after_broadcast)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = await this.get_recipient_address(state_object.request_item['applicant_id'], state_object.storefront_object['e5'])
+
+    const target = 'contractor_accept_storefront_request|'+to
+    const secondary_target = 'contractor_accept_storefront_request|'+this.state.accounts[this.state.selected_e5].address
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+
   }
   
 
@@ -53636,6 +54127,183 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+
+
+
+
+
+  async prepare_storefront_purchase_object_message(message_obj){
+    const t = message_obj
+    var now = Date.now()
+    const key_data = await this.get_encrypted_storefront_request_key(t)
+
+    const application_obj = {
+      'condition_data':t.condition_data, 
+      'price_data2':t.price_data2,
+      'application_expiry_time':t.application_expiry_time, 
+      'applicant_id':this.state.user_account_id[this.state.selected_e5],
+      'entered_images':t.entered_image_objects, 
+      'job_request_id':now, 
+      'entered_pdfs':t.entered_pdf_objects, 
+      'key_data':key_data.key_data, 
+      'pins': t.pins, 
+      'shipping_detail':t.fulfilment_location, 
+      'custom_specifications':t.custom_specifications, 
+      'variant_id':t.selected_variant['variant_id'], 
+      'purchase_unit_count':t.purchase_unit_count,
+      'signature_data':Date.now(), 
+      'sender_address':this.format_address(this.state.accounts[this.state.selected_e5].address, this.state.selected_e5), 
+      'options':t.purchase_option_tags_array, 
+      'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 
+      'purchase_identifier': this.hash_data(makeid(12))
+    }
+
+    const encrypted_obj = await this.encrypt_data_string(JSON.stringify(application_obj), key_data.key.toString())
+    const encrypted_job_request_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+    const tags = []
+    const id = now;
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(encrypted_job_request_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    var context = 38
+
+    const message = {
+      type: 'storefront_purchase_request',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      contractor_object_id: t.storefront_item['id'],
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  get_encrypted_storefront_request_key = async (t) =>{
+    var key = makeid(35)
+    var recipient = t.storefront_item['author']
+    var author_e5 = t.storefront_item['e5']
+    var key_data = {}
+    var recipients_pub_key_hash = await this.get_accounts_public_key(recipient, author_e5)
+    if(recipients_pub_key_hash != ''){
+      var encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(recipients_pub_key_hash))
+
+      key_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+    }
+    var uint8array = await this.get_account_raw_public_key() 
+    var my_encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(uint8array))
+    key_data[await this.get_my_unique_crosschain_identifier_number2()] = my_encrypted_key
+    key_data['encryptor_pub_key'] = this.uint8ToBase64(uint8array)
+
+    return { key_data, key }
+  }
+
+  async prepare_storefront_request_message(message_obj){
+    const state_object = await this.encrypt_job_request_message(message_obj)
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(state_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = message_obj['contractor_id']
+    const message = {
+      type: 'storefront-request-message',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: message_obj['id']/* job_request_id */,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_storefront_request_response_object_message(message_obj){
+    const t = message_obj;
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    
+    const data = t.picked_contract['id'].toString()
+    var context = 39
+    const message = {
+      type: 'contractor_accept_storefront_request',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      contractor_object_id: t.storefront_object['id'],
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      int_data: t.request_item['job_request_id'],
+      target: t.storefront_object['id']
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -56055,6 +56723,272 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
+  async process_new_storefront_purchase_request_message(message, object_hash, from, add_to_notifications, application_responses){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author
+      const convo_id = id;
+      const cid = object_hash;
+
+      const event = {returnValues:{p1: message.contractor_object_id, p2:sender_acc, p3:38, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+      const messages = this.state.socket_storefront_purchase_requests[message.contractor_object_id] == null ? [] : this.state.socket_storefront_purchase_requests[message.contractor_object_id].slice()
+      var ipfs_message = ipfs;
+
+      if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
+        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+        ipfs_message = JSON.parse(originalText);
+      }
+      if(ipfs_message != null && ipfs_message['job_request_id'] != null){
+        ipfs_message['request_id'] = event.returnValues.p5
+        ipfs_message['contractor_post_id'] = message.contractor_object_id;
+        ipfs_message['e5'] = e5
+        ipfs_message['time'] = event.returnValues.p6
+
+        var filtered_events = []
+        for(var i=0; i<application_responses.length; i++){
+          if(application_responses[i].returnValues.p5 == ipfs_message['job_request_id']){
+            filtered_events.push(application_responses[i])
+          }
+        }
+        if(filtered_events.length > 0){
+          var last_response = filtered_events[filtered_events.length -1]
+          var last_response_ipfs_obj = {'accepted': true, 'contract_id':parseInt(last_response.returnValues.p4)}
+          ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+          
+          ipfs_message['contract'] = last_response_ipfs_obj['contract_id']
+          ipfs_message['proposals'] = []
+        }else{
+          ipfs_message['is_response_accepted'] = false
+        }
+        const index = messages.findIndex(item => item['request_id'] === ipfs_message['request_id']);
+        if(index != -1){
+          messages[index] = ipfs_message
+        }else{
+          messages.push(ipfs_message)
+        }
+        const clone = JSON.parse(JSON.stringify(this.state.socket_storefront_purchase_requests))
+        clone[message.contractor_object_id] = messages
+        this.setState({socket_storefront_purchase_requests: clone})
+
+        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+          event['e5'] = e5
+          const notifs = [event]
+          this.handle_storefront_purchase_request_notifications(notifs)
+          if(add_to_notifications == true){
+            this.set_storefront_purchase_request_event_in_notifications(event, e5)
+          }
+        }
+      }
+    }
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
+  }
+
+  async handle_storefront_purchase_request_notifications(events){
+    var senders = []
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
+    var prompt = this.getLocale()['3096r']/* 'Incoming purchase requests from $' */
+    prompt = prompt.replace('$', senders.toString())
+    this.load_specific_storefront_items(events, 'p1')
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'storefront_purchase_request', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+  }
+
+  set_storefront_purchase_request_event_in_notifications(event, e5){
+    event['e5'] = e5
+    event['p'] = event.returnValues.p1
+    event['time'] = event.returnValues.p6
+    event['block'] = event.returnValues.p7
+    event['sender'] = event.returnValues.p2
+    event['type'] = 'storefront_purchase_request'
+    event['event_type'] = 'storefront_purchase_request'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront_purchase_request', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['storefront_purchase_request'] == null ? [] : clone['storefront_purchase_request'].slice()
+    request_clone_array.push(event)
+    clone['storefront_purchase_request'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
+  async process_new_storefront_request_message(message, object_hash, from){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
+      }, (2 * 1000));
+    }
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author
+      const convo_id = id;
+      const cid = object_hash;
+      const request_id = message.id
+
+      const event = {returnValues:{p1:17, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      var ipfs_obj = ipfs
+      if(ipfs['encrypted_data'] != null){
+        if(am_I_the_author){
+          const auth_decryption_key_cypher = ipfs['auth_decryption_key_cypher']
+          const my_eth_private_key = this.state.accounts['E25'].privateKey.toString()
+          const job_request_message_decryption_key = await this.decrypt_data_string(auth_decryption_key_cypher, my_eth_private_key)
+          ipfs_obj = JSON.parse(await this.decrypt_data_string(ipfs['encrypted_data'], job_request_message_decryption_key))
+        }else{
+          const convo_key = this.state.job_request_convo_keys[convo_id]
+          const originalText = await this.decrypt_data_string(ipfs_obj['encrypted_data'], convo_key.toString())
+          ipfs_obj = JSON.parse(originalText);
+        }
+      }
+      
+      
+      if(ipfs_obj != null){
+        const clone = structuredClone(this.state.socket_object_messages)
+        const messages = clone[request_id] == null ? [] : clone[request_id].slice()
+        const ipfs_message = ipfs_obj;
+        ipfs_message['time'] = event.returnValues.p6
+        this.fetch_uploaded_files_for_object(ipfs_message)
+        const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
+        if(includes == null){
+          messages.push(ipfs_message)
+        }
+        clone[request_id] = messages
+        this.setState({socket_object_messages: clone})
+
+
+        if(!am_I_the_author){
+          if(message.time > (Date.now()/1000) - (3*60)){
+            event['e5'] = e5
+            const notifs = [event]
+            this.handle_incoming_job_request_message_notifications(notifs)
+          }
+        }
+      }
+    }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
+  }
+
+  async process_new_contractor_accepted_storefront_request_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      this.load_contract_item(message.e5, message.data)
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const e5 = message.e5;
+    const id = message.id;
+    const sender_acc = message.author
+    const convo_id = id;
+
+    const event = {returnValues:{p1: message.target, p2:sender_acc, p3:39, p4:message.data, p5:message.int_data, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+    const socket_contractor_applications_clone = structuredClone(this.state.socket_contractor_applications)
+    const messages = socket_contractor_applications_clone[message.contractor_object_id]
+    console.log('socket_stuff2', 'socket_contractor_applications_clone_messages', message.contractor_object_id, messages)
+    if(messages != null){
+      const index = messages.findIndex(item => item['job_request_id'] == message.int_data);
+      console.log('socket_stuff2', 'index', index, message.int_data)
+      if(index != -1){
+        messages[index]['is_response_accepted'] = true
+        messages[index]['contract'] = event.returnValues.p4
+        messages[index]['proposals'] = []
+
+        this.setState({socket_contractor_applications: socket_contractor_applications_clone})
+        this.view_storefront_request_page.current?.set_request_item_accepted_value(message.int_data, event.returnValues.p4)
+      }
+    }
+
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+      event['e5'] = e5
+      const notifs = [event]
+      this.handle_storefront_request_response_notifications(notifs)
+      if(add_to_notifications == true){
+        this.set_storefront_request_response_event_in_notifications(event, e5)
+      }
+    }
+  }
+
+  async handle_storefront_request_response_notifications(events){
+    var senders = []
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
+    var prompt = this.getLocale()['3097g']/* 'Incoming storefront purchase request response from $' */
+    prompt = prompt.replace('$', senders.toString())
+    this.load_specific_storefront_items(events, 'p1')
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'storefront', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+  }
+
+  set_storefront_request_response_event_in_notifications(event, e5){
+    event['e5'] = e5
+    event['p'] = event.returnValues.p1
+    event['time'] = event.returnValues.p6
+    event['block'] = event.returnValues.p7
+    event['sender'] = event.returnValues.p2
+    event['type'] = 'storefront'
+    event['event_type'] = 'storefront_request_response'
+    event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['storefront_request_response'] == null ? [] : clone['storefront_request_response'].slice()
+    request_clone_array.push(event)
+    clone['storefront_request_response'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
 
 
 
@@ -56171,7 +57105,8 @@ class App extends Component {
       'storefront_order':'storefront_order|'+this.state.accounts[this.state.selected_e5].address,
       'signature_request':'signature_request|'+this.state.accounts[this.state.selected_e5].address,
       'open_signature_request':'open_signature_request|'+this.state.accounts[this.state.selected_e5].address,
-      'bill': 'bill|'+this.state.accounts[this.state.selected_e5].address
+      'bill': 'bill|'+this.state.accounts[this.state.selected_e5].address,
+      'contractor_accept_storefront_request': 'contractor_accept_storefront_request|'+this.state.accounts[this.state.selected_e5].address,
     }
     const target = target_object[type]
     
@@ -56210,6 +57145,9 @@ class App extends Component {
               }
               else if(type == 'bill'){
                 events.push(this.process_new_bill_event(object_data, object_hash))
+              }
+              else if(type == 'contractor_storefront_request'){
+                events.push(this.process_new_job_request_event(object_data, object_hash))
               }
               else{
                 events.push(this.process_new_mail_event(object_data, object_hash))
@@ -56513,6 +57451,12 @@ class App extends Component {
           }
           else if(object_data['type'] == 'mempool_notification'){
             await this.process_new_mempool_notification_message(object_data, object_hash, object_data['author_address'], true)
+          }
+          else if(object_data['type'] == 'storefront_purchase_request'){
+            await this.process_new_storefront_purchase_request_message(object_data, object_hash, object_data['author_address'], true)
+          }
+          else if(target_entry == 'contractor_accept_storefront_request'+this.state.accounts[this.state.selected_e5].address){
+            await this.process_new_contractor_accepted_storefront_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
           await this.wait(300)
         }

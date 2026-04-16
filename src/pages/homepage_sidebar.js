@@ -249,8 +249,10 @@ class HomepageSideBar extends Component {
         const promoted_post = notification_object['promoted_post'] || [];
         const comment_tag = notification_object['comment_tag'] || [];
         const post_tag = notification_object['post_tag'] || [];
+        const storefront_purchase_request = notification_object['storefront_purchase_request'] || []
+        const storefront_request_response = notification_object['storefront_request_response'] || []
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag, storefront_purchase_request, storefront_request_response)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {

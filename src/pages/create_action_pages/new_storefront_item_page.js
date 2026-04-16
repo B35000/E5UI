@@ -77,7 +77,7 @@ class NewStorefrontItemPage extends Component {
         purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(),
         get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(),
         get_option_storefront_type_object:this.get_option_storefront_type_object(),
-        get_purchase_through_bags_tags_object:this.get_purchase_through_bags_tags_object(),
+        get_purchase_through_bags_tags_object:this.get_purchase_through_bags_tags_object(), get_purchase_contracts_enabled_tags_object:this.get_purchase_contracts_enabled_tags_object(),
 
         content_channeling_setting: this.props.app_state.content_channeling, 
         device_language_setting: this.props.app_state.device_language, 
@@ -343,6 +343,17 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+    get_purchase_contracts_enabled_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['89']/* 'enabled' */], [0]
+            ],
+        };
+    }
+
 
 
 
@@ -573,6 +584,12 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535bq']/* 'Enable Pre-Purchase Agreement Offers.' */, 'details':this.props.app_state.loc['535br']/* 'If set to enabled, your clients will be able send purchase agreement offers to acquire your storefront items using your purchase contract (you\'ll need your purchase contract for this feature).' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_purchase_contracts_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_purchase_contracts_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['471']/* 'Direct Purchase Option' */, 'details':this.props.app_state.loc['472']/* 'If set to enabled, youll handle the shipping for the item when purchased directly by your clients' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -580,6 +597,10 @@ class NewStorefrontItemPage extends Component {
                 {this.render_direct_shipping_fee_view_if_enabled()}
             </div>
         )
+    }
+
+    when_get_purchase_contracts_enabled_tags_object_updated(tag_obj){
+        this.setState({get_purchase_contracts_enabled_tags_object: tag_obj})
     }
 
     render_pick_up_location_input_if_sale(){

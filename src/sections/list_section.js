@@ -1272,6 +1272,9 @@ class PostListSection extends Component {
                     return_text.push(this.props.app_state.loc['2509bv']/* '$ orders' */.replace('$', this.format_count(extra_data['storefront_order_events']['all_hits'])));
                     // console.log('get_object_views_text', 'storefront_order_events', return_text)
                 }
+                if(extra_data['storefront_purchase_request_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['storefront_purchase_request_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -1579,7 +1582,7 @@ class PostListSection extends Component {
     }
 
     render_contract_item(object, index){
-        if(object == null || object['ipfs'] == null){
+        if(object == null || (object['ipfs'] == null && object['id'] != 2)){
             if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
                 return(
                     <div>

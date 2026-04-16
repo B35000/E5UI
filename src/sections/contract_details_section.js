@@ -154,7 +154,7 @@ class ContractDetailsSection extends Component {
     render_contract_details_section(show_viewpager=true, stack_page_tags_object_to_use=this.state.navigate_view_contract_list_detail_tags_object) {
         var selected_item = this.get_selected_item(stack_page_tags_object_to_use, stack_page_tags_object_to_use['i'].active)
         var object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
-        if(object == null || object['ipfs'] == null){
+        if(object == null || (object['ipfs'] == null && object['id'] != 2)){
             return(
                 <div>
                     {this.render_empty_detail_object()}
@@ -788,6 +788,7 @@ class ContractDetailsSection extends Component {
                 'work':this.props.app_state.loc['177'],
                 'life':this.props.app_state.loc['179'],
                 'public':this.props.app_state.loc['252d']/* 🌐 Public Contract */,
+                'purchase':this.props.app_state.loc['252h']/* 🌾 Purchase Contract */,
                 'custom':this.props.app_state.loc['2214g'],
             }
             const title = this.props.app_state.loc['2214h']/* 'Contract Type.' */

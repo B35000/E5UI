@@ -99,10 +99,10 @@ function toTree(data) {
   return nodeById[0].sortRecursive();
 }
 
-class ViewJobRequestPage extends Component {
+class ViewStorefrontRequestPage extends Component {
     
     state = {
-        selected:0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8), entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), contractor_object:null, entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(), get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object()
+        selected:0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['3097']/* 'accept-storefront-request' */, id:makeid(8), entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['3097a']/* 'storefront' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), storefront_object:null, entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
     };
 
     get_comment_structure_tags(){
@@ -150,43 +150,31 @@ class ViewJobRequestPage extends Component {
         };
     }
 
-    get_include_exit_contract_after_finish_transaction_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e', this.props.app_state.loc['3097l']/* 'exit-contract ↩' */], [1]
-            ],
-        };
-    }
-
-    set_object(request_item, contractor_object){
+    set_object(request_item, storefront_object){
         if(this.state.request_item['job_request_id'] != request_item['job_request_id']){
             this.setState({
-                selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8), contractor_object: null,
-                entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
+                selected:0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['3097']/* 'accept-storefront-request' */, id:makeid(8), entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['3097a']/* 'storefront' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
             })
         }
-        this.setState({request_item: request_item, contractor_object: contractor_object, e5: request_item['e5']})
-        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'], request_item['key_data'], request_item, contractor_object)
+        this.setState({request_item: request_item, storefront_object: storefront_object, e5: request_item['e5']})
+        this.props.load_storefront_request_messages(storefront_object['id'], request_item['job_request_id'], request_item['e5'], request_item['key_data'], request_item, storefront_object)
 
         if(request_item['is_response_accepted']){
             this.setState({accept_job_request_title_tags_object: this.get_accepted_job_request_title_tags_object()})
         }
-        if (this.messagesEnd.current){
-            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        }
+        this.scroll_to_bottom()
     }
 
 
 
 
 
-    
+
+
+
 
     render(){
-        if(this.state.request_item['title_description'] == null || this.state.contractor_object == null) return;
+        if(this.state.request_item['job_request_id'] == null || this.state.storefront_object == null) return;
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 {this.render_accept_button()}
@@ -199,10 +187,9 @@ class ViewJobRequestPage extends Component {
         this.setState({accept_job_request_title_tags_object: tag_obj})
     }
 
-
     render_accept_button(){
         if(this.state.request_item['job_request_id'] != 0){
-            var object = this.state.contractor_object
+            var object = this.state.storefront_object
             if(!this.state.request_item['is_response_accepted'] && object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
                 return(
                 <div className="row">
@@ -227,8 +214,6 @@ class ViewJobRequestPage extends Component {
             }
         }
     }
-
-
 
     render_everything(){
         var size = this.props.app_state.size
@@ -278,31 +263,6 @@ class ViewJobRequestPage extends Component {
             )
         }
     }
-
-    render_empty_views(size){
-        var items = []
-        for(var i=0; i<size; i++){
-            items.push(i)
-        }
-        
-        return(
-            <div>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px'}}>
-                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-
 
     render_small_screen_selectors(){
         var selected_item = this.get_selected_item(this.state.accept_job_request_title_tags_object, this.state.accept_job_request_title_tags_object['i'].active)
@@ -360,7 +320,7 @@ class ViewJobRequestPage extends Component {
     }
 
     is_ok_to_show_contracts(){
-        var object = this.state.contractor_object
+        var object = this.state.storefront_object
         var request_item = this.state.request_item
         if(object == null || request_item == null) return;
 
@@ -369,8 +329,6 @@ class ViewJobRequestPage extends Component {
         }
         return true
     }
-
-
 
     render_title_details_part(){
         if(this.state.request_item['job_request_id'] != 0){
@@ -381,7 +339,6 @@ class ViewJobRequestPage extends Component {
             )
         }
     }
-
 
     render_job_response_item(item){
         var is_application_accepted = item['is_response_accepted'];
@@ -396,16 +353,10 @@ class ViewJobRequestPage extends Component {
                     {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1679']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
-                    {this.render_detail_item('0')}
-
-                    {this.render_detail_item('3', {'details':this.get_senders_name_or_you(item['applicant_id'], this.state.contractor_object['e5']), 'title':item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'details':this.get_senders_name_or_you(item['applicant_id'], this.state.storefront_object['e5']), 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_part_of_contract_message(item)}
-                    
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1680']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
-                    <div style={{height:10}}/>
                     
                     {this.render_pdf_files_if_any(item)}
                     <div style={{height:10}}/>
@@ -417,10 +368,15 @@ class ViewJobRequestPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1682']/* 'Accepted' */, 'details':this.props.app_state.loc['1698']/* 'The contractor Accepted the job request.' */, 'size':'l'})}
                     {this.render_view_contract_button(item)}
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1683']/* 'Set Pay' */, 'details':this.props.app_state.loc['1684']/* 'The requested pay for the job' */, 'size':'l'})}
-                    {this.render_set_prices_list_part(item)}
+                    
+                    {this.render_view_ordered_variant_details_data(item)}
 
-                    {this.render_finish_job_and_make_payment(item, this.state.contractor_object)}
+                    {this.render_set_conditions_list_part(item)}
+
+                    {this.render_finish_job_and_make_payment(item, this.state.storefront_object)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }else{
@@ -433,31 +389,28 @@ class ViewJobRequestPage extends Component {
                     {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1686']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
-                    {this.render_detail_item('0')}
-
-                    {this.render_detail_item('3', {'details':this.get_senders_name_or_you(item['applicant_id'], this.state.contractor_object['e5']), 'title':item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'details':this.get_senders_name_or_you(item['applicant_id'], this.state.storefront_object['e5']), 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_part_of_contract_message(item)}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1688']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
-                    <div style={{height:10}}/>
                     {this.render_pdf_files_if_any(item)}
                     <div style={{height:10}}/>
                     {this.render_image_part([].concat(item['entered_images']))}
 
-
                     {this.render_job_request_location_pins(item['pins'])}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1689']/* 'Set Pay' */, 'details':this.props.app_state.loc['1690']/* 'The amounts youll be receiving for the job.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {this.render_set_prices_list_part(item)}
+                    
+                    {this.render_view_ordered_variant_details_data(item)}
+
+                    {this.render_set_conditions_list_part(item)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
-        }
-        
+        } 
     }
 
     render_finish_job_and_make_payment(item, object){
@@ -467,23 +420,18 @@ class ViewJobRequestPage extends Component {
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1632l']/* 'Finalize Transaction.' */, 'details':this.props.app_state.loc['1632m']/* 'Finish up by making the requested payments quoted and recording them on E5.' */, 'size':'l'})}
-                    
-                    {this.am_i_part_of_contract(item) == true && (
-                        <div>
-                            <div style={{height:10}}/>
-                            {this.render_detail_item('4', {'text':this.props.app_state.loc['3097m']/* 'Exit their contract?' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                            <div style={{height:10}}/>
-                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_include_exit_contract_after_finish_transaction_object} tag_size={'l'} when_tags_updated={this.when_get_include_exit_contract_after_finish_transaction_object_updated.bind(this)} theme={this.props.theme}/>
-                        </div>
-                    )}
-
                     <div style={{height:10}}/>
+
                     <div onClick={()=> this.finish_transaction(item, object)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1632n']/* 'Finalize And Finish' */, 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055oh']/* 'Finalize' */, 'action':''},)}
                     </div>
                 </div>
             )
         }
+    }
+
+    finish_transaction(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object, 'am_i_part_of_contract':this.am_i_part_of_contract(item)}, 'finalize_storefront_request_transaction')
     }
 
     am_i_part_of_contract(item){
@@ -495,174 +443,19 @@ class ViewJobRequestPage extends Component {
         return contract['participant_times'][account_id] > (Date.now()/1000)
     }
 
-    when_get_include_exit_contract_after_finish_transaction_object_updated(tag_obj){
-        this.setState({get_include_exit_contract_after_finish_transaction_object: tag_obj})
-    }
-
-    finish_transaction(item, object){
-        if(!this.check_if_sender_has_enough_balance_for_awards(item['price_data'], object['e5'])){
-            this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
-        }
-        else{
-            const obj = {
-                id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
-                entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
-                e5: object['e5'], application: item, object: object, price_data: item['price_data'],
-                recipient: object['author'], identifier: item['purchase_identifier']
-            }
-            
-            const selected_item = this.state.get_selected_item(this.state.get_include_exit_contract_after_finish_transaction_object, 'e')
-            if(selected_item == this.props.app_state.loc['3097l']/* 'exit-contract ↩' */){
-                obj.contract_id = item['contract']
-            }
-
-            this.props.add_finish_job_payment_transaction_to_stack(obj)
-            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
-            this.props.open_dialog_bottomsheet()
-        }
-    }
-
-    check_if_sender_has_enough_balance_for_payouts(price_data, e5){
-        var has_enough = true
-        for(var i=0; i<price_data.length; i++){
-            var bounty_item_exchange = price_data[i]['id']
-            var bounty_item_amount = price_data[i]['amount']
-            var my_balance = this.props.calculate_actual_balance(e5, bounty_item_exchange)
-            my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(bounty_item_exchange, e5))
-            if(bigInt(my_balance).lesser(bigInt(bounty_item_amount))){
-                has_enough = false
-            }
-        }
-        return has_enough
-    }
-
-    get_debit_balance_in_stack(token_id, e5){
-        var txs = this.props.app_state.stack_items
-        var total_amount = bigInt(0)
-        for(var i=0; i<txs.length; i++){
-            var t = txs[i]
-            if(txs[i].e5 == e5){
-                if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
-                    var amount = bigInt(txs[i].amount)
-                    var exchange = t.token_item['id']
-                    var action = this.get_action(t)
-                    if(token_id == exchange && action == 1){
-                        total_amount = bigInt(total_amount).add(amount)
-                    }
-                }
-                else 
-                if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
-                    if(txs[i].token_item['id'] == token_id){
-                        total_amount = bigInt(total_amount).add(txs[i].debit_balance)
-                    }
-                }
-                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
-                    for(var j=0; j<t.selected_variant['price_data'].length; j++){
-                        var exchange = t.selected_variant['price_data'][i]['id']
-                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][j]['amount'], t.purchase_unit_count)
-                        if(exchange == token_id){
-                            total_amount = bigInt(total_amount).add(amount)
-                        }
-                    }
-                    for(var j=0; j<t.storefront_item['ipfs'].shipping_price_data.length; j++){
-                        var exchange = t.storefront_item['ipfs'].shipping_price_data[j]['id']
-                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[j]['amount'], t.purchase_unit_count)
-                        if(exchange == token_id){
-                            total_amount = bigInt(total_amount).add(amount)
-                        }
-                    }
-                }
-                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
-                    if(token_id == 5){
-                        total_amount = bigInt(total_amount).add(t.award_amount)
-                    }
-                    for(var j=0; j<t.price_data.length; j++){
-                        var exchange = t.price_data[j]['id']
-                        var amount = t.price_data[j]['amount']
-                        if(exchange == token_id){
-                            total_amount = bigInt(total_amount).add(amount)
-                        }
-                    }
-                }
-                // else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
-                //     var buy_tokens = t.token_item['data'][3]
-                //     var required_amounts = this.calculate_token_prices(t, t.token_item['data'][4])
-                //     for(var i=0; i<buy_tokens.length; i++){
-                //         var buy_token_id = buy_tokens[i]
-                //         if(buy_token_id == token_id){
-                //             var required_amount = required_amounts[i]
-                //             total_amount = bigInt(total_amount).add(required_amount)
-                //         }
-                //     }
-                // }
-                // else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
-                //     var entry_tokens = t.contract_item['data'][2]
-                //     var entry_amounts = t.contract_item['data'][3]
-                //     for(var i=0; i<entry_tokens.length; i++){
-                //         var entry_token_id = entry_tokens[i]
-                //         if(entry_token_id == token_id){
-                //             var required_amount = entry_amounts[i]
-                //             total_amount = bigInt(total_amount).add(required_amount)
-                //         }
-                //     }
-                // }
-                // else if(txs[i].type == this.props.app_state.loc['312']/* 'proposal' */){
-                //     for(var i = 0; i<t.bounty_values.length; i++){
-                //         if(t.bounty_values[i]['exchange'] == token_id){
-                //             var required_amount = t.bounty_values[i]['amount']
-                //             total_amount = bigInt(total_amount).add(required_amount)
-                //         }
-                //     }
-                // }
-                // else if(txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */){
-                //     var entry_tokens = this.state.subscription_item['data'][2]
-                //     var entry_fees = this.state.subscription_item['data'][3]
-                //     for(var i=0; i<entry_tokens.length; i++){
-                //         if(token_id == entry_tokens[i]){
-                //             var required_amount = this.calculate_final_amount(entry_fees[i], t)
-                //             total_amount = bigInt(total_amount).add(required_amount)
-                //         }
-                //     }
-                // }
-                // else if(txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */){
-                //     var exchanges_used = t.data.exchanges_used
-                //     var exchange_amounts = t.data.exchange_amounts
-                //     for(var i=0; i<exchanges_used.length; i++){
-                //         if(token_id == exchanges_used[i]){
-                //             var required_amount = exchange_amounts[token_id]
-                //             total_amount = bigInt(total_amount).add(required_amount)
-                //         }
-                //     }
-                // }
-            }
-        }
-        return total_amount
-    }
-
-    get_action(t){
-        var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
-        var stack_action = 1
-        if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
-        return stack_action
-    }
-    
-    get_amounts_to_be_paid(amount, count){
-        return bigInt(amount).multiply(bigInt(count))
-    }
-
     when_get_chain_or_indexer_job_object_updated(tag_obj){
         this.setState({get_chain_or_indexer_job_object: tag_obj})
     }
 
     show_moderator_note_if_any(item){
-        if(this.props.app_state.moderator_notes_by_my_following.length == 0  || this.props.app_state.user_account_id[this.state.contractor_object['e5']] == item['applicant_id']) return;
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0  || this.props.app_state.user_account_id[this.state.storefront_object['e5']] == item['applicant_id']) return;
         var note_to_apply = []
         for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
             const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
             var hit_count = 0
             for(var k=0; k<focused_note['keywords'].length; k++){
                 const keyword_target = focused_note['keywords'][k]
-                if(this.get_senders_name_or_you(item['applicant_id'], this.state.contractor_object['e5']) == keyword_target || item['applicant_id'] == keyword_target){
+                if(this.get_senders_name_or_you(item['applicant_id'], this.state.storefront_object['e5']) == keyword_target || item['applicant_id'] == keyword_target){
                     hit_count++
                 }
                 else if(item['title_description'].includes(keyword_target)){
@@ -720,14 +513,14 @@ class ViewJobRequestPage extends Component {
         var alias = (bucket[sender] == null? sender : bucket[sender])
         return alias
     }
-    
+
     render_part_of_contract_message(item){
         if(item['contract'] == null) return;
         var contract_and_proposals = this.props.app_state.loaded_contract_and_proposal_data[item['contract']]
         if(contract_and_proposals == null) return;
 
         var account_id = item['applicant_id']
-        var object = this.state.contractor_object
+        var object = this.state.storefront_object
         var alias = this.get_senders_name_or_you2(account_id, object['e5'])
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
             //if its my contractor post
@@ -754,7 +547,7 @@ class ViewJobRequestPage extends Component {
 
     render_view_contract_button(item){
         if(item['contract'] == null) return;
-        const object = this.state.contractor_object
+        const object = this.state.storefront_object
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]) return;
         var contract_and_proposals = this.props.app_state.loaded_contract_and_proposal_data[item['contract']]
         if(contract_and_proposals == null){
@@ -780,6 +573,7 @@ class ViewJobRequestPage extends Component {
     open_contract(contract, proposals){
         this.props.open_view_contract_ui(contract, proposals)
     }
+
 
     render_pdf_files_if_any(item){
         if(item['entered_pdfs'] != null && item['entered_pdfs'].length > 0){
@@ -828,63 +622,6 @@ class ViewJobRequestPage extends Component {
                 {this.render_detail_item('8', {'details':title,'title':details, 'size':'s', 'image':thumbnail, 'border_radius':'15%',})}
             </div>
         )
-    }
-
-    format_data_size(size){
-        if(bigInt(size).greater(bigInt(1024).pow(8))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
-        }
-        else if(bigInt(size).greater(bigInt(1024).pow(7))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
-        }
-        else if(bigInt(size).greater(bigInt(1024).pow(6))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
-        }
-        else if(bigInt(size).greater(bigInt(1024).pow(5))){
-            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
-            var value = mod+'.'+prim
-            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
-        }
-        else if(size > (1024*1024*1024*1024)){
-            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
-        }
-        else if(size > (1024*1024*1024)){
-            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
-        }
-        else if(size > (1024*1024)){
-            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
-        }
-        else if(size > 1024){
-            return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
-        }
-        else{
-            return {'size':size, 'unit':'bytes'}
-        }
-    }
-
-    get_cid_split(ecid){
-        var split_cid_array = ecid.split('_');
-        var filetype = split_cid_array[0]
-        var cid_with_storage = split_cid_array[1]
-        var cid = cid_with_storage
-        var storage = 'ch'
-        if(cid_with_storage.includes('.')){
-            var split_cid_array2 = cid_with_storage.split('.')
-            cid = split_cid_array2[0]
-            storage = split_cid_array2[1]
-        }
-
-        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
     get_expiry_time(item){
@@ -940,84 +677,236 @@ class ViewJobRequestPage extends Component {
         }
     }
 
-    render_set_prices_list_part(item){
+
+
+
+    render_view_ordered_variant_details_data(item){
+        const object = this.state.storefront_object        
+        var storefront = this.state.storefront_object
+        var variant_in_store = this.get_variant_object_from_storefront(storefront, item['variant_id'])
+        if(variant_in_store == null) return null
+        var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':item['purchase_unit_count'], 'details':composition_type+this.props.app_state.loc['2049']/* ' ordered.' */ , 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':this.props.app_state.loc['2050']/* 'Variant Description' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':(item['custom_specifications'] == null ? '...':item['custom_specifications']), 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_purchase_options_if_any2(item)}
+                {this.render_variant_final_prices(variant_in_store, item, object)}
+                {this.render_variant_image_if_any(variant_in_store)}
+            </div>
+        )
+    }
+
+    get_variant_object_from_storefront(storefront, id){
+        if(storefront == null) return null;
+        for(var i=0; i<storefront['ipfs'].variants.length; i++){
+            if(storefront['ipfs'].variants[i]['variant_id'] == id){
+                return storefront['ipfs'].variants[i]
+            }
+        }
+    }
+
+    render_variant_image_if_any(variant_in_store){
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            return(
+                <div style={{padding:'0px 0px 0px 0px'}}>
+                    {this.render_detail_item('9', variant_in_store['image_data']['data'])}
+                </div>
+            )
+        }
+    }
+
+    render_purchase_options_if_any2(item){
+        var items = item['options']
+        if(items == null || items.length == 0) return;
+        var storefront_options = item['storefront_options']
+        if(storefront_options == null || storefront_options.length == 0) return;
+        return(
+            <div>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', {'title':storefront_options[index]['title'], 'details':storefront_options[index]['details'], 'size':'l'})}
+                        <div style={{height:3}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={item} tag_size={'l'} when_tags_updated={this.when_purchase_option_tag_selected.bind(this)} theme={this.props.theme} locked={true}/>
+                        <div style={{height:(index == items.length -1 ? 0 : 3)}}/>
+                    </div>
+                ))}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_purchase_option_tag_selected(tag_item){
+        //do nothing
+    }
+
+    render_variant_final_prices(variant_in_store, item, object){
+        var price_items = variant_in_store['price_data']
+        var price_obj = {}
+        price_items.forEach(price => {
+            if(price_obj[price['id']] == null) price_obj[price['id']] = bigInt(0)
+            price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+        });
+
+        if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+            var options = item['storefront_options']
+
+            for(var i=0; i<item['options'].length; i++){
+                var tag_obj = item['options'][i]
+                var selected_items = []
+                for(var j=0; j<tag_obj['e'][2].length; j++){
+                    var selected_item_pos = tag_obj['e'][2][j]
+                    if(selected_item_pos != 0){
+                        selected_items.push(selected_item_pos-1)
+                    }
+                }
+                for(var k=0; k<selected_items.length; k++){
+                    var selected_pos = selected_items[k]
+                    var option_prices = options[i]['options'][selected_pos]['price']
+                    option_prices.forEach(price => {
+                        if(price_obj[price['id']] == null){
+                            price_obj[price['id']] = bigInt(0)
+                        }
+                        price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+                    });
+                } 
+            }
+        }
+
+        var price_array = []
+        for (const id in price_obj) {
+            if (price_obj.hasOwnProperty(id)) {
+                price_array.push({'id':id, 'amount':price_obj[id]})
+            }
+        }
+
+        if(item['price_data2'].length > 0){
+            //custom prices were specified, so show that instead
+            const custom_price_array = item['price_data2']
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3097h']/* 'Custom Price Specified.' */, 'details':this.props.app_state.loc['3097i'] /* 'The custom amounts that will be applied instead of the default pay listed for the variant in the storefront.' */})}
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {custom_price_array.map((item, index) => (
+                            <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064o']/* 'Order Price.' */, 'details':this.props.app_state.loc['2064p'] /* 'The price of the ordered item with the specified options.' */})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_array.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    render_set_conditions_list_part(purchase_item){
         var middle = this.props.height-300;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(item['price_data'])
+        var items = [].concat(purchase_item['condition_data'])
 
         if(items.length == 0){
-            items = [0,3,0]
+            return;
+        }
+        return(
+            <div style={{}}>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3097b']/* 'Order Conditions.' */, 'details':this.props.app_state.loc['3097c'] /* 'The conditions set for the purchase request.' */})}
+                <div style={{height: 10}}/>
+
+                <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '5px'}}>
+                            {this.render_condition_item(item)}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+    
+    render_condition_item(item){
+        const title = item['condition']
+        const details = this.props.app_state.loc['3096n']/* $ exchanges added. */.replace('$', number_with_commas(item['price_data'].length))
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_selected_pay_amounts(item['price_data'])}
+            </div>
+        )
+    }
+
+    render_selected_pay_amounts(price_data){
+        var items = [].concat(price_data)
+        if(items.length == 0){
+            items = [1, 2, 3]
             return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
-                                </div>
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_price_item(item)}
                             </li>
                         ))}
                     </ul>
                 </div>
-            )
-        }
-        
+            </div>
+        )
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    render_price_item(item){
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        const details = this.format_account_balance_figure(item['amount'])
+        const image = this.props.app_state.token_thumbnail_directory[this.state.storefront_object['e5']][item['id']]
+        return(
+            <div>
+                {this.render_detail_item('8', {'title':title, 'details':details, 'image':image, 'size':'s'})}
+            </div>
+        )
     }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
 
-    get_all_sorted_objects_mappings(object){
-        var all_objects = {}
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            var all_objects_clone = structuredClone(all_objects)
-            all_objects = { ...all_objects_clone, ...e5_objects}
-        }
 
-        return all_objects
-    }
+
+
 
 
 
@@ -1097,24 +986,6 @@ class ViewJobRequestPage extends Component {
 
 
 
-    
-
-
-    componentDidMount() {
-        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
-    check_for_new_responses_and_messages() {
-        if(this.state.request_item['job_request_id'] != 0){
-            this.props.load_job_request_messages(this.state.contractor_object['id'], this.state.request_item['job_request_id'], this.state.request_item['e5'], this.state.request_item['key_data'], this.state.request_item, this.state.contractor_object)
-        }
-    }
-
-
 
 
 
@@ -1123,7 +994,7 @@ class ViewJobRequestPage extends Component {
 
     render_select_contract_parts(){
         var background_color = this.props.theme['card_background_color']
-        var object = this.state.contractor_object
+        var object = this.state.storefront_object
         var request_item = this.state.request_item
         if(object == null || request_item == null) return;
 
@@ -1212,11 +1083,11 @@ class ViewJobRequestPage extends Component {
         var my_contracts = []
         var myid = this.props.app_state.user_account_id[this.state.e5] || 1
         var created_contracts = this.props.app_state.my_created_contracts[this.state.e5] || []
-        
+        console.log('get_contract_items', 'created_contracts', created_contracts)
         for(var i = 0; i < created_contracts.length; i++){
             var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
             const contract_type = created_contracts[i]['ipfs'].contract_type
-            if(post_author.toString() == myid.toString() && contract_type == 'work'){
+            if(post_author.toString() == myid.toString() && contract_type == 'purchase'){
                 my_contracts.push(created_contracts[i])
             }
         }
@@ -1301,7 +1172,7 @@ class ViewJobRequestPage extends Component {
             this.props.notify(this.props.app_state.loc['1153']/* 'You need to pick a contract first' */, 1600)
         }
         else if(time_diff < 0){
-            this.props.notify(this.props.app_state.loc['1698c']/* 'The job request has already expired.' */, 3600)
+            this.props.notify(this.props.app_state.loc['3097d']/* 'The purchase request has already expired.' */, 4600)
         }
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
@@ -1323,8 +1194,7 @@ class ViewJobRequestPage extends Component {
 
     reset_state(){
         this.setState({
-            selected: 0, picked_contract: null, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8),
-            entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */,this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
+            selected: 0, picked_contract: null, type:this.props.app_state.loc['3097']/* 'accept-storefront-request' */, id:makeid(8), entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['3097a']/* 'storefront' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
         });
     }
 
@@ -1340,6 +1210,42 @@ class ViewJobRequestPage extends Component {
         this.setState({request_item: request_item_clone})
     }
 
+
+
+
+
+
+
+
+    constructor(props) {
+        super(props);
+        this.messagesEnd = React.createRef();
+        this.pick_images_view_width = React.createRef();
+        this.has_user_scrolled = {}
+        this.locationPickerRef = React.createRef();
+    }
+
+    componentDidUpdate(){
+        var object = this.state.request_item;
+        var has_scrolled = this.has_user_scrolled[object['job_request_id']]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
+    }
+
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.state.request_item['job_request_id'] != 0){
+            this.props.load_storefront_request_messages(this.state.storefront_object['id'], this.state.request_item['job_request_id'], this.state.request_item['e5'], this.state.request_item['key_data'], this.state.request_item, this.state.storefront_object)
+        }
+    }
 
 
 
@@ -1460,13 +1366,13 @@ class ViewJobRequestPage extends Component {
     show_add_comment_bottomsheet(){
         var object = this.state.request_item;
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message() : 0
-        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'request', this.state.contractor_object['id'], this.state.entered_text)
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'purchase_request', this.state.storefront_object['id'], this.state.entered_text)
     }
-  
+
 
     render_top_title(){
         var object = this.state.request_item;
-        var contractor_post = this.state.contractor_object
+        var contractor_post = this.state.storefront_object
         const online_text = this.is_recipient_online() ? (' • '+this.props.app_state.loc['2738bi']/* 'online' */) : ''/* this.props.app_state.loc['2738bj'] *//* 'offline' */
         return(
             <div style={{padding:'0px 5px 5px 5px'}}>
@@ -1488,9 +1394,9 @@ class ViewJobRequestPage extends Component {
     is_recipient_online(){
         const tracked_online_accounts = this.props.app_state.tracked_online_accounts
         const job_request = this.state.request_item
-        const contractor_object = this.state.contractor_object
-        const recipient = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
-        const recipients_e5 = contractor_object['e5']
+        const storefront_object = this.state.storefront_object
+        const recipient = storefront_object['author'] == this.props.app_state.user_account_id[storefront_object['e5']] ? job_request['applicant_id'] : storefront_object['author']
+        const recipients_e5 = storefront_object['e5']
         const e5_id = recipient+recipients_e5
 
         if(tracked_online_accounts[e5_id] == null){
@@ -1498,22 +1404,6 @@ class ViewJobRequestPage extends Component {
         }
         else{
             return tracked_online_accounts[e5_id]['online']
-        }
-    }
-
-    constructor(props) {
-        super(props);
-        this.messagesEnd = React.createRef();
-        this.pick_images_view_width = React.createRef();
-        this.has_user_scrolled = {}
-        this.locationPickerRef = React.createRef();
-    }
-
-    componentDidUpdate(){
-        var object = this.state.request_item;
-        var has_scrolled = this.has_user_scrolled[object['job_request_id']]
-        if(has_scrolled == null){
-            this.scroll_to_bottom()
         }
     }
 
@@ -1728,16 +1618,6 @@ class ViewJobRequestPage extends Component {
         this.setState({focused_message: clone})
     }
 
-    // includes_function(array, item){
-    //     var return_value = false;
-    //     array.forEach(element => {
-    //         if(element['id'] == item['id']){
-    //             console.log('found clone: '+item['id'])
-    //             return_value = true
-    //         }
-    //     });
-    //     return return_value
-    // }
 
     unfocus_message(){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
@@ -1801,52 +1681,6 @@ class ViewJobRequestPage extends Component {
                     </SwipeableList>
             </div>
         )
-        // var focused_message = this.get_focused_message()
-        // if(item == focused_message){
-        //     return(
-        //         <div>
-        //             <SwipeableList>
-        //                 <SwipeableListItem
-        //                     swipeLeft={{
-        //                     content: <div>Focus</div>,
-        //                     action: () => console.log()
-        //                     }}
-        //                     swipeRight={{
-        //                     content: <div>Unfocus</div>,
-        //                     action: () => this.unfocus_message()
-        //                     }}>
-        //                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item)}</div>
-        //                 </SwipeableListItem>
-        //             </SwipeableList>
-        //             {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
-        //                 {this.render_stack_message_item(item)}
-        //             </div> */}
-        //             <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
-        //         </div>
-        //     )
-        // }else{
-        //     return(
-        //         <div>
-        //             <SwipeableList>
-        //                 <SwipeableListItem
-        //                     swipeLeft={{
-        //                     content: <div>Focus</div>,
-        //                     action: () => this.focus_message(item)
-        //                     }}
-        //                     swipeRight={{
-        //                     content: <div>Unfocus</div>,
-        //                     action: () => this.unfocus_message()
-        //                     }}>
-        //                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item)}</div>
-        //                 </SwipeableListItem>
-        //             </SwipeableList>
-
-        //             {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
-        //                 {this.render_stack_message_item(item)}
-        //             </div> */}
-        //         </div>
-        //     )
-        // }
     }
 
     when_message_clicked = (event, item, focused_message) => {
@@ -1875,7 +1709,6 @@ class ViewJobRequestPage extends Component {
         navigator.clipboard.writeText(signature_data)
         this.props.notify(this.props.app_state.loc['1692']/* 'Copied message to clipboard.' */, 1600)
     }
-
 
     render_stack_message_item(item){
         if(this.is_sender_in_blocked_accounts(item)){
@@ -1941,6 +1774,7 @@ class ViewJobRequestPage extends Component {
         )
     }
 
+
     linkifyOptions = {
         render: {
             url: ({ attributes, content }) => (
@@ -1990,6 +1824,7 @@ class ViewJobRequestPage extends Component {
         e.preventDefault(); // stop normal navigation
         this.props.show_view_iframe_link_bottomsheet(url)
     };
+
 
     show_moderator_note_for_comment_if_any(item){
         if(this.props.app_state.moderator_notes_by_my_following.length == 0 || item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]) return;
@@ -2046,6 +1881,7 @@ class ViewJobRequestPage extends Component {
     when_uploaded_file_item_clicked(item, index){
         this.props.when_file_link_tapped(item)
     }
+
 
     render_uploaded_moderator_file(item, index){
         var ecid_obj = this.get_cid_split(item)
@@ -2460,37 +2296,6 @@ class ViewJobRequestPage extends Component {
         return this.state.focused_message[object['job_request_id']]
     }
 
-
-
-
-
-    render_image_picker(){
-        return(
-            <div>
-                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                    <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} />
-                </div>
-            </div>
-        )
-    }
-
-    /* called when images have been picked from picker */
-    when_image_gif_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    var image = ev.target.result
-                    this.add_image_to_stack(image)
-                }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
-            }
-            // var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
-        }
-    }
-
     when_entered_text_input_field_changed(text){
         if(text.length > this.props.app_state.max_input_text_length){
             this.show_add_comment_bottomsheet()
@@ -2498,9 +2303,9 @@ class ViewJobRequestPage extends Component {
             this.setState({entered_text: text})
 
             const job_request = this.state.request_item
-            const contractor_object = this.state.contractor_object
-            const recipient_id = contractor_object['author'] == this.props.app_state.user_account_id[contractor_object['e5']] ? job_request['applicant_id'] : contractor_object['author']
-            const recipient_e5 = contractor_object['e5']
+            const storefront_object = this.state.storefront_object
+            const recipient_id = storefront_object['author'] == this.props.app_state.user_account_id[storefront_object['e5']] ? job_request['applicant_id'] : storefront_object['author']
+            const recipient_e5 = storefront_object['e5']
 
             this.props.emit_new_chat_typing_notification(job_request['job_request_id'], recipient_id, recipient_e5)
 
@@ -2530,9 +2335,9 @@ class ViewJobRequestPage extends Component {
 
             const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city;
 
-            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'target_recipient':this.state.contractor_object['author'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':'', my_country, my_city}
+            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.storefront_object['id'], 'e5':this.state.e5, 'key_data':this.state.request_item['key_data'], 'target_recipient':this.state.storefront_object['author'], 'sender_e5':this.props.app_state.selected_e5, 'lan':this.props.app_state.device_language, 'markdown':'', my_country, my_city}
 
-            this.props.add_job_request_message_to_stack_object(tx)
+            this.props.add_storefront_request_message_to_stack_object(tx)
 
             this.setState({entered_text:'', text_input_field_height: 30})
             // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
@@ -2542,27 +2347,6 @@ class ViewJobRequestPage extends Component {
             }
 
             this.unfocus_message()
-        }
-    }
-
-    add_image_to_stack(image){
-        if(this.props.app_state.user_account_id[this.state.e5] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
-            return
-        }
-        var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
-        var message = this.state.entered_text.trim()
-        var object = this.state.request_item;
-        var tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id[this.state.e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5}
-
-        this.props.add_job_request_message_to_stack_object(tx)
-
-        this.setState({entered_text:''})
-        this.props.notify('message added to stack', 600)
-
-        if (this.messagesEnd.current){
-            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
         }
     }
 
@@ -2607,7 +2391,6 @@ class ViewJobRequestPage extends Component {
         
         this.setState({focused_message: clone})
     }
-
 
 
 
@@ -2722,9 +2505,143 @@ class ViewJobRequestPage extends Component {
 
 
 
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+    
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
 
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
 
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
+    }
 
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+    get_cid_split(ecid){
+        var split_cid_array = ecid.split('_');
+        var filetype = split_cid_array[0]
+        var cid_with_storage = split_cid_array[1]
+        var cid = cid_with_storage
+        var storage = 'ch'
+        if(cid_with_storage.includes('.')){
+            var split_cid_array2 = cid_with_storage.split('.')
+            cid = split_cid_array2[0]
+            storage = split_cid_array2[1]
+        }
+
+        return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+    format_data_size(size){
+        if(bigInt(size).greater(bigInt(1024).pow(8))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(8)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'YBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(7))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(7)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'ZBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(6))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(6)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'EBs'}
+        }
+        else if(bigInt(size).greater(bigInt(1024).pow(5))){
+            var mod = bigInt(size).mod(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var prim = bigInt(size).divide(bigInt(1024).pow(5)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var value = mod+'.'+prim
+            return {'size':parseFloat(value).toFixed(3), 'unit':'PBs'}
+        }
+        else if(size > (1024*1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024*1024)).toFixed(3), 'unit':'TBs'}
+        }
+        else if(size > (1024*1024*1024)){
+            return {'size':parseFloat(size/(1024*1024*1024)).toFixed(3), 'unit':'GBs'}
+        }
+        else if(size > (1024*1024)){
+            return {'size':parseFloat(size/(1024*1024)).toFixed(3), 'unit':'MBs'}
+        }
+        else if(size > 1024){
+            return {'size':parseFloat(size/1024).toFixed(3), 'unit':'KBs'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
@@ -2735,10 +2652,10 @@ class ViewJobRequestPage extends Component {
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '14')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups show_account_details={this.show_account_details.bind(this)}  show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} />
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 
@@ -2833,12 +2750,9 @@ class ViewJobRequestPage extends Component {
     format_proportion(proportion){
         return ((proportion/10**18) * 100)+'%';
     }
-
-
-
 }
 
 
 
 
-export default ViewJobRequestPage;
+export default ViewStorefrontRequestPage;

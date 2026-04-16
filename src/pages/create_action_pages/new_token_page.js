@@ -931,13 +931,34 @@ class NewTokenPage extends Component {
                 <div onClick={()=>this.preset_utility_token()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['635']/* '🔧 Utility Token' */, 'details':this.props.app_state.loc['636']/* 'An uncapped, general purpose token which is bought and sold from its exchange.' */, 'size':'l'})}
                 </div>
-                <div style={{height:3}}/>
-
                 
-                {/* <div onClick={()=>this.preset_end_token()}>
+
+                {/* <div style={{height:3}}/>
+                <div onClick={()=>this.preset_end_token()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2769'], 'details':this.props.app_state.loc['2770'], 'size':'l'})}
                 </div> */}
-                <div style={{height:3}}/>
+
+                {this.render_detail_item('0')}
+                {this.render_token_type()}                
+            </div>
+        )
+    }
+
+    render_token_type(){
+        var obj = {
+            'e':this.props.app_state.loc['629']/* '📈 e-Token' */,
+            'paid':this.props.app_state.loc['631']/* '☝️ Paid Token' */,
+            'free':this.props.app_state.loc['633']/* '🫰 Free Token' */,
+            'utility':this.props.app_state.loc['635']/* '🔧 Utility Token' */,
+            'end':this.props.app_state.loc['2769'],
+            'custom':this.props.app_state.loc['2447p']/* 'Custom Token.' */,
+        }
+        const title = this.props.app_state.loc['2447q']/* 'Token Type.' */
+        const details = obj[this.get_token_type()]
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                <div style={{height:10}}/>
             </div>
         )
     }
