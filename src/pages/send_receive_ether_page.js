@@ -65,6 +65,8 @@ class SendReceiveEtherPage extends Component {
         
         request_ether_recipient:'',
         request_ether_recipient_address: '',
+
+        cypher_passcode:'',
     };
 
     set_object(item){
@@ -310,10 +312,24 @@ class SendReceiveEtherPage extends Component {
                 {this.show_gas_price_or_eip_options(e5)}
                 
                 
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
 
                 <div style={{height: 30}}/>
             </div>
         )
+    }
+
+    when_passcode_input_field_changed(text){
+        if(this.props.app_state.locked_wallet_hashed_password != '') this.setState({cypher_passcode: text})
     }
 
     show_gas_price_or_eip_options(e5){
@@ -1207,6 +1223,12 @@ class SendReceiveEtherPage extends Component {
         else if(!this.isValidAddress(recipient_address)){
             this.props.notify(this.props.app_state.loc['1407']/* 'Please set a valid recipient.' */, 4500)
         }
+        if(this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(!this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
         else{
             // this.setState({confirmation_dialog_box: true}) 
             this.props.show_dialog_bottomsheet({'picked_wei_amount':this.state.picked_wei_amount, 'e5':this.state.ether['e5'], 'recipient_address':recipient_address}, 'confirm_send_ether_dialog')
@@ -1217,6 +1239,14 @@ class SendReceiveEtherPage extends Component {
     copy_text_to_clipboard(text){
         navigator.clipboard.writeText(text)
         this.props.notify(this.props.app_state.loc['1403']/* 'copied to clipboard!' */, 600)
+    }
+
+    does_password_match_hash(passcode){
+        if(this.props.app_state.locked_wallet_hashed_password != ''){
+            const provided_hash = this.props.hash_data_with_randomizer(passcode);
+            return provided_hash == this.props.app_state.locked_wallet_hashed_password
+        }
+        else return true
     }
 
 }

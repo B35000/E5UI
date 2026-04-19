@@ -46,7 +46,9 @@ class SendReceiveCoinPage extends Component {
         
         request_coin_recipient:'',
         request_coin_recipient_address:'',
-        request_coin_memo:''
+        request_coin_memo:'',
+
+        cypher_passcode:'',
     };
 
 
@@ -426,8 +428,18 @@ class SendReceiveCoinPage extends Component {
                     </div>
                 )}
 
-                
                 {this.show_gas_price_options()}
+
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
             </div>
         )
     }
@@ -581,7 +593,6 @@ class SendReceiveCoinPage extends Component {
         return (_in*148 + out*34 + 10 +- _in)
     }
 
-
     show_gas_price_options(){
         var item = this.state.coin
         var data = this.props.app_state.coin_data[item['symbol']]
@@ -604,7 +615,6 @@ class SendReceiveCoinPage extends Component {
         }
         
     }
-
 
     get_picked_fee_amount_in_base_units(){
         var item = this.state.coin
@@ -639,6 +649,10 @@ class SendReceiveCoinPage extends Component {
         if(data['fee']['type'] == 'variable'){
             this.setState({picked_sats_fee_amount: amount})
         }
+    }
+
+    when_passcode_input_field_changed(text){
+        if(this.props.app_state.locked_wallet_hashed_password != '') this.setState({cypher_passcode: text})
     }
 
     open_confirm_send = async () => {
@@ -681,11 +695,24 @@ class SendReceiveCoinPage extends Component {
         else if(memo_text.length > 53){
             this.props.notify(this.props.app_state.loc['2954j']/* 'That memo is too long.' */, 4000)
         }
+        if(this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(!this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
         else{
             this.props.show_dialog_bottomsheet({'coin':item, 'fee':set_fee, 'amount':transfer_amount,'recipient':recipient, 'sender':this.get_account_address(), 'memo':memo_text, 'kill_wallet': kill_wallet}, 'confirm_send_coin_dialog')
         }
     }
 
+    does_password_match_hash(passcode){
+        if(this.props.app_state.locked_wallet_hashed_password != ''){
+            const provided_hash = this.props.hash_data_with_randomizer(passcode);
+            return provided_hash == this.props.app_state.locked_wallet_hashed_password
+        }
+        else return true
+    }
 
     when_send_coin_confirmation_received = async () => {
         var item = this.state.coin

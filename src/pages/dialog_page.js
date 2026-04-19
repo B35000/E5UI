@@ -721,6 +721,9 @@ class DialogPage extends Component {
         else if(option == 'view_storefront_bag_receipt_item'){
             return this.view_storefront_bag_receipt_item_ui()
         }
+        else if(option == 'set_password_for_locking_wallet'){
+            return this.view_set_password_for_locking_wallet_ui()
+        }
     }
 
 
@@ -13881,6 +13884,106 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    view_set_password_for_locking_wallet_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_password_for_locking_wallet_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_password_for_locking_wallet_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_password_for_locking_wallet_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_set_password_for_locking_wallet_data(){
+        const selected_item = this.get_selected_item(this.state.data['tag_object'], 'e')
+        var title = this.props.app_state.loc['3055nt']/* 'Set Passcode.' */
+        var details = this.props.app_state.loc['3055oq']/* 'Set your passowrd for enabling sendig of your ether and coin.' */
+        
+        if(selected_item == this.props.app_state.loc['1593md']/* 'locked' */){
+            title = this.props.app_state.loc['3055op']/* 'Set new password.' */
+            details = this.props.app_state.loc['3055oq']/* 'Set your passowrd for enabling sendig of your ether and coin.' */
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_cypher_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                <div style={{height: 10}}/>
+
+                <div onClick={()=>this.set_password_for_locking_wallet()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055np']/* 'Finish */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    set_password_for_locking_wallet(){
+        const cypher_passcode = this.state.cypher_passcode.trim()
+        
+        if(cypher_passcode == ''){
+            this.props.notify(this.props.app_state.loc['3055nw']/* type something. */, 1500);
+        }
+        else if(!this.does_password_match_hash(cypher_passcode)){
+            this.props.notify(this.props.app_state.loc['3055or']/* That didnt work. */, 3500);
+        }
+        else{
+            this.props.set_password_for_locking_wallet(cypher_passcode, this.state.data['tag_object'])
+        }
+    }
+    
+    does_password_match_hash(passcode){
+        const provided_hash = this.props.hash_data_with_randomizer(passcode);
+        const selected_item = this.get_selected_item(this.state.data['tag_object'], 'e')
+
+        if(selected_item == 'e'){
+            //were unlocking
+            return provided_hash == this.props.app_state.locked_wallet_hashed_password
+        }
+        else return true
+    }
 
 
 

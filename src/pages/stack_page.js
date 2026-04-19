@@ -186,6 +186,7 @@ class StackPage extends Component {
         get_chain_or_indexer_option_object:this.get_chain_or_indexer_option_object(),
         get_rounded_edges_option_tags_object: this.get_rounded_edges_option_tags_object(),
         get_notifications_permissions_option_tags_object:this.get_notifications_permissions_option_tags_object(),
+        get_locked_wallet_option_tags_object: this.get_locked_wallet_option_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
@@ -1458,6 +1459,36 @@ class StackPage extends Component {
 
     set_notifications_permissions_option(){
         this.setState({get_notifications_permissions_option_tags_object: this.get_notifications_permissions_option_tags_object(),})
+    }
+
+
+
+
+
+
+
+
+
+
+    get_locked_wallet_option_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593md']/* 'locked' */], [this.get_locked_wallet_option()]
+            ],
+        };
+    }
+
+    get_locked_wallet_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593md']/* 'locked' */] = 1
+        return obj[this.props.app_state.locked_wallet]
+    }
+
+    set_locked_wallet_option(){
+        this.setState({get_locked_wallet_option_tags_object: this.get_locked_wallet_option_tags_object(),})
     }
 
 
@@ -13828,7 +13859,6 @@ class StackPage extends Component {
                     )}
 
 
-
                     {this.does_title_details_contain_searched_text('1593lg', '1593lh') && (
                         <div>
                             {this.render_detail_item('3',{'title':this.props.app_state.loc['1593lg']/* 'Bottomsheet Rounded Edges' */, 'details':this.props.app_state.loc['1593lh']/* 'If set to rounded, the edges of bottomsheets will be visible and curved.' */, 'size':'l'})}
@@ -13839,6 +13869,8 @@ class StackPage extends Component {
                             {this.render_detail_item('0')}
                         </div>
                     )}
+
+                    {this.render_lock_wallet_setting_if_wallet_set()}
 
                 </div>
             </div>
@@ -15043,6 +15075,24 @@ class StackPage extends Component {
         )
     }
 
+    render_lock_wallet_setting_if_wallet_set(){
+        const opacity = this.props.app_state.has_wallet_been_set == true ? 1.0 : 0.5
+        return(
+            <div style={{opacity: opacity}}>
+                {this.does_title_details_contain_searched_text('1593me', '1593mf') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593me']/* 'Lock/Unlock Wallet' */, 'details':this.props.app_state.loc['1593mf']/* 'If set to locked, you will be unable to transfer any coin or ether out of the wallet without a set password.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_locked_wallet_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_locked_wallet_option_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     render_image(item){
         if(this.props.app_state.theme_image == item){
             return(
@@ -15332,6 +15382,10 @@ class StackPage extends Component {
             this.props.when_notifications_permissions_option_changed(selected_item)
         }
         
+    }
+
+    when_get_locked_wallet_option_tags_object_updated(tag_object){
+        if(this.props.app_state.has_wallet_been_set == true) this.props.show_dialog_bottomsheet({'tag_object':tag_object}, 'set_password_for_locking_wallet')
     }
     
 

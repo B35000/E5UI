@@ -19,6 +19,7 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import TextInput from './../components/text_input';
 
 // import Letter from './../assets/letter.png';
 
@@ -36,7 +37,7 @@ function number_with_commas(x) {
 class ConfirmRunPage extends Component {
     
     state = {
-        selected: 0, run_data:null, get_confirm_run_tags_object:this.get_confirm_run_tags_object(),
+        selected: 0, run_data:null, get_confirm_run_tags_object:this.get_confirm_run_tags_object(), cypher_passcode:'',
     };
 
 
@@ -179,10 +180,21 @@ class ConfirmRunPage extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':this.get_time_diff(run_expiry_duration), 'details':this.props.app_state.loc['1091']/* 'Run Expiry Duration' */, 'size':'l'})}
+
+
+                    {this.should_ask_for_password() == true && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'You locked your wallet. Please set the lock password used here.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+    
+                            <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                            <div style={{height: 10}}/>
+                        </div>
+                    )}
                     
                     <div style={{height: 10}}/>
-
-                    <div style={{'padding': '5px'}} onClick={()=> this.props.start_run()}>
+                    <div style={{'padding': '5px'}} onClick={()=> this.start_run()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1092']/* 'Run Transactions' */, 'action':''})}
                     </div>
 
@@ -190,6 +202,131 @@ class ConfirmRunPage extends Component {
                     {this.render_detail_item('0')}
                 </div>
             )
+        }
+    }
+
+    when_passcode_input_field_changed(text){
+        if(this.props.app_state.locked_wallet_hashed_password != '') this.setState({cypher_passcode: text})
+    }
+
+    start_run(){
+        if(this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(!this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
+        else{
+            this.props.start_run()
+        }
+    }
+
+    does_password_match_hash(passcode){
+        if(this.props.app_state.locked_wallet_hashed_password != ''){
+            const provided_hash = this.props.hash_data_with_randomizer(passcode);
+            return provided_hash == this.props.app_state.locked_wallet_hashed_password
+        }
+        else return true
+    }
+
+    should_ask_for_password(){
+        if(this.props.app_state.locked_wallet_hashed_password != ''){
+            const txs = this.props.app_state.stack_items
+            const e5 = this.props.app_state.selected_e5
+            var should_include = false;
+            for(var i=0; i<txs.length; i++){
+                if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
+                    if(
+                        txs[i].type == this.props.app_state.loc['1311']/* 'contract' */ ||
+                        txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */ ||
+                        txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */ ||
+                        txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */||
+                        txs[i].type == this.props.app_state.loc['312']/* 'proposal' */ ||
+                        txs[i].type == this.props.app_state.loc['796']/* 'vote' */ ||
+                        txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */ ||
+                        txs[i].type == this.props.app_state.loc['821']/* 'cancel-subscription' */ ||
+                        txs[i].type == this.props.app_state.loc['907']/* 'exchange-transfer' */ ||
+                        txs[i].type == this.props.app_state.loc['930']/* 'freeze/unfreeze' */ ||
+                        txs[i].type == this.props.app_state.loc['880']/* 'authmint' */ ||
+                        txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */ ||
+                        txs[i].type == this.props.app_state.loc['285']/* 'mail' */ ||
+                        this.does_message_contain_transfers_if_message(txs[i]) ||
+                        txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */ ||
+                        txs[i].type == this.props.app_state.loc['1155']/* 'award' */ ||
+                        txs[i].type == this.props.app_state.loc['898']/* 'depthmint' */ ||
+                        txs[i].type == this.props.app_state.loc['2884']/* 'royalty-payouts' */ ||
+                        txs[i].type == this.props.app_state.loc['2896']/* 'upcoming-subscriptions' */ ||
+                        txs[i].type == this.props.app_state.loc['2962']/* 'buy-album' */ ||
+                        txs[i].type == this.props.app_state.loc['a2962a']/* 'buy-video' */ ||
+                        txs[i].type == this.props.app_state.loc['3031']/* 'buy-storage' */ ||
+                        txs[i].type == this.props.app_state.loc['3068ac']/* 'iTransfer' */ ||
+                        txs[i].type == this.props.app_state.loc['3071j']/* 'bill-payment' */ ||
+                        txs[i].type == this.props.app_state.loc['3073']/* 'vote-poll' */ ||
+                        txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || 
+                        txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || 
+                        txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || 
+                        txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || 
+                        txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || 
+                        txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || 
+                        txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */ || 
+                        txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || 
+                        txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */|| 
+                        txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */ ||
+                        txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */ ||
+                        txs[i].type == this.props.app_state.loc['2117p']/* 'creator-payout' */ ||
+                        txs[i].type == this.props.app_state.loc['3055df']/* 'nitro-renewal' */ ||
+                        txs[i].type == this.props.app_state.loc['3076']/* 'auction-bid' */ ||
+                        txs[i].type == this.props.app_state.loc['3077']/* 'fulfil-bids' */ ||
+                        txs[i].type == this.props.app_state.loc['3055fg']/* 'vote_all' */ ||
+                        txs[i].type == this.props.app_state.loc['3055gf']/* 'transfer-alias' */ ||
+                        txs[i].type == this.props.app_state.loc['2642bm']/* 'order-payment' */ ||
+                        txs[i].type == this.props.app_state.loc['3092']/* 'purchase-credits' */ ||
+                        txs[i].type == this.props.app_state.loc['1632o']/* 'finish-payment' */ ||
+                        txs[i].type == this.props.app_state.loc['3093']/* 'configure-obligations' */ ||
+                        txs[i].type == this.props.app_state.loc['3094']/* 'exchange-deposit' */ ||
+                        txs[i].type == this.props.app_state.loc['1593lq']/* 'fulfil-obligations' */ ||
+                        txs[i].type == this.props.app_state.loc['b311a']/* video */ ||
+                        txs[i].type == this.props.app_state.loc['a311a']/* audio */ ||
+                        txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */ ||
+                        txs[i].type == this.props.app_state.loc['19']/* 'exit-contract' */ ||
+                        txs[i].type == this.props.app_state.loc['297']/* 'post' */ ||
+                        txs[i].type == this.props.app_state.loc['760']/* 'job' */
+                    ){
+                        should_include = true
+                    }
+                }
+            }
+            return should_include
+        }
+        else{
+            return false
+        }
+    }
+
+    does_message_contain_transfers_if_message(tx){
+        if(
+            tx.type == this.props.app_state.loc['1510']/* 'channel-messages' */ ||
+            tx.type == this.props.app_state.loc['1511']/* 'post-messages' */ ||
+            tx.type == this.props.app_state.loc['1514']/* 'job-messages' */ ||
+            tx.type == this.props.app_state.loc['1515']/* 'proposal-messages' */ ||
+            tx.type == this.props.app_state.loc['1501']/* 'bag-messages' */ ||
+            tx.type == this.props.app_state.loc['1502']/* 'storefront-messages' */ ||
+            tx.type == this.props.app_state.loc['1505']/* 'job-request-messages' */ ||
+            tx.type == this.props.app_state.loc['1593cc']/* 'audio-messages' */ || 
+            tx.type == this.props.app_state.loc['1593ct']/* 'video-messages' */ || 
+            tx.type == this.props.app_state.loc['1593cu']/* 'nitro-messages' */ ||
+            tx.type == this.props.app_state.loc['3030b']/* 'video-comment-messages' */ ||
+            tx.type == this.props.app_state.loc['3097e']/* 'purchase-request-messages' */
+        ){
+            for(var m=0; m<tx.messages_to_deliver.length; m++){
+                if(tx.messages_to_deliver[m]['award_amount'] != 0){
+                    return true;
+                }
+            }
+            return false;
+        }
+        else{
+            return false
         }
     }
 

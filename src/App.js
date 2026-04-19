@@ -1272,7 +1272,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -1375,7 +1375,9 @@ class App extends Component {
 
     e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false,
 
-    focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{}
+    focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
+
+    locked_wallet_hashed_password:''
   };
 
   get_thread_pool_size(){
@@ -4146,7 +4148,9 @@ class App extends Component {
 
       saved_cypher_seed_object: await this.get_encrypted_seed_if_passcode_is_set(),
       notifications_permissions: this.state.notifications_permissions,
-      account_balance: this.state.remember_account == 'e' ? {} : this.state.account_balance
+      account_balance: this.state.remember_account == 'e' ? {} : this.state.account_balance,
+      locked_wallet_hashed_password: this.state.locked_wallet_hashed_password,
+      locked_wallet: this.state.locked_wallet,
     }
   }
 
@@ -4386,6 +4390,8 @@ class App extends Component {
       var notifications_permissions = state.notifications_permissions || 'e'
       var account_balance = state.account_balance || {}
       var is_safe_to_load_focused_items_into_memory = storage_permissions != 'e'
+      var locked_wallet_hashed_password = state.locked_wallet_hashed_password || this.state.locked_wallet_hashed_password;
+      var locked_wallet = state.locked_wallet || this.state.locked_wallet;
 
       this.setState({
         theme: theme,
@@ -4477,6 +4483,8 @@ class App extends Component {
         notifications_permissions: notifications_permissions,
         account_balance: account_balance,
         is_safe_to_load_focused_items_into_memory: is_safe_to_load_focused_items_into_memory,
+        locked_wallet_hashed_password: locked_wallet_hashed_password,
+        locked_wallet: locked_wallet,
       })
       var me = this;
       setTimeout(function() {
@@ -7438,7 +7446,7 @@ class App extends Component {
 
     return this.renderBottomSheet(
       <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} 
-      start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
+      start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} send_ether_request_message={this.send_ether_request_message.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
       />,
       this.state.send_receive_bottomsheet,
       this.open_send_receive_ether_bottomsheet,
@@ -7622,8 +7630,8 @@ class App extends Component {
     var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
     var size = this.getScreenSize();
     return(
-      <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-        <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)} send_coin_request_message={this.send_coin_request_message.bind(this)}
+      <div /* style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
+        <SendReceiveCoinPage ref={this.send_receive_coin_page}  app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} theme={this.state.theme} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} broadcast_transaction={this.broadcast_transaction.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)} send_coin_request_message={this.send_coin_request_message.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
         
         />
       </div>
@@ -17736,7 +17744,8 @@ class App extends Component {
     var os = getOS()
     
     return this.renderBottomSheet(
-      <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)}/>,
+      <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
+      />,
       this.state.confirm_run_bottomsheet,
       this.open_confirm_run_bottomsheet,
       this.state.height-70
@@ -18168,7 +18177,7 @@ class App extends Component {
 
         open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
 
-        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)}
+        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)}
         />
       </div>
     )
@@ -18277,6 +18286,7 @@ class App extends Component {
       'confirm_bridge_ether_dialog':500,
       'finalize_storefront_request_transaction':550,
       'view_storefront_bag_receipt_item':550,
+      'set_password_for_locking_wallet':300,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -19700,6 +19710,13 @@ class App extends Component {
 
   fail_to_set_password(){
     this.open_dialog_bottomsheet();
+  }
+
+  set_password_for_locking_wallet(password, tag_object){
+    this.open_dialog_bottomsheet();
+    const selected_item = this.get_selected_item(tag_object, 'e');
+    this.emit_new_lock_unlock_wallet_message(password, selected_item == this.getLocale()['1593md']/* 'locked' */);
+    this.stack_page.current?.setState({get_locked_wallet_option_tags_object: tag_object})
   }
 
 
@@ -28022,9 +28039,9 @@ class App extends Component {
       if(obj.all_return_data != null){
         setTimeout(async () => {
           // this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [])
-          await this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], ['object'])
+          await this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], ['object', 'lock_unlock_wallet'])
           await this.set_page_objects_that_should_be_in_focus(this.state.focused_items)
-          this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], [], ['object'])
+          this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], [], ['object', 'lock_unlock_wallet'])
           this.set_socket_entries_in_memory(obj.all_return_data['socket_view_objects_data'], [])
         }, (35 * 1000));
       }
@@ -50759,7 +50776,7 @@ class App extends Component {
 
         if(disconnect_time != 0){
           const target_address = this.state.accounts[this.state.selected_e5].address
-          const resync_targets = ['jobs', 'open_signature_request|' +target_address, 'open_signature_response|'+target_address, 'call_invites|'+target_address, 'ether_coin_request|'+target_address, 'pre_purchase_request|'+target_address, 'direct_message|'+target_address, 'tags|'+target_address, 'mempool_notification|'+target_address]
+          const resync_targets = ['jobs', 'open_signature_request|' +target_address, 'open_signature_response|'+target_address, 'call_invites|'+target_address, 'ether_coin_request|'+target_address, 'pre_purchase_request|'+target_address, 'direct_message|'+target_address, 'tags|'+target_address, 'mempool_notification|'+target_address, 'lock_unlock_wallet|'+target_address]
           this.get_objects_from_socket_and_set_in_state(resync_targets, [], [], disconnect_time)  
         }
 
@@ -51027,6 +51044,9 @@ class App extends Component {
       }
       else if(message['type'] == 'contractor_accept_storefront_request'){
         me.process_new_contractor_accepted_storefront_request_message(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'lock_unlock_wallet'){
+        me.process_new_lock_unlock_wallet_message(message, object_hash, from, true)
       }
     });
     socket.on('user_joined_chatroom', ({userId, roomId}) => {
@@ -52100,6 +52120,21 @@ class App extends Component {
 
     await this.wait(3000)
     this.process_new_comment_message(comment_message_object.message, comment_message_object.object_hash)
+  }
+
+  async emit_new_lock_unlock_wallet_message(password, lock_or_unlock){
+    this.prompt_top_notification(this.getLocale()['2738cp']/* 'Updating Preference...' */, 1900)
+    const job_request_message_object = await this.prepare_new_lock_unlock_wallet_message(password, lock_or_unlock)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(job_request_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = this.state.accounts[this.state.selected_e5].address
+    const target = 'lock_unlock_wallet|'+this.state.accounts[this.state.selected_e5].address
+    const secondary_target = 'lock_unlock_wallet|'+this.state.accounts[this.state.selected_e5].address
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: to, message: job_request_message_object.message, target: target, object_hash: job_request_message_object.object_hash, secondary_target: secondary_target });
   }
   
 
@@ -54494,6 +54529,52 @@ class App extends Component {
   get_storefront(storefront_id, e5){
     var item = this.state.created_store_mappings[e5] == null ? null : this.state.created_store_mappings[e5][storefront_id]
     return item
+  }
+
+  async prepare_new_lock_unlock_wallet_message(password, lock_or_unlock){
+    const message_obj = {
+      'password':this.hash_data_with_randomizer(password), 
+      'lock_or_unlock': lock_or_unlock,
+      'time': Date.now(),
+    }
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = this.state.user_account_id[this.state.selected_e5]
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = 0
+    const message = {
+      type: 'lock_unlock_wallet',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: 0,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
   }
   
 
@@ -57216,6 +57297,54 @@ class App extends Component {
     this.setState({storefront_payment_update_data: clone})
   }
 
+  async process_new_lock_unlock_wallet_message(message, object_hash, from , add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author_address']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['2738cq']/* 'Preference Updated.' */, 1900)
+      }, (2 * 1000));
+    }
+    
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    if(ipfs != message.data){
+      /* 
+        'password':this.hash_data_with_randomizer(password), 
+        'lock_or_unlock': lock_or_unlock,
+        'time': Date.now(),
+      */
+      const time = ipfs['time']
+      const lock_or_unlock = ipfs['lock_or_unlock']
+      const hashed_password = ipfs['password']
+
+      if(this.my_wallets_locked_time == null){
+        this.my_wallets_locked_time = {}
+      }
+
+      if(this.my_wallets_locked_time[message['author_address']] == null){
+        this.my_wallets_locked_time[message['author_address']] = 0
+      }
+
+      if(this.my_wallets_locked_time[message['author_address']] < time){
+        this.my_wallets_locked_time[message['author_address']] = time
+        const new_setting = lock_or_unlock == true ? this.getLocale()['1593md']/* 'locked' */ : 'e'
+        const new_locked_wallet_hashed_password = lock_or_unlock == true ? hashed_password : ''
+        
+        this.setState({locked_wallet: new_setting, locked_wallet_hashed_password: new_locked_wallet_hashed_password})
+        await this.wait(400)
+        this.stack_page.current?.set_locked_wallet_option()
+      }
+    }
+  }
+
 
 
 
@@ -57686,6 +57815,9 @@ class App extends Component {
           }
           else if(object_data['type'] == 'storefront_payment_update_message'){
             await this.process_storefront_payment_update_message(object_data, object_hash, object_data['author_address'], true)
+          }
+          else if(object_data['type'] == 'lock_unlock_wallet'){
+            await this.process_new_lock_unlock_wallet_message(object_data, object_hash, object_data['author_address'], true)
           }
           
           await this.wait(300)
