@@ -6074,7 +6074,7 @@ class home_page extends Component {
                 does_entered_text_contain_reserved_keywords={this.props.does_entered_text_contain_reserved_keywords.bind(this)}
                 show_exchange_deposit_bottomsheet={this.props.show_exchange_deposit_bottomsheet.bind(this)} show_bridge_ether_bottomsheet={this.props.show_bridge_ether_bottomsheet.bind(this)} show_account_details={this.show_account_details.bind(this)} open_send_purchase_request_ui={this.props.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.props.get_storefron_purchase_requests.bind(this)}
 
-                open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)}
+                open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.props.get_storefront_bag_payment_update_messages.bind(this)}
                 />
             </div>
         )

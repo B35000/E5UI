@@ -56,7 +56,7 @@ class EnterContractPage extends Component {
     
     state = {
         selected: 0, type:this.props.app_state.loc['1'], id:makeid(8),
-        contract_item: null, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:(new Date().getTime()/1000)+64800,
+        contract_item: null, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:Math.floor(new Date().getTime()/1000)+64800,
         entered_indexing_tags:[this.props.app_state.loc['2'], this.props.app_state.loc['3']], job_acceptance_action_state_object:null
     };
 

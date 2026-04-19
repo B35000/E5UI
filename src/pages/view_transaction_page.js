@@ -8463,26 +8463,44 @@ return data['data']
                 {this.render_payment_index_tags(payment_tags)}
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('3', { 'title': this.props.app_state.loc['1632p']/* 'Finalize Payments.' */, 'details': this.props.app_state.loc['1632q']/* 'The amounts youll be paying for the indexed job.' */, 'size': 'l' })}
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['1632p']/* 'Finalize Payments.' */, 'details': this.props.app_state.loc['1979y']/* 'The amount youll be paying the contractor for fulfilling the job.' */, 'size': 'l' })}
                 <div style={{height: 10}}/>
 
                 {this.render_payment_amounts(price_data, object)}
+
+                {this.render_bag_storefront_transfers_if_exists(object)}
             </div>
         )
     }
 
     render_payment_amounts(items, object){
         return(
-            <div style={{ 'padding': '0px 0px 0px 0px'}}>
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} >
                 {items.map((pay_item, index) => (
-                    <div style={{'padding': '3px 0px 3px 0px'}}>
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'number':pay_item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']]})}>
+                    <div>
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'number':pay_item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']]})}>
                             {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'subtitle':this.format_power_figure(pay_item['amount']), 'barwidth':this.calculate_bar_width(pay_item['amount']), 'number':this.format_account_balance_figure(pay_item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']], })}
                         </div>
                     </div>
                 ))}
             </div>
         )
+    }
+
+    render_bag_storefront_transfers_if_exists(object){
+        const items_to_deliver = object['ipfs']['bag_orders']
+        if(items_to_deliver != null){
+            const total_amounts = this.get_total_bag_value(items_to_deliver, object)
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1979z']/* 'Storefront Payments.' */, 'details': this.props.app_state.loc['1979ba']/* 'The amounts youll be paying out to the respective storefronts for their variants you\'ve purchased.' */, 'size': 'l' })}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_payment_amounts(total_amounts, object)}
+                </div>
+            )
+        }
     }
 
     render_payment_index_tags(items){

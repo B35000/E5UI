@@ -718,6 +718,9 @@ class DialogPage extends Component {
         else if(option == 'finalize_storefront_request_transaction'){
             return this.view_finalize_storefront_request_transaction_ui()
         }
+        else if(option == 'view_storefront_bag_receipt_item'){
+            return this.view_storefront_bag_receipt_item_ui()
+        }
     }
 
 
@@ -9174,23 +9177,35 @@ return data['data']
     }
 
     finish_transaction(item, object){
-        if(!this.check_if_sender_has_enough_balance_for_payouts(item['price_data'], object['e5'])){
-            this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
-        }
-        else{
-            const obj = {
-                id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
-                entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
-                e5: object['e5'], application: item, object: object, price_data: item['price_data'], recipient: item['applicant_id'], identifier: object['e5_id']+item['applicant_id']+item['time']
+        if(object['ipfs']['bag_orders'] != null){
+            const all_amounts = this.merge_amount_arrays(item['price_data'], this.get_total_bag_value(object['ipfs']['bag_orders'], object))
+
+            if(!this.check_if_sender_has_enough_balance_for_payouts(all_amounts, object['e5'])){
+                this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+                return;
             }
-            const selected_item = this.state.get_selected_item(this.state.get_include_exit_contract_after_finish_transaction_object, 'e')
-            if(selected_item == this.props.app_state.loc['3097l']/* 'exit-contract ↩' */){
-                obj.contract_id = item['picked_contract_id']
+        }else{
+            if(!this.check_if_sender_has_enough_balance_for_payouts(item['price_data'], object['e5'])){
+                this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+                return;
             }
-            this.props.add_finish_job_payment_transaction_to_stack(obj)
-            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
-            this.props.open_dialog_bottomsheet()
         }
+        const obj = {
+            id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
+            entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
+            e5: object['e5'], application: item, object: object, price_data: item['price_data'], recipient: item['applicant_id'], identifier: object['e5_id']+item['applicant_id']+item['time']
+        }
+        const selected_item = this.get_selected_item(this.state.get_include_exit_contract_after_finish_transaction_object, 'e')
+        if(selected_item == this.props.app_state.loc['3097l']/* 'exit-contract ↩' */){
+            obj.contract_id = item['picked_contract_id']
+        }
+        if(object['ipfs']['bag_orders'] != null){
+            //its a bag
+            obj.bag_storefront_transfers = this.get_bag_storefront_transfers(object['ipfs']['bag_orders'], object)
+        }
+        this.props.add_finish_job_payment_transaction_to_stack(obj)
+        this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+        this.props.open_dialog_bottomsheet()
     }
 
     check_if_sender_has_enough_balance_for_payouts(price_data, e5){
@@ -9205,6 +9220,29 @@ return data['data']
             }
         }
         return has_enough
+    }
+
+    merge_amount_arrays(price_data, total_amounts){
+        const obj = {}
+        price_data.forEach(price => {
+            obj[price['id']] = price['amount']
+        });
+
+        total_amounts.forEach(price => {
+            if(obj[price['id']] == null){
+                obj[price['id']] = bigInt(0)
+            }
+            obj[price['id']] = bigInt(obj[price['id']]).plus(price['amount'])
+        });
+
+        var arr = []
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                arr.push({'id':key, 'amount':obj[key]})
+            }
+        }
+
+        return arr
     }
 
 
@@ -9266,7 +9304,9 @@ return data['data']
         const item = this.state.data['item']
         const object = this.state.data['object']
         const items = item['price_data']
-        var is_application_accepted = item['is_response_accepted'];
+        const is_application_accepted = item['is_response_accepted'];
+        const items_to_deliver = object['ipfs']['bag_orders']
+        const total_amounts = this.get_total_bag_value(items_to_deliver, object)
         if(is_application_accepted == true){
             return(
                 <div>
@@ -9279,7 +9319,14 @@ return data['data']
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2055']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2056']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name5(item['applicant_id'], object), 'size':'l'})}
                     <div style={{height:10}}/>
 
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055oi']/* 'Final payment to bag fulfiller account.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
                     {this.render_payment_amounts(items, object)}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055oj']/* 'Final payment to the storefronts your purchasing from.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                    {this.render_payment_amounts(total_amounts, object)}
                     {this.render_detail_item('0')}
                 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2057']/* 'Accepted' */, 'details':this.props.app_state.loc['2058']/* 'The bag owner picked this fulfilment application' */, 'size':'l'})}
@@ -9350,6 +9397,98 @@ return data['data']
             this.props.open_dialog_bottomsheet()
             this.props.view_bag_application_contract(item)
         }
+    }
+
+    render_payment_amounts2(items, object){
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {items.map((pay_item, index) => (
+                    <div>
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'number':pay_item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+pay_item['id']], 'subtitle':this.format_power_figure(pay_item['amount']), 'barwidth':this.calculate_bar_width(pay_item['amount']), 'number':this.format_account_balance_figure(pay_item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[pay_item['id']], })}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    get_total_bag_value(items_to_deliver, object){
+        var obj = {}
+        items_to_deliver.forEach(item => {
+            // var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
+            var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+            var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+            if(variant_in_store != null){
+                var price_items = variant_in_store['price_data']
+                for(var i=0; i<price_items.length; i++){
+                    var units = price_items[i];
+                    var amount = this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)
+                    var token_id = units['id']
+
+                    if(obj[token_id] == null){
+                        obj[token_id] = bigInt(0);
+                    }
+                    obj[token_id] = bigInt(obj[token_id]).add(amount)
+                }
+
+                if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+                    var options = item['storefront_options']
+
+                    for(var i=0; i<item['options'].length; i++){
+                        var tag_obj = item['options'][i]
+                        var selected_items = []
+                        for(var j=0; j<tag_obj['e'][2].length; j++){
+                            var selected_item_pos = tag_obj['e'][2][j]
+                            if(selected_item_pos != 0){
+                                selected_items.push(selected_item_pos-1)
+                            }
+                        }
+                        for(var k=0; k<selected_items.length; k++){
+                            var selected_pos = selected_items[k]
+                            var option_prices = options[i]['options'][selected_pos]['price']
+                            option_prices.forEach(price => {
+                                if(obj[price['id']] == null){
+                                    obj[price['id']] = bigInt(0)
+                                }
+                                obj[price['id']] = bigInt(obj[price['id']]).plus(price['amount'])
+                            });
+                        } 
+                    }
+                }
+            }
+        });
+        
+        var arr = []
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                arr.push({'id':key, 'amount':obj[key]})
+            }
+        }
+
+        return arr
+    }
+
+    get_bag_storefront_transfers(items_to_deliver, object){
+        const obj = []
+        items_to_deliver.forEach(item => {
+            var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+            var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+            if(variant_in_store != null){
+                var price_items = variant_in_store['price_data']
+                for(var i=0; i<price_items.length; i++){
+                    var units = price_items[i];
+                    var amount = this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)
+                    var token_id = units['id']
+                    const receiver = storefront['ipfs'].target_receiver || storefront['author'];
+                    obj.push({'id':token_id, 'amount':amount, 'receiver':receiver})
+                }
+            }
+        });
+
+        return obj
     }
 
 
@@ -13288,7 +13427,7 @@ return data['data']
         if(variant_in_store == null) return this.render_empty_views(3)
         return(
             <div>
-                {this.render_variant_final_prices(variant_in_store, item, object)}
+                {this.render_variant_final_prices2(variant_in_store, item, object)}
                 {this.render_set_conditions_list_part(item)}
                 {this.render_detail_item('0')}
 
@@ -13307,7 +13446,7 @@ return data['data']
         this.setState({get_include_exit_contract_after_finish_transaction_object: tag_obj})
     }
 
-    render_variant_final_prices(variant_in_store, item, object){
+    render_variant_final_prices2(variant_in_store, item, object){
         const price_array = this.get_final_price_data(variant_in_store, item)
         const shipping_price = object['ipfs'].shipping_price_data
         return(
@@ -13494,7 +13633,7 @@ return data['data']
         }
 
         
-        if(item['price_data2'].length != 0){
+        if(item['price_data2'] != null && item['price_data2'].length != 0){
             const price_array = [].concat(item['price_data2'])
             this.state.selected_conditions.forEach(condition => {
                 const price_data = condition['price_data']
@@ -13535,6 +13674,220 @@ return data['data']
             return price_array
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    view_storefront_bag_receipt_item_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_storefront_bag_receipt_item_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_storefront_bag_receipt_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_storefront_bag_receipt_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_storefront_bag_receipt_item_data(){
+        const object = this.state.data['object']
+        const item = this.state.data['item']
+        const sender_alias = this.get_senders_name2(item['author'], object)
+        const account_text = sender_alias == item['author'] ? sender_alias : item['author'] + ', ' + sender_alias
+        const time = item['time']
+        const id = item['id']
+        const variants = item['variants']
+        const price_obj = item['paid']
+        const fulfiller = this.get_senders_name2(item['fulfiller'], object)
+        const fulfiller_text = fulfiller == item['fulfiller'] ? fulfiller : item['fulfiller'] + ', ' + fulfiller
+
+        const price_array = []
+        for (const id in price_obj) {
+            if (price_obj.hasOwnProperty(id)) {
+                price_array.push({'id':id, 'amount':price_obj[id]})
+            }
+        }
+        const all_existing = this.fetch_closest_matching_payments_to_time(object, price_array, time, item['author'])
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':id, 'details':this.props.app_state.loc['3055ok']/* 'Bag Identifier.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':account_text, 'details':this.props.app_state.loc['3055ol']/* 'Sender Account' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':fulfiller_text, 'details':this.props.app_state.loc['3055oo']/* 'Bag Fulfiller.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                
+                {this.render_detail_item('0')}
+
+                {this.render_item_variants(object, variants)}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_array.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                        </div>
+                    ))}
+                </div>
+
+                {all_existing == true && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055om']/* 'Record Verified.' */, 'details':this.props.app_state.loc['3055on']/* 'e has found transactions matching the required transfers in the specified time.t' */, 'size':'l'})}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_item_variants(object, used_variants){
+        var items = [].concat(object['ipfs'].variants).filter((item) => {
+            return used_variants[item['variant_id']] != null
+        })
+        var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
+         
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_bag_receipt_variant_item(item, composition_type, used_variants)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_bag_receipt_variant_item(variant_in_store, composition_type, used_variants){
+        const purchase_count = used_variants[variant_in_store['variant_id']]
+        if(variant_in_store['image_data']['data'] != null && variant_in_store['image_data']['data']['images'] != null && variant_in_store['image_data']['data']['images'].length > 0){
+            var image = variant_in_store['image_data']['data']['images'][0]
+            return(
+                <div>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(purchase_count)+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                </div>
+            )
+        }else{
+            var image = this.props.app_state.static_assets['empty_image']
+            return(
+                <div>
+                    {this.render_detail_item('8',{'title':this.format_account_balance_figure(purchase_count)+' '+composition_type, 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s', 'image':image, 'border_radius':'4px', 'image_width':'auto'})}
+                </div>
+            )
+        }
+    }
+
+    fetch_closest_matching_payments_to_time(object, transfers, time, sender_account_id){
+        const transfer_events = this.props.app_state.storefront_payment_event_data[object['e5_id']] || []
+
+        const get_default_depth = (number) => {
+            var number_as_string = number.toString().toLocaleString('fullwide', {useGrouping:false})
+            return Math.floor((number_as_string.length-1)/72)
+        }
+
+        const get_exchange_transfer_actions = (amount) => {
+            var transaction_amount = amount.toString().toLocaleString('fullwide', {useGrouping:false})
+            var transaction_amount_depth = get_default_depth(transaction_amount)
+
+            var end = transaction_amount.length - 1
+            var start = (end - 71) < 0 ? 0 : (end-71)
+
+            var data = []
+            for(var j=0; j<=transaction_amount_depth; j++){
+                var depth_amount = bigInt(transaction_amount.substring(start, end+1)).toString().toLocaleString('fullwide', {useGrouping:false})
+                var depth = j
+                if(!bigInt(depth_amount).equals(0)){
+                data.push({'amount':depth_amount, 'depth':depth})
+                }
+
+                end -= 72
+                start -= 72
+            }
+            return data
+        }
+        var all_existing = true
+        transfers.forEach(transfer => {
+            const exchange = transfer['id']
+            const amount = transfer['amount']
+            const transfer_actions = get_exchange_transfer_actions(amount)
+
+            transfer_actions.forEach(action => {
+                const existing_events = transfer_events.filter((event) => { 
+                    return(
+                        event.returnValues.p1 == exchange && 
+                        action['amount'].toString() == event.returnValues.p4/* amount */.toString() &&
+                        action['depth'].toString() == event.returnValues.p7/* depth */.toString() &&
+                        Math.abs(parseInt(event.returnValues.p5/* timestamp */) - time) < (60*10) &&
+                        event.returnValues.p2/* sender */ == sender_account_id
+                    )
+                });
+
+                if(existing_events.length == 0){
+                    all_existing = false;
+                }
+            });
+        });
+        
+        return all_existing
+    }
+
+
+
+
+
+
+
+
+
 
 
 

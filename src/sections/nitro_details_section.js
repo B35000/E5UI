@@ -2549,11 +2549,15 @@ class NitroDetailsSection extends Component {
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
         const border_radii = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? '0px 7px 7px 0px': '7px'
+
+        const c = this.props.get_my_state_color()
+        const background_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['my_messages_color'][c] : this.props.theme['view_group_card_item_background']
+
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
                     <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
-                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radii}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
                                     <p className="fw-bold" style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>

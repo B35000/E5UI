@@ -1375,7 +1375,7 @@ class App extends Component {
 
     e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false,
 
-    focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}
+    focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{}
   };
 
   get_thread_pool_size(){
@@ -5609,6 +5609,8 @@ class App extends Component {
         'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)','synchronizer_loading_highlight_color':'rgb(206, 206, 206)',
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
+
+        'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)','r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)','y':'rgba(218, 219, 195, 0.6)','p':'rgba(210, 191, 211, 0.6)','o':'rgba(215, 207, 195, 0.6)',},
         
         'chart_color2':'#FCFCFC','chart_background_color':'#D5D5D5', 'chart_color':'rgb(170, 170, 170)',
   
@@ -5652,6 +5654,8 @@ class App extends Component {
         'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'rgb(69, 68, 68)', 'synchronizer_loading_highlight_color':'rgb(208, 205, 205)',
 
         'view_group_card_item_background':'#292929','tag_background_color':'rgb(54, 53, 53)', 'indexed_tag_background':'rgb(38, 38, 38)', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
+
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
 
         'chart_color':'#333333','chart_background_color':'#232323', 'chart_color2':'rgb(100, 100, 100)',
 
@@ -5700,6 +5704,8 @@ class App extends Component {
 
         'chart_color':'#1a1a1a','chart_background_color':'#0a0a0a', 'chart_color2':'rgb(96, 95, 95)',
 
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
@@ -5742,6 +5748,8 @@ class App extends Component {
         'loading_base_color':'rgb(12, 38, 8)','loading_highlight_color':'rgb(43, 95, 43)', 'synchronizer_loading_highlight_color':'rgb(77, 188, 77)',
 
         'view_group_card_item_background':'#13190c','tag_background_color':'rgb(29, 48, 11)', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2', 'view_group_card_item_background2':'linear-gradient(135deg,rgb(12, 25, 12),rgb(29, 57, 26))',
+
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
 
         'chart_color':'#01c601','chart_background_color':'#141e0a', 'chart_color2':'rgb(77, 255, 77)',
 
@@ -5786,9 +5794,11 @@ class App extends Component {
         'primary_text_color':'#029302','secondary_text_color':'#03a003',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgba(184, 225, 182, 0.6)','card_shadow_color':'rgb(158, 214, 171)', 'loading_base_color':'#d4e2cc','loading_highlight_color':'rgb(89, 197, 89)',
+        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgba(184, 225, 182, 0.6)','card_shadow_color':'rgb(158, 214, 171)', 'loading_base_color':'#d4e2cc','loading_highlight_color':'rgb(89, 197, 89)', 'synchronizer_loading_highlight_color':'rgb(77, 188, 77)',
         
         'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #d4e2cc,rgb(196, 209, 189))',
+
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
         
         'chart_color':'#01c601','chart_background_color':'#d4e2cc', 'chart_color2':'rgb(0, 136, 0)',
   
@@ -5838,6 +5848,8 @@ class App extends Component {
 
         'view_group_card_item_background':'#190c0c','tag_background_color':'rgb(51, 18, 14)', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a', 'view_group_card_item_background2':'linear-gradient(135deg, #190c0c,rgb(38, 18, 18))',
 
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+
         'chart_color':'#f70404','chart_background_color':'#190c0c', 'chart_color2':'rgb(252, 122, 122)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#3f0101',
@@ -5881,9 +5893,11 @@ class App extends Component {
         'primary_text_color':'#930101','secondary_text_color':'#a00803',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgba(222, 174, 174, 0.6)','card_shadow_color':'rgb(214, 158, 158)', 'loading_base_color':'#e2cdcc','loading_highlight_color':'rgb(181, 90, 86)',
+        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgba(222, 174, 174, 0.6)','card_shadow_color':'rgb(214, 158, 158)', 'loading_base_color':'#e2cdcc','loading_highlight_color':'rgb(181, 90, 86)', 'synchronizer_loading_highlight_color':'rgb(188, 77, 77)',
         
         'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2cdcc,rgb(211, 192, 191))',
+
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
         
         'chart_color':'#c60b01','chart_background_color':'#e2cdcc', 'chart_color2':'rgb(114, 7, 2)',
   
@@ -5929,9 +5943,12 @@ class App extends Component {
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#202c33','card_background_color':'rgba(6, 24, 42, 0.8)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'rgb(14, 28, 48)',
-        'navbar_text_shadow_color':'#171651', 'loading_base_color':'rgb(6, 24, 42)','loading_highlight_color':'rgb(19, 43, 58)', 'synchronizer_loading_highlight_color':'rgb(77, 144, 188)',
+        'navbar_text_shadow_color':'#171651', 'loading_base_color':'rgb(6, 24, 42)','loading_highlight_color':'rgb(19, 43, 58)', 
+        'synchronizer_loading_highlight_color':'rgb(77, 144, 188)',
 
         'view_group_card_item_background':'#0d0c19','tag_background_color':'rgb(13, 28, 43)', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7', 'view_group_card_item_background2':'linear-gradient(135deg, #0d0c19,rgb(27, 24, 51))',
+
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
 
         'chart_color':'#0079ff','chart_background_color':'#0d0c19', 'chart_color2':'rgb(99, 171, 253)',
 
@@ -5976,9 +5993,12 @@ class App extends Component {
         'primary_text_color':'#017493','secondary_text_color':'#0374a0',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgba(175, 195, 223, 0.6)','card_shadow_color':'rgb(158, 178, 214)', 'loading_base_color':'rgb(200, 214, 219)','loading_highlight_color':'rgb(89, 160, 188)',
+        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgba(175, 195, 223, 0.6)','card_shadow_color':'rgb(158, 178, 214)', 'loading_base_color':'rgb(200, 214, 219)','loading_highlight_color':'rgb(89, 160, 188)', 
+        'synchronizer_loading_highlight_color':'rgb(77, 144, 188)',
         
         'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #ccdce2,rgb(187, 203, 209))',
+
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
         
         'chart_color':'#0181c6','chart_background_color':'#ccdce2', 'chart_color2':'rgb(2, 77, 118)',
   
@@ -6024,9 +6044,12 @@ class App extends Component {
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#333220','card_background_color':'rgba(36, 37, 6, 0.8)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'rgb(46, 48, 14)',
-        'navbar_text_shadow_color':'#505116', 'loading_base_color':'rgb(36, 37, 6)','loading_highlight_color':'rgb(118, 118, 50)', 'synchronizer_loading_highlight_color':'rgb(188, 182, 77)',
+        'navbar_text_shadow_color':'#505116', 'loading_base_color':'rgb(36, 37, 6)','loading_highlight_color':'rgb(118, 118, 50)', 
+        'synchronizer_loading_highlight_color':'rgb(188, 182, 77)',
 
         'view_group_card_item_background':'#19190c','tag_background_color':'rgb(68, 67, 20)', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a', 'view_group_card_item_background2':'linear-gradient(135deg, #19190c,rgb(43, 43, 21))',
+
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
 
         'chart_color':'#f3f704','chart_background_color':'#19190c', 'chart_color2':'rgb(255, 255, 255)',
 
@@ -6071,9 +6094,11 @@ class App extends Component {
         'primary_text_color':'#757701','secondary_text_color':'#9ba003',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgba(216, 217, 182, 0.6)','card_shadow_color':'rgb(211, 214, 158)', 'loading_base_color':'rgb(221, 221, 197)','loading_highlight_color':'rgb(200, 202, 119)',
+        'navbar_button_selected_color':'#efefdc','primary_navbar_text_color':'#757701','secondary_navbar_text_color':'#9ba003','navbar_text_shadow_color':'#c1c05b','card_background_color':'rgba(216, 217, 182, 0.6)','card_shadow_color':'rgb(211, 214, 158)', 'loading_base_color':'rgb(221, 221, 197)','loading_highlight_color':'rgb(200, 202, 119)', 'synchronizer_loading_highlight_color':'rgb(188, 182, 77)',
         
         'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2e2cc,rgb(208, 208, 187))',
+
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
         
         'chart_color':'#9ba003','chart_background_color':'#e2e2cc', 'chart_color2':'rgb(90, 93, 0)',
   
@@ -6123,6 +6148,8 @@ class App extends Component {
 
         'view_group_card_item_background':'#160c19','tag_background_color':'rgb(59, 19, 70)', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7', 'view_group_card_item_background2':'linear-gradient(135deg, #160c19,rgb(39, 21, 44))',
 
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+
         'chart_color':'#e704f7','chart_background_color':'#160c19', 'chart_color2':'rgb(244, 133, 251)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#491851',
@@ -6166,9 +6193,11 @@ class App extends Component {
         'primary_text_color':'#930191','secondary_text_color':'#8e03a0',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgba(223, 186, 223, 0.6)','card_shadow_color':'rgb(210, 158, 214)', 'loading_base_color':'rgb(215, 196, 219)','loading_highlight_color':'rgb(183, 107, 193)',
+        'navbar_button_selected_color':'#eddcef','primary_navbar_text_color':'#930191','secondary_navbar_text_color':'#8e03a0','navbar_text_shadow_color':'#b55bc1','card_background_color':'rgba(223, 186, 223, 0.6)','card_shadow_color':'rgb(210, 158, 214)', 'loading_base_color':'rgb(215, 196, 219)','loading_highlight_color':'rgb(183, 107, 193)', 'synchronizer_loading_highlight_color':'rgb(131, 77, 188)',
         
         'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #decce2,rgb(206, 188, 209))',
+
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
         
         'chart_color':'#af01c6','chart_background_color':'#decce2', 'chart_color2':'rgb(114, 1, 129)',
   
@@ -6218,6 +6247,8 @@ class App extends Component {
 
         'view_group_card_item_background':'#19130c','tag_background_color':'rgb(70, 45, 20)', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a', 'view_group_card_item_background2':'linear-gradient(135deg, #19130c,rgb(43, 32, 20))',
 
+        'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+
         'chart_color':'#f78204','chart_background_color':'#19130c', 'chart_color2':'rgb(242, 185, 125)',
 
         'number_picker_label_color':'#0c0c0c','number_picker_label_shadow':'#513a18',
@@ -6261,9 +6292,11 @@ class App extends Component {
         'primary_text_color':'#935b01','secondary_text_color':'#a05403',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgba(223, 205, 186, 0.6)','card_shadow_color':'rgb(214, 193, 158)', 'loading_base_color':'rgb(226, 215, 204)','loading_highlight_color':'rgb(200, 152, 102)',
+        'navbar_button_selected_color':'#efe7dc','primary_navbar_text_color':'#935b01','secondary_navbar_text_color':'#a05403','navbar_text_shadow_color':'#c19f5b','card_background_color':'rgba(223, 205, 186, 0.6)','card_shadow_color':'rgb(214, 193, 158)', 'loading_base_color':'rgb(226, 215, 204)','loading_highlight_color':'rgb(200, 152, 102)', 'synchronizer_loading_highlight_color':'rgb(188, 134, 77)',
         
         'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2d7cc,rgb(200, 190, 180))',
+
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
         
         'chart_color':'#c67b01','chart_background_color':'#e2d7cc',  'chart_color2':'rgb(124, 77, 0)',
   
@@ -6570,7 +6603,7 @@ class App extends Component {
 
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
 
-          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)}
+          get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -9466,8 +9499,8 @@ class App extends Component {
     return bigInt(exchange_balance).minus(total_amount)
   }
 
-  get_amounts_to_be_paid(amount){
-    return bigInt(amount).multiply(bigInt(this.state.purchase_unit_count))
+  get_amounts_to_be_paid(amount, purchase_unit_count){
+    return bigInt(amount).multiply(bigInt(purchase_unit_count))
   }
 
   get_final_purchase_option_fees(options, transaction_item){
@@ -10205,6 +10238,7 @@ class App extends Component {
     const comments = []
     const tagged_addresses_info = []
     const storefront_purchase_request_e5_ids = []
+    const payment_update_transactions = []
 
     const all_tagged_addresses_data_clone = structuredClone(this.state.all_tagged_addresses_data)
     for(var i=0; i<stack.length; i++){
@@ -10304,6 +10338,12 @@ class App extends Component {
           const t = stack[i]
           storefront_purchase_request_e5_ids.push(t.storefront_item['e5_id'])
         }
+        else if(stack[i].type == this.getLocale()['1632o']/* 'finish-payment' */){
+          const t = stack[i]
+          if(t.bag_storefront_transfers != null){
+            payment_update_transactions.push(t)
+          }
+        }
       }
     }
 
@@ -10373,6 +10413,11 @@ class App extends Component {
       await this.wait(1000)
     }
 
+    for(var c=0; c<payment_update_transactions.length; c++){
+      const tx = payment_update_transactions[c]
+      await this.emit_send_payment_update_to_storefront_owner_message(tx.application, tx.object)
+      await this.wait(1000)
+    }
     
 
     this.setState({all_tagged_addresses_data: all_tagged_addresses_data_clone})
@@ -15935,7 +15980,10 @@ class App extends Component {
   }
 
   add_bag_acceptance_action_to_stack(state_obj){
-    var contract = state_obj.application_item['contract']
+    var contract_id = state_obj.application_item['contract']
+    var contract_proposal_data = this.state.loaded_contract_and_proposal_data[contract_id]
+    var contract = contract_proposal_data != null ? contract_proposal_data['contract'] : null;
+    
     if(contract['access_rights_enabled'] == true && (contract['my_interactable_time_value'] < Date.now()/1000 && !contract['moderators'].includes(this.state.user_account_id[contract['e5']]))){
       this.prompt_top_notification(this.getLocale()['2715']/* 'The contract owner hasnt granted you access to their contract yet.' */, 7000)
     }
@@ -18228,6 +18276,7 @@ class App extends Component {
       'request_passcode_for_decrypting_stored_seed':300,
       'confirm_bridge_ether_dialog':500,
       'finalize_storefront_request_transaction':550,
+      'view_storefront_bag_receipt_item':550,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -48257,6 +48306,23 @@ class App extends Component {
     await load_read_receipts_data();
   }
 
+  get_storefront_bag_payment_update_messages = async (id, e5, object) => {
+    const e5_id = id+e5
+    await this.get_objects_from_socket_and_set_in_state(['storefront_payment_update_message'], [e5_id], [])
+
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const target_receiver = object['ipfs'].target_receiver || object['author']
+    const payment_receipts = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: target_receiver})
+
+    const clone = structuredClone(this.state.storefront_payment_event_data)
+    clone[e5_id] = payment_receipts
+    this.setState({storefront_payment_event_data: clone})
+  }
+
 
 
 
@@ -52019,6 +52085,22 @@ class App extends Component {
     this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
 
   }
+
+  async emit_send_payment_update_to_storefront_owner_message(item, object){
+    const comment_message_object = await this.prepare_send_payment_update_to_storefront_owner_message(item, object)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(comment_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const object_e5_id = 'storefront_payment_update_message'
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: object_e5_id, message: comment_message_object.message, target: object_e5_id, object_hash: comment_message_object.object_hash});
+
+    await this.wait(3000)
+    this.process_new_comment_message(comment_message_object.message, comment_message_object.object_hash)
+  }
   
 
 
@@ -54307,6 +54389,111 @@ class App extends Component {
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
+  }
+
+
+
+
+
+
+
+
+
+
+  async prepare_send_payment_update_to_storefront_owner_message(item, object){
+    const items_to_deliver = object['ipfs']['bag_orders']
+    const variant_data = {}
+    items_to_deliver.forEach(item => {
+      const storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+      const storefront_id = item['storefront_item_id'];
+      const storefront_e5_id = storefront_id + storefront_e5
+      const variant_id = item['storefront_variant_id']
+      const purchase_count = item['purchase_unit_count']
+      const storefront = this.get_storefront(storefront_id, storefront_e5)
+      const variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+
+      if(variant_in_store != null){
+        const price_items = variant_in_store['price_data']
+        if(variant_data[storefront_e5_id] == null){
+          variant_data[storefront_e5_id] = {'variants':{}, 'paid':{}, 'id': object['id']}
+        }
+        variant_data[storefront_e5_id]['variants'][variant_id] = purchase_count
+
+        for(var i=0; i<price_items.length; i++){
+          const units = price_items[i];
+          const amount = this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)
+          const token_id = units['id']
+
+          if(variant_data[storefront_e5_id]['paid'][token_id] == null){
+            variant_data[storefront_e5_id]['paid'][token_id] = bigInt(0);
+          }
+          variant_data[storefront_e5_id]['paid'][token_id] = bigInt(variant_data[storefront_e5_id]['paid'][token_id]).add(amount)
+        }
+      }
+    });
+    const payment_update_object = {
+      'bag_id':object['id'],
+      'bag_e5':object['e5'],
+      'fulfiller': item['applicant_id'],
+      'data':variant_data,
+      'author_account_id':this.state.user_account_id[object['e5']],
+      'author_account_e5':object['e5'],
+      'author_address': this.state.accounts[object['e5']].address,
+      'time':Date.now(),
+    }
+
+    const tags = Object.keys(variant_data)
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(payment_update_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = 0
+    const message = {
+      type: 'storefront_payment_update_message',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: object['id'],
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      object_e5: object['e5']
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  get_variant_object_from_storefront(storefront, id){
+    if(storefront == null) return null;
+    for(var i=0; i<storefront['ipfs'].variants.length; i++){
+      if(storefront['ipfs'].variants[i]['variant_id'] == id){
+        return storefront['ipfs'].variants[i]
+      }
+    }
+  }
+
+  get_storefront(storefront_id, e5){
+    var item = this.state.created_store_mappings[e5] == null ? null : this.state.created_store_mappings[e5][storefront_id]
+    return item
   }
   
 
@@ -56990,6 +57177,45 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
+  async process_storefront_payment_update_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        me.update_scroll_position_of_chat()
+      }, (2 * 1000));
+    }
+    
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data));
+    const data = ipfs['data']
+    const storefront_ids = Object.keys(data);
+
+    const clone = structuredClone(this.state.storefront_payment_update_data)
+    storefront_ids.forEach(storefront_e5_id => {
+      if(clone[storefront_e5_id] == null){
+        clone[storefront_e5_id] = []
+      }
+      const payment_update_data = structuredClone(data[storefront_e5_id])
+      payment_update_data['time'] = ipfs['time'] / 1000
+      payment_update_data['author'] = message.author
+      const index = clone[storefront_e5_id].findIndex(item => item['id'] === payment_update_data['id']);
+      if(index == -1){
+        clone[storefront_e5_id].push(payment_update_data)
+      }
+    });
+
+    this.setState({storefront_payment_update_data: clone})
+  }
+
 
 
 
@@ -57458,6 +57684,10 @@ class App extends Component {
           else if(target_entry == 'contractor_accept_storefront_request'+this.state.accounts[this.state.selected_e5].address){
             await this.process_new_contractor_accepted_storefront_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
           }
+          else if(object_data['type'] == 'storefront_payment_update_message'){
+            await this.process_storefront_payment_update_message(object_data, object_hash, object_data['author_address'], true)
+          }
+          
           await this.wait(300)
         }
       }

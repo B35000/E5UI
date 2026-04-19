@@ -4816,6 +4816,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(format_object.int)
 
+                    if(format_object.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(format_object.transfers_obj)
+                    }
+
                     if(txs[i].contract_id != null){
                         var obj = [/* exit contract */
                             [30000, 11, 0],
@@ -6333,7 +6339,9 @@ class StackPage extends Component {
                 else if(txs[i].type == this.props.app_state.loc['1632o']/* 'finish-payment' */){
                     const object = txs[i].object
                     const amounts = txs[i].price_data
-                    const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+                    const indexing_tags = object['ipfs'].entered_indexing_tags || object['ipfs']['tags'] || []
+                    const indexing_title = object['ipfs'].entered_title_text || ''
+                    const payment_tags = indexing_tags.concat(indexing_title.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
 
                     const all_final_elements = []
                     for(var te=0; te<payment_tags.length; te++){
@@ -7876,16 +7884,19 @@ class StackPage extends Component {
                         final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                     });
                     const object_texts = []
-                    object_texts.push(object['ipfs'].markdown)
-                    object_texts.push(object['ipfs'].entered_title_text)
-                    object['ipfs'].entered_indexing_tags.forEach(tag => {
+                    if(object['ipfs'].markdown != null) object_texts.push(object['ipfs'].markdown)
+                    if(object['ipfs'].entered_title_text != null) object_texts.push(object['ipfs'].entered_title_text);
+                    const indexing_tags = object['ipfs'].entered_indexing_tags || object['ipfs']['tags'] || []
+                    indexing_tags.forEach(tag => {
                         object_texts.push(tag)
                     });
-                    object['ipfs'].entered_objects.forEach(text_object => {
-                        const type = text_object['type']
-                        const text = type == '11' ? text_object['data']['caption']['text'] : text_object['data']['text'];
-                        object_texts.push(text)
-                    });
+                    if(object['ipfs'].entered_objects != null){
+                        object['ipfs'].entered_objects.forEach(text_object => {
+                            const type = text_object['type']
+                            const text = type == '11' ? text_object['data']['caption']['text'] : text_object['data']['text'];
+                            object_texts.push(text)
+                        });
+                    }
 
                     const object_obligation_fulfiller = object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
@@ -7893,7 +7904,7 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
                     if(authors_obligation_contracts.length > 0){
-                        const obligation_promise_data = { 
+                        const obligation_promise_data = {
                             'id': tx.type,
                             'identifier':tx.id,
                             'city':this.props.app_state.city,
@@ -11979,6 +11990,15 @@ class StackPage extends Component {
             [],/* amounts for first target receiver */
             [],/* depths for the first targeted receiver*/
         ]
+
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+
         var string_obj = [[]]
 
         for(var i=0; i<t.price_data.length; i++){
@@ -12005,11 +12025,43 @@ class StackPage extends Component {
                 obj[7].push(transfer_actions[f]['depth'])
             }
         }
+
+        if(t.bag_storefront_transfers != null){
+            //its a bag
+            for(var i=0; i<t.bag_storefront_transfers.length; i++){
+                const exchange = t.bag_storefront_transfers[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+                const amount = t.bag_storefront_transfers[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+                const receiver = t.bag_storefront_transfers[i]['receiver'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+                for(var f=0; f<transfer_actions.length; f++){
+                    transfers_obj[1].push(exchange)
+                    transfers_obj[2].push(23)
+                    transfers_obj[3].push(receiver)
+                    transfers_obj[4].push(23)
+                    transfers_obj[5].push(transfer_actions[f]['amount'])
+                    transfers_obj[6].push(transfer_actions[f]['depth'])
+                }
+            }
+        }
+        
         
         var string_data = await this.get_object_ipfs_index({}, calculate_gas, ipfs_index, t.id);
         string_obj[0].push(string_data)
 
-        return {int: obj, str: string_obj, depth: depth_swap_obj}
+        return {int: obj, str: string_obj, depth: depth_swap_obj, transfers_obj}
     }
 
     format_configure_obligations_object = async (t, calculate_gas, ipfs_index) =>{

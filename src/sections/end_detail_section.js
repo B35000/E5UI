@@ -222,7 +222,7 @@ class EndDetailSection extends Component {
         var selected_item = this.get_selected_item(stack_page_tags_object_to_use, stack_page_tags_object_to_use['i'].active)
         var selected_object = this.get_item_in_array(this.get_exchange_tokens(3), this.props.selected_end_item)
         
-        if(selected_object == null || (selected_object['ipfs'] == null && selected_object['id'] != 5)){
+        if(selected_object == null || (selected_object['ipfs'] == null && selected_object['id'] != 3)){
             return(
                 <div>
                     {this.render_empty_detail_object()}

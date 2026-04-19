@@ -139,7 +139,7 @@ class StorefrontDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2642cn']/* 'variants 🎒' */, this.props.app_state.loc['2030']/* 'activity' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2642cn']/* 'variants 🎒' */, this.props.app_state.loc['2030']/* 'activity' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, this.props.app_state.loc['2642cy']/* 'bag-receipts' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */],[1]
           ],
           'direct-purchases':[
               ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
@@ -210,6 +210,9 @@ class StorefrontDetailsSection extends Component {
         }
         else if(selected_item == this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */){
             this.props.get_storefron_purchase_requests(object['id'], object['e5'])
+        }
+        else if(selected_item == this.props.app_state.loc['2642cy']/* 'bag-receipts 🧾' */){
+            this.props.get_storefront_bag_payment_update_messages(object['id'], object['e5'], object)
         }
     }
 
@@ -357,6 +360,9 @@ class StorefrontDetailsSection extends Component {
         }
         else if(selected_item == this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */){
             return this.render_purchase_requests_section(object)
+        }
+        else if(selected_item == this.props.app_state.loc['2642cy']/* 'bag-receipts 🧾' */){
+            return this.render_bag_recepits_section(object)
         }
     }
 
@@ -3880,7 +3886,6 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_storefront_post_top_title(object){
-        // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':'✦ '+object['id'], 'details':this.props.app_state.loc['2642cx']/* 'Purchase Requests' */, 'size':'l'})} 
@@ -4023,6 +4028,102 @@ class StorefrontDetailsSection extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_bag_recepits_section(object){
+        var he = this.props.height-50
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_storefront_bag_receipts_top_title(object)}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_storefront_bag_receipts(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_storefront_bag_receipts_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':'✦ '+object['id'], 'details':this.props.app_state.loc['2642cz']/* 'Bag Receipts' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_storefront_bag_receipts(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.get_storefront_bag_receipt_messages(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    {this.props.app_state.storefront_payment_update_data[object['e5_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_storefront_bag_receipt_item(item, object)}
+                                </div>
+                            </li> 
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_storefront_bag_receipt_messages(object){
+        const my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 != my_account.toString()){
+            return []
+        }
+        const data = this.props.app_state.storefront_payment_update_data[object['e5_id']] || []
+        return this.sortByAttributeDescending(data, 'time')
+    }
+
+    render_storefront_bag_receipt_item(item, object){
+        const sender_id = this.get_senders_name2(item['author'], object)
+        return(
+            <div onClick={() => this.view_storefron_bag_receipt_item(item, object)}>
+                {this.render_detail_item('3', {'title':sender_id, 'details':(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+            </div>
+        );
+    }
+
+    view_storefron_bag_receipt_item(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_storefront_bag_receipt_item')
+    }
 
 
 
@@ -4539,11 +4640,15 @@ class StorefrontDetailsSection extends Component {
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
         const border_radii = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? '0px 7px 7px 0px': '7px'
+
+        const c = this.props.get_my_state_color()
+        const background_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['my_messages_color'][c] : this.props.theme['view_group_card_item_background']
+
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
                     <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
-                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radii}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
                                     <p className="fw-bold" style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>

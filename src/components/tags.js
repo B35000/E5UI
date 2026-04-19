@@ -211,6 +211,7 @@ class tags extends Component {
     /* renders the tag button item with optional notification badge */
     render_tag_button(index, selected, text, tag_size, badgeCount = null){
         var background = this.props.theme['tag_background_color'];
+        var text_background = this.props.theme['tag_text_color']
         var txt = text+'';
         if(txt.startsWith('a.') || txt.startsWith('e.')|| txt.startsWith('v.')){
             background = this.props.theme['indexed_tag_background'];
@@ -218,10 +219,18 @@ class tags extends Component {
 
         if(index == 0){
             background = 'black';
+            // if(this.props.theme['pdf_theme'] == 'light'){
+            //     background = 'white'
+            //     text_background = 'black'
+            // }
         }
         if(selected != null){
             if(selected == index){
                 background = 'black';
+                // if(this.props.theme['pdf_theme'] == 'light'){
+                //     background = 'white'
+                //     text_background = 'black'
+                // }
             }
         }
 
@@ -261,7 +270,7 @@ class tags extends Component {
                         }
                     `}</style>
                     <div style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
-                        <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
+                        <p style={{'color': text_background, 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
                     {badgeCount && badgeCount > 0 && (
                         <div style={badgeStyle}>
@@ -284,7 +293,7 @@ class tags extends Component {
                         }
                     `}</style>
                     <div style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
-                        <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
+                        <p style={{'color': text_background, 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
                     {badgeCount && badgeCount > 0 && (
                         <div style={badgeStyle}>
