@@ -1289,7 +1289,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65, condition_title_size:65,
+    sync_steps:(45), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65, condition_title_size:65,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -11097,7 +11097,7 @@ class App extends Component {
     else if(target == '8'/* ends ☝️/spends 🫰 */){
       return(
         <div>
-          <NewTokenPage ref={this.new_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+          <NewTokenPage ref={this.new_token_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
           set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
           get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
           />
@@ -11106,13 +11106,13 @@ class App extends Component {
     }
     else if(target == '3'/* subscriptions */){
       return(
-        <NewSubscriptionPage ref={this.new_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        <NewSubscriptionPage ref={this.new_subscription_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
         />
       )
     }
     else if(target == '1'/* contracts */){
       return(
-        <NewContractPage ref={this.new_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        <NewContractPage ref={this.new_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
         />
       )
     }
@@ -13079,7 +13079,7 @@ class App extends Component {
     var os = getOS()
     
     return this.renderBottomSheet(
-      <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
+      <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
       update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} fetch_id_type={this.fetch_id_type.bind(this)}
       />,
       this.state.new_proposal_bottomsheet,
@@ -27989,7 +27989,7 @@ class App extends Component {
         if(is_syncing == false){
           await this.get_wallet_data2(account_for_e5, is_syncing, web3_url, e5_address, e5)
         }else{
-          await this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+          this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
         }
         await this.wait(2000)
       }
@@ -29307,6 +29307,9 @@ class App extends Component {
     }
 
 
+    this.save_pre_launch_data(pre_launch_data, e5)
+
+
 
 
 
@@ -29389,15 +29392,6 @@ class App extends Component {
     }
 
 
-     /* ---------------------------------------- TOKEN DATA --------------------------------------- */
-    // var priority_ids = await this.get_my_token_ids(web3, contractInstance, e5, account)
-    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
-    if(pre_launch_data[e5] != null) this.get_alias_data(E52contractInstance, e5, account, web3, pre_launch_data[e5]['exchange_alias_data']);
-    // if(is_syncing){
-    //   this.inc_synch_progress()
-    // }
-
-
 
     /* ---------------------------------------- JOB DATA ------------------------------------------- */
     // var posts_to_prioritize = await this.load_prioritised_job_posts(e5, web3, contract_addresses)
@@ -29421,9 +29415,14 @@ class App extends Component {
 
 
 
-
-
     if(is_syncing) await this.load_main_contracts(e5, pre_launch_data)
+
+
+    /* ---------------------------------------- TOKEN DATA --------------------------------------- */
+    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+    if(pre_launch_data[e5] != null) this.get_alias_data(E52contractInstance, e5, account, web3, pre_launch_data[e5]['exchange_alias_data']);
+
+    
     // this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance)
     // if(is_syncing){
     //   this.inc_synch_progress()
@@ -29761,41 +29760,6 @@ class App extends Component {
 
     if(is_syncing) this.load_run_data(contractInstance, E52contractInstance, e5, web3, H52contractInstance, pre_launch_data);
 
-    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_subscripion_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals', 'buy_album_video_events', 'uploaded_cid_data']
-    
-    await this.wait(700);
-
-    console.log('apppage', 'pre_launch_data', pre_launch_data[e5])
-
-    if(pre_launch_data[e5] != null){
-      const saved_pre_launch_data_object = {}
-      saved_pre_launch_data.forEach(target => {
-        if(target == 'created_audio_events'){
-          const final_events = this.sort_created_audio_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['buy_album_video_events'])
-          saved_pre_launch_data_object[target] = final_events;
-        }
-        else if(target == 'created_video_events'){
-          const final_events = this.sort_created_video_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['buy_album_video_events'])
-          saved_pre_launch_data_object[target] = final_events;
-        }
-        else if(target == 'created_index_events'){
-          const final_events = this.sort_created_contract_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['entered_contract_events'])
-          saved_pre_launch_data_object[target] = final_events;
-        }
-        else if(target == 'created_subscripion_index_events'){
-          const final_events = this.sort_created_audio_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['my_paid_subscription_events'])
-          saved_pre_launch_data_object[target] = final_events;
-        }
-        else{
-          saved_pre_launch_data_object[target] = pre_launch_data[e5][target]
-        }
-      });
-
-      var saved_pre_launch_events_clone = structuredClone(this.state.saved_pre_launch_events)
-      saved_pre_launch_events_clone[e5] = saved_pre_launch_data_object
-      this.setState({saved_pre_launch_events: saved_pre_launch_events_clone})
-    }
-
 
     if(this.state.refreshing_content_after_channeling_change == true){
       this.setState({refreshing_content_after_channeling_change: false})
@@ -29868,6 +29832,41 @@ class App extends Component {
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
+  }
+
+  save_pre_launch_data(pre_launch_data, e5){
+    const saved_pre_launch_data = ['created_subscription_events', 'my_paid_subscription_events', 'created_index_events', 'payment_history_events', 'created_contract_events', 'entered_contract_events', 'created_subscripion_index_events', 'all_contracts_proposals', 'contracts_ive_entered_events', 'created_bill_events', 'my_sent_bill_events', 'created_post_events', 'created_channel_events', 'created_store_events', 'bids_events', 'created_bag_events', 'response_count_data', 'created_contractor_events', 'all_requests', 'all_responses', 'created_audio_events', 'requests', 'created_video_events', 'created_poll_events', 'sales', 'f30received', 'f31received', 'f30created', 'f31created', 'e32received', 'e33received', 'e32created', 'e33created', 'e5_charts_data', 'load_traffic_proportion_data', 'all_contracts_proposals', 'buy_album_video_events', 'uploaded_cid_data']
+    
+    console.log('apppage', 'pre_launch_data', pre_launch_data[e5])
+
+    if(pre_launch_data[e5] != null){
+      const saved_pre_launch_data_object = {}
+      saved_pre_launch_data.forEach(target => {
+        if(target == 'created_audio_events'){
+          const final_events = this.sort_created_audio_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['buy_album_video_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else if(target == 'created_video_events'){
+          const final_events = this.sort_created_video_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['buy_album_video_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else if(target == 'created_index_events'){
+          const final_events = this.sort_created_contract_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['entered_contract_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else if(target == 'created_subscripion_index_events'){
+          const final_events = this.sort_created_audio_events_for_my_content(pre_launch_data[e5][target], e5, pre_launch_data[e5]['my_paid_subscription_events'])
+          saved_pre_launch_data_object[target] = final_events;
+        }
+        else{
+          saved_pre_launch_data_object[target] = pre_launch_data[e5][target]
+        }
+      });
+
+      var saved_pre_launch_events_clone = structuredClone(this.state.saved_pre_launch_events)
+      saved_pre_launch_events_clone[e5] = saved_pre_launch_data_object
+      this.setState({saved_pre_launch_events: saved_pre_launch_events_clone})
+    }
   }
 
   sort_created_audio_events_for_my_content(events, e5, buy_album_video_events){
@@ -30362,6 +30361,7 @@ class App extends Component {
       var latest_event = contacts_data[contacts_data.length - 1];
       var contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
       var contacts = contacts_data['all_contacts'] == null ? await this.decrypt_data(contacts_data['cypher'])['data'] : contacts_data['all_contacts']
+      
       var time = contacts_data['time']
       if(contacts != null){
         if(this.my_contacts_timestamp == null){
@@ -30416,6 +30416,9 @@ class App extends Component {
       var latest_event = blocked_contacts_data[blocked_contacts_data.length - 1];
       var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
       var loaded_blocked_accounts = blocked_contacts_data['all_blocked_accounts'] == null ? await this.decrypt_data(blocked_contacts_data['cypher'])['data'] : blocked_contacts_data['all_blocked_accounts']
+
+      if(loaded_blocked_accounts == null) return;
+
       var timestamp = blocked_contacts_data['time']
 
       if(loaded_blocked_accounts != null){
@@ -30455,6 +30458,8 @@ class App extends Component {
       if(section_tag_data == null) return;
       
       var data_obj = section_tag_data['cypher'] != null ? await this.decrypt_data(section_tag_data['cypher']) : section_tag_data
+
+      if(data_obj == null) return;
 
       var job_section_tags = data_obj['job_section_tags']
       var explore_section_tags = data_obj['explore_section_tags']
@@ -30906,6 +30911,8 @@ class App extends Component {
       var loaded_playlists = playlists_data['playlists'] == null ? await this.decrypt_data(playlists_data['cypher'])['data'] : playlists_data['playlists']
       var timestamp = playlists_data['time']
 
+      if(loaded_playlists == null) return;
+
       if(this.my_playlists_timestamp == null){
         this.my_playlists_timestamp = 0
       }
@@ -30948,6 +30955,9 @@ class App extends Component {
       var plays_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       if(plays_data != null){
         var loaded_plays = plays_data['plays'] == null ? await this.decrypt_data(plays_data['cypher'])['data'] : plays_data['plays']
+
+        if(loaded_plays == null) return;
+        
         var timestamp = plays_data['time']
 
         if(this.my_loaded_plays_collection_timestamp == null){
@@ -31628,6 +31638,8 @@ class App extends Component {
       var object_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
       var loaded_objects = await this.decrypt_data(object_data['cypher'])
       var timestamp = object_data['time']
+
+      if(loaded_objects == null) return;
       const pinned_objects = loaded_objects['locations']
 
       if(this.all_my_location_pinns_timestamp == null){
@@ -38899,6 +38911,7 @@ class App extends Component {
     if(this.state.created_contracts[e5] != null){
       return;
     }
+    console.log('load_main_contracts', 'beginning loading of main contracts...')
     var e5_address = this.state.e5s[e5].e5_address;
     if(e5_address != ''){
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -38940,6 +38953,8 @@ class App extends Component {
         var contract_obj = {
           'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 
         }
+
+        console.log('load_main_contracts', 'Main contract object defined...')
 
         if(created_contract_data[i][1][39] != 0 && created_contract_data[i][1][40] != 0){
           const primary_acc = created_contract_data[i][1][39];

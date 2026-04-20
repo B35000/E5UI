@@ -2426,24 +2426,35 @@ return data['data']
         var page = this.state.page
         const bottom_part = (message) => {
             const image_height = 60
-            const standard_width = this.props.width - 30
+            const standard_width = this.props.width - 20
             return(
-                <div style={{'margin':'20px 0px 20px 0px', 'width':standard_width}}>
-                    <div className="row">
+                <div style={{'margin':'10px 0px 20px 0px', 'width':standard_width}}>
+                    {/* <div className="row">
                         <div className="col-2">
-                            <div style={{'padding': '0px 0px 0px 20px'}} >
+                            <div style={{'padding': '0px 0px 0px 0px'}} >
                                 <img alt="" onClick={()=>this.enter_previous_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
                             </div>
                         </div>
-                        <div className="col-8">
+                        <div className="col-7">
                             <div style={{'margin':'25px 0px 0px 10px'}}>
                                 {this.render_detail_item('16', {'message':message})}
                             </div>
                         </div>
                         <div className="col-2">
-                            <div className="text-end" style={{}} >
-                                <img alt="" onClick={()=>this.enter_next_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 25px 0px 0px', 'transform': 'rotate(270deg)'}} />
+                            <div style={{}} >
+                                <img alt="" onClick={()=>this.enter_next_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 0px 0px 0px', 'transform': 'rotate(270deg)'}} />
                             </div>
+                        </div>
+                    </div> */}
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: standard_width}}>
+                        <div style={{'padding': '0px 0px 0px 0px', width:image_height}}>
+                            <img alt="" onClick={()=>this.enter_previous_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
+                        </div>
+                        <div style={{'padding':'25px 0px 0px 0px', width: standard_width - ((image_height) * 2)}}>
+                            {this.render_detail_item('16', {'message':message})}
+                        </div>
+                        <div style={{'padding': '0px 0px 0px 0px', width:image_height}}>
+                            <img alt="" onClick={()=>this.enter_next_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 0px 0px 0px', 'transform': 'rotate(270deg)'}} />
                         </div>
                     </div>
                 </div>
@@ -2452,10 +2463,10 @@ return data['data']
         const message = (this.state.page +1) + ' / '+ 4
         return(
             <div>
-                {this.render_configuration_section_parts_viewpager(page)}
-                <div style={{height:this.props.height-210}}>
-                    {bottom_part(message)}
+                <div style={{height:this.props.height-210, 'overflow':'auto'}}>
+                    {this.render_configuration_section_parts_viewpager(page)}  
                 </div>
+                {bottom_part(message)}
                 {/* <div style={{height:20}}/>
                 <div style={{'width':'96%', 'padding':'0px 0px 0px 10px'}}>
                     <div className="row">
@@ -2507,7 +2518,7 @@ return data['data']
         }
         return(
             <div>
-                <MySwipeableViews width={this.props.width} index={page} onChangeIndex={this.handleSwipeableViewsChange}>
+                <MySwipeableViews width={this.props.width-30} index={page} onChangeIndex={this.handleSwipeableViewsChange}>
                     {items.map((item, index) => (
                         <div key={''+item}>
                             {this.render_configuration_section_parts(item)}
@@ -2552,7 +2563,7 @@ return data['data']
                     <div onClick={()=>this.set_max_expiry_time()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['438p']/* 'Set Expiry Limit.' */, 'action': ''})}
                     </div>
-                    
+                    <div style={{height:20}}/>
                 </div>
             )
         }
@@ -2592,6 +2603,7 @@ return data['data']
                     <div onClick={()=>this.set_max_submit_expiry_time()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['438q']/* 'Set Submit Limit.' */, 'action': ''})}
                     </div>
+                    <div style={{height:20}}/>
                 </div>
             )
         }

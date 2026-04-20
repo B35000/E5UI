@@ -521,6 +521,7 @@ class WikiPage extends Component {
         const h = this.props.height*0.6
         const standard_width = this.props.width-30
         const standard_height = this.props.height-270
+        
         const previous = () => {
             const previous_page = parseInt(pos) - 1;
             if(previous_page >= 0){
@@ -538,7 +539,7 @@ class WikiPage extends Component {
             const image_height = 60
             return(
                 <div style={{'margin':'20px 0px 20px 0px', 'width':standard_width}}>
-                    <div className="row">
+                    {/* <div className="row">
                         <div className="col-2">
                             <div style={{'padding': '0px 0px 0px 20px'}} >
                                 <img alt="" onClick={()=>previous()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
@@ -554,6 +555,18 @@ class WikiPage extends Component {
                                 <img alt="" onClick={()=>next()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 25px 0px 0px', 'transform': 'rotate(270deg)'}} />
                             </div>
                         </div>
+                    </div> */}
+
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: standard_width}}>
+                        <div style={{'padding': '0px 0px 0px 0px', width:image_height}}>
+                            <img alt="" onClick={()=>previous()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
+                        </div>
+                        <div style={{'padding':'25px 0px 0px 0px', width: standard_width - ((image_height) * 2)}}>
+                            {this.render_detail_item('16', {'message':message})}
+                        </div>
+                        <div style={{'padding': '0px 0px 0px 0px', width:image_height}}>
+                            <img alt="" onClick={()=>next()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 0px 0px 0px', 'transform': 'rotate(270deg)'}} />
+                        </div>
                     </div>
                 </div>
             )
@@ -565,7 +578,7 @@ class WikiPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1980']/* 'One more step' */, 'details':this.props.app_state.loc['1981']/* 'You need to set your wallet and fill it with some ether' */, 'size':'l'})}
                     {this.render_detail_item('0')}
-                    <MySwipeableViews width={this.props.width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                    <MySwipeableViews width={this.props.width-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
                         <div key={'0'} style={{width: standard_width, height: standard_height}}>
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
@@ -602,7 +615,7 @@ class WikiPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1985']/* 'Action Required' */, 'details':this.props.app_state.loc['1986']/* 'You need to set your wallet first' */, 'size':'l'})}
                     {this.render_detail_item('0')}
-                    <MySwipeableViews width={this.props.width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                    <MySwipeableViews width={this.props.width-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
                         <div key={'0'} style={{width: standard_width, height: standard_height}}>
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
@@ -638,7 +651,7 @@ class WikiPage extends Component {
             const height_to_use = this.props.height-180
             return(
                 <div>
-                    <MySwipeableViews width={this.props.width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                    <MySwipeableViews width={this.props.width-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
                         <div key={'0'} style={{width: standard_width, height: height_to_use}}>
                             {this.render_detail_item('3', {'title':this.props.app_state.loc['1989a']/* 'Quick Tutorial' */, 'details':this.props.app_state.loc['1989b']/* 'You need to know how to use this webapp.' */, 'size':'l'})}
                             <div style={{height: 20}}/>

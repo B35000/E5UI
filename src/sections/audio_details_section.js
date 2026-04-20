@@ -447,6 +447,12 @@ class AudioDetailSection extends Component {
         
     }
 
+
+
+
+
+
+
     render_post_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
@@ -870,6 +876,9 @@ class AudioDetailSection extends Component {
     }
 
     render_repost_audiopost_ui(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+        
         var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
         var title = this.props.app_state.loc['a2527bt']/* 'Repost Audiopost' */
         var details = this.props.app_state.loc['a2527bu']/*  Add this audiopost to your promoted list. */
@@ -903,6 +912,9 @@ class AudioDetailSection extends Component {
     }
 
     render_follow_unfollow_author_button(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+
         var author_id = object['event'].returnValues.p5
         var follow_id = object['e5'] + ':' + author_id
         var followed_accounts = this.props.app_state.followed_accounts

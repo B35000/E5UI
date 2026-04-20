@@ -572,6 +572,9 @@ class BagDetailsSection extends Component {
     }
 
     render_follow_unfollow_author_button(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+        
         var author_id = object['event'].returnValues.p3
         var follow_id = object['e5'] + ':' + author_id
         var followed_accounts = this.props.app_state.followed_accounts

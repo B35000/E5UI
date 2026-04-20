@@ -749,6 +749,9 @@ class VideoDetailsSection extends Component {
     }
 
     render_repost_videopost_ui(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+        
         var reposted_posts = this.props.app_state.posts_reposted_by_me
         var title = this.props.app_state.loc['b2527o']/* 'Repost Videopost.' */
         var details = this.props.app_state.loc['b2527p']/*  Add this videopost to your promoted list. */
@@ -779,6 +782,9 @@ class VideoDetailsSection extends Component {
     }
 
     render_follow_unfollow_author_button(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+
         var author_id = object['event'].returnValues.p5
         var follow_id = object['e5'] + ':' + author_id
         var followed_accounts = this.props.app_state.followed_accounts

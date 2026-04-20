@@ -729,6 +729,9 @@ class SearchedAccountPage extends Component {
     }
 
     render_follow_unfollow_author_button(author_id, e5){
+        const me = this.props.app_state.user_account_id[e5] || 1
+        if(author_id == me) return;
+
         var follow_id = e5 + ':' + author_id
         var followed_accounts = this.props.app_state.followed_accounts
 

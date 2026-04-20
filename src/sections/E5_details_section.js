@@ -125,6 +125,15 @@ class E5DetailsSection extends Component {
         }
     }
 
+
+
+
+
+
+
+
+
+
     render_e5_main_details_section(obj){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-55
@@ -515,9 +524,9 @@ class E5DetailsSection extends Component {
 
             'tx_gas_limit':{'style':'l','title':this.props.app_state.loc['1429']/* Transaction Gas Limit' */, 'subtitle':this.format_power_figure(contract_config[11]), 'barwidth':this.calculate_bar_width(contract_config[11]), 'number':this.format_account_balance_figure(contract_config[11]), 'relativepower':'gas', 'n':contract_config[11]},
 
-            'contract_block_invocation_limit': {'title':contract_config[12], 'details':this.props.app_state.loc['2249']/* 'E5 block invocation Limit' */, 'size':'l'},
+            'contract_block_invocation_limit': {'title':this.props.app_state.loc['2336bu']/* '$ Blocks.' */.replace('$', contract_config[12]) , 'details':this.props.app_state.loc['2249']/* 'E5 block invocation Limit' */, 'size':'l'},
 
-            'contract_time_invocation_limit': {'title':contract_config[13], 'details':this.props.app_state.loc['2250']/* 'E5 time invocation Limit' */, 'size':'l'},
+            'contract_time_invocation_limit': {'title':this.get_time_diff(contract_config[13]), 'details':this.props.app_state.loc['2250']/* 'E5 time invocation Limit' */, 'size':'l'},
 
             'minimum_entered_contracts': {'title':contract_config[14], 'details':this.props.app_state.loc['2251']/* 'Minimum Entered Contracts for Consensus Participation' */, 'size':'l'},
 

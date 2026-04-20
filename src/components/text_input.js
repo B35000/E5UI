@@ -142,9 +142,9 @@ class TextInput extends Component {
 
   handleKeyDown(e){
     if (e.key === "Enter" && !e.shiftKey && typeof(this.props.when_enter_tapped) === 'function') {
-      e.preventDefault(); // prevent newline
       const os = getOS()
       if(os != 'Android' && os != 'iOS'){
+        e.preventDefault(); // prevent newline
         this.props.when_enter_tapped()
       }
     }

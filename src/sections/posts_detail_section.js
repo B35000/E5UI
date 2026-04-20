@@ -594,6 +594,9 @@ class PostsDetailsSection extends Component {
     }
 
     render_repost_post_ui(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+        
         var clone = structuredClone(this.props.app_state.posts_reposted_by_me)
         var title = this.props.app_state.loc['2526c']/* '🔄 Repost Post.' */
         var details = this.props.app_state.loc['2526d']/*  Add this post to your promoted list. */
@@ -624,6 +627,9 @@ class PostsDetailsSection extends Component {
     }
 
     render_follow_unfollow_author_button(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+
         var author_id = object['event'].returnValues.p5
         var follow_id = object['e5'] + ':' + author_id
         var followed_accounts = this.props.app_state.followed_accounts
