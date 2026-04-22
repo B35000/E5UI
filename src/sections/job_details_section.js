@@ -2210,11 +2210,11 @@ class JobDetailsSection extends Component {
             <div>
                 <SwipeableList>
                         <SwipeableListItem
-                            swipeLeft={{
+                            swipeRight={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}
-                            swipeRight={{
+                            swipeLeft={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
                             action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1514']/* 'job-messages' */)
                             }}

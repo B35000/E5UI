@@ -1787,11 +1787,11 @@ class ViewJobRequestPage extends Component {
                 `}</style>
                 <SwipeableList>
                         <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            swipeRight={{
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item)
                             }}
-                            swipeRight={{
+                            swipeLeft={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
                             action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1505']/* 'job-request-messages' */)
                             }}
@@ -1801,52 +1801,6 @@ class ViewJobRequestPage extends Component {
                     </SwipeableList>
             </div>
         )
-        // var focused_message = this.get_focused_message()
-        // if(item == focused_message){
-        //     return(
-        //         <div>
-        //             <SwipeableList>
-        //                 <SwipeableListItem
-        //                     swipeLeft={{
-        //                     content: <div>Focus</div>,
-        //                     action: () => console.log()
-        //                     }}
-        //                     swipeRight={{
-        //                     content: <div>Unfocus</div>,
-        //                     action: () => this.unfocus_message()
-        //                     }}>
-        //                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item)}</div>
-        //                 </SwipeableListItem>
-        //             </SwipeableList>
-        //             {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
-        //                 {this.render_stack_message_item(item)}
-        //             </div> */}
-        //             <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
-        //         </div>
-        //     )
-        // }else{
-        //     return(
-        //         <div>
-        //             <SwipeableList>
-        //                 <SwipeableListItem
-        //                     swipeLeft={{
-        //                     content: <div>Focus</div>,
-        //                     action: () => this.focus_message(item)
-        //                     }}
-        //                     swipeRight={{
-        //                     content: <div>Unfocus</div>,
-        //                     action: () => this.unfocus_message()
-        //                     }}>
-        //                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item)}</div>
-        //                 </SwipeableListItem>
-        //             </SwipeableList>
-
-        //             {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
-        //                 {this.render_stack_message_item(item)}
-        //             </div> */}
-        //         </div>
-        //     )
-        // }
     }
 
     when_message_clicked = (event, item, focused_message) => {

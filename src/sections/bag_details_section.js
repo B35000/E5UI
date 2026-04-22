@@ -2182,19 +2182,19 @@ class BagDetailsSection extends Component {
         return(
             <div>
                 <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
-                            action: () => this.focus_message(item, object)
-                            }}
-                            swipeRight={{
-                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
-                            action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1501']/* 'bag-messages' */)
-                            }}
-                            >
-                            <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item, object)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
+                    <SwipeableListItem
+                        swipeRight={{
+                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
+                        action: () => this.focus_message(item, object)
+                        }}
+                        swipeLeft={{
+                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
+                        action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1501']/* 'bag-messages' */)
+                        }}
+                        >
+                        <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_stack_message_item(item, object)}</div>
+                    </SwipeableListItem>
+                </SwipeableList>
             </div>
         )
         

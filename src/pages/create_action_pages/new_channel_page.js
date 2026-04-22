@@ -4013,6 +4013,7 @@ return data['data']
         //         }
         //     });
         // });
+        if(this.props.app_state.alias_bucket[this.props.app_state.selected_e5] == null) return []
         const accounts = Object.keys(this.props.app_state.alias_bucket[this.props.app_state.selected_e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[this.props.app_state.selected_e5][account_id]

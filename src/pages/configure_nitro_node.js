@@ -77,7 +77,7 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['3040']/* 'boot' */,this.props.app_state.loc['3041']/* 'restore' */,this.props.app_state.loc['3042']/* 'backup' */, this.props.app_state.loc['3043']/* 'new-E5' */, this.props.app_state.loc['3044']/* 'delete-E5' */,this.props.app_state.loc['3045']/* 'iteration' *//* , this.props.app_state.loc['3046'] *//* 'content-gateway' */, this.props.app_state.loc['3047']/* 'provider' */, this.props.app_state.loc['3048']/* 'boot-storage' */, this.props.app_state.loc['3049']/* 'reconfigure-storage' */], [0]
+                ['or','',0], ['e'/* ,this.props.app_state.loc['3040'] *//* 'boot' */,this.props.app_state.loc['3041']/* 'restore' */,this.props.app_state.loc['3042']/* 'backup' */, this.props.app_state.loc['3043']/* 'new-E5' */, this.props.app_state.loc['3044']/* 'delete-E5' */,this.props.app_state.loc['3045']/* 'iteration' *//* , this.props.app_state.loc['3046'] *//* 'content-gateway' */, this.props.app_state.loc['3047']/* 'provider' */, this.props.app_state.loc['3048']/* 'boot-storage' */, this.props.app_state.loc['3049']/* 'reconfigure-storage' */], [0]
             ],
         };
     }
@@ -1123,7 +1123,7 @@ class ConfigureNitroNodePage extends Component {
             return;
         }
         clone.push(url)
-        this.setState({added_rpc_urls: clone})
+        this.setState({added_rpc_urls: clone, typed_rpc_url:''})
     }
 
     render_added_rpcs(){
@@ -2521,6 +2521,7 @@ class ConfigureNitroNodePage extends Component {
         //     });
         // });
         const e5 = this.state.selected_e5
+        if(this.props.app_state.alias_bucket[e5] == null) return []
         const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[e5][account_id]

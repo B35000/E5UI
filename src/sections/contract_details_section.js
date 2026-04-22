@@ -39,6 +39,12 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+const originalWarn = console.warn;
+console.warn = (...args) => {
+  if (args[0]?.includes('react-virtuoso: Zero-sized element')) return;
+  originalWarn(...args);
+};
+
 
 class ContractDetailsSection extends Component {
 

@@ -224,6 +224,7 @@ class ConfirmRunPage extends Component {
     does_password_match_hash(passcode){
         if(this.props.app_state.locked_wallet_hashed_password != ''){
             const provided_hash = this.props.hash_data_with_randomizer(passcode);
+            // console.log('does_password_match_hash', 'locked_wallet_hashed_password', this.props.app_state.locked_wallet_hashed_password, 'provided_hash', provided_hash, 'passcode', passcode)
             return provided_hash == this.props.app_state.locked_wallet_hashed_password
         }
         else return true

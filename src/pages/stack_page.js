@@ -8659,7 +8659,8 @@ class StackPage extends Component {
             [], [],/* exchanges */
             [], [],/* receivers */
             []/* amounts */, [],/* action */
-            []/* lower_bounds */, []/* upper_bounds */
+            []/* lower_bounds */, [],/* upper_bounds */
+            [],/* depths */
         ];
 
 
@@ -8693,6 +8694,7 @@ class StackPage extends Component {
       }
       
       obj[6].push(action)
+      obj[9].push(t.token_item['data'][2][7/* <7>default_depth */])
 
       if(t.upper_bound != 0 && t.lower_bound != 0){
         obj[7].push(t.lower_bound.toString().toLocaleString('fullwide', {useGrouping:false}))
@@ -13112,7 +13114,8 @@ class StackPage extends Component {
                 [], [],/* exchanges */
                 [], [],/* receivers */
                 []/* amounts */, [],/* action */
-                []/* lower_bounds */, []/* upper_bounds */
+                []/* lower_bounds */, [],/* upper_bounds */
+                [],/* depths */ 
             ]
             var str_obj = [[]]
             var add_obj = []

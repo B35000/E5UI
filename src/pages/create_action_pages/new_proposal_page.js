@@ -332,6 +332,9 @@ class NewProposalPage extends Component {
     }
 
 
+    set_contract(contract){
+        this.setState({contract_item: contract, e5: contract['e5']})
+    }
 
 
 
@@ -2667,9 +2670,11 @@ return data['data']
 
     fetch_modify_target_data = async (text) =>{
         if(text.trim() != '' && !isNaN(text)){
-            const modify_target_data = await this.props.load_modify_item_data(text, this.props.app_state.selected_e5)
+            const modify_target_data = await this.props.load_modify_item_data(text, this.state.e5)
             const main_types = {'2':30, '3':31, '5':31}
-            const modify_target_type = main_types[text] != null ? main_types[text] : await this.props.fetch_id_type(parseInt(text), this.props.app_state.selected_e5)
+            const modify_target_type = main_types[text] != null ? main_types[text] : await this.props.fetch_id_type(parseInt(text), this.state.e5)
+
+            console.log('fetch_modify_target_data', 'modify_target_data', modify_target_data, 'modify_target_type', modify_target_type)
 
             this.setState({modify_target_data: modify_target_data, reconfig_items_tags_object: this.get_reconfig_items_tags_object(modify_target_type, parseInt(text) == 2), modify_target_type: modify_target_type})
         }
@@ -2795,7 +2800,7 @@ return data['data']
     }
 
     get_account_suggestions(type){
-        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5] || []
+        var contacts = this.props.app_state.contacts[this.state.e5] || []
         var return_array = []
 
         if(type == 'spend_target'){
@@ -3019,7 +3024,7 @@ return data['data']
 
 
     does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
             return false
         }
         return true
@@ -3029,7 +3034,7 @@ return data['data']
         if(!isNaN(typed_search)){
             return typed_search
         }
-        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+        var id = this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()]
 
         return id
     }
@@ -4077,8 +4082,8 @@ return data['data']
             return alias
         }
         await this.props.get_account_id_from_alias(alias)
-        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
 
         return id
     }
@@ -4151,11 +4156,11 @@ return data['data']
                                     }}>
                                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
-                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['token']]+':'+item['token'], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
-                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['token']]+':'+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
+                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']]+':'+item['token'], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']]+':'+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
                                             </div>
                                             <div style={{height:5}}/>
-                                            {this.render_detail_item('3', {'title':this.props.app_state.loc['419']+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':this.props.app_state.loc['419']+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
                                             <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
                                         </li>
                                     </div>
@@ -4235,10 +4240,10 @@ return data['data']
         var minimum_spend_bounty_amount = this.state.contract_item['data'][1][10/* <10>default_minimum_spend_vote_bounty_amount */]
         var minimum_end_bounty_amount = this.state.contract_item['data'][1][4/* <4>default_minimum_end_vote_bounty_amount */]
 
-        // var end_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][3]['balance']
-        var end_token_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 3)
-        // var spend_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]['balance']
-        var spend_token_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, 5)
+        // var end_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][3]['balance']
+        var end_token_balance = this.props.calculate_actual_balance(this.state.e5, 3)
+        // var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
+        var spend_token_balance = this.props.calculate_actual_balance(this.state.e5, 5)
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['420']/* 'The first bounty exchange should be the End or Spend Exchange' */})}
@@ -4297,7 +4302,7 @@ return data['data']
         var target_exchange = this.get_token_id_from_symbol(this.state.bounty_exchange_target.trim())
         var target_amount = this.state.bounty_amount
         
-        var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][target_exchange]
+        var target_exchange_data = this.props.app_state.created_token_object_mapping[this.state.e5][target_exchange]
         var default_depth = 0;
         if(target_exchange_data != null){
             target_exchange_data = target_exchange_data['ipfs']
@@ -4345,13 +4350,13 @@ return data['data']
         if(!isNaN(typed_search)){
             return typed_search
         }
-        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+        var id = this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()]
 
         return id
     }
 
     does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
             return false
         }
         return true
@@ -4396,8 +4401,8 @@ return data['data']
                                     }}>
                                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
-                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
-                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['exchange']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
+                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
                                             </div>
                                         </li>
                                     </div>
@@ -4441,11 +4446,6 @@ return data['data']
             </div>
         )
 
-    }
-
-
-    set_contract(contract){
-        this.setState({contract_item: contract, e5: contract['e5']})
     }
 
     finish_creating_object(){
@@ -4545,8 +4545,8 @@ return data['data']
         for(var i=0; i<bounty_values.length; i++){
             var bounty_item_exchange = bounty_values[i]['exchange']
             var bounty_item_amount = bounty_values[i]['amount']
-            // var my_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][bounty_item_exchange]['balance']
-            var my_balance = this.props.calculate_actual_balance(this.props.app_state.selected_e5, bounty_item_exchange)
+            // var my_balance = this.props.app_state.created_token_object_mapping[this.state.e5][bounty_item_exchange]['balance']
+            var my_balance = this.props.calculate_actual_balance(this.state.e5, bounty_item_exchange)
             if(my_balance < bounty_item_amount){
                 has_enough = false
             }

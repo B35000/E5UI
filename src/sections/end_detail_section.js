@@ -1646,7 +1646,7 @@ class EndDetailSection extends Component {
 
     calculate_wallet_dominance(max_supply, object){
         var my_balance = object['balance'];
-        if(my_balance == 0) return 0
+        if(my_balance == 0 || max_supply == 0) return 0
         var percentage = (my_balance * 100) / max_supply
         return percentage
     }
@@ -1814,7 +1814,7 @@ class EndDetailSection extends Component {
                 largest = yVal
             }
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i == 65){
                     dps.push({x: xVal,y: yVal, indexLabel:""+final_indicator});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
@@ -2104,6 +2104,7 @@ return data['data']
         const first_event_time = events[0].returnValues.p9/* timestamp */
         const last_event_time = events[events.length-1].returnValues.p9/* timestamp */
         const denominator = last_event_time == first_event_time ? 1 : Math.round((last_event_time - first_event_time) / (60*60*24))
+        if(denominator == 0) return total.divide(1)
         return total.divide(denominator)
     }
 

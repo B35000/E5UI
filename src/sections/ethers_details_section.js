@@ -1287,7 +1287,14 @@ class EthersDetailsSection extends Component {
         const time = ipfs['time']/1000
         const my_address = this.props.app_state.accounts[ether_item['e5']].address
         const sender_or_recipient_account = ipfs['sender_address'] == my_address ? ipfs['recipient_address'] : ipfs['sender_address'];
-        const base_unit_amount = ipfs['hash']['type'] == 'ether' ? bigInt(ipfs['hash']['tx'].value) : bigInt(ipfs['hash']['amount'])
+        const convert_to_bigint = (value) => {
+            if(value.includes('x')){
+                return bigInt(value.slice(2), 16)
+            }else{
+                return bigInt(value)
+            }
+        }
+        const base_unit_amount = ipfs['hash']['type'] == 'ether' ? convert_to_bigint(ipfs['hash']['tx'].value) : bigInt(ipfs['hash']['amount'])
         const decimal_amount = base_unit_amount / 10**18
         const sender_or_receiver = ipfs['recipient_address'] == my_address ? this.props.app_state.loc['2481c']/* 'From $, % ago.' */ : this.props.app_state.loc['2481e']/* 'To $, % ago.' */
 

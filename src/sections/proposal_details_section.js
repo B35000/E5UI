@@ -1312,7 +1312,7 @@ class ProposalDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Spend Actions', 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -1402,7 +1402,7 @@ class ProposalDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Reconfig Actions', 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -1510,7 +1510,7 @@ class ProposalDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Transfer Actions', 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -1893,11 +1893,11 @@ class ProposalDetailsSection extends Component {
             <div>
                 <SwipeableList>
                         <SwipeableListItem
-                            swipeLeft={{
+                            swipeRight={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}
-                            swipeRight={{
+                            swipeLeft={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
                             action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1515']/* 'proposal-messages' */)
                             }}

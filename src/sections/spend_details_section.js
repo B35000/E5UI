@@ -1663,7 +1663,7 @@ class SpendDetailSection extends Component {
     calculate_wallet_dominance(object){
         var max_supply = this.get_circulating_supply(object) 
         var my_balance = object['balance'];
-        if(my_balance == 0) return 0
+        if(my_balance == 0 || max_supply == 0) return 0
         // var percentage = (my_balance * 100) / max_supply
         var percentage = (bigInt(my_balance).multiply(100)).divide(max_supply)
         return percentage
@@ -2082,6 +2082,7 @@ return data['data']
         const first_event_time = events[0].returnValues.p9/* timestamp */
         const last_event_time = events[events.length-1].returnValues.p9/* timestamp */
         const denominator = last_event_time == first_event_time ? 1 : Math.round((last_event_time - first_event_time) / (60*60*24))
+        if(denominator == 0) return total.divide(1)
         return total.divide(denominator)
     }
 

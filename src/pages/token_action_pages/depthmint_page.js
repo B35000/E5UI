@@ -329,6 +329,7 @@ class DepthMintPage extends Component {
         //     });
         // });
         const e5 = this.state.token_item['e5']
+        if(this.props.app_state.alias_bucket[e5] == null) return []
         const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[e5][account_id]

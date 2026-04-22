@@ -1617,6 +1617,7 @@ class NitroDetailsSection extends Component {
         var data = []
         const data_point = this.get_selected_memory_stat_position()
         var timestamp_datapoints = Object.keys(memory_stats_data)
+        if(timestamp_datapoints.length == 0 || memory_stats_data[timestamp_datapoints[0]][data_point] == null) return { dps: [], largest: 0, starting_time: Date.now() - (1000*60*60*24), ending_time: Date.now() }
         const start_time = Date.now() - (1000*60*60*24)
         if(start_time - timestamp_datapoints[0] > (1000*60*5)){
             var diff = start_time - timestamp_datapoints[0]
@@ -1761,6 +1762,7 @@ class NitroDetailsSection extends Component {
         var data = []
         const data_point = this.get_selected_request_stat_position()
         var timestamp_datapoints = Object.keys(memory_stats_data)
+        if(timestamp_datapoints.length == 0 || memory_stats_data[timestamp_datapoints[0]][data_point] == null) return { dps: [], largest: 0, starting_time: Date.now() - (1000*60*60*24), ending_time: Date.now() }
         const start_time = Date.now() - (1000*60*60*24)
         if(start_time - timestamp_datapoints[0] > (1000*60*5)){
             var diff = start_time - timestamp_datapoints[0]
@@ -2479,11 +2481,11 @@ class NitroDetailsSection extends Component {
             <div>
                 <SwipeableList>
                         <SwipeableListItem
-                            swipeLeft={{
+                            swipeRight={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}
-                            swipeRight={{
+                            swipeLeft={{
                             content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2908']/* Delete. */}</p>,
                             action: () => this.props.delete_message_from_stack(item, this.props.app_state.loc['1593cu']/* 'nitro-messages' */)
                             }}

@@ -1852,6 +1852,7 @@ class NewSubscriptionPage extends Component {
         //     });
         // });
         const e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.alias_bucket[e5] == null) return []
         const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[e5][account_id]

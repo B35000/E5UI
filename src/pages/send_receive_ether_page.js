@@ -1117,13 +1117,25 @@ class SendReceiveEtherPage extends Component {
         this.setState({confirmation_dialog_box: false})
     }
 
-    when_send_ether_confirmation_received(){
+    async when_send_ether_confirmation_received(){
         // this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
         this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 5600)
+
+        var recipient_address = this.state.recipient_address.trim()
+        const recipient_account = await this.get_typed_alias_id(recipient_address)
+        const recipient_e5 = this.get_recipient_e5(recipient_address)
+
+        if(!isNaN(recipient_account) && recipient_account !='' && parseInt(recipient_account) > 1001){
+            //its an account, find its address
+            const address = await this.props.get_recipient_address(recipient_account, recipient_e5)
+            if(address != '0x0000000000000000000000000000000000000000'){
+                recipient_address = address;
+            }
+        }
         
         // console.log('when_send_ether_confirmed', e5)
-        this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas(), this.state.ether);  
+        this.props.send_ether_to_target(this.format_to_address(recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas(), this.state.ether);  
 
         // this.setState({recipient_address:''})
     };
@@ -1208,7 +1220,7 @@ class SendReceiveEtherPage extends Component {
 
         if(!isNaN(recipient_account) && recipient_account !='' && parseInt(recipient_account) > 1001){
             //its an account, find its address
-            const address = await this.get_recipient_address(recipient_account, recipient_e5)
+            const address = await this.props.get_recipient_address(recipient_account, recipient_e5)
             if(address != '0x0000000000000000000000000000000000000000'){
                 recipient_address = address;
             }
