@@ -1272,7 +1272,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* sluggish */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: this.getLocale()['1428']/* 'enabled' */, homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -1300,7 +1300,7 @@ class App extends Component {
     subscription_search_result:{}, all_data:{}, gateway_traffic_cache:{}, channel_events:{}, all_E5_runs:{}, 
 
     e5s:this.get_e5s(), kaomojis:this.get_kaomojis(),
-    selected_e5:'E25', default_e5:'E25',
+    selected_e5:'E35', default_e5:'E35',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
     device_country:this.get_location_info().userCountry, device_city: this.get_location_info().userCity, device_region: this.get_location_info().userRegion, device_country_code: this.get_country_code(this.get_location_info().userCountry), static_assets: this.get_static_assets(), languages:this.get_supported_languages(), allowed_countries:this.get_allowed_countries(),
@@ -28154,7 +28154,7 @@ class App extends Component {
     return [
       {'identifier':'e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{}, 'from_filter':{'p':'p8'/* timestamp */, 'value': Math.floor(Date.now()/1000) - (60*60*24*7*53)}}},/* e5 runs */
 
-      {'identifier':'my_e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{p1/* sender_account_id */: '%%account%%'}, 'from_filter':{}}},/* my_e5_runs */
+      {'identifier':'my_e5_runs','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E5', 'requested_event_id':'e4', 'filter':{p2/* sender_address */: this.state.accounts['E25'].address}, 'from_filter':{}}},/* my_e5_runs */
 
       {'identifier':'contacts','fetch_last_data':'last', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: '%%account%%', p3/* context */:1}, 'from_filter':{}}},/* contacts */
 
@@ -29468,8 +29468,13 @@ class App extends Component {
 
 
 
+    if(account != null && account > 1000 && this.state.created_tokens[e5] != null){
+      await this.update_balances_for_each_loaded_token(H52contractInstance, e5, account)
+    }
+
     /* ---------------------------------------- EVENT DATA ------------------------------------------- */
-    this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0], all_basic_events[22])
+    if(is_syncing) this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0], all_basic_events[22]);
+    else await this.load_all_e5_runs_data(web3, contractInstance, e5, account, all_basic_events[0], all_basic_events[22]);
     // this.load_my_e5_runs_data(web3, contractInstance, e5, account)
 
     // if(is_syncing){
@@ -29526,7 +29531,12 @@ class App extends Component {
 
 
     /* ---------------------------------------- TOKEN DATA --------------------------------------- */
-    this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+    if(is_syncing){
+      this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+    }
+    else{
+      await this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+    }
     if(pre_launch_data[e5] != null) this.get_alias_data(E52contractInstance, e5, account, web3, pre_launch_data[e5]['exchange_alias_data']);
 
     
@@ -30382,17 +30392,19 @@ class App extends Component {
     events = events.reverse()
     var clone = structuredClone(this.state.all_E5_runs)
     clone[e5] = events
+    console.log('load_all_e5_runs_data', 'loaded all events', events)
     this.setState({all_E5_runs: clone});
 
     this.filter_and_load_my_e5_runs_data(e5, account, pre_loaded_events2)
   }
 
   filter_and_load_my_e5_runs_data(e5, account, events){
-    var my_run_data = events.filter(function (event) {
-      return (event.returnValues.p1/* sender_account_id */ == account)
+    var my_run_data = events.filter((event) => {
+      return (event.returnValues.p2/* sender_address */ == this.state.accounts['E25'].address)
     })
     var clone = structuredClone(this.state.E5_runs)
     clone[e5] = my_run_data
+    console.log('filter_and_load_my_e5_runs_data', 'loaded my run data', my_run_data)
     this.setState({E5_runs: clone});
   }
 
@@ -30408,10 +30420,13 @@ class App extends Component {
     if(pre_launch_data[e5] != null && account > 1000 && pre_launch_data[e5]['account_data']['basic_transaction_data']){
       basic_transaction_data = pre_launch_data[e5]['account_data']['basic_transaction_data']
     }else{
-      if(this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284' ){
-        basic_transaction_data = (await contractInstance.methods.f287([account]).call((error, result) => {}))[0]
+      if(this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284'){
+        const contractArtifact = require('./contract_abis_old/E5.json');
+        const contractAddress = '0xF3895fe95f423A4EBDdD16232274091a320c5284'
+        const contractInstance2 = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+        basic_transaction_data = (await contractInstance2.methods.f287([account]).call((error, result) => {}))[0]
       }else{
-        basic_transaction_data = (await contractInstance.methods.f287([account]).call((error, result) => {}))[0]
+        basic_transaction_data = (await contractInstance.methods.f287([account]).call((error, result) => {}))[0][0]
       }
     }
     console.log('load_e5_balance_data','basic transaction data for e5: ',e5,' : ',basic_transaction_data)
@@ -34632,6 +34647,42 @@ class App extends Component {
 
     await this.wait(350)
     this.resolve_token_name_details()
+  }
+
+  async update_balances_for_each_loaded_token(H52contractInstance, e5, account){
+    const loaded_token_ids = []
+    const loaded_token_depths = []
+    const created_token_objects = this.state.created_tokens[e5] || []
+    created_token_objects.forEach(object => {
+      loaded_token_ids.push(object['id'])
+      loaded_token_depths.push(object['data'][2][7])
+    });
+    
+    const token_balances_and_data = await this.get_balance_from_multiple_exchanges(loaded_token_ids, account, H52contractInstance, loaded_token_depths, e5)
+    const token_balances = token_balances_and_data['bal']
+    const token_balances_data = token_balances_and_data['bal_data']
+
+    const balance_obj = {}
+    loaded_token_ids.forEach((exchange, index) => {
+      balance_obj[exchange] = {'token_balance':token_balances[index], 'token_balance_data':token_balances_data[index]}
+    });
+
+
+    const created_tokens_clone = structuredClone(this.state.created_tokens)
+    const created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
+
+    created_token_objects.forEach(object => {
+      const previous_obj = created_tokens_clone[e5].find(e => e['e5_id'] == object['e5_id'])
+      const previous_obj_mapping = created_token_object_mapping_clone[e5][object['id']]
+      const balance = balance_obj[object['id']]['token_balance']
+      const token_balance_data = balance_obj[object['id']]['token_balance_data']
+      previous_obj['balance'] = balance
+      previous_obj['token_balances_data'] = token_balance_data
+      previous_obj_mapping['balance'] = balance
+      previous_obj_mapping['token_balances_data'] = token_balance_data
+    });
+
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
   }
 
   fetch_balance_data_for_e_tokens = async(exchange_ids, exchange_data, H52contractInstance) => {

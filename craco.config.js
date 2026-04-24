@@ -135,6 +135,7 @@ module.exports = {
     },
   },
   devServer: {
+    hot: false,
     server: {
       type: 'http',
       // options: {

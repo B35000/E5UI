@@ -2347,7 +2347,13 @@ class StackPage extends Component {
         this.setState({state_viewed_data: viewed_data})
     }
 
-    //here
+    get_token_balance(token_id){
+        const e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null) return 0
+        return this.props.app_state.created_token_object_mapping[e5][token_id]['balance']
+    }
+
+    //-HERE----------------------------------------------------------------------------------------------
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
         var viewed_data = this.state.state_viewed_data == null ? "" : this.state.state_viewed_data
@@ -2369,6 +2375,9 @@ class StackPage extends Component {
 
         var estimated_gas_consumption_proportion = ((parseFloat(this.estimated_gas_consumed()) * 100) / parseFloat(this.get_e5_run_limit(this.props.app_state.selected_e5)));
         estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion
+
+        const end_token_balance = this.get_token_balance(3)
+        const spend_token_balance = this.get_token_balance(5)
         return(
             <div>
                 {this.render_now_calling_message_if_any()}
@@ -2385,6 +2394,19 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 {this.render_total_wallet_value()}
+
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}}>
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['424']/* 'End Balance' */, 'number':end_token_balance, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+                    </div>
+                    
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'number':spend_token_balance, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                    </div>
+                </div>
+
+                <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1450']/* 'Number of Stacked Transactions' */, 'subtitle':this.format_power_figure(this.props.app_state.stack_items.length), 'barwidth':this.calculate_bar_width(this.props.app_state.stack_items.length), 'number':this.format_account_balance_figure(this.props.app_state.stack_items.length), 'barcolor':'', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
@@ -3348,7 +3370,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
-                        should_optimize_run = false
+                        // should_optimize_run = false
                     }
                     if(txs[i].interactibles.length != 0){
                         var add_interactibles_accounts = [ /* set account to be interactible */
@@ -3369,7 +3391,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_interactibles_accounts)
-                        should_optimize_run = false
+                        // should_optimize_run = false
         
                     }
                     if(txs[i].moderators.length != 0){
@@ -3389,7 +3411,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
-                        should_optimize_run = false
+                        // should_optimize_run = false
                     }
 
                     const include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
@@ -3416,7 +3438,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(obj)
-                        should_optimize_run = false
+                        // should_optimize_run = false
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['601']/* 'token' */){
@@ -3498,7 +3520,7 @@ class StackPage extends Component {
                             strs.push([])
                             adds.push([])
                             ints.push(enable_interactibles_checker)
-                            should_optimize_run = false
+                            // should_optimize_run = false
                         }
                         if(txs[i].interactibles.length != 0){
                             var add_interactibles_accounts = [ /* set account to be interactible */
@@ -3519,7 +3541,7 @@ class StackPage extends Component {
                             strs.push([])
                             adds.push([])
                             ints.push(add_interactibles_accounts)
-                            should_optimize_run = false
+                            // should_optimize_run = false
             
                         }
                         if(txs[i].moderators.length != 0){
@@ -3539,7 +3561,7 @@ class StackPage extends Component {
                             strs.push([])
                             adds.push([])
                             ints.push(add_moderator_accounts)
-                            should_optimize_run = false
+                            // should_optimize_run = false
                         }
                     }
                     var transaction_obj = [ /* set data */
@@ -3584,7 +3606,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
-                        should_optimize_run = false
+                        // should_optimize_run = false
                     }
                     
                     if(txs[i].interactibles.length != 0){
@@ -3608,7 +3630,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_interactibles_accounts)
-                        should_optimize_run = false
+                        // should_optimize_run = false
         
                     }
                     if(txs[i].moderators.length != 0){
@@ -3628,7 +3650,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
-                        should_optimize_run = false
+                        // should_optimize_run = false
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['297']/* 'post' */){
@@ -3682,7 +3704,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
-                        should_optimize_run = false
+                        // should_optimize_run = false
                     }
 
                     if(txs[i].interactibles.length != 0){
@@ -3704,7 +3726,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_interactibles_accounts)
-                        should_optimize_run = false
+                        // should_optimize_run = false
         
                     }
                     if(txs[i].moderators.length != 0){
@@ -3724,7 +3746,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
-                        should_optimize_run = false
+                        // should_optimize_run = false
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1046']/* 'storefront-item' */){
@@ -4102,7 +4124,7 @@ class StackPage extends Component {
                     var ipfs_obj = await this.get_object_ipfs_index(final_bag_object, calculate_gas, ipfs_index, txs[i].id);
                     bag_metadata_strings[0].push(ipfs_obj.toString())
 
-                    should_optimize_run = false
+                    // should_optimize_run = false
 
                     ints.push(bag_metadata_action)
                     strs.push(bag_metadata_strings)
@@ -9301,7 +9323,8 @@ class StackPage extends Component {
             [], [],/* exchanges */
             [], [],/* receivers */
             []/* amounts */, [],/* action */
-            []/* lower_bounds */, []/* upper_bounds */
+            []/* lower_bounds */, [],/* upper_bounds */
+            []/* depth */
         ]
 
         for(var i=0; i<t.authmint_actions.length; i++){
@@ -9317,6 +9340,7 @@ class StackPage extends Component {
             obj[4].push(receiver_type)
             obj[5].push(t.authmint_actions[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
             obj[6].push(0)
+            obj[9].push(0)
         }
 
         return obj
@@ -12339,17 +12363,30 @@ class StackPage extends Component {
             var new_adds = []
             var new_strs = []
 
+            const object_stack_mappings = {}
+
             for(var i=0; i<ints.length; i++){
                 var global_action = ints[i][0][0]
                 if(global_action == 10000){
-                    return {'ints':ints, 'strs':strs, 'adds':adds}
+                    // return {'ints':ints, 'strs':strs, 'adds':adds}
+                    
                     new_ints.push(ints[i])
                     new_strs.push(strs[i])
                     new_adds.push(adds[i])
+
+                    object_stack_mappings[i] = new_ints.length -1
                 }
             }  
 
 
+            const get_final_item = (item, type) => {
+                if(parseInt(type) == 35){
+                    return object_stack_mappings[item]
+                }
+                else return item
+            }
+
+            var real_stack_arrays = [1]
             var obj = [ /* set metadata */
                 [20000, 1, 0],
                 [], [],/* target objects */
@@ -12364,8 +12401,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == 1/* modify_metadata */){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12386,7 +12428,7 @@ class StackPage extends Component {
 
 
 
-
+            var real_stack_arrays = [1, 3]
             var obj = [/* depth_mint\swap up\swap down tokens [2(depth_auth_mint), 1(swap_up), 0(swap_down)] */
                 [30000,16,0],
                 [], [],/* target exchange ids */
@@ -12403,8 +12445,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12425,7 +12472,7 @@ class StackPage extends Component {
 
 
 
-
+            var real_stack_arrays = [1, 3]
             var obj = [ /* set account to be interactible */
                 [20000, 2, 0],
                 [], [],/* target objects */
@@ -12440,8 +12487,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12461,6 +12513,7 @@ class StackPage extends Component {
             }
 
 
+            var real_stack_arrays = [1, 5]
             var obj = [/* ✔️auth modify token exchange */
                 [20000, 3, 0],
                 [], [],/* targets */
@@ -12476,8 +12529,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12497,6 +12555,8 @@ class StackPage extends Component {
             }
 
 
+
+            var real_stack_arrays = [1, 3]
             var obj = [ /* set account as mod */
                 [20000, 4, 0],
                 [], [],/* target objects */
@@ -12510,8 +12570,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12531,6 +12596,8 @@ class StackPage extends Component {
             }
 
 
+
+            var real_stack_arrays = [1]
             var obj = [ /* enable interactible checkers */
                 [20000, 5, 0],
                 [], []/* target objects */
@@ -12543,8 +12610,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12564,6 +12636,8 @@ class StackPage extends Component {
             }
 
 
+
+            var real_stack_arrays = [1]
             var obj = [ /* alias data */
                 [20000, 10, 0],
                 [], [],/* target objects */
@@ -12578,8 +12652,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12599,6 +12678,8 @@ class StackPage extends Component {
             }
 
 
+
+            var real_stack_arrays = [1, 5]
             var obj = [/* ✔️auth modify subscription */
                 [20000, 11, 0],
                 [], [],/* targets */
@@ -12614,8 +12695,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12637,7 +12723,7 @@ class StackPage extends Component {
 
 
 
-
+            var real_stack_arrays = [1]
             var obj = [/* index data in tags */
                 [20000, 12, 0],
                 [], []/* target objects */
@@ -12650,8 +12736,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
                         
@@ -12675,6 +12766,8 @@ class StackPage extends Component {
 
             
 
+
+            var real_stack_arrays = [1]
             var obj = [ /* set data */
                 [20000, 13, 0],
                 [], [],/* target objects */
@@ -12689,8 +12782,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12711,6 +12809,8 @@ class StackPage extends Component {
 
 
 
+
+            var real_stack_arrays = [1, 5]
             var obj = [/* auth modify proposal */
                 [20000, 14, 0],
                 [], [],/* targets */
@@ -12726,8 +12826,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12747,6 +12852,8 @@ class StackPage extends Component {
             }
 
 
+
+            var real_stack_arrays = [1, 5]
             var obj = [/* ✔️auth modify contract */
                 [20000, 15, 0],
                 [], [],/* targets */
@@ -12762,8 +12869,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12784,6 +12896,8 @@ class StackPage extends Component {
 
 
 
+
+            var real_stack_arrays = [1]
             var obj = [/* revoke author's moderator privelages */
                 [20000, 16, 0],
                 [], [],/* target objects */
@@ -12796,8 +12910,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12818,6 +12937,8 @@ class StackPage extends Component {
 
 
 
+
+            var real_stack_arrays = [1, 3]
             var obj = [/* block account */
                 [20000, 17, 0],
                 [], [],/* target objects */
@@ -12832,8 +12953,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12857,7 +12983,7 @@ class StackPage extends Component {
 
 
 
-
+            var real_stack_arrays = [1, 3]
             var obj = [/* ✔️send tokens to another account */
                 [30000, 1, 0],
                 [], [],/* exchanges */
@@ -12873,8 +12999,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12894,6 +13025,9 @@ class StackPage extends Component {
             }
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️pay subscription */
                 [30000, 2, 0],
                 [], [],/* target subscription ids */
@@ -12907,8 +13041,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12928,6 +13067,9 @@ class StackPage extends Component {
             }
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️enter a contract */
                 [30000, 3, 0],
                 [], [],/* contract ids */
@@ -12941,8 +13083,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -12962,6 +13109,9 @@ class StackPage extends Component {
             }
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️vote proposal */
                 [30000, 4, 0],
                 [], [],/* proposal ids */
@@ -12975,8 +13125,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<4; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
                         for(var j=4; j<ints[i].length; j++){
@@ -12999,6 +13154,9 @@ class StackPage extends Component {
             }
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️submit consensus request */
                 [30000, 5, 0/* payer_account_data_start */, 0/* payer_account_data_end */, 0/* vote_proposal_bounty_data_start */, 0/* vote_proposal_bounty_data_end */, 0],
                 [], [],/* targets */
@@ -13011,8 +13169,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13033,6 +13196,9 @@ class StackPage extends Component {
 
 
 
+
+
+            var real_stack_arrays = [1, 3]
             var obj = [/* ✔️auth freeze tokens [1-freeze_tokens , 0-unfreeze_tokens] */
                 [30000, 6, 0],
                 [], [],/* target_exchanges */
@@ -13049,8 +13215,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13071,6 +13242,9 @@ class StackPage extends Component {
 
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* send awwards */
                 [30000, 7, 0],
                 [], [],/* target receivers */
@@ -13084,8 +13258,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<4; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
                         for(var j=4; j<ints[i].length; j++){
@@ -13109,6 +13288,7 @@ class StackPage extends Component {
 
 
 
+            var real_stack_arrays = [1, 3]
             var obj = [/* ✔️buy end/spend */
                 [30000, 8, 0],
                 [], [],/* exchanges */
@@ -13125,8 +13305,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13146,12 +13331,16 @@ class StackPage extends Component {
             }
 
 
+
+
+            var real_stack_arrays = [1, 3]
             var obj = [/* ✔️auth mint token */
                 [30000, 9, 0],
                 [], [],/* exchanges */
                 [], [],/* receivers */
                 []/* amounts */, [],/* action */
-                []/* lower_bounds */, []/* upper_bounds */
+                []/* lower_bounds */, [],/* upper_bounds */
+                []/* depth */
             ]
             var str_obj = [[]]
             var add_obj = []
@@ -13161,8 +13350,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13183,6 +13377,9 @@ class StackPage extends Component {
 
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️exit contract */
                 [30000, 11, 0],
                 [], []/* contract ids */
@@ -13195,8 +13392,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13217,6 +13419,8 @@ class StackPage extends Component {
 
 
 
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️cancel subscription */
                 [30000, 12, 0],
                 [], [],/* target subscription ids */
@@ -13230,8 +13434,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13251,6 +13460,9 @@ class StackPage extends Component {
             }
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️collect subscription */
                 [30000, 13, 0],
                 [], [],/* target subscription ids */
@@ -13263,8 +13475,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<3; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
                         for(var j=3; j<ints[i].length; j++){
@@ -13288,6 +13505,9 @@ class StackPage extends Component {
 
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️extend enter contract */
                 [30000, 14, 0],
                 [], [],/* contract ids */
@@ -13301,8 +13521,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13323,6 +13548,8 @@ class StackPage extends Component {
 
 
 
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️archive proposal/contract */
                 [30000, 15, 0],
                 [], [],/* proposal/contract ids */
@@ -13335,8 +13562,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<3; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
                         for(var j=3; j<ints[i].length; j++){
@@ -13360,6 +13592,9 @@ class StackPage extends Component {
 
 
 
+
+
+            var real_stack_arrays = [1, 3, 7]
             var obj = [/* ✔️exchange transfer */
                 [30000, 17, 0],
                 [], [],/* exchange ids */
@@ -13375,8 +13610,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 
@@ -13397,6 +13637,9 @@ class StackPage extends Component {
 
 
 
+
+
+            var real_stack_arrays = [1]
             var obj = [/* ✔️force exit account */
                 [30000, 18, 0],
                 [], [],/* contract ids */
@@ -13410,8 +13653,13 @@ class StackPage extends Component {
                     var action = ints[i][0][1]
                     if(action == obj[0][1]){
                         for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
                             });
                         }
 

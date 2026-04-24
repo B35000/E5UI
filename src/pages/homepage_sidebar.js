@@ -88,7 +88,15 @@ class HomepageSideBar extends Component {
         )
     }
 
+    get_token_balance(token_id){
+        const e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null) return 0
+        return this.props.app_state.created_token_object_mapping[e5][token_id]['balance']
+    }
+
     render_metrics_section(h){
+        const end_token_balance = this.get_token_balance(3)
+        const spend_token_balance = this.get_token_balance(5)
         return(
             <div>
                 <div style={{'padding':'10px 10px 10px 10px', 'margin':'0px 0px 0px 5px', 'background-color':this.props.theme['card_background_color'],'border-radius': '15px', height:h, 'overflow-y': 'auto', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
@@ -112,6 +120,21 @@ class HomepageSideBar extends Component {
                     <div style={{height:10}}/>
                     {this.render_total_wallet_value()}
                     {this.render_detail_item('0')} 
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1264bu']/* 'End Spend Balance' */, 'details':this.props.app_state.loc['1264bv']/* 'You\'re balance in the End and Spend exchanges for your selected E5.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}}>
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['424']/* 'End Balance' */, 'number':end_token_balance, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+                        </div>
+                        
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'number':spend_token_balance, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                        </div>
+                    </div>
+
+                    {this.render_detail_item('0')}
 
 
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2821']/* 'Estimated Gas.' */, 'details':this.props.app_state.loc['2822']/* 'The estimated gas set to be consumed in your next run.' */, 'size':'l'})}
