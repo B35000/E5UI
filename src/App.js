@@ -6690,6 +6690,8 @@ class App extends Component {
           show_view_configure_obligations={this.show_view_configure_obligations.bind(this)} emit_subscribe_to_obligation_event={this.emit_subscribe_to_obligation_event.bind(this)} does_entered_text_contain_reserved_keywords={this.does_entered_text_contain_reserved_keywords.bind(this)} show_exchange_deposit_bottomsheet={this.show_exchange_deposit_bottomsheet.bind(this)}
 
           get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
+
+          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -8908,7 +8910,7 @@ class App extends Component {
       );
     }
     return(
-      <StackPage os={getOS()} ref={this.stack_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
+      <StackPage os={getOS()} ref={this.stack_page} width={this.state.width} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
       encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} 
       when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} 
       get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
@@ -8922,7 +8924,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)}
       />
     )
   }
@@ -10977,6 +10979,10 @@ class App extends Component {
     }
 
     return { tagged_addresses, tagged_account_ids }
+  }
+
+  fetch_gas_figures(){
+    this.stack_page.current?.fetch_gas_figures()
   }
 
 
@@ -28647,6 +28653,11 @@ class App extends Component {
 
     this.set_cookies()
     if(!should_skip_account_data){
+      
+      // if(is_syncing == false){
+      //   await this.get_accounts_data(_account, is_syncing, web3_url, e5_address, e5, pre_launch_data)
+      // }else{
+      // }
       this.get_accounts_data(_account, is_syncing, web3_url, e5_address, e5, pre_launch_data)
     }
   }
@@ -34307,7 +34318,7 @@ class App extends Component {
       created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
     }
     
-    var exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
+    const exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
 
     console.log('get_token_data','token events to load', created_token_events)
     const test_load = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
@@ -34344,9 +34355,9 @@ class App extends Component {
     }
 
 
-    var token_registry = pre_launch_data[e5] != null ? pre_launch_data[e5]['token_registry'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:19/* 19(token_symbol_registry) */});
-    var registered_token_names = {}
-    var registered_token_symbols = {}
+    const token_registry = pre_launch_data[e5] != null ? pre_launch_data[e5]['token_registry'] : await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:19/* 19(token_symbol_registry) */});
+    const registered_token_names = {}
+    const registered_token_symbols = {}
     token_registry.forEach(event => {
       var data = event.returnValues.p4/* string_data */
       var time = event.returnValues.p6/* timestamp */ * 1000
@@ -34354,16 +34365,16 @@ class App extends Component {
       registered_token_names[object['name']] = time
       registered_token_symbols[object['symbol']] = time
     });
-    var registered_token_names_clone = structuredClone(this.state.registered_token_names)
-    var registered_token_symbols_clone = structuredClone(this.state.registered_token_symbols)
+    const registered_token_names_clone = structuredClone(this.state.registered_token_names)
+    const registered_token_symbols_clone = structuredClone(this.state.registered_token_symbols)
     registered_token_names_clone[e5] = registered_token_names
     registered_token_symbols_clone[e5] = registered_token_symbols
     this.setState({registered_token_names:registered_token_names_clone, registered_token_symbols:registered_token_symbols_clone})
 
 
-    var created_tokens = [3, 5]
-    var created_token_depths = [0,0]
-    var exchange_accounts = [account, account]
+    const created_tokens = [3, 5]
+    const created_token_depths = [0,0]
+    const exchange_accounts = [account, account]
     for(var i=0; i<created_token_events.length; i++){
       var id = created_token_events[i].returnValues.p1
       created_tokens.push(parseInt(id))
@@ -34371,8 +34382,8 @@ class App extends Component {
       exchange_accounts.push(account)
     }
 
-    var focused_exchanges = [3, 5];
-    var depths = []
+    const focused_exchanges = [3, 5];
+    const depths = [0, 0]
     exchanges_to_load_first.forEach(exchange_id => {
       depths.push(0)
       if(!focused_exchanges.includes(parseInt(exchange_id))){
@@ -34382,7 +34393,7 @@ class App extends Component {
 
     this.record_number_of_items(e5, 'tokens', created_tokens.length)
     this.load_received_tokens_events(web3, H52contractInstance, e5, account)
-    var sort_tokens_into_3d_array = async (token_ids, pre_launch_data) => {
+    const sort_tokens_into_3d_array = async (token_ids, pre_launch_data) => {
       const object_array = []
       const unloaded_items = {}
       token_ids.forEach(id => {
@@ -34410,17 +34421,19 @@ class App extends Component {
       }
       return object_array
     }
-    var created_token_data = pre_launch_data[e5] != null ? await sort_tokens_into_3d_array(created_tokens, pre_launch_data) : await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
+    const created_token_data = pre_launch_data[e5] != null ? await sort_tokens_into_3d_array(created_tokens, pre_launch_data) : await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
 
 
-    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(focused_exchanges, account, H52contractInstance, depths, e5)
-    var token_balances = token_balances_and_data['bal']
-    var token_balances_data = token_balances_and_data['bal_data']
+    const token_balances_and_data = await this.get_balance_from_multiple_exchanges(focused_exchanges, account, H52contractInstance, depths, e5)
+    const token_balances = token_balances_and_data['bal']
+    const token_balances_data = token_balances_and_data['bal_data']
 
-    var balance_obj = {}
+    const balance_obj = {}
     focused_exchanges.forEach((exchange, index) => {
       balance_obj[exchange] = {'token_balance':token_balances[index], 'token_balance_data':token_balances_data[index]}
     });
+
+    console.log('token_balance_data', e5, 'balance_obj', balance_obj)
 
     created_tokens.forEach(created_id => {
       if(balance_obj[created_id] == null){
@@ -34461,7 +34474,7 @@ class App extends Component {
 
     var load_pos = this.state.sliced_object_load_count
     for(var i=0; i<created_tokens.length; i++){
-      const token_id = created_tokens[i]
+      const token_id = parseInt(created_tokens[i])
       var tokens_data = all_data[token_id] == null ? ((token_id == 3 || token_id == 5) ? null : await this.fetch_objects_data(token_id, web3, e5, contract_addresses)) : all_data[token_id]
       var event = i>1 ? created_token_events[i-2]: null
 
@@ -34520,7 +34533,7 @@ class App extends Component {
 
       if(this.homepage.current?.state.selected_end_item == token_id+e5 || this.homepage.current?.state.selected_spend_item == token_id+e5){
         // the token is being viewed
-        const previous_obj = this.state.created_tokens[e5].find(e => e['e5_id'] == token_id+e5)
+        const previous_obj = this.state.created_tokens[e5].find(e => e['e5_id'] == (token_id+e5))
         if(previous_obj != null){
           token_obj['exchanges_balances'] = previous_obj['exchanges_balances']
           token_obj['moderators'] = previous_obj['moderators']
@@ -34647,6 +34660,19 @@ class App extends Component {
 
     await this.wait(350)
     this.resolve_token_name_details()
+  }
+
+  reload_end_spend_balance = async (e5) => {
+    const account = this.state.user_account_id[e5]
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    
+    if(account != null && account > 1000 && this.state.created_tokens[e5] != null){
+      this.prompt_top_notification(this.getLocale()['2738cr']/* 'Reloading your main balances...' */, 3000)
+      await this.update_balances_for_each_loaded_token(H52contractInstance, e5, account)
+    }
   }
 
   async update_balances_for_each_loaded_token(H52contractInstance, e5, account){
@@ -45640,33 +45666,38 @@ class App extends Component {
 
 
   get_balance_from_multiple_exchanges = async (exchanges, account, H52contractInstance, exchanges_depth, e5) => {
-    var interacted_exchange_depth_data = await this.load_accounts_exchange_depth_interactions_data(account, e5)
-    var exchange_ids = []
-    var depths = []
-    var positions = []
+    const interacted_exchange_depth_data = await this.load_accounts_exchange_depth_interactions_data(account, e5)
+    const exchange_ids = []
+    const depths = []
+    const positions = []
+    // console.log('token_balance_data', e5, 'exchanges', exchanges, 'exchanges_depth', exchanges_depth)
     for(var j=0; j<exchanges.length; j++){
-      var exchange_depth = exchanges_depth[j]
+      const exchange_depth = parseInt(exchanges_depth[j])
       for(var i=exchange_depth; i>=0; i--){
         if((interacted_exchange_depth_data[exchanges[j]] != null && interacted_exchange_depth_data[exchanges[j]].includes(i)) || i == 0){
           exchange_ids.push(exchanges[j])
           depths.push(i)
           positions.push(j)
+        }else{
+          // console.log('token_balance_data', e5, 'not adding ', exchanges[j], 'at depth', i, 'in position', j)
         }
       }
     }
     
-    var token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
+    const token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
 
-    var bal = [];
-    var balance_data = [];
+    console.log('token_balance_data', e5, 'token_balances', token_balances, 'exchange_ids', exchange_ids)
+
+    const bal = [];
+    const balance_data = [];
     for(var i=0; i<token_balances.length; i++){
-      var bal_pos = positions[i]
+      const bal_pos = positions[i]
       if(bal_pos == bal.length){
         bal.push(0)
         balance_data.push({})
       }
       var balance = bal[bal_pos]
-      var balance_at_depth = bigInt(this.get_actual_number(token_balances[i], depths[i]))
+      const balance_at_depth = bigInt(this.get_actual_number(token_balances[i], depths[i]))
       
       balance = bigInt(balance).add(balance_at_depth)
       bal[bal_pos] = balance.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -45674,7 +45705,7 @@ class App extends Component {
     }
 
     for(var k=0; k<exchanges.length; k++){
-      var exchange_depth = exchanges_depth[j]
+      const exchange_depth = exchanges_depth[j]
       for(var l=exchange_depth; l>=0; l--){
         if(interacted_exchange_depth_data[exchanges[k]] == null || !interacted_exchange_depth_data[exchanges[k]].includes(l)){
           balance_data[k][l] = '0'
@@ -45714,8 +45745,8 @@ class App extends Component {
 
     var all_event_data = {}
     for(var i=0; i<stack_depth_swap_event_data.length; i++){
-      var exchange = stack_depth_swap_event_data[i].returnValues.p1/* exchange */
-      var depth = stack_depth_swap_event_data[i].returnValues.p4/* depth_val */
+      var exchange = parseInt(stack_depth_swap_event_data[i].returnValues.p1/* exchange */)
+      var depth = parseInt(stack_depth_swap_event_data[i].returnValues.p4/* depth_val */)
       if(all_event_data[exchange] == null){
         all_event_data[exchange] = []
       }
@@ -45724,8 +45755,8 @@ class App extends Component {
       }
     }
     for(var i=0; i<received_tokens_event_data.length; i++){
-      var exchange = received_tokens_event_data[i].returnValues.p1/* exchange */
-      var depth = received_tokens_event_data[i].returnValues.p7/* depth */
+      var exchange = parseInt(received_tokens_event_data[i].returnValues.p1/* exchange */)
+      var depth = parseInt(received_tokens_event_data[i].returnValues.p7/* depth */)
       if(all_event_data[exchange] == null){
         all_event_data[exchange] = []
       }

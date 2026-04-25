@@ -7643,7 +7643,7 @@ class home_page extends Component {
     render_metrics_section(h){
         // console.log('homepage', 're-rendering metrics section...')
         return(
-            <HomepageSidebar h={h} app_state={this.props.app_state} theme={this.props.theme} close_audio_pip={this.props.close_audio_pip.bind(this)} when_selected_e5_changed={this.props.when_selected_e5_changed.bind(this)} show_view_notification_log_bottomsheet={this.props.show_view_notification_log_bottomsheet.bind(this)} play_pause_from_stack={this.props.play_pause_from_stack.bind(this)} show_view_call_interface={this.props.show_view_call_interface.bind(this)}
+            <HomepageSidebar h={h} app_state={this.props.app_state} theme={this.props.theme} close_audio_pip={this.props.close_audio_pip.bind(this)} when_selected_e5_changed={this.props.when_selected_e5_changed.bind(this)} show_view_notification_log_bottomsheet={this.props.show_view_notification_log_bottomsheet.bind(this)} play_pause_from_stack={this.props.play_pause_from_stack.bind(this)} show_view_call_interface={this.props.show_view_call_interface.bind(this)} reload_end_spend_balance={this.props.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.props.fetch_gas_figures.bind(this)}
             />
         )
     }

@@ -27,6 +27,7 @@ import { parseBlob } from 'music-metadata';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 import EndImg from './../assets/end_token_icon.png';
 import LocationViewer from './../components/location_viewer';
+import MySwipeableViews from './../components/my_swipeable_views';
 
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
@@ -206,8 +207,7 @@ class StackPage extends Component {
         default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true, 
         setting_text:'', 
         
-        selected_obligation_year: new Date().getFullYear()
-        
+        selected_obligation_year: new Date().getFullYear(),
     };
 
     constructor(props) {
@@ -2347,12 +2347,6 @@ class StackPage extends Component {
         this.setState({state_viewed_data: viewed_data})
     }
 
-    get_token_balance(token_id){
-        const e5 = this.props.app_state.selected_e5
-        if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null) return 0
-        return this.props.app_state.created_token_object_mapping[e5][token_id]['balance']
-    }
-
     //-HERE----------------------------------------------------------------------------------------------
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
@@ -2376,8 +2370,6 @@ class StackPage extends Component {
         var estimated_gas_consumption_proportion = ((parseFloat(this.estimated_gas_consumed()) * 100) / parseFloat(this.get_e5_run_limit(this.props.app_state.selected_e5)));
         estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion
 
-        const end_token_balance = this.get_token_balance(3)
-        const spend_token_balance = this.get_token_balance(5)
         return(
             <div>
                 {this.render_now_calling_message_if_any()}
@@ -2395,16 +2387,7 @@ class StackPage extends Component {
 
                 {this.render_total_wallet_value()}
 
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}}>
-                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['424']/* 'End Balance' */, 'number':end_token_balance, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
-                    </div>
-                    
-                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'number':spend_token_balance, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
-                    </div>
-                </div>
+                {this.render_end_spend_balance_values()}
 
                 <div style={{height:10}}/>
 
@@ -2807,6 +2790,50 @@ class StackPage extends Component {
 
     play_pause_from_here(){
         this.props.play_pause_from_stack()
+    }
+
+    render_end_spend_balance_values(){
+        const items = this.load_active_e5s()
+        const pos = this.state.end_spend_balance_page == null ? items.indexOf(this.props.app_state.selected_e5) : this.state.end_spend_balance_page
+        const default_width = /* this.props.size == 's' ? this.props.width-20 :  */this.state.screen_width
+        return(
+            <div>
+                <MySwipeableViews width={default_width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                    {items.map((item, index) => (
+                        <div key={item}>
+                            {this.render_balance_item(item)}
+                        </div>
+                    ))}
+                </MySwipeableViews>
+            </div>
+        )
+    }
+
+    handleSwipeableViewsChange = (value) => {
+        this.setState({end_spend_balance_page: parseInt(value)})
+    };
+
+    render_balance_item(e5){
+        const end_token_balance = this.get_token_balance(3, e5)
+        const spend_token_balance = this.get_token_balance(5, e5)
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 5px 0px 5px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.reload_end_spend_balance(e5)}>
+                    <div>
+                        {this.render_detail_item('2', { 'style':'l', 'title':e5+' '+this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+                    </div>
+                    
+                    <div>
+                        {this.render_detail_item('2', { 'style':'l', 'title':e5+' '+this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    get_token_balance(token_id, e5){
+        if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null) return 0
+        return this.props.app_state.created_token_object_mapping[e5][token_id]['balance']
     }
 
 
@@ -15669,11 +15696,11 @@ class StackPage extends Component {
                             {this.render_e5_item(item)}
                         </li>
                     ))}
-                    {items2.map(() => (
+                    {/* {items2.map(() => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                             {this.render_empty_horizontal_list_item()}
                         </li>
-                    ))}
+                    ))} */}
                 </ul>
             </div>
         )

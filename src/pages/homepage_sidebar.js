@@ -88,15 +88,15 @@ class HomepageSideBar extends Component {
         )
     }
 
-    get_token_balance(token_id){
-        const e5 = this.props.app_state.selected_e5
+    get_token_balance(token_id, e5){
         if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null) return 0
         return this.props.app_state.created_token_object_mapping[e5][token_id]['balance']
     }
 
     render_metrics_section(h){
-        const end_token_balance = this.get_token_balance(3)
-        const spend_token_balance = this.get_token_balance(5)
+        const e5 = this.props.app_state.selected_e5
+        const end_token_balance = this.get_token_balance(3, e5)
+        const spend_token_balance = this.get_token_balance(5, e5)
         return(
             <div>
                 <div style={{'padding':'10px 10px 10px 10px', 'margin':'0px 0px 0px 5px', 'background-color':this.props.theme['card_background_color'],'border-radius': '15px', height:h, 'overflow-y': 'auto', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
@@ -124,13 +124,13 @@ class HomepageSideBar extends Component {
 
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1264bu']/* 'End Spend Balance' */, 'details':this.props.app_state.loc['1264bv']/* 'You\'re balance in the End and Spend exchanges for your selected E5.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}}>
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['424']/* 'End Balance' */, 'number':end_token_balance, 'relativepower':this.props.app_state.loc['3078']/* END */})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.reload_end_spend_balance(this.props.app_state.selected_e5)}>
+                        <div>
+                            {this.render_detail_item('2', { 'style':'l', 'title':e5+' '+this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
                         </div>
                         
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'number':spend_token_balance, 'relativepower':this.props.app_state.loc['3079']/* SPEND */})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                        <div>
+                            {this.render_detail_item('2', { 'style':'l', 'title':e5+' '+this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
                         </div>
                     </div>
 
@@ -332,11 +332,11 @@ class HomepageSideBar extends Component {
                             {this.render_e5_item(item)}
                         </li>
                     ))}
-                    {items2.map(() => (
+                    {/* {items2.map(() => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                             {this.render_empty_horizontal_list_item()}
                         </li>
-                    ))}
+                    ))} */}
                 </ul>
             </div>
         )
@@ -362,7 +362,7 @@ class HomepageSideBar extends Component {
             return(
                 <div>
                     {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
-                    {/* <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/> */}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }else{
@@ -375,10 +375,6 @@ class HomepageSideBar extends Component {
     }
 
     when_e5_clicked(item){
-        if(this.props.app_state.can_switch_e5s == false){
-            this.render_top_notification(this.props.app_state.loc['1593gr']/* Wait a bit.' */, 1200)
-            return;
-        }
         this.props.when_selected_e5_changed(item)
     }
 
@@ -769,7 +765,7 @@ class HomepageSideBar extends Component {
         
         return(
             <div>
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.fetch_gas_figures()}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ht']/* 'Gas Consumption as Proportion of Limit.' */, 'subtitle':'e0', 'barwidth':estimated_gas_consumption_proportion+'%', 'number':estimated_gas_consumption_proportion+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}

@@ -3146,7 +3146,15 @@ return data['data']
                     {this.render_skeleton_object()}
                 </div>
             )
-        }else{
+        }
+        else if(this.is_post_taken_down_for_sender(object) || this.is_object_sender_blocked(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        else{
             const item = this.format_item(object, event)
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
@@ -3165,6 +3173,74 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    is_post_taken_down_for_sender(object){
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(post_author == me) return false
+
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
+
+    is_object_sender_blocked(object){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(object['author'])){
+            return true
+        }
+
+        if(this.props.app_state.blocked_accounts_data.includes(object['author']+object['e5'])){
+            return true;
+        }
+        return false
+    }
+
+    should_show_post_if_masked_for_outsiders(object){
+        var selected_option = this.is_post_marked_as_masked_for_outsiders(object)
+        if(selected_option == false) return true
+        else{
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(me <1000){
+                return false
+            }else{
+                return true
+            }
+        }
+    }
+
+    is_post_marked_as_masked_for_outsiders(object){
+        if(object['ipfs'].get_masked_from_outsiders_option == null) return false
+        var selected_masked_option = this.get_selected_item2(object['ipfs'].get_masked_from_outsiders_option, 'e')
+        if(selected_masked_option == 1) return true
+        else return false
+    }
+
+    is_object_blocked_for_sender(object){
+        var is_object_blocked_for_sender = false;
+        if(this.props.app_state.posts_blocked_by_my_following.includes(object['e5_id'])){
+            is_object_blocked_for_sender = true
+        }
+
+        var author = object['author']
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1
+        if(author == myid){
+            is_object_blocked_for_sender = false
+        }
+
+
+        return is_object_blocked_for_sender
     }
 
     render_skeleton_object(){
@@ -3644,6 +3720,13 @@ return data['data']
         if(me == null) me = 1
 
         if(!this.can_sender_view_poll(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        else if(this.is_post_taken_down_for_sender(object) || this.is_object_sender_blocked(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
