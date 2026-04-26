@@ -265,6 +265,13 @@ class PostsDetailsSection extends Component {
         
     }
 
+
+
+
+
+
+
+
     render_post_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
@@ -678,6 +685,9 @@ class PostsDetailsSection extends Component {
     }
 
     render_block_post_button(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+        
         return(
             <div>
                 {this.render_detail_item('0')}

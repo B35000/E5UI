@@ -496,7 +496,7 @@ class SpendDetailSection extends Component {
                                     {index == 19 && this.render_detail_item('0')}
                                     {index == 20 && this.show_transaction_count_chart(selected_object, symbol)}
 
-                                    {index == 20 && this.show_mint_buy_traffic_chart(selected_object, symbol)}
+                                    {/* {index == 20 && this.show_mint_buy_traffic_chart(selected_object, symbol)} */}
                                     
                                     {index == 21 && (<div style={{height:10}}/>)}
                                     {index == 21 && this.render_detail_item('3', item['minimum_transactions_between_swap'])}

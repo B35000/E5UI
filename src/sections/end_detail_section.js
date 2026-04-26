@@ -415,6 +415,12 @@ class EndDetailSection extends Component {
         )
     }
 
+
+
+
+
+
+
     render_end_main_details_section(selected_object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-60
@@ -517,7 +523,7 @@ class EndDetailSection extends Component {
 
                                     {index == 17 && this.show_exchange_liquidity_chart(item, selected_object, symbol)}
 
-                                    {index == 18 && this.show_mint_buy_traffic_chart(selected_object, symbol)}
+                                    {/* {index == 18 && this.show_mint_buy_traffic_chart(selected_object, symbol)} */}
                                     
                                     {index == 20 && this.render_detail_item('3', item['minimum_transactions_between_swap'])}
                                     {index == 20 && (<div style={{height:10}}/>)}

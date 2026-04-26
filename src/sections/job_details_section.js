@@ -684,6 +684,9 @@ class JobDetailsSection extends Component {
     }
 
     render_block_post_button(object){
+        const me = this.props.app_state.user_account_id[object['e5']] || 1
+        if(object['author'] == me) return;
+        
         return(
             <div>
                 {this.render_detail_item('0')}

@@ -8743,7 +8743,7 @@ class StackPage extends Component {
       }
       
       obj[6].push(action)
-      obj[9].push(t.token_item['data'][2][7/* <7>default_depth */])
+      obj[9].push(0)
 
       if(t.upper_bound != 0 && t.lower_bound != 0){
         obj[7].push(t.lower_bound.toString().toLocaleString('fullwide', {useGrouping:false}))

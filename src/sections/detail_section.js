@@ -727,6 +727,9 @@ class PostDetailSection extends Component {
                 if(extra_data['storefront_purchase_request_events'] != null){
                     return_text.push(this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['storefront_purchase_request_events']['all_hits'])));
                 }
+                if(extra_data['token_swap_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dp']/* '$ swaps' */.replace('$', this.format_count(extra_data['token_swap_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -775,6 +778,7 @@ class PostDetailSection extends Component {
                 'storefront_order_events':this.props.app_state.loc['2509cd']/* orders 📦 */,
                 'repost_object_event':this.props.app_state.loc['2509de']/* reposts 🔄 */,
                 'storefront_purchase_request_events':this.props.app_state.loc['2509dm']/* purchase-requests 🛍️ */,
+                'token_swap_events':this.props.app_state.loc['2509dq']/* 'swap-actions ⇄' */
             }
 
             const available_items = ['e']
@@ -848,6 +852,11 @@ class PostDetailSection extends Component {
                     'title':this.props.app_state.loc['2509dn']/* Storefront Purchase Requests' */, 
                     'details':this.props.app_state.loc['2509do']/* Chart containing the contract purchase requests sent to the storefront over time. */,
                     'y_axis':this.props.app_state.loc['2509cm']/* Y-Axis: Requests */
+                },
+                'token_swap_events':{
+                    'title':this.props.app_state.loc['2509dr']/* Token Exchange Swaps' */, 
+                    'details':this.props.app_state.loc['2509ds']/* 'Chart containing the swap requests sent to the exchange over time.' */,
+                    'y_axis':this.props.app_state.loc['2509dt']/* Y-Axis: Swaps */
                 }
             }
 

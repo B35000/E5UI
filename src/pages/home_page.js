@@ -3141,7 +3141,7 @@ class home_page extends Component {
             var all_tokens = this.get_exchange_tokens(3, all)
             const current_e5 = this.props.app_state.selected_e5
             var e_tokens = all_tokens.filter(function (object) {
-                return (object['ipfs'] != null && object['ipfs'].token_type == 'e' && object['e5'] == current_e5)
+                return (object['ipfs'] != null && object['ipfs'].token_type == 'e'/*  && object['e5'] == current_e5 */)
             })
             return this.sortByAttributeDescending(e_tokens, 'spend_balance')
         }

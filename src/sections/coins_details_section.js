@@ -232,7 +232,7 @@ class CoinsDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':item['decimals'].toString(), 'details':this.props.app_state.loc['2912']/* Coin Decimal.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':item['base_unit'], 'details':this.props.app_state.loc['2913']/* Base Unit Name.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':item['base_unit'], 'details':this.props.app_state.loc['2913']/* Atomic Unit Name.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':'1 : '+number_with_commas(item['conversion']), 'details':this.props.app_state.loc['2914']/* Decimal Conversion Ratio.' */, 'size':'l'})}

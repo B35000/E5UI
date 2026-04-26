@@ -3565,6 +3565,9 @@ return data['data']
                 if(extra_data['storefront_purchase_request_events'] != null){
                     return_text.push(this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['storefront_purchase_request_events']['all_hits'])));
                 }
+                if(extra_data['token_swap_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dp']/* '$ swaps' */.replace('$', this.format_count(extra_data['token_swap_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string

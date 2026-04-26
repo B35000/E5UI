@@ -1275,6 +1275,9 @@ class PostListSection extends Component {
                 if(extra_data['storefront_purchase_request_events'] != null){
                     return_text.push(this.props.app_state.loc['2509br']/* '$ requests' */.replace('$', this.format_count(extra_data['storefront_purchase_request_events']['all_hits'])));
                 }
+                if(extra_data['token_swap_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dp']/* '$ swaps' */.replace('$', this.format_count(extra_data['token_swap_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -6460,7 +6463,7 @@ return data['data']
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':/* object['e5']+' • '+number_with_commas(object['id'])+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`,  'number_when_tapped':`${relativepower == '???' ? '???' : (new Date(time*1000).toLocaleString())}` },
-            'min':{'details': author+' • '+relativepower, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])}
+            'min':{'details': author+' • '+relativepower, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_audio_image_clicked', 'text_click':'when_audio_text_clicked', 'image_width':'auto', 'object':object, 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -7027,7 +7030,7 @@ return data['data']
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'image_width':'auto', 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`,  'number_when_tapped':`${relativepower == '???' ? '???' : (new Date(time*1000).toLocaleString())}` },
-            'min':{'details': author+' • '+relativepower, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'object':object, 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])}
+            'min':{'details': author+' • '+relativepower, 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px', 'image_click': 'when_video_image_clicked', 'text_click':'when_video_text_clicked', 'image_width':'auto', 'object':object, 'blur_image':this.is_post_nsfw(object), 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -7502,15 +7505,15 @@ return data['data']
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
-                                <div style={{height: 4}}/>
+                                {this.is_loading_object_data() == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                <div style={{height: 2}}/>
                             </div>
                         ))}
                     </ul>
                 </div>
             );
         }
-        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return (
             <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 {this.render_line_loader_if_reloading()}
@@ -7582,7 +7585,7 @@ return data['data']
                 </div>
             )
         }
-        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true){
             return(
                 <div onClick={() => this.when_ends_object_clicked(index, object)}>
                     {this.render_detail_item('8', item['min'])}
@@ -7672,7 +7675,7 @@ return data['data']
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id']), 'image_width':'auto'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
-            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id'])}
+            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'image_width':'auto', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id'])}
         }
     }
 
@@ -7765,15 +7768,15 @@ return data['data']
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
-                                <div style={{height: 4}}/>
+                                {this.is_loading_object_data() == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                <div style={{height: 2}}/>
                             </div>
                         ))}
                     </ul>
                 </div>
             );
         }
-        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 {this.render_line_loader_if_reloading()}
@@ -7841,7 +7844,7 @@ return data['data']
                 </div>
             )
         }
-        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true){
             return(
                 <div onClick={() => this.when_spends_object_item_clicked(index, object)}>
                     {this.render_detail_item('8', item['min'])}
@@ -7903,15 +7906,15 @@ return data['data']
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
-                                <div style={{height: 4}}/>
+                                {this.is_loading_object_data() == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                <div style={{height: 2}}/>
                             </div>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
+            var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_line_loader_if_reloading()}
@@ -7979,7 +7982,7 @@ return data['data']
                 </div>
             )
         }
-        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true){
             return(
                 <div onClick={() => this.when_bill_item_clicked(index, object)}>
                     {this.render_detail_item('3', item['min'])}
@@ -8368,7 +8371,7 @@ return data['data']
     render_small_empty_object(){
         return(
             <div>
-                <div style={{ height: 65, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                <div style={{ height: 65, 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)" }}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
                         <img alt="" src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
@@ -8387,7 +8390,7 @@ return data['data']
             )
         }
         return(
-            <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+            <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                 <div style={{'margin':'10px 20px 0px 0px'}}>
                     <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                     <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
