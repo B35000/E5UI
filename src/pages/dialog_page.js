@@ -9266,18 +9266,22 @@ return data['data']
     }
 
     finish_transaction(item, object){
-        if(object['ipfs']['bag_orders'] != null){
-            const all_amounts = this.merge_amount_arrays(item['price_data'], this.get_total_bag_value(object['ipfs']['bag_orders'], object))
+        // if(object['ipfs']['bag_orders'] != null){
+        //     const all_amounts = this.merge_amount_arrays(item['price_data'], this.get_total_bag_value(object['ipfs']['bag_orders'], object))
 
-            if(!this.check_if_sender_has_enough_balance_for_payouts(all_amounts, object['e5'])){
-                this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
-                return;
-            }
-        }else{
-            if(!this.check_if_sender_has_enough_balance_for_payouts(item['price_data'], object['e5'])){
-                this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
-                return;
-            }
+        //     if(!this.check_if_sender_has_enough_balance_for_payouts(all_amounts, object['e5'])){
+        //         this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+        //         return;
+        //     }
+        // }else{
+        //     if(!this.check_if_sender_has_enough_balance_for_payouts(item['price_data'], object['e5'])){
+        //         this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+        //         return;
+        //     }
+        // }
+        if(!this.check_if_sender_has_enough_balance_for_payouts(item['price_data'], object['e5'])){
+            this.props.notify(this.props.app_state.loc['3068aa']/* 'One of your token balances is insufficient for the transfer amounts specified.' */, 6900)
+            return;
         }
         const obj = {
             id:makeid(8), type: this.props.app_state.loc['1632o']/* 'finish-payment' */,
@@ -9288,10 +9292,10 @@ return data['data']
         if(selected_item == this.props.app_state.loc['3097l']/* 'exit-contract ↩' */){
             obj.contract_id = item['picked_contract_id']
         }
-        if(object['ipfs']['bag_orders'] != null){
-            //its a bag
-            obj.bag_storefront_transfers = this.get_bag_storefront_transfers(object['ipfs']['bag_orders'], object)
-        }
+        // if(object['ipfs']['bag_orders'] != null){
+        //     //its a bag
+        //     obj.bag_storefront_transfers = this.get_bag_storefront_transfers(object['ipfs']['bag_orders'], object)
+        // }
         this.props.add_finish_job_payment_transaction_to_stack(obj)
         this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
         this.props.open_dialog_bottomsheet()
@@ -9412,10 +9416,6 @@ return data['data']
                     <div style={{height:10}}/>
                     {this.render_payment_amounts(items, object)}
 
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055oj']/* 'Final payment to the storefronts your purchasing from.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                    <div style={{height:10}}/>
-                    {this.render_payment_amounts(total_amounts, object)}
                     {this.render_detail_item('0')}
                 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2057']/* 'Accepted' */, 'details':this.props.app_state.loc['2058']/* 'The bag owner picked this fulfilment application' */, 'size':'l'})}
@@ -9444,6 +9444,11 @@ return data['data']
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2060']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2061']/* 'Sender ID: ' */+item['applicant_id']+', '+ this.get_senders_name5(item['applicant_id'], object), 'size':'l'})}
 
                     {this.render_payment_amounts(items, object)}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['3055oj']/* 'Final payment to the storefronts your purchasing from.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:10}}/>
+                    {this.render_payment_amounts(total_amounts, object)}
                     <div style={{height:10}}/>
                     
                     {object['author'] == this.props.app_state.user_account_id[object['e5']] && (
@@ -9484,6 +9489,11 @@ return data['data']
     view_contract2(item, object){
         if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
             this.props.open_dialog_bottomsheet()
+            if(!this.has_sender_already_paid_previously(object)){
+                item['bag'] = object;
+                item.bag_storefront_transfers = this.get_bag_storefront_transfers(object['ipfs']['bag_orders'], object)
+                item.bag_value = this.get_total_bag_value(object['ipfs']['bag_orders'], object)
+            } 
             this.props.view_bag_application_contract(item)
         }
     }
@@ -9578,6 +9588,10 @@ return data['data']
         });
 
         return obj
+    }
+
+    has_sender_already_paid_previously(object){
+        return  this.props.app_state.bag_payment_confirmation_data[object['e5_id']] == 'confirmed'
     }
 
 

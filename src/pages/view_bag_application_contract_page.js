@@ -20,7 +20,8 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
-// import Letter from './../assets/letter.png'; 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 var bigInt = require("big-integer");
 
@@ -186,12 +187,7 @@ class ViewBagApplicationContractPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
+                                {this.render_skeleton_object()}
                             </li>
                         ))}
                     </ul>
@@ -199,6 +195,43 @@ class ViewBagApplicationContractPage extends Component {
             );
         }
         
+    }
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
 
@@ -398,9 +431,9 @@ class ViewBagApplicationContractPage extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-150
         var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
+        // if(size == 'm'){
+        //     he = this.props.height-190;
+        // }
         var item = this.get_contract_details_data(contract)
         var object = contract
 

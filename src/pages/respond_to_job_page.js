@@ -33,6 +33,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -236,12 +239,7 @@ class RespondToJobPage extends Component {
                     <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <div style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
+                                {this.render_skeleton_object()}
                             </div>
                         ))}
                     </div>
@@ -263,6 +261,43 @@ class RespondToJobPage extends Component {
             );
         }
         
+    }
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     get_contract_items(){

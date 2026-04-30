@@ -20,6 +20,9 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -174,8 +177,59 @@ class ViewJobRequestContractPage extends Component {
                     {this.render_contract_data_or_proposals()}
                 </div>
             )
+        }else{
+            var items = ['0','1'];
+            var background_color = this.props.theme['card_background_color']
+            return (
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_skeleton_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
         }
         
+    }
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
     }
 
     when_get_contracts_or_proposals_tags_object_updated(tag_obj){

@@ -616,12 +616,49 @@ class NewContractPage extends Component {
         }
     }
 
+    get_minimum_contract_entry_amount(token_id){
+        if(this.props.app_state.created_contract_mapping[this.props.app_state.selected_e5] == null || this.props.app_state.created_contract_mapping[this.props.app_state.selected_e5][token_id] == null){
+            if(this.props.app_state.selected_e5 == 'E25'){
+                if(token_id == 3){
+                    return bigInt('90000')
+                }else{
+                    return bigInt('90000')
+                }
+            } 
+            else if(this.props.app_state.selected_e5 == 'E35'){
+                if(token_id == 3){
+                    return bigInt('350000')
+                }else{
+                    return bigInt('3500')
+                }
+            }
+            else{
+                if(token_id == 3){
+                    return bigInt('7200000')
+                }else{
+                    return bigInt('72000')
+                }
+            } 
+                
+        }else{
+            const pos = token_id == 3 ? 3/* <3>default_end_minimum_contract_amount */ : 9/* <9>default_spend_minimum_contract_amount */
+            return this.props.app_state.created_contract_mapping[this.props.app_state.selected_e5][token_id]['data'][1][pos]
+        }
+    }
+
     preset_workgroup_contract(is_checking_type){
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
         var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
+
+        if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
+            end_price = this.get_minimum_contract_entry_amount(3).toString()
+        }
+        if(bigInt(spend_price).lesser(this.get_minimum_contract_entry_amount(5))){
+            spend_price = this.get_minimum_contract_entry_amount(5).toString()
+        }
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [1] ], };
@@ -674,7 +711,7 @@ class NewContractPage extends Component {
         var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
         var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1] ], };
         var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
-        var price = [{'id':'3', 'amount':bigInt('3500')}]
+        var price = [{'id':'3', 'amount':this.get_minimum_contract_entry_amount(3).toString()}]
 
         var set_object = {
             new_contract_type_tags_object: contract_type,
@@ -719,12 +756,19 @@ class NewContractPage extends Component {
         var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.006)).toString())
 
+        if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
+            end_price = this.get_minimum_contract_entry_amount(3).toString()
+        }
+        if(bigInt(spend_price).lesser(this.get_minimum_contract_entry_amount(5))){
+            spend_price = this.get_minimum_contract_entry_amount(5).toString()
+        }
+
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
         var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1] ], };
         var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
 
-        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1] ], };
         var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [2] ], };
         var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
@@ -753,7 +797,8 @@ class NewContractPage extends Component {
             keys.forEach(setting => {
                 if(setting == 'price_data'){
                     this.state[setting].forEach(price_target => {
-                        if(price_target['id'] == '3' && bigInt().lesser(bigInt(end_price))){
+                        if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
+                            // console.log('new_contract_page', 'found unmatching end price setting', price_target['amount'], spend_price)
                             is_matching = false
                         }
                         else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
@@ -784,6 +829,13 @@ class NewContractPage extends Component {
         
         var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.01)).toString())
+
+        if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
+            end_price = this.get_minimum_contract_entry_amount(3).toString()
+        }
+        if(bigInt(spend_price).lesser(this.get_minimum_contract_entry_amount(5))){
+            spend_price = this.get_minimum_contract_entry_amount(5).toString()
+        }
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [2] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
@@ -838,6 +890,13 @@ class NewContractPage extends Component {
         var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
 
+        if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
+            end_price = this.get_minimum_contract_entry_amount(3).toString()
+        }
+        if(bigInt(spend_price).lesser(this.get_minimum_contract_entry_amount(5))){
+            spend_price = this.get_minimum_contract_entry_amount(5).toString()
+        }
+
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
         var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [2] ], };
@@ -887,6 +946,13 @@ class NewContractPage extends Component {
 
         var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.06)).toString())
+
+        if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
+            end_price = this.get_minimum_contract_entry_amount(3).toString()
+        }
+        if(bigInt(spend_price).lesser(this.get_minimum_contract_entry_amount(5))){
+            spend_price = this.get_minimum_contract_entry_amount(5).toString()
+        }
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };

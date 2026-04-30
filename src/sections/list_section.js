@@ -5555,7 +5555,7 @@ class PostListSection extends Component {
         }
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
         var responses_text = ' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
-        if(object['responses'] == 0){
+        if(object['responses'] == 0 || true){
             responses_text = ''
         }
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+ responses_text + sender

@@ -964,9 +964,9 @@ class NewMintActionPage extends Component {
             else if(!can_make_swap){
                 this.props.notify(reason, 5500)
             }
-            // else if(!this.check_if_sender_can_sell_end_tokens()){
-            //     this.props.notify(this.props.app_state.loc['']/* 'You cant sell end while having a withdraw balance. Withdraw your ether first.' */,7500)
-            // }
+            else if(!this.check_if_sender_can_sell_end_tokens()){
+                this.props.notify(this.props.app_state.loc['996k']/* 'You cant sell end while having a withdraw balance.' */,7500)
+            }
             else{
                 this.props.add_buy_sell_transaction_to_stack(this.state)
                 this.setState({amount:0, recipient_id:''})

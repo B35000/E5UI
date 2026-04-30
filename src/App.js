@@ -1261,7 +1261,7 @@ class App extends Component {
   // }
 
   state = {
-    version:'7.0', os: getOS(),
+    version:this.get_app_version(), os: getOS(),
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -1377,8 +1377,12 @@ class App extends Component {
 
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
-    locked_wallet_hashed_password:''
+    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}
   };
+
+  get_app_version(){
+    return document.querySelector('meta[name="version"]')?.getAttribute('content');
+  }
 
   get_thread_pool_size(){
     var size = navigator.hardwareConcurrency || 2;
@@ -6691,7 +6695,7 @@ class App extends Component {
 
           get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
 
-          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)}
+          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -10444,13 +10448,13 @@ class App extends Component {
           const t = stack[i]
           storefront_purchase_request_e5_ids.push(t.storefront_item['e5_id'])
         }
-        else if(stack[i].type == this.getLocale()['1632o']/* 'finish-payment' */){
+        else if(stack[i].type == this.getLocale()['1498']/* 'accept-bag-application' */){
           const t = stack[i]
-          if(t.bag_storefront_transfers != null){
+          if(t.application_item.bag_storefront_transfers != null){
             payment_update_transactions.push(t)
           }
         }
-        else if(stack[i].type ==this.getLocale()['946']/* 'buy-sell' */){
+        else if(stack[i].type == this.getLocale()['946']/* 'buy-sell' */){
           const t = stack[i];
           swap_transactions.push(t.token_item['e5_id'])
         }
@@ -10525,7 +10529,7 @@ class App extends Component {
 
     for(var c=0; c<payment_update_transactions.length; c++){
       const tx = payment_update_transactions[c]
-      await this.emit_send_payment_update_to_storefront_owner_message(tx.application, tx.object)
+      await this.emit_send_payment_update_to_storefront_owner_message(tx.application_item, tx.application_item['bag'])
       await this.wait(1000)
     }
 
@@ -12954,8 +12958,8 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       if(me.enter_contract_page.current != null){
-      me.enter_contract_page.current.set_contract(contract_item, job_acceptance_action_state_object)
-    }
+        me.enter_contract_page.current.set_contract(contract_item, job_acceptance_action_state_object)
+      }
     }, (1 * 1100));
     
     this.load_contracts_proposals(contract_item['e5'], contract_item['id'])
@@ -25910,7 +25914,9 @@ class App extends Component {
         default_location_pins:[],
         my_acquired_videos:[], 
         my_acquired_audios:[],
-        last_notification_view_time: {'?':0, 'e':0, 'w':0}
+        last_notification_view_time: {'?':0, 'e':0, 'w':0},
+        locked_wallet: 'e', 
+        locked_wallet_hashed_password: ''
       });
 
       this.get_blocked_accounts_data_e5_timestamp = 0
@@ -28081,7 +28087,7 @@ class App extends Component {
     }
     this.setState({pre_launch_fetch_loading: false, did_just_set_wallet: this.did_just_set_wallet})
     for(var i=0; i<this.state.e5s['data'].length; i++){
-      var e5 = this.state.e5s['data'][i]
+      const e5 = this.state.e5s['data'][i]
       await this.start_get_accounts_for_specific_e5(is_synching, e5, should_skip_account_data, pre_launch_data)
     }
 
@@ -29553,10 +29559,15 @@ class App extends Component {
 
     /* ---------------------------------------- TOKEN DATA --------------------------------------- */
     if(is_syncing){
-      this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+      const run_get_token_data = async () => {
+        await this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+        this.set_all_token_names_and_symbols()
+      }
+      run_get_token_data()
     }
     else{
       await this.get_token_data(contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, [], [], pre_launch_data);
+      this.set_all_token_names_and_symbols()
     }
     if(pre_launch_data[e5] != null) this.get_alias_data(E52contractInstance, e5, account, web3, pre_launch_data[e5]['exchange_alias_data']);
 
@@ -34461,14 +34472,22 @@ class App extends Component {
     var is_first_time = this.state.created_tokens[e5] == null
 
 
-    var token_symbol_directory = this.state.token_directory[e5] == null ? {} : structuredClone(this.state.token_directory[e5])
-    var token_name_directory = this.state.token_name_directory[e5] == null ? {} : structuredClone(this.state.token_name_directory[e5])
+    const token_symbol_directory = structuredClone(this.state.token_directory)
+    const token_name_directory = structuredClone(this.state.token_name_directory)
     var token_thumbnail_directory = this.state.token_thumbnail_directory[e5] == null ? {} : structuredClone(this.state.token_thumbnail_directory[e5])
     var end_tokens = this.state.end_tokens[e5] == null ? [] : this.state.end_tokens[e5].slice()
 
-    token_symbol_directory[0] = 'wei'
-    token_symbol_directory['wei'] = 0
-    token_name_directory[e5+'0'] = this.state.e5s[e5].token
+    if(token_symbol_directory[e5] == null){
+      token_symbol_directory[e5] = {}
+    }
+    if(token_name_directory[e5] == null){
+      token_name_directory[e5] = {}
+    }
+    token_symbol_directory[e5][0] = 'wei'
+    token_symbol_directory[e5]['wei'] = 0
+    token_name_directory[e5][e5+'0'] = this.state.e5s[e5].token
+
+    this.setState({token_directory: token_symbol_directory, token_name_directory: token_name_directory})
 
     if(Object.keys(pre_launch_data).length != 0 && pre_launch_data[e5]['exchange_objects_data']['view_data'] != null){
       const object_view_data = pre_launch_data[e5]['exchange_objects_data']['view_data']
@@ -34571,22 +34590,53 @@ class App extends Component {
       }
 
       this.set_object_in_local_forage(token_obj)
-      
-      var token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
-      var token_title = tokens_data == null ? 'tokens' : tokens_data.entered_title_text
 
-      if(token_id == 3){
-        token_name = this.getLocale()['3078']/* END */
-        token_title = e5
-      } 
-      if(token_id == 5) {
-        token_name = this.getLocale()['3079']/* SPEND */
-        token_title = e5.replace('E','3')
+      const get_token_name_title = () => {
+        const token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
+        const token_title = tokens_data == null ? 'tokens' : tokens_data.entered_title_text
+        if(token_id == 3){
+          return { token_name: this.getLocale()['3078']/* END */, token_title: e5 }
+        }
+        else if(token_id == 5) {
+          // console.log('get_token_data2', 'token id is 5. setting to spend', e5)
+          return { token_name: this.getLocale()['3079']/* SPEND */, token_title: e5.replace('E','3') }
+        }
+        return { token_name, token_title }
       }
-      token_symbol_directory[token_id] = token_name;
-      token_symbol_directory[token_name] = token_id;
-      token_name_directory[e5+token_id] = token_title;
+      
+      const { token_name, token_title } = get_token_name_title()
 
+
+      const token_symbol_directory2 = structuredClone(this.state.token_directory)
+      const token_name_directory2 = structuredClone(this.state.token_name_directory)
+
+      console.log('get_my_token_data', e5, '---------------------e----------------------')
+      console.log('get_my_token_data', 'loading token id:', token_id)
+      console.log('get_my_token_data', 'token_name', token_name, 'token_title', token_title)
+      console.log('get_my_token_data', 'token_name_directory2 before setting token id', token_id, token_name_directory2)
+      
+      if(token_symbol_directory2[e5] == null){
+        token_symbol_directory2[e5] = {}
+      }
+
+      if(token_name_directory2[e5] == null){
+        token_name_directory2[e5] = {}
+      }
+
+      token_symbol_directory2[e5][token_id] = token_name;
+      token_symbol_directory2[e5][token_name] = token_id;
+      token_name_directory2[e5][e5+token_id] = token_title;
+
+      if(token_name_directory2[e5][e5+3] == null){
+        token_name_directory2[e5][e5+3] = e5;
+      }
+
+      if(token_name_directory2[e5][e5+5] == null){
+        token_name_directory2[e5][e5+5] = e5.replace('E','3');
+      }
+
+      console.log('get_my_token_data', 'token_name_directory2 after setting new token id', token_name_directory2)
+      this.setState({token_directory: token_symbol_directory2, token_name_directory: token_name_directory2})
 
       if(is_first_time || true){
         var created_tokens_clone = structuredClone(this.state.created_tokens)
@@ -34595,11 +34645,11 @@ class App extends Component {
         var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
         created_token_object_mapping_clone[e5] = created_token_object_mapping
 
-        var token_directory_clone = structuredClone(this.state.token_directory)
-        token_directory_clone[e5] = token_symbol_directory
+        // var token_directory_clone = structuredClone(this.state.token_directory)
+        // token_directory_clone[e5] = token_symbol_directory
 
-        var token_name_directory_clone = structuredClone(this.state.token_name_directory)
-        token_name_directory_clone[e5] = token_name_directory
+        // var token_name_directory_clone = structuredClone(this.state.token_name_directory)
+        // token_name_directory_clone[e5] = token_name_directory
 
         var token_thumbnail_directory_clone = structuredClone(this.state.token_thumbnail_directory)
         token_thumbnail_directory_clone[e5] = token_thumbnail_directory
@@ -34607,7 +34657,7 @@ class App extends Component {
         var end_tokens_clone = structuredClone(this.state.end_tokens)
         end_tokens_clone[e5] = end_tokens
 
-        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
+        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
         
         if((i%4 == 0 || i == created_tokens.length-1)){
           await this.wait(350)
@@ -34653,11 +34703,11 @@ class App extends Component {
     var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
     created_token_object_mapping_clone[e5] = created_token_object_mapping
 
-    var token_directory_clone = structuredClone(this.state.token_directory)
-    token_directory_clone[e5] = token_symbol_directory
+    // var token_directory_clone = structuredClone(this.state.token_directory)
+    // token_directory_clone[e5] = token_symbol_directory
 
-    var token_name_directory_clone = structuredClone(this.state.token_name_directory)
-    token_name_directory_clone[e5] = token_name_directory
+    // var token_name_directory_clone = structuredClone(this.state.token_name_directory)
+    // token_name_directory_clone[e5] = token_name_directory
 
     var token_thumbnail_directory_clone = structuredClone(this.state.token_thumbnail_directory)
     token_thumbnail_directory_clone[e5] = token_thumbnail_directory
@@ -34665,11 +34715,53 @@ class App extends Component {
     var end_tokens_clone = structuredClone(this.state.end_tokens)
     end_tokens_clone[e5] = end_tokens
 
-    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
-    // console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
 
     await this.wait(350)
     this.resolve_token_name_details()
+  }
+
+  set_all_token_names_and_symbols(){
+    const created_token_objects = this.get_all_sorted_objects(this.state.created_tokens)
+    const token_symbol_directory2 = structuredClone(this.state.token_directory)
+    const token_name_directory2 = structuredClone(this.state.token_name_directory)
+
+    const get_token_name_title = (tokens_data, token_id, e5) => {
+      const token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
+      const token_title = tokens_data == null ? 'tokens' : tokens_data.entered_title_text
+      if(token_id == 3){
+        return { token_name: this.getLocale()['3078']/* END */, token_title: e5 }
+      }
+      else if(token_id == 5) {
+        // console.log('get_token_data2', 'token id is 5. setting to spend', e5)
+        return { token_name: this.getLocale()['3079']/* SPEND */, token_title: e5.replace('E','3') }
+      }
+      return { token_name, token_title }
+    }
+
+    created_token_objects.forEach(object => {
+      const e5 = object['e5']
+      const token_id = object['id']
+      const { token_name, token_title } = get_token_name_title(object['ipfs'], object['id'], e5)
+      if(token_symbol_directory2[e5] == null){
+        token_symbol_directory2[e5] = {}
+      }
+      if(token_name_directory2[e5] == null){
+        token_name_directory2[e5] = {}
+      }
+      token_symbol_directory2[e5][token_id] = token_name;
+      token_symbol_directory2[e5][token_name] = token_id;
+      token_name_directory2[e5][e5+token_id] = token_title;
+    });
+
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const e5 = this.state.e5s['data'][i]
+      token_symbol_directory2[e5][0] = 'wei'
+      token_symbol_directory2[e5]['wei'] = 0
+      token_name_directory2[e5][e5+'0'] = this.state.e5s[e5].token
+    }
+
+    this.setState({token_directory: token_symbol_directory2, token_name_directory: token_name_directory2})
   }
 
   reload_end_spend_balance = async (e5) => {
@@ -48610,6 +48702,133 @@ class App extends Component {
     this.setState({storefront_payment_event_data: clone})
   }
 
+  get_bag_sender_transfers_events = async (object) => {
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const author = object['author']
+
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var transfer_events;
+    var application_responses;
+
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      const event_params2 = [
+        [web3, H52contractInstance, 'e1', e5, {p2/* sender */: author}],/* transfer_events */
+        [web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37}],/* application_responses */
+      ]
+      var return_data = await this.load_multiple_events_from_nitro(event_params2)
+      var all_events = return_data.all_events
+      transfer_events = all_events[0]
+      application_responses = all_events[1]
+    }else{
+      transfer_events = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p2/* sender */: author})
+      application_responses = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37})
+    }
+
+    const data = this.get_bag_storefront_transfers(object['ipfs']['bag_orders'], object)
+    const transfers = data.obj
+    const all_transfers_presenent = data.all_transfers_present;
+    const time = application_responses.length > 0 ? application_responses[0].returnValues.p6/* timestamp */ : 0
+
+    if(all_transfers_presenent == false){
+      const clone = structuredClone(this.state.bag_payment_confirmation_data)
+      clone[e5_id] = 'pending'
+      this.setState({bag_payment_confirmation_data: clone})
+      return;
+    } 
+
+    const get_default_depth = (number) => {
+      var number_as_string = number.toString().toLocaleString('fullwide', {useGrouping:false})
+      return Math.floor((number_as_string.length-1)/72)
+    }
+
+    const get_exchange_transfer_actions = (amount) => {
+      var transaction_amount = amount.toString().toLocaleString('fullwide', {useGrouping:false})
+      var transaction_amount_depth = get_default_depth(transaction_amount)
+
+      var end = transaction_amount.length - 1
+      var start = (end - 71) < 0 ? 0 : (end-71)
+
+      var data = []
+      for(var j=0; j<=transaction_amount_depth; j++){
+        var depth_amount = bigInt(transaction_amount.substring(start, end+1)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth = j
+        if(!bigInt(depth_amount).equals(0)){
+          data.push({'amount':depth_amount, 'depth':depth})
+        }
+
+        end -= 72
+        start -= 72
+      }
+      return data
+    }
+
+    var all_existing = true
+    transfers.forEach(transfer => {
+      const exchange = transfer['id']
+      const amount = transfer['amount']
+      const receiver = transfer['receiver']
+      const transfer_actions = get_exchange_transfer_actions(amount)
+
+      transfer_actions.forEach(action => {
+        const existing_events = transfer_events.filter((event) => { 
+          return(
+            event.returnValues.p1 == exchange && 
+            action['amount'].toString() == event.returnValues.p4/* amount */.toString() &&
+            action['depth'].toString() == event.returnValues.p7/* depth */.toString() &&
+            Math.abs(parseInt(event.returnValues.p5/* timestamp */) - time) < (60*10) &&
+            event.returnValues.p3/* receiver */ == receiver
+          )
+        });
+
+        if(existing_events.length == 0){
+          all_existing = false;
+        }
+      });
+    });
+
+    const clone = structuredClone(this.state.bag_payment_confirmation_data)
+    clone[e5_id] = all_existing == true ? 'confirmed' : 'unconfirmed'
+    this.setState({bag_payment_confirmation_data: clone})
+  }
+
+  get_bag_storefront_transfers(items_to_deliver, object){
+    const obj = []
+    var all_transfers_present = true;
+    items_to_deliver.forEach(item => {
+      var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+      var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
+      if(storefront != null){
+        var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+        if(variant_in_store != null){
+          var price_items = variant_in_store['price_data']
+          for(var i=0; i<price_items.length; i++){
+            var units = price_items[i];
+            var amount = this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)
+            var token_id = units['id']
+            const receiver = storefront['ipfs'].target_receiver || storefront['author'];
+            obj.push({'id':token_id, 'amount':amount, 'receiver':receiver})
+          }
+        }else{
+          all_transfers_present = false
+        } 
+      }else{
+        all_transfers_present = false
+      }
+    });
+
+    return { obj, all_transfers_present }
+  }
+
 
 
 
@@ -54705,7 +54924,7 @@ class App extends Component {
 
 
 
-  async prepare_send_payment_update_to_storefront_owner_message(item, object){
+  async prepare_send_payment_update_to_storefront_owner_message(application, object){
     const items_to_deliver = object['ipfs']['bag_orders']
     const variant_data = {}
     items_to_deliver.forEach(item => {
@@ -54739,7 +54958,7 @@ class App extends Component {
     const payment_update_object = {
       'bag_id':object['id'],
       'bag_e5':object['e5'],
-      'fulfiller': item['applicant_id'],
+      'fulfiller': application['applicant_id'],
       'data':variant_data,
       'author_account_id':this.state.user_account_id[object['e5']],
       'author_account_e5':object['e5'],
@@ -57541,7 +57760,7 @@ class App extends Component {
 
       var me = this;
       setTimeout(function() {
-        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+        // me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
         me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
@@ -57558,6 +57777,7 @@ class App extends Component {
       const payment_update_data = structuredClone(data[storefront_e5_id])
       payment_update_data['time'] = ipfs['time'] / 1000
       payment_update_data['author'] = message.author
+      payment_update_data['fulfiller'] = ipfs['fulfiller']
       const index = clone[storefront_e5_id].findIndex(item => item['id'] === payment_update_data['id']);
       if(index == -1){
         clone[storefront_e5_id].push(payment_update_data)

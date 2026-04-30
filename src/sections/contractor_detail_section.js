@@ -49,7 +49,7 @@ class ContractorDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_contractors_list_detail_tags_object: this.get_navigate_view_contracts_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}, 
-        get_contractor_availability_tags: this.get_contractor_availability_tags()
+        get_contractor_availability_tags: this.get_contractor_availability_tags(), selected_price_tag:{}, selected_token_tag:{}
     };
 
     constructor(props) {

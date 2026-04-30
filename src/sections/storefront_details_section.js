@@ -104,7 +104,7 @@ function capitalizeFirstLetter(val) {
 class StorefrontDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], visible_hidden_messages:[], selected_rating_group_filter:{},
+        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], visible_hidden_messages:[], selected_rating_group_filter:{}, bag_id_search_text:'', selected_price_tag:{}, selected_token_tag:{}
     };
 
     reset_tags(){
@@ -4054,11 +4054,18 @@ class StorefrontDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                     {this.render_storefront_bag_receipts_top_title(object)}
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2642da']/* Filter by Bag Id...' */} when_text_input_field_changed={this.when_bag_id_search_text_input_field_changed.bind(this)} text={this.state.bag_id_search_text} theme={this.props.theme}/>
+                    </div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     {this.render_storefront_bag_receipts(object)}
                 </div>
             </div>
         )
+    }
+
+    when_bag_id_search_text_input_field_changed(text){
+        this.setState({bag_id_search_text: text})
     }
 
     render_storefront_bag_receipts_top_title(object){
@@ -4115,14 +4122,26 @@ class StorefrontDetailsSection extends Component {
             return []
         }
         const data = this.props.app_state.storefront_payment_update_data[object['e5_id']] || []
-        return this.sortByAttributeDescending(data, 'time')
+        const sorted = this.sortByAttributeDescending(data, 'time')
+
+        if(this.state.bag_id_search_text.trim() == ''){
+            return sorted
+        }else{
+            const bag_id_search = this.state.bag_id_search_text.trim()
+            const filtered = sorted.filter((item) => {
+                return (item['id'].toString().startsWith(bag_id_search) || item['author'].toString().startsWith(bag_id_search))
+            })
+            return filtered
+        }
     }
 
     render_storefront_bag_receipt_item(item, object){
         const sender_id = this.get_senders_name2(item['author'], object)
+        console.log('render_storefront_bag_receipt_item','item', item)
+        const id = item['id']
         return(
             <div onClick={() => this.view_storefron_bag_receipt_item(item, object)}>
-                {this.render_detail_item('3', {'title':sender_id, 'details':(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':id+' • '+sender_id, 'details':(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
             </div>
         );
     }
@@ -4276,7 +4295,7 @@ class StorefrontDetailsSection extends Component {
         var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':this.truncate(top_title, 40), 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':this.truncate(top_title, 40), 'size':'l'})} 
             </div>
         )
     }

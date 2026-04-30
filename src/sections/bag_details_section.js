@@ -95,7 +95,7 @@ function toTree(data) {
 class BagDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], selected_variant:{}, visible_hidden_messages:[],
+        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], selected_variant:{}, visible_hidden_messages:[], selected_price_tag:{}, selected_token_tag:{}
     };
 
     reset_tags(){
@@ -133,11 +133,16 @@ class BagDetailsSection extends Component {
         const active = this.state.navigate_view_bag_list_detail_tags_object['i'].active
         const selected_item = this.get_selected_item(this.state.navigate_view_bag_list_detail_tags_object, active)
 
+
         if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
             this.props.get_objects_messages(object['id'], object['e5'])
         }
         else if(active == this.props.app_state.loc['1693']/* 'responses' */){
             this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
+        }
+        else if(selected_item == this.props.app_state.loc['2028']/* 'metadata' */){
+            this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
+            this.props.get_bag_sender_transfers_events(object)
         }
     }
 
@@ -340,14 +345,22 @@ class BagDetailsSection extends Component {
 
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['delivery'])}
-                    <div style={{height: 10}}/>
 
-                    {responses > 0 && (
+                    {/* {responses > 0 && (
                         <div>
-                            {this.render_detail_item('4', {'text':number_with_commas(responses)+this.props.app_state.loc['2509c']/* ' responses' */, 'textsize':'14px', 'font':'Sans-serif'})}
+                            {this.render_detail_item('4', {'text':number_with_commas(responses)+this.props.app_state.loc['2509c']' responses', 'textsize':'14px', 'font':'Sans-serif'})}
                             <div style={{height: 10}}/>
                         </div>
+                    )} */}
+
+                    {this.has_sender_already_paid_previously(object) == true && this.is_delivery_location_ok_to_show(object) == true && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064bj']/* Storefront Transfers Made. */, 'details':this.props.app_state.loc['2064bk']/* The bag holder has made transfers to the storefront owners for the items ordered in this bag. */})}
+                        </div>
                     )}
+
+                    {this.show_skeleton_if_still_loading_previously_paid(object)}
 
                     {this.render_bag_frequency_setting_in_days(object)}
 
@@ -373,6 +386,24 @@ class BagDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    show_skeleton_if_still_loading_previously_paid(object){
+        // const has_chain_and_socket = this.props.app_state.job_responses[object['id']] == null && this.props.app_state.socket_job_responses[object['id']] == null
+        return(
+            <div>
+                {(this.props.app_state.bag_payment_confirmation_data[object['e5_id']] == 'pending' || this.props.app_state.bag_payment_confirmation_data[object['e5_id']] == null) && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    has_sender_already_paid_previously(object){
+        return this.props.app_state.bag_payment_confirmation_data[object['e5_id']] == 'confirmed'
     }
 
     render_object_views(object){
@@ -687,7 +718,7 @@ class BagDetailsSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'sender_account':{'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
             'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
-            'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':delivery_location, 'size':'l'},
+            'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Address' */, 'details':delivery_location, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
     }
@@ -707,7 +738,7 @@ class BagDetailsSection extends Component {
         if(allowed == true){
             return object['ipfs'].delivery_location
         }else{
-            return "????"/* this.props.app_state.loc['2064h'] *//* 'Masked.' */
+            return this.props.app_state.loc['2064h']/* 'Masked.' */
         }
     }
 
@@ -717,6 +748,7 @@ class BagDetailsSection extends Component {
             var time_in_days = Math.round(transaction_item['delivery_frequency_time'] / (60*60*24))
             return(
                 <div>
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1058w']/* '♺ Reocurring Bag' */, 'details':this.props.app_state.loc['1058x']/* 'The bags is to be fulfilled periodically.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
@@ -734,6 +766,7 @@ class BagDetailsSection extends Component {
         if(items_to_deliver.length != 0){
             var total_amounts = this.get_total_bag_value(items_to_deliver, object)
             if(total_amounts != null){
+                // console.log('render_bag_value','this.props.app_state.token_name_directory', this.props.app_state.token_name_directory)
                 return(
                     <div>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2064a']/* 'Bag Value.' */, 'details':this.props.app_state.loc['2064b']/* 'The total amount to be paid by the bag owner in the respective denominations.' */, 'size':'l'})}
@@ -745,7 +778,13 @@ class BagDetailsSection extends Component {
                                 </div>
                             </div>
                         ))}
-                        {/* {this.render_detail_item('0')} */}
+                        {total_amounts.length == 0 && this.render_small_skeleton_object()}
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
                     </div>
                 )
             }

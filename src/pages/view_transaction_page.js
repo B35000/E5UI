@@ -3458,9 +3458,9 @@ return data['data']
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
         var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
+        // if(size == 'm'){
+        //     he = this.props.height-190;
+        // }
         var items = this.get_proposal_action_data()
         var object = this.format_proposal_post()
         var proposal_action = object['data'][1][0]
@@ -5468,10 +5468,11 @@ return data['data']
         )
     }
 
-
     render_accept_bag_application_data(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         var item = transaction_item.application_item
+        const bag = item['bag']
+        console.log('render_accept_bag_application_data', 'transaction_item.application_item', transaction_item.application_item)
         return(
             <div>
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
@@ -5484,9 +5485,87 @@ return data['data']
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
+
+                {bag != null && this.render_bag_storefront_transfers_if_exists(bag, item.bag_value)}
                 
             </div>  
         )
+    }
+
+    render_bag_storefront_transfers_if_exists(object, total_amounts){
+        const items_to_deliver = object['ipfs']['bag_orders']
+        if(items_to_deliver != null){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1979z']/* 'Storefront Payments.' */, 'details': this.props.app_state.loc['1979ba']/* 'The amounts youll be paying out to the respective storefronts for their variants you\'ve purchased.' */, 'size': 'l' })}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_payment_amounts(total_amounts, object)}
+                </div>
+            )
+        }
+    }
+
+    get_total_bag_value2(items_to_deliver, object){
+        var obj = {}
+        items_to_deliver.forEach(item => {
+            var storefront_e5 = item['storefront_item_e5'] == null ? 'E25' : item['storefront_item_e5']
+            var storefront = this.get_storefront(item['storefront_item_id'], storefront_e5)
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+            if(variant_in_store != null){
+                var price_items = variant_in_store['price_data']
+                for(var i=0; i<price_items.length; i++){
+                    var units = price_items[i];
+                    var amount = this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)
+                    var token_id = units['id']
+
+                    if(obj[token_id] == null){
+                        obj[token_id] = bigInt(0);
+                    }
+                    obj[token_id] = bigInt(obj[token_id]).add(amount)
+                }
+
+                if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+                    var options = item['storefront_options']
+
+                    for(var i=0; i<item['options'].length; i++){
+                        var tag_obj = item['options'][i]
+                        var selected_items = []
+                        for(var j=0; j<tag_obj['e'][2].length; j++){
+                            var selected_item_pos = tag_obj['e'][2][j]
+                            if(selected_item_pos != 0){
+                                selected_items.push(selected_item_pos-1)
+                            }
+                        }
+                        for(var k=0; k<selected_items.length; k++){
+                            var selected_pos = selected_items[k]
+                            var option_prices = options[i]['options'][selected_pos]['price']
+                            option_prices.forEach(price => {
+                                if(obj[price['id']] == null){
+                                    obj[price['id']] = bigInt(0)
+                                }
+                                obj[price['id']] = bigInt(obj[price['id']]).plus(price['amount'])
+                            });
+                        } 
+                    }
+                }
+            }
+        });
+        
+        var arr = []
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                arr.push({'id':key, 'amount':obj[key]})
+            }
+        }
+
+        return arr
+    }
+
+    get_storefront(storefront_id, e5){
+        var item = this.props.app_state.created_store_mappings[e5] == null ? null : this.props.app_state.created_store_mappings[e5][storefront_id]
+        return item
     }
 
 
@@ -8468,7 +8547,7 @@ return data['data']
 
                 {this.render_payment_amounts(price_data, object)}
 
-                {this.render_bag_storefront_transfers_if_exists(object)}
+                {/* {this.render_bag_storefront_transfers_if_exists(object)} */}
             </div>
         )
     }
@@ -8485,22 +8564,6 @@ return data['data']
                 ))}
             </div>
         )
-    }
-
-    render_bag_storefront_transfers_if_exists(object){
-        const items_to_deliver = object['ipfs']['bag_orders']
-        if(items_to_deliver != null){
-            const total_amounts = this.get_total_bag_value(items_to_deliver, object)
-            return(
-                <div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['1979z']/* 'Storefront Payments.' */, 'details': this.props.app_state.loc['1979ba']/* 'The amounts youll be paying out to the respective storefronts for their variants you\'ve purchased.' */, 'size': 'l' })}
-                    
-                    <div style={{height: 10}}/>
-                    {this.render_payment_amounts(total_amounts, object)}
-                </div>
-            )
-        }
     }
 
     render_payment_index_tags(items){

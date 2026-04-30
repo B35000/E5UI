@@ -2121,9 +2121,12 @@ class StackPage extends Component {
             <div>
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':number_with_commas(this.props.app_state.thread_pool_size), 'details':this.props.app_state.loc['1264bm']/* The number of logical processors available on your device. */, 'size':'l'})}
+                
                 <div style={{height: 10}}/>
-
                 {this.render_detail_item('3', {'title':this.props.app_state.socket_online == true ? this.props.app_state.loc['1593kh']/* Connected and Enabled */ : this.props.app_state.loc['1593ki']/* Disconnected and Disabled */, 'details':this.props.app_state.loc['1593kg']/* Indexer Socket Connection Status. */, 'size':'l'})}
+                
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.version, 'details':this.props.app_state.loc['1593mh']/* 'App Version.' */, 'size':'l'})}
             </div>
         )
     }
@@ -2795,7 +2798,7 @@ class StackPage extends Component {
     render_end_spend_balance_values(){
         const items = this.load_active_e5s()
         const pos = this.state.end_spend_balance_page == null ? items.indexOf(this.props.app_state.selected_e5) : this.state.end_spend_balance_page
-        const default_width = /* this.props.size == 's' ? this.props.width-20 :  */this.state.screen_width
+        const default_width = this.props.size != 's' ? this.state.screen_width - 20 : this.state.screen_width
         return(
             <div>
                 <MySwipeableViews width={default_width} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
@@ -4165,11 +4168,23 @@ class StackPage extends Component {
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1498']/* 'accept-bag-application' */){
-                    var message_obj = await this.format_accept_bag_application_object(txs[i], calculate_gas, ipfs_index)
+                    var message_obj = await this.format_accept_bag_application_object(txs[i], calculate_gas, ipfs_index, ints)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
+
+                    if(message_obj.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_obj.depth)
+                    }
+
+                    if(message_obj.transfer[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(message_obj.transfer)
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                     var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas, ints, ipfs_index)
@@ -9835,12 +9850,30 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_accept_bag_application_object = async (t, calculate_gas, ipfs_index) =>{
+    format_accept_bag_application_object = async (t, calculate_gas, ipfs_index, ints) =>{
+        var ints_clone = ints.slice()
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
             [], /* contexts */
             [] /* int_data */
+        ]
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
         ]
 
         var string_obj = [[]]
@@ -9862,7 +9895,39 @@ class StackPage extends Component {
 
 
 
-        return {int: obj, str: string_obj}
+        if(t.application_item.bag_storefront_transfers != null){
+            for(var i=0; i<t.application_item.bag_storefront_transfers.length; i++){
+                const exchange = t.application_item.bag_storefront_transfers[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+                const amount = t.application_item.bag_storefront_transfers[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+                const receiver = t.application_item.bag_storefront_transfers[i]['receiver'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+                var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+                var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+                for(var s=0; s<swap_actions.length; s++){
+                    depth_swap_obj[1].push(exchange)
+                    depth_swap_obj[2].push(23)
+                    depth_swap_obj[3].push(0)
+                    depth_swap_obj[4].push(53)
+                    depth_swap_obj[5/* action */].push(0)
+                    depth_swap_obj[6/* depth */].push(swap_actions[s])
+                    depth_swap_obj[7].push('1')
+                }
+
+                var transfer_actions = this.get_exchange_transfer_actions(amount)
+                for(var f=0; f<transfer_actions.length; f++){
+                    transfers_obj[1].push(exchange)
+                    transfers_obj[2].push(23)
+                    transfers_obj[3].push(receiver)
+                    transfers_obj[4].push(23)
+                    transfers_obj[5].push(transfer_actions[f]['amount'])
+                    transfers_obj[6].push(transfer_actions[f]['depth'])
+                }
+            }
+        }
+
+
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj, transfer: transfers_obj}
     }
 
     format_direct_purchase_object = async (t, calculate_gas, ints, ipfs_index) => {

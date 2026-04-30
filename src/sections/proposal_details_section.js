@@ -1227,9 +1227,9 @@ class ProposalDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
         var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
+        // if(size == 'm'){
+        //     he = this.props.height-190;
+        // }
         var items = this.get_proposal_action_data(object)
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var proposal_action = object['data'][1][0]
@@ -1313,7 +1313,7 @@ class ProposalDetailsSection extends Component {
         }else{
             return(
                 <div style={{}}>
-                    {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Spend Actions', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':'Spend Actions', 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
@@ -1403,7 +1403,7 @@ class ProposalDetailsSection extends Component {
         }else{
             return(
                 <div style={{}}>
-                    {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Reconfig Actions', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':'Reconfig Actions', 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
@@ -1429,7 +1429,7 @@ class ProposalDetailsSection extends Component {
         if(ui == 'number'){
             return(
                 <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':title, 'number':number, 'relativepower':this.props.app_state.loc['1880']/* 'units' */})}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':title, 'number':number, 'relativepower':this.props.app_state.loc['1880']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['1880']/* 'units' */, })}
                     </div>
                 </div>
@@ -1511,7 +1511,7 @@ class ProposalDetailsSection extends Component {
         }else{
             return(
                 <div style={{}}>
-                    {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Transfer Actions', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':'Transfer Actions', 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
