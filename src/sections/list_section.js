@@ -1042,7 +1042,7 @@ class PostListSection extends Component {
         const { startIndex, endIndex } = range;
         const viewed_item_ids = []
         for(var i=startIndex-1; i<=endIndex; i++){
-            if(i >= 0) viewed_item_ids.push(items[i][identifier]);
+            if(i >= 0 && items[i] != null) viewed_item_ids.push(items[i][identifier]);
         }
 
         return viewed_item_ids
@@ -1052,7 +1052,7 @@ class PostListSection extends Component {
         const { startIndex, endIndex } = range;
         const focused_item_ids = []
         for(var i=startIndex-7; i<=endIndex+7; i++){
-            if(i >= 0 && i<items.length) focused_item_ids.push(items[i][identifier]);
+            if(i >= 0 && i<items.length && items[i] != null) focused_item_ids.push(items[i][identifier]);
         }
         const should_continue_loading = endIndex+10 >= items.length
         this.props.set_page_objects_that_should_be_in_focus(focused_item_ids, should_continue_loading, section)

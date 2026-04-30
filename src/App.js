@@ -2407,7 +2407,7 @@ class App extends Component {
       this.get_token('METH', 'Metal', 'E1035'),
       this.get_token('METIS', 'Metis', 'E1045'),
       this.get_token('MIETH', 'Mind Network', 'E1055'),
-      this.get_token('MINETH', 'Mint', 'E1065'),
+      this.get_token('MINETH', 'Mint', 'E1065', true),
       this.get_token('MOETH', 'Mode', 'E1075'),
       this.get_token('GAS', 'Neo X', 'E1085'),
       this.get_token('OBNB', 'opBNB', 'E1095'),
@@ -3740,7 +3740,7 @@ class App extends Component {
     // this.test_infura()
     // this.test_key_hasher()
     // this.fetch_filter_and_export_all_my_cities()
-    this.test_load_events_from_nitro()
+    // this.test_load_events_from_nitro()
     this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
 
     await this.load_cookies();
