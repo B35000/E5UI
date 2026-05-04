@@ -33,6 +33,7 @@ import Linkify from "linkify-react";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Virtuoso } from "react-virtuoso";
+import { VList } from "virtua";
 
 var bigInt = require("big-integer");
 
@@ -299,7 +300,7 @@ class CallPage extends Component {
     state = {
         selected: 0, get_call_page_tags_object: this.get_call_page_tags_object(), 
         localVolume: 0, peerVolumes: {}, loudestSpeaker: null, volumeThreshold: 20,
-        get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(this.props.app_state.pitchShift), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), screen_width:0
+        get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(this.props.app_state.pitchShift), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), screen_width:0, startIndex: 100000
     };
 
 
@@ -642,6 +643,8 @@ class CallPage extends Component {
 
     componentDidMount(){
         this.setState({screen_width: this.screen.current.offsetWidth})
+        // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
+        setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
     }
 
     render_participants_stuff(){
@@ -989,13 +992,29 @@ class CallPage extends Component {
     }
 
     componentDidUpdate(prevProps){
-        var has_scrolled = this.has_user_scrolled;
-        if(has_scrolled == null){
-            this.scroll_to_bottom()
+        const prevCount = this.get_previous_state_messages(prevProps).length
+        const currentCount = this.get_message_count().length
+        
+        if (currentCount > prevCount) {
+            const added = currentCount - prevCount;
+            this.setState(prev => ({
+                startIndex: prev.startIndex - added
+            }));
         }
         if(prevProps.width != this.props.width){
             this.setState({screen_width: this.screen.current.offsetWidth})
         }
+    }
+
+    get_previous_state_messages(prevProps){
+        const socket_messages = prevProps.socket_object_messages[this.props.app_state.current_call_id] == null ? [] : prevProps.app_state.socket_object_messages[this.props.app_state.current_call_id]
+        const all_messages = this.sortByAttributeDescending(socket_messages, 'time').reverse()
+        return this.filter_messages_for_blocked_accounts(all_messages)
+    }
+
+    get_message_count(){
+        var items = [].concat(this.get_convo_messages()).reverse()
+        return this.append_divider_between_old_messages_and_new_ones(items)
     }
 
     render_sent_received_messages(he){
@@ -1087,12 +1106,47 @@ class CallPage extends Component {
                         style={{ height: middle }}
                         totalCount={items.length}
                         initialTopMostItemIndex={items.length-1}
+                        followOutput={false}
+                        alignToBottom={true}
+                        firstItemIndex={this.state.startIndex}
                         itemContent={(index) => {
-                            const item = items[index];
+                            const localIndex = index - this.state.startIndex;
+                            const item = items[localIndex];
+                            if (!item) return null;
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">
-                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div>
+                                                {this.render_message_as_focused_if_so(item)}
+                                                <div style={{height:3}}/>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                    {/* <div style={{'padding': '2px 5px 2px 5px'}}>
+                                        {this.render_message_as_focused_if_so(item)}
+                                        <div style={{height:3}}/>
+                                    </div> */}
+                                </div>
+                            );
+                        }}
+                    /> 
+                    {/* <VList
+                        ref={(el) => (this.virtuoso_list = el)}
+                        style={{ height: middle }}
+                        onScroll={(offset) => {
+                            const atBottom = offset < 80;
+                            if (!atBottom) {
+                                this.has_user_scrolled = true;
+                            }
+                        }}
+                    >
+                        {items.map((item, index) => {
+                            const ref_item = index == items.length - 1 ? this.messagesEnd : null;
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }}  transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                             <div>
                                                 {this.render_message_as_focused_if_so(item)}
                                                 <div style={{height:3}}/>
@@ -1101,8 +1155,8 @@ class CallPage extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
-                        }}
-                    />   
+                        })}
+                    </VList>   */}
                 </div>
             )
         }
@@ -1314,7 +1368,7 @@ class CallPage extends Component {
         var text = this.format_message(item['message'])
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
-        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? '0px 7px 7px 0px': '7px'
+        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? '7px 0px 0px 7px': '7px'
 
         const c = this.props.get_my_state_color()
         const background_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['my_messages_color'][c] : this.props.theme['view_group_card_item_background']
@@ -1322,7 +1376,7 @@ class CallPage extends Component {
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
-                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 1px 0px 0px','border-radius': border_radii}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radii}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
@@ -1948,7 +2002,7 @@ class CallPage extends Component {
                         return (
                             <div>
                                 <AnimatePresence initial={true} mode="popLayout">
-                                    <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                         <div>
                                             {this.render_main_comment(item, 0, object)}
                                             <div style={{height:3}}/>

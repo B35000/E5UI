@@ -34752,14 +34752,11 @@ class App extends Component {
       token_symbol_directory2[e5][token_id] = token_name;
       token_symbol_directory2[e5][token_name] = token_id;
       token_name_directory2[e5][e5+token_id] = token_title;
-    });
 
-    for(var i=0; i<this.state.e5s['data'].length; i++){
-      const e5 = this.state.e5s['data'][i]
       token_symbol_directory2[e5][0] = 'wei'
       token_symbol_directory2[e5]['wei'] = 0
       token_name_directory2[e5][e5+'0'] = this.state.e5s[e5].token
-    }
+    });
 
     this.setState({token_directory: token_symbol_directory2, token_name_directory: token_name_directory2})
   }
@@ -40111,6 +40108,10 @@ class App extends Component {
     await this.load_and_notify_user_of_incoming_post_comments(event_data.return_object, event_data.id_object_data_object)
     await this.wait(500)
     await this.load_and_notify_user_of_following_posts(event_data.return_object)
+    await this.wait(500)
+    await this.load_and_notify_user_of_incoming_storefront_requests(event_data.return_object)
+    await this.wait(500)
+    await this.load_and_notify_user_of_incoming_storefront_request_responses(event_data.return_object)
 
     // await this.load_latest_objects_for_notification_top_bar()
     await this.wait(1000)
@@ -40423,6 +40424,13 @@ class App extends Component {
 
           /* following posts */
           [web3, contractInstance, 'e1', focused_e5, {p3/* sender_account_id */: this.process_array_for_indexer_query(following_account_ids)}],
+
+
+          /* incoming storefront requests */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(get_my_storefronts()), p3/* context */:38}],
+
+          /* incoming storefront request responses */
+          [web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: this.process_array_for_indexer_query(get_job_request_respnse_jobs()), p3/* context */:39}],
         ]
         ff.forEach(element => {
           all_queries.push(element)
@@ -40437,7 +40445,7 @@ class App extends Component {
     const return_object = {'b':block_numbers}
     for(var e=0; e<e5s_used.length; e++){
       const e5 = e5s_used[e]
-      const pos = (e*18)
+      const pos = (e*20)
       const e5_socket_follower_posts_events = socket_follower_posts_events.filter(function (event) {
         return (event['e5'] == e5)
       })
@@ -40456,7 +40464,9 @@ class App extends Component {
         'bill responses': all_events[pos+14],
         'comment responses': all_events[pos+15],
         'payments':all_events[pos+16],
-        'posts': all_events[pos+17].concat(e5_socket_follower_posts_events)
+        'posts': all_events[pos+17].concat(e5_socket_follower_posts_events),
+        'incoming storefront requests':all_events[pos+18],
+        'incoming storefront request responses': all_events[pos+19],
       }
     }
 
@@ -41168,108 +41178,7 @@ class App extends Component {
 
 
 
-  load_and_notify_user_of_incoming_job_requests = async (all_event_object_data) => {
-    var all_unsorted_events = {}
-    var block_stamp = {}
-    var current_blocks = {}
-    for(var i=0; i<this.state.e5s['data'].length; i++){
-      const focused_e5 = this.state.e5s['data'][i]
-      var account = this.state.user_account_id[focused_e5]
-      if(this.state.addresses[focused_e5] != null && account > 1000){
-        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
-        const E52contractArtifact = require('./contract_abis/E52.json');
-        const E52_address = this.state.addresses[focused_e5][1];
-        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
-        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
-        var start = current_block_number == 0 ? 0 : current_block_number - difference
-        if(start < 0) start = 0;
-
-        // var my_contractor_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account});
-
-        // var ids = []
-        // my_contractor_post_events.forEach(event => {
-        //   var id = event.returnValues.p2/* item */
-        //   if(!ids.includes(id)){
-        //     ids.push(id)
-        //   }
-        // });
-
-        // if(ids.length == 0){
-        //   ids.push(0)
-        // }
-
-        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming job requests']
-        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:38}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
-
-        all_unsorted_events[focused_e5] = all_received_on_chain_events
-        block_stamp[focused_e5] = current_block_number
-        current_blocks[focused_e5] = current_block_number
-
-      }
-    }
-
-    if(this.load_and_notify_user_times_job_requests == null){
-      this.load_and_notify_user_times_job_requests = {}
-    }
-
-    var notifs = []
-    var all_notifications = []
-    for(const e5 in all_unsorted_events){
-      if(all_unsorted_events.hasOwnProperty(e5)){
-        if(this.load_and_notify_user_times_job_requests[e5] == null){
-          this.load_and_notify_user_times_job_requests[e5] = block_stamp[e5]
-        }
-        var account = this.state.user_account_id[e5]
-        all_unsorted_events[e5].forEach(event => {
-          var event_block = event.returnValues.p7/* block_number */
-          if(event_block > this.load_and_notify_user_times_job_requests[e5]){
-            event['e5'] = e5
-            notifs.push(event)
-          }
-          event['e5'] = e5
-          event['p'] = event.returnValues.p1
-          event['time'] = event.returnValues.p6
-          event['block'] = event.returnValues.p7
-          event['sender'] = event.returnValues.p2
-          event['type'] = 'contractor'
-          event['event_type'] = 'job_request'
-          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
-          all_notifications.push(event)
-        });
-        this.load_and_notify_user_times_job_requests[e5] = block_stamp[e5]
-      }
-    }
-
-    if(notifs.length > 0){
-      console.log('notifier', 'found one job request to nofity', notifs)
-      this.handle_job_request_notifications(notifs)
-    }
-
-    var clone = structuredClone(this.state.notification_object)
-    clone['job_request'] = all_notifications.reverse()
-    this.setState({notification_object: clone})
-
-    const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'contractor_job_request')
-
-    socket_notifications.forEach(event => {
-      this.set_job_request_event_in_notifications(event, event['e5'])
-    });
-  }
-
-  async handle_job_request_notifications(events){
-    var senders = []
-    for(var i=0; i<events.length; i++){
-      const event = events[i]
-      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
-      if(!senders.includes(alias)) senders.push(alias)
-    }
-    var prompt = this.getLocale()['2738q']/* 'Incoming job requests from $' */
-    prompt = prompt.replace('$', senders.toString())
-    this.load_specific_contractor_objects(events)
-    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
-  }
   
 
 
@@ -41386,6 +41295,113 @@ class App extends Component {
     prompt = prompt.replace('$', senders.toString())
     this.load_specific_job_application_jobs(events)
     this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'job', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+  }
+
+
+
+
+
+  load_and_notify_user_of_incoming_job_requests = async (all_event_object_data) => {
+    var all_unsorted_events = {}
+    var block_stamp = {}
+    var current_blocks = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      var account = this.state.user_account_id[focused_e5]
+      if(this.state.addresses[focused_e5] != null && account > 1000){
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = this.state.addresses[focused_e5][1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
+
+        // var my_contractor_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account});
+
+        // var ids = []
+        // my_contractor_post_events.forEach(event => {
+        //   var id = event.returnValues.p2/* item */
+        //   if(!ids.includes(id)){
+        //     ids.push(id)
+        //   }
+        // });
+
+        // if(ids.length == 0){
+        //   ids.push(0)
+        // }
+
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming job requests']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:38}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+        all_unsorted_events[focused_e5] = all_received_on_chain_events
+        block_stamp[focused_e5] = current_block_number
+        current_blocks[focused_e5] = current_block_number
+
+      }
+    }
+
+    if(this.load_and_notify_user_times_job_requests == null){
+      this.load_and_notify_user_times_job_requests = {}
+    }
+
+    var notifs = []
+    var all_notifications = []
+    for(const e5 in all_unsorted_events){
+      if(all_unsorted_events.hasOwnProperty(e5)){
+        if(this.load_and_notify_user_times_job_requests[e5] == null){
+          this.load_and_notify_user_times_job_requests[e5] = block_stamp[e5]
+        }
+        var account = this.state.user_account_id[e5]
+        all_unsorted_events[e5].forEach(event => {
+          var event_block = event.returnValues.p7/* block_number */
+          if(event_block > this.load_and_notify_user_times_job_requests[e5]){
+            event['e5'] = e5
+            notifs.push(event)
+          }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'contractor'
+          event['event_type'] = 'job_request'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
+        });
+        this.load_and_notify_user_times_job_requests[e5] = block_stamp[e5]
+      }
+    }
+
+    if(notifs.length > 0){
+      console.log('notifier', 'found one job request to nofity', notifs)
+      this.handle_job_request_notifications(notifs)
+    }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['job_request'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+
+    const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'contractor_job_request')
+
+    socket_notifications.forEach(event => {
+      this.set_job_request_event_in_notifications(event, event['e5'])
+    });
+  }
+
+  async handle_job_request_notifications(events){
+    var senders = []
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
+    var prompt = this.getLocale()['2738q']/* 'Incoming job requests from $' */
+    prompt = prompt.replace('$', senders.toString())
+    this.load_specific_contractor_objects(events)
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
   }
 
 
@@ -42743,6 +42759,193 @@ class App extends Component {
     var prompt = and_more == true ? this.getLocale()['2738cd']/* 'Incoming new bags from $ and more.' */ : this.getLocale()['2738ce']/* '$ just broadcasted a new bag.' */;
     prompt = prompt.replace('$', senders.toString())
     this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'bag', 'p':'p1', 'time':'p4','block':'p5', 'sender':'p2'})
+  }
+
+
+
+
+
+  load_and_notify_user_of_incoming_storefront_requests = async (all_event_object_data) => {
+    var all_unsorted_events = {}
+    var block_stamp = {}
+    var current_blocks = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      var account = this.state.user_account_id[focused_e5]
+      if(this.state.addresses[focused_e5] != null && account > 1000){
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = this.state.addresses[focused_e5][1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
+
+        // var my_contractor_post_events = await this.load_event_data(web3, E52contractInstance, 'e2', focused_e5, {p3/* item_type */: 26/* 26(contractor_object) */, p5/* sender_account */: account});
+
+        // var ids = []
+        // my_contractor_post_events.forEach(event => {
+        //   var id = event.returnValues.p2/* item */
+        //   if(!ids.includes(id)){
+        //     ids.push(id)
+        //   }
+        // });
+
+        // if(ids.length == 0){
+        //   ids.push(0)
+        // }
+
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming storefront requests']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:38}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+        all_unsorted_events[focused_e5] = all_received_on_chain_events
+        block_stamp[focused_e5] = current_block_number
+        current_blocks[focused_e5] = current_block_number
+
+      }
+    }
+
+    if(this.load_and_notify_user_times_job_requests == null){
+      this.load_and_notify_user_times_job_requests = {}
+    }
+
+    var notifs = []
+    var all_notifications = []
+    for(const e5 in all_unsorted_events){
+      if(all_unsorted_events.hasOwnProperty(e5)){
+        if(this.load_and_notify_user_times_job_requests[e5] == null){
+          this.load_and_notify_user_times_job_requests[e5] = block_stamp[e5]
+        }
+        var account = this.state.user_account_id[e5]
+        all_unsorted_events[e5].forEach(event => {
+          var event_block = event.returnValues.p7/* block_number */
+          if(event_block > this.load_and_notify_user_times_job_requests[e5]){
+            event['e5'] = e5
+            notifs.push(event)
+          }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'storefront'
+          event['event_type'] = 'storefront_request'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          all_notifications.push(event)
+        });
+        this.load_and_notify_user_times_job_requests[e5] = block_stamp[e5]
+      }
+    }
+
+    if(notifs.length > 0){
+      console.log('notifier', 'found one job request to nofity', notifs)
+      this.handle_incoming_storefront_request_message_notifications(notifs)
+    }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['storefront_request'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+  }
+
+  async handle_incoming_storefront_request_message_notifications(events){
+    var senders = []
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
+    var prompt = this.getLocale()['2738cs']/* 'Incoming storefront request message from $' */
+    prompt = prompt.replace('$', senders.toString())
+    this.load_specific_storefront_items(events, 'p3')
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_transactions','events':events, 'type':'contractor', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'})
+  }
+
+  load_and_notify_user_of_incoming_storefront_request_responses = async (all_event_object_data) => {
+    var all_unsorted_events = {}
+    var block_stamp = {}
+    var current_blocks = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      const focused_e5 = this.state.e5s['data'][i]
+      var account = this.state.user_account_id[focused_e5]
+      if(this.state.addresses[focused_e5] != null && account > 1000){
+        const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
+        const E52contractArtifact = require('./contract_abis/E52.json');
+        const E52_address = this.state.addresses[focused_e5][1];
+        const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+        var current_block_number = /* await web3.eth.getBlockNumber() */ all_event_object_data['b'][focused_e5]
+        var difference = this.state.e5s[focused_e5].notification_blocks == null ? 10_000 : this.state.e5s[focused_e5].notification_blocks
+        var start = current_block_number == 0 ? 0 : current_block_number - difference
+        if(start < 0) start = 0;
+
+        // var my_job_request_respnse_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p2/* sender_acc_id */: account, p3/* context */:38})
+
+        // var ids = []
+        // my_job_request_respnse_data.forEach(event => {
+        //   var id = event.returnValues.p1/* target_id */
+        //   if(!ids.includes(id)){
+        //     ids.push(id)
+        //   }
+        // });
+
+        var all_received_on_chain_events = all_event_object_data[focused_e5]['incoming storefront request responses']
+        // await E52contractInstance.getPastEvents('e4', { filter: {p1/* target_id */: ids, p3/* context */:39}, fromBlock: start, toBlock: current_block_number }, (error, events) => {})
+
+        all_unsorted_events[focused_e5] = all_received_on_chain_events
+        block_stamp[focused_e5] = current_block_number
+        current_blocks[focused_e5] = current_block_number
+      }
+    }
+
+    if(this.load_and_notify_user_times_job_request_responses == null){
+      this.load_and_notify_user_times_job_request_responses = {}
+    }
+
+    var notifs = []
+    var all_notifications = []
+    for(const e5 in all_unsorted_events){
+      if(all_unsorted_events.hasOwnProperty(e5)){
+        if(this.load_and_notify_user_times_job_request_responses[e5] == null){
+          this.load_and_notify_user_times_job_request_responses[e5] = block_stamp[e5]
+        }
+        var account = this.state.user_account_id[e5]
+        all_unsorted_events[e5].forEach(event => {
+          var event_block = event.returnValues.p7/* block_number */
+          var event_emitter = event.returnValues.p2/* sender_acc_id */
+          if(event_block > this.load_and_notify_user_times_job_request_responses[e5] && event_emitter != account){
+            event['e5'] = e5
+            notifs.push(event)
+          }
+          event['e5'] = e5
+          event['p'] = event.returnValues.p1
+          event['time'] = event.returnValues.p6
+          event['block'] = event.returnValues.p7
+          event['sender'] = event.returnValues.p2
+          event['type'] = 'storefront'
+          event['event_type'] = 'storefront_request_response'
+          event['view'] = {'notification_id':'view_incoming_transactions','events':[], 'type':'storefront', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2'}
+          if(event_emitter != account) all_notifications.push(event);
+        });
+        this.load_and_notify_user_times_job_request_responses[e5] = block_stamp[e5]
+      }
+    }
+
+    if(notifs.length > 0){
+      console.log('notifier', 'found one job request response to nofity', notifs)
+      this.handle_storefront_request_response_notifications(notifs)
+    }
+
+    var clone = structuredClone(this.state.notification_object)
+    clone['storefront_request_response'] = all_notifications.reverse()
+    this.setState({notification_object: clone})
+
+    const socket_notifications = await this.get_existing_mail_socket_events(Date.now(), Date.now() - (90*24*60*60*1000), 'contractor_accept_storefront_request')
+
+    socket_notifications.forEach(event => {
+      this.set_storefront_request_response_event_in_notifications(event, event['e5'])
+    });
   }
 
 
@@ -53348,6 +53551,7 @@ class App extends Component {
 
     
     const data = t.picked_contract['id'].toString()
+    const signature = await this.generate_signature(data)
     var context = 39
     const message = {
       type: 'contractor_accept_job_request',
@@ -53368,7 +53572,8 @@ class App extends Component {
       block: parseInt(block_number),
       context,
       int_data: t.request_item['job_request_id'],
-      target: t.contractor_object['id']
+      target: t.contractor_object['id'],
+      signature:signature,
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -55021,10 +55226,14 @@ class App extends Component {
   }
 
   async prepare_new_lock_unlock_wallet_message(password, lock_or_unlock){
+    const private_key = this.state.accounts['E25'].privateKey.toString()
+    const password_hash = this.hash_data_with_randomizer(password)
+    const cypher = await this.encrypt_data_string(password_hash, private_key)
     const message_obj = {
-      'password':this.hash_data_with_randomizer(password), 
+      'password':cypher, 
       'lock_or_unlock': lock_or_unlock,
       'time': Date.now(),
+      'encrypted': true,
     }
 
     const tags = []
@@ -55098,7 +55307,7 @@ class App extends Component {
     }
   }
 
-  async process_new_job_received(message, object_hash){
+  async process_new_job_received(message, object_hash, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55114,8 +55323,8 @@ class App extends Component {
       }, (2 * 1000));
     }
 
-    const ipfs_data = JSON.parse(await this.decrypt_storage_object(message.data))
-    // console.log('socket_stuff', 'ipfs data for job', ipfs_data)
+    const ipfs_data = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
+   
     if(ipfs_data != message.data){
       const e5 = message.e5;
       const id = message.id
@@ -55165,7 +55374,7 @@ class App extends Component {
     this.get_alias_from_account_id(message_account, message_e5)
   }
 
-  async process_new_post_received(message, object_hash){
+  async process_new_post_received(message, object_hash, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55181,7 +55390,7 @@ class App extends Component {
       }, (2 * 1000));
     }
 
-    const ipfs_data = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs_data = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
     if(ipfs_data != message.data){
       const e5 = message.e5;
       const id = message.id
@@ -55223,8 +55432,8 @@ class App extends Component {
     this.get_alias_from_account_id(message_account, message_e5)
   }
 
-  /* mail messages */
-  async process_new_mail_received(message, object_hash, from, add_to_notifications){
+  /* mail */
+  async process_new_mail_received(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55241,7 +55450,7 @@ class App extends Component {
       }, (2 * 1000));
     }
     const account = this.state.user_account_id[message['e5']]
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55253,7 +55462,7 @@ class App extends Component {
 
       const event = {returnValues:{p1:unique_crosschain_identifier, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
+      const ipfs_obj = bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null ? bulk_decyphered_package['internal'] : await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
 
       console.log('socket_stuff', 'processed mail', ipfs_obj)
       if(ipfs_obj != null && ipfs_obj.entered_title_text != null){
@@ -55319,7 +55528,7 @@ class App extends Component {
   }
 
   /* messages */
-  async process_new_message_received(message, object_hash, from, add_to_notifications){
+  async process_new_message_received(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     console.log('socket_stuff', 'process_new_message_received', 'received message', message)
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
@@ -55338,7 +55547,7 @@ class App extends Component {
       }, (2 * 1000));
     }
     const account = this.state.user_account_id[message['e5']]
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55349,7 +55558,7 @@ class App extends Component {
 
       const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
+      const ipfs_obj = bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null ? bulk_decyphered_package['internal'] : await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
       if(ipfs_obj != null && ipfs != ipfs_obj){
         const all_mail_clone = structuredClone(this.state.socket_mail_messages)
         if(all_mail_clone[convo_id] == null){
@@ -55406,8 +55615,8 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  /* messages */
-  async process_new_job_request_message(message, object_hash, from){
+  /* contractor job request messages */
+  async process_new_job_request_message(message, object_hash, from, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55424,7 +55633,7 @@ class App extends Component {
         me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55489,12 +55698,11 @@ class App extends Component {
     }
     var prompt = this.getLocale()['2738ax']/* 'Incoming job request message from $' */
     prompt = prompt.replace('$', senders.toString())
-    this.load_specific_storefront_items(events, 'p3')
     this.prompt_top_notification(prompt, 15000)
   }
 
   /* channel messages */
-  async process_new_channel_message(message, object_hash){
+  async process_new_channel_message(message, object_hash, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55512,7 +55720,7 @@ class App extends Component {
       }, (2 * 1000));
     }
 
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55562,7 +55770,7 @@ class App extends Component {
   }
 
   /* comment messages */
-  async process_new_comment_message(message, object_hash){
+  async process_new_comment_message(message, object_hash, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55581,7 +55789,7 @@ class App extends Component {
     }
 
     
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55613,7 +55821,7 @@ class App extends Component {
     this.get_alias_from_account_id(message_account, message_e5)
   }
 
-  async process_new_bill_message(message, object_hash, from, add_to_notifications){
+  async process_new_bill_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55628,7 +55836,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55639,7 +55847,7 @@ class App extends Component {
 
       const event = {returnValues:{p1: message.recipient, p2:sender_acc, p3:13, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
+      const ipfs_obj = bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null ? bulk_decyphered_package['internal'] : await this.fetch_and_decrypt_ipfs_object(ipfs, e5);
 
       if(ipfs_obj != null){
         const created_bills_clone = structuredClone(this.state.socket_created_bills)
@@ -55697,7 +55905,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_job_application_message(message, object_hash, from, add_to_notifications, application_responses=[]){
+  async process_new_job_application_message(message, object_hash, from, add_to_notifications, application_responses=[], bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55712,7 +55920,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55725,18 +55933,22 @@ class App extends Component {
 
 
       if(ipfs != null){
-        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
         const messages = this.state.socket_job_responses[message.job_object_id] == null ? [] : this.state.socket_job_responses[message.job_object_id].slice()
 
         var ipfs_message = ipfs;
         if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
-          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
-          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
-          // console.log('socket_decryptor', 'job application convo_key', convo_key.toString())
-          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
-          // console.log('socket_decryptor', 'job application originalText', originalText)
-          ipfs_message = JSON.parse(originalText);
+          if(bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null){
+            ipfs_message = bulk_decyphered_package['internal'];
+          }else{
+            const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+            var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+            var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+            var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+            // console.log('socket_decryptor', 'job application convo_key', convo_key.toString())
+            var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+            // console.log('socket_decryptor', 'job application originalText', originalText)
+            ipfs_message = JSON.parse(originalText);
+          }
         }
 
         // console.log('socket_decryptor', 'job application ipfs_message', ipfs_message)
@@ -55811,7 +56023,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_bag_application_message(message, object_hash, from, add_to_notifications, application_responses=[]){
+  async process_new_bag_application_message(message, object_hash, from, add_to_notifications, application_responses=[], bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55826,7 +56038,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55838,16 +56050,20 @@ class App extends Component {
       const event = {returnValues:{p1: message.job_object_id, p2:sender_acc, p3:36, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
       if(ipfs != null){
-        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
         const messages = this.state.socket_job_responses[message.job_object_id] == null ? [] : this.state.socket_job_responses[message.job_object_id].slice()
 
         var ipfs_message = ipfs;
         if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
-          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
-          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
-          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
-          ipfs_message = JSON.parse(originalText);
+          if(bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null){
+            ipfs_message = bulk_decyphered_package['internal']
+          }else{
+            const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+            var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+            var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+            var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+            var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+            ipfs_message = JSON.parse(originalText);
+          }
         }
 
         if(ipfs_message != null && ipfs_message['picked_contract_id'] != null){
@@ -55918,7 +56134,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_contractor_job_request_message(message, object_hash, from, add_to_notifications, application_responses){
+  async process_new_contractor_job_request_message(message, object_hash, from, add_to_notifications, application_responses, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -55933,7 +56149,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -55944,16 +56160,21 @@ class App extends Component {
 
       const event = {returnValues:{p1: message.contractor_object_id, p2:sender_acc, p3:38, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
-      const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+      
       const messages = this.state.socket_contractor_applications[message.contractor_object_id] == null ? [] : this.state.socket_contractor_applications[message.contractor_object_id].slice()
       var ipfs_message = ipfs;
 
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
-        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
-        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
-        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
-        ipfs_message = JSON.parse(originalText);
+        if(bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null){
+          ipfs_message = bulk_decyphered_package['internal']
+        }else{
+          const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          ipfs_message = JSON.parse(originalText);
+        }
       }
       if(ipfs_message != null && ipfs_message['job_request_id'] != null){
         ipfs_message['request_id'] = event.returnValues.p5
@@ -56041,6 +56262,10 @@ class App extends Component {
     const sender_acc = message.author
     const convo_id = id;
 
+    const signature_confirmation = await this.confirm_signature(message.signature, message.data, message['author_address'])
+    if(signature_confirmation == false) return;
+
+
     const event = {returnValues:{p1: message.target, p2:sender_acc, p3:39, p4:message.data, p5:message.int_data, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
     const socket_contractor_applications_clone = structuredClone(this.state.socket_contractor_applications)
@@ -56086,7 +56311,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_storefront_order_message(message, object_hash, from, add_to_notifications){
+  async process_new_storefront_order_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -56101,7 +56326,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -56113,14 +56338,18 @@ class App extends Component {
       const event = {returnValues:{p1: sender_acc, p2:message.target, p3:message.context, p4:object_hash, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
 
       const messages = this.state.direct_purchases[message.storefront_e5_id] == null ? [] : this.state.direct_purchases[message.storefront_e5_id].slice()
-      const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
       var ipfs_message = ipfs;
       if(ipfs_message['encrypted_data'] != null){
-        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
-        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
-        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
-        ipfs_message = JSON.parse(originalText);
+        if(bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null){
+          ipfs_message = bulk_decyphered_package['internal']
+        }else{
+          const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          ipfs_message = JSON.parse(originalText);
+        }
       }
       ipfs_message['purchase_id'] = event.returnValues.p4
       ipfs_message['time'] = event.returnValues.p6
@@ -56176,7 +56405,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_signature_request_message(message, object_hash, from, add_to_notifications){
+  async process_new_signature_request_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -56191,7 +56420,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     const received_signature_requests_object = structuredClone(this.state.received_signature_requests)
     received_signature_requests_object[ipfs['signature_request_id']] = ipfs
@@ -56231,7 +56460,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_signature_response_message(message, object_hash, from, add_to_notifications){
+  async process_new_signature_response_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -56246,7 +56475,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     const received_signature_requests_object = structuredClone(this.state.received_signature_responses)
     received_signature_requests_object[ipfs['signature_request_id']] = ipfs
@@ -56264,7 +56493,7 @@ class App extends Component {
     this.prompt_top_notification(prompt, 10000)
   }
 
-  async process_new_typing_message(message, object_hash, from, add_to_notifications){
+  async process_new_typing_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -56275,7 +56504,7 @@ class App extends Component {
       }
       this.setState({broadcast_stack: clone})
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
     
     if(!am_I_the_author){
       const convo_typing_info_clone = structuredClone(this.state.convo_typing_info)
@@ -56285,7 +56514,7 @@ class App extends Component {
     
   }
 
-  async process_new_read_receipts_message(message, object_hash, from, add_to_notifications){
+  async process_new_read_receipts_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -56296,7 +56525,7 @@ class App extends Component {
       }
       this.setState({broadcast_stack: clone})
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
     
     // console.log('socket_stuff', 'ipfs', ipfs)
 
@@ -56456,23 +56685,27 @@ class App extends Component {
     }
   }
 
-  async process_new_call_invite_message(message, object_hash, from_arg, add_to_notifications){
+  async process_new_call_invite_message(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
-      const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
       var ipfs_message = ipfs;
 
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
-        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
-        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
-        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
-        ipfs_message = JSON.parse(originalText);
+        if(bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null){
+          ipfs_message = bulk_decyphered_package['internal']
+        }else{
+          const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          ipfs_message = JSON.parse(originalText);
+        }
       }
       if(ipfs_message != null){
         const clone = structuredClone(this.state.call_invites)
@@ -56540,7 +56773,7 @@ class App extends Component {
     }
   }
 
-  async process_new_call_message(message, object_hash){
+  async process_new_call_message(message, object_hash, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -56558,7 +56791,7 @@ class App extends Component {
       }, (2 * 1000));
     }
 
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -56674,7 +56907,7 @@ class App extends Component {
     this.setState({blocked_accounts_data: blocked_accounts_data_clone})
   }
 
-  async process_ether_coin_request_message(message, object_hash, from_arg, add_to_notifications){
+  async process_ether_coin_request_message(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
@@ -56690,7 +56923,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     const received_coin_ether_requests_object = structuredClone(this.state.received_coin_ether_requests)
     if(received_coin_ether_requests_object[ipfs['message_obj']['ether_id']] == null){
@@ -56742,7 +56975,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_pre_purchase_request_message(message, object_hash, from_arg, add_to_notifications){
+  async process_pre_purchase_request_message(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
@@ -56758,7 +56991,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     const received_pre_purchase_request_object = structuredClone(this.state.received_pre_purchase_request)
     if(received_pre_purchase_request_object[ipfs['contract_e5_id']] == null){
@@ -56808,7 +57041,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_ether_coin_send_transaction_message(message, object_hash, from_arg, add_to_notifications){
+  async process_ether_coin_send_transaction_message(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
@@ -56824,7 +57057,7 @@ class App extends Component {
       //   me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       // }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     const sender_address = ipfs['sender_address']
     const recipient_address = ipfs['recipient_address']
@@ -56899,7 +57132,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_direct_message_received(message, object_hash, from_arg, add_to_notifications){
+  async process_new_direct_message_received(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash || this.state.loaded_messages.includes(object_hash)) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
@@ -56918,11 +57151,13 @@ class App extends Component {
       }, (2 * 1000));
     }
     const account = this.state.user_account_id[message['e5']]
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
+    console.log('process_new_direct_message_received', ipfs)
     if(ipfs != message.data){
-      const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
+      const ipfs_obj = bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null ? bulk_decyphered_package['internal'] : await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
 
+      console.log('process_new_direct_message_received', ipfs_obj)
       if(ipfs_obj != null && ipfs != ipfs_obj){
         const recipient_address = message['recipient'] == '' ? await this.get_recipient_address(ipfs_obj['recipient'], ipfs_obj['recipients_e5']) : message['recipient']
         const e5 = message.e5;
@@ -56931,7 +57166,7 @@ class App extends Component {
         const convo_id = id;
         const cid = object_hash;
 
-        // console.log('process_new_direct_message_received', convo_id, ipfs_obj)
+        console.log('process_new_direct_message_received', convo_id, ipfs_obj)
         const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
       
         ipfs_obj['time'] = event.returnValues.p6
@@ -56981,6 +57216,7 @@ class App extends Component {
     const message_account = message['author']
     const message_e5 = message['e5']
     this.get_alias_from_account_id(message_account, message_e5)
+    // await this.wait(4000)
   }
   
   async handle_direct_messages_notifications(event){
@@ -57196,7 +57432,7 @@ class App extends Component {
     }
   }
 
-  async process_obligation_subscriptions_message(message, object_hash){
+  async process_obligation_subscriptions_message(message, object_hash, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.accounts[message['e5']].address == message['author_address']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -57213,7 +57449,7 @@ class App extends Component {
       }, (2 * 1000));
     }
     
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const time = message['time']
@@ -57244,7 +57480,7 @@ class App extends Component {
     }
   }
 
-  async process_new_tags_message_received(message, object_hash, from_arg, add_to_notifications){
+  async process_new_tags_message_received(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     console.log('check_for_tags_if_exists_and_notify_receiver', 'received message', message)
     if(this.hash_message_for_id(message) != object_hash) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
@@ -57261,7 +57497,7 @@ class App extends Component {
         // me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
     console.log('check_for_tags_if_exists_and_notify_receiver', 'decrypted message', ipfs)
 
     if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
@@ -57304,7 +57540,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_tags_in_object_message_received(message, object_hash, from_arg, add_to_notifications){
+  async process_new_tags_in_object_message_received(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     console.log('check_for_tags_if_exists_and_notify_receiver', 'received message', message)
     if(this.hash_message_for_id(message) != object_hash) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
@@ -57321,7 +57557,7 @@ class App extends Component {
         // me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
     console.log('check_for_tags_if_exists_and_notify_receiver', 'decrypted message', ipfs)
 
     if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
@@ -57414,7 +57650,7 @@ class App extends Component {
     }
   }
 
-  async process_new_mempool_notification_message(message, object_hash, from_arg, add_to_notifications){
+  async process_new_mempool_notification_message(message, object_hash, from_arg, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const from = from_arg == null ? await this.get_recipient_address(message['author'], message['e5']): from_arg
     const am_I_the_author = this.state.accounts[message['e5']].address == from;
@@ -57432,7 +57668,7 @@ class App extends Component {
       }, (2 * 1000));
     }
     const account = this.state.user_account_id[message['e5']]
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
@@ -57480,7 +57716,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_storefront_purchase_request_message(message, object_hash, from, add_to_notifications, application_responses){
+  async process_new_storefront_purchase_request_message(message, object_hash, from, add_to_notifications, application_responses, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -57495,7 +57731,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -57511,11 +57747,15 @@ class App extends Component {
       var ipfs_message = ipfs;
 
       if(ipfs_message != null && ipfs_message['encrypted_data'] != null){
-        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
-        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
-        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
-        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
-        ipfs_message = JSON.parse(originalText);
+        if(bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null){
+          ipfs_message = bulk_decyphered_package['internal']
+        }else{
+          var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+          var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+          var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+          var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+          ipfs_message = JSON.parse(originalText);
+        }
       }
       if(ipfs_message != null && ipfs_message['job_request_id'] != null){
         ipfs_message['request_id'] = event.returnValues.p5
@@ -57594,7 +57834,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_new_storefront_request_message(message, object_hash, from){
+  async process_new_storefront_request_message(message, object_hash, from, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -57611,7 +57851,7 @@ class App extends Component {
         me.update_scroll_position_of_chat()
       }, (2 * 1000));
     }
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -57656,7 +57896,7 @@ class App extends Component {
           if(message.time > (Date.now()/1000) - (3*60)){
             event['e5'] = e5
             const notifs = [event]
-            this.handle_incoming_job_request_message_notifications(notifs)
+            this.handle_incoming_storefront_request_message_notifications(notifs)
           }
         }
       }
@@ -57747,7 +57987,7 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
-  async process_storefront_payment_update_message(message, object_hash, from, add_to_notifications){
+  async process_storefront_payment_update_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -57765,7 +58005,7 @@ class App extends Component {
       }, (2 * 1000));
     }
     
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data));
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data));
     const data = ipfs['data']
     const storefront_ids = Object.keys(data);
 
@@ -57787,7 +58027,7 @@ class App extends Component {
     this.setState({storefront_payment_update_data: clone})
   }
 
-  async process_new_lock_unlock_wallet_message(message, object_hash, from , add_to_notifications){
+  async process_new_lock_unlock_wallet_message(message, object_hash, from , add_to_notifications, bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
     const am_I_the_author = this.state.accounts[message['e5']].address == message['author_address']
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
@@ -57804,16 +58044,18 @@ class App extends Component {
       }, (2 * 1000));
     }
     
-    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
     if(ipfs != message.data){
       /* 
         'password':this.hash_data_with_randomizer(password), 
         'lock_or_unlock': lock_or_unlock,
         'time': Date.now(),
       */
+      const private_key = this.state.accounts['E25'].privateKey.toString()
       const time = ipfs['time']
       const lock_or_unlock = ipfs['lock_or_unlock']
-      const hashed_password = ipfs['password']
+      const hashed_password = ipfs['encrypted'] == true ? (bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null ? bulk_decyphered_package['internal'] : await this.decrypt_data_string(ipfs['password'], private_key)) : ipfs['password']
+
 
       if(this.my_wallets_locked_time == null){
         this.my_wallets_locked_time = {}
@@ -58156,6 +58398,11 @@ class App extends Component {
 
   async set_socket_entries_in_memory(target_data, application_responses, targets_to_prioritize=[], targets_to_ignore=[]){
     const entries = Object.keys(target_data)
+    const object_data_mappings = {}
+    const object_data_mappings_to_decrypt = {}
+    const general_encryption_ids = [ 'jobs', 'posts', 'mail', 'mail-message', 'job-request-message', 'channel-message', 'comment_message', 'bill', 'job_application', 'bag_application', 'contractor_job_request', 'storefront_order', 'signature_request', 'signature_response', 'typing', '', '', 'read_receipts', 'call_invite', 'call-message', 'ether_coin_request', 'pre_purchase_request', 'ether_coin_receipt', 'direct_message', 'obligation_subscription', 'tags', 'object_tags', 'mempool_notification', 'storefront_purchase_request', 'storefront-request-message', 'storefront_payment_update_message', 'lock_unlock_wallet' ]
+    const unencrypted = []
+
     for(var j=0; j<entries.length; j++){
       const time_entry = entries[j]
       const target_entries = Object.keys(target_data[time_entry])
@@ -58171,148 +58418,300 @@ class App extends Component {
           if(targets_to_ignore.length > 0 && targets_to_ignore.includes(object_data['type'])){
             continue;
           }
-          if(target_entry == 'jobs' && object_data.type == 'object'){
-            await this.process_new_job_received(object_data, object_hash)
-
-            var me = this;
-            setTimeout(function() {
-              if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
-                me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
-              }
-            }, (1 * 500));
-          }
-          else if(target_entry == 'posts' && object_data.type == 'object'){
-            await this.process_new_post_received(object_data, object_hash)
-
-            var me = this;
-            setTimeout(function() {
-              if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
-                me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
-              }
-            }, (1 * 500));
-          }
-          else if(target_entry == 'bill|'+this.state.accounts[this.state.selected_e5].address){
-            await this.process_new_bill_message(object_data, object_hash, object_data['author_address'], false)
-          }
-          else if(target_entry == 'mail|'+this.state.accounts[this.state.selected_e5].address){
-            await this.process_new_mail_received(object_data, object_hash, object_data['author_address'], false)
-          }
-          else if(target_entry.startsWith('job_application|')){
-            console.log('socket_stuff','loaded a job application item', object_data)
-            await this.process_new_job_application_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry.startsWith('bag_application|')){
-            await this.process_new_bag_application_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry.startsWith('contractor_job_request|')){
-            await this.process_new_contractor_job_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
-            await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry.startsWith('storefront_order|')){
-            await this.process_new_storefront_order_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry.startsWith('signature_request|')){
-            await this.process_new_signature_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry.startsWith('signature_response|')){
-            await this.process_new_signature_response_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry.startsWith('typing|')){
-            await this.process_new_typing_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(target_entry.startsWith('read_receipts|')){
-            await this.process_new_read_receipts_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(object_data['type'] == 'open_signature_request'){
-            await this.process_new_open_signature_request_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'open_signature_response'){
-            await this.process_new_open_signature_response_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'contractor_availability'){
-            await this.process_new_contractor_availability_update(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'storefront_order_status'){
-            await this.process_new_storefront_order_status_update(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'call_invite'){
-            await this.process_new_call_invite_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'call_metadata'){
-            await this.process_new_call_metadata_for_entering_call(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'call-message'){
-            await this.process_new_call_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'pre_purchase_transaction'){
-            await this.process_prepurchase_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'blocked_account'){
-            await this.process_new_blocked_account_message_update(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'ether_coin_request'){
-            await this.process_ether_coin_request_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'pre_purchase_request'){
-            await this.process_pre_purchase_request_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'ether_coin_receipt'){
-            await this.process_ether_coin_send_transaction_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'direct_message'){
-            await this.process_new_direct_message_received(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'repost'){
-            await this.process_repost_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'blocked'){
-            await this.process_blocked_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'follow_account'){
-            await this.process_follow_account_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'unfollow_account'){
-            await this.process_unfollow_account_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'repost_object_event'){
-            await this.process_repost_object_event_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'object_views'){
-            await this.process_object_views_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'obligation_subscription'){
-            await this.process_obligation_subscriptions_message(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'tags'){
-            await this.process_new_tags_message_received(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'object_tags'){
-            await this.process_new_tags_in_object_message_received(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'storefront_availability'){
-            await this.process_new_storefront_availability_update(object_data, object_hash)
-          }
-          else if(object_data['type'] == 'mempool_notification'){
-            await this.process_new_mempool_notification_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'storefront_purchase_request'){
-            await this.process_new_storefront_purchase_request_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(target_entry == 'contractor_accept_storefront_request'+this.state.accounts[this.state.selected_e5].address){
-            await this.process_new_contractor_accepted_storefront_request_message(object_data, object_hash, object_data['author_address'], false, application_responses)
-          }
-          else if(object_data['type'] == 'storefront_payment_update_message'){
-            await this.process_storefront_payment_update_message(object_data, object_hash, object_data['author_address'], true)
-          }
-          else if(object_data['type'] == 'lock_unlock_wallet'){
-            await this.process_new_lock_unlock_wallet_message(object_data, object_hash, object_data['author_address'], true)
-          }
           
+          const object_entry = await this.call_object_data_specific_function(target_entry, object_data, object_hash, application_responses, false, null, i, object_hashes)
+          await this.wait(300)
+
+          // if(object_data_mappings[object_entry.id] == null){
+          //   object_data_mappings[object_entry.id] = []
+          // }
+          // object_data_mappings[object_entry.id].push(object_entry.data)
+          
+          // if(general_encryption_ids.includes(object_entry.id)){
+          //   if(object_data_mappings_to_decrypt[object_entry.id] == null){
+          //     object_data_mappings_to_decrypt[object_entry.id] = []
+          //   }
+          //   object_data_mappings_to_decrypt[object_entry.id].push(object_entry.data.object_data.data)
+          // }else{
+          //   if(!unencrypted.includes(object_entry.id)) unencrypted.push(object_entry.id);
+          // }
+        }
+      }
+    }
+
+    return;
+    if(Object.keys(object_data_mappings).length == 0){
+      return;
+    }
+
+    console.log('set_socket_entries_in_memory', 'object_data_mappings', object_data_mappings)
+    console.log('set_socket_entries_in_memory', 'object_data_mappings_to_decrypt', object_data_mappings_to_decrypt)
+    const decryted_object_data_mappings = await this.bulk_decrypt_objects(object_data_mappings_to_decrypt)
+    const decrypted_id_keys = Object.keys(decryted_object_data_mappings)
+
+    console.log('set_socket_entries_in_memory', 'decryted_object_data_mappings', decryted_object_data_mappings)
+    
+    for(var m=0; m<decrypted_id_keys.length; m++){
+      const decyphered_data_object_array = decryted_object_data_mappings[decrypted_id_keys[m]].return_data
+      const decyphered_data_object_unsuccessful = decryted_object_data_mappings[decrypted_id_keys[m]].unsuccessful_pos
+      const decyphered_data_object_internal = decryted_object_data_mappings[decrypted_id_keys[m]].decrypted_with_key_data
+
+      for(var n=0; n<decyphered_data_object_array.length; n++){
+        const specific_item_data = object_data_mappings[decrypted_id_keys[m]][n]
+        const bulk_decyphered_package = {
+          'data':decyphered_data_object_array[n], 
+          'successful':(!decyphered_data_object_unsuccessful.includes(n)),
+          'internal': decyphered_data_object_internal[n]
+        }
+        if(decrypted_id_keys[m] == 'direct_message'){
+          console.log('set_socket_entries_in_memory', decrypted_id_keys[m], 'bulk_decyphered_package', bulk_decyphered_package)
+        }
+        await this.call_object_data_specific_function(specific_item_data.target_entry, specific_item_data.object_data, specific_item_data.object_hash, application_responses, false, bulk_decyphered_package, specific_item_data.i, specific_item_data.object_hashes)
+        await this.wait(300)
+      }
+    }
+
+    if(unencrypted.length > 0){
+      for(var p=0; p<unencrypted.length; p++){
+        const decyphered_data_object_array = object_data_mappings[unencrypted[p]]
+        for(var n=0; n<decyphered_data_object_array.length; n++){
+          const specific_item_data = decyphered_data_object_array[n]
+          await this.call_object_data_specific_function(specific_item_data.target_entry, specific_item_data.object_data, specific_item_data.object_hash, application_responses, false, null, specific_item_data.i, specific_item_data.object_hashes)
           await this.wait(300)
         }
       }
+    }
+  }
+
+  bulk_decrypt_objects = async (objects) => {
+    var keypair = null;
+    var private_key = ''
+    var my_unique_crosschain_identifier = '0'
+
+    if(this.state.has_wallet_been_set == true){
+      const web3 = new Web3(this.get_web3_url_from_e5('E35'));
+      const privateKey = this.state.accounts['E35'].privateKey
+      const hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+      const key_data = await this.generate_my_box_keys(hash);
+      keypair = key_data.keypair
+      private_key = this.state.accounts['E25'].privateKey.toString()
+      my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number2()
+    }
+    
+
+    await this.wait_for_at_least_one_worker_to_become_available(makeid(9))
+    return new Promise((resolve, reject) => {
+      const available_worker_index = this.get_available_position()
+      const worker = this.worker_pool[available_worker_index];
+      this.worker_pool_counter = available_worker_index + 1
+      if(this.worker_pool_counter == this.state.thread_pool_size){
+        this.worker_pool_counter = 0
+      }
+      this.worker_availability[available_worker_index] = false
+      const message_id = makeid(9)
+      
+      worker.postMessage({
+        type: 'bulk_decrypt_objects',
+        payload: {
+          datas: objects,
+          APP_KEY: process.env.REACT_APP_APPKEY_API_KEY,
+          REACT_APP_ENCRYPTION_SALT_KEY: process.env.REACT_APP_ENCRYPTION_SALT_KEY,
+          my_unique_crosschain_identifier: my_unique_crosschain_identifier, 
+          keypair: keypair,
+          private_key: private_key,
+          message_id: message_id
+        }
+      });
+
+      const return_object = {}
+
+      worker.onmessage = (e) => {
+        console.log('bulk_decrypt_objects', 'set_socket_entries_in_memory', 'worker.onmessage', e)
+        if(e.data.message == 'bulk_decrypt_objects' && e.data.message_id == message_id){
+          if(e.data.type === 'CRUMB'){
+            return_object[e.data.data_id] = {}
+            return_object[e.data.data_id].decrypted_with_key_data = {}
+            return_object[e.data.data_id].return_data = new Array(e.data.data.return_data)
+            return_object[e.data.data_id].unsuccessful_pos = new Array(e.data.data.unsuccessful_pos)
+          }
+          if(e.data.type === 'CRUMB2'){
+            return_object[e.data.data_id][e.data.internal_data_id][e.data.key] = e.data.data
+          }
+          else if(e.data.type === 'SUCCESS'){
+            resolve(return_object);
+            this.worker_availability[available_worker_index] = true
+          }
+        }
+        // if (e.data.type === 'SUCCESS' && e.data.message == 'bulk_decrypt_objects' && e.data.message_id == message_id) {
+        //   resolve(e.data.data);
+        //   this.worker_availability[available_worker_index] = true
+        // } 
+        // else if (e.data.type === 'ERROR' && e.data.message == 'bulk_decrypt_objects' && e.data.message_id == message_id) {
+        //   reject(e.data.error);
+        //   this.worker_availability[available_worker_index] = true
+        // }
+      };
+      
+      worker.onerror = (error) => {
+        reject(error);
+        this.worker_availability[available_worker_index] = true
+      };
+    });
+  }
+
+  async call_object_data_specific_function(target_entry, object_data, object_hash, application_responses, return_object_entry, bulk_decyphered_package=null, i, object_hashes){
+    if(return_object_entry == true){
+      if(target_entry == 'jobs' && object_data.type == 'object'){
+        return { id: 'jobs', data: { object_data, object_hash, target_entry, i, object_hashes } }
+      }
+      else if(target_entry == 'posts' && object_data.type == 'object'){
+        return { id: 'posts', data: { object_data, object_hash, target_entry, i, object_hashes } }
+      }
+      else{
+        return { id: object_data.type, data: { object_data, object_hash, target_entry, i, object_hashes } }
+      }
+    }
+
+    if(target_entry == 'jobs' && object_data.type == 'object'){
+      await this.process_new_job_received(object_data, object_hash, bulk_decyphered_package)
+
+      var me = this;
+      setTimeout(function() {
+        if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
+          me.homepage.current?.start_update_search(me.getLocale()['1196']/* 'jobs' */)
+        }
+      }, (1 * 500));
+    }
+    else if(target_entry == 'posts' && object_data.type == 'object'){
+      if(return_object_entry == true){
+        return { id: 'posts', data: { object_data, object_hash } }
+      }
+      await this.process_new_post_received(object_data, object_hash, bulk_decyphered_package)
+
+      var me = this;
+      setTimeout(function() {
+        if((i%me.state.update_search_object_load_count == 0 || i == object_hashes.length-1)){
+          me.homepage.current?.start_update_search(me.getLocale()['1213']/* 'posts' */)
+        }
+      }, (1 * 500));
+    }
+    else if(target_entry == 'bill|'+this.state.accounts[this.state.selected_e5].address){
+      await this.process_new_bill_message(object_data, object_hash, object_data['author_address'], false, bulk_decyphered_package)
+    }
+    else if(target_entry == 'mail|'+this.state.accounts[this.state.selected_e5].address){
+      await this.process_new_mail_received(object_data, object_hash, object_data['author_address'], false, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('job_application|')){
+      console.log('socket_stuff','loaded a job application item', object_data)
+      await this.process_new_job_application_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('bag_application|')){
+      await this.process_new_bag_application_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('contractor_job_request|')){
+      await this.process_new_contractor_job_request_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry == 'contractor_accept_job_request'+this.state.accounts[this.state.selected_e5].address){
+      await this.process_new_contractor_accepted_job_request_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('storefront_order|')){
+      await this.process_new_storefront_order_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('signature_request|')){
+      await this.process_new_signature_request_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('signature_response|')){
+      await this.process_new_signature_response_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('typing|')){
+      await this.process_new_typing_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(target_entry.startsWith('read_receipts|')){
+      await this.process_new_read_receipts_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'open_signature_request'){
+      await this.process_new_open_signature_request_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'open_signature_response'){
+      await this.process_new_open_signature_response_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'contractor_availability'){
+      await this.process_new_contractor_availability_update(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'storefront_order_status'){
+      await this.process_new_storefront_order_status_update(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'call_invite'){
+      await this.process_new_call_invite_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'call_metadata'){
+      await this.process_new_call_metadata_for_entering_call(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'call-message'){
+      await this.process_new_call_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'pre_purchase_transaction'){
+      await this.process_prepurchase_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'blocked_account'){
+      await this.process_new_blocked_account_message_update(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'ether_coin_request'){
+      await this.process_ether_coin_request_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'pre_purchase_request'){
+      await this.process_pre_purchase_request_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'ether_coin_receipt'){
+      await this.process_ether_coin_send_transaction_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'direct_message'){
+      await this.process_new_direct_message_received(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'repost'){
+      await this.process_repost_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'blocked'){
+      await this.process_blocked_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'follow_account'){
+      await this.process_follow_account_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'unfollow_account'){
+      await this.process_unfollow_account_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'repost_object_event'){
+      await this.process_repost_object_event_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'object_views'){
+      await this.process_object_views_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'obligation_subscription'){
+      await this.process_obligation_subscriptions_message(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'tags'){
+      await this.process_new_tags_message_received(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'object_tags'){
+      await this.process_new_tags_in_object_message_received(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'storefront_availability'){
+      await this.process_new_storefront_availability_update(object_data, object_hash, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'mempool_notification'){
+      await this.process_new_mempool_notification_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'storefront_purchase_request'){
+      await this.process_new_storefront_purchase_request_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(target_entry == 'contractor_accept_storefront_request'+this.state.accounts[this.state.selected_e5].address){
+      await this.process_new_contractor_accepted_storefront_request_message(object_data, object_hash, object_data['author_address'], false, application_responses, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'storefront_payment_update_message'){
+      await this.process_storefront_payment_update_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'lock_unlock_wallet'){
+      await this.process_new_lock_unlock_wallet_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
     }
   }
 

@@ -34,6 +34,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { Virtuoso } from "react-virtuoso";
 import { Drawer } from 'vaul';
+import { VList } from "virtua";
 
 
 var bigInt = require("big-integer");
@@ -1031,6 +1032,33 @@ class PostListSection extends Component {
                                     this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'jobs'))
                                 }}
                             />
+                            {/* <VList
+                                ref={(el) => (this.jobs_list = el)}
+                                style={{ height: middle }}
+                                onScroll={(offset) => {
+                                    const handle = this.jobs_list
+                                    const startOffset = handle.scrollOffset;
+                                    const endOffset = startOffset + handle.viewportSize;
+                                    const range = { 
+                                        startIndex: handle.findItemIndex(startOffset), 
+                                        endIndex: handle.findItemIndex(endOffset) 
+                                    }
+                                    this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'jobs'))
+                                }}
+                            >
+                                {items.map((item, index) => {
+                                    return (
+                                        <div>
+                                            <AnimatePresence initial={true}>
+                                                <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                                style={{'padding': padding}}>
+                                                    {this.render_job_object(item, index)}
+                                                </motion.div>
+                                            </AnimatePresence>
+                                        </div>
+                                    );
+                                })}
+                            </VList> */}
                     </div>
                 </div>
             );

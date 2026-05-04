@@ -1,19 +1,34 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable import/no-anonymous-default-export */
+/* eslint-env worker */
+
+import { id } from "tronweb/utils";
+
+/* global pako, nacl */
 export default () => {
+    self.importScripts('https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.js')
+
+    self.addEventListener('error', e => {
+        console.error('Worker error:', e);
+    });
+
+    self.addEventListener('unhandledrejection', e => {
+        console.error('Worker rejection:', e);
+    });
+
     self.addEventListener('message', async (e) => {
         const { type, payload } = e.data;
         if (type === 'DECRYPT') {
             try {
-            const decryptedData = await decrypt_secure_data(payload.encrypted, payload.password, payload.ready_made_key, payload.REACT_APP_ENCRYPTION_SALT_KEY);
-            
-            // Send results back to main thread
-            self.postMessage({
-                type: 'SUCCESS',
-                message: type,
-                message_id: payload.message_id,
-                data: decryptedData
-            });
+                const decryptedData = await decrypt_secure_data(payload.encrypted, payload.password, payload.ready_made_key, payload.REACT_APP_ENCRYPTION_SALT_KEY);
+                
+                // Send results back to main thread
+                self.postMessage({
+                    type: 'SUCCESS',
+                    message: type,
+                    message_id: payload.message_id,
+                    data: decryptedData
+                });
             } catch (error) {
             self.postMessage({
                 type: 'ERROR',
@@ -190,6 +205,84 @@ export default () => {
                     message_id: payload.message_id,
                     data: processeddata
                 });
+            } catch (error) {
+                self.postMessage({
+                    type: 'ERROR',
+                    message: type,
+                    message_id: payload.message_id,
+                    error: error.message
+                });
+            }
+        }
+        else if(type == 'bulk_decrypt_objects'){
+            try {
+                const decryptedData = await bulk_decrypt_objects(payload.datas, payload.APP_KEY, payload.REACT_APP_ENCRYPTION_SALT_KEY, payload.my_unique_crosschain_identifier, payload.keypair, payload.private_key);
+                
+                // Send results back to main thread
+                // self.postMessage({
+                //     type: 'SUCCESS',
+                //     message: type,
+                //     message_id: payload.message_id,
+                //     data: decryptedData
+                // });
+
+                const ids = Object.keys(decryptedData)
+                ids.forEach(id => {
+                    self.postMessage({ 
+                        type: 'CRUMB', 
+                        message: type, 
+                        message_id: payload.message_id, 
+                        data_id: id, 
+                        data: { 
+                            decrypted_with_key_data:{}, 
+                            return_data: decryptedData[id]['return_data'].length, 
+                            unsuccessful_pos: decryptedData[id]['unsuccessful_pos'].length
+                        }
+                    });
+
+                    Object.keys(decryptedData[id]['decrypted_with_key_data']).forEach(key => {
+                        self.postMessage({ 
+                            type: 'CRUMB2',
+                            message: type, 
+                            message_id: payload.message_id, 
+                            data_id: id,
+                            internal_data_id: 'decrypted_with_key_data',
+                            key:key,
+                            data: decryptedData[id]['decrypted_with_key_data'][key]
+                        });
+                    });
+
+                    decryptedData[id]['return_data'].forEach((item, key) => {
+                        self.postMessage({ 
+                            type: 'CRUMB2',
+                            message: type, 
+                            message_id: payload.message_id, 
+                            data_id: id,
+                            internal_data_id: 'return_data',
+                            key:key,
+                            data: decryptedData[id]['return_data'][key]
+                        });
+                    });
+
+                    decryptedData[id]['unsuccessful_pos'].forEach((item, key) => {
+                        self.postMessage({ 
+                            type: 'CRUMB2',
+                            message: type,
+                            message_id: payload.message_id, 
+                            data_id: id,
+                            internal_data_id: 'unsuccessful_pos',
+                            key:key,
+                            data: decryptedData[id]['unsuccessful_pos'][key]
+                        });
+                    });
+                });
+
+                self.postMessage({
+                    type: 'SUCCESS',
+                    message: type,
+                    message_id: payload.message_id,
+                });
+
             } catch (error) {
                 self.postMessage({
                     type: 'ERROR',
@@ -650,6 +743,164 @@ export default () => {
         });
 
         return selected_objects.concat(almost_selected_objects)
+    }
+
+    function base64ToUint8Array(base64) {
+      const binary = atob(base64);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+
+    function uint8ArrayToBase64(bytes) {
+      let binary = '';
+      for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function base64ToUint8(base64) {
+        // normalize base64url → base64
+        base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+
+        // fix padding
+        const pad = base64.length % 4;
+        if (pad) {
+            base64 += '='.repeat(4 - pad);
+        }
+
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+
+        return bytes;
+    }
+
+    async function bulk_decrypt_objects(object_data_mappings, APP_KEY, REACT_APP_ENCRYPTION_SALT_KEY, my_unique_crosschain_identifier, keypair, private_key){
+        const return_object_mapping = {}
+        const object_data_keys = Object.keys(object_data_mappings)
+        for(var k=0; k<object_data_keys.length; k++){
+            const id = object_data_keys[k]
+            const datas = object_data_mappings[id]
+
+            const return_data = []
+            const unsuccessful_pos = []
+            const decrypted_with_key_data = {}
+            for(var i=0; i<datas.length; i++){
+                var cipher_text = datas[i]
+                var secure = false
+                try{
+                    var json_object = JSON.parse(datas[i])
+                    cipher_text = json_object['ciphertext']
+                    if(json_object['c'] != null && json_object['c'] == true){
+                        cipher_text = (pako.inflate(base64ToUint8Array(cipher_text)))
+                    }
+                    secure = json_object['a']
+                }
+                catch(f){
+                    console.log('bulk_decrypt_objects', f)
+                }
+                try{
+                    if(secure == true){
+                        const decrypted_data = await decrypt_secure_data((cipher_text), APP_KEY, null, REACT_APP_ENCRYPTION_SALT_KEY);
+                        return_data.push(decrypted_data)
+
+                        if(id == 'mail' || id == 'bill' || id == 'mail-message' || id == 'direct_message' || id == 'mempool_notification'){
+                            try{
+                                const encrypted_ipfs_obj = JSON.parse(decrypted_data)
+                                const encoders_public_key_string = encrypted_ipfs_obj['encryptor_pub_key']
+                                const encrypted_key = encrypted_ipfs_obj['recipient_data'][my_unique_crosschain_identifier]
+                                
+                                if(encrypted_key != null){
+                                    const encrypted_object = base64ToUint8(encrypted_ipfs_obj['obj'])
+                                    const convo_key = decrypt_data_with_my_private_key(encrypted_key, encoders_public_key_string, keypair)
+                                    const decrypted_internal_data = await decrypt_secure_data(encrypted_object, convo_key.toString(), null, REACT_APP_ENCRYPTION_SALT_KEY)
+                                    decrypted_with_key_data[i] = JSON.parse(decrypted_internal_data);
+                                    console.log('bulk_decrypt_objects', 'internal_object', 'decrypted internal object', id, JSON.parse(decrypted_internal_data))
+                                }
+
+                            }
+                            catch(e){
+                                console.error('bulk_decrypt_objects', id, "Internal Decryption failed:", e);
+                            } 
+                        }
+                        else if(id == 'job_application' || id == 'bag_application' || id == 'contractor_job_request' || id == 'storefront_order' || id == 'call_invite' || id == 'storefront_purchase_request'){
+                            try{
+                                const ipfs_message = JSON.parse(decrypted_data)
+                                if(ipfs_message['encrypted_data'] != null){
+                                    const encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+                                    const encoders_public_key_string = ipfs_message['key_data']['encryptor_pub_key']
+
+                                    if(encrypted_key != null){
+                                        const encrypted_data = base64ToUint8(ipfs_message['encrypted_data'])
+                                        const convo_key = decrypt_data_with_my_private_key(encrypted_key, encoders_public_key_string, keypair)
+                                        const decrypted_internal_data = await decrypt_secure_data(encrypted_data, convo_key.toString(), null, REACT_APP_ENCRYPTION_SALT_KEY)
+                                        decrypted_with_key_data[i] = JSON.parse(decrypted_internal_data);
+                                        console.log('bulk_decrypt_objects', 'internal_object', 'decrypted internal object', id, JSON.parse(decrypted_internal_data))
+                                    }
+                                }
+                            }
+                            catch(e){
+                                console.error('bulk_decrypt_objects', id, "Internal Decryption failed:", e);
+                            }
+                        }
+                        else if(id == 'lock_unlock_wallet'){
+                            try{
+                                const ipfs_message = JSON.parse(decrypted_data)
+                                if(ipfs_message['encrypted'] == true){
+                                    decrypted_with_key_data[i] = await decrypt_secure_data(base64ToUint8(ipfs_message['password']), private_key, null, REACT_APP_ENCRYPTION_SALT_KEY);
+                                }
+                            }
+                            catch(e){
+                                console.error('bulk_decrypt_objects',"Internal Decryption failed:", e);
+                            }
+                            
+                        }
+                    }
+                    else{
+                        return_data.push(datas[i])
+                        unsuccessful_pos.push(i)
+                    }
+                }
+                catch(e){
+                    console.error('bulk_decrypt_objects',"Decryption failed:", e);
+                    return_data.push(datas[i])
+                    unsuccessful_pos.push(i)
+                }
+
+            }
+
+            return_object_mapping[id] = { return_data, unsuccessful_pos, decrypted_with_key_data }
+        }
+
+        console.log('bulk_decrypt_objects', 'set_socket_entries_in_memory', 'return_object_mapping', return_object_mapping)
+        return return_object_mapping
+    }
+
+    
+
+    function decrypt_data_with_my_private_key(base64_encoded_data, encoders_public_key_string, keyPair){
+        try{
+            const base64_encoded_cypher = base64_encoded_data.split('_')[0]
+            const nonce_cypher = base64_encoded_data.split('_')[1]
+            const encrypted_key_as_uint8array = base64ToUint8Array(base64_encoded_cypher)
+            const nonce = base64ToUint8Array(nonce_cypher)
+            const encoders_public_key_to_use = base64ToUint8(encoders_public_key_string)
+            const decrypted = nacl.box.open(encrypted_key_as_uint8array, nonce, encoders_public_key_to_use, keyPair.secretKey);
+            const decoder = new TextDecoder();
+            const user_key = decoder.decode(new Uint8Array(decrypted));
+            return user_key
+        }
+        catch(e){
+            console.error('decrypt_data_with_my_private_key', 'something went wrong with the decrypt_data_with_my_private_key worker function', e)
+        }
     }
 
 };

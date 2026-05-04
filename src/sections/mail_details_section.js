@@ -36,6 +36,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
 import { Virtuoso } from "react-virtuoso";
+import { VList } from "virtua";
 
 var bigInt = require("big-integer");
 
@@ -59,7 +60,7 @@ class MailDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_mail_list_detail_tags_object: this.get_navigate_view_mail_list_detail_tags_object_tags(), entered_text:'', entered_image_objects:[],
-        stacked_messages:[{}], focused_message:{'tree':{}}
+        stacked_messages:[{}], focused_message:{'tree':{}}, startIndex: 100000
     };
 
     get_navigate_view_mail_list_detail_tags_object_tags(){
@@ -79,6 +80,8 @@ class MailDetailsSection extends Component {
 
     componentDidMount(){
         this.interval = setInterval(() => this.check_for_new_and_messages(), this.props.app_state.details_section_syncy_time);
+        // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
+        setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
     }
 
     componentWillUnmount() {
@@ -1141,13 +1144,55 @@ class MailDetailsSection extends Component {
         this.has_user_scrolled = {}
     }
 
-    componentDidUpdate(){
-        var has_scrolled = this.has_user_scrolled[this.props.selected_mail_item]
-        if(has_scrolled == null){
-            this.scroll_to_bottom()
+    componentDidUpdate(prevProps){
+        const prevCount = this.get_previous_state_messages(prevProps).length
+        const currentCount = this.get_message_count().length
+        
+        if (currentCount > prevCount) {
+            const added = currentCount - prevCount;
+            this.setState(prev => ({
+                startIndex: prev.startIndex - added
+            }));
         }
     }
 
+    get_previous_state_messages(prevProps){
+        var mail = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+        var convo_id = mail['convo_id']
+        const chain_messages = prevProps.app_state.mail_messages[convo_id] == null ? [] : prevProps.app_state.mail_messages[convo_id]
+        const socket_messages = prevProps.app_state.socket_mail_messages[convo_id] == null ? [] : prevProps.app_state.socket_mail_messages[convo_id]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time').reverse()
+        var stacked_items = [].concat(this.get_stacked_items2(mail, prevProps)).reverse()
+        var final_items_without_divider = stacked_items.concat(all_messages)
+        return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
+    }
+
+    get_stacked_items2(mail, prevProps){
+        // var mail = this.get_mail_items()[this.props.selected_mail_item];
+        var convo_id = mail['convo_id']
+
+        var stack = prevProps.app_state.stack_items
+        var stacked_items = []
+        for(var i=0; i<stack.length; i++){
+            if(stack[i].type == 'mail-messages'){
+                for(var e=0; e<stack[i].messages_to_deliver.length; e++){
+                    var message_obj = stack[i].messages_to_deliver[e]
+                    if(message_obj.convo_id == convo_id){
+                        stacked_items.push(message_obj)
+                    }
+                }
+            }
+        }
+        return stacked_items
+    }
+
+    get_message_count(){
+        var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+        var items = [].concat(this.get_convo_messages(object)).reverse()
+        var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
+        var final_items_without_divider = stacked_items.concat(items)
+        return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
+    }
 
     render_sent_received_messages(object, he){
         // var middle = this.props.height-240;
@@ -1270,16 +1315,48 @@ class MailDetailsSection extends Component {
                         style={{ height: middle }}
                         totalCount={items.length}
                         initialTopMostItemIndex={items.length-1}
-                        rangeChanged={(range) => {
-                            this.handleScroll('event', object)
-                        }}
+                        followOutput={false}
+                        alignToBottom={true}
+                        firstItemIndex={this.state.startIndex}
                         itemContent={(index) => {
-                            const item = reversed_items[index]
+                            const localIndex = index - this.state.startIndex;
+                            const item = reversed_items[localIndex];
+                            if (!item) return null;
                             const ref_item = index == items.length - 1 ? this.messagesEnd : null;
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">
-                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div>
+                                                {this.render_message_as_focused_if_so(item, object)}
+                                                <div style={{height:3}}/>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                    {/* <div style={{'padding': '2px 5px 2px 5px'}}>
+                                        {this.render_message_as_focused_if_so(item, object)}
+                                        <div style={{height:3}}/>
+                                    </div> */}
+                                </div>
+                            );
+                        }}
+                    />
+                    {/* <VList
+                        ref={(el) => (this.virtuoso_list = el)}
+                        style={{ height: middle }}
+                        onScroll={(offset) => {
+                            const atBottom = offset < 80;
+                            if (!atBottom) {
+                                this.has_user_scrolled[this.props.selected_mail_item] = true;
+                            }
+                        }}
+                    >
+                        {reversed_items.map((item, index) => {
+                            const ref_item = index == items.length - 1 ? this.messagesEnd : null;
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }}  transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                             <div>
                                                 {this.render_message_as_focused_if_so(item, object)}
                                                 <div style={{height:3}}/>
@@ -1288,8 +1365,8 @@ class MailDetailsSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
-                        }}
-                    />  
+                        })}
+                    </VList>  */}
                 </div>
             )
         }
@@ -1490,7 +1567,7 @@ class MailDetailsSection extends Component {
         var text = this.format_message(item['message'], object)
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
-        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']] ? '0px 7px 7px 0px': '7px'
+        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']] ? '7px 0px 0px 7px': '7px'
 
         const c = this.props.get_my_state_color()
         const background_color = item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']] ? this.props.theme['my_messages_color'][c] : this.props.theme['view_group_card_item_background']
@@ -1498,7 +1575,7 @@ class MailDetailsSection extends Component {
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
-                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 1px 0px 0px','border-radius': border_radii}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radii}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 

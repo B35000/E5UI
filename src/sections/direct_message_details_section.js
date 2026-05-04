@@ -33,6 +33,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
 import { Virtuoso } from "react-virtuoso";
+import { VList } from "virtua";
 
 var bigInt = require("big-integer");
 
@@ -56,7 +57,7 @@ class DirectMessageDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_mail_list_detail_tags_object: this.get_navigate_view_mail_list_detail_tags_object_tags(), entered_text:'', entered_image_objects:[],
-        stacked_messages:[{}], focused_message:{'tree':{}}
+        stacked_messages:[{}], focused_message:{'tree':{}}, startIndex: 100000
     };
 
     get_navigate_view_mail_list_detail_tags_object_tags(){
@@ -493,7 +494,16 @@ class DirectMessageDetailsSection extends Component {
                             </div>
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                                 <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
-                                    <img alt="" className="text-end" onClick={()=>this.add_message_to_stack(object)} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                    <button
+                                        onMouseDown={(e) => {
+                                            e.preventDefault();
+                                            this.add_message_to_stack(object);
+                                        }}
+                                        style={{ background: 'none', border: 'none' }}
+                                    >
+                                        <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                    </button>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -546,11 +556,9 @@ class DirectMessageDetailsSection extends Component {
 
     scroll_to_bottom(){
         this.is_auto_scrolling = true
-        this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
-        this.virtuoso_list?.scrollToIndex({
-            index: "LAST",
-            behavior: "smooth"
-        });
+        // this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        this.virtuoso_list?.scrollToIndex({ index: "LAST", behavior: "smooth" });
+        // this.virtuoso_list?.scrollToIndex(-1, { align: "end", smooth: true, });
         var me = this;
         setTimeout(function() {
             me.is_auto_scrolling = false
@@ -631,11 +639,43 @@ class DirectMessageDetailsSection extends Component {
         this.has_user_scrolled = {}
     }
 
-    componentDidUpdate(){
-        var has_scrolled = this.has_user_scrolled[this.props.selected_direct_message_item]
-        if(has_scrolled == null){
-            this.scroll_to_bottom()
+    componentDidUpdate(prevProps){
+        const prevCount = this.get_previous_state_messages(prevProps).length
+        const currentCount = this.get_message_count().length
+        
+        if (currentCount > prevCount) {
+            const added = currentCount - prevCount;
+            this.setState(prev => ({
+                startIndex: prev.startIndex - added
+            }));
         }
+    }
+
+    componentDidMount() {
+        // Scroll to bottom on first render without animation.
+        // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
+        setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
+        
+    }
+
+    get_previous_state_messages(prevProps){
+        const messages = []
+        Object.keys(prevProps.app_state.direct_messages).forEach(e5_account => {
+            messages.push(prevProps.app_state.direct_messages[e5_account])
+        });
+        const object = this.get_item_in_array(messages, this.props.selected_direct_message_item);
+        var items = this.sortByAttributeDescending(object['messages'], 'time')
+        var stacked_items = []
+        var final_items_without_divider = stacked_items.concat(items)
+        return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
+    }
+
+    get_message_count(){
+        var object = this.get_item_in_array(this.get_my_direct_message_objects(), this.props.selected_direct_message_item);
+        var items = [].concat(this.get_convo_messages(object)).reverse()
+        var stacked_items = []
+        var final_items_without_divider = stacked_items.concat(items)
+        return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider) 
     }
 
     render_sent_received_messages(object, he){
@@ -753,32 +793,74 @@ class DirectMessageDetailsSection extends Component {
         else{
             const reversed_items = items.slice().reverse()
             return(
-                <div style={{}}>
+                <div style={{flexGrow: 1}}>
                     <Virtuoso
                         ref={(el) => (this.virtuoso_list = el)}
                         style={{ height: middle }}
                         totalCount={items.length}
+                        followOutput={false}
+                        alignToBottom={true}
+                        firstItemIndex={this.state.startIndex}
                         initialTopMostItemIndex={items.length-1}
-                        rangeChanged={(range) => {
-                            this.handleScroll('event', object)
-                        }}
                         itemContent={(index) => {
-                            const item = reversed_items[index]
+                            const localIndex = index - this.state.startIndex;
+                            const item = reversed_items[localIndex];
+                            if (!item) return null;
                             const ref_item = index == items.length - 1 ? this.messagesEnd : null;
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">
-                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                             <div>
                                                 {this.render_message_as_focused_if_so(item, object)}
                                                 <div style={{height:3}}/>
                                             </div>
                                         </motion.div>
                                     </AnimatePresence>
+                                    {/* <div style={{'padding': '2px 5px 2px 5px'}}>
+                                        {this.render_message_as_focused_if_so(item, object)}
+                                        <div style={{height:3}}/>
+                                    </div> */}
                                 </div>
                             );
                         }}
-                    />  
+                    /> 
+
+                    {/* <VList
+                        ref={(el) => (this.virtuoso_list = el)}
+                        style={{ height: middle }}
+                        onScroll={(offset) => {
+                            // const atBottom = offset < 80;
+                            // if (!atBottom) {
+                            //     this.has_user_scrolled[this.props.selected_direct_message_item] = true;
+                            // }
+                            const handle = this.virtuoso_list
+                            const startOffset = handle.scrollOffset;
+                            const endOffset = startOffset + handle.viewportSize;
+                            const range = {
+                                startIndex: handle.findItemIndex(startOffset), 
+                                endIndex: handle.findItemIndex(endOffset) 
+                            }
+                            this.has_user_scrolled[this.props.selected_direct_message_item] = range
+                        }}
+                    >
+                        {reversed_items.map((item, index) => {
+                            const ref_item = index == items.length - 1 ? this.messagesEnd : null;
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }}  transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            
+                                        </motion.div>
+                                    </AnimatePresence>
+                                    <div style={{'padding': '2px 5px 2px 5px'}}>
+                                        {this.render_message_as_focused_if_so(item, object)}
+                                        <div style={{height:3}}/>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </VList>  */}
                 </div>
             )
         }
@@ -969,7 +1051,7 @@ class DirectMessageDetailsSection extends Component {
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
 
-        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']] ? '0px 7px 7px 0px': '7px'
+        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']] ? '7px 0px 0px 7px': '7px'
 
         const c = this.props.get_my_state_color()
         const background_color = item['sender'] == this.props.app_state.user_account_id[item['my_preferred_e5']] ? this.props.theme['my_messages_color'][c] : this.props.theme['view_group_card_item_background']
@@ -977,7 +1059,7 @@ class DirectMessageDetailsSection extends Component {
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
-                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 1px 0px 0px','border-radius': border_radii}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radii}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 

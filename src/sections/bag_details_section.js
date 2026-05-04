@@ -39,6 +39,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
 import { Virtuoso } from "react-virtuoso";
+import { VList } from "virtua";
 
 var bigInt = require("big-integer");
 
@@ -95,7 +96,7 @@ function toTree(data) {
 class BagDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], selected_variant:{}, visible_hidden_messages:[], selected_price_tag:{}, selected_token_tag:{}
+        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], selected_variant:{}, visible_hidden_messages:[], selected_price_tag:{}, selected_token_tag:{}, startIndex: 100000
     };
 
     reset_tags(){
@@ -115,6 +116,8 @@ class BagDetailsSection extends Component {
 
     componentDidMount() {
         this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
+        // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
+        setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
     }
 
     componentWillUnmount() {
@@ -1849,7 +1852,7 @@ class BagDetailsSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">
-                                        <motion.div key={(item['storefront_variant_id']+index)} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{}} onClick={()=>console.log()}>
+                                        <motion.div key={(item['storefront_variant_id']+index)} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }}  transition={{ duration: 0.3 }} style={{}} onClick={()=>console.log()}>
                                             <div>
                                                 <div style={{'margin': '3px 0px 3px 0px'}} onClick={()=> this.when_ordered_variant_item_clicked(item, object)}>
                                                     {this.render_ordered_variant_item(item, object)}
@@ -2048,11 +2051,52 @@ class BagDetailsSection extends Component {
         this.locationPickerRef = React.createRef();
     }
 
-    componentDidUpdate(){
-        var has_scrolled = this.has_user_scrolled[this.props.selected_bag_item]
-        if(has_scrolled == null){
-            this.scroll_to_bottom()
+    componentDidUpdate(prevProps){
+        const prevCount = this.get_previous_state_messages(prevProps).length
+        const currentCount = this.get_message_count().length
+        
+        if (currentCount > prevCount) {
+            const added = currentCount - prevCount;
+            this.setState(prev => ({
+                startIndex: prev.startIndex - added
+            }));
         }
+    }
+
+    get_previous_state_messages(prevProps){
+        var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
+        const chain_messages = prevProps.app_state.object_messages[object['e5_id']] == null ? [] : prevProps.app_state.object_messages[object['e5_id']]
+        const socket_messages = prevProps.app_state.socket_object_messages[object['e5_id']] == null ? [] : prevProps.app_state.socket_object_messages[object['e5_id']]
+        const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
+        const items = this.filter_messages_for_blocked_accounts(all_messages)
+        var stacked_items = [].concat(this.get_stacked_items2(object, prevProps)).reverse()
+        return stacked_items.concat(items)
+    }
+
+    get_message_count(){
+        var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
+        var items = [].concat(this.get_convo_messages(object)).reverse()
+        var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
+        return stacked_items.concat(items)
+    }
+
+    get_stacked_items2(object, prevProps){
+        // var object = this.get_post_items()[this.props.selected_audio_item];
+        var convo_id = object['id']
+
+        var stack = prevProps.app_state.stack_items
+        var stacked_items = []
+        for(var i=0; i<stack.length; i++){
+            if(stack[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */){
+                for(var e=0; e<stack[i].messages_to_deliver.length; e++){
+                    var message_obj = stack[i].messages_to_deliver[e]
+                    if(message_obj['id'] == convo_id){
+                        stacked_items.push(message_obj)
+                    }
+                }
+            }
+        }
+        return stacked_items
     }
 
     render_sent_received_messages(object, he){
@@ -2134,16 +2178,48 @@ class BagDetailsSection extends Component {
                         style={{ height: middle }}
                         totalCount={items.length}
                         initialTopMostItemIndex={items.length-1}
-                        rangeChanged={(range) => {
-                            this.handleScroll('event', object)
-                        }}
+                        followOutput={false}
+                        alignToBottom={true}
+                        firstItemIndex={this.state.startIndex}
                         itemContent={(index) => {
-                            const item = reversed_items[index]
+                            const localIndex = index - this.state.startIndex;
+                            const item = reversed_items[localIndex];
+                            if (!item) return null;
                             const ref_item = index == items.length - 1 ? this.messagesEnd : null;
                             return (
                                 <div>
                                     <AnimatePresence initial={true} mode="popLayout">
-                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                            <div>
+                                                {this.render_message_as_focused_if_so(item, object)}
+                                                <div style={{height:3}}/>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                    {/* <div style={{'padding': '2px 5px 2px 5px'}}>
+                                        {this.render_message_as_focused_if_so(item, object)}
+                                        <div style={{height:3}}/>
+                                    </div> */}
+                                </div>
+                            );
+                        }}
+                    />
+                    {/* <VList
+                        ref={(el) => (this.virtuoso_list = el)}
+                        style={{ height: middle }}
+                        onScroll={(offset) => {
+                            const atBottom = offset < 80;
+                            if (!atBottom) {
+                                this.has_user_scrolled[this.props.selected_bag_item] = true;
+                            }
+                        }}
+                    >
+                        {reversed_items.map((item, index) => {
+                            const ref_item = index == items.length - 1 ? this.messagesEnd : null;
+                            return (
+                                <div>
+                                    <AnimatePresence initial={true} mode="popLayout">
+                                        <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }}  transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                             <div>
                                                 {this.render_message_as_focused_if_so(item, object)}
                                                 <div style={{height:3}}/>
@@ -2152,8 +2228,8 @@ class BagDetailsSection extends Component {
                                     </AnimatePresence>
                                 </div>
                             );
-                        }}
-                    />   
+                        })}
+                    </VList>     */}
                 </div>
             )
         }
@@ -2294,14 +2370,14 @@ class BagDetailsSection extends Component {
         var text = this.format_message(item['message'], object)
         // const parts = text.split(/(\d+)/g);
         const parts = this.split_text(text);
-        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? '0px 7px 7px 0px': '7px'
+        const border_radii = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? '7px 0px 0px 7px': '7px'
 
         const c = this.props.get_my_state_color()
         const background_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['my_messages_color'][c] : this.props.theme['view_group_card_item_background']
         return(
             <div>
                 <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
-                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 0px 0px 1px','border-radius': border_radii}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 1px 0px 0px','border-radius': border_radii}}>
                         <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radii}}>
                             <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
@@ -2974,7 +3050,7 @@ class BagDetailsSection extends Component {
                         return (
                             <div>
                                 <AnimatePresence initial={true} mode="popLayout">
-                                    <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} layout={true} transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <motion.div key={item['message_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }}  transition={{ duration: 0.3 }} style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                         <div>
                                             {this.render_main_comment(item, 0, object)}
                                             <div style={{height:3}}/>
