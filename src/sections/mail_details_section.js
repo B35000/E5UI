@@ -1158,6 +1158,7 @@ class MailDetailsSection extends Component {
 
     get_previous_state_messages(prevProps){
         var mail = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+        if(mail == null) return [];
         var convo_id = mail['convo_id']
         const chain_messages = prevProps.app_state.mail_messages[convo_id] == null ? [] : prevProps.app_state.mail_messages[convo_id]
         const socket_messages = prevProps.app_state.socket_mail_messages[convo_id] == null ? [] : prevProps.app_state.socket_mail_messages[convo_id]
@@ -1188,6 +1189,7 @@ class MailDetailsSection extends Component {
 
     get_message_count(){
         var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+        if(object == null) return [];
         var items = [].concat(this.get_convo_messages(object)).reverse()
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
         var final_items_without_divider = stacked_items.concat(items)
@@ -2299,7 +2301,7 @@ class MailDetailsSection extends Component {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14')uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(

@@ -3227,6 +3227,7 @@ return data['data']
 
     get_previous_state_messages(prevProps){
         var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
+        if(object == null) return [];
         const chain_messages = prevProps.app_state.object_messages[object['e5_id']] == null ? [] : prevProps.app_state.object_messages[object['e5_id']]
         const socket_messages = prevProps.app_state.socket_object_messages[object['e5_id']] == null ? [] : prevProps.app_state.socket_object_messages[object['e5_id']]
         const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
@@ -3256,6 +3257,7 @@ return data['data']
 
     get_message_count(){
         var object = this.get_item_in_array(this.get_audio_items(), this.props.selected_audio_item);
+        if(object == null) return [];
         var items = [].concat(this.get_convo_messages(object)).reverse()
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
         return stacked_items.concat(items)
@@ -4373,7 +4375,7 @@ return data['data']
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
 
@@ -4382,7 +4384,7 @@ return data['data']
         return(
             <div>
                 <ViewGroups show_account_details={this.props.show_account_details.bind(this)}  show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} censored_keyword_phrases={censor_list} select_deselect_tag={this.props.select_deselect_tag.bind(this)} rating_denomination={rating_denomination}
-                
+                show_images={this.props.show_images.bind(this)}
                 />
             </div>
         )

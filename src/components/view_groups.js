@@ -1046,7 +1046,7 @@ class ViewGroups extends Component {
                             a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'] }} {...props} onClick={(e) => this.handleLinkClick(e, props.href)} /* target="_blank" rel="noopener noreferrer" */ />,
                             hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
                             br: ({ node, ...props }) => <br style={{ color: this.props.theme['line_color'] }} {...props} />,
-                            img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} alt="" style={{ width: '100%', height: 'auto' }} {...props} /> )
+                            img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} src={this.get_image_from_file(props.src)} alt={props.alt || "e"} style={{ width: 'auto', maxWidth:'100px', height: 'auto', 'border-radius': '10px' }} /* {...props} */ /> )
                         }}
                     >{source}</Markdown>
                 </div>
@@ -1721,11 +1721,12 @@ class ViewGroups extends Component {
         try{
             if(ecid == null) return empty_image
             if(!ecid.startsWith('image')) return ecid
-            var ecid_obj = this.get_cid_split(ecid)
             // console.log('get_image_from_file', ecid, this.props.uploaded_data)
+            var ecid_obj = this.get_cid_split(ecid)
             if(this.props.uploaded_data[ecid_obj['filetype']] == null) return this.get_default_image_or_empty_image(ecid)
             var data = this.props.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
-            if(data == null) return this.get_default_image_or_empty_image(ecid)
+            if(data == null) return this.get_default_image_or_empty_image(ecid);
+            // console.log('get_image_from_file', ecid, data['data'])
             return data['data']
         }catch(e){
             console.log(e)

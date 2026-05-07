@@ -2065,6 +2065,7 @@ class BagDetailsSection extends Component {
 
     get_previous_state_messages(prevProps){
         var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
+        if(object == null) return [];
         const chain_messages = prevProps.app_state.object_messages[object['e5_id']] == null ? [] : prevProps.app_state.object_messages[object['e5_id']]
         const socket_messages = prevProps.app_state.socket_object_messages[object['e5_id']] == null ? [] : prevProps.app_state.socket_object_messages[object['e5_id']]
         const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
@@ -2075,6 +2076,7 @@ class BagDetailsSection extends Component {
 
     get_message_count(){
         var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
+        if(object == null) return [];
         var items = [].concat(this.get_convo_messages(object)).reverse()
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
         return stacked_items.concat(items)
@@ -3152,7 +3154,7 @@ class BagDetailsSection extends Component {
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         var uploaded_data = {}
-        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '14')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14')uploaded_data = this.props.app_state.uploaded_data
 
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
