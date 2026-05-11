@@ -108,7 +108,7 @@ class home_page extends Component {
         // get_selected_chart_item_tags_object:this.get_selected_chart_item_tags_object(),
         // get_selected_contract_chart_item_tags_object:this.get_selected_contract_chart_item_tags_object(),
         
-        view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
+        view_post_bottomsheet: false, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
         viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], viewed_nitros:[], viewed_polls:[], viewed_tokens:[], viewed_objects:[],
         
@@ -249,6 +249,10 @@ class home_page extends Component {
             if(cupcake_state.current_load_time != null){
                 this.setState({current_load_time: cupcake_state.current_load_time})
             }
+
+            if(cupcake_state.preserved_state != null){
+                this.set_preserved_state_data(cupcake_state.preserved_state)
+            }
         }
     }
 
@@ -282,8 +286,69 @@ class home_page extends Component {
             all_pinns:this.state.all_pinns,
             // tabs: this.state.tabs
             current_load_time:this.state.current_load_time,
+            preserved_state: this.get_preserved_state(),
         }
     }
+
+    get_preserved_state(){
+        if(this.props.app_state.preserve_state == this.props.app_state.loc['1593mm']/* never-preserve */){
+            return {}
+        }
+        else if(this.props.app_state.preserve_state == this.props.app_state.loc['1593ml']/* 'entire-state' */ || this.props.app_state.preserve_state == this.props.app_state.loc['1593mk']/* 'only-necessary' */){
+            const cached_state_obj = structuredClone(this.state)
+            delete cached_state_obj.page
+            delete cached_state_obj.work_page_tags_object
+            delete cached_state_obj.explore_page_tags_object
+            delete cached_state_obj.wallet_page_tags_object
+
+            delete cached_state_obj.selected_ether_item
+            delete cached_state_obj.selected_end_item 
+            delete cached_state_obj.selected_spend_item 
+            delete cached_state_obj.selected_e5_item
+            delete cached_state_obj.selected_job_post_item
+            delete cached_state_obj.selected_contract_item
+            delete cached_state_obj.selected_subscription_item
+            delete cached_state_obj.selected_post_item 
+            delete cached_state_obj.selected_channel_item
+            delete cached_state_obj.selected_proposal_item
+            delete cached_state_obj.selected_mail_item
+            delete cached_state_obj.selected_storefront_item
+            delete cached_state_obj.selected_bag_item 
+            delete cached_state_obj.selected_contractor_item
+            delete cached_state_obj.selected_coin_item 
+            delete cached_state_obj.selected_audio_item 
+            delete cached_state_obj.selected_video_item 
+            delete cached_state_obj.selected_nitro_item
+            delete cached_state_obj.selected_bill_item
+            delete cached_state_obj.selected_poll_item
+            delete cached_state_obj.selected_direct_message_item
+            delete cached_state_obj.detail_page
+            delete cached_state_obj.detail_selected_tag
+
+            cached_state_obj.view_post_bottomsheet = false; 
+            cached_state_obj.filter_section_bottomsheet = false; 
+            cached_state_obj.post_preview_bottomsheet = false; 
+            cached_state_obj.post_nsfw_bottomsheet = false;
+
+            return cached_state_obj
+        }
+    }
+
+    set_preserved_state_data(preserved_state){
+        if(Object.keys(preserved_state).length == 0) return;
+        const state = structuredClone(this.state)
+        Object.assign(state, preserved_state)
+        this.setState(state)
+    }
+
+
+
+
+
+
+
+
+
 
     /* returns the tag object used for the main page */
     get_main_page_tag_object(page){
@@ -1072,8 +1137,6 @@ class home_page extends Component {
 
     /* Get notification count for a specific page */
     get_notification_count(page){
-        // Replace this with your actual notification logic
-        // For example, you might have notifications stored in state or props
         // return 35;
         
         var count = 0;
@@ -1337,79 +1400,96 @@ class home_page extends Component {
     }
 
     sort_event_count_into_tag_bar_notifications(){
-        const all_events = this.props.app_state.notification_object_events
-        const obj2 = this.populate_object()
+        // const all_events = this.props.app_state.notification_object_events
+        // const obj2 = this.populate_object()
+        // const filter_for_all = (events, page_id) => {
+        //     const current_pages_load_time = this.state.current_load_time[page_id] || ((Date.now()/1000) - 60*60*24*30)
+        //     return events.filter(function (event) {
+        //         return (parseInt(event.returnValues.p4) > current_pages_load_time)
+        //     }).length
+        // }
+        // const filter_for_participated = (events, page_id, participated_objs) => {
+        //     const current_pages_load_time = this.state.current_load_time[page_id] || ((Date.now()/1000) - 60*60*24*30)
+        //     return events.filter(function (event) {
+        //         const id = event['e5'] + ':' + event.returnValues.p1
+        //         return ((parseInt(event.returnValues.p4) > current_pages_load_time) && participated_objs.includes(id))
+        //     }).length
+        // }
+        // const filter_for_following = (events, page_id, following_objs) => {
+        //     const current_pages_load_time = this.state.current_load_time[page_id] || ((Date.now()/1000) - 60*60*24*30)
+        //     return events.filter(function (event) {
+        //         const id = event['e5'] + ':' + event.returnValues.p3
+        //         return ((parseInt(event.returnValues.p4) > current_pages_load_time) && following_objs.includes(id))
+        //     }).length
+        // }
+
+        // //job
+        // obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][1/* all */] = filter_for_all(all_events['job'], this.props.app_state.loc['1196']/* 'jobs' */+this.props.app_state.loc['1202']/* 'all' */);
         
-        const filter_for_all = (events, page_id) => {
-            const current_pages_load_time = this.state.current_load_time[page_id] || ((Date.now()/1000) - 60*60*24*30)
-            return events.filter(function (event) {
-                return (parseInt(event.returnValues.p4) > current_pages_load_time)
-            }).length
-        }
-        const filter_for_participated = (events, page_id, participated_objs) => {
-            const current_pages_load_time = this.state.current_load_time[page_id] || ((Date.now()/1000) - 60*60*24*30)
-            return events.filter(function (event) {
-                const id = event['e5'] + ':' + event.returnValues.p1
-                return ((parseInt(event.returnValues.p4) > current_pages_load_time) && participated_objs.includes(id))
-            }).length
-        }
-        const filter_for_following = (events, page_id, following_objs) => {
-            const current_pages_load_time = this.state.current_load_time[page_id] || ((Date.now()/1000) - 60*60*24*30)
-            return events.filter(function (event) {
-                const id = event['e5'] + ':' + event.returnValues.p3
-                return ((parseInt(event.returnValues.p4) > current_pages_load_time) && following_objs.includes(id))
-            }).length
-        }
-
-        //job
-        obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][1/* all */] = filter_for_all(all_events['job'], this.props.app_state.loc['1196']/* 'jobs' */+this.props.app_state.loc['1202']/* 'all' */);
+        // obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][2/* participated */] = filter_for_participated(all_events['job'], this.props.app_state.loc['1196']/* 'jobs' */+this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.my_objects)
         
-        obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][2/* participated */] = filter_for_participated(all_events['job'], this.props.app_state.loc['1196']/* 'jobs' */+this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.my_objects)
+        // obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][3/* following */] = filter_for_following(all_events['job'], this.props.app_state.loc['1196']/* 'jobs' */+this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.followed_accounts)
         
-        obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][3/* following */] = filter_for_following(all_events['job'], this.props.app_state.loc['1196']/* 'jobs' */+this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.followed_accounts)
+        // obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][0/* root */] = obj2[this.props.app_state.loc['1196']/* 'jobs' */][2].slice(1).reduce((a, b) => a + b, 0);
+
+        // //contract
+        // obj2[this.props.app_state.loc['1197']/* 'contracts' */][2][1/* all */] = filter_for_all(all_events['contract'], this.props.app_state.loc['1197']/* 'contracts' */+this.props.app_state.loc['1202']/* 'all' */);
+
+        // obj2[this.props.app_state.loc['1197']/* 'contracts' */][2][0/* root */] = obj2[this.props.app_state.loc['1197']/* 'contracts' */][2].slice(1).reduce((a, b) => a + b, 0);
+
+
+        // //contractor
+        // obj2[this.props.app_state.loc['1198']/* 'contractors' */][2][1/* all */] = filter_for_all(all_events['job'], this.props.app_state.loc['1198']/* 'contractors' */+this.props.app_state.loc['1202']/* 'all' */);
         
-        obj2[this.props.app_state.loc['1196']/* 'jobs' */][2][0/* root */] = obj2[this.props.app_state.loc['1196']/* 'jobs' */][2].slice(1).reduce((a, b) => a + b, 0);
+        // obj2[this.props.app_state.loc['1198']/* 'contractors' */][2][2/* following */] = filter_for_following(all_events['job'], this.props.app_state.loc['1198']/* 'contractors' */+this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.followed_accounts)
 
-        //contract
-        obj2[this.props.app_state.loc['1197']/* 'contracts' */][2][1/* all */] = filter_for_all(all_events['contract'], this.props.app_state.loc['1197']/* 'contracts' */+this.props.app_state.loc['1202']/* 'all' */);
-
-        obj2[this.props.app_state.loc['1197']/* 'contracts' */][2][0/* root */] = obj2[this.props.app_state.loc['1197']/* 'contracts' */][2].slice(1).reduce((a, b) => a + b, 0);
-
-
-        //contractor
-        obj2[this.props.app_state.loc['1198']/* 'contractors' */][2][1/* all */] = filter_for_all(all_events['job'], this.props.app_state.loc['1198']/* 'contractors' */+this.props.app_state.loc['1202']/* 'all' */);
-        
-        obj2[this.props.app_state.loc['1198']/* 'contractors' */][2][2/* following */] = filter_for_following(all_events['job'], this.props.app_state.loc['1198']/* 'contractors' */+this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.followed_accounts)
-
-        obj2[this.props.app_state.loc['1198']/* 'contractors' */][2][0/* root */] = obj2[this.props.app_state.loc['1198']/* 'contractors' */][2].slice(1).reduce((a, b) => a + b, 0);
+        // obj2[this.props.app_state.loc['1198']/* 'contractors' */][2][0/* root */] = obj2[this.props.app_state.loc['1198']/* 'contractors' */][2].slice(1).reduce((a, b) => a + b, 0);
 
 
         //proposal
 
 
         //subscriptions
-        
     }
 
     populate_object(){
+        //this.get_all_work_notification_items([]).length
         const obj = {}
         obj[this.props.app_state.loc['1196']/* 'jobs' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1205']/* 'applied' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,],
+            ['xor','e',1], [
+                this.props.app_state.loc['1196']/* 'jobs' */,
+                this.props.app_state.loc['1202']/* 'all' */, 
+                this.props.app_state.loc['1264at']/* 'participated ✍' */, 
+                this.props.app_state.loc['1264ag']/* 'following' */, 
+                this.props.app_state.loc['1264ah']/* 'tag-targeted' */, 
+                this.props.app_state.loc['1205']/* 'applied' */,
+                this.props.app_state.loc['1203']/* 'viewed' */,
+                this.props.app_state.loc['1204']/* 'created' */, 
+                this.props.app_state.loc['1222']/* 'pinned' */, 
+                /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */ 
+            ], [this.get_all_work_notification_items(['follower_job', 'job_application_response','job_application']).length,0,0,
+                this.get_all_work_notification_items(['follower_job']).length,
+                0,
+                this.get_all_work_notification_items(['job_application_response']).length,
+                0,
+                this.get_all_work_notification_items(['job_application']).length/* created */,
+                0,0,0,0,0,0,0,0,0,0,0,
+            ],
         ];
         obj[this.props.app_state.loc['1197']/* 'contracts' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1332e']/* 'main' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264d'] *//* 'contract-notifications' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1332e']/* 'main' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264d'] *//* 'contract-notifications' */], [this.get_all_work_notification_items(['pre_purchase_request', 'contract']).length,this.get_all_work_notification_items(['pre_purchase_request']).length,0,this.get_all_work_notification_items(['contract']).length,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1198']/* 'contractors' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264e'] *//* 'contractor-notifications' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264e'] *//* 'contractor-notifications' */], [this.get_all_work_notification_items(['job_request_response', 'job_request']).length,this.get_all_work_notification_items(['job_request_response']).length,0,0,0,this.get_all_work_notification_items(['job_request']).length,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1199']/* 'proposals' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */, this.props.app_state.loc['1264aa']/* 'main-contract' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */, this.props.app_state.loc['1264aa']/* 'main-contract' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [this.get_all_work_notification_items(['proposal']).length,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1200']/* 'subscriptions' */] = [
             ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1201']/* 'mail' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */, /* this.props.app_state.loc['1264f'] *//* 'mail-notifications' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */ /* , this.props.app_state.loc['1264f'] *//* 'mail-notifications' */, this.props.app_state.loc['1264bo']/* 'direct-message 💬' */, this.props.app_state.loc['1593kn']/* 'calls ☎️' */], [this.get_all_work_notification_items(['mail','message','direct_message','call_request']).length,this.get_all_work_notification_items(['mail', 'message']).length,0,this.get_all_work_notification_items(['message']).length,this.get_all_work_notification_items(['direct_message']).length,this.get_all_work_notification_items(['call_request']).length,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1264s']/* 'nitro' */] = [
             ['xor','e',1], [this.props.app_state.loc['1264s']/* 'nitro' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1264t']/* 'bought' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
@@ -1417,47 +1497,66 @@ class home_page extends Component {
 
 
 
-
+        //this.get_all_explore_notification_items([]).length
         obj[this.props.app_state.loc['1212']/* 'E5s' */] = [
             ['xor','',0], [this.props.app_state.loc['1212']/* 'E5s' */,this.props.app_state.loc['1220']/* 'info ℹ️' */,this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1213']/* 'posts' */] = [
-            ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following 👥' */, this.props.app_state.loc['1264ah']/* 'tag-targeted 🎯' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned 📌' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','',0], [this.props.app_state.loc['1213']/* 'posts' */,this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following 👥' */, this.props.app_state.loc['1264ah']/* 'tag-targeted 🎯' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned 📌' */], [this.get_all_explore_notification_items(['follower_post']).length,0,0,this.get_all_explore_notification_items(['follower_post']).length,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1214']/* 'channels' */] = [
             ['xor','',0], [this.props.app_state.loc['1214']/* 'channels' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1215']/* 'storefront' */] = [
-            ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264az']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264az']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264g'] *//* 'storefront-notifications' */], [this.get_all_explore_notification_items(['storefront', 'auctionbids', 'storefront_purchase_request', 'storefront_request_response']).length,this.get_all_explore_notification_items(['storefront']).length,this.get_all_explore_notification_items(['storefront_request_response']).length,0,0,0,this.get_all_explore_notification_items(['auctionbids', 'storefront_purchase_request']).length,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1216']/* 'bags' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264ae']/* 'my-responses' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264ae']/* 'my-responses' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */,/* this.props.app_state.loc['1264h'] *//* 'bag-notifications' */], [this.get_all_explore_notification_items(['bag', 'bag_application_response', 'follower_bag']).length,this.get_all_explore_notification_items(['bag']).length,this.get_all_explore_notification_items(['bag_application_response']).length,this.get_all_explore_notification_items(['follower_bag']).length,0,0,0,this.get_all_explore_notification_items(['bag']).length,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1264k']/* 'audioport' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists 💽' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','',0], [this.props.app_state.loc['1264k']/* 'audioport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired' */, this.props.app_state.loc['1264m']/* 'playlists 💽' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */], [this.get_all_explore_notification_items(['follower_audio']).length,0,0,this.get_all_explore_notification_items(['follower_audio']).length,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired ✅' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','',0], [this.props.app_state.loc['1264p']/* 'videoport' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264l']/* 'acquired ✅' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */], [this.get_all_explore_notification_items(['follower_video']).length,0,0,this.get_all_explore_notification_items(['follower_video']).length,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = [
-            ['xor','',0], [this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264bn']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','',0], [this.props.app_state.loc['1264ao']/* 'polls' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264bn']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [this.get_all_explore_notification_items(['follower_poll']).length,0,0,this.get_all_explore_notification_items(['follower_poll']).length,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
 
 
 
 
-
+        //this.get_all_wallet_notification_items([]).length
         obj[this.props.app_state.loc['1264ai']/* bills */] = [
-            ['xor','',0], [this.props.app_state.loc['1264ai']/* bills */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+            ['xor','',0], [this.props.app_state.loc['1264ai']/* bills */, this.props.app_state.loc['1264ak']/* 'received' */, this.props.app_state.loc['1264am']/* 'sent' */, this.props.app_state.loc['1264an']/* 'reucrring' */,this.props.app_state.loc['1222']/* 'pinned' */, ], [this.get_all_wallet_notification_items(['bill_request']).length,this.get_all_wallet_notification_items(['bill_request']).length,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
-
         obj[this.props.app_state.loc['1218']/* 'ends' */] = [
             ['xor','',0], [this.props.app_state.loc['1218']/* 'ends' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264ba']/* 'main ⚫' */, this.props.app_state.loc['1264bf']/* 'E-Tokens 📈' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
-
         obj[this.props.app_state.loc['1219']/* 'spends' */] = [
             ['xor','',0], [this.props.app_state.loc['1219']/* 'spends' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264bb']/* 'main ⚪' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1264bc']/* 'hyper 🌟' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
+
+
+
+
+        if(this.state.page == '?'){
+            obj['e'] = [
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1196']/* 'e.jobs' */,'e.'+this.props.app_state.loc['1197']/* 'e.contracts' */,'e.'+this.props.app_state.loc['1198']/* 'e.contractors' */, 'e.'+this.props.app_state.loc['1199']/* 'e.proposals' */, 'e.'+this.props.app_state.loc['1264s']/* 'e.nitro' */,'e.'+this.props.app_state.loc['1200']/* 'e.subscriptions' */, 'e.'+this.props.app_state.loc['1201']/* 'e.mail' */], [0,this.get_all_work_notification_items(['follower_job', 'job_application_response','job_application']).length,this.get_all_work_notification_items(['pre_purchase_request', 'contract']).length,this.get_all_work_notification_items(['job_request_response', 'job_request']).length,this.get_all_work_notification_items(['proposal']).length,0,0,this.get_all_work_notification_items(['mail','message','direct_message','call_request']).length,0,0,0,0,0,0,0,0,]
+            ]
+        }
+        else if(this.state.page == 'e'){
+            obj['e'] = [
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1212']/* 'e.E5s' */,'e.'+this.props.app_state.loc['1213']/* 'e.posts' */,'e.'+this.props.app_state.loc['1214']/* 'e.channels' */, 'e.'+this.props.app_state.loc['1264ao']/* 'polls' */, 'e.'+this.props.app_state.loc['1215']/* 'e.storefront' */, 'e.'+this.props.app_state.loc['1216']/* 'e.bags' */, 'e.'+this.props.app_state.loc['1264k']/* 'e.audioport' */, 'e.'+this.props.app_state.loc['1264p']/* 'videoport' */], [0,0,this.get_all_explore_notification_items(['follower_post']).length,0,this.get_all_explore_notification_items(['follower_poll']).length,this.get_all_explore_notification_items(['storefront', 'auctionbids', 'storefront_purchase_request', 'storefront_request_response']).length,this.get_all_explore_notification_items(['bag', 'bag_application_response', 'follower_bag']).length,this.get_all_explore_notification_items(['follower_audio']).length,this.get_all_explore_notification_items(['follower_video']).length,0,0,0,0,0,0,0,0,]
+            ]
+        }
+        else if(this.state.page == 'w'){
+            obj['e'] = [
+                ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */], [0,0,0,0,0,this.get_all_wallet_notification_items(['bill_request']).length,0,0,0,0,0,0,0,0,0,0,]
+            ]
+        }
+
+        return obj
     }
 
 
@@ -2028,7 +2127,8 @@ class home_page extends Component {
     render_tag_bar_group(option, size){
         return(
             <div>
-                <Tags font={this.props.app_state.font} page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                <Tags font={this.props.app_state.font} page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state} badge_data={this.populate_object()} 
+                />
             </div>
         )
     }
@@ -2064,6 +2164,10 @@ class home_page extends Component {
         if(is_selecting_same_tag == true && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */ && selected_page != this.props.app_state.loc['1212']/* 'E5s' */ && clicked_tag_name != this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */ && clicked_tag_name != this.props.app_state.loc['1264bo']/* 'direct-message 💬' */ && clicked_tag_name != this.props.app_state.loc['1593kn']/* 'calls ☎️' */ && clicked_tag_name != this.props.app_state.loc['1593x']/* 'Watch 👁️' */ && clicked_tag_name != this.props.app_state.loc['1264bp']/* 'indexed-data 🔎' */){
             this.props.show_dialog_bottomsheet({'id':id, 'selected_page':selected_page}, 'home_page_view_options')
             return;
+        }
+
+        if(clicked_tag_name == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+            this.props.reload_all_my_direct_messages()
         }
         
         var posts_to_load = []
@@ -2795,7 +2899,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page2(id, selected_page)
-            var my_objects = this.props.app_state.my_objects
+            var my_objects = this.props.app_state.my_objects.concat(this.props.app_state.my_objects2)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
@@ -2871,7 +2975,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var my_channels = this.props.app_state.my_channels.slice().concat(this.props.app_state.my_objects)
+            var my_channels = this.props.app_state.my_channels.slice().concat(this.props.app_state.my_objects, this.props.app_state.my_objects2)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
@@ -3226,7 +3330,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var my_objects = this.props.app_state.my_objects
+            var my_objects = this.props.app_state.my_objects.concat(this.props.app_state.my_objects2)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
@@ -3561,7 +3665,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264az']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var my_objects = this.props.app_state.my_objects
+            var my_objects = this.props.app_state.my_objects.concat(this.props.app_state.my_objects2)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
@@ -3856,7 +3960,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var my_objects = this.props.app_state.my_objects
+            var my_objects = this.props.app_state.my_objects.concat(this.props.app_state.my_objects2)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
@@ -3958,7 +4062,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var my_objects = this.props.app_state.my_objects
+            var my_objects = this.props.app_state.my_objects.concat(this.props.app_state.my_objects2)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var id = object['e5'] + ':' + object['id']
@@ -5179,7 +5283,12 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_direct_messages_read_receipts(object)
+        this.props.reload_all_messages(object, true)
         this.props.set_audio_pip_opacity_because_of_inactivity()
+
+        setTimeout(() => {
+            this.reset_chat_scroll_position()
+        }, (1 * 1000));
     }
 
     when_ether_object_clicked(index, id, e5){
@@ -6075,7 +6184,7 @@ class home_page extends Component {
                 does_entered_text_contain_reserved_keywords={this.props.does_entered_text_contain_reserved_keywords.bind(this)}
                 show_exchange_deposit_bottomsheet={this.props.show_exchange_deposit_bottomsheet.bind(this)} show_bridge_ether_bottomsheet={this.props.show_bridge_ether_bottomsheet.bind(this)} show_account_details={this.show_account_details.bind(this)} open_send_purchase_request_ui={this.props.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.props.get_storefron_purchase_requests.bind(this)}
 
-                open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.props.get_storefront_bag_payment_update_messages.bind(this)} get_bag_sender_transfers_events={this.props.get_bag_sender_transfers_events.bind(this)}
+                open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.props.get_storefront_bag_payment_update_messages.bind(this)} get_bag_sender_transfers_events={this.props.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.props.reload_all_messages.bind(this)}
                 />
             </div>
         )

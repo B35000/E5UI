@@ -1426,8 +1426,8 @@ class ViewStorefrontRequestPage extends Component {
     get_message_count(){
         var items = [].concat(this.get_convo_messages()).reverse()
         var stacked_items = [].concat(this.get_stacked_items()).reverse()
-        var final_items_without_divider = stacked_items.concat(items)
-        return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
+        return stacked_items.concat(items)
+        // return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
     }
 
     get_stacked_items2(object, prevProps){
@@ -2465,7 +2465,9 @@ class ViewStorefrontRequestPage extends Component {
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             }
 
-            this.unfocus_message()
+            if(this.get_focused_message() != null){
+                this.unfocus_message()
+            }
         }
     }
 

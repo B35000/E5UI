@@ -127,7 +127,7 @@ class tags extends Component {
                     <ul ref={this.myRef} onScroll={event => this.handleScroll(event)} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none', '-webkit-overflow-scrolling': 'touch'}}>
                         {active_tags.map((item, index) => (
                             <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
-                                {this.render_tag(index,selected,item,tag_size, this.getBadgeCount(item, index))}
+                                {this.render_tag(index,selected,item,tag_size, active)}
                             </li>
                         ))}
                   </ul>
@@ -135,9 +135,10 @@ class tags extends Component {
         );
     }
 
-    getBadgeCount(item, index) {
-        // return 35;
-        return null;
+    getBadgeCount(index, active) {
+        const badge_data = this.props.badge_data
+        if(badge_data != null && badge_data[active] != null && badge_data[active][2] != null && badge_data[active][2][index] != null) return badge_data[active][2][index];
+        else return 0
     }
 
     // /* renders the tag button item */
@@ -198,18 +199,18 @@ class tags extends Component {
     //     }
     // }
 
-    render_tag(index, selected, item, tag_size, badgeCount = null){
+    render_tag(index, selected, item, tag_size, active){
         return(
             <AnimatePresence initial={true}>
                 <motion.div key={'tag'+item+index} /* initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} */ onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}>
-                    {this.render_tag_button(index, selected, item, tag_size, badgeCount)}
+                    {this.render_tag_button(index, selected, item, tag_size, active)}
                 </motion.div>
             </AnimatePresence>
         )
     }
 
     /* renders the tag button item with optional notification badge */
-    render_tag_button(index, selected, text, tag_size, badgeCount = null){
+    render_tag_button(index, selected, text, tag_size, active){
         var background = this.props.theme['tag_background_color'];
         var text_background = this.props.theme['tag_text_color']
         var txt = text+'';
@@ -241,7 +242,7 @@ class tags extends Component {
         const badgeStyle = {
             position: 'absolute',
             top: '-4px',
-            right: '-6px',
+            right: '-3px',
             backgroundColor: this.props.theme['tag_text_color'],
             color: this.props.theme['indexed_tag_background'],
             borderRadius: '10px',
@@ -255,51 +256,35 @@ class tags extends Component {
             padding: '0 5px',
             boxShadow: '0px 0px 1px 1px '+this.props.theme['tag_text_color'],
         };
+
+        const badgeCount = this.getBadgeCount(index, active)
+
+        const render_badge_count = () => {
+            if(badgeCount != null && badgeCount > 0){
+                return(
+                    <div style={badgeStyle}>
+                        {badgeCount > 99 ? '99+' : badgeCount}
+                    </div>
+                )
+            }
+        }
         
         if(tag_size == 's'){
             return (
                 <div style={{position: 'relative', display: 'inline-block'}}>
-                    <style>{`
-                        .button-click {
-                            animation: clickAnim 0.3s ease;
-                        }
-                        @keyframes clickAnim {
-                            0%   { transform: scale(1); }
-                            50%  { transform: scale(0.85); }
-                            100% { transform: scale(1); }
-                        }
-                    `}</style>
                     <div style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
                         <p style={{'color': text_background, 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
-                    {badgeCount && badgeCount > 0 && (
-                        <div style={badgeStyle}>
-                            {badgeCount > 99 ? '99+' : badgeCount}
-                        </div>
-                    )}
+                    {render_badge_count()}
                 </div>
             );
         }else{
             return (
                 <div style={{position: 'relative', display: 'inline-block'}}>
-                    <style>{`
-                        .button-click {
-                            animation: clickAnim 0.2s ease;
-                        }
-                        @keyframes clickAnim {
-                            0%   { transform: scale(1); }
-                            50%  { transform: scale(0.85); }
-                            100% { transform: scale(1); }
-                        }
-                    `}</style>
                     <div style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
                         <p style={{'color': text_background, 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
                     </div>
-                    {badgeCount && badgeCount > 0 && (
-                        <div style={badgeStyle}>
-                            {badgeCount > 99 ? '99+' : badgeCount}
-                        </div>
-                    )}
+                    {render_badge_count()}
                 </div>
             );
         }

@@ -1272,7 +1272,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1422']/* 'slow' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: this.getLocale()['1428']/* 'enabled' */, homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* 'sluggish' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: this.getLocale()['1428']/* 'enabled' */, homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e', preserve_state: this.getLocale()['1593mk']/* 'only-necessary' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -1377,7 +1377,7 @@ class App extends Component {
 
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
-    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}
+    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[]
   };
 
   get_app_version(){
@@ -3760,10 +3760,22 @@ class App extends Component {
     this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
 
     await this.load_cookies();
-    this.load_cookies2()
+
+    if(this.state.preserve_state == this.getLocale()['1593mm']/* never-preserve */){
+      this.load_cookies2()
+    }
+    else{
+      await this.load_cookies2()
+    }
+
+    
     var me = this;
-    setTimeout(function() {
-      me.load_e5_data();
+    setTimeout(() => {
+      if(Object.keys(this.state.addresses).length > 0){
+        me.load_e5_data2();
+      }else{
+        me.load_e5_data();
+      }
       me.reset_background_sync()
 
       me.get_key()
@@ -4245,6 +4257,7 @@ class App extends Component {
       direct_messages: this.state.direct_messages,
       loaded_messages: this.state.loaded_messages,
       all_message_files: this.get_all_my_message_media_file_data(),
+      preserved_state: this.get_preserved_state(),
     }
   }
 
@@ -4276,6 +4289,7 @@ class App extends Component {
       var direct_messages = state.direct_messages
       var loaded_messages = state.loaded_messages
       var all_message_files = state.all_message_files
+      var preserved_state = state.preserved_state || {}
 
       // if(cached_tracks != null){
       //   this.set_cached_tracks_data(cached_tracks)
@@ -4284,6 +4298,9 @@ class App extends Component {
       // if(cached_files != null){
       //   this.load_cached_files_into_memory(cached_files)
       // }
+
+      this.set_preserved_state_data(preserved_state)
+      await this.wait(300);
 
       if(file_data != null){
         this.set_uploaded_file_data(file_data)
@@ -4435,6 +4452,7 @@ class App extends Component {
       var is_safe_to_load_focused_items_into_memory = storage_permissions != 'e'
       var locked_wallet_hashed_password = state.locked_wallet_hashed_password || this.state.locked_wallet_hashed_password;
       var locked_wallet = state.locked_wallet || this.state.locked_wallet;
+      var preserve_state = state.preserve_state || this.state.preserve_state;
 
       this.setState({
         theme: theme,
@@ -4528,6 +4546,7 @@ class App extends Component {
         is_safe_to_load_focused_items_into_memory: is_safe_to_load_focused_items_into_memory,
         locked_wallet_hashed_password: locked_wallet_hashed_password,
         locked_wallet: locked_wallet,
+        preserve_state: preserve_state,
       })
       var me = this;
       setTimeout(function() {
@@ -4588,6 +4607,7 @@ class App extends Component {
       me.stack_page.current?.set_chain_or_indexer_option()
       me.stack_page.current?.set_rounded_edges_option()
       me.stack_page.current?.set_notifications_permissions_option()
+      me.stack_page.current?.set_preserve_state_option()
     }, (1 * 1000));
   }
 
@@ -4837,6 +4857,133 @@ class App extends Component {
 
       return return_data
     }
+  }
+
+  get_preserved_state(){
+    if(this.state.preserve_state == this.getLocale()['1593mm']/* never-preserve */){
+      return {}
+    }
+    else if(this.state.preserve_state == this.getLocale()['1593ml']/* 'entire-state' */){
+      const cached_state_obj = structuredClone(this.state)
+      cached_state_obj.this_e5_contract_addresses = this.e5_contract_addresses
+      cached_state_obj.this_alias_data = this.alias_data
+      cached_state_obj.syncronizing_progress = 0
+      cached_state_obj.sync_steps = 28;
+      delete cached_state_obj.version;
+      delete cached_state_obj.locked_wallet_hashed_password;
+      delete cached_state_obj.seed;
+      delete cached_state_obj.account_seed
+      delete cached_state_obj.has_wallet_been_set;
+      delete cached_state_obj.seed_object;
+      delete cached_state_obj.has_account_been_loaded_from_storage;
+      delete cached_state_obj.accounts;
+
+      Object.assign(cached_state_obj, {
+        syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
+        should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
+        send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
+        dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false,
+      })
+
+      return cached_state_obj
+    }
+    else if(this.state.preserve_state == this.getLocale()['1593mk']/* 'only-necessary' */){
+      const cached_state_obj = {
+        sunrise: this.state.sunrise, 
+        sunset: this.state.sunset, 
+        city: this.state.user_city, 
+        region: this.state.user_region,
+        asset_price_data: this.state.asset_price_data,
+        addresses: this.state.addresses,
+        this_e5_contract_addresses: this.e5_contract_addresses, //-------
+
+        // account_balance: this.state.account_balance,
+        gas_price: this.state.gas_price,
+        chain_id: this.state.chain_id,
+        last_blocks: this.state.last_blocks,
+        number_of_blocks: this.state.number_of_blocks,
+        all_cities: this.state.all_cities,
+
+        boot_times: this.state.boot_times,
+        // user_account_id: this.state.user_account_id,
+        e5s_transaction_height: this.state.e5s_transaction_height,
+        saved_pre_launch_events: this.state.saved_pre_launch_events,
+
+        alias_bucket: this.state.alias_bucket,
+        alias_owners: this.state.alias_owners,
+        my_alias_events: this.state.my_alias_events,
+        alias_timestamp: this.state.alias_timestamp,
+        this_alias_data: this.alias_data, //-------
+
+        all_E5_runs: this.state.all_E5_runs,
+        E5_runs: this.state.E5_runs,
+        withdraw_balance: this.state.withdraw_balance,
+        basic_transaction_data: this.state.basic_transaction_data,
+        E5_balance: this.state.E5_balance,
+        end_balance_of_E5: this.state.end_balance_of_E5,
+        spend_balance_of_E5: this.state.spend_balance_of_E5,
+        end_balance_of_burn_account: this.state.end_balance_of_burn_account,
+        withdraw_event_data: this.state.withdraw_event_data,
+        pending_withdraw_event_data: this.state.pending_withdraw_event_data,
+        nitro_links: this.state.nitro_links,
+
+        registered_token_names: this.state.registered_token_names,
+        registered_token_symbols: this.state.registered_token_symbols,
+        token_directory: this.state.token_directory,
+        token_name_directory: this.state.token_name_directory,
+        created_tokens: this.state.created_tokens,
+        created_token_object_mapping: this.state.created_token_object_mapping,
+        token_thumbnail_directory: this.state.token_thumbnail_directory,
+        end_tokens: this.state.end_tokens,
+
+        created_jobs: this.state.created_jobs,
+        created_job_mappings: this.state.created_job_mappings,
+        my_applications: this.state.my_applications,
+        my_job_responses_notifications: this.state.my_job_responses_notifications,
+        my_job_application_responses_notifications: this.state.my_job_application_responses_notifications,
+
+        my_subscription_payment_mappings: this.state.my_subscription_payment_mappings,
+        created_nitros: this.state.created_nitros,
+        created_nitro_mappings: this.state.created_nitro_mappings,
+        nitro_album_art:this.state.nitro_album_art,
+        uploaded_data: this.state.uploaded_data,
+        all_data: this.state.all_data,
+
+        my_created_contracts: this.state.my_created_contracts,
+        my_created_contract_mapping: this.state.my_created_contract_mapping,
+        my_created_subscriptions: this.state.my_created_subscriptions,
+        my_created_subscription_object_mapping: this.state.my_created_subscription_object_mapping,
+
+        created_contracts: this.state.created_contracts,
+        created_contract_mapping: this.state.created_contract_mapping,
+
+        uploaded_data: this.state.uploaded_data,
+        file_streaming_dataL: this.state.file_streaming_data,
+        video_thumbnails: this.state.video_thumbnails,
+
+        object_view_data: this.state.object_view_data,
+        object_extra_data: this.state.object_extra_data,
+        socket_created_jobs: this.state.socket_created_jobs,
+        
+        // accounts: this.state.accounts,
+        sync_steps:28,
+      }
+
+      return cached_state_obj
+    }
+    return {}
+  }
+
+  set_preserved_state_data(preserved_state){
+    if(Object.keys(preserved_state).length == 0) return;
+    this.e5_contract_addresses = structuredClone(preserved_state.this_e5_contract_addresses)
+    this.alias_data = structuredClone(preserved_state.this_alias_data)
+    delete preserved_state.this_e5_contract_addresses;
+    delete preserved_state.this_alias_data;
+    const state = structuredClone(this.state)
+    Object.assign(state, preserved_state)
+    this.setState(state)
   }
 
 
@@ -6711,7 +6858,7 @@ class App extends Component {
 
           get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
 
-          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)}
+          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -7231,6 +7378,17 @@ class App extends Component {
     this.set_cookies_after_stack_action()
   }
 
+  reload_all_messages(object, silently=false){
+    if(silently == false) this.prompt_top_notification(this.getLocale()['2738ct']/* 'Reloading your chat\'s newer messages...' */, 2700);
+    const target_address = this.state.accounts[this.state.selected_e5].address
+    //(targets: any, filter_tags: any, application_responses?: any[], absolute_load_limit?: number, default_load_step?: number, authors?: any[], target_e5?: string, recipients?: any[])
+    this.get_objects_from_socket_and_set_in_state(['direct_message|'+target_address], [object['convo_id'], this.state.accounts[this.state.selected_e5].address], [], Date.now()-(1000*60*60*24*7), (36*7*24*60*60*1000), [], '', [])
+  }
+
+  reload_all_my_direct_messages(){
+    const target_address = this.state.accounts[this.state.selected_e5].address
+    this.get_objects_from_socket_and_set_in_state(['direct_message|'+target_address], [], [], Date.now()-(1000*60*60*24*7), (36*7*24*60*60*1000), [], '', [])
+  }
 
 
 
@@ -10105,6 +10263,14 @@ class App extends Component {
     const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
     const rawData = window.atob(base64);
     return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+  }
+
+  when_preserve_state_option_changed(item){
+    this.setState({preserve_state: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
 
@@ -25724,25 +25890,77 @@ class App extends Component {
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
-
-      const seed_object = this.state.saved_cypher_seed_object['seed_object']
-      if(this.state.accounts[this.state.selected_e5] != null && seed_object == null){
-        var me = this
-        setTimeout(function() {
-          me.start_get_accounts_data(true, false, false/* should_skip_pre_launch */)
-        }, (3 * 1000));
-      }else{
-        if(seed_object != null && Object.keys(seed_object).length > 0){
-          this.when_wallet_data_updated3(seed_object.added_tags, seed_object.set_salt, seed_object.selected_item, true, seed_object.selected_item_2)
-        }else{
-          this.when_wallet_data_updated(['(32)'], 0, '', true, 'e') 
-        }
-      }
+      await this.start_synchronization_process()
     }else{
       this.prompt_top_notification(this.getLocale()['2738']/* 'Not available in your region yet.' */, (35*60*1000))
       this.set_document_title('??(Beta)')
       this.disableConsole()
       this.changeFavicon('/not_available_tab_icon.png')
+    }
+  }
+
+  load_e5_data2 = async () => {
+    this.setState({should_keep_synchronizing_bottomsheet_open: true});
+    await this.check_and_set_default_rpc()
+    this.inc_synch_progress()
+
+    await this.update_nitro_privacy_signature(false)
+    this.inc_synch_progress()
+
+    await this.load_root_config()
+    this.inc_synch_progress()
+
+    await this.load_coin_and_externals_data()
+    this.inc_synch_progress()
+
+    await this.check_and_set_default_rpc()
+    this.inc_synch_progress()
+
+    if(this.is_allowed_in_e5()){
+      this.enableConsole()
+      this.inc_synch_progress()
+
+      if(this.state.device_country == null || this.state.device_city == null){
+        this.prompt_top_notification(this.getLocale()['2738al']/* 'e cant seem to access your general location info.' */, (35*60*1000))
+        return;
+      }
+      this.set_document_title(this.state.document_title)
+      this.inc_synch_progress()
+      this.load_coin_and_ether_coin_prices()
+      this.inc_synch_progress()
+
+      if(this.state.manual_beacon_node_disabled == 'e'){
+        await this.check_if_beacon_node_is_online()
+      }
+      this.inc_synch_progress()
+      this.start_synchronization_process()
+      this.inc_synch_progress()
+      while(this.state.syncronizing_progress < 100){
+        this.inc_synch_progress()
+        await this.wait(10)
+      }
+    }
+    else{
+      this.prompt_top_notification(this.getLocale()['2738']/* 'Not available in your region yet.' */, (35*60*1000))
+      this.set_document_title('??(Beta)')
+      this.disableConsole()
+      this.changeFavicon('/not_available_tab_icon.png')
+    }
+  }
+
+  async start_synchronization_process(){
+    const seed_object = this.state.saved_cypher_seed_object['seed_object']
+    if(this.state.accounts[this.state.selected_e5] != null && seed_object == null){
+      var me = this
+      setTimeout(function() {
+        me.start_get_accounts_data(true, false, false/* should_skip_pre_launch */)
+      }, (3 * 1000));
+    }else{
+      if(seed_object != null && Object.keys(seed_object).length > 0){
+        this.when_wallet_data_updated3(seed_object.added_tags, seed_object.set_salt, seed_object.selected_item, true, seed_object.selected_item_2)
+      }else{
+        this.when_wallet_data_updated(['(32)'], 0, '', true, 'e') 
+      }
     }
   }
 
@@ -28306,9 +28524,9 @@ class App extends Component {
 
       {'identifier':'my_paid_subscription_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'F5', 'requested_event_id':'e1', 'filter':{p2/* sender_acc_id */:'%%account%%'}, 'from_filter':{}}},/* my_paid_subscription_events  */
 
-      {'identifier':'created_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 30/* contract_obj_id */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_index_events  */
+      {'identifier':'created_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 30/* contract_obj_id */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_index_events  */
 
-      {'identifier':'created_subscripion_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 33/* subscription_obj_id */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_subscripion_index_events  */
+      {'identifier':'created_subscripion_index_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 33/* subscription_obj_id */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_subscripion_index_events  */
 
       {'identifier':'payment_history_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'F5', 'requested_event_id':'e1', 'filter':{p2/* sender_acc_id */:'%%account%%'}, 'from_filter':{}}},/* payment_history_events  */
 
@@ -28324,11 +28542,11 @@ class App extends Component {
 
       {'identifier':'my_sent_bill_events','fetch_last_data':'all', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p3/* context */:13/* bills */, p2/* sender_acc_id */:'%%account%%'}, 'from_filter':{}}},/* my_sent_bill_events  */
 
-      {'identifier':'created_post_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 18/* 18(post object) */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_post_events  */
+      {'identifier':'created_post_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 18/* 18(post object) */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_post_events  */
 
-      {'identifier':'created_channel_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */:  36/* 36(type_channel_target) */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_channel_events  */
+      {'identifier':'created_channel_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */:  36/* 36(type_channel_target) */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_channel_events  */
 
-      {'identifier':'created_store_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */:  27/* 27(storefront-item) */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_store_events  */
+      {'identifier':'created_store_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */:  27/* 27(storefront-item) */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_store_events  */
 
       {'identifier':'bids_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p3/* context */:45, p2/* sender_acc_id */:'%%account%%'}, 'from_filter':{}}},/* bids_events  */
 
@@ -28336,19 +28554,19 @@ class App extends Component {
 
       {'identifier':'response_count_data','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p3/* context */:36}, 'from_filter':{}}},/* response_count_data  */
 
-      {'identifier':'created_contractor_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 26/* 26(contractor_object) */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_contractor_events  */
+      {'identifier':'created_contractor_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 26/* 26(contractor_object) */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_contractor_events  */
 
       {'identifier':'all_requests','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p3/* context */:38}, 'from_filter':{}}},/* all_requests  */
 
       {'identifier':'all_responses','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p3/* context */:39}, 'from_filter':{}}},/* all_responses  */
 
-      {'identifier':'created_audio_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 19/* 19(audio_object) */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_audio_events  */
+      {'identifier':'created_audio_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 19/* 19(audio_object) */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_audio_events  */
 
       {'identifier':'requests','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: 21}, 'from_filter':{}}},/* requests  */
 
-      {'identifier':'created_video_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 20/* 20(video_object) */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_video_events  */
+      {'identifier':'created_video_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 20/* 20(video_object) */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_video_events  */
 
-      {'identifier':'created_poll_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 28/* 28(poll-object) */, p1:'%%index_hash%%'}, 'from_filter':{}}},/* created_poll_events  */
+      {'identifier':'created_poll_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e2', 'filter':{p3/* item_type */: 28/* 28(poll-object) */, /* p1:'%%index_hash%%' */}, 'from_filter':{}}},/* created_poll_events  */
 
       {'identifier':'sales','fetch_last_data':'none', 'fetch_params':{'requested_contract':'E52', 'requested_event_id':'e4', 'filter':{p1/* target_id */: 21}, 'from_filter':{}}},/* sales  */
 
@@ -30543,7 +30761,11 @@ class App extends Component {
     var end_balance_of_burn_account_clone = structuredClone(this.state.end_balance_of_burn_account)
     end_balance_of_burn_account_clone[e5] = end_balance_of_burn_account.toString().toLocaleString('fullwide', {useGrouping:false})
 
-    this.setState({end_balance_of_E5:end_balance_of_E5_clone, spend_balance_of_E5:spend_balance_of_E5_clone, end_balance_of_burn_account: end_balance_of_burn_account_clone})
+    this.setState({
+      end_balance_of_E5: end_balance_of_E5_clone, 
+      spend_balance_of_E5: spend_balance_of_E5_clone, 
+      end_balance_of_burn_account: end_balance_of_burn_account_clone
+    })
 
   }
 
@@ -46292,6 +46514,8 @@ class App extends Component {
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:'0'})
 
+    console.log('get_accounts_public_key', 'public key events for account', account, e5, events)
+
     if(events.length == 0){
       events = await this.get_accounts_public_key_from_other_e5s(account, e5)
     }
@@ -46325,7 +46549,7 @@ class App extends Component {
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_contract_from_e5(e5)
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
-    var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
+    const account_address = await contractInstance.methods.f289(account).call((error, result) => {});
     if(account_address.toString() != '0x0000000000000000000000000000000000000000'){
       for(var i=0; i<this.state.e5s['data'].length; i++){
         const focused_e5 = this.state.e5s['data'][i]
@@ -46334,14 +46558,14 @@ class App extends Component {
           const focused_contractAddress = this.get_contract_from_e5(focused_e5)
           const focused_contractInstance = new focused_web3.eth.Contract(contractArtifact.abi, focused_contractAddress);
 
-          var accounts_in_other_e5s = await focused_contractInstance.methods.f167([],[account_address], 2).call((error, result) => {});
-          var focused_account_id = accounts_in_other_e5s[0]
+          const accounts_in_other_e5s = await focused_contractInstance.methods.f167([],[account_address], 2).call((error, result) => {});
+          const focused_account_id = accounts_in_other_e5s[0]
 
           if(focused_account_id != 0){
             const E52contractArtifact = require('./contract_abis/E52.json');
             const E52_address = this.state.addresses[focused_e5][1];
             const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-            var events = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: focused_account_id, p3/* context */:'0'})
+            const events = await this.load_event_data(focused_web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: focused_account_id, p3/* context */:'0'})
 
             if(events.length != 0){
               return events
@@ -46499,7 +46723,6 @@ class App extends Component {
           const clone = structuredClone(this.state.object_messages)
           clone[e5_id] = messages
           this.setState({object_messages: clone})
-          // await this.wait(150)
         }
       }else{
         console.log('apppage', 'get_object_messages', 'unable to load data for specific comment', all_object_comment_events[j])
@@ -51498,8 +51721,6 @@ class App extends Component {
 
 
 
-
-
   async set_up_socket_connection_and_initialize_listeners(attempts){
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != ''){
@@ -51818,6 +52039,9 @@ class App extends Component {
       else if(message['type'] == 'lock_unlock_wallet'){
         me.process_new_lock_unlock_wallet_message(message, object_hash, from, true)
       }
+      else if(message['type'] == 'my_commented_list'){
+        me.process_new_commented_posts_list_message(message, object_hash, from, true)
+      }
     });
     socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -52034,6 +52258,8 @@ class App extends Component {
 
     await this.wait(3000)
     this.process_new_channel_message(channel_message_object.message, channel_message_object.object_hash)
+    await this.wait(1200)
+    this.add_object_to_my_commented_list_and_emit(channel_e5_id)
   }
 
   async emit_new_object_comment_message(state_object){
@@ -52054,6 +52280,8 @@ class App extends Component {
     await this.emit_comment_record_object_event([object_e5_id], 'object_comments')
     await this.wait(1200)
     this.check_for_tags_if_exists_and_notify_receiver(object_e5_id, state_object)
+    await this.wait(1200)
+    this.add_object_to_my_commented_list_and_emit(object_e5_id)
   }
 
   async emit_new_bill_confirmed(state_object, show_job_after_broadcast){
@@ -52491,7 +52719,8 @@ class App extends Component {
     clone.push(mail_message_object.message.message_identifier)
     this.setState({broadcast_stack: clone})
 
-    const to = await this.get_recipient_address(state_object['recipient'], state_object['recipients_e5'])
+    const to = state_object['convo_id']
+    // await this.get_recipient_address(state_object['recipient'], state_object['recipients_e5'])
 
     const target = 'direct_message|'+to
     const secondary_target = 'direct_message|'+this.state.accounts[this.state.selected_e5].address
@@ -52905,6 +53134,29 @@ class App extends Component {
     const secondary_target = 'lock_unlock_wallet|'+this.state.accounts[this.state.selected_e5].address
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: to, message: job_request_message_object.message, target: target, object_hash: job_request_message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async add_object_to_my_commented_list_and_emit(object_e5_id){
+    const my_objects_clone = this.state.my_objects2.slice()
+    const id = object_e5_id.split('E')[0]
+    const e5 = 'E'+object_e5_id.split('E')[1]
+    const comment_id = e5 + ':' + id
+    if(!my_objects_clone.includes(comment_id)){
+      my_objects_clone.push(comment_id)
+    }
+    this.setState({my_objects2: my_objects_clone})
+    const message_object = await this.prepare_new_add_object_to_my_commented_list_message(my_objects_clone)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = this.state.accounts[this.state.selected_e5].address
+    const target = 'my_commented_list|'+this.state.accounts[this.state.selected_e5].address
+    const secondary_target = 'my_commented_list|'+this.state.accounts[this.state.selected_e5].address
+    await this.reconnect_socket_if_unconnected()
+
+    this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
   }
   
 
@@ -54535,14 +54787,15 @@ class App extends Component {
 
 
   async prepare_direct_mail_message_object_message(state_object){
-    const tags = []
+    const tags = [state_object['convo_id'], this.state.accounts[this.state.selected_e5].address]
     const id = this.make_number_id(12)
     const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
     const block_number = await web3.eth.getBlockNumber()
 
     const author = this.state.user_account_id[this.state.selected_e5]
     const e5 = this.state.selected_e5
-    const recipient = await this.get_recipient_address(state_object['recipient'], state_object['e5'])
+    const recipient = state_object['convo_id']
+    // await this.get_recipient_address(state_object['recipient'], state_object['e5'])
     const channeling = ''
     const lan = ''
     const state = ''
@@ -55333,6 +55586,58 @@ class App extends Component {
     const context = 0
     const message = {
       type: 'lock_unlock_wallet',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: 0,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+
+
+
+
+
+
+
+  async prepare_new_add_object_to_my_commented_list_message(list){
+    const message_obj = {
+      'list':list, 
+      'time': Date.now(),
+    }
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = this.state.user_account_id[this.state.selected_e5]
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = 0
+    const message = {
+      type: 'my_commented_list',
       message_identifier: this.make_number_id(12),
       author: author,
       author_address: this.state.accounts[e5].address,
@@ -57235,7 +57540,7 @@ class App extends Component {
     if(ipfs != message.data){
       const ipfs_obj = bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null ? bulk_decyphered_package['internal'] : await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
 
-      console.log('process_new_direct_message_received', ipfs_obj)
+      console.log('process_new_direct_message_received', message, ipfs_obj)
       if(ipfs_obj != null && ipfs != ipfs_obj){
         const recipient_address = message['recipient'] == '' ? await this.get_recipient_address(ipfs_obj['recipient'], ipfs_obj['recipients_e5']) : message['recipient']
         const e5 = message.e5;
@@ -57244,13 +57549,17 @@ class App extends Component {
         const convo_id = id;
         const cid = object_hash;
 
+        if(convo_id == '0x0000000000000000000000000000000000000000'){
+          console.log('process_new_direct_message_received2', 'found bad message', message, ipfs_obj)
+          return;
+        }
+
         console.log('process_new_direct_message_received', convo_id, ipfs_obj)
-        const event = {returnValues:{p1:0, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+        const event = {returnValues:{p1:ipfs_obj['recipient'], p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
       
         ipfs_obj['time'] = event.returnValues.p6
-        event.returnValues.p1 = ipfs_obj['recipient']
-        const recipient_e5 = ipfs_obj['recipients_e5'];
-        const type  = am_I_the_author == true ? 'sent': 'received'
+        const recipient_e5 =  am_I_the_author == true ? ipfs_obj['recipients_e5'] : message.e5;
+        const type = am_I_the_author == true ? 'sent': 'received'
         const convo_with = am_I_the_author == true ? event.returnValues.p1 : event.returnValues.p2
 
         const all_mail_clone = structuredClone(this.state.direct_messages)
@@ -57277,6 +57586,16 @@ class App extends Component {
 
           const loaded_messages_clone = this.state.loaded_messages.slice()
           loaded_messages_clone.push(object_hash)
+
+          var set = false;
+          all_mail_clone[convo_id]['messages'].forEach(mail_item => {
+            if(mail_item['type'] == 'received' && set == false){
+              set = true;
+              all_mail_clone[convo_id]['account_id'] = mail_item['sender']
+              all_mail_clone[convo_id]['account_e5'] = mail_item['e5']
+              all_mail_clone[convo_id]['e5_account_id'] = mail_item['e5'] + ':' + mail_item['sender']
+            }
+          });
 
           this.setState({direct_messages: all_mail_clone, loaded_messages: loaded_messages_clone})
 
@@ -58155,6 +58474,40 @@ class App extends Component {
     }
   }
 
+  async process_new_commented_posts_list_message(message, object_hash, from , add_to_notifications, bulk_decyphered_package=null){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author_address']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+    }
+
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
+    if(ipfs != message.data){
+      const time = ipfs['time']
+      const list = ipfs['list']
+
+      if(this.my_commented_posts_list_time == null){
+        this.my_commented_posts_list_time = {}
+      }
+
+      if(this.my_commented_posts_list_time[message['author_address']] == null){
+        this.my_commented_posts_list_time[message['author_address']] = 0
+      }
+
+      if(this.my_commented_posts_list_time[message['author_address']] < time){
+        this.my_commented_posts_list_time[message['author_address']] = time
+        this.setState({my_objects2: list})
+      }
+    }
+  }
+
+  
+
 
 
 
@@ -58790,6 +59143,9 @@ class App extends Component {
     }
     else if(object_data['type'] == 'lock_unlock_wallet'){
       await this.process_new_lock_unlock_wallet_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'my_commented_list'){
+      await this.process_new_commented_posts_list_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
     }
   }
 

@@ -1814,6 +1814,8 @@ class ChannelDetailsSection extends Component {
         const prevCount = this.get_previous_state_messages(prevProps).length
         const currentCount = this.get_message_count().length
         
+        // console.log('componentDidUpdate', 'currentCount', this.get_message_count())
+        // console.log('componentDidUpdate', 'prevCount', this.get_previous_state_messages(prevProps))
         if (currentCount > prevCount) {
             const added = currentCount - prevCount;
             this.setState(prev => ({
@@ -1967,6 +1969,7 @@ class ChannelDetailsSection extends Component {
         const items = this.filter_messages_for_blocked_accounts(all_messages)
         var stacked_items = [].concat(this.get_stacked_items2(object, prevProps)).reverse()
         return stacked_items.concat(items)
+        // return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
     }
 
     get_message_count(){
@@ -1974,8 +1977,8 @@ class ChannelDetailsSection extends Component {
         if(object == null) return [];
         var items = [].concat(this.get_convo_messages(object)).reverse()
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()
-        var final_items_without_divider = stacked_items.concat(items)
-        return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
+        return stacked_items.concat(items)
+        // return this.append_divider_between_old_messages_and_new_ones(final_items_without_divider)
     }
 
     get_stacked_items2(object, prevProps){

@@ -1014,7 +1014,7 @@ class CallPage extends Component {
 
     get_message_count(){
         var items = [].concat(this.get_convo_messages()).reverse()
-        return this.append_divider_between_old_messages_and_new_ones(items)
+        return items
     }
 
     render_sent_received_messages(he){
@@ -1934,7 +1934,9 @@ class CallPage extends Component {
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             }
 
-            this.unfocus_message()
+            if(this.get_focused_message() != null){
+                this.unfocus_message()
+            }
         }
     }
 

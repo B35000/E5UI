@@ -3131,7 +3131,9 @@ class NitroDetailsSection extends Component {
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             }
 
-            this.unfocus_message(object)
+            if(this.get_focused_message(object) != null){
+                this.unfocus_message(object)
+            }
         }
     }
 

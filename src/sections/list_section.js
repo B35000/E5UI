@@ -2901,7 +2901,7 @@ class PostListSection extends Component {
         invites.forEach(item => {
             invite_objects.push(this.props.app_state.call_invites[item])
         });
-        return this.sortByAttributeDescending(invite_objects, 'time')
+        return this.sortByAttributeDescending(invite_objects, 'time').reverse()
     }
 
     render_invite_item(item){
@@ -2914,7 +2914,8 @@ class PostListSection extends Component {
         }
         const data = item;
         const participants_count = this.props.app_state.room_participants_count[data['call_id']] || 0
-        const footer = formatted_call_id(data['call_id']) + ' • ' + this.props.app_state.loc['1593kx']/* '$ participants' */.replace('$', number_with_commas(participants_count))
+        const footer = formatted_call_id(data['call_id']) 
+        //+ ' • ' + this.props.app_state.loc['1593kx']/* '$ participants' */.replace('$', number_with_commas(participants_count))
         const title_image = this.props.app_state.e5s[data['sender_account_e5']].e5_img
         const title = data['sender_account'] + this.get_sender_title_text2(data['sender_account'], data['sender_account_e5'])
         const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */
@@ -2930,7 +2931,7 @@ class PostListSection extends Component {
             return ' • ' +this.props.app_state.loc['1694']/* 'You' */
         }else{
             const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-            var alias = (bucket[account] == null ? ' • '+this.props.app_state.loc['2871']/* Alias Unknown. */ : ' • ' +bucket[account])
+            var alias = (bucket[account] == null ? ''/* ' • '+this.props.app_state.loc['2871'] *//* Alias Unknown. */ : ' • ' +bucket[account])
             return alias
         }
     }

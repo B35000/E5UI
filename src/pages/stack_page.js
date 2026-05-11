@@ -185,13 +185,16 @@ class StackPage extends Component {
         get_floating_close_button_object:this.get_floating_close_button_object(), get_floating_close_button_position_object:this.get_floating_close_button_position_object(),
         get_page_background_object:this.get_page_background_object(),
         get_chain_or_indexer_option_object:this.get_chain_or_indexer_option_object(),
-        get_rounded_edges_option_tags_object: this.get_rounded_edges_option_tags_object(),
+        get_rounded_edges_option_tags_object:this.get_rounded_edges_option_tags_object(),
         get_notifications_permissions_option_tags_object:this.get_notifications_permissions_option_tags_object(),
-        get_locked_wallet_option_tags_object: this.get_locked_wallet_option_tags_object(),
+        get_locked_wallet_option_tags_object:this.get_locked_wallet_option_tags_object(),
+        get_preserve_state_option_object:this.get_preserve_state_option_object(),
+
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         get_seed_randomizer_setting_object:this.get_seed_randomizer_setting_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
+
 
         typed_word:'',added_tags:[],set_salt: 0,
         run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
@@ -1489,6 +1492,39 @@ class StackPage extends Component {
 
     set_locked_wallet_option(){
         this.setState({get_locked_wallet_option_tags_object: this.get_locked_wallet_option_tags_object(),})
+    }
+
+
+
+
+
+
+
+
+
+
+
+    get_preserve_state_option_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['1593mk']/* 'only-necessary' */, this.props.app_state.loc['1593ml']/* 'entire-state' */, this.props.app_state.loc['1593mm']/* never-preserve */], [this.get_preserve_state_option()]
+            ],
+        };
+    }
+
+    get_preserve_state_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593mk']/* 'only-necessary' */] = 1
+        obj[this.props.app_state.loc['1593ml']/* 'entire-state' */] = 2
+        obj[this.props.app_state.loc['1593mm']/* never-preserve */] = 3
+        return obj[this.props.app_state.preserve_state]
+    }
+
+    set_preserve_state_option(){
+        this.setState({get_preserve_state_option_object: this.get_preserve_state_option_object(),})
     }
 
 
@@ -14036,6 +14072,17 @@ class StackPage extends Component {
 
 
                     {this.render_notification_setting_if_not_mobile()}
+
+                    {this.does_title_details_contain_searched_text('', '') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593mi']/* '🧠 Preserve State.' */, 'details':this.props.app_state.loc['1593mj']/* 'e can remember your current session between reloads for faster synchronization times.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preserve_state_option_object} tag_size={'l'} when_tags_updated={this.when_get_preserve_state_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
                 </div>
             </div>
         )
@@ -14058,7 +14105,7 @@ class StackPage extends Component {
 
                     {this.does_title_details_contain_searched_text('1545', '1546') && (
                         <div>
-                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* '🍪 Enable Cookies' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, permission to use cookies will be enabled in this web-app.' */, 'size':'l'})}
                             <div style={{height: 10}}/>
 
                             <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
@@ -15729,6 +15776,12 @@ class StackPage extends Component {
 
     when_get_locked_wallet_option_tags_object_updated(tag_object){
         if(this.props.app_state.has_wallet_been_set == true) this.props.show_dialog_bottomsheet({'tag_object':tag_object}, 'set_password_for_locking_wallet')
+    }
+
+    when_get_preserve_state_option_object_updated(tag_obj){
+        this.setState({get_preserve_state_option_object: tag_obj})
+        var selected_item = this.get_selected_item(tag_obj, 'e')
+        this.props.when_preserve_state_option_changed(selected_item)
     }
     
 

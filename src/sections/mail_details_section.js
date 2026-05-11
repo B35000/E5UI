@@ -2215,7 +2215,9 @@ class MailDetailsSection extends Component {
             //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             // }
 
-            this.unfocus_message(mail)
+            if(focused_message != null){
+                this.unfocus_message(mail)
+            }
         }
     }
 

@@ -526,15 +526,16 @@ class DirectMessageDetailsSection extends Component {
         }else{
             this.setState({entered_text: text})
             var recipients_e5 = object['account_e5']
-            this.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, true)
+            if(text.length == 1) this.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, true);
+            else if(text.length == 0) this.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, false)
 
-            var me = this;
-            setTimeout(function() {
-                if(me.state.entered_text == text){
-                    //done typing
-                    me.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, false)
-                }
-            }, (1 * 2000));
+            // var me = this;
+            // setTimeout(function() {
+            //     if(me.state.entered_text == text){
+            //         //done typing
+            //         me.props.emit_new_chat_typing_notification(object['convo_id'], object['account_id'], recipients_e5, false)
+            //     }
+            // }, (1 * 2000));
         }
     }
 
@@ -602,10 +603,10 @@ class DirectMessageDetailsSection extends Component {
         // var mail = this.get_mail_items()[this.props.selected_mail_item];
         var sender = this.props.app_state.loc['2785']/* 'You' */
         var recipient = this.get_account_alias(mail['account_id'], mail['account_e5'])
-        const online_text = this.is_recipient_online(mail) ? this.props.app_state.loc['2738bi']/* 'online' */ : null/* this.props.app_state.loc['2738bj'] *//* 'offline' */
+        const online_text = this.is_recipient_online(mail) ? this.props.app_state.loc['2738bi']/* 'online' */ : mail['convo_id']/* this.props.app_state.loc['2738bj'] *//* 'offline' */
         return(
-            <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':sender+this.props.app_state.loc['2512']/* ' with ' */+recipient, 'details':this.props.app_state.loc['2513']/* 'conversation' */, 'size':'l', 'footer':online_text})} 
+            <div style={{padding:'5px 5px 5px 5px'}} onClick={() => this.props.reload_all_messages(mail)}>
+                {this.render_detail_item('3', {'title':sender+this.props.app_state.loc['2512']/* ' with ' */+recipient, 'details':this.props.app_state.loc['2513']/* 'conversation' */, 'size':'l', 'footer':online_text, 'title_image':this.props.app_state.e5s[mail['account_e5']].e5_img})} 
             </div>
         )
     }
@@ -1570,7 +1571,11 @@ class DirectMessageDetailsSection extends Component {
         
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 3600)
-        }else{
+        }
+        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['2513d']/* 'Switch to an E5 in which you have an account ID.' */, 7600)
+        }
+        else{
             var convo_id = mail['convo_id']
             var recipients_e5 = mail['account_e5']
 
@@ -1581,14 +1586,16 @@ class DirectMessageDetailsSection extends Component {
             var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['account_e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':'', my_country, my_city}
             this.props.send_direct_message(tx)
 
-            this.setState({entered_text:''})
+            this.when_entered_text_input_field_changed('')
             
             this.scroll_to_bottom()
             // if (this.messagesEnd.current){
             //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
             // }
 
-            this.unfocus_message(mail)
+            if(focused_message != null){
+                this.unfocus_message(mail)
+            }
         }
     }
 
