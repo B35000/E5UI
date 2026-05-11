@@ -1301,8 +1301,22 @@ class AddCommentPage extends Component {
     }
 
 
-    finish(){
+    async finish(){
         var object = this.state.object
+
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            var e5_to_use = ''
+            Object.keys(this.props.app_state.user_account_id).forEach(account_e5 => {
+                if(this.props.app_state.user_account_id[account_e5] != null && this.props.app_state.user_account_id[account_e5] != 1 && e5_to_use == ''){
+                    e5_to_use = account_e5
+                }
+            });
+            if(e5_to_use != ''){
+                this.props.show_dialog_bottomsheet({'object':{}}, 'request_switch_to_another_e5')
+                return;
+            }
+        }
+
         if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
             this.props.notify(this.props.app_state.loc['1040']/* 'You need to make at least 1 transaction to participate.' */, 1200)
             return

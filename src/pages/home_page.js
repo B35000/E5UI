@@ -6184,7 +6184,7 @@ class home_page extends Component {
                 does_entered_text_contain_reserved_keywords={this.props.does_entered_text_contain_reserved_keywords.bind(this)}
                 show_exchange_deposit_bottomsheet={this.props.show_exchange_deposit_bottomsheet.bind(this)} show_bridge_ether_bottomsheet={this.props.show_bridge_ether_bottomsheet.bind(this)} show_account_details={this.show_account_details.bind(this)} open_send_purchase_request_ui={this.props.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.props.get_storefron_purchase_requests.bind(this)}
 
-                open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.props.get_storefront_bag_payment_update_messages.bind(this)} get_bag_sender_transfers_events={this.props.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.props.reload_all_messages.bind(this)}
+                open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.props.get_storefront_bag_payment_update_messages.bind(this)} get_bag_sender_transfers_events={this.props.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.props.reload_all_messages.bind(this)} when_selected_e5_changed={this.props.when_selected_e5_changed.bind(this)}
                 />
             </div>
         )
@@ -6202,6 +6202,10 @@ class home_page extends Component {
         setTimeout(function() {
             me.detail_section.current?.reset_chat_scroll_position()
         }, (1 * 300));
+    }
+
+    continue_with_sending_message(object){
+        this.detail_section.current?.continue_with_sending_message(object)
     }
 
 

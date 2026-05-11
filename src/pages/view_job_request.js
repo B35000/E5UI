@@ -2593,6 +2593,20 @@ class ViewJobRequestPage extends Component {
         var object = this.state.request_item;
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            var e5_to_use = ''
+            Object.keys(this.props.app_state.user_account_id).forEach(account_e5 => {
+                if(this.props.app_state.user_account_id[account_e5] != null && this.props.app_state.user_account_id[account_e5] != 1 && e5_to_use == ''){
+                    e5_to_use = account_e5
+                }
+            });
+            if(e5_to_use != ''){
+                this.props.show_dialog_bottomsheet({'object':object}, 'request_switch_to_another_e5')
+                return;
+            }
+        }
+
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 1600)
         }

@@ -6858,7 +6858,7 @@ class App extends Component {
 
           get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
 
-          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)}
+          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -17205,7 +17205,7 @@ class App extends Component {
     var h = this.state.comment_size
     
     return this.renderBottomSheet(
-      <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} show_images={this.show_images.bind(this)}
+      <AddCommentPage ref={this.add_comment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)}emit_new_chat_typing_notification={this.emit_new_chat_typing_notification.bind(this)} show_images={this.show_images.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
       />,
       this.state.add_comment_bottomsheet,
       this.open_add_comment_bottomsheet,
@@ -18473,7 +18473,7 @@ class App extends Component {
 
         open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
 
-        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)}
+        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)}
         />
       </div>
     )
@@ -18583,6 +18583,7 @@ class App extends Component {
       'finalize_storefront_request_transaction':550,
       'view_storefront_bag_receipt_item':550,
       'set_password_for_locking_wallet':300,
+      'request_switch_to_another_e5':300,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -20013,6 +20014,18 @@ class App extends Component {
     const selected_item = this.get_selected_item(tag_object, 'e');
     this.emit_new_lock_unlock_wallet_message(password, selected_item == this.getLocale()['1593md']/* 'locked' */);
     this.stack_page.current?.setState({get_locked_wallet_option_tags_object: tag_object})
+  }
+
+  continue_with_sending_message(object){
+    this.open_dialog_bottomsheet();
+    if(this.add_comment_page.current != null){
+      this.add_comment_page.current?.finish()
+    }else{
+      this.homepage.current?.continue_with_sending_message(object)
+      this.view_job_request_page.current?.add_message_to_stack()
+      this.view_storefront_request_page.current?.add_message_to_stack()
+      this.view_call_interface_page.current?.add_message_to_stack()
+    }
   }
 
 

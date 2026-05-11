@@ -118,6 +118,7 @@ class BagDetailsSection extends Component {
         this.interval = setInterval(() => this.check_for_new_responses_and_messages(), this.props.app_state.details_section_syncy_time);
         // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
         setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
+        this.setState({screen_width: this.screen.offsetWidth})
     }
 
     componentWillUnmount() {
@@ -170,7 +171,7 @@ class BagDetailsSection extends Component {
 
     render(){
         return(
-            <div>{this.render_bag_list_detail()}</div>
+            <div ref={(el) => (this.screen = el)}>{this.render_bag_list_detail()}</div>
         )
     }
 
@@ -1924,11 +1925,7 @@ class BagDetailsSection extends Component {
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
             (this.state.text_input_field_height-35 < 0 ? 0 : this.state.text_input_field_height-35))
         var size = this.props.screensize
-        var ww = '80%'
-        if(size == 'l') ww = '90%'
-        if(this.props.app_state.width > 1100){
-            ww = '80%'
-        }
+        var ww = this.state.screen_width - 50
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
@@ -1943,7 +1940,7 @@ class BagDetailsSection extends Component {
                 </div>
                 <div style={{height:5}}/>
                 {this.render_focused_message(object)}
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: this.state.screen_width}}>
                     <div style={{'margin':`${side_buttons_margin_top}px 0px 0px 0px`}}>
                         {/* {this.render_image_picker()} */}
                         <div>
@@ -1953,16 +1950,30 @@ class BagDetailsSection extends Component {
                         </div>
                     </div>
                     <div style={{width:10}}/>
-                    <div className="row" style={{width:ww}}>
+                    <div style={{'margin': '0px 0px 0px 0px', width:ww-65}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
+                    </div>
+                    <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
+                        <button
+                            onMouseDown={(e) => {
+                                e.preventDefault();
+                                this.add_message_to_stack(object);
+                            }}
+                            style={{ background: 'none', border: 'none' }}
+                        >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </button>
+                    </div>
+                    {/* <div className="row" style={{width:ww}}>
                         <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
                                 <img alt="" className="text-end" onClick={()=>this.add_message_to_stack(object)} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div> 
         )
@@ -2060,6 +2071,10 @@ class BagDetailsSection extends Component {
             this.setState(prev => ({
                 startIndex: prev.startIndex - added
             }));
+        }
+
+        if(prevProps.app_state.width != this.props.app_state.width){
+            this.setState({screen_width: this.screen.offsetWidth})
         }
     }
 
@@ -2936,6 +2951,20 @@ class BagDetailsSection extends Component {
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
+
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            var e5_to_use = ''
+            Object.keys(this.props.app_state.user_account_id).forEach(account_e5 => {
+                if(this.props.app_state.user_account_id[account_e5] != null && this.props.app_state.user_account_id[account_e5] != 1 && e5_to_use == ''){
+                    e5_to_use = account_e5
+                }
+            });
+            if(e5_to_use != ''){
+                this.props.show_dialog_bottomsheet({'object':object}, 'request_switch_to_another_e5')
+                return;
+            }
+        }
+
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 4600)
         }

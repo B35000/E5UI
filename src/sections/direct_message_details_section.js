@@ -77,7 +77,7 @@ class DirectMessageDetailsSection extends Component {
 
     render(){
         return(
-            <div>
+            <div ref={(el) => (this.screen = el)}>
                 {this.render_mail_list_detail()}
             </div>
         )
@@ -460,11 +460,7 @@ class DirectMessageDetailsSection extends Component {
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
             (this.state.text_input_field_height-35 < 0 ? 0 : this.state.text_input_field_height-35))
         var size = this.props.screensize
-        var ww = '80%'
-        if(size == 'l') ww = '90%'
-        if(this.props.app_state.width > 1100){
-            ww = '80%'
-        }
+        var ww = this.state.screen_width - 50
         if(object != null){
             return(
                 <div>
@@ -478,7 +474,7 @@ class DirectMessageDetailsSection extends Component {
                     </div>
                     <div style={{height:5}}/>
                     {this.render_focused_message(object)}
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: this.state.screen_width}}>
                         <div style={{'margin':`${side_buttons_margin_top}px 0px 0px 0px`}}>
                             {/* {this.render_image_picker()} */}
                             <div>
@@ -488,9 +484,23 @@ class DirectMessageDetailsSection extends Component {
                             </div>
                         </div>
                         <div style={{width:10}}/>
-                        <div className="row" style={{width:ww}}>
+                        <div style={{'margin': '0px 0px 0px 0px', width:ww-65}}>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
+                        </div>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
+                            <button
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    this.add_message_to_stack(object);
+                                }}
+                                style={{ background: 'none', border: 'none' }}
+                            >
+                                <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            </button>
+                        </div>
+                        {/* <div className="row" style={{width:ww}}>
                             <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                                <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
+                                <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
                             </div>
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                                 <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
@@ -503,10 +513,9 @@ class DirectMessageDetailsSection extends Component {
                                     >
                                         <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                                     </button>
-                                    
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div> 
             )
@@ -650,13 +659,17 @@ class DirectMessageDetailsSection extends Component {
                 startIndex: prev.startIndex - added
             }));
         }
+
+        if(prevProps.app_state.width != this.props.app_state.width){
+            this.setState({screen_width: this.screen.offsetWidth})
+        }
     }
 
     componentDidMount() {
         // Scroll to bottom on first render without animation.
         // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
         setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
-        
+        this.setState({screen_width: this.screen.offsetWidth})
     }
 
     get_previous_state_messages(prevProps){
@@ -1555,7 +1568,7 @@ class DirectMessageDetailsSection extends Component {
         return this.state.focused_message[object['id']]
     }
 
-    add_message_to_stack(mail){
+    async add_message_to_stack(mail){
         var message = this.state.entered_text.trim()
         // var mail = this.get_mail_items()[this.props.selected_mail_item];
         var message_id = Date.now()
@@ -1571,31 +1584,48 @@ class DirectMessageDetailsSection extends Component {
         
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 3600)
+            return;
         }
-        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
-            this.props.notify(this.props.app_state.loc['2513d']/* 'Switch to an E5 in which you have an account ID.' */, 7600)
-        }
-        else{
-            var convo_id = mail['convo_id']
-            var recipients_e5 = mail['account_e5']
-
-            const my_country =  this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country;
-
-            const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city;
-
-            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['account_e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':'', my_country, my_city}
-            this.props.send_direct_message(tx)
-
-            this.when_entered_text_input_field_changed('')
-            
-            this.scroll_to_bottom()
-            // if (this.messagesEnd.current){
-            //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-            // }
-
-            if(focused_message != null){
-                this.unfocus_message(mail)
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            var e5_to_use = ''
+            Object.keys(this.props.app_state.user_account_id).forEach(account_e5 => {
+                if(this.props.app_state.user_account_id[account_e5] != null && this.props.app_state.user_account_id[account_e5] != 1 && e5_to_use == ''){
+                    e5_to_use = account_e5
+                }
+            });
+            if(e5_to_use == ''){
+                this.props.notify(this.props.app_state.loc['2513d']/* 'You need an account to send a message.' */, 7600)
+                return;
+            }else{
+                this.props.show_dialog_bottomsheet({'object':mail}, 'request_switch_to_another_e5')
+                return;
+                // this.props.when_selected_e5_changed(e5_to_use)
+                // const sleep = (ms) => {
+                //     return new Promise(resolve => setTimeout(resolve, ms));
+                // }
+                // await sleep(300)
             }
+        }
+
+        var convo_id = mail['convo_id']
+        var recipients_e5 = mail['account_e5']
+
+        const my_country =  this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country;
+
+        const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city;
+
+        var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'recipient':mail['account_id'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['account_e5'], 'my_pub_key':this.props.app_state.my_pub_key, 'my_preferred_account_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'my_preferred_e5':this.props.app_state.selected_e5, 'recipients_e5':recipients_e5, 'lan':this.props.app_state.device_language, 'markdown':'', my_country, my_city}
+        this.props.send_direct_message(tx)
+
+        this.when_entered_text_input_field_changed('')
+        
+        this.scroll_to_bottom()
+        // if (this.messagesEnd.current){
+        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        // }
+
+        if(focused_message != null){
+            this.unfocus_message(mail)
         }
     }
 

@@ -2545,11 +2545,7 @@ class VideoDetailsSection extends Component {
         var side_buttons_margin_top = (this.state.text_input_field_height == null ? 0 : 
             (this.state.text_input_field_height-35 < 0 ? 0 : this.state.text_input_field_height-35))
         var size = this.props.screensize
-        var ww = '80%'
-        if(size == 'l') ww = '90%'
-        if(this.props.app_state.width > 1100){
-            ww = '80%'
-        }
+        var ww = this.state.screen_width - 50
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
@@ -2563,7 +2559,7 @@ class VideoDetailsSection extends Component {
                 </div>
                 <div style={{height:5}}/>
                 {this.render_focused_message(object)}
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: this.state.screen_width}}>
                     <div style={{'margin':`${side_buttons_margin_top}px 0px 0px 0px`}}>
                         <div>
                             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked(object)}>
@@ -2572,16 +2568,30 @@ class VideoDetailsSection extends Component {
                         </div>
                     </div>
                     <div style={{width:10}}/>
-                    <div className="row" style={{width:ww}}>
+                    <div style={{'margin': '0px 0px 0px 0px', width:ww-65}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
+                    </div>
+                    <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
+                        <button
+                            onMouseDown={(e) => {
+                                e.preventDefault();
+                                this.add_message_to_stack(object);
+                            }}
+                            style={{ background: 'none', border: 'none' }}
+                        >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </button>
+                    </div>
+                    {/* <div className="row" style={{width:ww}}>
                         <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.add_message_to_stack(object)}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
                                 <img alt="" className="text-end" onClick={()=>this.add_message_to_stack(object)} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div> 
         )
@@ -2686,6 +2696,10 @@ class VideoDetailsSection extends Component {
             this.setState(prev => ({
                 startIndex: prev.startIndex - added
             }));
+        }
+
+        if(prevProps.app_state.width != this.props.app_state.width){
+            this.setState({screen_width: this.screen.current.offsetWidth})
         }
     }
 
@@ -3627,6 +3641,19 @@ class VideoDetailsSection extends Component {
         if(comments_disabled_option == 1 && me != posts_author){
             this.props.notify(this.props.app_state.loc['2759']/* The comment section has been disabled by the posts author. */, 4500)
             return
+        }
+
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            var e5_to_use = ''
+            Object.keys(this.props.app_state.user_account_id).forEach(account_e5 => {
+                if(this.props.app_state.user_account_id[account_e5] != null && this.props.app_state.user_account_id[account_e5] != 1 && e5_to_use == ''){
+                    e5_to_use = account_e5
+                }
+            });
+            if(e5_to_use != ''){
+                this.props.show_dialog_bottomsheet({'object':object}, 'request_switch_to_another_e5')
+                return;
+            }
         }
 
         if(message == ''){

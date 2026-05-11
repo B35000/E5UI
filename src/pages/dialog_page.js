@@ -724,6 +724,9 @@ class DialogPage extends Component {
         else if(option == 'set_password_for_locking_wallet'){
             return this.view_set_password_for_locking_wallet_ui()
         }
+        else if(option == 'request_switch_to_another_e5'){
+            return this.view_request_switch_to_another_e5_ui()
+        }
     }
 
 
@@ -14086,6 +14089,142 @@ return data['data']
         else return true
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    view_request_switch_to_another_e5_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_request_switch_to_another_e5_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_request_switch_to_another_e5_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_request_switch_to_another_e5_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_request_switch_to_another_e5_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055os']/* 'You need to switch E5s.' */, 'details':this.props.app_state.loc['3055ot']/* 'You dont have an account in the current E5 youre using. Please switch to another first.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.load_preferred_e5_ui2()}
+                <div style={{height: 10}}/>
+
+                <div onClick={()=>this.select_e5_and_send_message()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ou']/* 'Switch */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    load_preferred_e5_ui2(){
+        var items = this.load_active_e5s2()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked3(item)}>
+                            {this.render_e5_item3(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_e5s2(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true && this.props.app_state.user_account_id[e5] != null && this.props.app_state.user_account_id[e5] != 1){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    render_e5_item3(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        const account = this.props.app_state.user_account_id[item]
+        var details = account + this.get_sender_title_text2(account, item)
+        if(this.props.app_state.selected_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked3(item){
+        this.props.when_selected_e5_changed(item)
+    }
+
+    get_sender_title_text2(account, e5){
+        const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[account] == null ? '' : ' • ' +bucket[account])
+        return alias
+    }
+
+    select_e5_and_send_message(){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055ov']/* 'You need to pick an E5 with your account.' */, 5500)
+        }else{
+            this.props.continue_with_sending_message(this.state.data['object'])
+        }
+    }
+
+    
 
 
 
