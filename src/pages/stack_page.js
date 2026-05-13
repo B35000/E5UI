@@ -2084,8 +2084,8 @@ class StackPage extends Component {
                     {/* {this.render_gas_history_chart()} */}
                     {/* {this.render_mempool_metrics()} */}
                     {this.render_dialog_ui()}
-                    {this.render_extra_information()}
                     {this.render_beacon_node_enabled_message()}
+                    {this.render_extra_information()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -2098,8 +2098,8 @@ class StackPage extends Component {
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {/* {this.render_gas_history_chart()} */}
-                            {this.render_extra_information()}
                             {this.render_beacon_node_enabled_message()}
+                            {this.render_extra_information()}
                         </div>
                         <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_run_settings_part()}
@@ -2117,8 +2117,8 @@ class StackPage extends Component {
                             {this.render_stack_gas_part()}
                             {this.render_simplified_stack_history()}
                             {this.render_gas_history_chart()}
-                            {this.render_extra_information()}
                             {this.render_beacon_node_enabled_message()}
+                            {this.render_extra_information()}
                         </div>
                         <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                             {this.render_stack_run_settings_part()}
@@ -2159,12 +2159,20 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':number_with_commas(this.props.app_state.thread_pool_size), 'details':this.props.app_state.loc['1264bm']/* The number of logical processors available on your device. */, 'size':'l'})}
                 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.socket_online == true ? this.props.app_state.loc['1593kh']/* Connected and Enabled */ : this.props.app_state.loc['1593ki']/* Disconnected and Disabled */, 'details':this.props.app_state.loc['1593kg']/* Indexer Socket Connection Status. */, 'size':'l'})}
+
+                <div onClick={() => this.when_socket_message_tapped()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.socket_online == true ? this.props.app_state.loc['1593kh']/* Connected and Enabled */ : this.props.app_state.loc['1593ki']/* Disconnected and Disabled */, 'details':this.props.app_state.loc['1593kg']/* Indexer Socket Connection Status. */, 'size':'l'})}
+                </div>
                 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.version, 'details':this.props.app_state.loc['1593mh']/* 'App Version.' */, 'size':'l'})}
             </div>
         )
+    }
+
+    when_socket_message_tapped(){
+        this.props.set_up_socket_connection_and_initialize_listeners(0)
+        this.props.notify(this.props.app_state.loc['1593mn']/* 'Restarting socket connection...' */, 2800);
     }
 
     render_stack_transactions_part(){
@@ -18437,7 +18445,7 @@ class StackPage extends Component {
                 else if(state != null && state != 'unavailable' && state['free_default_storage'] != 0){
                     const my_balance = this.props.app_state.account_balance[state['target_account_e5']]
                     const minimum_balance = state['target_minimum_balance_amounts'][this.props.app_state.selected_e5] || 1
-                    if(my_balance != null && bigInt(my_balance).greaterOrEquals(bigInt(minimum_balance))){
+                    if(my_balance != null && bigInt(my_balance).greaterOrEquals(bigInt(minimum_balance)) && this.props.app_state.free_default_storage_consumed_data[this.state.selected_nitro_item] == false){
                         var free_storage_amount = state['free_default_storage']
                         max_size = (free_storage_amount  * 1024 * 1024)
                     }

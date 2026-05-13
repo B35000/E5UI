@@ -255,7 +255,7 @@ class PickFilePage extends Component {
             else if(state != null && state != 'unavailable' && state['free_default_storage'] != 0){
                 const my_balance = this.props.app_state.account_balance[state['target_account_e5']]
                 const minimum_balance = state['target_minimum_balance_amounts'][this.props.app_state.selected_e5] || 1
-                if(my_balance != null && bigInt(my_balance).greaterOrEquals(bigInt(minimum_balance))){
+                if(my_balance != null && bigInt(my_balance).greaterOrEquals(bigInt(minimum_balance)) && this.props.app_state.free_default_storage_consumed_data[this.state.selected_nitro_item] == false){
                     var free_storage_amount = state['free_default_storage']
                     max_size = (free_storage_amount  * 1024 * 1024)
                 }
@@ -1144,12 +1144,15 @@ class PickFilePage extends Component {
         
         if(size_total > this.get_upload_file_size_limit()){
             this.props.notify(this.props.app_state.loc['1593cy']/* 'The total space for all the selected files exceeds the amount of space youve acquired in the nitro node.' */, 9000)
+            this.props.set_file_upload_status('');
         }else{
             if(nitro_id == null){
                 this.props.notify(this.props.app_state.loc['1593coz']/* 'You need to select a nitro node first.' */, 9000) 
+                this.props.set_file_upload_status('');
             }
             else if(!this.props.app_state.has_wallet_been_set){
                 this.props.notify(this.props.app_state.loc['2906']/* 'You need to set your wallet first.' */, 9000)
+                this.props.set_file_upload_status('');
             }
             else{
                 var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
@@ -1158,16 +1161,22 @@ class PickFilePage extends Component {
                 
                 if(obj == null){
                     this.props.notify(this.props.app_state.loc['1593da']/* 'Please wait a few moments for E5 to syncronize fully.' */, 5000)
+                    this.props.set_file_upload_status('');
                 }
                 else if(node_details == null){
                     this.props.notify(this.props.app_state.loc['1593db']/* 'Please wait a few moments for your selected node to come online.' */, 5000)
+                    this.props.set_file_upload_status('');
                 }
                 else{
                     const ecids = await this.props.upload_multiple_encrypted_files_to_nitro_node(files, type, obj, node_details)
 
                     // console.log('upload_encrypted_files', ecids)
-                    const clone = this.state.selected_ecids.slice().concat(ecids)
-                    this.setState({selected_ecids: clone})
+                    if(ecids != null){
+                        const clone = this.state.selected_ecids.slice().concat(ecids)
+                        this.setState({selected_ecids: clone})
+                    }else{
+                        this.props.set_file_upload_status('');
+                    }
                 }
             }
         }

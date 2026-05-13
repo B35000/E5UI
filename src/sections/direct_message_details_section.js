@@ -465,7 +465,7 @@ class DirectMessageDetailsSection extends Component {
             return(
                 <div>
                     <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
-                        <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'hidden', height: he, padding:'5px 0px 5px 0px'}}>
                             {this.render_top_title(object)}
                             {/* {this.render_focus_list(object)} */}
                             <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
@@ -727,7 +727,7 @@ class DirectMessageDetailsSection extends Component {
         }
         else{
             return(
-                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'scroll', height: middle}}>
+                <div onScroll={event => this.handleScroll(event, object)} style={{overflow: 'hidden', height: middle}}>
                     <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(final_items, object, middle-10)}
                         {this.render_bubble_if_typing(object)}

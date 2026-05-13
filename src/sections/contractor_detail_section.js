@@ -319,7 +319,7 @@ class ContractorDetailsSection extends Component {
 
     is_object_still_keyword_valid(object){
         let is_valid = true;
-        if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].markdown)){
+        if(object['ipfs'].markdown != null && this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].markdown)){
             is_valid = false;
         }
         if(this.props.does_entered_text_contain_reserved_keywords(object['ipfs'].entered_title_text)){
@@ -463,7 +463,7 @@ class ContractorDetailsSection extends Component {
     }
 
     copy_id_to_clipboard(object){
-        navigator.clipboard.writeText(object['id'])
+        navigator.clipboard.writeText('e'+object['id'])
         this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 

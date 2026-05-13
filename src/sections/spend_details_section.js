@@ -773,7 +773,7 @@ class SpendDetailSection extends Component {
     }
 
     copy_id_to_clipboard(object){
-        navigator.clipboard.writeText(object['id'])
+        navigator.clipboard.writeText('e'+object['id'])
         this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 

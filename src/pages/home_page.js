@@ -51,7 +51,7 @@ import { Drawer } from 'vaul';
 
 
 var bigInt = require("big-integer");
-
+var primary_following = ['E25:1002']
 
 
 /* numberWithCommas */
@@ -324,6 +324,7 @@ class home_page extends Component {
             delete cached_state_obj.selected_direct_message_item
             delete cached_state_obj.detail_page
             delete cached_state_obj.detail_selected_tag
+            delete cached_state_obj.tabs;
 
             cached_state_obj.view_post_bottomsheet = false; 
             cached_state_obj.filter_section_bottomsheet = false; 
@@ -538,8 +539,8 @@ class home_page extends Component {
         if(size == 'l'){
             var middle = this.props.height-112;
             return (
-                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                    <div className="row" style={{height: this.props.height, width:width+13, /* 'background-color':background_color, */ 'padding':'0px 0px 0px 15px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
+                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px'}}>
+                    <div className="row" style={{height: this.props.height, width:'100%', /* 'background-color':background_color, */ 'padding':'0px 0px 0px 15px', 'margin':'0px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                         {this.render_side_bar()}
 
                         <div className="col-11" style={{}} >
@@ -561,8 +562,8 @@ class home_page extends Component {
             var middle = this.props.height-126;
             return (
                 <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                    <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
-                        <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px'}}>
+                    <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                        <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                             {this.render_top_tag_bar(size)}
                         </div>
                         
@@ -570,7 +571,7 @@ class home_page extends Component {
                         {this.render_post_details_with_orientation(middle, width, size)}
                         <div style={{height:10}}/>
                         
-                        <div style={{height:bottom_bar, width: '103%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                        <div style={{height:bottom_bar, width: '100%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                             {this.render_navbar_button_group(size)}
                         </div>
                         
@@ -586,11 +587,11 @@ class home_page extends Component {
             var bottom_bar = 75;
             return(
                 <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                    <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
+                    <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                         {this.render_small_screen_size_ui(size, top_bar, width)}
                         
                         <div style={{height:5}}/>
-                        <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                        <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                             {this.render_navbar_button_group(size)}
                         </div>
 
@@ -1371,12 +1372,12 @@ class home_page extends Component {
         if(size == 'l'){
             var w = this.props.width
             if(w < 1100){
-                width = this.props.width - 120;
-            }else{
                 width = this.props.width - 130;
+            }else{
+                width = this.props.width - 140;
             }
         } 
-        if(size == 'xl') width = this.props.width - 120;
+        if(size == 'xl') width = this.props.width - 130;
         if(size == 's') width = this.props.width
 
         const color = this.props.app_state.socket_online == true ? (this.props.app_state.is_device_online == true ? this.props.app_state.theme['online_dot_color'] : this.props.app_state.theme['offline_dot_color']) : this.props.app_state.theme['unset_dot_color'];
@@ -2235,7 +2236,7 @@ class home_page extends Component {
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ag']/* 'following' */)){
             const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags().concat(this.props.app_state.my_paid_subscription_e5_ids)
             posts_to_load = posts_to_load.concat(following_tags.current_tags, following_tags.extra_tags)
-            targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts)
+            targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts, primary_following)
         }
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1222']/* 'pinned 📌' */)){
             posts_to_load = posts_to_load.concat(this.state.all_pinns)
@@ -2356,7 +2357,7 @@ class home_page extends Component {
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ag']/* 'following' */)){
             const following_tags = this.state.page == '?' ? this.get_job_section_tags() : this.get_explore_section_tags().concat(this.props.app_state.my_paid_subscription_e5_ids)
             posts_to_load = posts_to_load.concat(following_tags.current_tags, following_tags.extra_tags)
-            targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts)
+            targeted_accounts = targeted_accounts.concat(this.props.app_state.followed_accounts, primary_following)
         }
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1222']/* 'pinned 📌' */)){
             posts_to_load = posts_to_load.concat(this.state.all_pinns)
@@ -2886,7 +2887,7 @@ class home_page extends Component {
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p3
                 var follow_id = object['e5'] + ':' + author_id
-                var followed_accounts = this.props.app_state.followed_accounts
+                var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
                 if(followed_accounts.includes(follow_id)){
                     my_following_objects.push(object)
                 }
@@ -2962,7 +2963,7 @@ class home_page extends Component {
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
                 var follow_id = object['e5'] + ':' + author_id
-                var followed_accounts = this.props.app_state.followed_accounts
+                var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
                 if(followed_accounts.includes(follow_id)){
                     my_following_objects.push(object)
                 }
@@ -3039,7 +3040,7 @@ class home_page extends Component {
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
                 var follow_id = object['e5'] + ':' + author_id
-                var followed_accounts = this.props.app_state.followed_accounts
+                var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
                 if(followed_accounts.includes(follow_id)){
                     my_following_objects.push(object)
                 }
@@ -3103,7 +3104,10 @@ class home_page extends Component {
 
             if(type == exchange_type){
                 token_exchanges.push(
-                    {'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'e5_id':exchange_id, 'E5': exchanges_from_sync[i]['e5'], 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'], 'exchange_ratio_data':exchanges_from_sync[i]['exchange_ratio_data'], 'proportion_ratio_data':exchanges_from_sync[i]['proportion_ratio_data'], 'token_balances_data':exchanges_from_sync[i]['token_balances_data'], 'hidden':exchanges_from_sync[i]['hidden'], 'pos':exchanges_from_sync[i]['pos'], 'timestamp':exchanges_from_sync[i]['timestamp']}
+                    {
+                        'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'e5_id':exchange_id, 'E5': exchanges_from_sync[i]['e5'], 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'], 'exchange_ratio_data':exchanges_from_sync[i]['exchange_ratio_data'], 'proportion_ratio_data':exchanges_from_sync[i]['proportion_ratio_data'], 'token_balances_data':exchanges_from_sync[i]['token_balances_data'], 'hidden':exchanges_from_sync[i]['hidden'], 'pos':exchanges_from_sync[i]['pos'], 'timestamp':exchanges_from_sync[i]['timestamp'],
+                        'author':exchanges_from_sync[i]['author'], 'object_type':exchanges_from_sync[i]['object_type'],
+                    }
                 )
             }
         }
@@ -3313,7 +3317,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var followed_accounts = this.props.app_state.followed_accounts
+            var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
@@ -3501,7 +3505,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var followed_accounts = this.props.app_state.followed_accounts
+            var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['post']
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3652,7 +3656,7 @@ class home_page extends Component {
                 var object = all_objects[i]
                 var author_id = object['event'].returnValues.p5
                 var follow_id = object['e5'] + ':' + author_id
-                var followed_accounts = this.props.app_state.followed_accounts
+                var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
                 if(followed_accounts.includes(follow_id)){
                     my_following_objects.push(object)
                 }
@@ -3829,7 +3833,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var followed_accounts = this.props.app_state.followed_accounts
+            var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['audio']
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -3942,7 +3946,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var followed_accounts = this.props.app_state.followed_accounts
+            var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['video']
             for(var i=0; i<all_objects.length; i++){
                 var object = all_objects[i]
@@ -4186,7 +4190,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
             var all_objects = this.get_items_for_page2(page_id, selected_page)
-            var followed_accounts = this.props.app_state.followed_accounts
+            var followed_accounts = this.props.app_state.followed_accounts.concat(primary_following)
             // console.log('followed_accounts', followed_accounts)
             var my_following_reposts = this.props.app_state.posts_reposted_by_my_following['post']
             for(var i=0; i<all_objects.length; i++){
@@ -5706,8 +5710,8 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
-        this.props.start_object_file_viewcount_fetch(object, 'audio')
-        this.props.fetch_uploaded_files_for_object(object)
+        await this.props.start_object_file_viewcount_fetch(object, 'audio')
+        await this.props.fetch_uploaded_files_for_object(object, false)
         this.props.get_object_censored_keywords_and_accounts(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
@@ -5838,8 +5842,8 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.start_object_file_viewcount_fetch(object, 'video')
-        this.props.fetch_uploaded_files_for_object(object)
+        await this.props.start_object_file_viewcount_fetch(object, 'video')
+        await this.props.fetch_uploaded_files_for_object(object, false)
         // this.props.get_objects_messages(id, e5)
         // this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)

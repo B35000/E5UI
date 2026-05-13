@@ -716,7 +716,7 @@ class StorefrontDetailsSection extends Component {
     }
 
     copy_id_to_clipboard(object){
-        navigator.clipboard.writeText(object['id'])
+        navigator.clipboard.writeText('e'+object['id'])
         this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }
 
@@ -4182,7 +4182,7 @@ class StorefrontDetailsSection extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'hidden', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}

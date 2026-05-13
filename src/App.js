@@ -1377,7 +1377,7 @@ class App extends Component {
 
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
-    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[]
+    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}
   };
 
   get_app_version(){
@@ -5858,7 +5858,7 @@ class App extends Component {
         'primary_text_color':'#393e46','secondary_text_color':'grey', 
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'rgb(255, 253, 253)','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgba(225, 225, 225,.4)','card_shadow_color':'#DCDCDC',
+        'navbar_button_selected_color':'rgba(255, 253, 253, 0.75)','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgba(225, 225, 225,.4)','card_shadow_color':'#DCDCDC',
         'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)','synchronizer_loading_highlight_color':'rgb(206, 206, 206)',
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
@@ -5903,7 +5903,7 @@ class App extends Component {
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#545454','card_background_color':'rgba(51, 51, 51,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
+        'navbar_button_selected_color':'#545454a2','card_background_color':'rgba(51, 51, 51,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
         'loading_base_color':'rgb(51, 51, 51)','loading_highlight_color':'rgb(69, 68, 68)', 'synchronizer_loading_highlight_color':'rgb(208, 205, 205)',
 
         'view_group_card_item_background':'#292929','tag_background_color':'rgb(54, 53, 53)', 'indexed_tag_background':'rgb(38, 38, 38)', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
@@ -5950,7 +5950,7 @@ class App extends Component {
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#333333','card_background_color':'rgba(20, 20, 20,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
+        'navbar_button_selected_color':'#333333a4','card_background_color':'rgba(20, 20, 20,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
         'loading_base_color':'rgb(20, 20, 20)','loading_highlight_color':'rgb(42, 41, 41)', 'synchronizer_loading_highlight_color':'rgb(214, 214, 214)',
 
         'view_group_card_item_background':'#1a1a1a','tag_background_color':'#303030', 'indexed_tag_background':'#242424', 'tag_shadow':'#303030', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #1a1a1a,rgb(52, 51, 51))',
@@ -5997,7 +5997,7 @@ class App extends Component {
         'primary_text_color':'#04e504', 'secondary_text_color':'#02f902',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#203f00','card_background_color':'rgba(12, 38, 8, 0.8)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'rgb(14, 48, 21)', 'navbar_text_shadow_color':'#5bc15b',
+        'navbar_button_selected_color':'#1f3f00b4','card_background_color':'rgba(12, 38, 8, 0.8)', 'primary_navbar_text_color':'#02f902','secondary_navbar_text_color':'#04e504','card_shadow_color':'rgb(14, 48, 21)', 'navbar_text_shadow_color':'#5bc15b',
         'loading_base_color':'rgb(12, 38, 8)','loading_highlight_color':'rgb(43, 95, 43)', 'synchronizer_loading_highlight_color':'rgb(77, 188, 77)',
 
         'view_group_card_item_background':'#13190c','tag_background_color':'rgb(29, 48, 11)', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2', 'view_group_card_item_background2':'linear-gradient(135deg,rgb(12, 25, 12),rgb(29, 57, 26))',
@@ -6047,7 +6047,7 @@ class App extends Component {
         'primary_text_color':'#029302','secondary_text_color':'#03a003',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#dcefde','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgba(184, 225, 182, 0.6)','card_shadow_color':'rgb(158, 214, 171)', 'loading_base_color':'#d4e2cc','loading_highlight_color':'rgb(89, 197, 89)', 'synchronizer_loading_highlight_color':'rgb(77, 188, 77)',
+        'navbar_button_selected_color':'#dcefdeac','primary_navbar_text_color':'#029302','secondary_navbar_text_color':'#03a003','navbar_text_shadow_color':'#5bc15b','card_background_color':'rgba(184, 225, 182, 0.6)','card_shadow_color':'rgb(158, 214, 171)', 'loading_base_color':'#d4e2cc','loading_highlight_color':'rgb(89, 197, 89)', 'synchronizer_loading_highlight_color':'rgb(77, 188, 77)',
         
         'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #d4e2cc,rgb(196, 209, 189))',
 
@@ -6096,7 +6096,7 @@ class App extends Component {
         'primary_text_color':'#f70404', 'secondary_text_color':'#f43535',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#332020','card_background_color':'rgba(37, 6, 6, 0.8)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'rgb(48, 14, 14)',
+        'navbar_button_selected_color':'#3320209e','card_background_color':'rgba(37, 6, 6, 0.8)', 'primary_navbar_text_color':'#f43535','secondary_navbar_text_color':'#f70404','card_shadow_color':'rgb(48, 14, 14)',
         'navbar_text_shadow_color':'#511616', 'loading_base_color':'rgb(37, 6, 6)','loading_highlight_color':'rgb(58, 19, 19)', 'synchronizer_loading_highlight_color':'rgb(188, 77, 77)',
 
         'view_group_card_item_background':'#190c0c','tag_background_color':'rgb(51, 18, 14)', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a', 'view_group_card_item_background2':'linear-gradient(135deg, #190c0c,rgb(38, 18, 18))',
@@ -6146,7 +6146,7 @@ class App extends Component {
         'primary_text_color':'#930101','secondary_text_color':'#a00803',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#efdedc','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgba(222, 174, 174, 0.6)','card_shadow_color':'rgb(214, 158, 158)', 'loading_base_color':'#e2cdcc','loading_highlight_color':'rgb(181, 90, 86)', 'synchronizer_loading_highlight_color':'rgb(188, 77, 77)',
+        'navbar_button_selected_color':'#efdedcaf','primary_navbar_text_color':'#930101','secondary_navbar_text_color':'#a00803','navbar_text_shadow_color':'#c15b5b','card_background_color':'rgba(222, 174, 174, 0.6)','card_shadow_color':'rgb(214, 158, 158)', 'loading_base_color':'#e2cdcc','loading_highlight_color':'rgb(181, 90, 86)', 'synchronizer_loading_highlight_color':'rgb(188, 77, 77)',
         
         'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2cdcc,rgb(211, 192, 191))',
 
@@ -6195,7 +6195,7 @@ class App extends Component {
         'primary_text_color':'#0079ff', 'secondary_text_color':'#2587f7',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#202c33','card_background_color':'rgba(6, 24, 42, 0.8)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'rgb(14, 28, 48)',
+        'navbar_button_selected_color':'#202c33b4','card_background_color':'rgba(6, 24, 42, 0.8)', 'primary_navbar_text_color':'#2587f7','secondary_navbar_text_color':'#0079ff','card_shadow_color':'rgb(14, 28, 48)',
         'navbar_text_shadow_color':'#171651', 'loading_base_color':'rgb(6, 24, 42)','loading_highlight_color':'rgb(19, 43, 58)', 
         'synchronizer_loading_highlight_color':'rgb(77, 144, 188)',
 
@@ -6246,7 +6246,7 @@ class App extends Component {
         'primary_text_color':'#017493','secondary_text_color':'#0374a0',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'#757701',
         
-        'navbar_button_selected_color':'#dce8ef','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgba(175, 195, 223, 0.6)','card_shadow_color':'rgb(158, 178, 214)', 'loading_base_color':'rgb(200, 214, 219)','loading_highlight_color':'rgb(89, 160, 188)', 
+        'navbar_button_selected_color':'#dce8efad','primary_navbar_text_color':'#017493','secondary_navbar_text_color':'#0374a0','navbar_text_shadow_color':'#5babc1','card_background_color':'rgba(175, 195, 223, 0.6)','card_shadow_color':'rgb(158, 178, 214)', 'loading_base_color':'rgb(200, 214, 219)','loading_highlight_color':'rgb(89, 160, 188)', 
         'synchronizer_loading_highlight_color':'rgb(77, 144, 188)',
         
         'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #ccdce2,rgb(187, 203, 209))',
@@ -6296,7 +6296,7 @@ class App extends Component {
         'primary_text_color':'#efec4c', 'secondary_text_color':'#efea58',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
-        'navbar_button_selected_color':'#333220','card_background_color':'rgba(36, 37, 6, 0.8)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'rgb(46, 48, 14)',
+        'navbar_button_selected_color':'#333220b7','card_background_color':'rgba(36, 37, 6, 0.8)', 'primary_navbar_text_color':'#efea58','secondary_navbar_text_color':'#efec4c','card_shadow_color':'rgb(46, 48, 14)',
         'navbar_text_shadow_color':'#505116', 'loading_base_color':'rgb(36, 37, 6)','loading_highlight_color':'rgb(118, 118, 50)', 
         'synchronizer_loading_highlight_color':'rgb(188, 182, 77)',
 
@@ -9101,7 +9101,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)}
       />
     )
   }
@@ -31193,7 +31193,7 @@ class App extends Component {
     return {'filetype':filetype, 'cid':cid, 'storage':storage, 'file_name':file_name, 'full':ecid}
   }
 
-  fetch_uploaded_files_for_object = async (object) => {
+  fetch_uploaded_files_for_object = async (object, synchronously=true) => {
     var ecids = [];
     var keys = {}
 
@@ -31311,7 +31311,8 @@ class App extends Component {
     
 
     if(ecids.length > 0){
-      this.fetch_uploaded_data_from_ipfs(ecids, false, keys)
+      if(synchronously == true) this.fetch_uploaded_data_from_ipfs(ecids, false, keys);
+      else await this.fetch_uploaded_data_from_ipfs(ecids, false, keys);
     }
   }
 
@@ -33639,6 +33640,8 @@ class App extends Component {
 
     this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
 
+    await this.fetch_and_set_loaded_object_views([id], e5)
+
     const search_accounts = moderators.slice()
     this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
   }
@@ -34117,6 +34120,8 @@ class App extends Component {
 
       const target = 'pre_purchase|'+contract_obj['e5_id']
       await this.get_objects_from_socket_and_set_in_state([target], [my_address], [], 0)
+
+      await this.fetch_and_set_loaded_object_views([id], e5)
 
       var is_loading_prepurchase_balance_clone = structuredClone(this.state.is_loading_prepurchase_balance)
       is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = false
@@ -34633,6 +34638,8 @@ class App extends Component {
     const index = my_proposals_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
     my_proposals_clone[e5][index] = object
     this.setState({my_proposals: my_proposals_clone})
+
+    await this.fetch_and_set_loaded_object_views([id], e5)
 
     const search_accounts = archive_participants.slice()
     account_as_list.forEach(account_id => {
@@ -35316,6 +35323,8 @@ class App extends Component {
     created_token_object_mapping_clone[e5][created_tokens[i]] = object
 
     this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+
+    await this.fetch_and_set_loaded_object_views([id], e5)
 
     console.log('load_extra_token_data', 'finished loading all exchange data.')
 
@@ -51366,11 +51375,12 @@ class App extends Component {
   }
 
   load_my_account_storage_info = async (object) => {
-    var account = this.state.user_account_id[object['e5']]
+    var account = this.state.user_account_id[this.state.selected_e5]
     if(account != null && account != 1){
       var link = object['ipfs'] == null ? null : object['ipfs'].node_url
-      const e5_account = object['e5']+':'+account
-      var request = `${link}/${this.load_registered_endpoint_from_link(link, 'account_storage_data')}/${await this.fetch_nitro_privacy_signature(link,e5_account)}/${await this.fetch_nitro_privacy_signature(link)}`
+      const e5_account = this.state.selected_e5+':'+account
+      const address = this.state.accounts[this.state.selected_e5].address
+      var request = `${link}/${this.load_registered_endpoint_from_link(link, 'account_storage_data')}/${await this.fetch_nitro_privacy_signature(link, e5_account)}/${await this.fetch_nitro_privacy_signature(link, address)}/${await this.fetch_nitro_privacy_signature(link)}`
       try{
         const response = await fetch(request);
         if (!response.ok) {
@@ -51382,14 +51392,19 @@ class App extends Component {
         var success = obj.success
         if(success == true){
           var info = obj.account
+          var free_default_storage_consumed = obj.free_default_storage_consumed
           var clone = structuredClone(this.state.nitro_node_storage_payment_info)
+          var clone2 = structuredClone(this.state.free_default_storage_consumed_data)
           clone[object['e5_id']] = info
-          this.setState({nitro_node_storage_payment_info: clone})
+          clone2[object['e5_id']] = free_default_storage_consumed
+          this.setState({nitro_node_storage_payment_info: clone, free_default_storage_consumed_data: clone2})
         }
         else{
           var clone = structuredClone(this.state.nitro_node_storage_payment_info)
+          var clone2 = structuredClone(this.state.free_default_storage_consumed_data)
           clone[object['e5_id']] = 'unavailable'
-          this.setState({nitro_node_storage_payment_info: clone})
+          clone2[object['e5_id']] = 'unavailable'
+          this.setState({nitro_node_storage_payment_info: clone, free_default_storage_consumed_data: clone2})
         }
       }
       catch(e){

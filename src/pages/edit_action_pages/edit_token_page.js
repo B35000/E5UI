@@ -322,6 +322,8 @@ class NewTokenPage extends Component {
                 <div className="row" style={{}}>
                     <div className="col-6" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_title_tags_part2()}
@@ -334,6 +336,8 @@ class NewTokenPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_title_tags_part2()}

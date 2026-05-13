@@ -61,7 +61,7 @@ class synchronizing_page extends Component {
         }
         var img = this.get_default_logo()
         return(
-            <div style={{width:'100%', height:h,'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+            <div style={{width:'100%', height:h,'display': 'flex', 'align-items':'center','justify-content':'center', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                 <div>
                     <p style={{'text-align': 'center', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font, 'font-size':'12px'}}>{this.get_sync_text()}</p>
                     <div style={{width:bar_width, 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
