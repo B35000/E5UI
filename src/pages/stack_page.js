@@ -2171,8 +2171,10 @@ class StackPage extends Component {
     }
 
     when_socket_message_tapped(){
-        this.props.set_up_socket_connection_and_initialize_listeners(0)
-        this.props.notify(this.props.app_state.loc['1593mn']/* 'Restarting socket connection...' */, 2800);
+        if(this.props.app_state.has_wallet_been_set == true){
+            this.props.set_up_socket_connection_and_initialize_listeners(0)
+            this.props.notify(this.props.app_state.loc['1593mn']/* 'Restarting socket connection...' */, 2800);
+        }
     }
 
     render_stack_transactions_part(){
