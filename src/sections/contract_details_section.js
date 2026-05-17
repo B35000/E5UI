@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -3344,6 +3344,9 @@ class ContractDetailsSection extends Component {
     }
 
     get_actual_number(number, depth){
+        if(bigInt(depth).greater(1_000_000)){
+            return bigInt(number).toString().toLocaleString('fullwide', {useGrouping:false})
+        }
         var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
         var depth_vaule = bigInt(('1e'+p))
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})

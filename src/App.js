@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-pascal-case */
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -604,8 +604,9 @@ import NewMailPage from './pages/create_action_pages/new_mail_page';
 import NewContractorPage from './pages/create_action_pages/new_contractor_page';
 import NewAudioPage from './pages/create_action_pages/new_audio_page'
 import NewVideoPage from './pages/create_action_pages/new_video_page';
-import NewNitroPage from './pages/create_action_pages/new_nitro_page'
-import NewPollPage from './pages/create_action_pages/new_poll_page'
+import NewNitroPage from './pages/create_action_pages/new_nitro_page';
+import NewPollPage from './pages/create_action_pages/new_poll_page';
+import NewCertificatePage from './pages/create_action_pages/new_certificate_page';
 
 import EditJobPage from './pages/edit_action_pages/edit_job_page'
 import EditTokenPage from './pages/edit_action_pages/edit_token_page'
@@ -618,6 +619,7 @@ import EditAudioPage from './pages/edit_action_pages/edit_audiopost_page';
 import EditVideoPage from './pages/edit_action_pages/edit_videopost_page';
 import EditNitroPage from './pages/edit_action_pages/edit_nitropost_page';
 import EditPollPage from './pages/edit_action_pages/edit_poll_page';
+import EditCertificatePage from './pages/edit_action_pages/edit_certificate_page';
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -635,6 +637,7 @@ import DepthMintPage from './pages/token_action_pages/depthmint_page';
 import StageRoyaltiesPage from './pages/token_action_pages/stage_royalties_page';
 import ViewStagedRoyaltyPage from './pages/token_action_pages/view_staged_royalty_page';
 import ExchangeDepositPage from './pages/token_action_pages/exchange_deposit_page';
+import MintCertificatePage from './pages/token_action_pages/mint_certificate_page';
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -1266,7 +1269,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1377,7 +1380,7 @@ class App extends Component {
 
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
-    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}
+    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{},
   };
 
   get_app_version(){
@@ -3584,6 +3587,7 @@ class App extends Component {
     this.new_job_page = React.createRef();
     this.new_storefront_page = React.createRef();
     this.new_storefront_item_page = React.createRef();
+    this.new_certificate_page = React.createRef();
 
     this.new_mint_dump_token_page = React.createRef();
     this.new_transfer_token_page = React.createRef();
@@ -3621,6 +3625,7 @@ class App extends Component {
     this.view_job_request_page = React.createRef();
     this.view_job_request_contract_page = React.createRef();
     this.withdraw_ether_page = React.createRef();
+    this.mint_certificate_page = React.createRef();
 
     this.edit_job_page = React.createRef();
     this.edit_token_page = React.createRef();
@@ -3684,6 +3689,7 @@ class App extends Component {
     this.bridge_ether_page = React.createRef();
     this.send_purchase_request_page = React.createRef();
     this.view_storefront_request_page = React.createRef();
+    this.edit_certificate_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4883,7 +4889,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -6722,6 +6728,8 @@ class App extends Component {
           {this.render_bridge_ether_bottomsheet()}
           {this.render_send_purchase_request_bottomsheet()}
           {this.render_view_storefront_request_bottomsheet()}
+          {this.render_edit_certificate_object_bottomsheet()}
+          {this.render_mint_certificate_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -10530,6 +10538,7 @@ class App extends Component {
     const storefront_purchase_request_e5_ids = []
     const payment_update_transactions = []
     const swap_transactions = []
+    const mint_certificate_transactions = []
 
     const all_tagged_addresses_data_clone = structuredClone(this.state.all_tagged_addresses_data)
     for(var i=0; i<stack.length; i++){
@@ -10639,6 +10648,10 @@ class App extends Component {
           const t = stack[i];
           swap_transactions.push(t.token_item['e5_id'])
         }
+        else if(stack[i].type == this.getLocale()['3099']/* 'mint-certificate' */){
+          const t = stack[i];
+          mint_certificate_transactions.push(t.token_item['e5_id'])
+        }
       }
     }
 
@@ -10716,6 +10729,11 @@ class App extends Component {
 
     if(swap_transactions.length > 0){
       this.emit_comment_record_object_event(swap_transactions, 'token_swap_events');
+      await this.wait(1000)
+    }
+
+    if(mint_certificate_transactions.length > 0){
+      this.emit_comment_record_object_event(mint_certificate_transactions, 'certificate_mint_events');
       await this.wait(1000)
     }
     
@@ -11470,6 +11488,15 @@ class App extends Component {
     else if(target == '13'/* polls */){
       return(
           <NewPollPage ref={this.new_poll_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} generate_hash={this.generate_hash.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} process_csv_file_data={this.process_csv_file_data.bind(this)} process_json_file_object={this.process_json_file_object.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} load_my_accounts_obligation_data={this.load_my_accounts_obligation_data.bind(this)} show_images={this.show_images.bind(this)}
+        />
+      )
+    }
+    else if(target == '14'/* certificates */){
+      return(
+        <NewCertificatePage
+          ref={this.new_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+          set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_images={this.show_images.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         />
       )
     }
@@ -12804,6 +12831,82 @@ class App extends Component {
 
 
 
+  render_edit_certificate_object_bottomsheet(){
+    if(this.state.edit_certificate_bottomsheet2 != true) return;
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      this.render_edit_certificate_element(),
+      this.state.edit_certificate_bottomsheet,
+      this.open_edit_certificate_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  render_edit_certificate_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div>
+          <EditCertificatePage ref={this.edit_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_images={this.show_images.bind(this)}
+          />
+      </div>
+    )
+  }
+
+  open_edit_certificate_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_certificate_bottomsheet')
+    if(this.state.edit_certificate_bottomsheet == true){
+      //closing
+      this.edit_certificate_bottomsheet = this.edit_certificate_page.current?.state;
+
+      this.setState({edit_certificate_bottomsheet: !this.state.edit_certificate_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_certificate_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_certificate_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_certificate_bottomsheet: !me.state.edit_certificate_bottomsheet});
+          if(me.edit_certificate_bottomsheet != null){
+            me.edit_certificate_page.current?.setState(me.edit_certificate_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_edit_certificate_object(target, object){
+    this.open_edit_certificate_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_certificate_page.current){
+      me.edit_certificate_page.current?.setState(object['ipfs'])
+      me.edit_certificate_page.current?.setState({type:me.getLocale()['d311bt']/* 'edit-certificate' */})
+      me.edit_certificate_page.current?.setState({object_id: object['id']})
+      me.edit_certificate_page.current?.set()
+    }
+    }, (1 * 1100));
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -12840,6 +12943,9 @@ class App extends Component {
     }
     else if(target == '13'){
       this.open_edit_poll_object(target, object)
+    }
+    else if(target == '14'){
+      this.open_edit_certificate_object(target, object)
     }
   }
 
@@ -15802,6 +15908,33 @@ class App extends Component {
         }, (1 * 1100));
         
     }
+    else if(tx.type == this.getLocale()['d311a']/* 'certificate' */){
+      this.open_new_object('14')
+      var me = this;
+      setTimeout(function() {
+        if(me.new_certificate_page.current){
+          me.new_certificate_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
+    else if(tx.type == this.getLocale()['d311bt']/* 'edit-certificate' */){
+      this.open_edit_certificate_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.edit_certificatae_page.current){
+        me.edit_certificate_page.current?.setState(tx)
+      }
+      }, (1 * 1100)); 
+    }
+    else if(tx.type == this.getLocale()['3099']/* 'mint-certificate' */){
+      this.open_mint_certificate_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.mint_certificate_page.current){
+          me.mint_certificate_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
     
   }
 
@@ -18473,7 +18606,7 @@ class App extends Component {
 
         open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
 
-        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)}
+        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)}
         />
       </div>
     )
@@ -18584,6 +18717,7 @@ class App extends Component {
       'view_storefront_bag_receipt_item':550,
       'set_password_for_locking_wallet':300,
       'request_switch_to_another_e5':300,
+      'view_certificate_class_details':550,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -19043,15 +19177,21 @@ class App extends Component {
     }
     else if(object_type == 31/* token */){
       const id = object['data'][0][3/* <3>token_type */]
-      if(id == 3/* capped(or type end) */){
-        this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1218']/* 'ends ☝️' */})
-        this.homepage.current?.when_ends_object_clicked(index, object['id'], object['e5'], object, 'ignore')
+      if(object['data'][0][4/* <4>non-fungible */] == 1){
+        this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264bw']/* 'certificates' */})
+        this.homepage.current?.when_certificate_object_clicked(index, object['id'], object['e5'], object, 'ignore')
         this.homepage.current?.reset_post_detail_object()
       }else{
-        //5 uncapped(or type spend)
-        this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1219']/* 'spends 🫰' */})
-        this.homepage.current?.when_spends_object_clicked(index, object['id'], object['e5'], object, 'ignore')
-        this.homepage.current?.reset_post_detail_object()
+        if(id == 3/* capped(or type end) */){
+          this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1218']/* 'ends ☝️' */})
+          this.homepage.current?.when_ends_object_clicked(index, object['id'], object['e5'], object, 'ignore')
+          this.homepage.current?.reset_post_detail_object()
+        }else{
+          //5 uncapped(or type spend)
+          this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1219']/* 'spends 🫰' */})
+          this.homepage.current?.when_spends_object_clicked(index, object['id'], object['e5'], object, 'ignore')
+          this.homepage.current?.reset_post_detail_object()
+        }
       }
     }
     else if(object_type == 19/* audioport */){
@@ -20247,6 +20387,7 @@ class App extends Component {
       this.new_video_page.current?.when_image_gif_files_picked(picked_files)
       this.new_nitro_page.current?.when_image_gif_files_picked(picked_files)
       this.new_poll_page.current?.when_image_gif_files_picked(picked_files)
+      this.new_certificate_page.current?.when_image_gif_files_picked(picked_files)
 
       this.edit_job_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_token_page.current?.when_image_gif_files_picked(picked_files)
@@ -20256,11 +20397,15 @@ class App extends Component {
       this.edit_contractor_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_videopost_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_audiopost_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_nitro_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_poll_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_certificate_page.current?.when_image_gif_files_picked(picked_files)
 
       this.add_comment_page.current?.when_image_gif_files_picked(picked_files)
       this.send_job_request_page.current?.when_image_gif_files_picked(picked_files)
       this.dialog_page.current?.when_files_picked(picked_files)
       this.send_purchase_request_page.current?.when_image_gif_files_picked(picked_files)
+      this.mint_certificate_page.current?.when_image_gif_files_picked(picked_files)
     }
     else if(function_name == 'create_text_banner_image'){
       this.new_channel_page.current?.when_banner_selected(picked_files)
@@ -20275,6 +20420,7 @@ class App extends Component {
       this.new_video_page.current?.when_banner_selected(picked_files)
       this.new_nitro_page.current?.when_banner_selected(picked_files)
       this.new_poll_page.current?.when_banner_selected(picked_files)
+      this.new_certificate_page.current?.when_banner_selected(picked_files)
 
       this.edit_job_page.current?.when_banner_selected(picked_files)
       this.edit_token_page.current?.when_banner_selected(picked_files)
@@ -20284,6 +20430,11 @@ class App extends Component {
       this.edit_contractor_page.current?.when_banner_selected(picked_files)
       this.edit_videopost_page.current?.when_banner_selected(picked_files)
       this.edit_audiopost_page.current?.when_banner_selected(picked_files)
+      this.edit_nitro_page.current?.when_banner_selected(picked_files)
+      this.edit_poll_page.current?.when_banner_selected(picked_files)
+      this.edit_certificate_page.current?.when_banner_selected(picked_files)
+
+      this.mint_certificate_page.current?.when_banner_selected(picked_files)
     }
     else if(function_name == 'create_storefront_variant_image'){
       this.new_storefront_item_page.current?.when_variant_image_gif_files_picked(picked_files)
@@ -20321,6 +20472,7 @@ class App extends Component {
       this.new_video_page.current?.when_pdf_files_picked(picked_files)
       this.new_nitro_page.current?.when_pdf_files_picked(picked_files)
       this.new_poll_page.current?.when_pdf_files_picked(picked_files)
+      this.new_certificate_page.current?.when_pdf_files_picked(picked_files)
 
       this.edit_job_page.current?.when_pdf_files_picked(picked_files)
       this.edit_token_page.current?.when_pdf_files_picked(picked_files)
@@ -20330,12 +20482,16 @@ class App extends Component {
       this.edit_contractor_page.current?.when_pdf_files_picked(picked_files)
       this.edit_videopost_page.current?.when_pdf_files_picked(picked_files)
       this.edit_audiopost_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_nitro_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_poll_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_certificate_page.current?.when_pdf_files_picked(picked_files)
 
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
       this.send_job_request_page.current?.when_pdf_files_picked(picked_files)
       this.view_contextual_transfer_page.current?.when_pdf_files_picked(picked_files)
       this.dialog_page.current?.when_files_picked(picked_files)
       this.send_purchase_request_page.current?.when_pdf_files_picked(picked_files)
+      this.mint_certificate_page.current?.when_pdf_files_picked(picked_files)
     }
     else if(function_name == 'create_zip'){
       this.new_channel_page.current?.when_zip_files_picked(picked_files)
@@ -20349,6 +20505,7 @@ class App extends Component {
       this.new_video_page.current?.when_zip_files_picked(picked_files)
       this.new_nitro_page.current?.when_zip_files_picked(picked_files)
       this.new_poll_page.current?.when_zip_files_picked(picked_files)
+      this.new_certificate_page.current?.when_zip_files_picked(picked_files)
 
       this.edit_job_page.current?.when_zip_files_picked(picked_files)
       this.edit_token_page.current?.when_zip_files_picked(picked_files)
@@ -20358,9 +20515,13 @@ class App extends Component {
       this.edit_contractor_page.current?.when_zip_files_picked(picked_files)
       this.edit_videopost_page.current?.when_zip_files_picked(picked_files)
       this.edit_audiopost_page.current?.when_zip_files_picked(picked_files)
+      this.edit_nitro_page.current?.when_zip_files_picked(picked_files)
+      this.edit_poll_page.current?.when_zip_files_picked(picked_files)
+      this.edit_certificate_page.current?.when_zip_files_picked(picked_files)
 
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
       this.dialog_page.current?.when_files_picked(picked_files)
+      this.mint_certificate_page.current?.when_zip_files_picked(picked_files)
     }
     else if(function_name == 'create_video_pick_video_file'){
       this.new_video_page.current?.when_video_file_picked(picked_files)
@@ -20392,6 +20553,7 @@ class App extends Component {
       this.new_video_page.current?.when_markdown_image_selected(picked_files)
       this.new_nitro_page.current?.when_markdown_image_selected(picked_files)
       this.new_poll_page.current?.when_markdown_image_selected(picked_files)
+      this.new_certificate_page.current?.when_markdown_image_selected(picked_files)
 
       this.edit_job_page.current?.when_markdown_image_selected(picked_files)
       this.edit_token_page.current?.when_markdown_image_selected(picked_files)
@@ -20401,11 +20563,16 @@ class App extends Component {
       this.edit_contractor_page.current?.when_markdown_image_selected(picked_files)
       this.edit_videopost_page.current?.when_markdown_image_selected(picked_files)
       this.edit_audiopost_page.current?.when_markdown_image_selected(picked_files)
+      this.edit_nitro_page.current?.when_markdown_image_selected(picked_files)
+      this.edit_poll_page.current?.when_markdown_image_selected(picked_files)
+      this.edit_certificate_page.current?.when_markdown_image_selected(picked_files)
 
       this.add_comment_page.current?.when_markdown_image_selected(picked_files)
+      this.mint_certificate_page.current?.when_markdown_image_selected(picked_files)
     }
     else if(function_name == 'create_markdown_image2'){
       this.new_poll_page.current?.when_markdown_image_selected2(picked_files)
+      this.new_certificate_page.current?.when_markdown_image_selected2(picked_files)
     }
   }
 
@@ -25700,6 +25867,91 @@ class App extends Component {
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
     this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_mint_certificate_bottomsheet(){
+    if(this.state.mint_certificate_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <MintCertificatePage ref={this.mint_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_mint_certificate_to_stack={this.add_mint_certificate_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_images={this.show_images.bind(this)}
+      />,
+      this.state.mint_certificate_bottomsheet,
+      this.open_mint_certificate_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_mint_certificate_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_mint_certificate_bottomsheet')
+    if(this.state.mint_certificate_bottomsheet == true){
+      //closing
+      this.mint_certificate_bottomsheet = this.mint_certificate_page.current?.state;
+
+      this.setState({mint_certificate_bottomsheet: !this.state.mint_certificate_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({mint_certificate_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({mint_certificate_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({mint_certificate_bottomsheet: !me.state.mint_certificate_bottomsheet});
+
+          if(me.mint_certificate_bottomsheet != null){
+            me.mint_certificate_page.current?.setState(me.mint_certificate_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_mint_certificate_bottomsheet(item, object){
+    this.open_mint_certificate_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.mint_certificate_page.current != null){
+      me.mint_certificate_page.current.set_token(item, object)
+    }
+    }, (1 * 1100));
+  }
+
+  add_mint_certificate_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -31267,6 +31519,28 @@ class App extends Component {
         });
       }
 
+      if(object['ipfs'].candidates != null && object['ipfs'].candidates.length > 0){
+        const candidates = object['ipfs'].candidates
+        candidates.forEach(candidate => {
+          const markdown = candidate['markdown']
+          const images_in_markdown = this.extractImageLinks(markdown)
+          images_in_markdown.forEach(item => {
+            if(this.is_ecid(item)) ecids.push(item)
+          });
+        });
+      }
+
+      if(object['ipfs'].certificate_models != null && Object.keys(object['ipfs'].certificate_models).length > 0){
+        const models = Object.keys(object['ipfs'].certificate_models)
+        models.forEach(model => {
+          const markdown = object['ipfs'].certificate_models[model]
+          const images_in_markdown = this.extractImageLinks(markdown)
+          images_in_markdown.forEach(item => {
+            if(this.is_ecid(item)) ecids.push(item)
+          });
+        });
+      }
+
       const key_object = object['ipfs'].ecid_encryption_passwords || {}
       var object_keys = Object.keys(key_object)
       object_keys.forEach(ecid => {
@@ -34788,6 +35062,7 @@ class App extends Component {
     // var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
     var created_token_object_data = this.state.created_tokens[e5] || []
+    var created_certificate_object_data = this.state.created_certificates[e5] || []
     var created_token_object_mapping = this.state.created_token_object_mapping[e5] || {}
     var is_first_time = this.state.created_tokens[e5] == null
 
@@ -34875,14 +35150,17 @@ class App extends Component {
       }
 
       const spend_balance = (tokens_data != null && tokens_data.token_type == 'e') ? e_token_balance_data[token_id] : 0
+      
+      const is_certificate = created_token_data[i][0][4/* <4>non-fungible */] == 1
         
       var token_obj = {
-        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':created_token_object_data.length, 'spend_balance':spend_balance, 'object_type':'token'
+        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : created_token_object_data.length, 'spend_balance':spend_balance, 'object_type':'token'
       }
+
 
       if(this.homepage.current?.state.selected_end_item == token_id+e5 || this.homepage.current?.state.selected_spend_item == token_id+e5){
         // the token is being viewed
-        const previous_obj = this.state.created_tokens[e5].find(e => e['e5_id'] == (token_id+e5))
+        const previous_obj = is_certificate == true ? this.state.created_certificates[e5].find(e => e['e5_id'] == (token_id+e5)) : this.state.created_tokens[e5].find(e => e['e5_id'] == (token_id+e5))
         if(previous_obj != null){
           token_obj['exchanges_balances'] = previous_obj['exchanges_balances']
           token_obj['moderators'] = previous_obj['moderators']
@@ -34900,13 +35178,24 @@ class App extends Component {
       }
 
       if(tokens_data != null || (token_id == 3 || token_id == 5)){
-        const index = created_token_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']);
-        if(index != -1){
-          created_token_object_data[index] = token_obj
-        }else{
-          created_token_object_data.push(token_obj)
+        const index = is_certificate == true ? created_certificate_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']) : created_token_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']);
+
+        if(is_certificate == true){
+          if(index != -1){
+            created_certificate_object_data[index] = token_obj
+          }else{
+            created_certificate_object_data.push(token_obj)
+          }
         }
-        created_token_object_mapping[token_id] = token_obj
+        else{
+          if(index != -1){
+            created_token_object_data[index] = token_obj
+          }else{
+            created_token_object_data.push(token_obj)
+          }
+          created_token_object_mapping[token_id] = token_obj
+        }
+        
       }
 
       this.set_object_in_local_forage(token_obj)
@@ -34962,6 +35251,9 @@ class App extends Component {
         var created_tokens_clone = structuredClone(this.state.created_tokens)
         created_tokens_clone[e5] = created_token_object_data
 
+        var created_certificates_clone = structuredClone(this.state.created_certificates)
+        created_certificates_clone[e5] = created_certificate_object_data
+
         var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
         created_token_object_mapping_clone[e5] = created_token_object_mapping
 
@@ -34977,7 +35269,7 @@ class App extends Component {
         var end_tokens_clone = structuredClone(this.state.end_tokens)
         end_tokens_clone[e5] = end_tokens
 
-        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
+        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone})
         
         if((i%4 == 0 || i == created_tokens.length-1)){
           await this.wait(350)
@@ -35020,6 +35312,9 @@ class App extends Component {
     var created_tokens_clone = this.structuredClone(this.state.created_tokens)
     created_tokens_clone[e5] = created_token_object_data
 
+    var created_certificates_clone = structuredClone(this.state.created_certificates)
+    created_certificates_clone[e5] = created_certificate_object_data
+
     var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
     created_token_object_mapping_clone[e5] = created_token_object_mapping
 
@@ -35035,7 +35330,7 @@ class App extends Component {
     var end_tokens_clone = structuredClone(this.state.end_tokens)
     end_tokens_clone[e5] = end_tokens
 
-    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone})
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone})
 
     await this.wait(350)
     this.resolve_token_name_details()
@@ -35381,7 +35676,6 @@ class App extends Component {
     for(var i=0; i<received_tokens_event_data.length; i++){
       all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
     }
-
     for(var i=0; i<stack_depth_swap_event_data.length; i++){
       all_events.push({'event':stack_depth_swap_event_data[i], 'action':'DepthMint', 'timestamp':stack_depth_swap_event_data[i].returnValues.p7})
     }
@@ -46454,6 +46748,9 @@ class App extends Component {
   }
 
   get_actual_number(number, depth){
+    if(bigInt(depth).greater(1_000_000)){
+      return bigInt(number).toString().toLocaleString('fullwide', {useGrouping:false})
+    }
     var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
     var depth_vaule = bigInt(('1e'+p))
     return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})

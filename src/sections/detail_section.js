@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -41,6 +41,7 @@ import NitroDetailsSection from './nitro_details_section'
 import BillDetailsSection from './bill_details_section'
 import PollDetailsSection from './poll_details_section';
 import DirectMessageDetailsSection from './direct_message_details_section'
+import CertificateDetailsSection from './certificate_details_section'
 
 var bigInt = require("big-integer");
 
@@ -296,6 +297,12 @@ class PostDetailSection extends Component {
                         app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bill_item={this.props.selected_bill_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} pin_bill={this.props.pin_bill.bind(this)} get_bill_items={this.props.get_bill_items.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} perform_bill_object_payment_search={this.props.perform_bill_object_payment_search.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_account_details={this.props.show_account_details.bind(this)}
                     />
                 )
+            }
+            else if(selected_option_name == this.props.app_state.loc['1264bw']/* 'certificates' */){
+                <CertificateDetailsSection
+                    ref={this.curent_post_section} app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_certificate_item={this.props.selected_certificate_item} viewed_certificates={this.props.viewed_certificates} wallet_page_tags_object={this.props.wallet_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} get_certificate_items={this.props.get_certificate_items.bind(this)} add_id_to_contacts={this.props.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} pin_certificate={this.props.pin_certificate.bind(this)} open_e5_link={this.props.open_e5_link.bind(this)} view_number={this.props.view_number.bind(this)} when_pdf_file_opened={this.props.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.props.when_zip_file_opened.bind(this)}
+                    follow_unfollow_post_author={this.props.follow_unfollow_post_author.bind(this)} when_e5_link_tapped={this.props.when_e5_link_tapped.bind(this)} select_deselect_tag={this.props.select_deselect_tag.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)} show_account_details={this.props.show_account_details.bind(this)} get_my_state_color={this.get_my_state_color.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} open_modify_token_ui={this.props.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.props.open_exchange_transfers_ui.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)}
+                />
             }
         }
     }
@@ -738,6 +745,9 @@ class PostDetailSection extends Component {
                 if(extra_data['token_swap_events'] != null){
                     return_text.push(this.props.app_state.loc['2509dp']/* '$ swaps' */.replace('$', this.format_count(extra_data['token_swap_events']['all_hits'])));
                 }
+                if(extra_data['certificate_mint_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dy']/* '$ mints' */.replace('$', this.format_count(extra_data['certificate_mint_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -786,7 +796,8 @@ class PostDetailSection extends Component {
                 'storefront_order_events':this.props.app_state.loc['2509cd']/* orders 📦 */,
                 'repost_object_event':this.props.app_state.loc['2509de']/* reposts 🔄 */,
                 'storefront_purchase_request_events':this.props.app_state.loc['2509dm']/* purchase-requests 🛍️ */,
-                'token_swap_events':this.props.app_state.loc['2509dq']/* 'swap-actions ⇄' */
+                'token_swap_events':this.props.app_state.loc['2509dq']/* 'swap-actions ⇄' */,
+                'certificate_mint_events':this.props.app_state.loc['2509du']/* 'mint-actions 🌱' */
             }
 
             const available_items = ['e']
@@ -865,6 +876,11 @@ class PostDetailSection extends Component {
                     'title':this.props.app_state.loc['2509dr']/* Token Exchange Swaps' */, 
                     'details':this.props.app_state.loc['2509ds']/* 'Chart containing the swap requests sent to the exchange over time.' */,
                     'y_axis':this.props.app_state.loc['2509dt']/* Y-Axis: Swaps */
+                },
+                'certificate_mint_events':{
+                    'title':this.props.app_state.loc['2509dv']/* Certificate Mints' */, 
+                    'details':this.props.app_state.loc['2509dw']/* 'Chart containing the mint requests sent to the exchange over time.' */,
+                    'y_axis':this.props.app_state.loc['2509dx']/* Y-Axis: Mints */
                 }
             }
 

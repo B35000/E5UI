@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -1007,6 +1007,15 @@ class ViewTransactionPage extends Component {
                         {this.render_accept_storefront_application_data()}
                     </div>
                 )
+            }
+            else if(tx.type == this.props.app_state.loc['d311a']/* 'certificate' */){
+                return this.render_certificate_data()
+            }
+            else if(tx.type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */){
+                return this.render_edit_certificate()
+            }
+            else if(tx.type == this.props.app_state.loc['3099']/* 'mint-certificate' */){
+                return this.render_mint_certificate_data()
             }
             
         }
@@ -2451,6 +2460,92 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('3', {'title':text, 'details':this.props.app_state.loc['3072x']/* 'Consensus Type.' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+    render_certificate_data(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        var e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':object['ipfs'].exchange_authority, 'details':this.props.app_state.loc['d311bp']/* 'Certificate Authority' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_pdf_files_if_any()}
+                    {this.render_zip_files_if_any()}
+                    {this.render_markdown_if_any()}
+
+                    {this.render_price_data(object['ipfs'].price_data, e5)}
+                    <div style={{height: 10}}/>
+                    {this.render_model_items(object['ipfs'].certificate_models)}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_price_data(items, e5){
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.reverse().map((item, index) => (
+                        <SwipeableList>
+                            <SwipeableListItem>
+                                <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                    <li style={{'padding': '5px'}}>
+                                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                        </div>
+                                    </li>
+                                </div>
+                            </SwipeableListItem>
+                        </SwipeableList>
+                        
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_model_items(model_data){
+        const items = Object.keys(model_data)
+        return(
+            <div>
+                {items.map((item, index) => (
+                    <div style={{'margin': '1px 2px 1px 2px'}}>
+                        {this.render_model_item(item, model_data)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_model_item(item, data){
+        const title = item
+        const details = this.format_account_balance_figure(data['maximum_supply']) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
+        return(
+            <div onClick={() => this.edit_model_item(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
     }
@@ -6523,6 +6618,40 @@ return data['data']
         )
     }
 
+    render_edit_certificate(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        var e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':object['ipfs'].exchange_authority, 'details':this.props.app_state.loc['d311bp']/* 'Certificate Authority' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+
+                    {this.render_pdf_files_if_any()}
+                    {this.render_zip_files_if_any()}
+                    {this.render_markdown_if_any()}
+
+                    {this.render_price_data(object['ipfs'].price_data, e5)}
+                    <div style={{height: 10}}/>
+                    {this.render_model_items(object['ipfs'].certificate_models)}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
 
 
 
@@ -9242,6 +9371,82 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+    render_mint_certificate_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const item = transaction_item.selected_class
+        const object = transaction_item.token_item
+        const data = object['ipfs'].certificate_models[item]
+        const name = item
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const split_period = data['split_period']
+        const price_data = object['ipfs'].price_data
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const e5 = object['e5']
+
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
+               
+                <div style={{height: 10}}/>
+                {this.render_my_balances(item, object, price_data, e5)}
+
+                {this.render_detail_item('0')}
+
+                {this.render_item_data(items)}
+                {this.render_item_images()}
+                {this.render_pdf_files_if_any()}
+                {this.render_zip_files_if_any()}
+                {this.render_markdown_if_any()}
+            </div>
+        )
+    }
+
+    render_multiplied_prices(price_data, base_fee_price_multiplier, e5){
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {price_data.map((item, index) => (
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_my_balances(item, object, price_data, e5){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3099a']/* 'Your balances.' */, 'details':this.props.app_state.loc['3099b']/* 'The amount of money you have available for creating this new certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_data.map((item, index) => (
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':this.props.calculate_actual_balance(e5, item['id']), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(this.props.calculate_actual_balance(e5, item['id'])), 'barwidth':this.calculate_bar_width(this.props.calculate_actual_balance(e5, item['id'])), 'number':this.format_account_balance_figure(this.props.calculate_actual_balance(e5, item['id'])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
 
 
 

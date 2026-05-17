@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -726,6 +726,9 @@ class DialogPage extends Component {
         }
         else if(option == 'request_switch_to_another_e5'){
             return this.view_request_switch_to_another_e5_ui()
+        }
+        else if(option == 'view_certificate_class_details'){
+            return this.view_certificate_class_details_ui()
         }
     }
 
@@ -3042,6 +3045,9 @@ return data['data']
     }
 
     get_actual_number(number, depth){
+        if(bigInt(depth).greater(1_000_000)){
+            return bigInt(number).toString().toLocaleString('fullwide', {useGrouping:false})
+        }
         var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
         var depth_vaule = bigInt(('1e'+p))
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
@@ -3571,6 +3577,9 @@ return data['data']
                 if(extra_data['token_swap_events'] != null){
                     return_text.push(this.props.app_state.loc['2509dp']/* '$ swaps' */.replace('$', this.format_count(extra_data['token_swap_events']['all_hits'])));
                 }
+                if(extra_data['certificate_mint_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dy']/* '$ mints' */.replace('$', this.format_count(extra_data['certificate_mint_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -3697,7 +3706,7 @@ return data['data']
                     36/* channel */: this.props.app_state.created_channels[e5],
                     27/* storefront */: this.props.app_state.created_stores[e5],
                     25/* bag */: this.props.app_state.created_bags[e5],
-                    31/* token */: this.props.app_state.created_tokens[e5],
+                    31/* token */: this.props.app_state.created_tokens[e5].concat(this.props.app_state.created_certificates[e5]),
                     19/* audioport */: this.props.app_state.created_audios[e5],
                     20/* videoport */: this.props.app_state.created_videos[e5],
                     21/* nitro */: this.props.app_state.created_nitros[e5],
@@ -4289,6 +4298,9 @@ return data['data']
         var object_array = object['data']
         var token_id = object['id']
         var item = object
+        if(object_array[0][4/* <4>non-fungible */] == 1){
+            return this.format_certificate_item(object)
+        }
         var type = object_array[0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
@@ -4329,6 +4341,20 @@ return data['data']
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
             'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+        }
+    }
+
+    format_certificate_item(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = item['event'].returnValues.p5
+        var time = item['event'].returnValues.p4
+        var sender = this.get_senders_name(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
 
@@ -14222,6 +14248,160 @@ return data['data']
         }else{
             this.props.continue_with_sending_message(this.state.data['object'])
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    view_certificate_class_details_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_certificate_class_details_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_certificate_class_details_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_class_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_class_details_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_class_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_class_details_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_certificate_class_details_data(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const data = object['ipfs'].certificate_models[item]
+        const name = item
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const split_period = data['split_period']
+        const price_data = object['ipfs'].price_data
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const e5 = object['e5']
+        const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_account_balance_figure(maximum_supply), 'details':this.props.app_state.loc['3055ox']/* 'Class Maimum Supply' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':(new Date(purchase_start_time).toLocaleString()), 'details':this.props.app_state.loc['3055oy']/* 'Purchase Start Time' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':(new Date(purchase_end_time).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']/* 'Every $' */.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']/* 'Split Period' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
+
+                {split_time > 0 && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pe']/* 🌱 Mint New Certificate.' */, 'details':this.props.app_state.loc['3055pf']/* 'Create and mint a new certificate token with your preferred details.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.mint_new_certificate()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055pg']/* 'Mint Token' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_certificate_class_details_data2(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const data = object['ipfs'].certificate_models[item]
+        const class_markdown = data['class_markdown']
+
+        if(class_markdown == ''){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':class_markdown})}
+                </div>
+            )
+        }
+    }
+
+    render_multiplied_prices(price_data, base_fee_price_multiplier, e5){
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {price_data.map((item, index) => (
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    mint_new_certificate(){
+        this.props.open_dialog_bottomsheet()
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        this.props.show_mint_certificate_bottomsheet(item, object)
+    }
+
+    get_current_split_time(split_period, purchase_start_time, purchase_end_time){
+        const current_time = Math.floor(Date.now()/1000)
+        if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
+        const difference = parseInt(current_time) - parseInt(purchase_start_time)
+        const periodCount = Math.floor(difference / parseInt(split_period))
+        return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
     }
 
     

@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -74,7 +74,7 @@ class SpendDetailSection extends Component {
           'e':[
               ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
           ],
-          'events': [
+           'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */], [1], [1]
            ],
            'moderator-events': [
@@ -449,7 +449,7 @@ class SpendDetailSection extends Component {
                                     {/* {this.render_post_state(selected_object)} */}
                                     {index == 6 && this.render_token_type(selected_object)}
                                     {index == 7 && this.render_object_age(selected_object, item)}
-                                    {index == 8 && this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
+                                    {index == 8 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3098l']/* 'Access Rights' */, 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                                     {index == 9 && this.render_detail_item('0')}
 
                                     {index == 10 && this.render_detail_item('3', item['token_type'])}
@@ -2575,7 +2575,6 @@ return data['data']
         return this.props.app_state.exchange_events[object['id']][event]
     }
 
-
     render_contract_transfer_item_logs(object){
         var middle = this.props.height - 120;
         var items = [].concat(this.get_item_logs(object, 'transfer'))
@@ -2615,7 +2614,6 @@ return data['data']
         }
     }
 
-
     when_contract_transfer_item_clicked(index){
         if (this.state.selected_contract_transfer_event_item == index) {
             this.setState({ selected_contract_transfer_event_item: null })
@@ -2623,7 +2621,6 @@ return data['data']
             this.setState({ selected_contract_transfer_event_item: index })
         }
     }
-
 
     render_contract_transfer_event_item(item, object, index){
         var exchange_id = item['event'].returnValues.p1;
@@ -2669,6 +2666,9 @@ return data['data']
     }
 
     get_actual_number(number, depth){
+        if(bigInt(depth).greater(1_000_000)){
+            return bigInt(number).toString().toLocaleString('fullwide', {useGrouping:false})
+        }
         var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
         var depth_vaule = bigInt(('1e'+p))
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2756,7 +2756,6 @@ return data['data']
         }
     }
 
-
     when_proportion_ratio_item_clicked(index){
         if (this.state.selected_proportion_ratio_event_item == index) {
             this.setState({ selected_proportion_ratio_event_item: null })
@@ -2764,7 +2763,6 @@ return data['data']
             this.setState({ selected_proportion_ratio_event_item: index })
         }
     }
-
 
     render_proportion_ratio_event_item(item, object, index){
         var new_active_limit = item.returnValues.p2

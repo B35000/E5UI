@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -78,6 +78,7 @@ class tags extends Component {
         items[this.props.app_state.loc['3093e']/* 'work-obligations' */] = '💼'
         items[this.props.app_state.loc['3093f']/* 'explore-obligations' */] = '🧭'
         items[this.props.app_state.loc['3093g']/* 'wallet-obligations' */] = '👛'
+        items[this.props.app_state.loc['1264bw']/* 'certificates' */] = '📜'
       }
       
       if(items[item] != null) return items[item];

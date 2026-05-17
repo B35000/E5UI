@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -62,9 +62,9 @@ class NewPostPage extends Component {
         device_region: this.props.app_state.device_region,
         device_city: '', selected_device_city:'',
 
-        my_country : this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
+        my_country: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
 
-        my_city : this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
+        my_city: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
         
         typed_link_text:'', link_search_results:[], added_links:[],
         get_post_preview_option:this.get_post_preview_option(),
@@ -2703,7 +2703,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
         }
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){
-            this.props.notify(this.props.app_state.loc['284bc']/* 'Your job post is too large.' */, 5000)
+            this.props.notify(this.props.app_state.loc['284bc']/* 'Your post is too large.' */, 5000)
         }
         else{
 

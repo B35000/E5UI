@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -3151,6 +3151,9 @@ return data['data']
     }
 
     get_actual_number(number, depth){
+        if(bigInt(depth).greater(1_000_000)){
+            return bigInt(number).toString().toLocaleString('fullwide', {useGrouping:false})
+        }
         var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
         var depth_vaule = bigInt(('1e'+p))
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
@@ -3518,7 +3521,7 @@ return data['data']
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Update Balance Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2447bf']/* 'Update Balance Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_update_balance_item_logs(object)}
@@ -3624,7 +3627,7 @@ return data['data']
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Freeze-Unfreeze Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2447bg']/* 'Freeze-Unfreeze Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                     {this.render_freeze_unfreeze_item_logs(object)}
@@ -3632,7 +3635,6 @@ return data['data']
             </div>
         )
     }
-
 
     render_freeze_unfreeze_item_logs(object){
         var middle = this.props.height - 120;
@@ -3673,7 +3675,6 @@ return data['data']
         }
     }
 
-
     when_freeze_unfreeze_item_clicked(index){
         if (this.state.selected_freeze_unfreeze_event_item == index) {
             this.setState({ selected_freeze_unfreeze_event_item: null })
@@ -3681,7 +3682,6 @@ return data['data']
             this.setState({ selected_freeze_unfreeze_event_item: index })
         }
     }
-
 
     render_freeze_unfreeze_event_item(item, object, index){
         var freeze_unfreeze_obj = {'1':this.props.app_state.loc['2423']/* 'Action: Freeze' */,'0':this.props.app_state.loc['2424']/* 'Action: Unfreeze' */}
@@ -4194,7 +4194,6 @@ return data['data']
             )
         }
     }
-
 
     when_depth_mint_item_clicked(index){
         if (this.state.selected_depth_mint_event_item == index) {

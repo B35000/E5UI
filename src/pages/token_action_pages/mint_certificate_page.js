@@ -17,39 +17,37 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { Component } from 'react';
-import ViewGroups from '../../components/view_groups';
+import ViewGroups from '../../components/view_groups'
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
+import DurationPicker from '../../components/duration_picker';
+import Slider from '../../components/slider'
+import MySwipeableViews from '../../components/my_swipeable_views';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
-
-import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
-import '@sandstreamdev/react-swipeable-list/dist/styles.css';
-import imageCompression from 'browser-image-compression';
-import ReactJson from 'react-json-view'
-
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import imageCompression from 'browser-image-compression';
 
 var bigInt = require("big-integer");
 
-function number_with_commas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function bgN(number, power) {
+  return bigInt((number+"e"+power)).toString();
 }
 
-function start_and_end(str) {
-    if (str.length > 13) {
-      return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
-    }
-    return str;
-  }
+function number_with_commas(x) {
+    if(x == null) x = '';
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 function makeid(length) {
     let result = '';
@@ -63,52 +61,56 @@ function makeid(length) {
     return result;
 }
 
-class EditPollPage extends Component {
+function make_number_id(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return parseInt(result);
+}
+
+class MintCertificatePage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), object_type:28, type:this.props.app_state.loc['3072h']/* 'edit-poll' */, e5:this.props.app_state.selected_e5,
-        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
-        entered_tag_text: '', entered_title_text:'', entered_text:'',
-        entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
+        selected: 0, token_item: null, selected_class:null,
+        id: makeid(8), type:this.props.app_state.loc['3099']/* 'mint-certificate' */, entered_indexing_tags:[this.props.app_state.loc['3099c']/* 'certificate' */, this.props.app_state.loc['3099d']/* 'create' */],
+        new_mint_title_tags_object:this.new_mint_title_tags_object(),
+
+        entered_text:'',
+        entered_text_objects:[], entered_image_objects:[],
         entered_objects:[],
 
         content_channeling_setting: this.props.app_state.content_channeling, 
         device_language_setting: this.props.app_state.device_language, 
         device_country: this.props.app_state.device_country,
         device_region: this.props.app_state.device_region,
+        device_city: '', selected_device_city:'',
+
+        my_country: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
+
+        my_city: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
 
         edit_text_item_pos:-1,
-        get_content_channeling_object:this.get_content_channeling_object(),
-        get_take_down_option: this.get_take_down_option(),
-
-        entered_pdf_objects:[], markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
-
-        participant_id:'', participants:[], json_files:[], csv_files:[],
-        start_time:(new Date().getTime()/1000)+7200,
-        end_time:(new Date().getTime()/1000)+64800,
-
-        winner_count:1, candidate:'', candidates:[], viewers:[], viewer:'',
+        entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
     };
 
-    set(){
-        if(this.state.get_take_down_option == null){
-            this.setState({get_take_down_option: this.get_take_down_option()})
-        }
-        if(this.state.get_markdown_preview_or_editor_object == null){
-            this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
-        }
 
-        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
+
+    set_token(item, object){
+        this.setState({token_item: object, selected_class: item, e5: object['e5']})
     }
 
-
-    get_new_job_page_tags_object(){
+    new_mint_title_tags_object(){
         var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['c311cf']/* access */, 'e.'+this.props.app_state.loc['110']/* e.text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', 'e.'+this.props.app_state.loc['110']/* text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */ ], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
@@ -133,36 +135,7 @@ class EditPollPage extends Component {
         return obj;
     }
 
-    get_content_channeling_object(){
-        const channeling_setting = this.props.app_state.get_content_channeling_tags_object
-        var obj = {
-            'local-only':['e', this.props.app_state.loc['1231']/* 'local' */], 
-            
-            'local-language':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */ ], 
-            
-            'all':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1233']/* 'international' */ ]
-        }
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], obj[channeling_setting], [1]
-            ],
-        };
-    }
 
-    get_markdown_preview_or_editor_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
-            ],
-        };
-    }
-    
 
 
 
@@ -170,47 +143,40 @@ class EditPollPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-(25 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
-                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(50+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
-                        <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                    <div style={{'padding': '0px 10px 0px 0px', width:40}}>
-                        <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
-                    </div>
-                </div>
-                {/* <div className="row" style={{'width':'102%'}}>
+            <div style={{'padding':'10px 20px 0px 10px'}}>
+                <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.new_mint_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_mint_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
-                </div> */}
+                </div>
+
+                <div style={{'margin':'10px 0px 0px 0px'}}>
+                    {this.render_everything()}   
+                </div>
                 
-                
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
-                    <div style={{'width':'98%'}}>
-                        {this.render_everything()}
-                    </div>   
-                </div> 
             </div>
         )
     }
 
-    when_new_job_page_tags_updated(tag_group){
-        this.setState({get_new_job_page_tags_object: tag_group})
+    when_new_mint_title_tags_object_updated(tag_obj){
+        this.setState({new_mint_title_tags_object: tag_obj})
     }
 
+
+
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.get_new_job_page_tags_object, this.state.get_new_job_page_tags_object['i'].active)
+        if(this.state.token_item == null) return;
+        var selected_item = this.get_selected_item(this.state.new_mint_title_tags_object, this.state.new_mint_title_tags_object['i'].active)
 
         if(selected_item == 'e'){
             return(
                 <div>
-                    {this.render_enter_tags_part()}
+                    {this.render_root()}
                 </div>
             )    
         }
@@ -221,7 +187,7 @@ class EditPollPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == this.props.app_state.loc['112']){
+        else if(selected_item == this.props.app_state.loc['112']/* images */){
             return(
                 <div>
                     {this.render_enter_image_part()}
@@ -249,13 +215,6 @@ class EditPollPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['c311cf']/* access */){
-            return(
-                <div>
-                    {this.render_access_rights_part()}
-                </div>
-            )
-        }
     }
 
     is_text_selected_item(selected_item){
@@ -266,20 +225,17 @@ class EditPollPage extends Component {
         return false
     }
 
-   
 
 
-    componentDidMount(){
-        this.setState({screen_width: this.screen.current?.offsetWidth})
-    }
 
-    render_enter_tags_part(){
-        var size = this.props.size
-
+    render_root(){
+        var size = this.props.app_state.size
         if(size == 's'){
             return(
                 <div>
-                    {this.render_title_tags_part()}
+                    {this.render_mint_certificate_pickers()}
+                    {this.render_detail_item('0')}
+                    {this.load_my_balances()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -288,192 +244,116 @@ class EditPollPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" >
-                        {this.render_title_tags_part()}
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mint_certificate_pickers()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-6" >
-                        {this.render_empty_views(3)}
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_my_balances()}
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" >
-                        {this.render_title_tags_part()}
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mint_certificate_pickers()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-5" >
-                        {this.render_empty_views(3)}
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_my_balances()}
                     </div>
                 </div>
-                
             )
         }
     }
 
-    render_title_tags_part(){
+    render_mint_certificate_pickers(){
+        const item = this.state.selected_class
+        const object = this.state.token_item
+        const data = object['ipfs'].certificate_models[item]
+        const name = item
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const split_period = data['split_period']
+        const price_data = object['ipfs'].price_data
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const e5 = object['e5']
+        const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
         return(
-            <div ref={this.screen} style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['c311b']})}
-                <div style={{height:10}}/>
-                
-                <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+            <div>
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
                 <div style={{height: 10}}/>
-                
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
-                
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['302']})}
-                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.format_account_balance_figure(maximum_supply), 'details':this.props.app_state.loc['3055ox']/* 'Class Maimum Supply' */, 'size':'l'})}
+                <div style={{height: 10}}/>
 
-                <div className="row" style={{width:'99%'}}>
-                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.add_indexing_tag_for_new_job()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
-                        </div>
-                    </div>
-                </div>
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('3', {'title':(new Date(purchase_start_time).toLocaleString()), 'details':this.props.app_state.loc['3055oy']/* 'Purchase Start Time' */, 'size':'l'})}
+                <div style={{height: 10}}/>
 
-                {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+                {this.render_detail_item('3', {'title':(new Date(purchase_end_time).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
+                <div style={{height: 10}}/>
 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']/* 'Every $' */.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']/* 'Split Period' */, 'size':'l'})}
+                <div style={{height: 10}}/>
 
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-
-
-
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                {this.render_transaction_size_indicator()}
-
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
             </div>
         )
     }
 
-    when_get_take_down_option(tag_obj){
-        this.setState({get_take_down_option: tag_obj})
+    get_current_split_time(split_period, purchase_start_time, purchase_end_time){
+        const current_time = Math.floor(Date.now()/1000)
+        if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
+        const difference = parseInt(current_time) - parseInt(purchase_start_time)
+        const periodCount = Math.floor(difference / parseInt(split_period))
+        return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
     }
 
-    when_title_text_input_field_changed(text){
-        this.setState({entered_title_text: text})
-    }
-
-    when_index_text_input_field_changed(text){
-        this.setState({entered_tag_text: text})
-    }
-
-    when_get_content_channeling_object_updated(tag_obj){
-        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
-        this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
-    }
-
-    add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
-
-        if(this.add_multiple_indexing_tags_for_new_job(typed_word) == true){
-            return;
-        }
-
-        if(typed_word == ''){
-            this.props.notify(this.props.app_state.loc['128'], 1400)
-        }
-        else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify(this.props.app_state.loc['129'], 1400)
-        }
-        else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify(this.props.app_state.loc['130'], 1400)
-        }
-        else if(typed_word.length < 3){
-            this.props.notify(this.props.app_state.loc['131'], 1400)
-        }
-        else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify(this.props.app_state.loc['132'], 1400)
-        }
-        else if(this.state.entered_indexing_tags.length == this.props.app_state.max_tags_count){
-            this.props.notify(this.props.app_state.loc['162l']/* The maximum number of tags you can use is 7. */, 5400)
-        }
-        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word)){
-            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
-        }
-        else{
-            var cloned_seed_array = this.state.entered_indexing_tags.slice()
-            cloned_seed_array.push(typed_word)
-            this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            // this.props.notify('tag added!', 200)
-        }
-    }
-
-    add_multiple_indexing_tags_for_new_job(typed_statement){
-        if(!this.hasWhiteSpace(typed_statement)){
-            return false
-        }
-        else if(typed_statement == ''){
-            this.props.notify(this.props.app_state.loc['128'], 1400)
-            return true
-        }
-        var cloned_seed_array = this.state.entered_indexing_tags.slice()
-        let added_items = 0
-        const add_tag = (typed_word) => {
-            if(
-                typed_word != '' &&
-                typed_word.length <= this.props.app_state.tag_size &&
-                typed_word.length >= 3 &&
-                !this.state.entered_indexing_tags.includes(typed_word) &&
-                this.state.entered_indexing_tags.length < this.props.app_state.max_tags_count &&
-                /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word) == false
-            ){
-                cloned_seed_array.push(typed_word)
-                added_items++
-            }
-        }
-        const typed_tags = typed_statement.split(' ')
-        typed_tags.forEach(tag_item => {
-            add_tag(tag_item)
-        });
-        
-        if(added_items == 0){
-            this.props.notify(this.props.app_state.loc['284br']/* 'nothing added.' */, 1800)
-            return true;
-        }
-        else{
-            this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify(this.props.app_state.loc['284bs']/* '$ tags added.' */.replace('$', added_items), 2800)
-            return true;
-        }
-    }
-
-    hasWhiteSpace(s) {
-        return s.indexOf(' ') >= 0;
-    }
-
-    delete_entered_tag_word(word, pos){
-        var cloned_seed_array = this.state.entered_indexing_tags.slice()
-        const index = cloned_seed_array.indexOf(word);
-        if (index > -1) { // only splice array when item is found
-            cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({entered_indexing_tags: cloned_seed_array})
+    render_multiplied_prices(price_data, base_fee_price_multiplier, e5){
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {price_data.map((item, index) => (
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                    </div>
+                ))}
+            </div>
+        )
     }
 
 
+    load_my_balances(){
+        const item = this.state.selected_class
+        const object = this.state.token_item
+        const price_data = object['ipfs'].price_data
+        const e5 = object['e5']
 
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3099a']/* 'Your balances.' */, 'details':this.props.app_state.loc['3099b']/* 'The amount of money you have available for creating this new certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_data.map((item, index) => (
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':this.props.calculate_actual_balance(e5, item['id']), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(this.props.calculate_actual_balance(e5, item['id'])), 'barwidth':this.calculate_bar_width(this.props.calculate_actual_balance(e5, item['id'])), 'number':this.format_account_balance_figure(this.props.calculate_actual_balance(e5, item['id'])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                        </div>
+                    ))}
+                </div>
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3099e']/* 'Certificate Size.' */, 'details':this.props.app_state.loc['3099f']/* 'Below is the size of your new certificate with all the details youve set.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_transaction_size_indicator()}
+            </div>
+        )
+    }
 
     render_transaction_size_indicator(){
         var current_stack_size = this.props.app_state.stack_size_in_bytes[this.state.e5] == null ? 50 : this.props.app_state.stack_size_in_bytes[this.state.e5]
@@ -481,8 +361,11 @@ class EditPollPage extends Component {
             const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
             const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
             
-            var existing_percentage = this.round_off((current_stack_size / this.props.app_state.upload_object_size_limit) * 100)
-            var additional_percentage = this.round_off((size / this.props.app_state.upload_object_size_limit) * 100)
+            const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
+            const upload_limit = post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ ? (1024*23) : this.props.app_state.upload_object_size_limit;
+            
+            var existing_percentage = this.round_off((current_stack_size / upload_limit) * 100)
+            var additional_percentage = this.round_off((size / upload_limit) * 100)
             
             if(existing_percentage >= 100){
                 existing_percentage = 99.99
@@ -496,7 +379,7 @@ class EditPollPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['a311da']/* 'Post Size.' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3099e']/* 'Certificate Size.' */, 'subtitle':this.format_power_figure(stack_size_in_bytes_formatted_data_size['size']), 'barwidth':this.calculate_bar_width(stack_size_in_bytes_formatted_data_size['size']), 'number':(stack_size_in_bytes_formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':stack_size_in_bytes_formatted_data_size['unit'], })}
 
                         {this.render_impact_value({'title':this.props.app_state.loc['a311db']/* 'Impact on Run.' */, 'subtitle':'e0', 'barwidth':existing_percentage+'%', 'barwidth2':additional_percentage+'%', 'number':(existing_percentage + additional_percentage)+'%', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1881']/* 'proportion' */,})}
                     </div>
@@ -569,6 +452,28 @@ class EditPollPage extends Component {
         return str.length + (m ? m.length : 0);
     }
 
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return 'e0'
+        }
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
+        }
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
 
 
 
@@ -625,6 +530,12 @@ class EditPollPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
+                {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['307']})}
+                {this.render_detail_item('0')} */}
+                
+                {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/> */}
+
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
@@ -760,7 +671,6 @@ class EditPollPage extends Component {
         }
     }
 
-
     delete_text_item(item){
         var cloned_array = this.state.entered_text_objects.slice()
         const index = cloned_array.indexOf(item);
@@ -783,30 +693,6 @@ class EditPollPage extends Component {
         this.setState({entered_objects: cloned_array})
 
         // this.props.notify('item removed!', 600)
-    }
-
-
-    when_banner_image_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    if(ev.total < this.props.app_state.image_size_limit){
-                        this.add_banner_to_object(ev.target.result)
-                        // this.setState({selected_banner_image: ev.target.result});
-                    }
-                }.bind(this);
-                var imageFile = e.target.files[i];
-                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
-                    reader.readAsDataURL(compressedFile);
-                })
-                .catch(function (error) {
-                    console.log(error.message);
-                });
-            }
-            var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
-        }
     }
 
     when_banner_selected = async (files) => {
@@ -861,7 +747,6 @@ class EditPollPage extends Component {
         this.setState({entered_objects: cloned_array, entered_text:''})
     }
 
-
     edit_text_item(item){
         var entered_objects_pos = -1;
         for(var i=0; i<this.state.entered_objects.length; i++){
@@ -878,7 +763,6 @@ class EditPollPage extends Component {
         // this.props.notify('editing item', 600)
     }
 
-
     finish_editing_text_item(item){
         var cloned_array = this.state.entered_objects.slice()
         var pos = this.state.edit_text_item_pos
@@ -886,7 +770,6 @@ class EditPollPage extends Component {
         console.log(cloned_array)
         this.setState({entered_objects: cloned_array, entered_text:'', edit_text_item_pos: -1})
     }
-
 
     render_kaomoji_list(){
         var items = this.props.app_state.kaomojis
@@ -913,6 +796,7 @@ class EditPollPage extends Component {
     when_kamoji_clicked(text){
         this.setState({entered_text: this.state.entered_text+' '+text})
     }
+
 
 
 
@@ -974,7 +858,7 @@ class EditPollPage extends Component {
 
     /* renders the buttons for pick images, set images and clear images */
     render_create_image_ui_buttons_part(){
-      return(
+        return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
             {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -995,7 +879,7 @@ class EditPollPage extends Component {
             </div> */}
 
         </div>
-      )
+        )
     }
 
     add_images_to_object(){
@@ -1008,31 +892,6 @@ class EditPollPage extends Component {
             cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
             this.setState({entered_objects: cloned_array, entered_image_objects:[]})
             this.props.notify('images added!', 800)
-        }
-    }
-
-    /* called when images have been picked from picker */
-    when_image_gif_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
-                    if(ev.total < this.props.app_state.image_size_limit){
-                        clonedArray.push(ev.target.result);
-                        this.setState({entered_image_objects: clonedArray});
-                    }
-                }.bind(this);
-                var imageFile = e.target.files[i];
-                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
-                    reader.readAsDataURL(compressedFile);
-                })
-                .catch(function (error) {
-                    console.log(error.message);
-                });
-            }
-            var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 
@@ -1085,13 +944,6 @@ class EditPollPage extends Component {
         this.props.notify('items removed!',600)
     }
 
-    constructor(props) {
-        super(props);
-        this.screen = React.createRef()
-        this.csv_input = React.createRef()
-        this.json_input = React.createRef()
-    }
-
     render_image_part(){
         var background_color = this.props.theme['card_background_color']
         var col = Math.round((this.state.screen_width-25) / 100)
@@ -1106,7 +958,7 @@ class EditPollPage extends Component {
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
+                                        <img src={this.props.app_state.theme['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
                                     
                                 </div>
@@ -1139,7 +991,6 @@ class EditPollPage extends Component {
         )
     }
 
-
     get_image_from_file(ecid){
         var ecid_obj = this.get_cid_split(ecid)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
@@ -1170,6 +1021,12 @@ class EditPollPage extends Component {
         }
         this.setState({entered_image_objects: cloned_array})
     }
+
+
+
+
+
+
 
 
 
@@ -1233,7 +1090,7 @@ class EditPollPage extends Component {
                 <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
             </div>
         </div>
-      )
+        )
     }
 
     when_pdf_files_picked = async (files) => {
@@ -1351,10 +1208,6 @@ class EditPollPage extends Component {
             return {'size':size, 'unit':'bytes'}
         }
     }
-
-
-
-
 
 
 
@@ -1502,6 +1355,9 @@ class EditPollPage extends Component {
 
 
 
+
+
+
     render_enter_markdown_part(){
         var size = this.props.size
         if(size == 's' || size == 'm'){
@@ -1521,6 +1377,7 @@ class EditPollPage extends Component {
                         <div style={{'margin':'0px 0px 0px 10px'}}>
                             <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
                         </div>
+
                         {this.render_markdown_shortcut_list()}
                     </div>
                     <div className="col-6" >
@@ -1637,173 +1494,70 @@ class EditPollPage extends Component {
 
 
 
-    render_access_rights_part(){
-        var size = this.props.size
-        if(size == 's'){
-            return(
-                <div>
-                    {this.render_set_access_rights_parts()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row">
-                    <div className="col-6" >
-                        {this.render_set_access_rights_parts()}
-                    </div>
-                    <div className="col-6" >
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
-                
-            )
-        }
-        else if(size == 'l'){
-            return(
-                <div className="row">
-                    <div className="col-5" >
-                        {this.render_set_access_rights_parts()}
-                    </div>
-                    <div className="col-5" >
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
 
-    render_set_access_rights_parts(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311cg']/* Poll Accessibility. */, 'details':this.props.app_state.loc['c311ch']/* Specify which accounts can view the poll if it is a private poll. */, 'size':'l'})}
-                <div style={{height:10}}/>
 
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_viewer_input_field_changed.bind(this)} text={this.state.viewer} theme={this.props.theme}/>
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
-                {this.load_account_suggestions('viewer')}
-                
-                <div style={{height: 10}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_viewer_button_tapped()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311cj']/* Add viewer. */, 'action':''})}
-                </div>
-                <div style={{height: 20}}/>
-                {this.render_added_viewers()}
-            </div>
-        )
-    }
 
-    when_viewer_input_field_changed(text){
-        this.setState({viewer: text})
-    }
 
-    when_add_viewer_button_tapped(){
-        var typed_text = this.state.viewer.trim()
-        if(typed_text.includes(',')){
-            this.add_multiple_viewers(typed_text)
-            return;
+
+    finish(){
+        const item = this.state.selected_class
+        const object = this.state.token_item
+        const price_data = object['ipfs'].price_data
+        const e5 = object['e5']
+        const data = object['ipfs'].certificate_models[item]
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+
+        if(this.check_if_sender_has_enough_tokens_for_buy(price_data, base_fee_price_multiplier) == false){
+            this.props.notify(this.props.app_state.loc['3099g']/* 'Your balance is insufficient to fulfil this mint.' */, 4500)
         }
-        var participant_id = this.get_typed_alias_id(typed_text)
-        var participant_e5 = isNaN(typed_text) ? this.get_alias_e5(typed_text) : this.state.e5
-        var final_value = participant_e5+':'+participant_id
-        var participants_clone = this.state.viewers.slice()
-        if(typed_text == ''){
-            this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
-        }
-        else if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
-            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
-        }
-        else if(participants_clone.includes(final_value)){
-            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        else if(!this.check_if_sender_can_interact_with_exchange()){
+            this.props.notify(this.props.app_state.loc['982']/* 'You cant interact with the same exchange twice in one run.' */, 4200)
         }
         else{
-            participants_clone = participants_clone.push(final_value)
-            this.setState({viewers: participants_clone, viewer:''});
+            this.props.add_mint_certificate_to_stack(this.state)
+            this.setState({
+                entered_text:'', 
+                entered_text_objects:[], 
+                entered_image_objects:[], 
+                entered_objects:[], 
+                edit_text_item_pos:-1, 
+                entered_pdf_objects:[], 
+                markdown:'',
+                get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(),
+                entered_zip_objects:[],
+            })
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
         }
     }
 
-    add_multiple_viewers(data){
-        var entities = data.split(',')
-        var final_obj = []
-        var account_entries = 0
-        var participants_clone = this.state.viewers.slice()
-        entities.forEach(account_data => {
-            if(account_data != null && account_data != ''){
-                var data_point_array = account_data.split(':')
-                var e5 = ''
-                var account = ''
-                if(data_point_array.length == 2){
-                    e5 = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
-                    account = data_point_array[1].trim().replace(/[^\p{L}\p{N} ]/gu, '')
-                }
-                else if(data_point_array.length == 1){
-                    e5 = this.state.e5
-                    account = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
-                }
-                if(e5 != '' && account != ''){
-                    if(this.props.app_state.e5s['data'].includes(e5) && this.props.app_state.e5s[e5].active == true){
-                        if(!isNaN(account) && parseInt(account) < 10**16){
-                            var final_value = e5+':'+parseInt(account)
-                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
-                                final_obj.push(final_value)
-                                account_entries++
-                            }
-                        }
-                    }
-                }
-            }
+    check_if_sender_has_enough_tokens_for_buy(price_data, base_fee_price_multiplier){
+        const e5 = this.state.token_item['e5']
+        const buy_tokens = []
+        const required_amounts = []
+        price_data.forEach(price => {
+            buy_tokens.push(price['id'])
+            required_amounts.push(bigInt(price['amount']).multiply(base_fee_price_multiplier))
         });
-        if(account_entries == 0){
-            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
-        }else{
-            participants_clone.concat(final_obj)
-            this.setState({viewers: participants_clone, viewer:''});
-            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        var affordable = true;
+        for(var i=0; i<buy_tokens.length; i++){
+            var token_id = buy_tokens[i]
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
+            var required_amount = required_amounts[i]
+            if(bigInt(token_balance).lesser(required_amount)){
+                affordable = false
+            }
         }
+        return affordable
     }
 
-    render_added_viewers(){
-        var items = [].concat(this.state.viewers)
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{}}>
-                    {this.render_empty_views(3)}
-                </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <SwipeableList>
-                                <SwipeableListItem
-                                    swipeLeft={{
-                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
-                                    action: () =>this.when_added_viewer_tapped(item, index)
-                                    }}>
-                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
-                                        <li style={{'padding': '3px'}}>
-                                        {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
-                                        </li>
-                                    </div>
-                                </SwipeableListItem>
-                            </SwipeableList>
-                            
-                        ))}
-                    </ul>
-                </div>
-            )
+    check_if_sender_can_interact_with_exchange(){
+        var stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == this.props.app_state.loc['3099']/* 'mint-certificate' */ && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id && stack_transactions[i].e5 == this.props.app_state.selected_e5){
+                return false
+            }
         }
-    }
-
-    when_added_viewer_tapped(item, index){
-        var cloned_array = this.state.viewers.slice()
-        if (index > -1) { // only splice array when item is found
-            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({viewers: cloned_array})
+        return true
     }
 
 
@@ -1811,145 +1565,24 @@ class EditPollPage extends Component {
 
 
 
-    load_account_suggestions(target_type){
-        var items = [].concat(this.get_suggested_accounts(target_type))
+
+    render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
-                            {this.render_detail_item('3', item['label'])}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                    </div>
+                </div>
+            );
     }
 
-    get_suggested_accounts(target_type){
-        var me = this.props.app_state.user_account_id[this.state.e5]
-        if(me == null || me == 1){
-            return this.get_account_suggestions(target_type)
-        }
-        return[
-            {'id':me, 'label':{'title':this.props.app_state.loc['c311l']/* My Account. */, 'details':this.props.app_state.loc['c311m']/* 'Account' */, 'size':'s'}},
-        ].concat(this.get_account_suggestions(target_type))
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
     }
-
-    get_account_suggestions(target_type){
-        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
-        if(contacts == null) contacts = [];
-        var return_array = []
-
-        if(target_type == 'participants'){
-            contacts.forEach(contact => {
-                if(contact['id'].toString().includes(this.state.participants)){
-                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
-                }
-            });
-            return_array = this.filter_and_add_other_accounts(this.state.participants, return_array)
-        }
-        else if(target_type == 'viewer'){
-            contacts.forEach(contact => {
-                if(contact['id'].toString().includes(this.state.viewers)){
-                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
-                }
-            });
-            return_array = this.filter_and_add_other_accounts(this.state.viewers, return_array)
-        }
-        
-        return return_array;
-    }
-
-    filter_and_add_other_accounts(typed_name, return_array){
-        if(typed_name.length < 3){
-            return return_array
-        }
-        const added_aliases = []
-        return_array.forEach(item => {
-            added_aliases.push(item['label']['details'])
-        });
-
-        return return_array.concat(this.get_all_aliases(added_aliases, typed_name))
-    }
-
-    get_all_aliases(added_aliases, typed_name){
-        const aliases = []
-        // const e5s = Object.keys(this.props.app_state.alias_bucket)
-        // e5s.forEach(e5 => {
-        //     const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
-        //     accounts.forEach(account_id => {
-        //         const alias = this.props.app_state.alias_bucket[e5][account_id]
-        //         if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
-        //             aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
-        //         }
-        //     });
-        // });
-        const e5 = this.props.app_state.selected_e5
-        if(this.props.app_state.alias_bucket[e5] == null) return []
-        const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
-        accounts.forEach(account_id => {
-            const alias = this.props.app_state.alias_bucket[e5][account_id]
-            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
-                aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
-            }
-        });
-
-        return aliases
-    }
-
-    get_contact_alias(contact){
-        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-        return (obj[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : obj[contact['id']])
-    }
-
-    when_suggestion_clicked(item, pos, target_type){
-        if(target_type == 'participants'){
-            this.setState({participant_id: item['id']})
-        }
-        else if(target_type == 'viewer'){
-            this.setState({viewer: item['id']})
-        }
-    }
-
-
-
-
-
-
-
-
-    finish_creating_object(){
-        var index_tags = this.state.entered_indexing_tags
-        var title = this.state.entered_title_text
-
-        if(index_tags.length < 3){
-            this.props.notify(this.props.app_state.loc['270'], 4700)
-        }
-        else if(title == ''){
-            this.props.notify(this.props.app_state.loc['311'], 4700)
-        }
-        else if(title.length > this.props.app_state.title_size){
-            this.props.notify(this.props.app_state.loc['272'], 4700)
-        }
-        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
-            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
-        }
-        else{
-            this.props.when_add_edit_object_to_stack(this.state)
-            this.props.notify(this.props.app_state.loc['18'], 1700);
-            
-        }
-    }
-
-
-
-
-
-
-
-
-
 
     render_empty_views(size){
         var items = []
@@ -1964,7 +1597,7 @@ class EditPollPage extends Component {
                         <li style={{'padding': '2px'}}>
                             <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                 <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                 </div>
                             </div>
                         </li>
@@ -1974,20 +1607,49 @@ class EditPollPage extends Component {
         )
     }
 
-    get_selected_item(object, option){
-        var selected_item = object[option][2][0]
-        var picked_item = object[option][1][selected_item];
-        return picked_item
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var uploaded_data = {}
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
-
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} show_images={this.props.show_images.bind(this)}
                 
                 />
             </div>
@@ -1996,16 +1658,8 @@ class EditPollPage extends Component {
     }
 
 
-    show_images(){
-
-    }
-
-    get_number_width(number){
-        var last_two_digits = number.toString().slice(0, 1)+'0';
-        if(number > 10){
-            last_two_digits = number.toString().slice(0, 2);
-        }
-        return last_two_digits+'%'
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
     }
 
     format_account_balance_figure(amount){
@@ -2052,6 +1706,14 @@ class EditPollPage extends Component {
         return this.get_time_diff(diff)
     }
 
+    get_time_from_now(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = number_date - now;
+        return this.get_time_diff(diff)
+    }
+
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
             var num = parseInt(diff)
@@ -2085,13 +1747,10 @@ class EditPollPage extends Component {
         }
     }
 
-    format_proportion(proportion){
-        return ((proportion/10**18) * 100)+'%';
-    }
 
 }
 
 
 
 
-export default EditPollPage;
+export default MintCertificatePage;

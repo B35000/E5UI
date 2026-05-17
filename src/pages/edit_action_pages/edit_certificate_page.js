@@ -17,16 +17,22 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { Component } from 'react';
-import ViewGroups from '../../components/view_groups'
+import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
-// import Letter from '../../assets/letter.png';
-// import E5EmptyIcon from '../../assets/e5empty_icon.png';
-// import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
+import NumberPicker from '../../components/number_picker';
+import DurationPicker from '../../components/duration_picker';
+import Slider from '../../components/slider'
+import MySwipeableViews from '../../components/my_swipeable_views';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
@@ -36,6 +42,11 @@ var bigInt = require("big-integer");
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
+}
+
+function number_with_commas(x) {
+    if(x == null) x = '';
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function makeid(length) {
@@ -50,35 +61,51 @@ function makeid(length) {
     return result;
 }
 
-function number_with_commas(x) {
-    if(x == null) x = '';
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function make_number_id(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return parseInt(result);
 }
 
-class NewMailPage extends Component {
+class EditCertificatePage extends Component {
     
     state = {
-        selected: 0, object_type:10,
-        id: makeid(8), type:this.props.app_state.loc['285'], e5:this.props.app_state.selected_e5,
-        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* i copypasted these! sue me  */
-        // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
-        entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'',
+        selected: 0, id: makeid(8), object_type:31, type:this.props.app_state.loc['d311bt']/* 'edit-certificate' */, e5:this.props.app_state.selected_e5,
+
+        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
+        entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[], recipients:[],
+        entered_objects:[],
 
         content_channeling_setting: this.props.app_state.content_channeling, 
         device_language_setting: this.props.app_state.device_language, 
         device_country: this.props.app_state.device_country,
+        device_region: this.props.app_state.device_region,
+        device_city: '', selected_device_city:'',
 
-        typed_link_text:'', link_search_results:[], added_links:[], 
+        my_country: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
+
+        my_city: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
+
         edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(), entered_pdf_objects:[],
-        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], 
+        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
-        /* my_pub_key:this.props.app_state.my_pub_key, */ convo_id:Date.now(), recipients_e5: this.props.app_state.selected_e5,
-        get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
+        new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
+        exchange_authority:'',moderator_id:'', moderators:[], interactible_id:'',  interactibles:[], interactible_timestamp:0,
+
+        exchange_id:'', price_amount:0, price_data:[{'id':'5', 'amount':'1'}],
+
+        class_name:'', maximum_supply:0, purchase_start_time: (Date.now()+(1000*60*60*5))/1000, purchase_end_time: (Date.now()+(1000*60*60*24))/1000, split_period:0, base_fee_price_multiplier:1, 
+        certificate_models:{}, class_markdown:'',
     };
+
 
     get_new_job_page_tags_object(){
         var obj = {
@@ -86,7 +113,7 @@ class NewMailPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'e.'+this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['d311j']/* 'certificate-model 🏗️' */, this.props.app_state.loc['d311f']/* 'base-fee 💵' */, 'e.'+this.props.app_state.loc['110']/* text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */ ], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
@@ -108,34 +135,29 @@ class NewMailPage extends Component {
         obj[this.props.app_state.loc['117']] = [
                 ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
             ]
-
         return obj;
     }
 
-    get_new_job_text_tags_object(){
+    get_content_channeling_object(){
+        const channeling_setting = this.props.app_state.get_content_channeling_tags_object
+        var obj = {
+            'local-only':['e', this.props.app_state.loc['1231']/* 'local' */], 
+            
+            'local-language':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */ ], 
+            
+            'all':['e', this.props.app_state.loc['1231']/* 'local' */, this.props.app_state.loc['1232']/* 'language' */, this.props.app_state.loc['1233']/* 'international' */ ]
+        }
+        var setting = {}
+        setting[this.props.app_state.loc['1231']/* 'local' */] = 1
+        setting[this.props.app_state.loc['1232']/* 'language' */] = 2
+        setting[this.props.app_state.loc['1233']/* 'international' */ ] = 3
+        var pos = setting[this.props.app_state.content_channeling]
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.font', 'e.size'], [0]
-            ],
-            'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
-            ],
-            'size':[
-                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
-            ],
-        };
-    }
-
-    get_sort_links_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e',this.props.app_state.loc['162a']/* '📑 contract' */, this.props.app_state.loc['162b']/* '💼 job' */, this.props.app_state.loc['162c']/* '👷🏻‍♀️ contractor' */, this.props.app_state.loc['162d']/* '🏪 storefront' */, this.props.app_state.loc['162e']/* '🎫 subscription' */,this.props.app_state.loc['162f']/* '📰 post' */,this.props.app_state.loc['162g'] /* '📡 channel' */, this.props.app_state.loc['162h']/* '🪙 token' */, this.props.app_state.loc['162i']/* '🧎 proposal' */], [0]
+                ['xor','',0], obj[channeling_setting], [pos]
             ],
         };
     }
@@ -151,27 +173,36 @@ class NewMailPage extends Component {
         };
     }
 
-    get_chain_or_indexer_job_object(){
-        const pos = this.props.do_i_have_an_account() == true ? 1 : 2
+    get_new_token_access_rights_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */, this.props.app_state.loc['284v']/* 'blockchain' */], [pos]
+                ['xor','',0], ['e',this.props.app_state.loc['616']/* 'enabled' */, this.props.app_state.loc['617']/* 'disabled' */], [2]
+            ],
+        };
+    }
+
+    get_new_token_interactible_moderator_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['618']/* 'moderators' */, this.props.app_state.loc['619']/* 'interactible' */], [1]
             ],
         };
     }
 
 
-
-
-
+    set(){
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
+    }
 
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-(25 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
                     <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(50+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
                         <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
@@ -181,13 +212,11 @@ class NewMailPage extends Component {
                     </div>
                 </div>
                 
-                
-                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     <div style={{'width':'98%'}}>
                         {this.render_everything()}
-                    </div>   
-                </div>
-                
+                    </div>  
+                </div> 
             </div>
         )
     }
@@ -195,6 +224,10 @@ class NewMailPage extends Component {
     when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
+
+
+
+
 
 
     render_everything(){
@@ -214,14 +247,7 @@ class NewMailPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == this.props.app_state.loc['111']){
-            return(
-                <div>
-                    {this.render_enter_links_part()}
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['112']){
+        else if(selected_item == this.props.app_state.loc['112']/* images */){
             return(
                 <div>
                     {this.render_enter_image_part()}
@@ -249,13 +275,12 @@ class NewMailPage extends Component {
                 </div>
             )
         }
-        // else if(selected_item == 'recipients'){
-        //     return(
-        //         <div>
-        //             {this.render_recipients_part()}
-        //         </div>
-        //     )
-        // }
+        else if(selected_item == this.props.app_state.loc['d311f']/* 'base-fee 💵' */){
+            return this.render_set_token_prices_list()
+        }
+        else if(selected_item == this.props.app_state.loc['d311j']/* 'certificate-model 🏗️' */){
+            return this.render_set_certificate_model_data()
+        }
     }
 
     is_text_selected_item(selected_item){
@@ -266,32 +291,15 @@ class NewMailPage extends Component {
         return false
     }
 
-    get_selected_item(object, option){
-        var selected_item = object[option][2][0]
-        var picked_item = object[option][1][selected_item];
-        return picked_item
+    constructor(props) {
+        super(props);
+        this.screen = React.createRef()
     }
 
 
 
 
 
-
-
-
-
-    componentDidMount(){
-        this.setState({screen_width: this.screen.current.offsetWidth})
-        if(this.interval != null) clearInterval(this.interval);
-        var me = this;
-        setTimeout(function() {
-            me.interval = setInterval(() => me.update_object_in_background(), 10*1000);
-        }, (1 * 100));
-    }
-
-    componentWillUnmount() {
-        if(this.interval != null)clearInterval(this.interval);
-    }
 
 
     render_enter_tags_part(){
@@ -313,11 +321,11 @@ class NewMailPage extends Component {
                 <div className="row">
                     <div className="col-6" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-6">
+                    <div className="col-6" >
                         {this.render_title_tags_part2()}
-                        <div style={{height:10}}/>
-                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -328,11 +336,11 @@ class NewMailPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_title_tags_part2()}
-                        <div style={{height:10}}/>
-                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -340,53 +348,23 @@ class NewMailPage extends Component {
         }
     }
 
-    render_empty_views(size){
-        var items = []
-        for(var i=0; i<size; i++){
-            items.push(i)
-        }
-        
-        return(
-            <div>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '2px'}}>
-                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                <div style={{'margin':'10px 20px 10px 0px'}}>
-                                    <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
     render_title_tags_part(){
         return(
-            <div ref={this.screen} style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['286']})}
+            <div ref={this.screen} style={{'padding':'0px 0px 0px 3px'}}>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['d311b']/* Specify a title for your new Certificate. */})}
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['d311c']/* Certificate Name... */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['287']})}
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['288']} when_text_input_field_changed={this.when_target_recipient_input_field_changed.bind(this)} text={this.state.target_recipient} theme={this.props.theme}/>
-                {this.load_account_suggestions()}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['302']})}
                 <div style={{height:10}}/>
 
-                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 20px 20px 20px'}}/>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['289']})}
-                <div style={{height:10}}/>
-
-                <div className="row" style={{'width':'99%'}}>
+                <div className="row" style={{width:'99%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         {/* {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})} */}
@@ -400,34 +378,36 @@ class NewMailPage extends Component {
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
 
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bn']/* 'Channeling City (Optional)' */, 'details':this.props.app_state.loc['a311bo']/* 'If you\'ve set local channeling, you can restrict your post to a specific city.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput height={30} placeholder={this.props.app_state.loc['a311bp']/* 'Enter City...' */} when_text_input_field_changed={this.when_device_city_input_field_changed.bind(this)} text={this.state.device_city} theme={this.props.theme}/>
+                
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_cities_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_city_selected'})}
+                
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_device_city})}
+
             </div>
         )
     }
-
+    
     render_title_tags_part2(){
         return(
             <div>
                 {this.render_previous_edits_if_existing()}
 
-                
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['296a']/* 'Mail Indexing.' */, 'details':this.props.app_state.loc['296b']/* 'If set to blockchain, the reference to your private mail will be recorded on a blockchain and indexer while if left to indexer, your private mail will be referenced in an indexer only.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
-
-
-
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_transaction_size_indicator()}
             </div>
         )
     }
-
-    when_get_chain_or_indexer_job_object_updated(tag_obj){
-        this.setState({get_chain_or_indexer_job_object: tag_obj})
-    }
-
+    
     when_title_text_input_field_changed(text){
         this.setState({entered_title_text: text})
     }
@@ -436,6 +416,46 @@ class NewMailPage extends Component {
         this.setState({entered_tag_text: text})
     }
 
+    when_get_content_channeling_object_updated(tag_obj){
+        var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
+    }
+
+    when_device_city_input_field_changed(text){
+        this.setState({device_city: text.toLowerCase()})
+    }
+
+    get_cities_from_typed_text(){
+        var selected_cities = []
+        var typed_text = this.state.device_city
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities = []
+        var device_country = this.props.app_state.device_country_code
+
+        if(typed_text != ''){
+            specific_cities = all_cities.filter(function (el) {
+                return (el['city'].startsWith(typed_text) || el['city'] == typed_text) && el['country'].startsWith(device_country)
+            });
+        }else{
+            specific_cities = all_cities.filter(function (el) {
+                return el['country'].startsWith(device_country)
+            });
+        }
+
+        var l = specific_cities.length > 7 ? 7 : specific_cities.length
+        for(var i=0; i<l; i++){
+            selected_cities.push(specific_cities[i]['city'])
+        }
+        return selected_cities;
+    }
+    
+    when_city_selected(tag, pos){
+        if(tag != 'e'){
+            if(this.state.selected_device_city == tag) this.setState({selected_device_city: ''});
+            else this.setState({selected_device_city: tag, device_city:''})
+        } 
+    }
+    
     add_indexing_tag_for_new_job(){
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
@@ -524,10 +544,10 @@ class NewMailPage extends Component {
         this.setState({entered_indexing_tags: cloned_seed_array})
         // this.props.notify('tag removed', 200)
     }
-
-   
-
-
+    
+    
+    
+    
     render_transaction_size_indicator(){
         var current_stack_size = this.props.app_state.stack_size_in_bytes[this.state.e5] == null ? 50 : this.props.app_state.stack_size_in_bytes[this.state.e5]
         if(current_stack_size != -1){
@@ -559,28 +579,6 @@ class NewMailPage extends Component {
                 </div>
             )
         }
-    }
-
-    format_power_figure(amount){
-        if(amount == null){
-            amount = 0;
-        }
-        if(amount < 1_000_000_000){
-            return 'e0'
-        }
-        else{
-            var power = amount.toString().length - 9
-            return 'e'+(power+1)
-        }
-    }
-
-    calculate_bar_width(num){
-        if(num == null) return '0%'
-        var last_two_digits = num.toString().slice(0, 1)+'0';
-        if(num > 10){
-            last_two_digits = num.toString().slice(0, 2);
-        }
-        return last_two_digits+'%'
     }
 
     render_impact_value(object_data){
@@ -636,7 +634,7 @@ class NewMailPage extends Component {
             return {'size':parseFloat(size), 'unit':'bytes'}
         }
     }
-
+    
     round_off(float_number){
         return (Math.round(float_number * 100) / 100)
     }
@@ -646,92 +644,29 @@ class NewMailPage extends Component {
         var m = encodeURIComponent(str).match(/%[89ABab]/g);
         return str.length + (m ? m.length : 0);
     }
-    
-    render_new_job_object(){
-        return;
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        var items = [].concat(this.state.entered_objects);
-        return ( 
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                <div style={{'padding': '5px 0px 5px 0px'}}>
-                    {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
-                    {this.render_detail_item('0')}
 
-                    <Draggable>
-                        {items.map((item, index) => (
-                            <div key={index}>
-                                {this.render_detail_item(item['type'], item['data'])} 
-                                <div style={{height:10}}/>
-                            </div>
-                        ))}
-                    </Draggable>
-                </div>         
-            </div>
-        );
-    }
-
-
-    render_previous_edits_if_existing(){
-        const previous_edits = this.props.fetch_objects_from_db(this.state.object_type)
-        const unfiltered_items = Object.keys(previous_edits)
-        if(unfiltered_items.length == 0){
-            return;
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
         }
-        const items = this.sort_items(unfiltered_items, previous_edits)
-        if(items.length == 0){
-            return;
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ds']/* 'Set to previous changes.' */, 'details':this.props.app_state.loc['a311dt']/* 'You can continue where you left off in a pevious edit.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_previous_edit_item(item)}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                {this.render_detail_item('0')}
-            </div>
-        )
-    }
-
-    sort_items(items, previous_edits_data){
-        const return_data = []
-        const current_id = this.state.id
-        items.forEach(identifier => {
-            if(identifier != current_id){
-                return_data.push(previous_edits_data[identifier])
-            }
-        });
-        return this.sortByAttributeDescending(return_data, 'last_modified')
-    }
-
-    render_previous_edit_item(data){
-        const title = this.truncate(data.entered_title_text, 23);
-        const details = (new Date(data.last_modified).toLocaleString())
-        return(
-            <div onClick={() => this.when_previous_edit_tapped(data)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
-            </div>
-        )
-    }
-
-    when_previous_edit_tapped(data){
-        this.setState(data)
-    }
-
-    update_object_in_background(){
-        if(this.state.entered_title_text != ''){
-            this.props.update_object_change_in_db(this.state, this.state.object_type)
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
     }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
 
 
 
@@ -742,7 +677,7 @@ class NewMailPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 10px 0px 0px'}}>
+                <div style={{}}>
                     {this.render_text_part()}
                     {this.render_entered_texts()}
                 </div>
@@ -755,7 +690,7 @@ class NewMailPage extends Component {
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
-                    <div className="col-6" >
+                    <div className="col-6">
                         {this.render_empty_views(3)}
                     </div>
                 </div>
@@ -782,35 +717,34 @@ class NewMailPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['290']})}
+                {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['307']})}
                 {this.render_detail_item('0')} */}
                 
                 {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
-                
                 <div style={{height:10}}/>
+
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_banner_image_picked.bind(this)} />
                     </div> */}
 
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
-                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_text_banner_image', 1)}/>
-                    </div>
-
                     {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_banner_image_picked.bind(this)} />
                     </div> */}
 
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('image', 'create_text_banner_image', 1)}/>
+                    </div>
+
                     <div style={{'padding': '5px', width:205}}>
                         {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped', 'prevent_default':true})}
                     </div>
                 </div>
-
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
@@ -836,7 +770,7 @@ class NewMailPage extends Component {
             size = '40px'
         }
         return{
-            'font':font, 'textsize':size,'text':this.state.entered_text
+            'font':font, 'textsize':size, 'text':this.state.entered_text
         }
     }
 
@@ -844,7 +778,7 @@ class NewMailPage extends Component {
         var typed_word = this.state.entered_text.trim();
 
         if(typed_word == ''){
-            this.props.notify(this.props.app_state.loc['128'], 400)
+            this.props.notify(this.props.app_state.loc['128'], 1400)
         }else{
             var entered_text = this.get_edited_text_object()
             if(this.state.edit_text_item_pos != -1){
@@ -948,29 +882,6 @@ class NewMailPage extends Component {
         // this.props.notify('item removed!', 600)
     }
 
-    when_banner_image_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    if(ev.total < this.props.app_state.image_size_limit){
-                        this.add_banner_to_object(ev.target.result)
-                        // this.setState({selected_banner_image: ev.target.result});
-                    }
-                }.bind(this);
-                var imageFile = e.target.files[i];
-                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
-                    reader.readAsDataURL(compressedFile);
-                })
-                .catch(function (error) {
-                    console.log(error.message);
-                });
-            }
-            var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
-        }
-    }
-
     when_banner_selected = async (files) => {
         this.add_banner_to_object(files[0])
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
@@ -1013,7 +924,6 @@ class NewMailPage extends Component {
         this.setState({entered_objects: cloned_array, entered_text:''})
     }
 
-
     update_banner_in_object(image, index){
         var entered_text = this.get_edited_text_object()
         entered_text['textsize'] = '10px'
@@ -1023,7 +933,6 @@ class NewMailPage extends Component {
         cloned_array[pos] = {'data':obj, 'type':'11' }
         this.setState({entered_objects: cloned_array, entered_text:''})
     }
-
 
     edit_text_item(item){
         var entered_objects_pos = -1;
@@ -1040,7 +949,6 @@ class NewMailPage extends Component {
         }
         // this.props.notify('editing item', 600)
     }
-
 
     finish_editing_text_item(item){
         var cloned_array = this.state.entered_objects.slice()
@@ -1080,429 +988,6 @@ class NewMailPage extends Component {
 
 
 
-
-
-
-    render_enter_links_part(){
-        return(
-            <div style={{'margin':'10px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['291']})}
-                <div style={{height:10}}/>
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['140'],'action':'', 'prevent_default':true})}
-                    </div>
-                </div>
-                <div style={{height:10}}/>
-                {this.render_selected_links()}
-
-                {this.render_detail_item('0')}
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
-                <div style={{height:10}}/>
-                {this.render_searched_link_results()}
-
-            </div>
-        )
-    }
-
-    when_get_sort_links_tags_object_updated(tag_obj){
-        this.setState({get_sort_links_tags_object: tag_obj})
-    }
-
-    when_typed_link_text_changed(text){
-        this.setState({typed_link_text: text})
-    }
-
-
-    search_object(){
-        var typed_text = this.state.typed_link_text
-
-        if(typed_text == ''){
-            this.props.notify(this.props.app_state.loc['128'], 1800)
-        }else{
-            this.props.notify(this.props.app_state.loc['141'], 1600)
-            var return_data = this.search_for_object(typed_text)
-            this.setState({link_search_results: return_data})
-        }
-    }
-
-
-    search_for_object(typed_text){
-        var contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
-        var channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
-        var contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
-        var jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
-        var posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
-        var proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
-        var storefronts = this.get_all_sorted_objects(this.props.app_state.created_stores)
-        var subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
-        var tokens = this.get_all_sorted_objects(this.props.app_state.created_tokens)
-    
-
-        var return_objects = []
-        var my_objects = []
-        contracts.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            console.log(object['id'])
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contract'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contract'})
-            }
-        });
-
-        channels.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'channel'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'channel'})
-            }
-        });
-
-        contractors.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contractor'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contractor'})
-            }
-        });
-
-        jobs.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'job'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'job'})
-            }
-        });
-
-
-        posts.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'post'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'post'})
-            }
-        });
-
-
-        proposals.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'proposal'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'proposal'})
-            }
-        });
-
-        storefronts.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'storefront'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'storefront'})
-            }
-        });
-
-
-        subscriptions.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'subscription'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'subscription'})
-            }
-        });
-
-        tokens.forEach(object => {
-            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
-            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
-                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'token'})
-            }
-            var me = this.props.app_state.user_account_id[object['e5']]
-            if(me == null) me = 1
-            if(object['author'] == me){
-                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'token'})
-            }
-        });
-
-        if(return_objects.length == 0 || typed_text == '') return my_objects;
-        return return_objects
-    }
-
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
-
-
-    render_selected_links(){
-        var items = [].concat(this.state.added_links).reverse()
-        var background_color = this.props.theme['card_background_color']
-
-        if(items.length == 0){
-            items = [1, 2, 3]
-            return(
-                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item)}>
-                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
-
-    truncate(source, size) {
-        return source.length > size ? source.slice(0, size - 1) + "…" : source;
-    }
-
-    get_title(item){
-        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
-        return `${obj[item['type']]} ${item_id}`
-    }
-
-
-    when_link_item_clicked(item){
-        var clone = this.state.added_links.slice()
-        var pos = clone.indexOf(item)
-        if(pos > -1){
-            clone.splice(pos, 1)
-        }
-        this.setState({added_links: clone})
-        // this.props.notify('Link removed from object', 700)
-    }
-
-
-    render_searched_link_results(){
-        var middle = this.props.height-400;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = [].concat(this.state.link_search_results)
-
-        if(items.length == 0){
-            items = this.search_for_object('')
-        }
-
-        items = this.sort_searched_link_results(items)
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>this.when_searched_link_tapped(item)}>
-                                {this.render_detail_item('3', {'title':''+this.get_title(item), 'details':item['title'], 'size':'s'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    sort_searched_link_results(items){
-        var selected_item = this.get_selected_item2(this.state.get_sort_links_tags_object, 'e')
-        var results = []
-        if(selected_item == 0/* e */){
-            return items
-        }
-        else if(selected_item == 1/* 📑 contract */){
-            items.forEach(item => {
-                if(item['type'] == 'contract'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 2/* 💼 job */){
-            items.forEach(item => {
-                if(item['type'] == 'job'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 3/* 👷🏻‍♀️ contractor */){
-            items.forEach(item => {
-                if(item['type'] == 'contractor'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 4/* 🏪 storefront */){
-            items.forEach(item => {
-                if(item['type'] == 'storefront'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 5/* 🎫 subscription */){
-            items.forEach(item => {
-                if(item['type'] == 'subscription'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 6/* 📰 post */){
-            items.forEach(item => {
-                if(item['type'] == 'post'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 7/* 📡 channel */){
-            items.forEach(item => {
-                if(item['type'] == 'channel'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 8/* 🪙 token */){
-            items.forEach(item => {
-                if(item['type'] == 'token'){
-                    results.push(item)
-                }
-            });
-        }
-        else if(selected_item == 9/* 🧎 proposal */){
-            items.forEach(item => {
-                if(item['type'] == 'proposal'){
-                    results.push(item)
-                }
-            });
-        }
-
-        return results;
-    }
-
-    get_selected_item2(object, option){
-        return object[option][2][0]
-    }
-
-    when_searched_link_tapped(item){
-        var clone = this.state.added_links.slice()
-        var pos = this.position_of(item, clone)
-
-        if(pos > -1){
-            this.props.notify(this.props.app_state.loc['143'], 1700)
-        }else{
-            clone.push(item)
-            this.setState({added_links: clone})
-            this.props.notify(this.props.app_state.loc['144'], 1400)
-        }
-    }
-
-    position_of(item, added_links){
-        var pos = -1
-        added_links.forEach(element => {
-            if(element['id'] == item['id'] && element['e5'] == item['e5']){
-                pos = added_links.indexOf(element)
-            }
-        });
-        return pos
-    }
-
-
-
-
-    
 
 
 
@@ -1557,7 +1042,7 @@ class NewMailPage extends Component {
 
     /* renders the buttons for pick images, set images and clear images */
     render_create_image_ui_buttons_part(){
-      return(
+        return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
             {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -1578,7 +1063,7 @@ class NewMailPage extends Component {
             </div> */}
 
         </div>
-      )
+        )
     }
 
     add_images_to_object(){
@@ -1591,31 +1076,6 @@ class NewMailPage extends Component {
             cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
             this.setState({entered_objects: cloned_array, entered_image_objects:[]})
             this.props.notify('images added!', 800)
-        }
-    }
-
-    /* called when images have been picked from picker */
-    when_image_gif_picked = (e) => {
-        if(e.target.files && e.target.files[0]){
-            for(var i = 0; i < e.target.files.length; i++){ 
-                let reader = new FileReader();
-                reader.onload = function(ev){
-                    const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
-                    if(ev.total < this.props.app_state.image_size_limit){
-                        clonedArray.push(ev.target.result);
-                        this.setState({entered_image_objects: clonedArray});
-                    }
-                }.bind(this);
-                var imageFile = e.target.files[i];
-                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
-                    reader.readAsDataURL(compressedFile);
-                })
-                .catch(function (error) {
-                    console.log(error.message);
-                });
-            }
-            var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 
@@ -1668,11 +1128,6 @@ class NewMailPage extends Component {
         this.props.notify('items removed!',600)
     }
 
-    constructor(props) {
-        super(props);
-        this.screen = React.createRef()
-    }
-
     render_image_part(){
         var background_color = this.props.theme['card_background_color']
         var col = Math.round((this.state.screen_width-25) / 100)
@@ -1720,13 +1175,12 @@ class NewMailPage extends Component {
         )
     }
 
-
     get_image_from_file(ecid){
         var ecid_obj = this.get_cid_split(ecid)
         if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
         var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
         if(data == null) return
-return data['data']
+        return data['data']
     }
 
     get_cid_split(ecid){
@@ -1751,7 +1205,6 @@ return data['data']
         }
         this.setState({entered_image_objects: cloned_array})
     }
-
 
 
 
@@ -1813,7 +1266,7 @@ return data['data']
                 <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} onClick={() => this.props.show_pick_file_bottomsheet('pdf', 'create_pdf', 10**16)}/>
             </div>
         </div>
-      )
+        )
     }
 
     when_pdf_files_picked = async (files) => {
@@ -1931,6 +1384,8 @@ return data['data']
             return {'size':size, 'unit':'bytes'}
         }
     }
+
+
 
 
 
@@ -2074,6 +1529,8 @@ return data['data']
 
 
 
+
+
     render_enter_markdown_part(){
         var size = this.props.size
         if(size == 's' || size == 'm'){
@@ -2208,65 +1665,169 @@ return data['data']
 
 
 
-    render_recipients_part(){
+
+
+
+
+
+
+
+
+
+    render_set_token_prices_list(){
+        var size = this.props.size
+        var height = this.props.height-150
+
+        if(size == 's'){
+            return(
+                <div style={{ 'overflow-x':'hidden'}}>
+                    {this.render_set_token_and_amount_part()}
+                    <div style={{height: 20}}/>
+                    {this.render_set_prices_list_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" >
+                        {this.render_set_token_and_amount_part()}
+                    </div>
+                    <div className="col-6" >
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" >
+                        {this.render_set_token_and_amount_part()}
+                    </div>
+                    <div className="col-5" >
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_token_and_amount_part(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':'Set some recipients for your new mail'})}
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_target_recipient_input_field_changed.bind(this)} text={this.state.target_recipient} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311g']/* 'Base Fee Exchange.' */, 'details':this.props.app_state.loc['d311h']/* 'Specify an exchange by its id, then the desired base price, and click add' */, 'size':'l'})}
 
-                <div style={{'padding': '5px'}} onClick={()=>this.add_recipient_account()}>
-                    {this.render_detail_item('5', {'text':'Add Account', 'action':''})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['737']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id')}
+                <div style={{height: 20}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['739']/* 'Price' */, 'number':this.state.price_amount, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['739']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                 </div>
-                <div style={{height:10}}/>
 
-                {this.render_recipients_transactions()}
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['740']/* 'Add Price' */, 'action':''})}
+                </div>
             </div>
         )
     }
 
-    when_target_recipient_input_field_changed(text){
-        this.setState({target_recipient: text})
+    when_exchange_id_input_field_changed(text){
+        this.setState({exchange_id: text})
     }
 
-    add_recipient_account(){
-        var clone = this.state.recipients.slice()
-        var recipient = this.state.target_recipient
+    when_price_amount(amount){
+        this.setState({price_amount: amount})
+    }
 
-        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+    when_add_price_set(){
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
+        var amount = this.state.price_amount
+
+        var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+        var default_depth = 0;
+        if(target_exchange_data != null){
+            target_exchange_data = target_exchange_data['ipfs']
+            if(target_exchange_data != null){
+                default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+            }
         }
-        else if(clone.includes(recipient)){
-            this.props.notify('you cant include the same recipient twice', 600)
+
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['741']/* 'please put a valid exchange id' */, 2600)
+        }
+        else if(default_depth != 0){
+            this.props.notify(this.props.app_state.loc['2762']/* 'You cant use that exchange.' */, 3600)
+        }
+        else if(amount == 0){
+            this.props.notify(this.props.app_state.loc['742']/* 'please put a valid amount' */, 2600)
+        }
+        else if(this.is_exchange_already_added(exchange_id)){
+            this.props.notify(this.props.app_state.loc['743']/* 'You cant use the same exchange twice' */, 3600)
         }
         else{
-            clone.push(recipient)
-            this.setState({recipients: clone, target_recipient:''})
-            this.props.notify('recipent account added!', 600)
+            var price_data_clone = this.state.price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data: price_data_clone});
+            this.props.notify(this.props.app_state.loc['744']/* 'added price!' */, 1400)
         }
     }
 
+    is_exchange_already_added(exchange_id){
+        if(this.get_item_in_array(exchange_id, this.state.price_data) == null){
+            return false
+        }
+        return true
+    }
 
+    get_item_in_array(exchange_id, object_array){
+        var object = object_array.find(x => x['id'] === exchange_id);
+        return object
+    }
 
-    render_recipients_transactions(){
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
+    }
+
+    render_set_prices_list_part(){
         var middle = this.props.height-500;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.state.recipients)
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
-            items = [0, 1]
+            items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                        <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
                                     </div>
                                 </div>
                             </li>
@@ -2277,64 +1838,611 @@ return data['data']
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Recipient ID: '+item, 'details':'Account', 'size':'s'})}
-                            </li>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_amount_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                        <li style={{'padding': '5px'}}>
+                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                            </div>
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
                         ))}
                     </ul>
                 </div>
             )
         }
+        
     }
 
-
-    when_item_clicked(item){
-        var cloned_array = this.state.recipients.slice()
+    when_amount_clicked(item){
+        var cloned_array = this.state.price_data.slice()
         const index = cloned_array.indexOf(item);
         if (index > -1) { // only splice array when item is found
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
-        this.setState({recipients: cloned_array})
-        this.props.notify('account removed!', 600)
+        this.setState({price_data: cloned_array})
     }
 
 
 
 
-    load_account_suggestions(){
-        var items = [].concat(this.get_suggested_accounts())
+
+
+
+
+
+
+
+
+    render_set_certificate_model_data(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div style={{ 'overflow-x':'hidden'}}>
+                    {this.render_set_certificate_model_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_certificate_model_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_models_list_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" >
+                        {this.render_set_certificate_model_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" >
+                        {this.render_set_certificate_model_part2()}
+                        {this.render_detail_item('0')}
+                        {this.render_set_models_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" >
+                        {this.render_set_certificate_model_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" >
+                        {this.render_set_certificate_model_part2()}
+                        {this.render_detail_item('0')}
+                        {this.render_set_models_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_set_certificate_model_part(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311k']/* 'Certificate Model Details.' */, 'details':this.props.app_state.loc['d311l']/* 'Specify the structure of your certificate and the type of valid tokens that may be minted.' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311m']/* 'New Class.' */, 'details':this.props.app_state.loc['d311n']/* 'Specify a Class Name or Identifier. One word, no spaces.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['d311o']/* 'Class Name...' */} when_text_input_field_changed={this.when_class_id_input_field_changed.bind(this)} text={this.state.class_name} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(35 - this.state.class_name.length)})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311p']/* 'Class Maximum Supply.' */, 'details':this.props.app_state.loc['d311q']/* 'The total number of non-fungible tokens that can be minted as certificates for this new class.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['d311r']/* 'Number of Certificates.' */, 'subtitle':this.format_power_figure(this.state.maximum_supply), 'barwidth':this.calculate_bar_width(this.state.maximum_supply), 'number':this.format_account_balance_figure(this.state.maximum_supply), 'barcolor':'', 'relativepower':this.props.app_state.loc['d311s']/* 'certificates' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt(999_999_999)} when_number_picker_value_changed={this.when_maximum_supply.bind(this)} theme={this.props.theme} power_limit={9}/>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311t']/* 'Purchase Start Time.' */, 'details':this.props.app_state.loc['d311u']/* 'Specify a time after which the class\'s certificates can be purcahsed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_start_time).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_start_time), 'size':'l'})}
+
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_purchase_start_date_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311w']/* 'Purchase End Time.' */, 'details':this.props.app_state.loc['d311x']/* 'Specify a time after which the class\'s certificates cannot be purchased.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_end_time).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_end_time), 'size':'l'})}
+
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_purchase_end_date_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+
+            </div>
+        )
+    }
+
+    render_set_certificate_model_part2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311y']/* 'Split Periods.' */, 'details':this.props.app_state.loc['d311z']/* 'You may optionally specify a periodic split, meaning the certificates will be purchased in a specified frequency within the time bounds set.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.split_period), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l'})}
+                
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_split_period_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ba']/* 'Base-fee Price Multiplier' */, 'details':this.props.app_state.loc['d311bb']/* 'The base fee that will be applied when acquiring certificates in this class.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['d311bc']/* 'Price Multiplier' */, 'subtitle':this.format_power_figure(this.state.base_fee_price_multiplier), 'barwidth':this.calculate_bar_width(this.state.base_fee_price_multiplier), 'number':this.format_account_balance_figure(this.state.base_fee_price_multiplier), 'barcolor':'', 'relativepower':this.props.app_state.loc['d311bd']/* 'tokens' */, })}
+                </div>
+
+                {this.render_multiplied_prices()}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_base_fee_price_multiplier.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bq']/* Class Details */, 'details':this.props.app_state.loc['d311br']/* You can optionally specify some details about the class. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_markdown_preview_or_editor_object} tag_size={'l'} when_tags_updated={this.when_get_markdown_preview_or_editor_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_preview_or_editor_option_ui2()}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311be']/* 'Create New Class.' */, 'details':this.props.app_state.loc['d311bf']/* 'Create the new class with the specified details.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_class_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['d311bh']/* 'Create Class' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_class_id_input_field_changed(text){
+        this.setState({class_name: text})
+    }
+
+    when_maximum_supply(number){
+        this.setState({maximum_supply: number})
+    }
+
+    when_new_purchase_start_date_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({purchase_start_time: timeInSeconds})
+    }
+
+    when_new_purchase_end_date_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({purchase_end_time: timeInSeconds})
+    }
+
+    when_split_period_time_set(number){
+        this.setState({split_period: number})
+    }
+
+    when_base_fee_price_multiplier(number){
+        this.setState({base_fee_price_multiplier: number})
+    }
+
+    render_multiplied_prices(){
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {this.state.price_data.map((item, index) => (
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    when_add_class_tapped(){
+        const class_name = this.state.class_name.trim()
+        const maximum_supply = this.state.maximum_supply
+        const purchase_start_time = this.state.purchase_start_time
+        const purchase_end_time = this.state.purchase_end_time
+        const split_period = this.state.split_period
+        const base_fee_price_multiplier = this.state.base_fee_price_multiplier
+        const class_markdown = this.state.class_markdown
+
+        if(class_name == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
+        }
+        else if(this.hasWhiteSpace(class_name)){
+            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
+        }
+        else if(class_name.length > 35){
+            this.props.notify(this.props.app_state.loc['d311bi']/* 'That class name is too long' */, 4400)
+        }
+        else if(purchase_start_time > purchase_end_time){
+            this.props.notify(this.props.app_state.loc['d311bj']/* 'The start time cannot be after the end time' */, 6400)
+        }
+        else if(base_fee_price_multiplier == 0){
+            this.props.notify(this.props.app_state.loc['d311bk']/* 'base fee multiplier cannot be 0' */, 4400)
+        }
+        else{
+            const clone = structuredClone(this.state.certificate_models)
+            clone[class_name] = {
+                'id':make_number_id(9),
+                'class_name':class_name,
+                'maximum_supply':maximum_supply,
+                'purchase_start_time':purchase_start_time,
+                'purchase_end_time':purchase_end_time,
+                'split_period':split_period,
+                'base_fee_price_multiplier':base_fee_price_multiplier,
+                'class_markdown':class_markdown
+            }
+            this.setState({certificate_models: clone, class_name: '', class_markdown:''})
+            this.props.notify(this.props.app_state.loc['d311bl']/* 'class data set.' */, 900)
+        }
+    }
+
+    render_set_models_list_part(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(Object.keys(this.state.certificate_models))
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                        <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_model_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                        {this.render_model_item(item)}
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    render_model_item(item){
+        const data = this.state.certificate_models[item]
+        const title = item
+        const details = this.format_account_balance_figure(data['maximum_supply']) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
+        return(
+            <div onClick={() => this.edit_model_item(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    edit_model_item(item){
+        // const clone = structuredClone(this.state.certificate_models)
+        // const clone2 = structuredClone(this.state.certificate_models)
+        // delete clone[item]
+
+        // this.setState({class_name: clone2['class_name'], maximum_supply: clone2['maximum_supply'], purchase_start_time: clone2['purchase_start_time'], purchase_end_time: clone2['purchase_end_time'], split_period: clone2['split_period'], base_fee_price_multiplier: clone2['base_fee_price_multiplier'], 
+        // certificate_models: clone, class_markdown: clone2['class_markdown']})
+
+        // this.props.notify(this.props.app_state.loc['d311bn']/* 'editing selected class.' */, 1900)
+    }
+
+    when_model_clicked(item){
+        const clone = structuredClone(this.state.certificate_models)
+        delete clone[item]
+        this.setState({certificate_models: clone})
+    }
+
+    render_preview_or_editor_option_ui2(){
+        var selected_item = this.get_selected_item(this.state.get_markdown_preview_or_editor_object, this.state.get_markdown_preview_or_editor_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['a311bt']/* 'Editor' */){
+            return(
+                <div>
+                    <div style={{'margin':'0px 0px 0px 10px'}}>
+                        <TextInput height={200} placeholder={this.props.app_state.loc['d311bs']/* 'Class\' Details in Markdown..' */} when_text_input_field_changed={this.when_class_markdown_field_changed.bind(this)} text={this.state.class_markdown} theme={this.props.theme}/>
+                    </div>
+                    {this.render_markdown_shortcut_list2()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['a311bu']/* 'preview' */){
+            return(
+                <div>
+                    {this.render_markdown_or_empty2()}
+                </div>
+            )
+        }
+    }
+
+    render_markdown_or_empty2(){
+        if(this.state.class_markdown.trim() == ''){
+            return(
+                <div>
+                    {this.render_empty_views(2)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('13', {'source':this.state.class_markdown})}
+                </div>
+            )
+        }
+    }
+
+    when_class_markdown_field_changed(text){
+        this.setState({class_markdown: text})
+    }
+
+    render_markdown_shortcut_list2(){
+        var items = this.props.app_state.markdown_shortcut_list
+
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_markdown_shortcut_clicked2(item['details'])}>
+                                {this.render_detail_item('3', item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    when_markdown_shortcut_clicked2(text){
+        if(text == this.props.app_state.loc['a311ei']/* '![eImage alt text](image.jpg)' */){
+            this.props.show_pick_file_bottomsheet('image', 'create_markdown_image2', 1000000000000)
+        }else{
+            this.setState({class_markdown: this.state.class_markdown+'\n'+text})
+        }
+    }
+
+    when_markdown_image_selected2 = async (files) => {
+        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
+        var current_markdown = this.state.class_markdown.slice()
+        for(var f=0; f<files.length; f++){
+            const file = files[f]
+            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
+            current_markdown += `\n![${this.props.app_state.loc['a311ej']/* eImage alt text */}](${file})`
+        }
+        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, class_markdown: current_markdown});
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    load_token_suggestions(target_type){
+        var items = [].concat(this.get_suggested_tokens(target_type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                                {this.render_detail_item('14', item['label'])}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+        )
+    }
+
+    get_suggested_tokens(target_type){
+        var items = [
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':this.props.app_state.selected_e5, 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':this.props.app_state.selected_e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[this.props.app_state.selected_e5].spend_image, 'img_size':30}},
+        ];
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        if(exchanges_from_sync == null) exchanges_from_sync = []
+        var me = this;
+        exchanges_from_sync = exchanges_from_sync.filter(function (exchange) {
+            return (me.is_exchange_searched(exchange, target_type))
+        })
+        var sorted_token_exchange_data = []
+        // var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                if(this.is_exchange_searched(exchanges_from_sync[i], target_type))sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            if(sorted_token_exchange_data[i]['ipfs'] == null || sorted_token_exchange_data[i]['ipfs'].default_depth == null || sorted_token_exchange_data[i]['ipfs'].default_depth == 0){
+                items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['ipfs'].entered_symbol_text, 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s', 'image':(sorted_token_exchange_data[i]['ipfs'].token_image == null ? (sorted_token_exchange_data[i]['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img']:this.props.app_state.static_assets['spend_img']) : sorted_token_exchange_data[i]['ipfs'].token_image), 'img_size':30}})
+            }
+        }
+
+        return items;
+    }
+
+    is_exchange_searched(exchange, target_type){
+        var filter_text = this.state.exchange_id
+
+        if(filter_text == ''){
+            return true
+        }
+        var token_name = exchange['ipfs'] == null ? '' : exchange['ipfs'].entered_title_text
+        var entered_symbol_text = exchange['ipfs'] == null ? '' : exchange['ipfs'].entered_symbol_text
+        if(token_name == null){
+            token_name = ''
+            entered_symbol_text = ''
+        }
+        if(token_name.toLowerCase().includes(filter_text.toLowerCase()) || entered_symbol_text.toLowerCase().includes(filter_text.toLowerCase())){
+            return true
+        }
+        else if(!isNaN(filter_text) && exchange['id'].toString().startsWith(filter_text)){
+            return true
+        }
+        return false
+    }
+
+    when_price_suggestion_clicked(item, pos, target_type){
+        this.setState({exchange_id: item['id']})
+    }
+
+
+
+
+
+
+
+    load_account_suggestions(target_type){
+        var items = [].concat(this.get_suggested_accounts(target_type))
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
 
-    get_suggested_accounts(){
-        return this.get_account_suggestions()
+    get_suggested_accounts(target_type){
+        return[
+            {'id':'53', 'label':{'title':this.props.app_state.loc['723']/* 'My Account' */, 'details':this.props.app_state.loc['724']/* 'Account' */, 'size':'s'}},
+        ].concat(this.get_account_suggestions(target_type))
     }
 
-    get_account_suggestions(){
-        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5]
+    get_account_suggestions(target_type){
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        if(contacts == null) contacts = [];
         var return_array = []
-        contacts.forEach(contact => {
-            if(contact['id'].toString().includes(this.state.target_recipient)){
-                return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
-            }
-        });
-        return_array = this.filter_and_add_other_accounts(this.state.target_recipient, return_array)
 
-        return return_array
+        if(target_type == 'exchange_authority'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.exchange_authority)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+            return_array = this.filter_and_add_other_accounts(this.state.exchange_authority, return_array)
+        }
+        else if(target_type == 'trust_fee_target'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.trust_fee_target)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+            return_array = this.filter_and_add_other_accounts(this.state.trust_fee_target, return_array)
+        }
+        else if(target_type == 'moderator_id'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.moderator_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+            return_array = this.filter_and_add_other_accounts(this.state.moderator_id, return_array)
+        }
+        else if(target_type == 'interactible_id'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.interactible_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+            return_array = this.filter_and_add_other_accounts(this.state.interactible_id, return_array)
+        }
+        
+        return return_array;
     }
 
     filter_and_add_other_accounts(typed_name, return_array){
@@ -2351,22 +2459,12 @@ return data['data']
 
     get_all_aliases(added_aliases, typed_name){
         const aliases = []
-        // const e5s = Object.keys(this.props.app_state.alias_bucket)
-        // e5s.forEach(e5 => {
-        //     const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
-        //     accounts.forEach(account_id => {
-        //         const alias = this.props.app_state.alias_bucket[e5][account_id]
-        //         if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
-        //             aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
-        //         }
-        //     });
-        // });
         const e5 = this.props.app_state.selected_e5
         if(this.props.app_state.alias_bucket[e5] == null) return []
         const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
         accounts.forEach(account_id => {
             const alias = this.props.app_state.alias_bucket[e5][account_id]
-            if(!added_aliases.includes(alias) && alias.toLowerCase().startsWith(typed_name.toLowerCase())){
+            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
                 aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
             }
         });
@@ -2376,6 +2474,92 @@ return data['data']
 
     get_contact_alias(contact){
         return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    when_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'exchange_authority'){
+            this.setState({exchange_authority: item['id']})
+        }
+        else if(target_type == 'trust_fee_target'){
+            this.setState({trust_fee_target: item['id']})
+        }
+        else if(target_type == 'moderator_id'){
+            this.setState({moderator_id: item['id']})
+        }
+        else if(target_type == 'interactible_id'){
+            this.setState({interactible_id: item['id']})
+        }
+
+    }
+
+
+
+
+
+    finish_creating_object(){
+        var index_tags = this.state.entered_indexing_tags
+        var title = this.state.entered_title_text
+        var texts = this.state.entered_text_objects
+        var images = this.state.entered_image_objects
+        var price_data = this.state.price_data
+        var certificate_models = this.state.certificate_models
+
+        const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
+        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
+
+        if(index_tags.length < 3){
+            this.props.notify(this.props.app_state.loc['270'], 2700)
+        }
+        else if(title == ''){
+            this.props.notify(this.props.app_state.loc['311'], 2700)
+        }
+        else if(title.length > this.props.app_state.title_size){
+            this.props.notify(this.props.app_state.loc['272'], 2700)
+        }
+        else if(price_data.length == 0){
+            this.props.notify(this.props.app_state.loc['d311i']/* 'A base fee for acquiring this certificate is required.' */, 7700)
+        }
+        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
+            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
+        }
+        else if(Object.keys(certificate_models).length == 0){
+            this.props.notify(this.props.app_state.loc['d311bo']/* 'You need to define your certificate\'s model with classes.' */, 9000)
+        }
+        else{
+            this.props.when_add_edit_object_to_stack(this.state)
+            this.props.notify(this.props.app_state.loc['18'], 1700);
+        }
+    }
+
+
+
+
+
+
+
+
+    render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
+        return(
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                    </div>
+                </div>
+            );
     }
 
     get_all_sorted_objects_mappings(object){
@@ -2390,14 +2574,59 @@ return data['data']
         return all_objects
     }
 
-    when_suggestion_clicked(item){
-        this.setState({target_recipient: item['label']['details']})
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
     }
 
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
+    }
+    
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
 
-
-
-
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
@@ -2405,122 +2634,107 @@ return data['data']
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} show_images={this.props.show_images.bind(this)}
+                
                 />
             </div>
         )
 
     }
 
-    show_images(){
-
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
     }
 
-    async get_recipient_id(recipient){
-        await this.props.get_account_id_from_alias(recipient)
-        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
-        var id = (obj[recipient] == null ? recipient : obj[recipient])
-        return id
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
     }
 
-    async get_recipient_e5(recipient){
-        await this.props.get_account_id_from_alias(recipient)
-        var e5s = this.props.app_state.e5s['data']
-        var recipients_e5 = this.props.app_state.selected_e5
-        for (let i = 0; i < e5s.length; i++) {
-            var e5 = e5s[i]
-            if(this.props.app_state.alias_owners[e5] != null){
-                var id = this.props.app_state.alias_owners[e5][recipient]
-                if(id != null && !isNaN(id)){
-                    recipients_e5 = e5
-                }
-            }
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
         }
-        return recipients_e5
-    }
-
-
-    async finish_creating_object(){
-        var index_tags = this.state.entered_indexing_tags
-        var title = this.state.entered_title_text
-        var recipient = this.state.target_recipient.trim()
-
-        const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
-        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
-
-        if(isNaN(recipient)){
-            var recipients_e5 = await this.get_recipient_e5(recipient)
-            recipient = await this.get_recipient_id(recipient)
-            this.setState({target_recipient: recipient.toString(), recipients_e5: recipients_e5})
-        }
-
-        if(index_tags.length < 1){
-            this.props.notify(this.props.app_state.loc['160'], 2700)
-        }
-        else if(title == ''){
-            this.props.notify(this.props.app_state.loc['295'], 2700)
-        }
-        else if(title.length > this.props.app_state.title_size){
-            this.props.notify(this.props.app_state.loc['162'], 2700)
-        }
-        // else if(recipients.length == 0){
-        //     this.props.notify('set at least one recipient', 700)
-        // }
-        else if(isNaN(recipient) || parseInt(recipient) < 1000 || recipient == '' || recipient.toString().includes('.')){
-            this.props.notify(this.props.app_state.loc['296'], 2700)
-        }
-        else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
-            this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
-        }
-        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
-            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
-        }
-        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account(this.props.app_state.selected_e5)){
-            this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
-        }
-        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){
-            this.props.notify(this.props.app_state.loc['284bc']/* 'Your job post is too large.' */, 5000)
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            // var images_to_add = this.state.entered_image_objects
-            // var id = Math.round(new Date().getTime()/1000);
-            // if(images_to_add.length != 0){
-            //     var cloned_array = this.state.entered_objects.slice()
-            //     cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
-            //     this.setState({entered_objects: cloned_array, entered_image_objects:[]})
-            // }
-            
-            var me = this;
-            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
-                device_language_setting :me.props.app_state.device_language,
-                device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
-
-            setTimeout(function() {
-                if(post_indexing == me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
-                    me.props.emit_new_object_in_socket(me.state)
-                }else{
-                    me.props.when_add_new_mail_to_stack(me.state)
-                    me.reset_state()
-                }
-            }, (1 * 1000));
-
-            if(post_indexing != me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
-                this.props.notify(this.props.app_state.loc['18']/* transaction added to stack' */, 1700);
-            }
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
     }
 
-    reset_state(){
-        const me = this;
-        me.setState({ selected: 0, id: makeid(8), type:me.props.app_state.loc['285'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[], typed_link_text:'', link_search_results:[], added_links:[], entered_pdf_objects:[], markdown:''})
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
     }
 
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = parseInt(diff)
+            var s = num > 1 ? 's': '';
+            return num+ this.props.app_state.loc['29']
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['30'] 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['31'] + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['32'] + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['33'] + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['34'] + s;
+        }
+    }
 
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
+    }
+
+    get_number_width(number){
+        if(number == null) return '0%'
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
 
 }
 
 
 
 
-export default NewMailPage;
+export default EditCertificatePage;

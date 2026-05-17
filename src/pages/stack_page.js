@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -4403,7 +4403,8 @@ class StackPage extends Component {
                     txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */ || 
                     txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */|| 
                     txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */ ||
-                    txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */
+                    txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */ ||
+                    txs[i].type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */
                 ){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
@@ -5041,6 +5042,80 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */){
+                    var token_obj = this.format_certificate_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(token_obj)
+
+                    new_tx_index = ints.length -1
+                    var token_stack_id = ints.length-1
+                    
+                    var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
+
+                    if(access_rights_setting == this.props.app_state.loc['616']/* 'enabled' */){
+                        var enable_interactibles_checker = [ /* enable interactible checkers */
+                            [20000, 5, 0],
+                            [token_stack_id], [35]/* target objects */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(enable_interactibles_checker)
+                        // should_optimize_run = false
+                    }
+                    if(txs[i].interactibles.length != 0){
+                        var add_interactibles_accounts = [ /* set account to be interactible */
+                            [20000, 2, 0],
+                            [], [],/* target objects */
+                            [], [],/* target account ids*/
+                            []/* interacible expiry time limit */
+                        ]
+
+                        for(var j = 0; j < txs[i].interactibles.length; j++){
+                            add_interactibles_accounts[1].push(token_stack_id)
+                            add_interactibles_accounts[2].push(35)
+                            add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
+                            add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_interactibles_accounts)
+                        // should_optimize_run = false
+        
+                    }
+                    if(txs[i].moderators.length != 0){
+                        var add_moderator_accounts = [ /* set account as mod */
+                            [20000, 4, 0],
+                            [], [],/* target objects */
+                            [], []/* target moderator account ids*/
+                        ]
+
+                        for(var j = 0; j < txs[i].moderators.length; j++){
+                            add_moderator_accounts[1].push(token_stack_id)
+                            add_moderator_accounts[2].push(35)
+                            add_moderator_accounts[3].push(txs[i].moderators[j])
+                            txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_moderator_accounts)
+                        // should_optimize_run = false
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['3099']/* 'mint-certificate' */){
+                    var purchase_obj = await this.format_purchase_certificate_object(txs[i], calculate_gas, ipfs_index)
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(purchase_obj.buy_obj)
+
+                    strs.push(purchase_obj.string_obj)
+                    adds.push([])
+                    ints.push(purchase_obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -5075,7 +5150,8 @@ class StackPage extends Component {
                 pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
                 pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */ || 
                 pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
-                pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */
+                pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */ ||
+                pushed_txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */
             ){
                 metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
@@ -5168,7 +5244,8 @@ class StackPage extends Component {
                 pushed_txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
                 pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */|| 
                 pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
-                pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */
+                pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */ ||
+                pushed_txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */
             ){
                 var identifier = setting[pushed_txs[i].content_channeling_setting]
                 if(identifier == 'local'){
@@ -6139,7 +6216,8 @@ class StackPage extends Component {
                     txs[i].type == this.props.app_state.loc['2975']/* 'edit-audio' */|| 
                     txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */ || 
                     txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */ ||
-                    txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */
+                    txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */ ||
+                    txs[i].type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */
                 ){
                     const t = txs[i]
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
@@ -6316,7 +6394,8 @@ class StackPage extends Component {
                     txs[i].type == this.props.app_state.loc['a311a']/* audio */ || 
                     txs[i].type == this.props.app_state.loc['b311a']/* video */|| 
                     txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */ ||
-                    txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */
+                    txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */ ||
+                    txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */
                 ){
                     var data = txs[i]
                     if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
@@ -6558,6 +6637,28 @@ class StackPage extends Component {
                     var application_obj = {'accepted':true, 'contract_id':t.picked_contract['id']}
                     ipfs_index_object[t.id] = application_obj
                     ipfs_index_array.push({'id':t.id, 'data':application_obj})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3099']/* 'mint-certificate' */){
+                    const data = txs[i]
+                    const certificate_data = {
+                        'token_id': data.token_item['id'],
+                        'token_e5': data.token_item['e5'],
+                        'class': data.selected_class,
+                        'entered_text_objects': data.entered_text_objects, 
+                        'entered_image_objects': data.entered_image_objects,
+                        'entered_objects': data.entered_objects,
+                        'content_channeling_setting':data.content_channeling_setting,
+                        'device_language_setting':data.device_language_setting,
+                        'device_country':data.device_country,
+                        'device_region':data.device_region,
+                        'my_country':data.my_country,
+                        'my_city':data.my_city,
+                        'entered_pdf_objects':data.entered_pdf_objects,
+                        'markdown':data.markdown,
+                        'entered_zip_objects':data.entered_zip_objects,
+                    }
+                    ipfs_index_object[txs[i].id] = certificate_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
                 }
             }
         }
@@ -8436,6 +8537,16 @@ class StackPage extends Component {
     cancel_dialog_box(){
         this.setState({invalid_ether_amount_dialog_box: false})
     }
+
+
+
+
+
+
+
+
+
+
 
     format_contract_object(t){
         var default_vote_bounty_split_proportion = t.default_vote_bounty_split_proportion == 0 ? bgN(1,16) : t.default_vote_bounty_split_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -12474,6 +12585,136 @@ class StackPage extends Component {
 
 
         return {int: obj, str: string_obj}
+    }
+
+    format_certificate_object(t){
+        //.toString().toLocaleString('fullwide', {useGrouping:false})
+        var exchange_authority = t.exchange_authority == '' ? 53 : parseInt(t.exchange_authority)
+        var exchange_authority_type = 23
+        if(exchange_authority == 53){
+            exchange_authority_type = 53
+        }
+        var trust_fee_target = t.exchange_authority == '' ? 53 : parseInt(t.exchange_authority)
+        var trust_fee_target_type = 23
+        if(trust_fee_target == 53){
+            trust_fee_target_type = 53
+        }
+
+
+        var obj = [/* create token */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
+            [0, 1, 1, 5, 1],
+            [23, 23, 23, 23, 23],
+
+            [1, 0, 0, 0/* 3 */, 0, 0, 0, bgN(3, 5)/* 7 */, 0, exchange_authority, trust_fee_target, 0/* 11 */, 0, 0, 0, 0/* 15 */, 0, 0, 0],
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, exchange_authority_type, trust_fee_target_type, 23, 23, 23, 23, 23, 23, 23, 23],
+
+            [1, 1, 0/* 2 */, 0, 0, 0, bgN(100, 16), 0/* 7 */,   bgN(1,54), bgN(1,45), bgN(1,36), bgN(1,27), 60/* 12 */, 0, bgN(1,26), 0, bgN(1,18), 0],
+            [23, 23, 23, 23, 23, 23, 23, 23,  23, 23, 23, 23, 23, 23,  23, 23, 23, 23],
+
+            [], [],
+            [], [],
+            [], []
+        ]
+
+        for(var i=0; i<t.price_data.length; i++){
+            obj[7].push(parseInt(t.price_data[i]['id']))
+            obj[8].push(23)
+            obj[9].push(parseInt(t.price_data[i]['amount']))
+            obj[10].push(23)
+            obj[11].push(0)
+            obj[12].push(23)
+        }
+
+        return obj
+    }
+
+    format_purchase_certificate_object = async (t, calculate_gas, ipfs_index) =>{
+        const item = t.selected_class
+        const object = t.token_item
+        const data = object['ipfs'].certificate_models[item]
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const split_period = data['split_period']
+        const maximum_supply = data['maximum_supply']
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const class_id = data['id']
+        const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        const previous_split_time = this.get_previous_split_time(split_period, purchase_start_time, purchase_end_time)
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        const start_time_minutes = Math.floor(previous_split_time / 60) - 60
+        const end_time_minutes = Math.floor(split_time / 60) + 90
+
+        const start_end_time = bigInt(bgN(start_time_minutes, 36)).plus(end_time_minutes)
+
+        var target_id = t.token_item['id']
+        var context = 32
+        var int_data = start_end_time
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        
+        const price = base_fee_price_multiplier
+        const supply = maximum_supply
+        const token_class = class_id
+
+        const v3_depths_to_add/* depths_to_add */ = [
+            bgN(price, 54)/* exchange_ratio_y */, 
+            bgN(end_time_minutes, 45)/* end_time */, 
+            bgN(start_time_minutes, 36)/* start_time */, 
+            bgN(supply, 27)/* supply */, 
+            bgN(token_class, 18)/* class */, 
+            0/* identifier */
+        ]
+
+        var v4_depth_final/* targeted_depth */ = bigInt(0)
+        v3_depths_to_add/* depths_to_add */.forEach(value => {
+            v4_depth_final/* targeted_depth */ = bigInt(v4_depth_final/* targeted_depth */).plus(bigInt(value.toString().toLocaleString('fullwide', {useGrouping:false}))).toString().toLocaleString('fullwide', {useGrouping:false})
+        });
+
+        var buy_obj = [/* buy end/spend */
+            [30000, 8, 0],
+            [target_id], [23],/* exchanges */
+            [0], [53],/* receivers */
+            [1]/* amounts */, [0],/* action */
+            []/* lower_bounds */, [],/* upper_bounds */
+            [v4_depth_final],/* depths */
+        ];
+
+        return {int: obj, str: string_obj, buy_obj}
+    }
+
+    get_current_split_time(split_period, purchase_start_time, purchase_end_time){
+        const current_time = Math.floor(Date.now()/1000)
+        if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
+        const difference = parseInt(current_time) - parseInt(purchase_start_time)
+        const periodCount = Math.floor(difference / parseInt(split_period))
+        return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
+    }
+
+    get_previous_split_time(split_period, purchase_start_time, purchase_end_time){
+        const current_time = Math.floor(Date.now()/1000)
+        if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
+        const difference = parseInt(current_time) - parseInt(purchase_start_time)
+        const periodCount = Math.floor(difference / parseInt(split_period))
+        const previous_time = parseInt(purchase_start_time) + ((periodCount - 1) * parseInt(split_period))
+        if(previous_time < purchase_start_time) return purchase_start_time
+        else return previous_time
     }
 
     
@@ -22496,6 +22737,9 @@ class StackPage extends Component {
     }
 
     get_actual_number(number, depth){
+        if(bigInt(depth).greater(1_000_000)){
+            return bigInt(number).toString().toLocaleString('fullwide', {useGrouping:false})
+        }
         var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
         var depth_vaule = bigInt(('1e'+p))
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})

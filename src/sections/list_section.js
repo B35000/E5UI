@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -369,6 +369,13 @@ class PostListSection extends Component {
                     </div>
                 )
             }
+            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bw']/* 'certificates' */){
+                return(
+                    <div>
+                        {this.render_certificates_list_group()}
+                    </div>
+                )
+            }
         }
 
     }
@@ -439,6 +446,7 @@ class PostListSection extends Component {
         this.end_list = React.createRef();
         this.spend_list = React.createRef();
         this.bill_list = React.createRef();
+        this.certificate_list = React.createRef();
 
         this.locationPickerRef = React.createRef();
         this.locationPickerRef2 = React.createRef();
@@ -617,6 +625,9 @@ class PostListSection extends Component {
     }
 
     get_actual_number(number, depth){
+        if(bigInt(depth).greater(1_000_000)){
+            return bigInt(number).toString().toLocaleString('fullwide', {useGrouping:false})
+        }
         var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
         var depth_vaule = bigInt(('1e'+p))
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
@@ -764,6 +775,11 @@ class PostListSection extends Component {
     set_bills_list(pos, smooth){
         if(smooth == null || smooth == false) this.bill_list.current?.scrollToIndex({ index: pos, align: "start", });
         else this.bill_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
+    }
+
+    set_certificate_list(pos, smooth){
+        if(smooth == null || smooth == false) this.certificate_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.certificate_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
 
@@ -1305,6 +1321,9 @@ class PostListSection extends Component {
                 }
                 if(extra_data['token_swap_events'] != null){
                     return_text.push(this.props.app_state.loc['2509dp']/* '$ swaps' */.replace('$', this.format_count(extra_data['token_swap_events']['all_hits'])));
+                }
+                if(extra_data['certificate_mint_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dy']/* '$ mints' */.replace('$', this.format_count(extra_data['certificate_mint_events']['all_hits'])));
                 }
             }
             const result_string = return_text.join(' • ')
@@ -8086,6 +8105,140 @@ return data['data']
     when_pay_all_bills_tapped(items){
         this.props.show_dialog_bottomsheet({'objects':items }, 'confirm_pay_bill')
     }
+
+
+
+
+
+
+
+
+
+
+    render_certificates_list_group(){
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var all_items = this.get_certificate_exchanges()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
+                        {this.show_load_metrics(items, 'certificates')}
+                        {this.show_new_objects_message_if_any(all_items)}
+                        {items.map((item, index) => (
+                            <div>
+                                {this.is_loading_object_data() == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                <div style={{height: 2}}/>
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
+        return ( 
+            <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                {this.render_line_loader_if_reloading()}
+                {this.show_load_metrics(items, 'certificates')}
+                {this.show_new_objects_message_if_any(all_items)}
+                <Virtuoso
+                    ref={this.certificate_list}
+                    style={{ height: middle }}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index];
+                        return (
+                            <div>
+                                <AnimatePresence initial={true}>
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_certificate_object(item, index)}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                    rangeChanged={(range) => {
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'certificates'))
+                    }}
+                />
+            </div>
+        );
+    }
+
+    get_certificate_exchanges(){
+        return this.order_elements(this.remove_duplicates(this.props.get_certifiate_items()), 'e5_id');
+    }
+
+    render_certificate_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_certificate_item(object)
+        if(object == null) return;
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_proposal_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_proposal_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_proposal_item_clicked(index, object)} */>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_certificate_item(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = item['event'].returnValues.p5
+        var time = item['event'].returnValues.p4
+        var sender = this.get_senders_name(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
+        }
+    }
+
+    when_spends_object_item_clicked(index, item){
+        setTimeout(() => this.props.when_certificate_object_clicked(index, item['id'], item['e5'], item), animate_time);
+    }
+
+
 
 
 

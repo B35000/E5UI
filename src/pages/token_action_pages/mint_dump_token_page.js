@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Bry Onyoni
+// Copyright (c) 2023 - Present, Bry Onyoni
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -955,10 +955,10 @@ class NewMintActionPage extends Component {
             else if(!this.check_if_sender_can_interact_with_exchange()){
                 this.props.notify(this.props.app_state.loc['982']/* 'You cant interact with the same exchange twice in one run.' */, 4200)
             }
-            else if(bigInt(amount).greater(this.get_token_buy_limit()) && action == 'mint-buy'){
+            else if(bigInt(amount).greater(this.get_token_buy_limit()) && action == this.props.app_state.loc['949']/* 'mint-buy' */){
                 this.props.notify(this.props.app_state.loc['983']/* 'The amount youve set exceeds the maximum buy amount enforced by the exchange.' */, 7500)
             }
-            else if(bigInt(amount).greater(this.get_token_sell_limit()) && action == 'dump-sell'){
+            else if(bigInt(amount).greater(this.get_token_sell_limit()) && action == this.props.app_state.loc['950']/* 'dump-sell' */){
                 this.props.notify(this.props.app_state.loc['984']/* 'The amount youve set exceeds the maximum sell amount enforced by the exchange.' */, 7500)
             }
             else if(!can_make_swap){
