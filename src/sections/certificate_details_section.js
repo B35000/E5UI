@@ -56,7 +56,7 @@ function start_and_end(str) {
 class CertificateDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), typed_search_id:''
+        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), typed_search_id:'', typed_search_acquired_tokens:'', typed_search_fractionalized_tokens:'',
     };
 
     reset_tags(){
@@ -86,7 +86,7 @@ class CertificateDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['3098t']/* 'classes ✧' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['3098t']/* 'classes ✧' */, 'e.'+this.props.app_state.loc['3098w']/* 'acquired' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
           ],
         }
 
@@ -95,6 +95,9 @@ class CertificateDetailsSection extends Component {
         ]
         obj[this.props.app_state.loc['2120']/* moderator-events */] = [
             ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
+        ]
+        obj[this.props.app_state.loc['3098w']/* 'acquired' */] = [
+            ['xor', 'e', 1], [this.props.app_state.loc['3098w']/* 'acquired' */, this.props.app_state.loc['3098z']/* 'full 💎' */, this.props.app_state.loc['3098ba']/* 'fractionalized 💠' */], [1], [1]
         ]
 
         return obj
@@ -123,7 +126,7 @@ class CertificateDetailsSection extends Component {
                 <div>
                     {this.render_post_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags ref={c => this.bottom_tags = c} font={this.props.app_state.font} page_tags_object={this.state.navigate_view_post_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_post_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags ref={c => this.bottom_tags = c} app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.navigate_view_post_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_post_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -173,70 +176,70 @@ class CertificateDetailsSection extends Component {
         else if(selected_item == this.props.app_state.loc['2121']/* 'transfers' */){
             return(
                 <div key={selected_item}>
-                    {this.render_transfer_logs(selected_object)}
+                    {this.render_transfer_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2340']/* 'updated-exchange-ratios' */){
             return(
                 <div key={selected_item}>
-                    {this.render_updated_exchange_ratio_logs(selected_object)}
+                    {this.render_updated_exchange_ratio_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2341']/* 'modify-exchange' */){
             return(
                 <div key={selected_item}>
-                    {this.render_modify_exchange_logs(selected_object)}
+                    {this.render_modify_exchange_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2338']/* 'exchange-transfers' */){
             return(
                 <div key={selected_item}>
-                    {this.render_exchange_transfers_logs(selected_object)}
+                    {this.render_exchange_transfers_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2339']/* 'updated-balances' */){
             return(
                 <div key={selected_item}>
-                    {this.render_update_balance_logs(selected_object)}
+                    {this.render_update_balance_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2342']/* 'freeze-unfreeze' */){
             return(
                 <div key={selected_item}>
-                    {this.render_freeze_unfreeze_logs(selected_object)}
+                    {this.render_freeze_unfreeze_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
             return(
                 <div key={selected_item}>
-                    {this.render_modify_moderator_logs(selected_object)}
+                    {this.render_modify_moderator_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2067']/* 'interactable-checkers' */){
             return(
                 <div key={selected_item}>
-                    {this.render_interactable_checker_logs(selected_object)}
+                    {this.render_interactable_checker_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2068']/* 'interactable-accounts' */){
             return(
                 <div key={selected_item}>
-                    {this.render_interactable_accounts_logs(selected_object)}
+                    {this.render_interactable_accounts_logs(object)}
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['2069']/* 'block-accounts' */){
             return(
                 <div key={selected_item}>
-                    {this.render_blocked_accounts_logs(selected_object)}
+                    {this.render_blocked_accounts_logs(object)}
                 </div>
             )
         }
@@ -244,7 +247,21 @@ class CertificateDetailsSection extends Component {
         else if(selected_item == this.props.app_state.loc['3098t']/* 'classes ✧' */){
             return(
                 <div key={selected_item}>
-                    {this.render_certificate_classes(selected_object)}
+                    {this.render_certificate_classes(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3098z']/* 'full 💎' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_aquired_tokens(object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3098ba']/* 'fractionalized 💠' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_fractionalized_tokens(object)}
                 </div>
             )
         }
@@ -322,7 +339,10 @@ class CertificateDetailsSection extends Component {
                     {this.render_detail_item('3', item['exchange_authority'])}
                     <div style={{height:10}}/>
 
-                    {index == 30 && this.render_revoke_author_privelages_event(object)}
+                    {this.render_detail_item('3', item['fractionalizable'])}
+                    <div style={{height:10}}/>
+
+                    {this.render_revoke_author_privelages_event(object)}
                     <div style={{height:10}}/>
 
 
@@ -922,19 +942,22 @@ class CertificateDetailsSection extends Component {
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
         var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
 
+        var fractionalizable = this.get_selected_item2(object['ipfs'].get_new_certificate_fractionalizable_tags_object, 'e') == 1
+
         const is_socket_job = false
         const title_image = this.props.app_state.e5s[object['e5']].e5_img
         const title_space = '• '
 
-        var selected_obj_root_config = selected_object['data'][0];
-        var selected_obj_config = selected_object['data'][1];
-        var selected_obj_ratio_config = selected_object['data'][2];
+        var selected_obj_root_config = object['data'][0];
+        var selected_obj_config = object['data'][1];
+        var selected_obj_ratio_config = object['data'][2];
         var is_auth_main_contract = selected_obj_config[9] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: (selected_obj_config[9])
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
             'exchange_authority': {'title':is_auth_main_contract, 'details':this.props.app_state.loc['3098i']/* 'Certificate Authority' */, 'size':'l'},
+            'fractionalizable': {'title':this.get_access_rights_status(fractionalizable), 'details':this.props.app_state.loc['d311bw']/* 'Fractionalization' */, 'size':'l'},
         }
     }
 
@@ -1019,18 +1042,16 @@ class CertificateDetailsSection extends Component {
         }
     }
 
-    render_buy_token_uis(selected_object){
-        // var selected_item = this.props.selected_spend_item
-        // var selected_object = this.get_exchange_tokens(5)[selected_item]
-        var buy_tokens = [].concat(selected_object['data'][3])
-        var buy_amounts = [].concat(selected_object['exchanges_balances'])
-        var buy_depths = [].concat(selected_object['data'][5])
+    render_buy_token_uis(object){
+        var buy_tokens = [].concat(object['data'][3])
+        var buy_amounts = [].concat(object['exchanges_balances'])
+        var buy_depths = [].concat(object['data'][5])
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
-                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
-                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </div>
                     ))}
                 </div>
@@ -1106,9 +1127,9 @@ class CertificateDetailsSection extends Component {
         const unfiltered_items = [].concat(Object.keys(object['ipfs'].certificate_models))
         const items = unfiltered_items.filter((item) => {
             return (
-                this.state.typed_search_id == '' || 
-                (item.toLowerCase().startsWith(this.state.typed_search_id.toLowerCase())) ||
-                (object['ipfs'].certificate_models[item]['class_markdown'].toLowerCase().includes(this.state.typed_search_id.toLowerCase()))
+                this.state.typed_search_id.trim() == '' || 
+                (item.toLowerCase().startsWith(this.state.typed_search_id.trim().toLowerCase())) ||
+                (object['ipfs'].certificate_models[item]['class_markdown'].toLowerCase().includes(this.state.typed_search_id.trim().toLowerCase()))
             )
         })
 
@@ -1145,6 +1166,232 @@ class CertificateDetailsSection extends Component {
 
 
 
+
+
+
+
+
+
+
+
+    render_aquired_tokens(object){
+        var he = this.props.height-45
+
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_acquired_classes_top_title(object)}
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a class...' */} when_text_input_field_changed={this.when_typed_search_acquired_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_acquired_tokens} theme={this.props.theme}/>
+                    </div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_acquired_classes(object)}
+                </div>
+            </div>
+        )
+    }
+
+    when_typed_search_acquired_tokens_text_input_field_changed(text){
+        this.setState({typed_search_acquired_tokens: text})
+    }
+
+    render_acquired_classes_top_title(){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['3098x']/* 'Acquired Full Certificates' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_acquired_classes(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        const unfiltered_items = [].concat(this.get_acquired_tokens(object))
+
+        const items = unfiltered_items.filter((item) => {
+            const t = this.state.typed_search_acquired_tokens.trim().toLowerCase()
+            const depth_data = item['depth_data']
+            const model_config = this.get_model_config(depth_data, object)
+            const class_name = model_config['class_name']
+            const ipfs = item['ipfs']
+            const markdown = ipfs['markdown']
+            const class_markdown = model_config['class_markdown']
+            return (
+                t == '' ||
+                class_name.toLowerCase().startsWith(t) ||
+                markdown.toLowerCase().includes(t) ||
+                class_markdown.toLowerCase().includes(t)
+            )
+        })
+
+        if(items.length == 0){
+            return this.render_empty_views(3)
+        }
+        else{
+            return(
+                <div style={{}}>
+                    <div style={{ 'padding': '0px 5px 0px 5px'}}>
+                        {items.map((item, index) => (
+                            <div style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_acquired_class_item(item, object)}
+                                </div>
+                            </div> 
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_acquired_tokens(object){
+        const non_fungible_token_data = this.props.app_state.non_fungible_token_data[object['e5_id']] || {}
+        const my_account = this.props.app_state.user_account_id[object['e5_id']]
+        const account_data = non_fungible_token_data[object['e5_id']+':'+my_account] || {}
+        return this.sortByAttributeDescending(Object.values(account_data), 'time')
+    }
+
+    render_acquired_class_item(item, object){
+        const depth = item['depth']
+        const depth_data = item['depth_data']
+        const ipfs = item['ipfs']
+        const event = item['event']
+        const time = item['time']
+        const model_config = this.get_model_config(depth_data, object)
+        
+        const title = depth_data['identifier']
+        const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+        return(
+            <div onClick={() => this.view_acquired_class_item_details(item, object)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    get_model_config(depth_data, object){
+        const certificate_models = object['ipfs'].certificate_models
+        var valid_model = ''
+        Object.keys(certificate_models).forEach(model => {
+          if(certificate_models[model]['id'] == depth_data['class']){
+            valid_model = model
+          }
+        });
+        return certificate_models[valid_model]
+    }
+
+    view_acquired_class_item_details(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_acquired_certificate_item_details')
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_fractionalized_tokens(object){
+        var he = this.props.height-45
+
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_fractionalized_classes_top_title(object)}
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a class...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
+                    </div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_fractionalized_classes(object)}
+                </div>
+            </div>
+        )
+    }
+
+    when_typed_search_fractionalized_tokens_text_input_field_changed(text){
+        this.setState({typed_search_fractionalized_tokens: text})
+    }
+
+    render_fractionalized_classes_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['3098bb']/* 'Acquired Fractionalized Certificates' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_fractionalized_classes(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        const unfiltered_items = [].concat(this.get_fractionalized_tokens(object))
+        const items = unfiltered_items.filter((item) => {
+            const t = this.state.typed_search_fractionalized_tokens.trim().toLowerCase()
+            const depth_data = item['ipfs']['depth_item']['depth_data']
+            const model_config = item['ipfs']['model_data']
+            const class_name = model_config['class_name']
+            const ipfs = item['ipfs']['depth_item']['ipfs']
+            const markdown = ipfs['markdown']
+            const class_markdown = model_config['class_markdown']
+            return (
+                t == '' ||
+                class_name.toLowerCase().startsWith(t) ||
+                markdown.toLowerCase().includes(t) ||
+                class_markdown.toLowerCase().includes(t)
+            )
+        })
+
+        if(items.length == 0){
+            return this.render_empty_views(3)
+        }
+        else{
+            return(
+                <div style={{}}>
+                    <div style={{ 'padding': '0px 5px 0px 5px'}}>
+                        {items.map((item, index) => (
+                            <div style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_fractionalized_class_item(item, object)}
+                                </div>
+                            </div> 
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_fractionalized_tokens(object){
+        const non_fungible_fractionals_data = this.props.app_state.fractionalized_assets[object['e5_id']] || {};
+        return this.sortByAttributeDescending(Object.values(account_data), 'timestamp')
+    }
+
+    render_fractionalized_class_item(item, object){
+        const depth_data = item['ipfs']['depth_item']['depth_data']
+        const title = depth_data['identifier']
+        const time = item['ipfs']['depth_item']['time']
+        const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+        return(
+            <div onClick={() => this.view_fractionalized_class_item_details(item, object)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    view_fractionalized_class_item_details(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_fractionalized_certificate_item_details')
+    }
 
 
 
@@ -2402,7 +2649,28 @@ class CertificateDetailsSection extends Component {
 
 
 
-
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     get_all_sorted_objects(object){
         var all_objects = []

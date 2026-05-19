@@ -638,6 +638,9 @@ import StageRoyaltiesPage from './pages/token_action_pages/stage_royalties_page'
 import ViewStagedRoyaltyPage from './pages/token_action_pages/view_staged_royalty_page';
 import ExchangeDepositPage from './pages/token_action_pages/exchange_deposit_page';
 import MintCertificatePage from './pages/token_action_pages/mint_certificate_page';
+import TransferCertificatePage from './pages/token_action_pages/transfer_certificate_page';
+import FractionalizeCertificatePage from './pages/token_action_pages/fractionalize_certificate_page'
+import TransferStakePage from './pages/token_action_pages/transfer_stake_page';
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -1269,7 +1272,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1380,7 +1383,7 @@ class App extends Component {
 
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
-    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{},
+    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}
   };
 
   get_app_version(){
@@ -3626,6 +3629,8 @@ class App extends Component {
     this.view_job_request_contract_page = React.createRef();
     this.withdraw_ether_page = React.createRef();
     this.mint_certificate_page = React.createRef();
+    this.transfer_certificate_page = React.createRef();
+    this.transfer_stake_page = React.createRef();
 
     this.edit_job_page = React.createRef();
     this.edit_token_page = React.createRef();
@@ -3690,6 +3695,7 @@ class App extends Component {
     this.send_purchase_request_page = React.createRef();
     this.view_storefront_request_page = React.createRef();
     this.edit_certificate_page = React.createRef();
+    this.fractionalize_certificate_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4889,7 +4895,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -6730,6 +6736,9 @@ class App extends Component {
           {this.render_view_storefront_request_bottomsheet()}
           {this.render_edit_certificate_object_bottomsheet()}
           {this.render_mint_certificate_bottomsheet()}
+          {this.render_transfer_certificate_bottomsheet()}
+          {this.render_fractionalize_certificate_bottomsheet()}
+          {this.render_transfer_stake_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -15935,6 +15944,33 @@ class App extends Component {
         }
       }, (1 * 1100));
     }
+    else if(tx.type == this.getLocale()['3100']/* 'transfer-certificate' */){
+      this.open_transfer_certificate_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.transfer_certificate_page.current){
+          me.transfer_certificate_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
+    else if(tx.type == this.getLocale()['3101']/* 'fractionalize-certificate' */){
+      this.open_fractionalize_certificate_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.fractionalize_certificate_page.current){
+          me.fractionalize_certificate_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
+    else if(tx,type == this.getLocale()['3102']/* 'transfer-stake' */){
+      this.open_transfer_stake_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.transfer_stake_page.current){
+          me.transfer_stake_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
     
   }
 
@@ -18555,7 +18591,7 @@ class App extends Component {
 
 
 
-  //-------------------------------------------DIALOG BOTTOMSHEET---------------------------------------------
+  //-------------------------------------------DIALOG BOTTOMSHEET-----------------------------------
   render_dialog_bottomsheet(){
     if(this.state.dialog_bottomsheet2 != true) return;
     var os = getOS()
@@ -18606,7 +18642,7 @@ class App extends Component {
 
         open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
 
-        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)}
+        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)}
         />
       </div>
     )
@@ -18718,6 +18754,8 @@ class App extends Component {
       'set_password_for_locking_wallet':300,
       'request_switch_to_another_e5':300,
       'view_certificate_class_details':550,
+      'view_acquired_certificate_item_details':600,
+      'view_fractionalized_certificate_item_details':600,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -25955,6 +25993,252 @@ class App extends Component {
   }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+  render_transfer_certificate_bottomsheet(){
+    if(this.state.transfer_certificate_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <TransferCertificatePage ref={this.transfer_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_certificate_to_stack={this.add_transfer_certificate_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      />,
+      this.state.transfer_certificate_bottomsheet,
+      this.open_transfer_certificate_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_transfer_certificate_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_transfer_certificate_bottomsheet')
+    if(this.state.transfer_certificate_bottomsheet == true){
+      //closing
+      this.transfer_certificate_bottomsheet = this.transfer_certificate_page.current?.state;
+
+      this.setState({transfer_certificate_bottomsheet: !this.state.transfer_certificate_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({transfer_certificate_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({transfer_certificate_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({transfer_certificate_bottomsheet: !me.state.transfer_certificate_bottomsheet});
+
+          if(me.transfer_certificate_bottomsheet != null){
+            me.transfer_certificate_page.current?.setState(me.transfer_certificate_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_transfer_certificate_bottomsheet(item, object, model_data){
+    this.open_transfer_certificate_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.transfer_certificate_page.current != null){
+      me.transfer_certificate_page.current.set_token(item, object, model_data)
+    }
+    }, (1 * 1100));
+  }
+
+  add_transfer_certificate_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_fractionalize_certificate_bottomsheet(){
+    if(this.state.fractionalize_certificate_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <FractionalizeCertificatePage ref={this.fractionalize_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_fractionalize_certificate_to_stack={this.add_fractionalize_certificate_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      />,
+      this.state.fractionalize_certificate_bottomsheet,
+      this.open_fractionalize_certificate_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_fractionalize_certificate_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_fractionalize_certificate_bottomsheet')
+    if(this.state.fractionalize_certificate_bottomsheet == true){
+      //closing
+      this.fractionalize_certificate_bottomsheet = this.fractionalize_certificate_page.current?.state;
+
+      this.setState({fractionalize_certificate_bottomsheet: !this.state.fractionalize_certificate_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({fractionalize_certificate_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({fractionalize_certificate_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({fractionalize_certificate_bottomsheet: !me.state.fractionalize_certificate_bottomsheet});
+
+          if(me.fractionalize_certificate_bottomsheet != null){
+            me.fractionalize_certificate_page.current?.setState(me.fractionalize_certificate_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_fractionalize_certificate_bottomsheet(item, object, model_data){
+    this.open_fractionalize_certificate_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.fractionalize_certificate_page.current != null){
+      me.fractionalize_certificate_page.current.set_token(item, object, model_data)
+    }
+    }, (1 * 1100));
+  }
+
+  add_fractionalize_certificate_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_transfer_stake_bottomsheet(){
+    if(this.state.transfer_stake_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <TransferStakePage ref={this.transfer_stake_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_stake_to_stack={this.add_transfer_stake_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      />,
+      this.state.transfer_stake_bottomsheet,
+      this.open_transfer_stake_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_transfer_stake_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_transfer_stake_bottomsheet')
+    if(this.state.transfer_stake_bottomsheet == true){
+      //closing
+      this.transfer_stake_bottomsheet = this.transfer_stake_page.current?.state;
+
+      this.setState({transfer_stake_bottomsheet: !this.state.transfer_stake_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({transfer_stake_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({transfer_stake_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({transfer_stake_bottomsheet: !me.state.transfer_stake_bottomsheet});
+
+          if(me.transfer_stake_bottomsheet != null){
+            me.transfer_stake_page.current?.setState(me.transfer_stake_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_transfer_stake_bottomsheet(item, object){
+    this.open_transfer_stake_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.transfer_stake_page.current != null){
+      me.transfer_stake_page.current.set_token(item, object)
+    }
+    }, (1 * 1100));
+  }
+
+  add_transfer_stake_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
 
 
 
@@ -35187,6 +35471,14 @@ class App extends Component {
             created_certificate_object_data.push(token_obj)
           }
         }
+        else if(tokens_data['fractionalized_asset'] == true){
+          const fractionalized_assets_clone = structuredClone(this.state.fractionalized_assets)
+          if(fractionalized_assets_clone[token_obj['e5_id']] == null){
+            fractionalized_assets_clone[token_obj['e5_id']]
+          }
+          fractionalized_assets_clone[token_obj['e5_id']][tokens_data['depth']] = token_obj
+          this.setState({fractionalized_assets: fractionalized_assets_clone})
+        }
         else{
           if(index != -1){
             created_token_object_data[index] = token_obj
@@ -35610,14 +35902,25 @@ class App extends Component {
     }
 
     console.log('load_extra', object)
-    var created_tokens_clone = structuredClone(this.state.created_tokens)
-    const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
-    created_tokens_clone[e5][index] = object
+    if(object['data'][0][4/* <4>non-fungible */] == 1){
+      var created_certificates_clone = structuredClone(this.state.created_certificates)
+      const index = created_certificates_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+      created_certificates_clone[e5][index] = object
 
-    var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
-    created_token_object_mapping_clone[e5][created_tokens[i]] = object
+      this.setState({created_certificates: created_certificates_clone})
+      const depths_used = Object.keys(token_balance_data)
+      await this.load_my_non_fungible_token_data(object, depths_used, account)
+    }else{
+      var created_tokens_clone = structuredClone(this.state.created_tokens)
+      const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+      created_tokens_clone[e5][index] = object
 
-    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+      var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
+      created_token_object_mapping_clone[e5][created_tokens[i]] = object
+
+      this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+    }
+      
 
     await this.fetch_and_set_loaded_object_views([id], e5)
 
@@ -35704,6 +36007,139 @@ class App extends Component {
 
     this.setState({my_token_event_notifications: my_token_event_notifications_clone});
   }
+
+  load_my_non_fungible_token_data(object, depths_used, account){
+    const e5 = object['e5']
+    const id = object['id']
+    const e5_id = object['e5_id']
+
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    var contract_addresses = this.state.addresses[e5]
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const valid_depths = []
+    if(depths_used.length > 0){
+      for(var i=0; i<depths_used.length; depths_used++){
+        const depth = depths_used[i]
+        const depth_data = this.deconstruct_depth_data(depth)
+        const certificate_models = object['ipfs'].certificate_models
+        var valid_model = ''
+        Object.keys(certificate_models).forEach(model => {
+          if(certificate_models[model]['id'] == depth_data['class']){
+            valid_model = model
+          }
+        });
+        if(valid_model != ''){
+          const model_config = certificate_models[valid_model]
+          if(
+            model_config['base_fee_price_multiplier'] == depth_data['price'] && 
+            model_config['maximum_supply'] == depth_data['supply'] &&
+            parseInt(depth_data['start_time']) == Math.floor(parseInt(model_config['purchase_start_time']) / 60) &&
+            parseInt(depth_data['end_time']) == Math.floor(parseInt(model_config['purchase_end_time']) / 60)
+          ){
+            valid_depths.push(depth_data['full'])
+          }
+        }
+      }
+    }
+
+    const non_fungible_token_mint_events = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p1/* exchange_id */:id, p6/* depth */:this.process_array_for_indexer_query(valid_depths)})
+
+    const non_fungible_token_data_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p3/* context */:32, p1/* target_id */:id})
+
+    const mint_data_mappings = {}
+    non_fungible_token_mint_events.forEach(mint_event => {
+      const mint_recipient = mint_event.returnValues.p2/* receiver */
+      const mint_depth = mint_event.returnValues.p6.toString().toLocaleString('fullwide', {useGrouping:false})
+      const mint_block = mint_event.returnValues.p5/* block_number */
+      //find corresponding data event to query
+      const data_event = non_fungible_token_data_events.filter((data_event) => {
+        return (
+          data_event.returnValues.p2 == mint_recipient && 
+          data_event.returnValues.p7 == mint_block && 
+          valid_depths.includes(mint_depth)
+        )
+      })
+      if(data_event.length > 0){
+        const valid_data_event = data_event[0]
+        mint_data_mappings[mint_depth] = valid_data_event
+      }
+    });
+
+    const valid_data_events = Object.values(mint_data_mappings).reverse();
+    const valid_data_depths = Object.keys(mint_data_mappings).reverse();
+
+    var loaded_target = 0
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(valid_data_events.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = valid_data_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+
+    for(var i=0; i<valid_data_events.length; i++){
+      const event = valid_data_events[i]
+      const depth = valid_data_depths[i]
+      const object_data = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+
+      if(object_data != null){
+        const depth_data = this.deconstruct_depth_data(depth)
+        const data_object = {
+          'depth': depth,
+          'depth_data': depth_data,
+          'ipfs': object_data,
+          'event': event,
+          'time': parseInt(event.returnValues.p6/* timestamp */)
+        }
+
+        const clone = structuredClone(this.state.non_fungible_token_data)
+        if(clone[e5_id] == null){
+          clone[e5_id] = {}
+        }
+        if(clone[e5_id][e5+':'+account] == null){
+          clone[e5_id][e5+':'+account] = {}
+        }
+        clone[e5_id][e5+':'+account][depth] = data_object
+        this.setState({non_fungible_token_data: clone})
+      }
+
+      if(i == loaded_target && i+1 >= valid_data_events.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(valid_data_events.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
+      }
+    }
+  }
+
+  deconstruct_depth_data(depth){
+    const depth_price_data = this.deconstruct(depth, 54)
+    const depth_end_time_data = this.deconstruct(depth_price_data.remainder, 45)
+    const depth_start_time_data = this.deconstruct(depth_end_time_data.remainder, 36)
+    const depth_supply_data = this.deconstruct(depth_start_time_data.remainder, 27)
+    const depth_class_data = this.deconstruct(depth_supply_data.remainder, 18)
+    return {
+      'class': depth_class_data.value,
+      'identifier': depth_class_data.remainder,
+      'supply':depth_supply_data.value,
+      'start_time': depth_start_time_data.value,
+      'end_time':depth_end_time_data.value,
+      'price':depth_price_data.value,
+      'full':depth
+    }
+  }
+
+  deconstruct(arg, power){
+    const value = (bigInt(arg).divide(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
+    const remainder = (bigInt(arg).mod(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
+    return { value, remainder }
+  }
+
+
 
 
 

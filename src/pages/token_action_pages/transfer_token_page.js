@@ -177,7 +177,7 @@ class TransferTokenPage extends Component {
 
     render_data_picker_ui(){
         return(
-            <div> 
+            <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1020']/* 'Transfer the specified token' */})}
 
                 <div style={{height:10}}/> 
@@ -778,6 +778,8 @@ class TransferTokenPage extends Component {
         this.props.notify(this.props.app_state.loc['1036']/* 'Transaction removed.' */, 600)
     }
 
+
+    
 
     load_account_suggestions(){
         var items = [].concat(this.get_suggested_accounts())

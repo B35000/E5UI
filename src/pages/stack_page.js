@@ -5116,6 +5116,35 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(purchase_obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3100']/* 'transfer-certificate' */){
+                    var transfer_object = this.format_transfer_certificate_object(txs[i], ints)
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(transfer_object['transfers'])
+                }
+                else if(txs[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */){
+                    var fractionalize_object = await this.format_fractionalize_certificate_object(txs[i], calculate_gas, ipfs_index, ints)
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(fractionalize_object.obj)
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(fractionalize_object.buy_obj)
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(fractionalize_object.transfers_obj)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3102']/* 'transfer-stake' */){
+                    var transfer_object = await this.format_transfer_stake_object(txs[i], calculate_gas, ipfs_index, ints)
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(transfer_object.transfers_obj)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -5151,7 +5180,8 @@ class StackPage extends Component {
                 pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */ || 
                 pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
                 pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */ ||
-                pushed_txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */
+                pushed_txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */ ||
+                pushed_txs[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */
             ){
                 metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
@@ -6644,7 +6674,7 @@ class StackPage extends Component {
                         'token_id': data.token_item['id'],
                         'token_e5': data.token_item['e5'],
                         'class': data.selected_class,
-                        'entered_text_objects': data.entered_text_objects, 
+                        // 'entered_text_objects': data.entered_text_objects, 
                         'entered_image_objects': data.entered_image_objects,
                         'entered_objects': data.entered_objects,
                         'content_channeling_setting':data.content_channeling_setting,
@@ -6656,6 +6686,26 @@ class StackPage extends Component {
                         'entered_pdf_objects':data.entered_pdf_objects,
                         'markdown':data.markdown,
                         'entered_zip_objects':data.entered_zip_objects,
+                    }
+                    ipfs_index_object[txs[i].id] = certificate_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */){
+                    const data = txs[i]
+                    const certificate_data = {
+                        'fractionalized_asset':true,
+                        'token_id': data.token_item['id'],
+                        'token_e5': data.token_item['e5'],
+                        'depth':data.depth_item['depth_data']['full'],
+                        'depth_item':data.depth_item,
+                        'model_data':data.model_data,
+                        'content_channeling_setting':data.content_channeling_setting,
+                        'device_language_setting':data.device_language_setting,
+                        'device_country':data.device_country,
+                        'device_region':data.device_region,
+                        'my_country':data.my_country,
+                        'my_city':data.my_city,
+                        'fractionalization_data':data.fractionalization_data
                     }
                     ipfs_index_object[txs[i].id] = certificate_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
@@ -12629,18 +12679,19 @@ class StackPage extends Component {
         return obj
     }
 
-    format_purchase_certificate_object = async (t, calculate_gas, ipfs_index) =>{
+    format_purchase_certificate_object = async (t, calculate_gas, ipfs_index) => {
         const item = t.selected_class
         const object = t.token_item
         const data = object['ipfs'].certificate_models[item]
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
-        const split_period = data['split_period']
+        // const split_period = data['split_period']
         const maximum_supply = data['maximum_supply']
         const base_fee_price_multiplier = data['base_fee_price_multiplier']
         const class_id = data['id']
-        const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
-        const previous_split_time = this.get_previous_split_time(split_period, purchase_start_time, purchase_end_time)
+        // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        // const previous_split_time = this.get_previous_split_time(split_period, purchase_start_time, purchase_end_time)
+        
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -12650,8 +12701,8 @@ class StackPage extends Component {
 
         var string_obj = [[]]
 
-        const start_time_minutes = Math.floor(previous_split_time / 60) - 60
-        const end_time_minutes = Math.floor(split_time / 60) + 90
+        const start_time_minutes = Math.floor(purchase_start_time / 60)
+        const end_time_minutes = Math.floor(purchase_end_time / 60)
 
         const start_end_time = bigInt(bgN(start_time_minutes, 36)).plus(end_time_minutes)
 
@@ -12699,22 +12750,128 @@ class StackPage extends Component {
         return {int: obj, str: string_obj, buy_obj}
     }
 
-    get_current_split_time(split_period, purchase_start_time, purchase_end_time){
-        const current_time = Math.floor(Date.now()/1000)
-        if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
-        const difference = parseInt(current_time) - parseInt(purchase_start_time)
-        const periodCount = Math.floor(difference / parseInt(split_period))
-        return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
+    // get_current_split_time(split_period, purchase_start_time, purchase_end_time){
+    //     /* 
+    //         if:
+    //             current_time -> 2000s, 
+    //             purchase_end_time -> 4000s,
+    //             purchase_start_time -> 1000s,
+    //             split_period -> 500s
+
+    //         then:
+    //             difference -> 1000s
+    //             period_count -> 2
+    //             return -> 1000s + ( 2 * 500s ) -> 2000s
+    //     */
+    //     const current_time = Math.floor(Date.now()/1000)
+    //     if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
+    //     const difference = parseInt(current_time) - parseInt(purchase_start_time)
+    //     const periodCount = Math.floor(difference / parseInt(split_period))
+    //     return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
+    // }
+
+    // get_previous_split_time(split_period, purchase_start_time, purchase_end_time){
+    //     const current_time = Math.floor(Date.now()/1000)
+    //     if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
+    //     const difference = parseInt(current_time) - parseInt(purchase_start_time)
+    //     const periodCount = Math.floor(difference / parseInt(split_period))
+    //     const previous_time = parseInt(purchase_start_time) + ((periodCount - 1) * parseInt(split_period))
+    //     if(previous_time < purchase_start_time) return parseInt(purchase_start_time)
+    //     else return previous_time
+    // }
+
+    format_transfer_certificate_object(t, ints){
+        const exchange = t.token_item['id']
+        const recipient = t.recipient
+        const depth = t.depth_item['full']
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [exchange.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* exchanges */
+            [recipient.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* receivers */
+            [1],/* amounts */
+            [depth.toString().toLocaleString('fullwide', {useGrouping:false})]/* depths */
+        ]
+        return { 'transfers':transfers_obj }
     }
 
-    get_previous_split_time(split_period, purchase_start_time, purchase_end_time){
-        const current_time = Math.floor(Date.now()/1000)
-        if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
-        const difference = parseInt(current_time) - parseInt(purchase_start_time)
-        const periodCount = Math.floor(difference / parseInt(split_period))
-        const previous_time = parseInt(purchase_start_time) + ((periodCount - 1) * parseInt(split_period))
-        if(previous_time < purchase_start_time) return purchase_start_time
-        else return previous_time
+    format_fractionalize_certificate_object = async (t, calculate_gas, ipfs_index, ints) => {
+        const exchange = t.token_item['id']
+        const depth = t.depth_item['full']
+        var obj = [/* create token */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
+            [0, 1, 1, 5, 0],
+            [23, 23, 23, 23, 23],
+
+            [1, 0, 0, 0/* 3 */, 0, 0, 0, 1/* 7 */, 0, 0, 0, 0/* 11 */, 0, 0, 0, 0/* 15 */, 0, 0, 0],
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, 53, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+
+            [bgN(100, 16), 1, 0/* 2 */, 0, 0, 0, bgN(100, 16), 0/* 7 */,   0, 0, 0, 0, 0/* 12 */, 0, 0, 0, 0, 0],
+            [23, 23, 23, 23, 23, 23, 23, 23,  23, 23, 23, 23, 23, 23,  23, 23, 23, 23],
+
+            [exchange.toString().toLocaleString('fullwide', {useGrouping:false})], [23],
+            [1], [23],
+            [depth.toString().toLocaleString('fullwide', {useGrouping:false})], [23]
+        ]
+
+        const token_pos = ints.length -1
+
+        var buy_obj = [/* buy end/spend */
+            [30000, 8, 0],
+            [token_pos], [35],/* exchanges */
+            [0], [53],/* receivers */
+            [1]/* amounts */, [0],/* action */
+            []/* lower_bounds */, [],/* upper_bounds */
+            [depth.toString().toLocaleString('fullwide', {useGrouping:false})],/* depths */
+        ];
+
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+
+        const recipients = Object.keys(t.fractionalization_data)
+        for(var r=0; r<recipients.length; r++){
+            const recipient = recipients[r]
+            const proportion = t.fractionalization_data[recipient]
+
+            transfers_obj[1].push(token_pos)
+            transfers_obj[2].push(35)
+            transfers_obj[3].push(recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+            transfers_obj[4].push(23)
+            transfers_obj[5].push(proportion.toString().toLocaleString('fullwide', {useGrouping:false}))
+            transfers_obj[6].push(0)
+        }
+
+        return { obj, buy_obj, transfers_obj }
+    }
+
+    format_transfer_stake_object = async (t, calculate_gas, ipfs_index, ints) => {
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+
+        const recipients = Object.keys(t.fractionalization_data)
+        const token_id = t.item['id']
+        for(var r=0; r<recipients.length; r++){
+            const recipient = recipients[r]
+            const proportion = t.fractionalization_data[recipient]
+
+            transfers_obj[1].push(token_id)
+            transfers_obj[2].push(23)
+            transfers_obj[3].push(recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+            transfers_obj[4].push(23)
+            transfers_obj[5].push(proportion.toString().toLocaleString('fullwide', {useGrouping:false}))
+            transfers_obj[6].push(0)
+        }
+
+        return { transfers_obj }
     }
 
     

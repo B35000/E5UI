@@ -95,7 +95,7 @@ class NewCertificatePage extends Component {
 
         edit_text_item_pos:-1,
 
-        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], get_new_certificate_fractionalizable_tags_object:this.get_new_certificate_fractionalizable_tags_object(),
 
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         exchange_authority:'',moderator_id:'', moderators:[], interactible_id:'',  interactibles:[], interactible_timestamp:0, 
@@ -103,7 +103,7 @@ class NewCertificatePage extends Component {
         exchange_id:'', price_amount:0, price_data:[{'id':'5', 'amount':'1'}],
 
         class_name:'', maximum_supply:0, purchase_start_time: (Date.now()+(1000*60*60*5))/1000, purchase_end_time: (Date.now()+(1000*60*60*24))/1000, split_period:0, base_fee_price_multiplier:1, 
-        certificate_models:{}, class_markdown:'',
+        certificate_models:{}, class_markdown:'', posession_rights:0,
     };
 
 
@@ -191,6 +191,17 @@ class NewCertificatePage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['618']/* 'moderators' */, this.props.app_state.loc['619']/* 'interactible' */], [1]
+            ],
+        };
+    }
+
+    get_new_certificate_fractionalizable_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['616']/* 'enabled' */], [0]
             ],
         };
     }
@@ -428,7 +439,14 @@ class NewCertificatePage extends Component {
     render_title_tags_part2(){
         return(
             <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bu']/* 'Fractionalizable Certificate.' */, 'details':this.props.app_state.loc['d311bv']/* 'If set to enabled, users will be able to fractionalize certificates aquired from this exchange.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_fractionalizable_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_fractionalizable_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+
                 {this.render_previous_edits_if_existing()}
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
@@ -436,6 +454,10 @@ class NewCertificatePage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_new_certificate_fractionalizable_tags_object_updated(tag_obj){
+        this.setState({get_new_certificate_fractionalizable_tags_object: tag_obj})
     }
 
     when_title_text_input_field_changed(text){
@@ -2421,12 +2443,22 @@ class NewCertificatePage extends Component {
     render_set_certificate_model_part2(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311y']/* 'Split Periods.' */, 'details':this.props.app_state.loc['d311z']/* 'You may optionally specify a periodic split, meaning the certificates will be purchased in a specified frequency within the time bounds set.' */, 'size':'l'})}
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['d311y'] 'Split Periods.', 'details':this.props.app_state.loc['d311z']'You may optionally specify a periodic split, meaning the certificates will be purchased in a specified frequency within the time bounds set.', 'size':'l'})}
                 <div style={{height:10}}/>
                 
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.split_period), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.split_period), 'details':this.props.app_state.loc['1439'] 'Estimated Time.', 'size':'l'})}
                 
                 <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_split_period_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
+
+                {this.render_detail_item('0')} */}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['d311bz']/* 'The threshold after which an owner has rights to posess the item this certificate represents if fractionalization is enabled and carried out.' */, 'title':this.props.app_state.loc['d311bx']/* 'Posession Rights Threshold' */})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['d311ca']/* 'If unset, the default used will be 100%' */})}
+                
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.posession_rights), 'details':this.props.app_state.loc['d311by']/* 'Posession Rights Proportion.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_posession_rights_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'50.1%'}/>
 
                 {this.render_detail_item('0')}
 
@@ -2461,6 +2493,10 @@ class NewCertificatePage extends Component {
                 </div>
             </div>
         )
+    }
+
+    when_posession_rights_proportion(number){
+        this.setState({posession_rights: number})
     }
 
     when_class_id_input_field_changed(text){
@@ -2508,9 +2544,10 @@ class NewCertificatePage extends Component {
         const maximum_supply = this.state.maximum_supply
         const purchase_start_time = this.state.purchase_start_time
         const purchase_end_time = this.state.purchase_end_time
-        const split_period = this.state.split_period
+        // const split_period = this.state.split_period
         const base_fee_price_multiplier = this.state.base_fee_price_multiplier
         const class_markdown = this.state.class_markdown
+        const posession_rights = this.state.posession_rights
 
         if(class_name == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
@@ -2535,9 +2572,10 @@ class NewCertificatePage extends Component {
                 'maximum_supply':maximum_supply,
                 'purchase_start_time':purchase_start_time,
                 'purchase_end_time':purchase_end_time,
-                'split_period':split_period,
+                // 'split_period':split_period,
                 'base_fee_price_multiplier':base_fee_price_multiplier,
-                'class_markdown':class_markdown
+                'class_markdown':class_markdown,
+                'posession_rights': posession_rights == 0 ? bgN(1,18) : posession_rights
             }
             this.setState({certificate_models: clone, class_name: '', class_markdown:''})
             this.props.notify(this.props.app_state.loc['d311bl']/* 'class data set.' */, 900)
@@ -2610,8 +2648,8 @@ class NewCertificatePage extends Component {
         const clone2 = structuredClone(this.state.certificate_models)
         delete clone[item]
 
-        this.setState({class_name: clone2['class_name'], maximum_supply: clone2['maximum_supply'], purchase_start_time: clone2['purchase_start_time'], purchase_end_time: clone2['purchase_end_time'], split_period: clone2['split_period'], base_fee_price_multiplier: clone2['base_fee_price_multiplier'], 
-        certificate_models: clone, class_markdown: clone2['class_markdown']})
+        this.setState({class_name: clone2['class_name'], maximum_supply: clone2['maximum_supply'], purchase_start_time: clone2['purchase_start_time'], purchase_end_time: clone2['purchase_end_time'], /* split_period: clone2['split_period'], */ base_fee_price_multiplier: clone2['base_fee_price_multiplier'], 
+        certificate_models: clone, class_markdown: clone2['class_markdown'], posession_rights: clone2['posession_rights']})
 
         this.props.notify(this.props.app_state.loc['d311bn']/* 'editing selected class.' */, 1900)
     }

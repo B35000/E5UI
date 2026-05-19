@@ -730,6 +730,12 @@ class DialogPage extends Component {
         else if(option == 'view_certificate_class_details'){
             return this.view_certificate_class_details_ui()
         }
+        else if(option == 'view_acquired_certificate_item_details'){
+            return this.view_acquired_certificate_item_details_ui()
+        }
+        else if(option == 'view_fractionalized_certificate_item_details'){
+            return this.view_fractionalized_certificate_item_details_ui()
+        }
     }
 
 
@@ -14315,11 +14321,12 @@ return data['data']
         const maximum_supply = data['maximum_supply']
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
-        const split_period = data['split_period']
+        // const split_period = data['split_period']
         const price_data = object['ipfs'].price_data
         const base_fee_price_multiplier = data['base_fee_price_multiplier']
         const e5 = object['e5']
-        const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        const now = Date.now() / 1000
         return(
             <div>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -14334,14 +14341,14 @@ return data['data']
                 {this.render_detail_item('3', {'title':(new Date(purchase_end_time).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']/* 'Every $' */.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']/* 'Split Period' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']'Every $'.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']'Split Period', 'size':'l'})}
+                <div style={{height: 10}}/> */}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
 
-                {split_time > 0 && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pe']/* 🌱 Mint New Certificate.' */, 'details':this.props.app_state.loc['3055pf']/* 'Create and mint a new certificate token with your preferred details.' */, 'size':'l'})}
@@ -14396,16 +14403,403 @@ return data['data']
         this.props.show_mint_certificate_bottomsheet(item, object)
     }
 
-    get_current_split_time(split_period, purchase_start_time, purchase_end_time){
-        const current_time = Math.floor(Date.now()/1000)
-        if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
-        const difference = parseInt(current_time) - parseInt(purchase_start_time)
-        const periodCount = Math.floor(difference / parseInt(split_period))
-        return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
+    // get_current_split_time(split_period, purchase_start_time, purchase_end_time){
+    //     const current_time = Math.floor(Date.now()/1000)
+    //     if(current_time > purchase_end_time || current_time < purchase_start_time) return 0;
+    //     const difference = parseInt(current_time) - parseInt(purchase_start_time)
+    //     const periodCount = Math.floor(difference / parseInt(split_period))
+    //     return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
+    // }
+
+
+
+
+
+
+
+
+
+    view_acquired_certificate_item_details_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_acquired_certificate_item_details_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_acquired_certificate_item_details_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_acquired_certificate_item_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_acquired_certificate_item_details_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_acquired_certificate_item_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_acquired_certificate_item_details_data2()}
+                    </div>
+                </div>
+            )
+        }
     }
 
-    
+    render_acquired_certificate_item_details_data(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const depth = item['depth']
+        const depth_data = item['depth_data']
+        const ipfs = item['ipfs']
+        const event = item['event']
+        const time = item['time']
+        const data = this.get_model_config(depth_data, object)
 
+        const name = data['class_name']
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const now = Date.now() / 1000
+
+        const fractionalizable = this.get_selected_item2(object['ipfs'].get_new_certificate_fractionalizable_tags_object, 'e') == 1
+        
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pj']/* ⇄ Transfer Ownership' */, 'details':this.props.app_state.loc['3055pk']/* 'Transfer Ownership of your certificate to another account.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.transfer_certificate(data)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055pl']/* 'Begin Transfer' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pm']/* ❖ Fractionalize Certificate' */, 'details':this.props.app_state.loc['3055pn']/* 'Fragment your certificate into shares that you can redistribute to other accounts.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.fractionalize_certificate(data)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055po']/* 'Fractionalize' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_acquired_certificate_item_details_data2(){
+        const item = this.state.data['item']
+        const ipfs = item['ipfs']
+        return(
+            <div>
+                {this.render_item_data(ipfs['entered_objects'])}
+                {this.render_item_images(ipfs['entered_image_objects'])}
+                {this.render_pdf_files_if_any(ipfs['entered_pdf_objects'])}
+                {this.render_zip_files_if_any(ipfs['entered_zip_objects'])}
+                {this.render_markdown_if_any(ipfs['markdown'])}
+            </div>
+        )
+    }
+
+    get_model_config(depth_data, object){
+        const certificate_models = object['ipfs'].certificate_models
+        var valid_model = ''
+        Object.keys(certificate_models).forEach(model => {
+          if(certificate_models[model]['id'] == depth_data['class']){
+            valid_model = model
+          }
+        });
+        return certificate_models[valid_model]
+    }
+
+    render_item_data(items){
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            {this.render_detail_item(item['type'], item['data'])} 
+                            <div style={{height:2}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    render_item_images(entered_image_objects){
+        var images_to_add = entered_image_objects
+        if(images_to_add.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
+            </div>
+        )
+    }
+
+    render_pdf_files_if_any(entered_pdf_objects){
+        if(entered_pdf_objects != null && entered_pdf_objects.length > 0){
+            return(
+                <div>
+                    {this.render_pdfs_part(entered_pdf_objects)}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_part(entered_pdf_objects){
+        var items = [].concat(entered_pdf_objects)
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.open_file2(item)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    open_file2(item){
+        const ecid_obj = this.get_cid_split(item)
+        const ecid = ecid_obj['full']
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data == null) return;
+        if(!this.is_file_available(data['hash'])){
+            // this.props.notify(this.props.app_state.loc['3055fx']/* 'You deleted that file.' */, 1200)
+            return;
+        } 
+
+        if(data['type'] == 'image'){
+            this.props.show_images([ecid], 0)
+        }
+        else if(data['type'] == 'audio'){
+            this.props.play_individual_track(ecid)
+        }
+        else if(data['type'] == 'video'){
+            const width = data['width'];
+            const height = data['height'];
+            this.props.play_individual_video(ecid, width, height)
+        }
+        else if(data['type'] == 'pdf'){
+            this.props.when_pdf_file_opened(ecid)
+        }
+        else if(data['type'] == 'zip'){
+            this.props.when_zip_file_opened(ecid)
+        }
+    }
+
+    render_zip_files_if_any(entered_zip_objects){
+        if(entered_zip_objects != null && entered_zip_objects.length > 0){
+            return(
+                <div>
+                    {this.render_zips_part(entered_zip_objects)}
+                </div>
+            )
+        }
+    }
+
+    render_zips_part(entered_zip_objects){
+        var items = [].concat(entered_zip_objects)
+
+        if(items.length == 0) return;
+        
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.open_file2(item)}>
+                            {this.render_uploaded_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_markdown_if_any(markdown){
+        if(markdown != null && markdown != ''){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('13', {'source':markdown})}
+                </div>
+            )
+        }
+    }
+
+    transfer_certificate(model_data){
+        this.props.open_dialog_bottomsheet()
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        this.props.show_transfer_certificate_bottomsheet(item, object, model_data)
+    }
+
+    fractionalize_certificate(model_data){
+        this.props.open_dialog_bottomsheet()
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        this.props.show_fractionalize_certificate_bottomsheet(item, object, model_data)
+    }
+
+
+
+
+
+
+
+
+
+
+    view_fractionalized_certificate_item_details_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_fractionalized_certificate_item_details_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_fractionalized_certificate_item_details_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_fractionalized_certificate_item_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_fractionalized_certificate_item_details_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_fractionalized_certificate_item_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_fractionalized_certificate_item_details_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_fractionalized_certificate_item_details_data(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+
+        const depth = item['ipfs']['depth_item']['depth']
+        const depth_data = item['ipfs']['depth_item']['depth_data']
+        const ipfs = item['ipfs']['depth_item']['ipfs']
+        const event = item['ipfs']['depth_item']['event']
+        const time = item['ipfs']['depth_item']['time']
+
+        const data = item['ipfs']['model_data']
+        const name = data['class_name']
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        
+        const my_balance = item['balance']
+        const my_stake = (my_balance / 10^18) * 100
+        const posession_rights = (data['posession_rights']/ 10^18) * 100
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055pp']/* 'Your Fractionalized Stake.' */, 'subtitle':this.format_power_figure(my_stake), 'barwidth':this.calculate_bar_width(my_stake), 'number':(my_stake)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055ps']/* 'Posession Rights Proportion' */, 'subtitle':this.format_power_figure(posession_rights), 'barwidth':this.calculate_bar_width(posession_rights), 'number':(posession_rights)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+                </div>
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pq']/* ⇄ Transfer Stake' */, 'details':this.props.app_state.loc['3055pr']/* 'Transfer some of your stake to another account.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.transfer_fractionalized_stake(data)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055pl']/* 'Begin Transfer' */, 'action':''})}
+                </div> 
+            </div>
+        )
+    }
+
+    render_fractionalized_certificate_item_details_data2(){
+        const item = this.state.data['item']
+        const ipfs = item['ipfs']['depth_item']['ipfs']
+        return(
+            <div>
+                {this.render_item_data(ipfs['entered_objects'])}
+                {this.render_item_images(ipfs['entered_image_objects'])}
+                {this.render_pdf_files_if_any(ipfs['entered_pdf_objects'])}
+                {this.render_zip_files_if_any(ipfs['entered_zip_objects'])}
+                {this.render_markdown_if_any(ipfs['markdown'])}
+            </div>
+        )
+    }
+
+    transfer_fractionalized_stake(){
+        this.props.open_dialog_bottomsheet()
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        this.props.show_transfer_stake_bottomsheet(item, object)
+    }
 
 
 

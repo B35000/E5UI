@@ -1017,7 +1017,15 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['3099']/* 'mint-certificate' */){
                 return this.render_mint_certificate_data()
             }
-            
+            else if(tx.type == this.props.app_state.loc['3100']/* 'transfer-certificate' */){
+                return this.render_transfer_certificate_data()
+            }
+            else if(tx.type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */){
+                return this.render_fractionalize_certificate_data()
+            }
+            else if(tx.type == this.props.app_state.loc['3102']/* 'transfer-stake' */){
+                return this.render_transfer_stake_data()
+            }
         }
     }
 
@@ -9389,7 +9397,7 @@ return data['data']
         const maximum_supply = data['maximum_supply']
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
-        const split_period = data['split_period']
+        // const split_period = data['split_period']
         const price_data = object['ipfs'].price_data
         const base_fee_price_multiplier = data['base_fee_price_multiplier']
         const e5 = object['e5']
@@ -9449,6 +9457,263 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+    render_transfer_certificate_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const alias = this.get_account_alias2(transaction_item.recipient) 
+        const recipient_title = transaction_item.recipient + (alias == '' ? '' : ' • '+ alias)
+        const token_item = transaction_item.token_item
+        const depth_item = transaction_item.depth_item
+        const model_data = transaction_item.model_data
+        const depth_data = depth_item['depth_data']
+        const name = depth_data['class_name']
+        const maximum_supply = depth_data['maximum_supply']
+        const time = depth_item['time']
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':recipient_title, 'details':this.props.app_state.loc['3055gh']/* 'Transfer Recipient Account' */, 'size':'l'})}
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    get_account_alias2(account_id){
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id] == null ? ('') : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id])
+    }
+
+
+
+
+
+
+
+
+
+
+    render_fractionalize_certificate_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const token_item = transaction_item.token_item
+        const depth_item = transaction_item.depth_item
+        const model_data = transaction_item.model_data
+
+        const depth_data = depth_item['depth_data']
+        const name = depth_data['class_name']
+        const maximum_supply = depth_data['maximum_supply']
+        const time = depth_item['time']
+
+        const remainder = this.get_remainder_as_proportion()
+
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3101n']/* 'Your Share.' */, 'subtitle':this.format_power_figure(remainder), 'barwidth':this.calculate_bar_width(remainder), 'number':(remainder)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+                </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_set_recipients_list_part()}
+            </div>
+        )
+    }
+
+    get_remainder(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const values = Object.values(transaction_item.fractionalization_data)
+        var total = bigInt(0)
+        values.forEach(proportion => {
+            total = total.plus(proportion)
+        });
+        return bigInt('1e18').minus(total)
+    }
+
+    get_remainder_as_proportion(){
+        const my_balance = this.get_remainder()
+        return (my_balance / 10^18) * 100
+    }
+
+    render_set_recipients_list_part(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = [].concat(Object.keys(transaction_item.fractionalization_data))
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                        <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3101p']/* 'The recipients of the new shares and their respective proportions.' */, 'title':this.props.app_state.loc['3101o']/* 'Your set recipients' */})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                        {this.render_recipient_item(item)}
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    render_recipient_item(item){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const proportion = transaction_item.fractionalization_data[item]
+        const alias = this.get_account_alias2(item) 
+        const title = item + (alias == '' ? '' : ' • '+ alias)
+        const details = this.format_proportion(proportion)
+        return(
+            <div onClick={() => this.edit_model_item(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_transfer_stake_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const token_item = transaction_item.token_item
+        const item = transaction_item.item
+
+        const depth = item['ipfs']['depth_item']['depth']
+        const depth_data = item['ipfs']['depth_item']['depth_data']
+        const ipfs = item['ipfs']['depth_item']['ipfs']
+        const event = item['ipfs']['depth_item']['event']
+        const time = item['ipfs']['depth_item']['time']
+
+        const data = item['ipfs']['model_data']
+        const name = data['class_name']
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+
+        const my_balance = item['balance']
+        const my_stake = (my_balance / 10^18) * 100
+        const posession_rights = (data['posession_rights']/ 10^18) * 100
+
+        const remainder = this.get_remainder_as_proportion2()
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055pp']/* 'Your Fractionalized Stake.' */, 'subtitle':this.format_power_figure(my_stake), 'barwidth':this.calculate_bar_width(my_stake), 'number':(my_stake)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3102d']/* 'Remaining Stake after Set Transfers' */, 'subtitle':this.format_power_figure(remainder), 'barwidth':this.calculate_bar_width(remainder), 'number':(remainder)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055ps']/* 'Posession Rights Proportion' */, 'subtitle':this.format_power_figure(posession_rights), 'barwidth':this.calculate_bar_width(posession_rights), 'number':(posession_rights)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+                </div>
+
+                {this.render_detail_item('0')}
+                {this.render_set_recipients_list_part()}
+            </div>
+        )
+    }
+
+    get_remainder2(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const values = Object.values(transaction_item.fractionalization_data).concat(this.get_values_from_stack())
+        var total = bigInt(0)
+        values.forEach(proportion => {
+            total = total.plus(proportion)
+        });
+        return bigInt('1e18').minus(total)
+    }
+
+    get_values_from_stack(){
+        var stack_transactions = this.props.app_state.stack_items
+        var values = []
+        for(var i=0; i<stack_transactions.length; i++){
+            if(
+                stack_transactions[i].type == this.props.app_state.loc['3102']/* 'transfer-stake' */ &&
+                stack_transactions[i].token_item['id'] == this.state.token_item['id'] && 
+                stack_transactions[i].id != this.state.id && 
+                stack_transactions[i].e5 == this.props.app_state.selected_e5 &&
+                stack_transactions[i].item['ipfs']['depth_item']['depth'] == this.state.item['ipfs']['depth_item']['depth']
+            ){
+                values = values.concat(Object.values(stack_transactions[i].fractionalization_data))
+            }
+        }
+        return values
+    }
+
+    get_remainder_as_proportion2(){
+        const my_balance = this.get_remainder2()
+        return (my_balance / 10^18) * 100
+    }
 
 
 

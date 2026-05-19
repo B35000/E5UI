@@ -77,7 +77,7 @@ class MintCertificatePage extends Component {
     
     state = {
         selected: 0, token_item: null, selected_class:null,
-        id: makeid(8), type:this.props.app_state.loc['3099']/* 'mint-certificate' */, entered_indexing_tags:[this.props.app_state.loc['3099c']/* 'certificate' */, this.props.app_state.loc['3099d']/* 'create' */],
+        id: makeid(8), type:this.props.app_state.loc['3099']/* 'mint-certificate' */, entered_indexing_tags:[this.props.app_state.loc['3099c']/* 'certificate' */, this.props.app_state.loc['3099d']/* 'create' */, this.props.app_state.loc['3099h']/* 'mint' */],
         new_mint_title_tags_object:this.new_mint_title_tags_object(),
 
         entered_text:'',
@@ -279,11 +279,11 @@ class MintCertificatePage extends Component {
         const maximum_supply = data['maximum_supply']
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
-        const split_period = data['split_period']
+        // const split_period = data['split_period']
         const price_data = object['ipfs'].price_data
         const base_fee_price_multiplier = data['base_fee_price_multiplier']
         const e5 = object['e5']
-        const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
         return(
             <div>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -298,8 +298,8 @@ class MintCertificatePage extends Component {
                 {this.render_detail_item('3', {'title':(new Date(purchase_end_time).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']/* 'Every $' */.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']/* 'Split Period' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb'] 'Every $'.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']'Split Period', 'size':'l'})}
+                <div style={{height: 10}}/> */}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
@@ -1521,7 +1521,7 @@ class MintCertificatePage extends Component {
                 entered_image_objects:[], 
                 entered_objects:[], 
                 edit_text_item_pos:-1, 
-                entered_pdf_objects:[], 
+                entered_pdf_objects:[],
                 markdown:'',
                 get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(),
                 entered_zip_objects:[],
