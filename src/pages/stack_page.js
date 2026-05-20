@@ -3872,6 +3872,20 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(enter_object)
+
+                    var transfer_object = this.format_add_stake_object(txs[i], ints)
+
+                    if(transfer_object.depth_swap_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(transfer_object.depth_swap_obj)
+                    }
+
+                    if(transfer_object.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(transfer_object.transfers_obj)
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['35']/* 'extend-contract' */){
                     var extend_object = this.format_extend_contract_object(txs[i])
@@ -5144,6 +5158,21 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(transfer_object.transfers_obj)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3103']/* 'add-stake' */){
+                    var transfer_object = this.format_add_stake_object(txs[i], ints)
+
+                    if(transfer_object.depth_swap_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(transfer_object.depth_swap_obj)
+                    }
+
+                    if(transfer_object.transfers_obj[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(transfer_object.transfers_obj)
+                    }
                 }
                 
                 delete_pos_array.push(i)
@@ -6696,6 +6725,7 @@ class StackPage extends Component {
                         'fractionalized_asset':true,
                         'token_id': data.token_item['id'],
                         'token_e5': data.token_item['e5'],
+                        'token_e5_id': data.token_item['e5_id'],
                         'depth':data.depth_item['depth_data']['full'],
                         'depth_item':data.depth_item,
                         'model_data':data.model_data,
@@ -9221,6 +9251,7 @@ class StackPage extends Component {
         consensus_obj[this.props.app_state.loc['316']/* spend */] = 0
         consensus_obj[this.props.app_state.loc['317']/* reconfig */] = 1
         consensus_obj[this.props.app_state.loc['318']/* exchange-transfer */] = 6
+        consensus_obj[this.props.app_state.loc['438bt']/* certificate-transfer */] = 0
 
         var consensus_type_tag = this.get_selected_item(t.new_proposal_type_tags_object, t.new_proposal_type_tags_object['i'].active)
         var consensus_type = consensus_obj[consensus_type_tag]
@@ -9337,6 +9368,37 @@ class StackPage extends Component {
                 obj[17].push(t.exchange_transfer_values[i]['token'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[18].push(23)
                 
+                obj[19].push(0)/* depths */
+                obj[20].push(23)
+            }
+        }
+        else if(consensus_type_tag == this.props.app_state.loc['438bt']/* certificate-transfer */){
+            const spend_actions = Object.values(t.fractionalization_data)
+            for(var i=0; i<spend_actions.length; i++){
+                const spend_token = spend_actions[i]['token_id']
+                const proportion = spend_actions[i]['proportion']
+                const recipient = spend_actions[i]['recipient']
+                obj[9].push(spend_token.toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[10].push(23)
+
+                obj[11].push(proportion.toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[12].push(23)
+
+                var receiver = recipient
+                var receiver_type = 23
+                if(receiver == 53){
+                    receiver_type = 53
+                }
+
+                obj[13].push(receiver.toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[14].push(receiver_type)
+
+                obj[15].push(0)/* depths */
+                obj[16].push(23)
+
+                obj[17].push(0)/* depths */
+                obj[18].push(23)
+
                 obj[19].push(0)/* depths */
                 obj[20].push(23)
             }
@@ -12447,7 +12509,7 @@ class StackPage extends Component {
     format_exchange_deposit_object = (t, ints) => {
         var ints_clone = ints.slice()
         const object = t.token_item
-        const recpient = object['id']
+        const recipient = object['id']
 
         var depth_swap_obj = [
             [30000,16,0],
@@ -12488,7 +12550,7 @@ class StackPage extends Component {
             for(var u=0; u<transfer_actions.length; u++){
                 transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
                 transfers_obj[2].push(23)
-                transfers_obj[3].push(recpient.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[3].push(recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
                 transfers_obj[4].push(23)
                 transfers_obj[5].push(transfer_actions[u]['amount'])
                 transfers_obj[6].push(transfer_actions[u]['depth'])
@@ -12872,6 +12934,75 @@ class StackPage extends Component {
         }
 
         return { transfers_obj }
+    }
+
+    format_add_stake_object = (t, ints) => {
+        var ints_clone = ints.slice()
+        const object = t.contract
+        const recipient = object['id']
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+
+        const data = t.exchange_transfer_values
+
+        for(var i=0; i<data.length; i++){
+            const exchange = data[i]['token']
+            const amount = (data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, transfers_obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var u=0; u<transfer_actions.length; u++){
+                transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(transfer_actions[u]['amount'])
+                transfers_obj[6].push(transfer_actions[u]['depth'])
+            }
+        }
+
+        const token_ids = Object.keys(t.fractionalization_data)
+        for(var r=0; r<token_ids.length; r++){
+            const token_id = token_ids[r]
+            const proportion = t.fractionalization_data[token_id]['proportion']
+
+            transfers_obj[1].push(token_id)
+            transfers_obj[2].push(23)
+            transfers_obj[3].push(recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+            transfers_obj[4].push(23)
+            transfers_obj[5].push(proportion.toString().toLocaleString('fullwide', {useGrouping:false}))
+            transfers_obj[6].push(0)
+        }
+        
+
+
+        return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj}
     }
 
     

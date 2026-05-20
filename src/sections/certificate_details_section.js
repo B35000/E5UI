@@ -1308,7 +1308,7 @@ class CertificateDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                     {this.render_fractionalized_classes_top_title(object)}
                     <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a class...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
                     </div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     {this.render_fractionalized_classes(object)}
@@ -1374,7 +1374,12 @@ class CertificateDetailsSection extends Component {
 
     get_fractionalized_tokens(object){
         const non_fungible_fractionals_data = this.props.app_state.fractionalized_assets[object['e5_id']] || {};
-        return this.sortByAttributeDescending(Object.values(account_data), 'timestamp')
+        const exchanges_from_sync = []
+        const exchange_ids = Object.keys(non_fungible_fractionals_data)
+        exchange_ids.forEach(exchange_id => {
+            exchanges_from_sync.push(non_fungible_fractionals_data[exchange_id])
+        });
+        return this.sortByAttributeDescending(exchanges_from_sync, 'timestamp')
     }
 
     render_fractionalized_class_item(item, object){

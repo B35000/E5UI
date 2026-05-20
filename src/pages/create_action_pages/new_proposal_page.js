@@ -108,7 +108,9 @@ class NewProposalPage extends Component {
         edit_text_item_pos:-1, new_price_number:0, get_auto_vote_yes_object:this.get_auto_vote_yes_object(),
 
         get_sort_links_tags_object:this.get_sort_links_tags_object(), entered_pdf_objects:[],
-        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[]
+        markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+
+        selected_certificate_target:null, proportion_amount:0, typed_search_fractionalized_tokens:'', fractionalization_data:{},
     };
 
     
@@ -152,7 +154,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['316']/* 'spend' */,this.props.app_state.loc['317']/* 'reconfig' */, this.props.app_state.loc['318']/* 'exchange-transfer' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['316']/* 'spend' */,this.props.app_state.loc['317']/* 'reconfig' */, this.props.app_state.loc['318']/* 'exchange-transfer' */, this.props.app_state.loc['438bt']/* certificate-transfer */], [1]
             ],
         };
     }
@@ -2888,7 +2890,343 @@ return data['data']
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['438bt']/* certificate-transfer */){
+            return this.render_certificate_transfer()
+        }
     }
+
+
+
+
+
+
+
+
+
+    render_certificate_transfer(){
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_certificates_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_certificates_list_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_certificates_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificates_list_part()}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_certificates_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificates_list_part()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_select_certificates_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3103f']/* 'Certificate Targets' */, 'details':this.props.app_state.loc['438bu']/* 'Select the certificates you wish to transfer out of the contract' */, 'size':'l'})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
+
+                <div style={{margin:'5px 10px 0px 10px'}}>
+                    <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
+                </div>
+                <div style={{height:10}}/>
+                {this.load_certificates()}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['438bw']/* 'Certificate Transfer Target' */, 'details':this.props.app_state.loc['438bx']/* 'Set a target that will receive the certificate shares set below.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_target_text_input_field_changed.bind(this)} text={this.state.spend_target_input_text} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['438bu']/* 'Set the number of shares the contract will transfer out as a proportion of the total.' */, 'title':this.props.app_state.loc['3101e']/* 'Proportion of Shares.' */})}
+                                
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.proportion_amount), 'details':this.props.app_state.loc['3101g']/* 'Fractionalized Proportion to Receive.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_proportion_amount_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
+
+                <div style={{height:20}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.add_certificate_transfer_item()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['919']/* 'Add Transfer Action' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_typed_search_fractionalized_tokens_text_input_field_changed(text){
+        this.setState({typed_search_fractionalized_tokens: text})
+    }
+
+    when_proportion_amount_proportion(number){
+        this.setState({proportion_amount: number})
+    }
+
+    add_certificate_transfer_item(){
+        const selected_certificate = this.state.selected_certificate
+        const proportion = this.state.proportion_amount
+        const spend_target = await this.get_typed_alias_id(this.state.spend_target_input_text.toString().trim())
+        const clone = structuredClone(this.state.fractionalization_data)
+
+        if(selected_certificate == null){
+            this.props.notify(this.props.app_state.loc['3098bc']/* 'Please select a certificate first.' */, 2600)
+        }
+        if(isNaN(spend_target) || parseInt(spend_target) < 0 || spend_target == ''){
+            this.props.notify(this.props.app_state.loc['387']/* 'please put a valid spend target' */, 4600)
+        }
+        else if(proportion == 0){
+            this.props.notify(this.props.app_state.loc['3101k']/* 'You need to speficy a proportion.' */, 3600)
+        }
+        else if(this.get_remainder(selected_certificate).lesserOrEquals(0)){
+            this.props.notify(this.props.app_state.loc['3098bd']/* 'The shares youve set is higher than your balance.' */, 3600)
+        }
+        else{
+            const object = selected_certificate
+            const model_data = object['ipfs']['model_data']
+            const class_name = model_data['class_name']
+            const time = object['ipfs']['depth_item']['time']
+            const details = class_name + ' • ' + this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+            const proportion = proportion
+            const title = this.format_proportion(proportion)
+            const alias = this.get_account_alias2(spend_target) 
+            const footer = spend_target + (alias == '' ? '' : ' • '+ alias)
+
+            clone[selected_certificate['e5_id']] = {
+                'object':{'title':title, 'details':details, 'footer': footer, 'size':'l'},
+                'proportion': proportion,
+                'recipient':spend_target,
+                'token_id': selected_certificate['id']
+            }
+            this.setState({fractionalization_data: clone, spend_target_input_text:'', selected_certificate_target: null, selected_certificate: null})
+            this.props.notify(this.props.app_state.loc['3101l']/* 'recipient\'s proportion set.' */, 900)
+        }
+    }
+
+    get_account_alias2(account_id){
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id] == null ? ('') : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id])
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
+    }
+
+    get_remainder(selected_certificate){
+        const values = Object.values(this.state.fractionalization_data)
+        var total = bigInt(0)
+        values.forEach(proportion => {
+            total = total.plus(proportion)
+        });
+        return bigInt(selected_certificate['balance']).minus(total)
+    }
+
+
+
+
+    render_set_certificates_list_part(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(Object.keys(this.state.fractionalization_data))
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3103j']/* 'When you specify some shares to transfer, they will show here.' */, 'title':this.props.app_state.loc['3103k']/* 'No set transfers.' */})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                        <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3101p']/* 'The recipients of the new shares and their respective proportions.' */, 'title':this.props.app_state.loc['3101o']/* 'Your set recipients' */})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_transfer_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                        {this.render_transfer_item(item)}
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_transfer_item(item){
+        const data = this.state.fractionalization_data[item]
+        const object = data['object']
+        return(
+            <div>
+                {this.render_detail_item('3', object)}
+            </div>
+        )
+    }
+
+    when_transfer_clicked(item){
+        const clone = structuredClone(this.state.fractionalization_data)
+        delete clone[item]
+        this.setState({fractionalization_data: clone})
+    }
+
+
+
+
+
+
+    load_certificates(){
+        const unfiltered_items = [].concat(this.get_suggested_certificates())
+        const items = unfiltered_items.filter((item) => {
+            const t = this.state.typed_search_fractionalized_tokens.trim().toLowerCase()
+            const depth_data = item['ipfs']['depth_item']['depth_data']
+            const model_config = item['ipfs']['model_data']
+            const class_name = model_config['class_name']
+            const ipfs = item['ipfs']['depth_item']['ipfs']
+            const markdown = ipfs['markdown']
+            const class_markdown = model_config['class_markdown']
+            return (
+                t == '' ||
+                class_name.toLowerCase().startsWith(t) ||
+                markdown.toLowerCase().includes(t) ||
+                class_markdown.toLowerCase().includes(t)
+            )
+        })
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3', item['label'])}
+                            {this.show_line_if_selected(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    show_line_if_selected(item){
+        if(item['object']['e5_id'] == selected_certificate_target){
+            return(
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )
+        }
+    }
+
+    get_suggested_certificates(){
+        const contract = this.state.contract_item;
+        const balance_obj = object['balance_obj']
+        const exchanges = Object.keys(balance_obj)
+        const data = this.resolve_exchanges(exchanges, object['e5'])
+        const { all_exchange_data, exchanges_from_sync } = data
+
+        for (let i = 0; i < all_exchange_data.length; i++) {
+            const exchange_id = all_exchange_data[i]
+            const object = exchanges_from_sync[exchange_id]
+            const model_data = object['ipfs']['model_data']
+            const class_name = model_data['class_name']
+            const time = object['ipfs']['depth_item']['time']
+            const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+            items.push({'object':object, 'label':{'title':start_and_end(class_name), 'details':this.format_proportion(object['balance']), 'footer':footer, 'size':'l'}})
+        }
+        return items;
+    }
+
+    resolve_exchanges(exchanges, e5){
+        const certificate_ids = Object.keys(this.props.app_state.fractionalized_assets)
+        const exchanges_from_sync = {}
+        certificate_ids.forEach(certificate_id => {
+            const exchange_ids = Object.keys(this.props.app_state.fractionalized_assets[certificate_id])
+            exchange_ids.forEach(exchange_id => {
+                const fractionalized_exchange_object = this.props.app_state.fractionalized_assets[certificate_id][exchange_id]
+                if(fractionalized_exchange_object['e5'] == e5){
+                    exchanges_from_sync[fractionalized_exchange_object['id']] = fractionalized_exchange_object
+                }
+            });
+        });
+
+        const all_exchange_data = exchanges.filter((exchange_id) => {
+            return exchanges_from_sync[exchange_id] != null
+        })
+
+        return { all_exchange_data, exchanges_from_sync }
+    }
+
+    when_suggestion_clicked(item, index){
+        this.setState({selected_certificate_target: item['object']['e5_id'], selected_certificate: item['object']})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     render_spend_proposal_ui(){
@@ -3004,7 +3342,7 @@ return data['data']
 
 
     add_spend_action_to_list(){
-        var spend_target = this.state.spend_target_input_text.trim()
+        const spend_target = await this.get_typed_alias_id(this.state.spend_target_input_text.toString().trim())
         var spend_token = this.get_token_id_from_symbol(this.state.spend_token_input_text.trim())
         var amount = this.state.spend_amount;
 
@@ -4489,7 +4827,7 @@ return data['data']
             this.setState({content_channeling_setting: me.props.app_state.content_channeling,
                 device_language_setting :me.props.app_state.device_language,
                 device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
+                e5 :me.props.app_state.selected_e5, selected_certificate_target: null, selected_certificate: null})
             
             setTimeout(function() {
                 me.props.when_add_new_proposal_to_stack(me.state)
@@ -4524,7 +4862,9 @@ return data['data']
                 typed_link_text:'', link_search_results:[], added_links:[], 
                 edit_text_item_pos:-1,
 
-                bounty_exchange_target:'', bounty_amount:0, bounty_values:[], entered_pdf_objects:[], markdown:''})
+                bounty_exchange_target:'', bounty_amount:0, bounty_values:[], entered_pdf_objects:[], markdown:'', get_markdown_preview_or_editor_object: me.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+
+                selected_certificate_target:null, proportion_amount:0, typed_search_fractionalized_tokens:'', fractionalization_data:{},})
 
                 me.props.notify(me.props.app_state.loc['18']/* 'transaction added to stack' */, 700);
             }, (1 * 1000));

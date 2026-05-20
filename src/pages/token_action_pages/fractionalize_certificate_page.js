@@ -293,7 +293,7 @@ class FractionalizeCertificatePage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3101r']/* 'When you speicfy a recipient, it will show here.' */, 'title':this.props.app_state.loc['3103101q1o']/* 'No set recipients' */})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3101r']/* 'When you speicfy a recipient, it will show here.' */, 'title':this.props.app_state.loc['3101q']/* 'No set recipients' */})}
                     <div style={{height:10}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
@@ -319,7 +319,7 @@ class FractionalizeCertificatePage extends Component {
                                 <SwipeableListItem
                                     swipeLeft={{
                                     content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
-                                    action: () =>this.when_model_clicked(item)
+                                    action: () =>this.when_recipient_clicked(item)
                                     }}>
                                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         {this.render_recipient_item(item)}
@@ -341,7 +341,7 @@ class FractionalizeCertificatePage extends Component {
         const title = item + (alias == '' ? '' : ' • '+ alias)
         const details = this.format_proportion(proportion)
         return(
-            <div onClick={() => this.edit_model_item(item)}>
+            <div>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )

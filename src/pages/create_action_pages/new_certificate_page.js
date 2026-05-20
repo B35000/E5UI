@@ -2500,7 +2500,7 @@ class NewCertificatePage extends Component {
     }
 
     when_class_id_input_field_changed(text){
-        this.setState({class_name: text})
+        if(this.state.edit_id == null) this.setState({class_name: text});
     }
 
     when_maximum_supply(number){
@@ -2636,8 +2636,9 @@ class NewCertificatePage extends Component {
         const data = this.state.certificate_models[item]
         const title = item
         const details = this.format_account_balance_figure(data['maximum_supply']) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
+        const opacity = this.state.edit_id == data['id'] ? 0.5 : 1.0
         return(
-            <div onClick={() => this.edit_model_item(item)}>
+            <div style={{opacity: opacity}} onClick={() => this.edit_model_item(item)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
@@ -2646,12 +2647,16 @@ class NewCertificatePage extends Component {
     edit_model_item(item){
         const clone = structuredClone(this.state.certificate_models)
         const clone2 = structuredClone(this.state.certificate_models)
-        delete clone[item]
+        // delete clone[item]
 
-        this.setState({class_name: clone2['class_name'], maximum_supply: clone2['maximum_supply'], purchase_start_time: clone2['purchase_start_time'], purchase_end_time: clone2['purchase_end_time'], /* split_period: clone2['split_period'], */ base_fee_price_multiplier: clone2['base_fee_price_multiplier'], 
-        certificate_models: clone, class_markdown: clone2['class_markdown'], posession_rights: clone2['posession_rights']})
+        if(this.state.edit_id == clone2['id']){
+            this.setState({edit_id: null, class_name: ''})
+        }else{
+            this.setState({class_name: clone2['class_name'], maximum_supply: clone2['maximum_supply'], purchase_start_time: clone2['purchase_start_time'], purchase_end_time: clone2['purchase_end_time'], /* split_period: clone2['split_period'], */ base_fee_price_multiplier: clone2['base_fee_price_multiplier'], 
+            certificate_models: clone, class_markdown: clone2['class_markdown'], posession_rights: clone2['posession_rights'], edit_id: clone2['id']})
 
-        this.props.notify(this.props.app_state.loc['d311bn']/* 'editing selected class.' */, 1900)
+            this.props.notify(this.props.app_state.loc['d311bn']/* 'editing selected class.' */, 1900)
+        }
     }
 
     when_model_clicked(item){

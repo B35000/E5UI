@@ -1235,11 +1235,20 @@ class ProposalDetailsSection extends Component {
         //     he = this.props.height-190;
         // }
         var items = this.get_proposal_action_data(object)
-        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var proposal_action = object['data'][1][0]
 
         if(proposal_action == 0){
-           return(
+            const selected_item = this.get_selected_item2(object['ipfs'].new_proposal_type_tags_object, 'e')
+            if(selected_item == 4/* certificate-transfer */){
+                return(
+                    <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 0px 0px 0px', }}>
+                        <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
+                            {this.render_certificate_transfer_actions(items, object)}
+                        </div>
+                    </div> 
+                )
+            }
+            return(
                 <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 0px 0px 0px', }}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                         {this.render_spend_actions(items, object)}
@@ -1274,6 +1283,10 @@ class ProposalDetailsSection extends Component {
         var proposal_action = object['data'][1][0]
 
         if(proposal_action == 0){
+            const selected_item = this.get_selected_item2(object['ipfs'].new_proposal_type_tags_object, 'e')
+            if(selected_item == 4/* certificate-transfer */){
+                return object['ipfs'].fractionalization_data
+            }
             var return_items = object['ipfs'].spend_actions
             return return_items
         }
@@ -1317,7 +1330,7 @@ class ProposalDetailsSection extends Component {
         }else{
             return(
                 <div style={{}}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':'Spend Actions', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2258i']/* 'Spend Actions' */, 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
@@ -1407,7 +1420,7 @@ class ProposalDetailsSection extends Component {
         }else{
             return(
                 <div style={{}}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':'Reconfig Actions', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2258h']/* 'Reconfig Actions' */, 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
@@ -1515,7 +1528,7 @@ class ProposalDetailsSection extends Component {
         }else{
             return(
                 <div style={{}}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':'Transfer Actions', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2258g']/* 'Transfer Actions' */, 'size':'l'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
@@ -1526,6 +1539,50 @@ class ProposalDetailsSection extends Component {
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1886']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['exchange']], 'size':'s'})}
                                 <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+    render_certificate_transfer_actions(args, object){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(Object.values(args))
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2052']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2258f']/* 'Certificate Transfer Actions.' */, 'size':'l'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_detail_item('3', args[item]['object'])}
                             </li>
                         ))}
                     </ul>

@@ -544,6 +544,8 @@ class ContractDetailsSection extends Component {
 
                                     {index == 33 && this.show_send_proposal_button(object)}
 
+                                    {index == 33 && this.show_add_stake_button(object)}
+
                                     {index == 34 && this.show_send_main_contract_proposal(object)}
 
                                     {index == 35 && this.show_make_pre_purchase_button(object)}
@@ -1045,6 +1047,28 @@ class ContractDetailsSection extends Component {
 
     }
 
+    show_add_stake_button(object){
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2 && object['hidden'] == false) {
+            return (
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2214co']/* 'Transfer some tokens or stake in a certificate to the contract\'s account.' */, 'title': this.props.app_state.loc['2214cn']/* '♨️ Add Stake' */ })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.open_add_stake_ui(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214cp']/* 'Add' */, 'action': '' },)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_add_stake_ui(object){
+        this.props.show_add_stake_bottomsheet(object)
+    }
+
     show_send_main_contract_proposal(object){
         console.log('show_send_main_contract_proposal', object['id'], object['hidden'])
         if(object['id'] == 2 && object['hidden'] == false){
@@ -1514,10 +1538,12 @@ class ContractDetailsSection extends Component {
                         {this.render_detail_item('2', item['end_balance'])}
                     </div>
 
-                    <div style={{ height: 10 }} />
+                    <div style={{ height: 10 }}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['spend_balance']['title'], 'number':item['spend_balance']['n'], 'relativepower':item['spend_balance']['relativepower']})}>
                         {this.render_detail_item('2', item['spend_balance'])}
                     </div>
+
+                    {this.render_other_balances(object)}
 
                     {contract_age > (60*60*24) && (
                         <div>
@@ -1527,6 +1553,87 @@ class ContractDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_other_balances(object){
+        const balance_obj = object['balance_obj']
+        const exchanges = Object.keys(balance_obj)
+        const data = this.resolve_exchanges(exchanges, object['e5'])
+        if(data.all_exchange_data.length == 0) return;
+        return(
+            <div style={{'margin':'10px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {data.all_exchange_data.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                            {this.render_balance_item(item, data.exchanges_from_sync, object, balance_obj)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_balance_item(item, exchanges_from_sync, object, balance_obj){
+        const type = item['type']
+        const exchange_id = item['exchange_id']
+        const balance = balance_obj[exchange_id]['balance']
+        if(type == 'normal'){
+            const exchange_object = exchanges_from_sync[exchange_id]
+            return(
+                <div>
+                    {this.render_detail_item('8', {'details':this.format_account_balance_figure(balance)+' '+ exchange_object['ipfs'].entered_symbol_text, 'title':exchange_object['ipfs'].entered_title_text, 'size':'l', 'image':(exchange_object['ipfs'].token_image == null ? (exchange_object['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img'] : this.props.app_state.static_assets['spend_img']) : exchange_object['ipfs'].token_image), 'img_size':30})}
+                </div>
+            )
+        }
+        else{
+            const object = exchanges_from_sync[exchange_id]
+            const model_data = object['ipfs']['model_data']
+            const class_name = model_data['class_name']
+            const time = object['ipfs']['depth_item']['time']
+            const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':start_and_end(class_name), 'details':this.format_proportion(balance), 'footer':footer, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    resolve_exchanges(exchanges, e5){
+        const all_exchange_data = []
+
+        const certificate_ids = Object.keys(this.props.app_state.fractionalized_assets)
+        const exchanges_from_sync = {}
+        certificate_ids.forEach(certificate_id => {
+            const exchange_ids = Object.keys(this.props.app_state.fractionalized_assets[certificate_id])
+            exchange_ids.forEach(exchange_id => {
+                const fractionalized_exchange_object = this.props.app_state.fractionalized_assets[certificate_id][exchange_id]
+                if(fractionalized_exchange_object['e5'] == e5){
+                    exchanges_from_sync[fractionalized_exchange_object['id']] = fractionalized_exchange_object
+                }
+            });
+        });
+
+        const all_exchange_objects = this.props.app_state.created_tokens[e5]
+        const filtered_exchange_objects = all_exchange_objects.filter((exchange_object) => {
+            return exchanges.includes(exchange_object['id'])
+        })
+
+        filtered_exchange_objects.forEach(exchange_object => {
+            exchanges_from_sync[exchange_object['id']] = exchange_object
+        });
+
+        const all_exchange_names = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)
+        exchanges.forEach(exchange_id => {
+            if(all_exchange_names[e5+exchange_id] != null){
+                all_exchange_data.push({'exchange_id':exchange_id, 'type': 'normal'})
+            }
+            else if(exchanges_from_sync[exchange_id] != null){
+                all_exchange_data.push({'exchange_id':exchange_id, 'type': 'certificate'})
+            }
+        });
+
+        return { all_exchange_data, exchanges_from_sync }
     }
 
     

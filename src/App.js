@@ -626,6 +626,7 @@ import ExtendContractPage from './pages/contract_action_pages/extend_contract_pa
 import ExitContractPage from './pages/contract_action_pages/exit_contract_page';
 import ModifyContractPage from './pages/contract_action_pages/modify_contract_page';
 import ForceExitPage from './pages/contract_action_pages/force_exit_account_page';
+import AddStakePage from './pages/contract_action_pages/add_stake_page';
 
 import NewMintActionPage from './pages/token_action_pages/mint_dump_token_page';
 import NewTransferActionPage from './pages/token_action_pages/transfer_token_page';
@@ -1272,7 +1273,7 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -3696,6 +3697,7 @@ class App extends Component {
     this.view_storefront_request_page = React.createRef();
     this.edit_certificate_page = React.createRef();
     this.fractionalize_certificate_page = React.createRef();
+    this.add_stake_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4895,7 +4897,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false
       })
 
       return cached_state_obj
@@ -4980,6 +4982,10 @@ class App extends Component {
         
         // accounts: this.state.accounts,
         sync_steps:28,
+
+        created_certificates:this.state.created_certificates, 
+        non_fungible_token_data:this.state.non_fungible_token_data, 
+        fractionalized_assets:this.state.fractionalized_assets,
       }
 
       return cached_state_obj
@@ -6739,6 +6745,7 @@ class App extends Component {
           {this.render_transfer_certificate_bottomsheet()}
           {this.render_fractionalize_certificate_bottomsheet()}
           {this.render_transfer_stake_bottomsheet()}
+          {this.render_add_stake_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -6875,7 +6882,7 @@ class App extends Component {
 
           get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
 
-          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)}
+          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} show_add_stake_bottomsheet={this.show_add_stake_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -15962,12 +15969,21 @@ class App extends Component {
         }
       }, (1 * 1100));
     }
-    else if(tx,type == this.getLocale()['3102']/* 'transfer-stake' */){
+    else if(tx.type == this.getLocale()['3102']/* 'transfer-stake' */){
       this.open_transfer_stake_bottomsheet()
       var me = this;
       setTimeout(function() {
         if(me.transfer_stake_page.current){
           me.transfer_stake_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    } 
+    else if(tx.type == this.getLocale()['3103']/* 'add-stake' */){
+      this.open_add_stake_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.add_stake_page.current){
+          me.add_stake_page.current?.setState(tx)
         }
       }, (1 * 1100));
     }
@@ -18761,7 +18777,7 @@ class App extends Component {
     if(id == 'song_options'){
       if(data['from'] == 'audio_details_section') size = 550
       if(data['from'] == 'audio_details_section3') size = 350
-    }
+    } 
     if(size > this.state.height-70){
       size = this.state.height-70
     }
@@ -26170,6 +26186,7 @@ class App extends Component {
 
 
 
+
   render_transfer_stake_bottomsheet(){
     if(this.state.transfer_stake_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -26240,6 +26257,87 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack_clone)
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+  render_add_stake_bottomsheet(){
+    if(this.state.add_stake_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <AddStakePage ref={this.add_stake_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_add_stake_to_stack={this.add_add_stake_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      />,
+      this.state.add_stake_bottomsheet,
+      this.open_add_stake_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_add_stake_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_add_stake_bottomsheet')
+    if(this.state.add_stake_bottomsheet == true){
+      //closing
+      this.add_stake_bottomsheet = this.add_stake_page.current?.state;
+
+      this.setState({add_stake_bottomsheet: !this.state.add_stake_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({add_stake_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({add_stake_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({add_stake_bottomsheet: !me.state.add_stake_bottomsheet});
+
+          if(me.add_stake_bottomsheet != null){
+            me.add_stake_page.current?.setState(me.add_stake_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_add_stake_bottomsheet(object){
+    this.open_add_stake_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.add_stake_page.current != null){
+      me.add_stake_page.current.set_contract(object)
+    }
+    }, (1 * 1100));
+  }
+
+  add_add_stake_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
 
 
 
@@ -34452,6 +34550,7 @@ class App extends Component {
           contract_obj['pre_purchase_transfer_events'] = previous_obj['pre_purchase_transfer_events']
           contract_obj['prepurchase_awards_events'] = previous_obj['prepurchase_awards_events']
           contract_obj['interactible_hidden'] = previous_obj['interactible_hidden']
+          contract_obj['balance_obj'] = previous_obj['balance_obj']
         }
       }
 
@@ -34640,6 +34739,30 @@ class App extends Component {
       await this.load_contracts_obligation_metadata(object['e5_id'])
     }
 
+
+    const exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(id, e5, {})
+    const focused_exchanges = [];
+    const depths = []
+    exchanges_to_load_first.forEach(exchange_id => {
+      depths.push(0)
+      if(!focused_exchanges.includes(parseInt(exchange_id)) && parseInt(exchange_id) != 3 && parseInt(exchange_id) != 5){
+        focused_exchanges.push(parseInt(exchange_id))
+      }
+    });
+
+    const token_balances_and_data = await this.get_balance_from_multiple_exchanges(focused_exchanges, id, H52contractInstance, depths, e5)
+    const token_balances = token_balances_and_data['bal']
+    const token_balances_data = token_balances_and_data['bal_data']
+
+    const balance_obj = {}
+    focused_exchanges.forEach((exchange, index) => {
+      balance_obj[exchange] = {
+        'balance':token_balances[index], 
+        'balance_data':token_balances_data[index]
+      }
+    });
+
+
     object['end_balance'] = end_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['spend_balance'] = spend_balance.toString().toLocaleString('fullwide', {useGrouping:false})
     object['participants'] = contract_entered_accounts
@@ -34651,6 +34774,7 @@ class App extends Component {
     object['my_blocked_time_value'] = my_blocked_time_value[i][0]
     object['obligation_configurations'] = configurations
     object['entry_expiry'] = entered_timestamp_data[i][0]
+    object['balance_obj'] = balance_obj;
     object['hidden'] = false
 
 
@@ -34712,6 +34836,8 @@ class App extends Component {
     await loading_prepurchase_balance(object)
     await this.wait(700)
     this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
+
+    this.load_token_data(focused_exchanges, e5)
   }
 
   async load_prepurchase_balance_for_prompt(data){
@@ -35219,9 +35345,9 @@ class App extends Component {
     
     const exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
 
-    console.log('get_token_data','token events to load', created_token_events)
-    const test_load = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
-    console.log('get_token_data','actual token events from indexer', test_load)
+    // console.log('get_token_data','token events to load', created_token_events)
+    // const test_load = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+    // console.log('get_token_data','actual token events from indexer', test_load)
 
     if(prioritized_accounts && prioritized_accounts.length > 0){
       var my_posted_events = created_token_events.filter(function (event) {
@@ -35473,10 +35599,10 @@ class App extends Component {
         }
         else if(tokens_data['fractionalized_asset'] == true){
           const fractionalized_assets_clone = structuredClone(this.state.fractionalized_assets)
-          if(fractionalized_assets_clone[token_obj['e5_id']] == null){
-            fractionalized_assets_clone[token_obj['e5_id']]
+          if(fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */] == null){
+            fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */]
           }
-          fractionalized_assets_clone[token_obj['e5_id']][tokens_data['depth']] = token_obj
+          fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */][token_obj['e5_id']] = token_obj
           this.setState({fractionalized_assets: fractionalized_assets_clone})
         }
         else{
