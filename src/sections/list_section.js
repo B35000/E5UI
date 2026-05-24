@@ -947,6 +947,7 @@ class PostListSection extends Component {
         object[this.props.app_state.loc['1218']/* 'ends' */] = this.props.app_state.created_tokens
         object[this.props.app_state.loc['1219']/* 'spends' */] = this.props.app_state.created_tokens
         object[this.props.app_state.loc['1264ai']/* bills */] = this.props.app_state.created_bills
+        object[this.props.app_state.loc['1264bw']/* 'certificates' */] = this.props.app_state.created_certificates
 
         if(reload != null){
             // console.log('is_loading_object_data', 'load_contract_data', this.props.app_state.is_fetching_objects, active_page)
@@ -8124,6 +8125,8 @@ return data['data']
         var all_items = this.get_certificate_exchanges()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
+        // console.log('render_certificate_list_gorup', this.props.app_state.created_certificates)
+
         if(items.length == 0){
             items = ['0','1'];
             return ( 
@@ -8134,7 +8137,7 @@ return data['data']
                         {this.show_new_objects_message_if_any(all_items)}
                         {items.map((item, index) => (
                             <div>
-                                {this.is_loading_object_data() == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
                                 <div style={{height: 2}}/>
                             </div>
                         ))}
@@ -8142,7 +8145,7 @@ return data['data']
                 </div>
             );
         }
-        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 {this.render_line_loader_if_reloading()}
@@ -8174,7 +8177,7 @@ return data['data']
     }
 
     get_certificate_exchanges(){
-        return this.order_elements(this.remove_duplicates(this.props.get_certifiate_items()), 'e5_id');
+        return this.order_elements(this.remove_duplicates(this.props.get_certificate_items()), 'e5_id');
     }
 
     render_certificate_object(object, index){
@@ -8198,7 +8201,7 @@ return data['data']
         if(object == null) return;
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
             return(
-                <div onClick={() => this.when_proposal_item_clicked(index, object)}>
+                <div onClick={() => this.when_certificate_item_clicked(index, object)}>
                     {this.render_detail_item('3', item['min'])}
                 </div>
             )
@@ -8208,7 +8211,7 @@ return data['data']
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_proposal_item_clicked(index, object)}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_certificate_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
                     <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_proposal_item_clicked(index, object)} */>
@@ -8223,8 +8226,8 @@ return data['data']
     format_certificate_item(object){
         var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
-        var age = item['event'].returnValues.p5
-        var time = item['event'].returnValues.p4
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
         var sender = this.get_senders_name(object['author'], object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
@@ -8234,7 +8237,7 @@ return data['data']
         }
     }
 
-    when_spends_object_item_clicked(index, item){
+    when_certificate_item_clicked(index, item){
         setTimeout(() => this.props.when_certificate_object_clicked(index, item['id'], item['e5'], item), animate_time);
     }
 

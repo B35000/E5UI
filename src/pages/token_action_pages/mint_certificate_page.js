@@ -135,6 +135,17 @@ class MintCertificatePage extends Component {
         return obj;
     }
 
+    get_markdown_preview_or_editor_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
+            ],
+        };
+    }
+
 
 
 
@@ -227,6 +238,20 @@ class MintCertificatePage extends Component {
 
 
 
+    constructor(props) {
+        super(props);
+        this.screen = React.createRef()
+    }
+
+    componentDidUpdate(prevProps){
+        if(this.screen.current?.offsetWidth != this.state.screen_width){
+            this.setState({screen_width: this.screen.current?.offsetWidth})
+        }
+    }
+
+
+
+
 
     render_root(){
         var size = this.props.app_state.size
@@ -285,7 +310,7 @@ class MintCertificatePage extends Component {
         const e5 = object['e5']
         // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
         return(
-            <div>
+            <div ref={this.screen}>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
@@ -360,9 +385,7 @@ class MintCertificatePage extends Component {
         if(current_stack_size != -1){
             const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
             const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
-            
-            const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
-            const upload_limit = post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ ? (1024*23) : this.props.app_state.upload_object_size_limit;
+            const upload_limit = this.props.app_state.upload_object_size_limit;
             
             var existing_percentage = this.round_off((current_stack_size / upload_limit) * 100)
             var additional_percentage = this.round_off((size / upload_limit) * 100)
@@ -576,8 +599,8 @@ class MintCertificatePage extends Component {
     }
 
     get_edited_text_object(){
-        var font = this.get_selected_item(this.state.get_new_job_page_tags_object, 'font')
-        var size = this.get_selected_item(this.state.get_new_job_page_tags_object, 'size')
+        var font = this.get_selected_item(this.state.new_mint_title_tags_object, 'font')
+        var size = this.get_selected_item(this.state.new_mint_title_tags_object, 'size')
         if(this.props.app_state.kaomojis.includes(this.state.entered_text.trim())){
             font = 'Sans-serif'
             size = '40px'
@@ -1649,7 +1672,7 @@ class MintCertificatePage extends Component {
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)}
                 
                 />
             </div>

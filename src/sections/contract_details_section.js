@@ -39,6 +39,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 const originalWarn = console.warn;
 console.warn = (...args) => {
   if (args[0]?.includes('react-virtuoso: Zero-sized element')) return;
@@ -1556,7 +1563,7 @@ class ContractDetailsSection extends Component {
     }
 
     render_other_balances(object){
-        const balance_obj = object['balance_obj']
+        const balance_obj = object['balance_obj'] || {}
         const exchanges = Object.keys(balance_obj)
         const data = this.resolve_exchanges(exchanges, object['e5'])
         if(data.all_exchange_data.length == 0) return;

@@ -1018,7 +1018,7 @@ class ViewGroups extends Component {
                             // p: ({ node, ...props }) => <p style={{ color: this.props.theme['secondary_text_color'],  'word-wrap': word_wrap_value }} {...props} />,
 
                             p: ({ node, ...props }) => {
-                                console.log('markdown',props.children)
+                                // console.log('markdown',props.children)
                                 const text = props.children
 
                                 const processed = typeof text === "string" ? this.split_text(text).map((part, i) => (check_if_is_link(part) || check_if_is_account_link(part)) ? (

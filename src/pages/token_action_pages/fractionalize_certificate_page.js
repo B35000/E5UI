@@ -177,11 +177,11 @@ class FractionalizeCertificatePage extends Component {
 
     render_select_targets_data(){
         const remainder = this.get_remainder_as_proportion()
-        const posession_rights = (this.state.model_data['posession_rights']/ 10^18) * 100
+        const posession_rights = (this.state.model_data['posession_rights']/ 10**18) * 100
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3101c']/* 'Fractionalize your owned certificate.' */})}
-                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3101s']/* 'By default you will receive the remaining shares shown below.' */})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['3101s']/* 'By default you will receive the remaining shares shown below.' */})}
                 <div style={{height:10}}/> 
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -226,7 +226,7 @@ class FractionalizeCertificatePage extends Component {
         this.setState({proportion_amount: number})
     }
 
-    add_share_and_recipient(){
+    async add_share_and_recipient(){
         var recipient = await this.get_typed_alias_id(this.state.recipient_id.toString().trim())
         const proportion = this.state.proportion_amount
         const clone = structuredClone(this.state.fractionalization_data)
@@ -245,7 +245,7 @@ class FractionalizeCertificatePage extends Component {
         }
         else{
             clone[recipient] = proportion
-            this.setState({fractionalization_data: clone, recipient:''})
+            this.setState({fractionalization_data: clone, recipient_id:''})
             this.props.notify(this.props.app_state.loc['3101l']/* 'recipient\'s proportion set.' */, 900)
         }
     }
@@ -261,7 +261,7 @@ class FractionalizeCertificatePage extends Component {
 
     get_remainder_as_proportion(){
         const my_balance = this.get_remainder()
-        return (my_balance / 10^18) * 100
+        return (my_balance / 10**18) * 100
     }
 
     async get_typed_alias_id(alias){
@@ -354,7 +354,9 @@ class FractionalizeCertificatePage extends Component {
     }
 
     get_account_alias2(account_id){
-        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id] == null ? ('') : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id])
+        const alias = this.props.app_state.alias_bucket[this.props.app_state.stack_items[this.state.transaction_index].e5][account_id]
+        if(alias == null) return '';
+        else return alias;
     }
     
 
@@ -461,6 +463,7 @@ class FractionalizeCertificatePage extends Component {
         }
         else{
             this.props.add_fractionalize_certificate_to_stack(this.state)
+            this.setState({fractionalization_data: {}, recipient_id:''})
             this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
         }
     }
@@ -480,6 +483,37 @@ class FractionalizeCertificatePage extends Component {
         }
         return true
     }
+
+
+
+
+
+
+
+    set_recipients_data = async () => {
+        var recipients_data = await this.props.get_local_storage_data_if_enabled("transfer_data");
+        if(recipients_data != null && recipients_data != ""){
+            this.setState({recipients_data: recipients_data})
+        }
+    }
+
+    componentDidMount(){
+        this.set_recipients_data()
+    }
+
+    get_recipients_from_memory(){
+        const recipients_data = this.state.recipients_data;
+        if(recipients_data != null){
+            const data = JSON.parse(recipients_data)['data']
+            if(data != null) return data;
+            else return []
+        }
+        else return []
+    }
+
+
+
+
 
 
 
@@ -567,7 +601,7 @@ class FractionalizeCertificatePage extends Component {
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width}  show_images={this.props.show_images.bind(this)}
                 
                 />
             </div>

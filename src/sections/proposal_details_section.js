@@ -1582,7 +1582,7 @@ class ProposalDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
-                                {this.render_detail_item('3', args[item]['object'])}
+                                {this.render_detail_item('3', item['object'])}
                             </li>
                         ))}
                     </ul>

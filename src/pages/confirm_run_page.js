@@ -291,7 +291,13 @@ class ConfirmRunPage extends Component {
                         txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */ ||
                         txs[i].type == this.props.app_state.loc['19']/* 'exit-contract' */ ||
                         txs[i].type == this.props.app_state.loc['297']/* 'post' */ ||
-                        txs[i].type == this.props.app_state.loc['760']/* 'job' */
+                        txs[i].type == this.props.app_state.loc['760']/* 'job' */ ||
+                        txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */ ||
+                        txs[i].type == this.props.app_state.loc['3099']/* 'mint-certificate' */ ||
+                        txs[i].type == this.props.app_state.loc['3100']/* 'transfer-certificate' */ ||
+                        txs[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */ ||
+                        txs[i].type == this.props.app_state.loc['3102']/* 'transfer-stake' */ ||
+                        txs[i].type == this.props.app_state.loc['3103']/* 'add-stake' */
                     ){
                         should_include = true
                     }

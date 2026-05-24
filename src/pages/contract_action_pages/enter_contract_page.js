@@ -29,6 +29,9 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 var bigInt = require("big-integer");
 
 function number_with_commas(x) {
@@ -50,6 +53,13 @@ function makeid(length) {
       counter += 1;
     }
     return result;
+}
+
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
 }
 
 class EnterContractPage extends Component {
@@ -507,6 +517,7 @@ class EnterContractPage extends Component {
 
 
     add_tokens_ui(){
+        var size = this.props.app_state.size
         if(size == 's'){
             return(
                 <div>
@@ -555,7 +566,7 @@ class EnterContractPage extends Component {
                 <div style={{height:20}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['916']/* 'Token Target ID...' */} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
 
-                {this.load_account_suggestions('token_target')}
+                {this.load_token_suggestions('token_target')}
                 {this.render_detail_item('0')}
 
 
@@ -668,6 +679,7 @@ class EnterContractPage extends Component {
 
 
     add_certificates_ui(){
+        var size = this.props.app_state.size
         if(size == 's'){
             return(
                 <div>
@@ -713,7 +725,7 @@ class EnterContractPage extends Component {
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3103f']/* 'Certificate Targets' */, 'details':this.props.app_state.loc['3103g']/* 'Select the certificates you wish to transfer to the contract. Only fractionalized certificates will show here.' */, 'size':'l'})}
-                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
 
                 <div style={{margin:'5px 10px 0px 10px'}}>
                     <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
@@ -866,8 +878,9 @@ class EnterContractPage extends Component {
 
     load_certificates(){
         const unfiltered_items = [].concat(this.get_suggested_certificates())
-        const items = unfiltered_items.filter((item) => {
+        const items = unfiltered_items.filter((render_item) => {
             const t = this.state.typed_search_fractionalized_tokens.trim().toLowerCase()
+            const item = render_item['object']
             const depth_data = item['ipfs']['depth_item']['depth_data']
             const model_config = item['ipfs']['model_data']
             const class_name = model_config['class_name']
@@ -898,7 +911,7 @@ class EnterContractPage extends Component {
     }
 
     show_line_if_selected(item){
-        if(item['object']['e5_id'] == selected_certificate_target){
+        if(item['object']['e5_id'] == this.state.selected_certificate_target){
             return(
                 <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
             )
@@ -930,6 +943,7 @@ class EnterContractPage extends Component {
                 sorted_token_exchange_data.push(exchanges_from_sync[i])
             }
         }
+        const items = []
         for (let i = 0; i < sorted_token_exchange_data.length; i++) {
             const object = sorted_token_exchange_data[i]
             const model_data = object['ipfs']['model_data']

@@ -115,7 +115,7 @@ class CertificateDetailsSection extends Component {
     }
 
     render_posts_list_detail(){
-        if(this.props.selected_post_item == null){
+        if(this.props.selected_certificate_item == null){
             return(
                 <div>
                     {this.render_empty_detail_object()}
@@ -302,7 +302,6 @@ class CertificateDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
         var size = this.props.screensize
-        // var object = this.get_post_items()[this.props.selected_post_item];
         var item = this.get_post_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
@@ -324,7 +323,7 @@ class CertificateDetailsSection extends Component {
                     {this.show_moderator_note_if_any(object)}
                     {this.render_post_state(object)}
                     <div onClick={() => this.add_to_contacts2(object)}>
-                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
+                        {this.render_detail_item('3', {'title':''+this.get_senders_name(object['author'], object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                     
@@ -343,8 +342,6 @@ class CertificateDetailsSection extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_revoke_author_privelages_event(object)}
-                    <div style={{height:10}}/>
-
 
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
@@ -935,8 +932,8 @@ class CertificateDetailsSection extends Component {
     get_post_details_data(object){
         var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
-        var age = item['event'].returnValues.p5
-        var time = item['event'].returnValues.p4
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
 
         var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
         var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
@@ -979,7 +976,6 @@ class CertificateDetailsSection extends Component {
 
 
     render_edit_object_button(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['author'] == my_account){
@@ -1100,7 +1096,7 @@ class CertificateDetailsSection extends Component {
                         <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a class...' */} when_text_input_field_changed={this.when_typed_search_id_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
                     </div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
-                    {this.render_certificate_classes(object)}
+                    {this.render_certificate_class_items(object)}
                 </div>
             </div>
         )
@@ -1118,7 +1114,7 @@ class CertificateDetailsSection extends Component {
         )
     }
 
-    render_certificate_classes(object){
+    render_certificate_class_items(object){
         var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
@@ -1151,16 +1147,99 @@ class CertificateDetailsSection extends Component {
     render_certificate_class_item(item, object){
         const data = object['ipfs'].certificate_models[item]
         const title = item
-        const details = this.format_account_balance_figure(data['maximum_supply']) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
+        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']*1000).toLocaleString()))
+        const class_mint_count = this.get_class_mint_count(object, this.construct_depth_item(data))
+        const footer_text = class_mint_count == 0 ? null : this.props.app_state.loc['3098bg']/* '$ Certificates Minted.' */.replace('$', number_with_commas(class_mint_count))
         return(
             <div onClick={() => this.view_class_details(item, object)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer_text})}
             </div>
         )
     }
-
+    
     view_class_details(item, object){
         this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_certificate_class_details')
+    }
+
+    construct_depth_item(data){
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const maximum_supply = data['maximum_supply']
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const class_id = data['id']
+
+        const start_time_minutes = Math.floor(purchase_start_time / 60)
+        const end_time_minutes = Math.floor(purchase_end_time / 60)
+        const price = base_fee_price_multiplier
+        const supply = maximum_supply
+        const token_class = class_id
+
+        const v3_depths_to_add/* depths_to_add */ = [
+            bgN(price, 54)/* exchange_ratio_y */, 
+            bgN(end_time_minutes, 45)/* end_time */, 
+            bgN(start_time_minutes, 36)/* start_time */, 
+            bgN(supply, 27)/* supply */, 
+            bgN(token_class, 18)/* class */, 
+            0/* identifier */
+        ]
+
+        var v4_depth_final/* targeted_depth */ = bigInt(0)
+        v3_depths_to_add/* depths_to_add */.forEach(value => {
+            v4_depth_final/* targeted_depth */ = bigInt(v4_depth_final/* targeted_depth */).plus(bigInt(value.toString().toLocaleString('fullwide', {useGrouping:false}))).toString().toLocaleString('fullwide', {useGrouping:false})
+        });
+
+        return this.deconstruct_depth_data(v4_depth_final)
+    }
+
+    get_class_mint_count(object, depth_data){
+        const all_depths_used = object['all_depths_used']
+        // console.log('get_class_mint_count', 'all_depths_used', all_depths_used, 'depth_data', depth_data)
+        if(all_depths_used == null) return 0
+        const class_count_data = {}
+        const my_general_identifier = depth_data['price'] + depth_data['end_time'] + depth_data['start_time'] + depth_data['supply'] + depth_data['class']
+
+        all_depths_used.forEach(depth => {
+            const deconstructed_object = this.deconstruct_depth_data(depth)
+            const general_identifier = deconstructed_object['price'] + deconstructed_object['end_time'] + deconstructed_object['start_time'] + deconstructed_object['supply'] + deconstructed_object['class'];
+            if(
+                depth_data['class'] == deconstructed_object['class'] && 
+                depth_data['supply'] == deconstructed_object['supply'] &&
+                depth_data['start_time'] == deconstructed_object['start_time'] &&
+                depth_data['end_time'] == deconstructed_object['end_time'] &&
+                depth_data['price'] == deconstructed_object['price']
+            ){
+                if(class_count_data[general_identifier] == null){
+                    class_count_data[general_identifier] = 0;
+                }
+                class_count_data[general_identifier] ++;
+            }
+        });
+
+        // console.log('get_class_mint_count','class_count_data', class_count_data)
+        return class_count_data[my_general_identifier] || 0
+    }
+
+    deconstruct_depth_data(depth){
+        const depth_price_data = this.deconstruct(depth, 54)
+        const depth_end_time_data = this.deconstruct(depth_price_data.remainder, 45)
+        const depth_start_time_data = this.deconstruct(depth_end_time_data.remainder, 36)
+        const depth_supply_data = this.deconstruct(depth_start_time_data.remainder, 27)
+        const depth_class_data = this.deconstruct(depth_supply_data.remainder, 18)
+        return {
+            'class': depth_class_data.value,
+            'identifier': depth_class_data.remainder,
+            'supply':depth_supply_data.value,
+            'start_time': depth_start_time_data.value,
+            'end_time':depth_end_time_data.value,
+            'price':depth_price_data.value,
+            'full':depth
+        }
+    }
+    
+    deconstruct(arg, power){
+        const value = (bigInt(arg).divide(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
+        const remainder = (bigInt(arg).mod(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
+        return { value, remainder }
     }
 
 
@@ -1195,7 +1274,7 @@ class CertificateDetailsSection extends Component {
         this.setState({typed_search_acquired_tokens: text})
     }
 
-    render_acquired_classes_top_title(){
+    render_acquired_classes_top_title(object){
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['3098x']/* 'Acquired Full Certificates' */, 'size':'l'})}
@@ -1249,8 +1328,9 @@ class CertificateDetailsSection extends Component {
 
     get_acquired_tokens(object){
         const non_fungible_token_data = this.props.app_state.non_fungible_token_data[object['e5_id']] || {}
-        const my_account = this.props.app_state.user_account_id[object['e5_id']]
-        const account_data = non_fungible_token_data[object['e5_id']+':'+my_account] || {}
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+        const account_data = non_fungible_token_data[object['e5']+':'+my_account] || {}
+        // console.log('get_acquired_tokens', this.props.app_state.non_fungible_token_data)
         return this.sortByAttributeDescending(Object.values(account_data), 'time')
     }
 
@@ -1261,8 +1341,10 @@ class CertificateDetailsSection extends Component {
         const event = item['event']
         const time = item['time']
         const model_config = this.get_model_config(depth_data, object)
-        
-        const title = depth_data['identifier']
+        const class_name = model_config['class_name']
+        const maximum_supply = model_config['maximum_supply']
+        const identifier_text = this.props.app_state.loc['3098be']/* '$ out of &' */.replace('$', depth_data['identifier']).replace('&', maximum_supply)
+        const title = identifier_text + ' • '+ class_name
         const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
         return(
             <div onClick={() => this.view_acquired_class_item_details(item, object)}>
@@ -1384,9 +1466,13 @@ class CertificateDetailsSection extends Component {
 
     render_fractionalized_class_item(item, object){
         const depth_data = item['ipfs']['depth_item']['depth_data']
-        const title = depth_data['identifier']
-        const time = item['ipfs']['depth_item']['time']
-        const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+        const model_config = item['ipfs']['model_data']
+        const class_name = model_config['class_name']
+        const maximum_supply = model_config['maximum_supply']
+        const identifier_text = this.props.app_state.loc['3098be']/* '$ out of &' */.replace('$', depth_data['identifier']).replace('&', maximum_supply)
+        const title = identifier_text + ' • '+ class_name
+        const time = item['timestamp']
+        const details = this.props.app_state.loc['3098bf']/* 'Fractionalized on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
         return(
             <div onClick={() => this.view_fractionalized_class_item_details(item, object)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}

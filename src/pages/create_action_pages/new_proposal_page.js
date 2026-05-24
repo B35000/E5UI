@@ -60,6 +60,13 @@ function makeid(length) {
     return result;
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class NewProposalPage extends Component {
     
     state = {
@@ -2904,6 +2911,7 @@ return data['data']
 
 
     render_certificate_transfer(){
+        var size = this.props.app_state.size
         if(size == 's'){
             return(
                 <div>
@@ -2949,7 +2957,7 @@ return data['data']
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3103f']/* 'Certificate Targets' */, 'details':this.props.app_state.loc['438bu']/* 'Select the certificates you wish to transfer out of the contract' */, 'size':'l'})}
-                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
 
                 <div style={{margin:'5px 10px 0px 10px'}}>
                     <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
@@ -2989,7 +2997,7 @@ return data['data']
         this.setState({proportion_amount: number})
     }
 
-    add_certificate_transfer_item(){
+    async add_certificate_transfer_item(){
         const selected_certificate = this.state.selected_certificate
         const proportion = this.state.proportion_amount
         const spend_target = await this.get_typed_alias_id(this.state.spend_target_input_text.toString().trim())
@@ -3013,7 +3021,6 @@ return data['data']
             const class_name = model_data['class_name']
             const time = object['ipfs']['depth_item']['time']
             const details = class_name + ' • ' + this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
-            const proportion = proportion
             const title = this.format_proportion(proportion)
             const alias = this.get_account_alias2(spend_target) 
             const footer = spend_target + (alias == '' ? '' : ' • '+ alias)
@@ -3050,7 +3057,9 @@ return data['data']
         values.forEach(proportion => {
             total = total.plus(proportion)
         });
-        return bigInt(selected_certificate['balance']).minus(total)
+        const contract = this.state.contract_item;
+        const balance_obj = contract['balance_obj']
+        return bigInt(balance_obj[selected_certificate['id']]['balance']).minus(total)
     }
 
 
@@ -3132,8 +3141,9 @@ return data['data']
 
     load_certificates(){
         const unfiltered_items = [].concat(this.get_suggested_certificates())
-        const items = unfiltered_items.filter((item) => {
+        const items = unfiltered_items.filter((render_item) => {
             const t = this.state.typed_search_fractionalized_tokens.trim().toLowerCase()
+            const item = render_item['object']
             const depth_data = item['ipfs']['depth_item']['depth_data']
             const model_config = item['ipfs']['model_data']
             const class_name = model_config['class_name']
@@ -3164,7 +3174,7 @@ return data['data']
     }
 
     show_line_if_selected(item){
-        if(item['object']['e5_id'] == selected_certificate_target){
+        if(item['object']['e5_id'] == this.state.selected_certificate_target){
             return(
                 <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
             )
@@ -3173,11 +3183,11 @@ return data['data']
 
     get_suggested_certificates(){
         const contract = this.state.contract_item;
-        const balance_obj = object['balance_obj']
+        const balance_obj = contract['balance_obj']
         const exchanges = Object.keys(balance_obj)
-        const data = this.resolve_exchanges(exchanges, object['e5'])
+        const data = this.resolve_exchanges(exchanges, contract['e5'])
         const { all_exchange_data, exchanges_from_sync } = data
-
+        const items = []
         for (let i = 0; i < all_exchange_data.length; i++) {
             const exchange_id = all_exchange_data[i]
             const object = exchanges_from_sync[exchange_id]
@@ -3185,7 +3195,7 @@ return data['data']
             const class_name = model_data['class_name']
             const time = object['ipfs']['depth_item']['time']
             const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
-            items.push({'object':object, 'label':{'title':start_and_end(class_name), 'details':this.format_proportion(object['balance']), 'footer':footer, 'size':'l'}})
+            items.push({'object':object, 'label':{'title':start_and_end(class_name), 'details':this.format_proportion(balance_obj[object['id']]['balance']), 'footer':footer, 'size':'l'}})
         }
         return items;
     }
@@ -3341,7 +3351,7 @@ return data['data']
     }
 
 
-    add_spend_action_to_list(){
+    async add_spend_action_to_list(){
         const spend_target = await this.get_typed_alias_id(this.state.spend_target_input_text.toString().trim())
         var spend_token = this.get_token_id_from_symbol(this.state.spend_token_input_text.trim())
         var amount = this.state.spend_amount;

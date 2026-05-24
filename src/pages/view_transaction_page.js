@@ -2487,6 +2487,7 @@ return data['data']
         var he = this.props.height-150
         var object = this.format_post();
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        const item = this.get_certificate_details_data(object)
         var e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
@@ -2513,6 +2514,15 @@ return data['data']
                 </div>
             </div>
         )
+    }
+
+    get_certificate_details_data(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+        }
     }
 
     render_price_data(items, e5){
@@ -2544,7 +2554,7 @@ return data['data']
             <div>
                 {items.map((item, index) => (
                     <div style={{'margin': '1px 2px 1px 2px'}}>
-                        {this.render_model_item(item, model_data)}
+                        {this.render_model_item(item, model_data[item])}
                     </div>
                 ))}
             </div>
@@ -2553,7 +2563,7 @@ return data['data']
 
     render_model_item(item, data){
         const title = item
-        const details = this.format_account_balance_figure(data['maximum_supply']) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
+        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']*1000).toLocaleString()))
         return(
             <div onClick={() => this.edit_model_item(item)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
@@ -3194,7 +3204,7 @@ return data['data']
 
                 {item.exchange_transfer_values.length > 0 && this.load_transfer_actions2()}
                 <div style={{height:10}}/>
-                {Object.keys(fractionalization_data).length > 0 && this.render_set_recipients_list_part2()}
+                {Object.keys(item.fractionalization_data).length > 0 && this.render_set_recipients_list_part2()}
             </div>
         )
     }
@@ -3422,7 +3432,7 @@ return data['data']
         var object = this.format_proposal_post()
         var tags = object['ipfs'] == null ? ['Proposal'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
-        var consensus_obj = {0:this.props.app_state.loc['316']/* spend' */,1:this.props.app_state.loc['317']/* 'reconfig' */, 6:this.props.app_state.loc['318']/* 'exchange-transfer' */}
+        var consensus_obj = {0:this.props.app_state.loc['316']/* spend' */,1:this.props.app_state.loc['317']/* 'reconfig' */, 6:this.props.app_state.loc['318']/* 'exchange-transfer' */, 60: this.props.app_state.loc['438bt']/* certificate-transfer */}
         var proposal_config = object['data'][1]
         var consensus_type = consensus_obj[proposal_config[0]]
 
@@ -3676,7 +3686,7 @@ return data['data']
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', args[item]['object'])}
+                                {this.render_detail_item('3', item['object'])}
                             </li>
                         ))}
                     </ul>
@@ -6698,6 +6708,7 @@ return data['data']
         var he = this.props.height-150
         var object = this.format_post();
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        var item = this.get_certificate_details_data(object)
         var e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
@@ -8807,7 +8818,7 @@ return data['data']
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_contract(transaction_item)}
+                {this.render_contract(transaction_item.contract)}
                 <div style={{ height:15 }}/>
 
                 {this.render_detail_item('3', {'title':number_with_commas(transaction_item.default_keyword_combination), 'details':this.props.app_state.loc['3093dx']/* 'Keyword Combinations.' */, 'size':'l'})}
@@ -8840,26 +8851,25 @@ return data['data']
         return new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`)  
     }
 
-    render_contract(transaction_item){
-        const object = transaction_item.contract
+    render_contract(object){
         const item = this.format_contract_item2(object)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
 
         return(
-                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                    <div style={{'padding': '0px 0px 0px 5px'}}>
-                        {this.render_detail_item('1', item['tags'])}
-                        <div style={{height: 10}}/>
-                        <div style={{'padding': '0px 0px 0px 0px'}}>
-                            {this.render_detail_item('3', item['id'])}
-                        </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}}>
-                            {this.render_detail_item('2', item['age'])}
-                        </div>
-                    </div>         
-                </div>
-            )
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
     }
 
     format_contract_item2(object){
@@ -9486,7 +9496,7 @@ return data['data']
 
                 {this.render_detail_item('0')}
 
-                {this.render_item_data(items)}
+                {this.render_item_data(transaction_item.entered_objects)}
                 {this.render_item_images()}
                 {this.render_pdf_files_if_any()}
                 {this.render_zip_files_if_any()}
@@ -9539,8 +9549,8 @@ return data['data']
         const depth_item = transaction_item.depth_item
         const model_data = transaction_item.model_data
         const depth_data = depth_item['depth_data']
-        const name = depth_data['class_name']
-        const maximum_supply = depth_data['maximum_supply']
+        const name = model_data['class_name']
+        const maximum_supply = model_data['maximum_supply']
         const time = depth_item['time']
         return(
             <div>
@@ -9563,7 +9573,9 @@ return data['data']
     }
 
     get_account_alias2(account_id){
-        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id] == null ? ('') : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[account_id])
+        const alias = this.props.app_state.alias_bucket[this.props.app_state.stack_items[this.state.transaction_index].e5][account_id]
+        if(alias == null) return '';
+        else return alias;
     }
 
 
@@ -9582,8 +9594,8 @@ return data['data']
         const model_data = transaction_item.model_data
 
         const depth_data = depth_item['depth_data']
-        const name = depth_data['class_name']
-        const maximum_supply = depth_data['maximum_supply']
+        const name = model_data['class_name']
+        const maximum_supply = model_data['maximum_supply']
         const time = depth_item['time']
 
         const remainder = this.get_remainder_as_proportion()
@@ -9625,7 +9637,7 @@ return data['data']
 
     get_remainder_as_proportion(){
         const my_balance = this.get_remainder()
-        return (my_balance / 10^18) * 100
+        return (my_balance / 10**18) * 100
     }
 
     render_set_recipients_list_part(){
@@ -9709,7 +9721,7 @@ return data['data']
         const depth_data = item['ipfs']['depth_item']['depth_data']
         const ipfs = item['ipfs']['depth_item']['ipfs']
         const event = item['ipfs']['depth_item']['event']
-        const time = item['ipfs']['depth_item']['time']
+        const time = item['timestamp']
 
         const data = item['ipfs']['model_data']
         const name = data['class_name']
@@ -9718,8 +9730,8 @@ return data['data']
         const purchase_end_time = data['purchase_end_time']
 
         const my_balance = item['balance']
-        const my_stake = (my_balance / 10^18) * 100
-        const posession_rights = (data['posession_rights']/ 10^18) * 100
+        const my_stake = (my_balance / 10**18) * 100
+        const posession_rights = (data['posession_rights']/ 10**18) * 100
 
         const remainder = this.get_remainder_as_proportion2()
         return(
@@ -9733,7 +9745,7 @@ return data['data']
                 {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098bf']/* 'Fractionalized on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -9757,7 +9769,10 @@ return data['data']
         values.forEach(proportion => {
             total = total.plus(proportion)
         });
-        return bigInt('1e18').minus(total)
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const item = transaction_item.item
+        const my_balance = item['balance']
+        return bigInt(my_balance).minus(total)
     }
 
     get_values_from_stack(){
@@ -9766,10 +9781,10 @@ return data['data']
         for(var i=0; i<stack_transactions.length; i++){
             if(
                 stack_transactions[i].type == this.props.app_state.loc['3102']/* 'transfer-stake' */ &&
-                stack_transactions[i].token_item['id'] == this.state.token_item['id'] && 
-                stack_transactions[i].id != this.state.id && 
+                stack_transactions[i].token_item['id'] == this.props.app_state.stack_items[this.state.transaction_index].token_item['id'] && 
+                stack_transactions[i].id != this.props.app_state.stack_items[this.state.transaction_index].id && 
                 stack_transactions[i].e5 == this.props.app_state.selected_e5 &&
-                stack_transactions[i].item['ipfs']['depth_item']['depth'] == this.state.item['ipfs']['depth_item']['depth']
+                stack_transactions[i].item['ipfs']['depth_item']['depth'] == this.props.app_state.stack_items[this.state.transaction_index].item['ipfs']['depth_item']['depth']
             ){
                 values = values.concat(Object.values(stack_transactions[i].fractionalization_data))
             }
@@ -9779,7 +9794,7 @@ return data['data']
 
     get_remainder_as_proportion2(){
         const my_balance = this.get_remainder2()
-        return (my_balance / 10^18) * 100
+        return (my_balance / 10**18) * 100
     }
 
 
@@ -9845,7 +9860,7 @@ return data['data']
                             <SwipeableList>
                                 <SwipeableListItem>
                                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
-                                        {this.render_recipient_item(item)}
+                                        {this.render_recipient_item2(item)}
                                     </div>
                                 </SwipeableListItem>
                             </SwipeableList>

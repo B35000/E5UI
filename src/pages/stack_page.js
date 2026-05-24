@@ -5126,7 +5126,7 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(purchase_obj.buy_obj)
 
-                    strs.push(purchase_obj.string_obj)
+                    strs.push(purchase_obj.str)
                     adds.push([])
                     ints.push(purchase_obj.int)
                 }
@@ -5144,6 +5144,8 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(fractionalize_object.obj)
 
+                    new_tx_index = ints.length -1
+
                     strs.push([])
                     adds.push([])
                     ints.push(fractionalize_object.buy_obj)
@@ -5151,6 +5153,8 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(fractionalize_object.transfers_obj)
+
+                    should_optimize_run = false
                 }
                 else if(txs[i].type == this.props.app_state.loc['3102']/* 'transfer-stake' */){
                     var transfer_object = await this.format_transfer_stake_object(txs[i], calculate_gas, ipfs_index, ints)
@@ -5908,6 +5912,7 @@ class StackPage extends Component {
 
 
 
+        console.log('unoptimized run', ints, strs, adds)
 
 
         var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
@@ -12715,11 +12720,11 @@ class StackPage extends Component {
 
         var obj = [/* create token */
             [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
-            [0, 1, 1, 5, 1],
+            [0, 1, 0, 5, 1],
             [23, 23, 23, 23, 23],
 
-            [1, 0, 0, 0/* 3 */, 0, 0, 0, bgN(3, 5)/* 7 */, 0, exchange_authority, trust_fee_target, 0/* 11 */, 0, 0, 0, 0/* 15 */, 0, 0, 0],
-            [23, 23, 23, 23, 23, 23, 23, 23, 23, exchange_authority_type, trust_fee_target_type, 23, 23, 23, 23, 23, 23, 23, 23],
+            [100, 0, 0, 0/* 3 */, 0, 0, 0, bgN(3, 5)/* 7 */, 0, exchange_authority, trust_fee_target, 0/* 11 */, 0, 0, 0, 0/* 15 */, 0, 0, 0, 1000],
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, exchange_authority_type, trust_fee_target_type, 23, 23, 23, 23, 23, 23, 23, 23, 23],
 
             [1, 1, 0/* 2 */, 0, 0, 0, bgN(100, 16), 0/* 7 */,   bgN(1,54), bgN(1,45), bgN(1,36), bgN(1,27), 60/* 12 */, 0, bgN(1,26), 0, bgN(1,18), 0],
             [23, 23, 23, 23, 23, 23, 23, 23,  23, 23, 23, 23, 23, 23,  23, 23, 23, 23],
@@ -12770,7 +12775,7 @@ class StackPage extends Component {
 
         var target_id = t.token_item['id']
         var context = 32
-        var int_data = start_end_time
+        var int_data = start_end_time.toString().toLocaleString('fullwide', {useGrouping:false})
 
         var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
 
@@ -12804,7 +12809,7 @@ class StackPage extends Component {
             [30000, 8, 0],
             [target_id], [23],/* exchanges */
             [0], [53],/* receivers */
-            [1]/* amounts */, [0],/* action */
+            [price.toString().toLocaleString('fullwide', {useGrouping:false})]/* amounts */, [0],/* action */
             []/* lower_bounds */, [],/* upper_bounds */
             [v4_depth_final],/* depths */
         ];
@@ -12845,7 +12850,7 @@ class StackPage extends Component {
     format_transfer_certificate_object(t, ints){
         const exchange = t.token_item['id']
         const recipient = t.recipient
-        const depth = t.depth_item['full']
+        const depth = t.depth_item['depth']
         var transfers_obj = [/* send tokens to another account */
             [30000, 1, 0],
             [exchange.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* exchanges */
@@ -12858,10 +12863,10 @@ class StackPage extends Component {
 
     format_fractionalize_certificate_object = async (t, calculate_gas, ipfs_index, ints) => {
         const exchange = t.token_item['id']
-        const depth = t.depth_item['full']
+        const depth = t.depth_item['depth']
         var obj = [/* create token */
             [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
-            [0, 1, 1, 5, 0],
+            [0, 0, 0, 5, 0],
             [23, 23, 23, 23, 23],
 
             [1, 0, 0, 0/* 3 */, 0, 0, 0, 1/* 7 */, 0, 0, 0, 0/* 11 */, 0, 0, 0, 0/* 15 */, 0, 0, 0],
@@ -12875,7 +12880,7 @@ class StackPage extends Component {
             [depth.toString().toLocaleString('fullwide', {useGrouping:false})], [23]
         ]
 
-        const token_pos = ints.length -1
+        const token_pos = ints.length
 
         var buy_obj = [/* buy end/spend */
             [30000, 8, 0],
@@ -12883,7 +12888,7 @@ class StackPage extends Component {
             [0], [53],/* receivers */
             [1]/* amounts */, [0],/* action */
             []/* lower_bounds */, [],/* upper_bounds */
-            [depth.toString().toLocaleString('fullwide', {useGrouping:false})],/* depths */
+            [0],/* depths */
         ];
 
         var transfers_obj = [/* send tokens to another account */
@@ -12938,7 +12943,7 @@ class StackPage extends Component {
 
     format_add_stake_object = (t, ints) => {
         var ints_clone = ints.slice()
-        const object = t.contract
+        const object = t.contract || t.contract_item
         const recipient = object['id']
 
         var depth_swap_obj = [
@@ -12989,8 +12994,9 @@ class StackPage extends Component {
 
         const token_ids = Object.keys(t.fractionalization_data)
         for(var r=0; r<token_ids.length; r++){
-            const token_id = token_ids[r]
-            const proportion = t.fractionalization_data[token_id]['proportion']
+            const token_e5_id = token_ids[r]
+            const token_id = t.fractionalization_data[token_e5_id]['object']['id']
+            const proportion = t.fractionalization_data[token_e5_id]['proportion']
 
             transfers_obj[1].push(token_id)
             transfers_obj[2].push(23)
@@ -13649,51 +13655,6 @@ class StackPage extends Component {
 
 
 
-
-            var real_stack_arrays = [1, 3]
-            var obj = [/* ✔️send tokens to another account */
-                [30000, 1, 0],
-                [], [],/* exchanges */
-                [], [],/* receivers */
-                [],/* amounts */
-                []/* depths */
-            ]
-            var str_obj = [[]]
-            var add_obj = []
-            for(var i=0; i<ints.length; i++){
-                var global_action = ints[i][0][0]
-                if(global_action == obj[0][0]){
-                    var action = ints[i][0][1]
-                    if(action == obj[0][1]){
-                        for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach((element, index) => {
-                                if(real_stack_arrays.includes(j)){
-                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
-                                }
-                                else{
-                                    obj[j].push(element)
-                                }
-                            });
-                        }
-
-                        // strs[i][0].forEach(element => {
-                        //     str_obj[0].push(element)
-                        // });
-                        // adds[i].forEach(element => {
-                        //     add_obj.push(element)
-                        // });
-                    }
-                }
-            }
-            if(obj[1].length != 0){
-                new_ints.push(obj)
-                new_strs.push(str_obj)
-                new_adds.push(add_obj)
-            }
-
-
-
-
             var real_stack_arrays = [1]
             var obj = [/* ✔️pay subscription */
                 [30000, 2, 0],
@@ -13910,51 +13871,6 @@ class StackPage extends Component {
 
 
 
-
-            var real_stack_arrays = [1]
-            var obj = [/* send awwards */
-                [30000, 7, 0],
-                [], [],/* target receivers */
-                [],/* awward contexts */
-            ]
-            var str_obj = [[]]
-            var add_obj = []
-            for(var i=0; i<ints.length; i++){
-                var global_action = ints[i][0][0]
-                if(global_action == obj[0][0]){
-                    var action = ints[i][0][1]
-                    if(action == obj[0][1]){
-                        for(var j=1; j<4; j++){
-                            ints[i][j].forEach((element, index) => {
-                                if(real_stack_arrays.includes(j)){
-                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
-                                }
-                                else{
-                                    obj[j].push(element)
-                                }
-                            });
-                        }
-                        for(var j=4; j<ints[i].length; j++){
-                            obj.push(ints[i][j])
-                        }
-
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        // adds[i].forEach(element => {
-                        //     add_obj.push(element)
-                        // });
-                    }
-                }
-            }
-            if(obj[1].length != 0){
-                new_ints.push(obj)
-                new_strs.push(str_obj)
-                new_adds.push(add_obj)
-            }
-
-
-
             var real_stack_arrays = [1, 3]
             var obj = [/* ✔️buy end/spend */
                 [30000, 8, 0],
@@ -14041,6 +13957,102 @@ class StackPage extends Component {
                 new_strs.push(str_obj)
                 new_adds.push(add_obj)
             }
+
+
+
+
+
+
+
+
+            var real_stack_arrays = [1]
+            var obj = [/* send awwards */
+                [30000, 7, 0],
+                [], [],/* target receivers */
+                [],/* awward contexts */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<4; j++){
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
+                            });
+                        }
+                        for(var j=4; j<ints[i].length; j++){
+                            obj.push(ints[i][j])
+                        }
+
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+
+
+
+            var real_stack_arrays = [1, 3]
+            var obj = [/* ✔️send tokens to another account */
+                [30000, 1, 0],
+                [], [],/* exchanges */
+                [], [],/* receivers */
+                [],/* amounts */
+                []/* depths */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach((element, index) => {
+                                if(real_stack_arrays.includes(j)){
+                                    obj[j].push(get_final_item(element, ints[i][j+1][index]))
+                                }
+                                else{
+                                    obj[j].push(element)
+                                }
+                            });
+                        }
+
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
 
 
 

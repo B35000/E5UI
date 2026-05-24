@@ -143,6 +143,7 @@ class AddStakePage extends Component {
 
 
     add_tokens_ui(){
+        const size = this.props.size
         if(size == 's'){
             return(
                 <div>
@@ -191,7 +192,7 @@ class AddStakePage extends Component {
                 <div style={{height:20}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['916']/* 'Token Target ID...' */} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
 
-                {this.load_account_suggestions('token_target')}
+                {this.load_token_suggestions('token_target')}
                 {this.render_detail_item('0')}
 
 
@@ -300,6 +301,7 @@ class AddStakePage extends Component {
 
 
     add_certificates_ui(){
+        const size = this.props.size
         if(size == 's'){
             return(
                 <div>
@@ -345,7 +347,7 @@ class AddStakePage extends Component {
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3103f']/* 'Certificate Targets' */, 'details':this.props.app_state.loc['3103g']/* 'Select the certificates you wish to transfer to the contract' */, 'size':'l'})}
-                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
 
                 <div style={{margin:'5px 10px 0px 10px'}}>
                     <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
@@ -497,8 +499,9 @@ class AddStakePage extends Component {
 
     load_certificates(){
         const unfiltered_items = [].concat(this.get_suggested_certificates())
-        const items = unfiltered_items.filter((item) => {
+        const items = unfiltered_items.filter((render_item) => {
             const t = this.state.typed_search_fractionalized_tokens.trim().toLowerCase()
+            const item = render_item['object']
             const depth_data = item['ipfs']['depth_item']['depth_data']
             const model_config = item['ipfs']['model_data']
             const class_name = model_config['class_name']
@@ -529,7 +532,7 @@ class AddStakePage extends Component {
     }
 
     show_line_if_selected(item){
-        if(item['object']['e5_id'] == selected_certificate_target){
+        if(item['object']['e5_id'] == this.state.selected_certificate_target){
             return(
                 <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
             )
@@ -561,6 +564,7 @@ class AddStakePage extends Component {
                 sorted_token_exchange_data.push(exchanges_from_sync[i])
             }
         }
+        const items = []
         for (let i = 0; i < sorted_token_exchange_data.length; i++) {
             const object = sorted_token_exchange_data[i]
             const model_data = object['ipfs']['model_data']
@@ -865,7 +869,7 @@ class AddStakePage extends Component {
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)}
                 
                 />
             </div>

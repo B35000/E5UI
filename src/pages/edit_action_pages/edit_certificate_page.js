@@ -296,6 +296,10 @@ class EditCertificatePage extends Component {
         this.screen = React.createRef()
     }
 
+    componentDidMount(){
+        this.setState({screen_width: this.screen.current.offsetWidth})
+    }
+
 
 
 
@@ -359,7 +363,7 @@ class EditCertificatePage extends Component {
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['302']})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['d311cb']/* 'Set some tags for indexing your new certificate.' */})}
                 <div style={{height:10}}/>
 
                 <div className="row" style={{width:'99%'}}>
@@ -554,8 +558,7 @@ class EditCertificatePage extends Component {
             const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
             const stack_size_in_bytes_formatted_data_size = this.format_data_size2(size)
             
-            const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
-            const upload_limit = post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ ? (1024*23) : this.props.app_state.upload_object_size_limit;
+            const upload_limit = this.props.app_state.upload_object_size_limit;
             
             var existing_percentage = this.round_off((current_stack_size / upload_limit) * 100)
             var additional_percentage = this.round_off((size / upload_limit) * 100)
@@ -1964,7 +1967,7 @@ class EditCertificatePage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['d311t']/* 'Purchase Start Time.' */, 'details':this.props.app_state.loc['d311u']/* 'Specify a time after which the class\'s certificates can be purcahsed.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_start_time).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_start_time), 'size':'l'})}
+                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_start_time*1000).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_start_time- (Date.now()/1000)), 'size':'l'})}
 
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
                     <CssBaseline />
@@ -1980,7 +1983,7 @@ class EditCertificatePage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['d311w']/* 'Purchase End Time.' */, 'details':this.props.app_state.loc['d311x']/* 'Specify a time after which the class\'s certificates cannot be purchased.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_end_time).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_end_time), 'size':'l'})}
+                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_end_time*1000).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_end_time - (Date.now()/1000)), 'size':'l'})}
 
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
                     <CssBaseline />
@@ -2006,7 +2009,7 @@ class EditCertificatePage extends Component {
                 {this.render_detail_item('0')} */}
 
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['d311bz']/* 'The threshold after which an owner has rights to posess the item this certificate represents if fractionalization is enabled and carried out.' */, 'title':this.props.app_state.loc['d311bx']/* 'Posession Rights Threshold' */})}
-                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['d311ca']/* 'If unset, the default used will be 100%' */})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['d311ca']/* 'If unset, the default used will be 100%' */})}
                 
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.format_proportion(this.state.posession_rights), 'details':this.props.app_state.loc['d311by']/* 'Posession Rights Proportion.' */, 'size':'l'})}
@@ -2021,7 +2024,7 @@ class EditCertificatePage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['d311bc']/* 'Price Multiplier' */, 'subtitle':this.format_power_figure(this.state.base_fee_price_multiplier), 'barwidth':this.calculate_bar_width(this.state.base_fee_price_multiplier), 'number':this.format_account_balance_figure(this.state.base_fee_price_multiplier), 'barcolor':'', 'relativepower':this.props.app_state.loc['d311bd']/* 'tokens' */, })}
                 </div>
-
+                <div style={{height:10}}/>
                 {this.render_multiplied_prices()}
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_base_fee_price_multiplier.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -2188,7 +2191,7 @@ class EditCertificatePage extends Component {
     render_model_item(item){
         const data = this.state.certificate_models[item]
         const title = item
-        const details = this.format_account_balance_figure(data['maximum_supply']) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
+        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
         const opacity = this.state.edit_id == data['id'] ? 0.5 : 1.0
         return(
             <div style={{opacity: opacity}} onClick={() => this.edit_model_item(item)}>
@@ -2537,8 +2540,6 @@ class EditCertificatePage extends Component {
         var price_data = this.state.price_data
         var certificate_models = this.state.certificate_models
 
-        const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
-        const size = this.lengthInUtf8Bytes(JSON.stringify(this.state))
 
         if(index_tags.length < 3){
             this.props.notify(this.props.app_state.loc['270'], 2700)
@@ -2569,7 +2570,9 @@ class EditCertificatePage extends Component {
 
 
 
-
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
 
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']

@@ -1479,7 +1479,7 @@ class App extends Component {
         first_block:22528756, end_image:'https://nftstorage.link/ipfs/bafkreihciglctxpprbcf3xx7ykrzfxacfblvdtjnld7p4hfczsyy67aajy', spend_image:'https://nftstorage.link/ipfs/bafkreianjrpyl6xi7vz3aahnvqy6r3liysoc4sg5z742xlawip7if4qjsi', ether_image:celo_logo/* 'https://nftstorage.link/ipfs/bafkreidcfqahs3qwnte4do6di6gvcczfwu4bikwvkqlcrmaekheevohvce' */, iteration:40_000, url:1, active:false, e5_img:null
       },
       'E65':{
-        web3:['https://rpc.ftso.au/flare'],
+        web3:['https://rpc.au.cc/flare'],
         token:'FLR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
         first_block:15492557, end_image:'https://nftstorage.link/ipfs/bafkreibxgvjqeewxnpvlhbr7fdffjqpdlm46jgq46n4ph5ycntc4gkg3iu', spend_image:'https://nftstorage.link/ipfs/bafkreibi6jb4mv3lukllruf5byelbq2hbtnzksefixsf34dozga33urv34', ether_image:flare_logo/* 'https://nftstorage.link/ipfs/bafkreibcju2icekhorub6nhkvuwidz52s3kt5wxq5pivowqkchodczvsru' */, iteration:40_000, url:0, active:false, e5_img:null
@@ -1849,7 +1849,7 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:doublea_logo/* 'https://nftstorage.link/ipfs/bafkreidtmpi7bagyu7vtvspkx7nx73bztl7g7raxhprlqhdzt4226gy5ne' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E655':{
-        web3:['https://rpc.evm.karura.network'],
+        web3:['https://eth-rpc-karura.aca-api.network'],
         token:'KAR',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:karura_logo/* 'https://nftstorage.link/ipfs/bafkreihmmav45jddg6egaooccb7ywij3ietijnvtzep7vfyy2gjazfsdjq' */, iteration:3_000, url:0, active:false, e5_img:null
@@ -4984,8 +4984,8 @@ class App extends Component {
         sync_steps:28,
 
         created_certificates:this.state.created_certificates, 
-        non_fungible_token_data:this.state.non_fungible_token_data, 
-        fractionalized_assets:this.state.fractionalized_assets,
+        // non_fungible_token_data:this.state.non_fungible_token_data, 
+        // fractionalized_assets:this.state.fractionalized_assets,
       }
 
       return cached_state_obj
@@ -26029,7 +26029,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <TransferCertificatePage ref={this.transfer_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_certificate_to_stack={this.add_transfer_certificate_to_stack.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
       />,
       this.state.transfer_certificate_bottomsheet,
       this.open_transfer_certificate_bottomsheet,
@@ -26112,7 +26112,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <FractionalizeCertificatePage ref={this.fractionalize_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_fractionalize_certificate_to_stack={this.add_fractionalize_certificate_to_stack.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
       />,
       this.state.fractionalize_certificate_bottomsheet,
       this.open_fractionalize_certificate_bottomsheet,
@@ -26195,7 +26195,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <TransferStakePage ref={this.transfer_stake_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_stake_to_stack={this.add_transfer_stake_to_stack.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
       />,
       this.state.transfer_stake_bottomsheet,
       this.open_transfer_stake_bottomsheet,
@@ -26277,7 +26277,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <AddStakePage ref={this.add_stake_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_add_stake_to_stack={this.add_add_stake_to_stack.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
       />,
       this.state.add_stake_bottomsheet,
       this.open_add_stake_bottomsheet,
@@ -35562,6 +35562,7 @@ class App extends Component {
       const spend_balance = (tokens_data != null && tokens_data.token_type == 'e') ? e_token_balance_data[token_id] : 0
       
       const is_certificate = created_token_data[i][0][4/* <4>non-fungible */] == 1
+      console.log('get_token_data', e5, token_id, 'is certificate: ',is_certificate)
         
       var token_obj = {
         'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : created_token_object_data.length, 'spend_balance':spend_balance, 'object_type':'token'
@@ -35597,10 +35598,10 @@ class App extends Component {
             created_certificate_object_data.push(token_obj)
           }
         }
-        else if(tokens_data['fractionalized_asset'] == true){
+        else if(tokens_data != null && tokens_data['fractionalized_asset'] == true){
           const fractionalized_assets_clone = structuredClone(this.state.fractionalized_assets)
           if(fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */] == null){
-            fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */]
+            fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */] = {}
           }
           fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */][token_obj['e5_id']] = token_obj
           this.setState({fractionalized_assets: fractionalized_assets_clone})
@@ -35953,15 +35954,20 @@ class App extends Component {
     const exchanges_buy_tokens = object['data'][3]
 
     var event_params = [
-      [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */}],
-      [web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i]}],
-      [web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i]}],
+      [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i].toString(), p2/* action_type */:'4'/* <4>modify_moderator_accounts */}],
+      [web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i].toString()}],
+      [web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i].toString()}],
 
-      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p2/* sender */: id}],
-      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p3/* receiver */: id}]
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p2/* sender */: id.toString()}],
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p3/* receiver */: id.toString()}],
+      [web3, H52contractInstance, 'e2', e5, {p1/* exchange_id */:id.toString()}]
     ]
     const { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
+    // const test_data = await H52contractInstance.getPastEvents('allEvents', { filter: {}, fromBlock: 24511047, toBlock: 'latest' }, (error, events) => {})
+
+    console.log('load_extra', 'all_events', all_events)
+    // console.log('load_extra', 'test_events', test_data)
     var moderator_data = all_events[0]
     var old_moderators = []
 
@@ -36029,13 +36035,25 @@ class App extends Component {
 
     console.log('load_extra', object)
     if(object['data'][0][4/* <4>non-fungible */] == 1){
+      const all_depth_mint_events = all_events[5]
+      console.log('load_extra', 'all_depth_mint_events', all_depth_mint_events)
+      const depths_used = []
+      const all_depths_used = []
+      all_depth_mint_events.forEach(event => {
+        if(!depths_used.includes(event.returnValues.p6/* depth */)){
+          all_depths_used.push(event.returnValues.p6/* depth */);
+          if(event.returnValues.p2 == account) depths_used.push(event.returnValues.p6/* depth */);
+        }
+      });
+      
+      object['all_depths_used'] = all_depths_used
       var created_certificates_clone = structuredClone(this.state.created_certificates)
       const index = created_certificates_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
       created_certificates_clone[e5][index] = object
-
       this.setState({created_certificates: created_certificates_clone})
-      const depths_used = Object.keys(token_balance_data)
-      await this.load_my_non_fungible_token_data(object, depths_used, account)
+
+      
+      if(depths_used.length > 0) await this.load_my_non_fungible_token_data(object, depths_used, account)
     }else{
       var created_tokens_clone = structuredClone(this.state.created_tokens)
       const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
@@ -36134,7 +36152,7 @@ class App extends Component {
     this.setState({my_token_event_notifications: my_token_event_notifications_clone});
   }
 
-  load_my_non_fungible_token_data(object, depths_used, account){
+  async load_my_non_fungible_token_data(object, depths_used, account){
     const e5 = object['e5']
     const id = object['id']
     const e5_id = object['e5_id']
@@ -36151,10 +36169,12 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     const valid_depths = []
+    console.log('load_my_non_fungible_token_data', 'depths_used', depths_used)
     if(depths_used.length > 0){
       for(var i=0; i<depths_used.length; depths_used++){
         const depth = depths_used[i]
         const depth_data = this.deconstruct_depth_data(depth)
+        console.log('load_my_non_fungible_token_data', 'depth_data', depth_data)
         const certificate_models = object['ipfs'].certificate_models
         var valid_model = ''
         Object.keys(certificate_models).forEach(model => {
@@ -36162,6 +36182,7 @@ class App extends Component {
             valid_model = model
           }
         });
+        console.log('load_my_non_fungible_token_data', 'valid_model', valid_model)
         if(valid_model != ''){
           const model_config = certificate_models[valid_model]
           if(
@@ -36171,10 +36192,15 @@ class App extends Component {
             parseInt(depth_data['end_time']) == Math.floor(parseInt(model_config['purchase_end_time']) / 60)
           ){
             valid_depths.push(depth_data['full'])
+            console.log('load_my_non_fungible_token_data', 'added depth item to valid depths', depth_data)
+          }else{
+            console.log('load_my_non_fungible_token_data', 'invalid depth item', depth_data)
           }
         }
       }
     }
+
+    if(valid_depths.length == 0) return;
 
     const non_fungible_token_mint_events = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p1/* exchange_id */:id, p6/* depth */:this.process_array_for_indexer_query(valid_depths)})
 
@@ -36193,6 +36219,7 @@ class App extends Component {
           valid_depths.includes(mint_depth)
         )
       })
+      console.log('load_my_non_fungible_token_data', 'filtered non_fungible_token_data_events', data_event)
       if(data_event.length > 0){
         const valid_data_event = data_event[0]
         mint_data_mappings[mint_depth] = valid_data_event
@@ -36212,7 +36239,7 @@ class App extends Component {
       const event = valid_data_events[i]
       const depth = valid_data_depths[i]
       const object_data = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
-
+      console.log('load_my_non_fungible_token_data', 'valid_data_events object_data', object_data)
       if(object_data != null){
         const depth_data = this.deconstruct_depth_data(depth)
         const data_object = {
@@ -47233,8 +47260,8 @@ class App extends Component {
       ]
       var event_data = await this.load_multiple_events_from_nitro(event_params)
       var all_events = event_data.all_events
-      received_tokens_event_data = all_events[0]
-      stack_depth_swap_event_data = all_events[1]
+      received_tokens_event_data = all_events[0] || []
+      stack_depth_swap_event_data = all_events[1] || []
     }else{
       received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
       stack_depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id})

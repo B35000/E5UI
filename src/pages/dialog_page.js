@@ -4353,8 +4353,8 @@ return data['data']
     format_certificate_item(object){
         var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
-        var age = item['event'].returnValues.p5
-        var time = item['event'].returnValues.p4
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
         var sender = this.get_senders_name(object['author'], object);
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
@@ -14327,6 +14327,8 @@ return data['data']
         const e5 = object['e5']
         // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
         const now = Date.now() / 1000
+
+        const class_mint_count = this.get_class_mint_count(object, this.construct_depth_item(data))
         return(
             <div>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -14335,10 +14337,13 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.format_account_balance_figure(maximum_supply), 'details':this.props.app_state.loc['3055ox']/* 'Class Maimum Supply' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':(new Date(purchase_start_time).toLocaleString()), 'details':this.props.app_state.loc['3055oy']/* 'Purchase Start Time' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':(new Date(purchase_start_time*1000).toLocaleString()), 'details':this.props.app_state.loc['3055oy']/* 'Purchase Start Time' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':(new Date(purchase_end_time).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':(new Date(purchase_end_time*1000).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':number_with_commas(class_mint_count), 'details':this.props.app_state.loc['3055pt']/* 'Certificates Minted.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']'Every $'.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']'Split Period', 'size':'l'})}
@@ -14348,7 +14353,7 @@ return data['data']
                 <div style={{height: 10}}/>
                 {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
 
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && class_mint_count < maximum_supply && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pe']/* 🌱 Mint New Certificate.' */, 'details':this.props.app_state.loc['3055pf']/* 'Create and mint a new certificate token with your preferred details.' */, 'size':'l'})}
@@ -14410,6 +14415,83 @@ return data['data']
     //     const periodCount = Math.floor(difference / parseInt(split_period))
     //     return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
     // }
+
+    construct_depth_item(data){
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const maximum_supply = data['maximum_supply']
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const class_id = data['id']
+
+        const start_time_minutes = Math.floor(purchase_start_time / 60)
+        const end_time_minutes = Math.floor(purchase_end_time / 60)
+        const price = base_fee_price_multiplier
+        const supply = maximum_supply
+        const token_class = class_id
+
+        const v3_depths_to_add/* depths_to_add */ = [
+            bgN(price, 54)/* exchange_ratio_y */, 
+            bgN(end_time_minutes, 45)/* end_time */, 
+            bgN(start_time_minutes, 36)/* start_time */, 
+            bgN(supply, 27)/* supply */, 
+            bgN(token_class, 18)/* class */, 
+            0/* identifier */
+        ]
+
+        var v4_depth_final/* targeted_depth */ = bigInt(0)
+        v3_depths_to_add/* depths_to_add */.forEach(value => {
+            v4_depth_final/* targeted_depth */ = bigInt(v4_depth_final/* targeted_depth */).plus(bigInt(value.toString().toLocaleString('fullwide', {useGrouping:false}))).toString().toLocaleString('fullwide', {useGrouping:false})
+        });
+
+        return this.deconstruct_depth_data(v4_depth_final)
+    }
+
+    get_class_mint_count(object, depth_data){
+        const all_depths_used = object['all_depths_used']
+        if(all_depths_used == null) return 0
+        const class_count_data = {}
+        const my_general_identifier = depth_data['price'] + depth_data['end_time'] + depth_data['start_time'] + depth_data['supply'] + depth_data['class']
+        all_depths_used.forEach(depth => {
+            const deconstructed_object = this.deconstruct_depth_data(depth)
+            const general_identifier = deconstructed_object['price'] + deconstructed_object['end_time'] + deconstructed_object['start_time'] + deconstructed_object['supply'] + deconstructed_object['class'];
+            if(
+                depth_data['class'] == deconstructed_object['class'] && 
+                depth_data['supply'] == deconstructed_object['supply'] &&
+                depth_data['start_time'] == deconstructed_object['start_time'] &&
+                depth_data['end_time'] == deconstructed_object['end_time'] &&
+                depth_data['price'] == deconstructed_object['price']
+            ){
+                if(class_count_data[general_identifier] == null){
+                    class_count_data[general_identifier] = 0;
+                }
+                class_count_data[general_identifier] ++;
+            }
+        });
+        return class_count_data[my_general_identifier] || 0
+    }
+
+    deconstruct_depth_data(depth){
+        const depth_price_data = this.deconstruct(depth, 54)
+        const depth_end_time_data = this.deconstruct(depth_price_data.remainder, 45)
+        const depth_start_time_data = this.deconstruct(depth_end_time_data.remainder, 36)
+        const depth_supply_data = this.deconstruct(depth_start_time_data.remainder, 27)
+        const depth_class_data = this.deconstruct(depth_supply_data.remainder, 18)
+        return {
+            'class': depth_class_data.value,
+            'identifier': depth_class_data.remainder,
+            'supply':depth_supply_data.value,
+            'start_time': depth_start_time_data.value,
+            'end_time':depth_end_time_data.value,
+            'price':depth_price_data.value,
+            'full':depth
+        }
+    }
+    
+    deconstruct(arg, power){
+        const value = (bigInt(arg).divide(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
+        const remainder = (bigInt(arg).mod(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
+        return { value, remainder }
+    }
 
 
 
@@ -14742,7 +14824,7 @@ return data['data']
         const depth_data = item['ipfs']['depth_item']['depth_data']
         const ipfs = item['ipfs']['depth_item']['ipfs']
         const event = item['ipfs']['depth_item']['event']
-        const time = item['ipfs']['depth_item']['time']
+        const time = item['timestamp']
 
         const data = item['ipfs']['model_data']
         const name = data['class_name']
@@ -14751,8 +14833,8 @@ return data['data']
         const purchase_end_time = data['purchase_end_time']
         
         const my_balance = item['balance']
-        const my_stake = (my_balance / 10^18) * 100
-        const posession_rights = (data['posession_rights']/ 10^18) * 100
+        const my_stake = (my_balance / 10**18) * 100
+        const posession_rights = (data['posession_rights']/ 10**18) * 100
         return(
             <div>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -14761,7 +14843,7 @@ return data['data']
                 {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098bf']/* 'Fractionalized on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>

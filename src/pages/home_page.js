@@ -1559,7 +1559,7 @@ class home_page extends Component {
         }
         else if(this.state.page == 'w'){
             obj['e'] = [
-                ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */], [0,0,0,0,0,this.get_all_wallet_notification_items(['bill_request']).length,0,0,0,0,0,0,0,0,0,0,]
+                ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */], [0,0,0,0,0,0,this.get_all_wallet_notification_items(['bill_request']).length,0,0,0,0,0,0,0,0,0,0,]
             ]
         }
 
@@ -4259,7 +4259,7 @@ class home_page extends Component {
         }
     }
 
-    get_certifiate_items(all){
+    get_certificate_items(all){
         var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
 
         var page_id = this.state.wallet_page_tags_object['i'].active+selected_option_name
@@ -5335,7 +5335,7 @@ class home_page extends Component {
             
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors} viewed_audios={this.state.viewed_audios} viewed_videos={this.state.viewed_videos} viewed_nitros={this.state.viewed_nitros} viewed_polls={this.state.viewed_polls} viewed_certificates={this.state.viewed_certificates}
 
-            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)} get_poll_items={this.get_poll_items.bind(this)} get_certifiate_items={this.get_certifiate_items.bind(this)}
+            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)} get_poll_items={this.get_poll_items.bind(this)} get_certificate_items={this.get_certificate_items.bind(this)}
 
             show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
             get_all_sorted_notifications={this.get_all_sorted_notifications.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} view_number={this.props.view_number.bind(this)}

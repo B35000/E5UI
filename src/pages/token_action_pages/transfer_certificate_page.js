@@ -158,11 +158,35 @@ class TransferCertificatePage extends Component {
     }
 
     render_select_target_data(){
+        const item = this.state.depth_item
+        const depth = item['depth']
+        const depth_data = item['depth_data']
+        const ipfs = item['ipfs']
+        const event = item['event']
+        const time = item['time']
+
+        const data = this.state.model_data
+        const name = data['class_name']
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const now = Date.now() / 1000
+
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3100c']/* 'Transfer your owned certificate.' */})}
-
                 <div style={{height:10}}/> 
+
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1023']/* 'Set the recipient of the transfer action' */, 'title':this.props.app_state.loc['1024']/* 'Recipient of action' */})}
                 
                 <div style={{height:10}}/>
@@ -280,7 +304,7 @@ class TransferCertificatePage extends Component {
 
 
 
-    finish(){
+    async finish(){
         var recipient = await this.get_typed_alias_id(this.state.recipient_id.toString().trim())
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify(this.props.app_state.loc['1030']/* 'Please put a valid account ID.' */, 1600)
@@ -320,6 +344,33 @@ class TransferCertificatePage extends Component {
             }
         }
         return true
+    }
+
+
+
+
+
+
+
+    set_recipients_data = async () => {
+        var recipients_data = await this.props.get_local_storage_data_if_enabled("transfer_data");
+        if(recipients_data != null && recipients_data != ""){
+            this.setState({recipients_data: recipients_data})
+        }
+    }
+
+    componentDidMount(){
+        this.set_recipients_data()
+    }
+
+    get_recipients_from_memory(){
+        const recipients_data = this.state.recipients_data;
+        if(recipients_data != null){
+            const data = JSON.parse(recipients_data)['data']
+            if(data != null) return data;
+            else return []
+        }
+        else return []
     }
 
 
@@ -409,8 +460,7 @@ class TransferCertificatePage extends Component {
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} when_city_selected={this.when_city_selected.bind(this)} show_images={this.props.show_images.bind(this)}
-                
+                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width}  show_images={this.props.show_images.bind(this)}
                 />
             </div>
         )
